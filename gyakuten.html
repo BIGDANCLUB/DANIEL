@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>逆転裁判風 - 法廷バトル</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #1a0a0a;
+  color: #fff;
+  font-family: 'MS Gothic', 'Hiragino Kaku Gothic Pro', monospace;
+  overflow: hidden;
+  user-select: none;
+}
+
+#game-container {
+  width: 100vw; height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Title Screen */
+#title-screen {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(180deg, #0a0a2a 0%, #1a0a0a 50%, #0a0a2a 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 200;
+}
+#title-screen h1 {
+  font-size: 52px; color: #ff4444;
+  text-shadow: 0 0 30px rgba(255,50,50,0.6), 2px 2px 0 #000;
+  letter-spacing: 12px; margin-bottom: 8px;
+}
+#title-screen .subtitle {
+  font-size: 20px; color: #ffcc00; margin-bottom: 50px; letter-spacing: 4px;
+}
+#title-screen button {
+  font-size: 22px; padding: 14px 50px; margin: 8px;
+  background: #2a1a1a; border: 2px solid #ff4444; color: #ff4444;
+  cursor: pointer; font-family: inherit; letter-spacing: 4px;
+  transition: all 0.2s;
+}
+#title-screen button:hover { background: #3a2a2a; box-shadow: 0 0 15px rgba(255,50,50,0.4); }
+
+/* Courtroom Scene */
+#courtroom {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  display: none;
+}
+
+/* Background */
+#court-bg {
+  width: 100%; height: 55%;
+  background: linear-gradient(180deg, #2a1a0a 0%, #3a2a1a 60%, #4a3a2a 100%);
+  position: relative;
+  border-bottom: 4px solid #5a4a3a;
+}
+
+/* Character Display */
+#character-area {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 300px; height: 350px;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+#character-sprite {
+  font-size: 180px; line-height: 1;
+  filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.8));
+  transition: transform 0.1s;
+}
+#character-name-plate {
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.8); border: 1px solid #888;
+  padding: 3px 15px; font-size: 14px; white-space: nowrap;
+  border-radius: 2px;
+}
+
+/* Witness stand */
+#witness-stand {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 200px; height: 80px;
+  background: linear-gradient(180deg, #6a5a3a, #4a3a2a);
+  border-top: 3px solid #8a7a5a;
+  border-radius: 5px 5px 0 0;
+}
+
+/* Desk for attorney */
+#attorney-desk {
+  position: absolute; bottom: 0; right: 30px;
+  width: 180px; height: 60px;
+  background: linear-gradient(180deg, #5a4a2a, #3a2a1a);
+  border-top: 3px solid #7a6a4a;
+  border-radius: 5px 5px 0 0;
+}
+#prosecutor-desk {
+  position: absolute; bottom: 0; left: 30px;
+  width: 180px; height: 60px;
+  background: linear-gradient(180deg, #5a4a2a, #3a2a1a);
+  border-top: 3px solid #7a6a4a;
+  border-radius: 5px 5px 0 0;
+}
+
+/* Text Box */
+#text-box {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 45%;
+  background: linear-gradient(180deg, #1a1a2a, #0a0a1a);
+  border-top: 3px solid #4a4a6a;
+  padding: 0;
+}
+#speaker-name {
+  background: #aa2222; color: #fff; display: inline-block;
+  padding: 5px 20px; font-size: 16px; font-weight: bold;
+  margin: 10px 0 0 20px; border-radius: 3px;
+  min-width: 100px; text-align: center;
+}
+#dialogue-text {
+  padding: 12px 25px; font-size: 18px; line-height: 1.8;
+  min-height: 80px; letter-spacing: 1px;
+}
+#dialogue-text .highlight { color: #ff4444; font-weight: bold; }
+
+/* Statement Counter */
+#statement-counter {
+  position: absolute; top: 15px; right: 20px;
+  background: rgba(0,0,0,0.7); border: 1px solid #666;
+  padding: 5px 12px; font-size: 13px; border-radius: 3px;
+}
+
+/* Action Buttons */
+#action-buttons {
+  position: absolute; bottom: 15px; right: 20px;
+  display: flex; gap: 8px;
+}
+#action-buttons button {
+  padding: 8px 18px; font-size: 14px; cursor: pointer;
+  font-family: inherit; border-radius: 4px; transition: all 0.2s;
+  border: 2px solid; letter-spacing: 2px;
+}
+.btn-next {
+  background: #1a2a3a; border-color: #4488cc !important; color: #88bbee;
+}
+.btn-next:hover { background: #2a3a4a; }
+.btn-press {
+  background: #2a2a1a; border-color: #ccaa44 !important; color: #ffdd66;
+}
+.btn-press:hover { background: #3a3a2a; }
+.btn-present {
+  background: #3a1a1a; border-color: #cc4444 !important; color: #ff6666;
+}
+.btn-present:hover { background: #4a2a2a; box-shadow: 0 0 10px rgba(255,50,50,0.3); }
+
+/* Evidence Panel */
+#evidence-panel {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.92); z-index: 100; display: none;
+  flex-direction: column;
+}
+#evidence-header {
+  background: #2a1a1a; padding: 12px 20px;
+  border-bottom: 2px solid #aa4444;
+  display: flex; justify-content: space-between; align-items: center;
+}
+#evidence-header h2 { color: #ff6666; font-size: 20px; letter-spacing: 4px; }
+#evidence-list {
+  flex: 1; overflow-y: auto; padding: 10px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px; align-content: start;
+}
+.evidence-card {
+  background: #1a1a2a; border: 2px solid #3a3a5a;
+  padding: 12px; cursor: pointer; border-radius: 4px;
+  transition: all 0.2s;
+}
+.evidence-card:hover {
+  border-color: #ff6666; background: #2a1a2a;
+  box-shadow: 0 0 10px rgba(255,50,50,0.2);
+}
+.evidence-card.selected {
+  border-color: #ff4444; background: #3a1a1a;
+  box-shadow: 0 0 15px rgba(255,50,50,0.4);
+}
+.evidence-card h4 { color: #ffcc44; font-size: 14px; margin-bottom: 5px; }
+.evidence-card p { color: #aaa; font-size: 12px; line-height: 1.5; }
+.evidence-card .evidence-icon { font-size: 28px; float: left; margin-right: 10px; }
+
+#evidence-detail {
+  background: #0a0a1a; border-top: 2px solid #3a3a5a;
+  padding: 15px 20px; min-height: 100px;
+}
+#evidence-detail h3 { color: #ffcc44; margin-bottom: 5px; }
+#evidence-detail p { color: #ccc; font-size: 14px; line-height: 1.6; }
+
+#evidence-actions {
+  background: #1a1a2a; padding: 10px 20px;
+  border-top: 1px solid #333;
+  display: flex; justify-content: flex-end; gap: 10px;
+}
+#evidence-actions button {
+  padding: 8px 20px; font-size: 14px; cursor: pointer;
+  font-family: inherit; border-radius: 4px;
+}
+
+/* Objection / Hold It / Take That overlays */
+#shout-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 150; display: none;
+  align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.3);
+}
+#shout-text {
+  font-size: 72px; font-weight: bold; letter-spacing: 8px;
+  text-shadow: 4px 4px 0 #000, 0 0 30px currentColor;
+  animation: shoutAnim 0.5s ease-out;
+}
+@keyframes shoutAnim {
+  0% { transform: scale(3) rotate(-5deg); opacity: 0; }
+  50% { transform: scale(1.1) rotate(1deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Screen flash */
+#flash-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 140; display: none; background: #fff;
+  animation: flashAnim 0.3s ease-out forwards;
+}
+@keyframes flashAnim {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Health / Penalty Bar */
+#penalty-bar {
+  position: absolute; top: 15px; left: 20px;
+  display: flex; align-items: center; gap: 8px;
+}
+#penalty-label { font-size: 13px; color: #aaa; }
+#penalty-gauge {
+  width: 200px; height: 16px; background: #333;
+  border: 1px solid #666; border-radius: 2px; overflow: hidden;
+}
+#penalty-fill {
+  height: 100%; background: linear-gradient(90deg, #44cc44, #88ee44);
+  transition: width 0.5s;
+}
+
+/* Shake animation */
+.screen-shake {
+  animation: shake 0.4s ease-in-out;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10% { transform: translateX(-8px) rotate(-0.5deg); }
+  30% { transform: translateX(8px) rotate(0.5deg); }
+  50% { transform: translateX(-6px); }
+  70% { transform: translateX(6px); }
+  90% { transform: translateX(-3px); }
+}
+
+/* Result Screen */
+#result-screen {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 200; display: none;
+  flex-direction: column; align-items: center; justify-content: center;
+}
+#result-screen.victory { background: linear-gradient(180deg, #0a1a0a, #1a2a1a, #0a1a0a); }
+#result-screen.defeat { background: linear-gradient(180deg, #1a0a0a, #2a1a1a, #1a0a0a); }
+#result-screen h1 { font-size: 56px; margin-bottom: 20px; letter-spacing: 8px; }
+#result-screen p { font-size: 18px; color: #aaa; margin-bottom: 30px; }
+#result-screen button {
+  font-size: 18px; padding: 12px 40px;
+  background: #2a2a2a; border: 2px solid #888; color: #eee;
+  cursor: pointer; font-family: inherit;
+}
+</style>
+</head>
+<body>
+
+<div id="game-container">
+  <!-- Title Screen -->
+  <div id="title-screen">
+    <h1>逆転法廷</h1>
+    <div class="subtitle">〜 最後の証拠 〜</div>
+    <button onclick="startGame()">はじめる</button>
+  </div>
+
+  <!-- Courtroom -->
+  <div id="courtroom">
+    <div id="court-bg">
+      <div id="prosecutor-desk"></div>
+      <div id="witness-stand"></div>
+      <div id="attorney-desk"></div>
+      <div id="character-area">
+        <div id="character-sprite"></div>
+      </div>
+    </div>
+    <div id="text-box">
+      <div id="speaker-name">???</div>
+      <div id="dialogue-text"></div>
+      <div id="action-buttons"></div>
+    </div>
+    <div id="penalty-bar">
+      <div id="penalty-label">ペナルティ</div>
+      <div id="penalty-gauge"><div id="penalty-fill" style="width:100%"></div></div>
+    </div>
+    <div id="statement-counter"></div>
+  </div>
+
+  <!-- Evidence Panel -->
+  <div id="evidence-panel">
+    <div id="evidence-header">
+      <h2>証 拠 品</h2>
+      <button onclick="closeEvidence()" style="background:#3a2a2a;border:1px solid #aa4444;color:#ff8888;padding:6px 16px;cursor:pointer;font-family:inherit;">閉じる</button>
+    </div>
+    <div id="evidence-list"></div>
+    <div id="evidence-detail">
+      <h3>証拠品を選択してください</h3>
+      <p>左の証拠品をクリックすると詳細が表示されます。</p>
+    </div>
+    <div id="evidence-actions">
+      <button onclick="closeEvidence()" style="background:#2a2a3a;border:1px solid #666;color:#aaa;cursor:pointer;font-family:inherit;">戻る</button>
+      <button id="btn-submit-evidence" onclick="submitEvidence()" style="background:#3a1a1a;border:2px solid #cc4444;color:#ff6666;cursor:pointer;font-family:inherit;display:none;">この証拠を突きつける！</button>
+    </div>
+  </div>
+
+  <!-- Shout Overlay -->
+  <div id="shout-overlay"><div id="shout-text"></div></div>
+  <div id="flash-overlay"></div>
+
+  <!-- Result Screen -->
+  <div id="result-screen">
+    <h1 id="result-title"></h1>
+    <p id="result-message"></p>
+    <button onclick="location.reload()">タイトルに戻る</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// Game Data
+// ============================================================
+
+const EVIDENCE = [
+  {
+    id: 0,
+    name: '被害者の診断書',
+    icon: '📋',
+    desc: '被害者・山田太郎の死因は後頭部への強い打撃による外傷性脳損傷。死亡推定時刻は午後11時〜午前0時。',
+    detail: '司法解剖の結果、死因は後頭部への鈍器による一撃と断定。凶器は丸みを帯びた金属製の物体と推定される。死亡推定時刻は12月5日午後11時〜6日午前0時。'
+  },
+  {
+    id: 1,
+    name: '凶器のトロフィー',
+    icon: '🏆',
+    desc: '犯行現場で発見された金属製トロフィー。被害者の血痕が付着。被告人の指紋が検出された。',
+    detail: '被害者の書斎で発見。高さ30cm、重さ1.2kgの金属製トロフィー。被告人は「以前触ったことがある」と証言している。血痕は被害者のものと一致。'
+  },
+  {
+    id: 2,
+    name: '現場の写真',
+    icon: '📷',
+    desc: '犯行現場である被害者の書斎の写真。窓が開いており、机の上の書類が散乱している。',
+    detail: '書斎の窓は外側から開けられた形跡がある。机の上には契約書の下書きが散乱。本棚の前にトロフィーが落ちていた。書斎の時計は午後11時15分で停止している。'
+  },
+  {
+    id: 3,
+    name: '被告人のアリバイメモ',
+    icon: '📝',
+    desc: '被告人・鈴木一郎は「当日は午後10時から自宅でテレビを見ていた」と主張。同居人の証言あり。',
+    detail: '被告人の妻が「夫は午後10時に帰宅し、一緒にテレビを見ていた」と証言。ただし妻は午前0時前に就寝しており、それ以降の行動は不明。被告人の自宅から現場まで車で15分。'
+  },
+  {
+    id: 4,
+    name: '防犯カメラ映像記録',
+    icon: '🎥',
+    desc: 'マンション入口の防犯カメラ記録。午後11時30分に不審な人影がマンションに入る様子が映っている。',
+    detail: '映像は不鮮明だが、身長170cm前後の人物がマンション正面入口から侵入。黒いコートを着用。顔は帽子で隠されている。被告人の身長は172cm。なお、裏口にはカメラが設置されていない。'
+  },
+  {
+    id: 5,
+    name: '証人・佐藤の名刺',
+    icon: '💳',
+    desc: '証人・佐藤花子の名刺。被害者と同じ会社「山田商事」の経理部所属。',
+    detail: '佐藤花子は山田商事の経理部主任。被害者である社長・山田太郎の直属の部下。事件当日、被害者と会社の不正経理について話し合う予定だったと証言している。'
+  },
+  {
+    id: 6,
+    name: '不正経理の帳簿',
+    icon: '📒',
+    desc: '山田商事の裏帳簿。約3000万円の使途不明金が記録されている。被害者の書斎から発見。',
+    detail: '過去2年間にわたり約3000万円が不明な口座に送金されていた記録。送金先の口座名義は「S.H」というイニシャルのみ判明。被害者がこの不正を調査していた形跡がある。'
+  },
+  {
+    id: 7,
+    name: '証人の通話記録',
+    icon: '📱',
+    desc: '証人・佐藤花子の携帯電話の通話記録。事件当日の午後10時45分に被害者と15分間通話している。',
+    detail: '通話記録によると、佐藤花子は当日午後10時45分〜11時00分に被害者と通話。佐藤はこの通話について「翌日の会議の打ち合わせ」と説明している。'
+  },
+  {
+    id: 8,
+    name: '黒いコート',
+    icon: '🧥',
+    desc: '被告人の自宅から押収された黒いコート。防犯カメラの人物と同型。ただし繊維鑑定では現場の痕跡は検出されず。',
+    detail: '被告人所有の黒いコート。防犯カメラの人物が着用していたものと同じブランド・同じサイズ。しかし科学捜査の結果、現場に残された繊維とは一致しなかった。'
+  },
+  {
+    id: 9,
+    name: '佐藤の銀行口座',
+    icon: '🏦',
+    desc: '捜査で判明した佐藤花子の隠し口座。イニシャル「S.H」（佐藤花子 = Sato Hanako）名義。約3000万円の入金記録。',
+    detail: '佐藤花子が偽名で開設した銀行口座。過去2年間で約3000万円が入金されており、裏帳簿の使途不明金と金額・時期が完全に一致する。佐藤はこの口座の存在を否定している。'
+  }
+];
+
+const WITNESS_STATEMENTS = [
+  {
+    id: 0,
+    speaker: '佐藤花子',
+    text: '私は事件当日、午後9時に会社を出て、まっすぐ帰宅しました。',
+    pressText: '残業が長引いて疲れていたので、寄り道せずに帰りました。自宅には午後9時半ごろ着いたと思います。',
+    contradiction: null,
+    correctEvidence: null,
+  },
+  {
+    id: 1,
+    speaker: '佐藤花子',
+    text: '帰宅後は一人で夕食を食べ、テレビを見ていました。外出はしていません。',
+    pressText: '一人暮らしなので、証明してくれる人はいませんが…本当に家にいたんです。',
+    contradiction: null,
+    correctEvidence: null,
+  },
+  {
+    id: 2,
+    speaker: '佐藤花子',
+    text: '社長…山田さんとは、その日は会社で顔を合わせただけで、特に話はしていません。',
+    contradiction: 7,
+    correctEvidence: 7,
+    contradictionExplanation: '通話記録が示す事実と矛盾する',
+    revealText: '佐藤さん、あなたは「山田さんとは話していない」と証言しましたね？しかし、この通話記録を見てください。事件当日の午後10時45分に、あなたは被害者と15分間も電話で話しているじゃないですか！',
+  },
+  {
+    id: 3,
+    speaker: '佐藤花子',
+    text: '会社の経理については、私は普通に業務をこなしていただけです。不正なんて知りません。',
+    contradiction: 9,
+    correctEvidence: 9,
+    contradictionExplanation: '隠し口座の存在が証言と矛盾する',
+    revealText: '「不正を知らない」ですって？では、この銀行口座は何ですか！「S.H」…佐藤花子、あなたのイニシャルです！裏帳簿の使途不明金3000万円と完全に一致するこの口座を、どう説明するんですか！',
+  },
+  {
+    id: 4,
+    speaker: '佐藤花子',
+    text: '山田社長が不正経理を調査していたなんて、初耳です。そんな話は聞いたことがありません。',
+    pressText: '社長は経営のことは幹部にしか話しませんから、経理部の私には関係のない話です。',
+    contradiction: null,
+    correctEvidence: null,
+  },
+  {
+    id: 5,
+    speaker: '佐藤花子',
+    text: '事件のことを知ったのは翌朝、ニュースで見たときです。本当に驚きました。',
+    pressText: 'テレビのニュース速報で「山田商事の社長が殺害」と流れて…信じられませんでした。',
+    contradiction: null,
+    correctEvidence: null,
+  },
+  {
+    id: 6,
+    speaker: '佐藤花子',
+    text: '被告人の鈴木さんとは面識がありません。会社で見かけたこともないです。',
+    pressText: '鈴木さんは別の部署の取引先だと聞いていますが、直接会ったことはありません。',
+    contradiction: null,
+    correctEvidence: null,
+  },
+  {
+    id: 7,
+    speaker: '佐藤花子',
+    text: 'マンションには裏口から入ることはできません。正面入口しかないはずです。',
+    contradiction: 4,
+    correctEvidence: 4,
+    contradictionExplanation: '防犯カメラ記録の情報と矛盾する',
+    revealText: 'ちょっと待ってください！この防犯カメラの記録によると、「裏口にはカメラが設置されていない」とあります。つまり裏口は存在するんです！なぜあなたは裏口がないと断言できるんですか？…実際に裏口を使ったことがあるからこそ、カメラがないことを知っていたのでは！？',
+  },
+  {
+    id: 8,
+    speaker: '佐藤花子',
+    text: '犯行に使われたトロフィーは、社長室に飾ってあったものだと思います。私は触ったこともありません。',
+    pressText: 'あのトロフィーは創業記念のもので、社長が大切にしていました。',
+    contradiction: null,
+    correctEvidence: null,
+  },
+  {
+    id: 9,
+    speaker: '佐藤花子',
+    text: '書斎の時計が午後11時15分で止まっていたそうですが、私はその時間、自宅にいました。',
+    contradiction: 7,
+    correctEvidence: 7,
+    contradictionExplanation: '通話記録から行動の矛盾が証明できる',
+    revealText: 'あなたは午後11時15分に自宅にいたと主張していますね。しかし通話記録では午後11時まで被害者と電話していた。そして被害者のマンションからあなたの自宅まで徒歩5分の距離です。電話の内容が「不正経理の追及」だったとしたら…あなたには動機も、時間的猶予も、十分にあったということです！',
+  },
+];
+
+// Total contradictions to find
+const TOTAL_CONTRADICTIONS = WITNESS_STATEMENTS.filter(s => s.contradiction !== null).length;
+
+// ============================================================
+// Game State
+// ============================================================
+let state = {
+  phase: 'title', // title, testimony, pressing, presenting, result
+  currentStatement: 0,
+  foundContradictions: 0,
+  penaltyHP: 100, // 0 = game over
+  selectedEvidence: null,
+  isPressing: false,
+  revealedContradictions: new Set(),
+  textQueue: [],
+  textIndex: 0,
+  isTyping: false,
+  currentText: '',
+  dialogueCallback: null,
+  shakeTimeout: null,
+};
+
+// ============================================================
+// Text Typing Effect
+// ============================================================
+function typeText(speaker, text, callback, speakerColor = '#aa2222') {
+  const nameEl = document.getElementById('speaker-name');
+  const textEl = document.getElementById('dialogue-text');
+
+  nameEl.textContent = speaker;
+  nameEl.style.background = speakerColor;
+  textEl.innerHTML = '';
+  state.isTyping = true;
+  state.currentText = text;
+  state.textIndex = 0;
+  state.dialogueCallback = callback;
+
+  function typeNext() {
+    if (state.textIndex < text.length) {
+      // Handle HTML tags
+      if (text[state.textIndex] === '<') {
+        const closeIdx = text.indexOf('>', state.textIndex);
+        if (closeIdx !== -1) {
+          state.textIndex = closeIdx + 1;
+        }
+      }
+      textEl.innerHTML = text.substring(0, state.textIndex + 1);
+      state.textIndex++;
+      setTimeout(typeNext, 30);
+    } else {
+      state.isTyping = false;
+    }
+  }
+  typeNext();
+}
+
+function skipOrAdvance() {
+  if (state.isTyping) {
+    // Skip to end
+    const textEl = document.getElementById('dialogue-text');
+    textEl.innerHTML = state.currentText;
+    state.isTyping = false;
+    state.textIndex = state.currentText.length;
+  } else if (state.dialogueCallback) {
+    const cb = state.dialogueCallback;
+    state.dialogueCallback = null;
+    cb();
+  }
+}
+
+// ============================================================
+// Shout Effects
+// ============================================================
+function showShout(text, color, callback) {
+  const overlay = document.getElementById('shout-overlay');
+  const textEl = document.getElementById('shout-text');
+  const flash = document.getElementById('flash-overlay');
+
+  // Flash
+  flash.style.display = 'block';
+  setTimeout(() => { flash.style.display = 'none'; }, 300);
+
+  textEl.textContent = text;
+  textEl.style.color = color;
+  overlay.style.display = 'flex';
+
+  // Remove and re-add for animation restart
+  textEl.style.animation = 'none';
+  void textEl.offsetHeight;
+  textEl.style.animation = 'shoutAnim 0.5s ease-out';
+
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    if (callback) callback();
+  }, 1200);
+}
+
+function shakeScreen() {
+  const container = document.getElementById('courtroom');
+  container.classList.add('screen-shake');
+  clearTimeout(state.shakeTimeout);
+  state.shakeTimeout = setTimeout(() => {
+    container.classList.remove('screen-shake');
+  }, 400);
+}
+
+// ============================================================
+// Character Display
+// ============================================================
+function showCharacter(type) {
+  const sprite = document.getElementById('character-sprite');
+  switch(type) {
+    case 'witness-normal':
+      sprite.textContent = '👩‍💼';
+      break;
+    case 'witness-nervous':
+      sprite.textContent = '😰';
+      break;
+    case 'witness-angry':
+      sprite.textContent = '😠';
+      break;
+    case 'witness-shocked':
+      sprite.textContent = '😱';
+      break;
+    case 'attorney':
+      sprite.textContent = '👨‍⚖️';
+      break;
+    case 'prosecutor':
+      sprite.textContent = '👨‍💼';
+      break;
+    case 'judge':
+      sprite.textContent = '👴';
+      break;
+    default:
+      sprite.textContent = '';
+  }
+}
+
+// ============================================================
+// Game Flow
+// ============================================================
+function startGame() {
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('courtroom').style.display = 'block';
+  state.phase = 'testimony';
+
+  showCharacter('judge');
+  typeText('裁判長', 'それでは、証人・佐藤花子の証言を開始します。弁護人は証言に矛盾があれば、証拠を突きつけてください。', () => {
+    showCharacter('witness-normal');
+    typeText('佐藤花子', 'はい、証言いたします。', () => {
+      showStatement(0);
+    }, '#884422');
+  }, '#444488');
+}
+
+function showStatement(index) {
+  if (index >= WITNESS_STATEMENTS.length) {
+    // All statements heard
+    endTestimony();
+    return;
+  }
+
+  state.currentStatement = index;
+  state.isPressing = false;
+  const stmt = WITNESS_STATEMENTS[index];
+
+  document.getElementById('statement-counter').textContent =
+    `証言 ${index + 1} / ${WITNESS_STATEMENTS.length}　|　矛盾発見: ${state.foundContradictions} / ${TOTAL_CONTRADICTIONS}`;
+
+  showCharacter('witness-normal');
+  typeText(stmt.speaker, stmt.text, () => {
+    showStatementActions();
+  }, '#884422');
+}
+
+function showStatementActions() {
+  const btns = document.getElementById('action-buttons');
+  const stmt = WITNESS_STATEMENTS[state.currentStatement];
+  const alreadyRevealed = state.revealedContradictions.has(state.currentStatement);
+
+  let html = '';
+  html += `<button class="btn-next" onclick="nextStatement()">次へ ▶</button>`;
+  html += `<button class="btn-press" onclick="pressWitness()">ゆさぶる</button>`;
+  if (!alreadyRevealed) {
+    html += `<button class="btn-present" onclick="openEvidenceToPresent()">証拠を突きつける</button>`;
+  } else {
+    html += `<button class="btn-present" style="opacity:0.3;cursor:default;" disabled>矛盾解明済み ✓</button>`;
+  }
+  btns.innerHTML = html;
+}
+
+function nextStatement() {
+  document.getElementById('action-buttons').innerHTML = '';
+  showStatement(state.currentStatement + 1);
+}
+
+function pressWitness() {
+  const stmt = WITNESS_STATEMENTS[state.currentStatement];
+  document.getElementById('action-buttons').innerHTML = '';
+
+  showShout('ゆさぶる！', '#ffcc00', () => {
+    showCharacter('witness-nervous');
+    typeText(stmt.speaker, stmt.pressText, () => {
+      showStatementActions();
+    }, '#884422');
+  });
+}
+
+// ============================================================
+// Evidence Presentation
+// ============================================================
+function openEvidenceToPresent() {
+  state.selectedEvidence = null;
+  const panel = document.getElementById('evidence-panel');
+  const list = document.getElementById('evidence-list');
+  const submitBtn = document.getElementById('btn-submit-evidence');
+
+  let html = '';
+  for (const ev of EVIDENCE) {
+    html += `<div class="evidence-card" id="ev-card-${ev.id}" onclick="selectEvidence(${ev.id})">`;
+    html += `<span class="evidence-icon">${ev.icon}</span>`;
+    html += `<h4>${ev.name}</h4>`;
+    html += `<p>${ev.desc}</p>`;
+    html += `</div>`;
+  }
+  list.innerHTML = html;
+
+  document.getElementById('evidence-detail').innerHTML = '<h3>証拠品を選択してください</h3><p>突きつけたい証拠品をクリックしてください。</p>';
+  submitBtn.style.display = 'none';
+  panel.style.display = 'flex';
+}
+
+function selectEvidence(id) {
+  state.selectedEvidence = id;
+  const ev = EVIDENCE[id];
+
+  // Highlight selected
+  document.querySelectorAll('.evidence-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`ev-card-${id}`).classList.add('selected');
+
+  // Show detail
+  document.getElementById('evidence-detail').innerHTML =
+    `<h3>${ev.icon} ${ev.name}</h3><p>${ev.detail}</p>`;
+
+  document.getElementById('btn-submit-evidence').style.display = 'inline-block';
+}
+
+function closeEvidence() {
+  document.getElementById('evidence-panel').style.display = 'none';
+}
+
+function submitEvidence() {
+  if (state.selectedEvidence === null) return;
+  closeEvidence();
+
+  const stmt = WITNESS_STATEMENTS[state.currentStatement];
+  const ev = EVIDENCE[state.selectedEvidence];
+
+  if (stmt.correctEvidence === state.selectedEvidence) {
+    // Correct!
+    correctPresentation(stmt, ev);
+  } else {
+    // Wrong!
+    wrongPresentation(ev);
+  }
+}
+
+function correctPresentation(stmt, ev) {
+  showShout('異議あり！', '#ff4444', () => {
+    shakeScreen();
+    showCharacter('attorney');
+    typeText('弁護人', stmt.revealText, () => {
+      showCharacter('witness-shocked');
+      state.foundContradictions++;
+      state.revealedContradictions.add(state.currentStatement);
+
+      document.getElementById('statement-counter').textContent =
+        `証言 ${state.currentStatement + 1} / ${WITNESS_STATEMENTS.length}　|　矛盾発見: ${state.foundContradictions} / ${TOTAL_CONTRADICTIONS}`;
+
+      setTimeout(() => {
+        typeText('佐藤花子', 'そ…それは……！', () => {
+          // Check if all contradictions found
+          if (state.foundContradictions >= TOTAL_CONTRADICTIONS) {
+            allContradictionsFound();
+          } else {
+            showCharacter('witness-nervous');
+            typeText('裁判長', '証人、この点について説明を求めます。証言を続けなさい。', () => {
+              showStatement(state.currentStatement + 1);
+            }, '#444488');
+          }
+        }, '#884422');
+      }, 800);
+    }, '#2244aa');
+  });
+}
+
+function wrongPresentation(ev) {
+  showShout('異議あり！', '#ff4444', () => {
+    showCharacter('attorney');
+    typeText('弁護人', `この「${ev.name}」を見てください！ここに矛盾が…`, () => {
+      setTimeout(() => {
+        showShout('異議あり！', '#4488ff', () => {
+          showCharacter('prosecutor');
+          typeText('検察官', 'それは的外れな指摘だ。弁護人には証拠の意味を理解する能力がないようだな。', () => {
+            shakeScreen();
+            // Penalty
+            state.penaltyHP -= 20;
+            document.getElementById('penalty-fill').style.width = state.penaltyHP + '%';
+
+            if (state.penaltyHP > 60) {
+              document.getElementById('penalty-fill').style.background = 'linear-gradient(90deg, #44cc44, #88ee44)';
+            } else if (state.penaltyHP > 30) {
+              document.getElementById('penalty-fill').style.background = 'linear-gradient(90deg, #ccaa44, #eecc44)';
+            } else {
+              document.getElementById('penalty-fill').style.background = 'linear-gradient(90deg, #cc4444, #ee6644)';
+            }
+
+            showCharacter('judge');
+            typeText('裁判長', `弁護人にペナルティを科します。無関係な証拠の提示は慎んでください。`, () => {
+              if (state.penaltyHP <= 0) {
+                gameOver();
+              } else {
+                showStatement(state.currentStatement);
+              }
+            }, '#444488');
+          }, '#4444aa');
+        });
+      }, 500);
+    }, '#2244aa');
+  });
+}
+
+// ============================================================
+// End Conditions
+// ============================================================
+function allContradictionsFound() {
+  showCharacter('witness-shocked');
+  typeText('佐藤花子', 'うぅ…もう…隠し通せない……', () => {
+    shakeScreen();
+    setTimeout(() => {
+      showCharacter('witness-angry');
+      typeText('佐藤花子', '…そうよ！私がやったのよ！あの男は不正を暴こうとした…私の全てを奪おうとしたのよ！だから…だから私は……！', () => {
+        setTimeout(() => {
+          showCharacter('judge');
+          typeText('裁判長', '…証人の自白により、事件の真相が明らかになりました。', () => {
+            typeText('裁判長', '被告人・鈴木一郎に対し、<span class="highlight">無罪</span>を言い渡します！', () => {
+              setTimeout(() => showResult(true), 1000);
+            }, '#444488');
+          }, '#444488');
+        }, 800);
+      }, '#884422');
+    }, 500);
+  }, '#884422');
+}
+
+function endTestimony() {
+  if (state.foundContradictions >= TOTAL_CONTRADICTIONS) {
+    allContradictionsFound();
+  } else {
+    showCharacter('judge');
+    typeText('裁判長', '証言は以上です。弁護人、もう一度証言を聞きますか？', () => {
+      const btns = document.getElementById('action-buttons');
+      btns.innerHTML = `
+        <button class="btn-next" onclick="restartTestimony()">もう一度聞く</button>
+        <button class="btn-press" onclick="openEvidenceList()">証拠品を確認</button>
+      `;
+    }, '#444488');
+  }
+}
+
+function restartTestimony() {
+  document.getElementById('action-buttons').innerHTML = '';
+  showStatement(0);
+}
+
+function openEvidenceList() {
+  state.selectedEvidence = null;
+  const panel = document.getElementById('evidence-panel');
+  const list = document.getElementById('evidence-list');
+
+  let html = '';
+  for (const ev of EVIDENCE) {
+    html += `<div class="evidence-card" id="ev-card-${ev.id}" onclick="selectEvidenceView(${ev.id})">`;
+    html += `<span class="evidence-icon">${ev.icon}</span>`;
+    html += `<h4>${ev.name}</h4>`;
+    html += `<p>${ev.desc}</p>`;
+    html += `</div>`;
+  }
+  list.innerHTML = html;
+
+  document.getElementById('evidence-detail').innerHTML = '<h3>証拠品を選択してください</h3><p>証拠品をクリックすると詳細が表示されます。</p>';
+  document.getElementById('btn-submit-evidence').style.display = 'none';
+  panel.style.display = 'flex';
+}
+
+function selectEvidenceView(id) {
+  const ev = EVIDENCE[id];
+  document.querySelectorAll('.evidence-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`ev-card-${id}`).classList.add('selected');
+  document.getElementById('evidence-detail').innerHTML =
+    `<h3>${ev.icon} ${ev.name}</h3><p>${ev.detail}</p>`;
+}
+
+function gameOver() {
+  showResult(false);
+}
+
+function showResult(victory) {
+  const screen = document.getElementById('result-screen');
+  const title = document.getElementById('result-title');
+  const msg = document.getElementById('result-message');
+
+  screen.className = victory ? 'victory' : 'defeat';
+
+  if (victory) {
+    title.textContent = '無罪';
+    title.style.color = '#44ff44';
+    title.style.textShadow = '0 0 30px rgba(50,255,50,0.6)';
+    msg.textContent = `全ての矛盾を暴き、真犯人を追い詰めた！被告人・鈴木一郎は無罪となった。`;
+  } else {
+    title.textContent = '有罪';
+    title.style.color = '#ff4444';
+    title.style.textShadow = '0 0 30px rgba(255,50,50,0.6)';
+    msg.textContent = `ペナルティが限界に達した…弁護は失敗に終わった。`;
+  }
+
+  screen.style.display = 'flex';
+}
+
+// ============================================================
+// Click to advance text
+// ============================================================
+document.addEventListener('click', (e) => {
+  // Don't advance if clicking buttons or evidence panel
+  if (e.target.closest('button') || e.target.closest('#evidence-panel') ||
+      e.target.closest('#evidence-actions') || e.target.closest('#title-screen') ||
+      e.target.closest('#result-screen')) return;
+
+  if (state.phase === 'title') return;
+  skipOrAdvance();
+});
+
+// Keyboard
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    skipOrAdvance();
+  }
+  if (e.key === 'Escape') {
+    closeEvidence();
+  }
+});
+</script>
+</body>
+</html>

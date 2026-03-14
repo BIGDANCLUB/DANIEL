@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ファーレントゥーガ風 戦略SLG</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; color: #eee; font-family: 'MS Gothic', 'Courier New', monospace; overflow: hidden; }
+canvas { display: block; }
+
+/* UI Overlay */
+#ui-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+}
+#ui-overlay > * { pointer-events: auto; }
+
+#info-panel {
+  position: absolute; top: 10px; left: 10px;
+  background: rgba(0,0,0,0.85); border: 2px solid #4a4a6a;
+  padding: 10px; min-width: 220px; font-size: 13px;
+  border-radius: 4px;
+}
+#info-panel h3 { color: #ffd700; margin-bottom: 5px; font-size: 14px; }
+#info-panel .faction-info { margin: 3px 0; }
+
+#action-panel {
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.85); border: 2px solid #4a4a6a;
+  padding: 8px 15px; border-radius: 4px; display: flex; gap: 10px;
+  font-size: 13px; align-items: center;
+}
+
+#detail-panel {
+  position: absolute; top: 10px; right: 10px;
+  background: rgba(0,0,0,0.85); border: 2px solid #4a4a6a;
+  padding: 10px; min-width: 200px; font-size: 13px;
+  border-radius: 4px; display: none;
+}
+#detail-panel h3 { color: #ffd700; margin-bottom: 5px; font-size: 14px; }
+
+button {
+  background: #2a2a4a; color: #eee; border: 1px solid #6a6a8a;
+  padding: 5px 12px; cursor: pointer; font-family: inherit; font-size: 12px;
+  border-radius: 3px;
+}
+button:hover { background: #3a3a5a; }
+button:disabled { opacity: 0.4; cursor: default; }
+button.active { background: #4a3a1a; border-color: #ffd700; }
+
+/* Title Screen */
+#title-screen {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(180deg, #0a0a1e 0%, #1a1a3e 50%, #0a0a1e 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 100;
+}
+#title-screen h1 {
+  font-size: 42px; color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.5);
+  margin-bottom: 10px; letter-spacing: 8px;
+}
+#title-screen .subtitle {
+  font-size: 16px; color: #aaa; margin-bottom: 40px;
+}
+#title-screen button {
+  font-size: 18px; padding: 12px 40px; margin: 8px;
+  background: #2a2a4a; border: 2px solid #ffd700; color: #ffd700;
+}
+#title-screen button:hover { background: #3a3a5a; }
+
+/* Battle Screen */
+#battle-screen {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.95); z-index: 50; display: none;
+}
+
+/* Hire Dialog */
+#hire-dialog {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.95); border: 2px solid #ffd700;
+  padding: 15px; min-width: 350px; z-index: 60; display: none;
+  border-radius: 6px;
+}
+#hire-dialog h3 { color: #ffd700; margin-bottom: 10px; text-align: center; }
+.hire-unit {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 8px; margin: 4px 0; background: #1a1a2e; border-radius: 3px;
+}
+.hire-unit .unit-info { flex: 1; }
+.hire-unit .unit-cost { color: #ffd700; margin: 0 10px; }
+
+/* Message Log */
+#message-log {
+  position: absolute; bottom: 50px; left: 10px;
+  background: rgba(0,0,0,0.7); border: 1px solid #333;
+  padding: 5px 8px; max-width: 400px; max-height: 100px;
+  overflow-y: auto; font-size: 11px; border-radius: 3px;
+}
+.log-entry { margin: 2px 0; }
+.log-battle { color: #ff6666; }
+.log-info { color: #66aaff; }
+.log-gold { color: #ffd700; }
+
+/* Turn Banner */
+#turn-banner {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 32px; color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.7);
+  z-index: 40; display: none; pointer-events: none;
+  background: rgba(0,0,0,0.7); padding: 15px 40px; border-radius: 8px;
+  border: 2px solid #ffd700;
+}
+</style>
+</head>
+<body>
+
+<!-- Title Screen -->
+<div id="title-screen">
+  <h1>覇王戦記</h1>
+  <div class="subtitle">- ファーレントゥーガ風 戦略シミュレーション -</div>
+  <button onclick="startGame()">ゲーム開始</button>
+</div>
+
+<!-- Main Canvas -->
+<canvas id="gameCanvas"></canvas>
+
+<!-- UI Overlay -->
+<div id="ui-overlay" style="display:none;">
+  <div id="info-panel"></div>
+  <div id="detail-panel"></div>
+  <div id="action-panel"></div>
+  <div id="message-log"></div>
+  <div id="turn-banner"></div>
+</div>
+
+<!-- Battle Screen -->
+<div id="battle-screen">
+  <canvas id="battleCanvas"></canvas>
+</div>
+
+<!-- Hire Dialog -->
+<div id="hire-dialog"></div>
+
+<script>
+// ============================================================
+// Game Constants & Configuration
+// ============================================================
+const TILE_SIZE = 64;
+const MAP_COLS = 12;
+const MAP_ROWS = 9;
+const BATTLE_COLS = 10;
+const BATTLE_ROWS = 8;
+const BATTLE_TILE = 56;
+
+const TERRAIN = {
+  PLAINS: { id: 0, name: '平地', color: '#3a7a3a', moveCost: 1, defBonus: 0 },
+  FOREST: { id: 1, name: '森', color: '#2a5a2a', moveCost: 2, defBonus: 10 },
+  MOUNTAIN: { id: 2, name: '山', color: '#6a5a4a', moveCost: 3, defBonus: 20 },
+  WATER: { id: 3, name: '水', color: '#2a4a7a', moveCost: 99, defBonus: 0 },
+  CASTLE: { id: 4, name: '城', color: '#5a5a5a', moveCost: 1, defBonus: 30 },
+  ROAD: { id: 5, name: '道', color: '#8a7a5a', moveCost: 1, defBonus: -5 },
+};
+
+const UNIT_TYPES = {
+  SOLDIER: { name: '歩兵', hp: 80, atk: 18, def: 12, spd: 4, range: 1, cost: 50, symbol: '兵', moveRange: 3 },
+  ARCHER: { name: '弓兵', hp: 55, atk: 22, def: 7, spd: 4, range: 3, cost: 70, symbol: '弓', moveRange: 3 },
+  CAVALRY: { name: '騎兵', hp: 70, atk: 24, def: 10, spd: 7, range: 1, cost: 100, symbol: '騎', moveRange: 5 },
+  MAGE: { name: '魔術師', hp: 45, atk: 30, def: 5, spd: 3, range: 2, cost: 120, symbol: '魔', moveRange: 3 },
+  KNIGHT: { name: '重騎士', hp: 110, atk: 22, def: 20, spd: 3, range: 1, cost: 150, symbol: '騎', moveRange: 2 },
+  HEALER: { name: '僧侶', hp: 40, atk: 8, def: 6, spd: 4, range: 2, cost: 80, symbol: '僧', moveRange: 3 },
+};
+
+const FACTION_COLORS = ['#cc3333', '#3366cc', '#33aa33', '#cc9933', '#9933cc'];
+const FACTION_NAMES = ['紅蓮帝国', '蒼海王国', '翠風共和国', '金獅子騎士団', '紫雲教団'];
+
+// ============================================================
+// Map Generation
+// ============================================================
+function generateMap() {
+  const map = [];
+  for (let r = 0; r < MAP_ROWS; r++) {
+    map[r] = [];
+    for (let c = 0; c < MAP_COLS; c++) {
+      const rnd = Math.random();
+      if (rnd < 0.45) map[r][c] = TERRAIN.PLAINS;
+      else if (rnd < 0.65) map[r][c] = TERRAIN.FOREST;
+      else if (rnd < 0.78) map[r][c] = TERRAIN.MOUNTAIN;
+      else if (rnd < 0.85) map[r][c] = TERRAIN.WATER;
+      else map[r][c] = TERRAIN.ROAD;
+    }
+  }
+  return map;
+}
+
+// ============================================================
+// Game State
+// ============================================================
+let game = null;
+
+function createGame() {
+  const map = generateMap();
+
+  // Place castles for each faction
+  const castlePositions = [
+    { r: 1, c: 1 }, { r: 1, c: 10 }, { r: 7, c: 1 }, { r: 7, c: 10 }, { r: 4, c: 5 }
+  ];
+
+  const factions = [];
+  for (let i = 0; i < 5; i++) {
+    const pos = castlePositions[i];
+    map[pos.r][pos.c] = TERRAIN.CASTLE;
+    // Make surrounding tiles accessible
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        const nr = pos.r + dr, nc = pos.c + dc;
+        if (nr >= 0 && nr < MAP_ROWS && nc >= 0 && nc < MAP_COLS) {
+          if (map[nr][nc] === TERRAIN.WATER || map[nr][nc] === TERRAIN.MOUNTAIN) {
+            map[nr][nc] = TERRAIN.PLAINS;
+          }
+        }
+      }
+    }
+
+    factions.push({
+      id: i,
+      name: FACTION_NAMES[i],
+      color: FACTION_COLORS[i],
+      gold: 300,
+      territories: [{ r: pos.r, c: pos.c }],
+      units: createStartingUnits(i),
+      isPlayer: i === 0,
+      alive: true,
+    });
+  }
+
+  return {
+    map,
+    factions,
+    turn: 1,
+    currentFaction: 0,
+    phase: 'strategy', // strategy, battle
+    selectedTerritory: null,
+    selectedUnit: null,
+    moveMode: false,
+    attackTarget: null,
+    logs: [],
+    battleState: null,
+    cameraX: 0,
+    cameraY: 0,
+  };
+}
+
+function createStartingUnits(factionId) {
+  const units = [];
+  const types = Object.keys(UNIT_TYPES);
+  // Each faction starts with 3 units
+  const startTypes = ['SOLDIER', 'SOLDIER', 'ARCHER'];
+  for (const t of startTypes) {
+    const base = UNIT_TYPES[t];
+    units.push({
+      ...base,
+      type: t,
+      currentHp: base.hp,
+      maxHp: base.hp,
+      factionId,
+      moved: false,
+      level: 1,
+      exp: 0,
+    });
+  }
+  return units;
+}
+
+// ============================================================
+// Canvas Setup
+// ============================================================
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const battleCanvas = document.getElementById('battleCanvas');
+const battleCtx = battleCanvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  battleCanvas.width = window.innerWidth;
+  battleCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// ============================================================
+// Drawing - Strategy Map
+// ============================================================
+function drawStrategyMap() {
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const offsetX = (canvas.width - MAP_COLS * TILE_SIZE) / 2 + game.cameraX;
+  const offsetY = (canvas.height - MAP_ROWS * TILE_SIZE) / 2 + game.cameraY;
+
+  // Draw terrain
+  for (let r = 0; r < MAP_ROWS; r++) {
+    for (let c = 0; c < MAP_COLS; c++) {
+      const terrain = game.map[r][c];
+      const x = offsetX + c * TILE_SIZE;
+      const y = offsetY + r * TILE_SIZE;
+
+      ctx.fillStyle = terrain.color;
+      ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+
+      // Territory coloring
+      const owner = getTerritoryOwner(r, c);
+      if (owner !== null) {
+        ctx.fillStyle = game.factions[owner].color + '40';
+        ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+      }
+
+      // Grid
+      ctx.strokeStyle = '#00000044';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
+
+      // Castle symbol
+      if (terrain === TERRAIN.CASTLE) {
+        ctx.fillStyle = '#ddd';
+        ctx.font = '24px serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('城', x + TILE_SIZE/2, y + TILE_SIZE/2 - 8);
+      }
+
+      // Terrain symbol
+      if (terrain === TERRAIN.FOREST) {
+        ctx.fillStyle = '#1a3a1a';
+        ctx.font = '18px serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('♣', x + TILE_SIZE/2, y + 16);
+      } else if (terrain === TERRAIN.MOUNTAIN) {
+        ctx.fillStyle = '#4a3a2a';
+        ctx.font = '18px serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('▲', x + TILE_SIZE/2, y + 16);
+      } else if (terrain === TERRAIN.WATER) {
+        ctx.fillStyle = '#1a3a5a';
+        ctx.font = '18px serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('〜', x + TILE_SIZE/2, y + 16);
+      }
+    }
+  }
+
+  // Draw faction units on territories
+  for (const faction of game.factions) {
+    if (!faction.alive) continue;
+    for (const terr of faction.territories) {
+      const x = offsetX + terr.c * TILE_SIZE;
+      const y = offsetY + terr.r * TILE_SIZE;
+
+      // Faction marker
+      ctx.fillStyle = faction.color;
+      ctx.beginPath();
+      ctx.arc(x + TILE_SIZE - 12, y + TILE_SIZE - 12, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 10px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      // Count units at this territory
+      const unitCount = faction.units.length;
+      ctx.fillText(unitCount > 0 ? unitCount : '', x + TILE_SIZE - 12, y + TILE_SIZE - 11);
+
+      // Flag
+      ctx.fillStyle = faction.color;
+      ctx.fillRect(x + 4, y + 4, 18, 12);
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x + 4, y + 4, 18, 12);
+      ctx.fillStyle = '#fff';
+      ctx.font = '8px monospace';
+      ctx.fillText(faction.name[0], x + 13, y + 11);
+    }
+  }
+
+  // Highlight selected territory
+  if (game.selectedTerritory) {
+    const { r, c } = game.selectedTerritory;
+    const x = offsetX + c * TILE_SIZE;
+    const y = offsetY + r * TILE_SIZE;
+    ctx.strokeStyle = '#ffd700';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x + 1, y + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+  }
+
+  // Highlight movable territories when in move mode
+  if (game.moveMode && game.selectedTerritory) {
+    const adjacent = getAdjacentTerritories(game.selectedTerritory.r, game.selectedTerritory.c);
+    for (const pos of adjacent) {
+      const x = offsetX + pos.c * TILE_SIZE;
+      const y = offsetY + pos.r * TILE_SIZE;
+      ctx.strokeStyle = '#00ff0088';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x + 2, y + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+
+      // If enemy territory, show attack indicator
+      const tOwner = getTerritoryOwner(pos.r, pos.c);
+      if (tOwner !== null && tOwner !== game.currentFaction) {
+        ctx.fillStyle = '#ff000044';
+        ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+        ctx.fillStyle = '#ff4444';
+        ctx.font = '20px serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('⚔', x + TILE_SIZE/2, y + TILE_SIZE/2);
+      }
+    }
+  }
+
+  updateInfoPanel();
+  updateDetailPanel();
+}
+
+function getTerritoryOwner(r, c) {
+  for (const f of game.factions) {
+    if (!f.alive) continue;
+    for (const t of f.territories) {
+      if (t.r === r && t.c === c) return f.id;
+    }
+  }
+  return null;
+}
+
+function getAdjacentTerritories(r, c) {
+  const dirs = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
+  const result = [];
+  for (const [dr, dc] of dirs) {
+    const nr = r + dr, nc = c + dc;
+    if (nr >= 0 && nr < MAP_ROWS && nc >= 0 && nc < MAP_COLS) {
+      if (game.map[nr][nc] !== TERRAIN.WATER) {
+        result.push({ r: nr, c: nc });
+      }
+    }
+  }
+  return result;
+}
+
+// ============================================================
+// UI Updates
+// ============================================================
+function updateInfoPanel() {
+  const panel = document.getElementById('info-panel');
+  const f = game.factions[game.currentFaction];
+  let html = `<h3>ターン ${game.turn}</h3>`;
+  html += `<div style="color:${f.color};font-weight:bold;">${f.name}${f.isPlayer ? ' (プレイヤー)' : ' (CPU)'}</div>`;
+  html += `<div class="faction-info">💰 所持金: ${f.gold}G</div>`;
+  html += `<div class="faction-info">🏰 領地数: ${f.territories.length}</div>`;
+  html += `<div class="faction-info">⚔ 部隊数: ${f.units.length}</div>`;
+  html += `<hr style="border-color:#333;margin:8px 0;">`;
+  html += `<div style="font-size:11px;color:#999;">勢力状況:</div>`;
+  for (const faction of game.factions) {
+    if (!faction.alive) {
+      html += `<div style="color:#555;text-decoration:line-through;">${faction.name} - 滅亡</div>`;
+    } else {
+      html += `<div style="color:${faction.color};">${faction.name}: 領地${faction.territories.length} 部隊${faction.units.length}</div>`;
+    }
+  }
+  panel.innerHTML = html;
+}
+
+function updateDetailPanel() {
+  const panel = document.getElementById('detail-panel');
+  if (!game.selectedTerritory) {
+    panel.style.display = 'none';
+    return;
+  }
+
+  const { r, c } = game.selectedTerritory;
+  const terrain = game.map[r][c];
+  const owner = getTerritoryOwner(r, c);
+
+  let html = `<h3>領地情報</h3>`;
+  html += `<div>地形: ${terrain.name}</div>`;
+  html += `<div>防御ボーナス: +${terrain.defBonus}%</div>`;
+
+  if (owner !== null) {
+    const f = game.factions[owner];
+    html += `<div style="color:${f.color};margin-top:5px;">所有: ${f.name}</div>`;
+    html += `<div style="margin-top:5px;font-weight:bold;">部隊一覧:</div>`;
+    for (let i = 0; i < f.units.length; i++) {
+      const u = f.units[i];
+      const hpPct = Math.round(u.currentHp / u.maxHp * 100);
+      const hpColor = hpPct > 60 ? '#6f6' : hpPct > 30 ? '#ff6' : '#f66';
+      html += `<div style="margin:2px 0;padding:2px 4px;background:#1a1a2e;border-radius:2px;">`;
+      html += `${u.symbol} ${u.name} Lv${u.level} `;
+      html += `<span style="color:${hpColor}">HP${u.currentHp}/${u.maxHp}</span>`;
+      html += `</div>`;
+    }
+  } else {
+    html += `<div style="color:#888;margin-top:5px;">中立地帯</div>`;
+  }
+
+  panel.style.display = 'block';
+  panel.innerHTML = html;
+}
+
+function updateActionPanel() {
+  const panel = document.getElementById('action-panel');
+  const f = game.factions[game.currentFaction];
+
+  if (!f.isPlayer) {
+    panel.innerHTML = `<span style="color:${f.color};">${f.name} 行動中...</span>`;
+    return;
+  }
+
+  let html = '';
+  const sel = game.selectedTerritory;
+  const owner = sel ? getTerritoryOwner(sel.r, sel.c) : null;
+  const isOwn = owner === game.currentFaction;
+
+  if (isOwn && sel) {
+    html += `<button onclick="startMove()" ${game.moveMode ? 'class="active"' : ''}>移動/攻撃</button>`;
+    html += `<button onclick="openHireDialog()">雇用</button>`;
+  }
+
+  html += `<button onclick="endTurn()" style="margin-left:20px;">ターン終了</button>`;
+  html += `<span style="margin-left:10px;color:#888;">ターン ${game.turn}</span>`;
+  panel.innerHTML = html;
+}
+
+function addLog(msg, cls = 'log-info') {
+  game.logs.push({ msg, cls });
+  if (game.logs.length > 20) game.logs.shift();
+  const el = document.getElementById('message-log');
+  el.innerHTML = game.logs.map(l => `<div class="log-entry ${l.cls}">${l.msg}</div>`).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+// ============================================================
+// Player Interaction - Strategy Map
+// ============================================================
+canvas.addEventListener('click', (e) => {
+  if (game.phase !== 'strategy') return;
+  const f = game.factions[game.currentFaction];
+  if (!f.isPlayer) return;
+
+  const offsetX = (canvas.width - MAP_COLS * TILE_SIZE) / 2 + game.cameraX;
+  const offsetY = (canvas.height - MAP_ROWS * TILE_SIZE) / 2 + game.cameraY;
+
+  const col = Math.floor((e.clientX - offsetX) / TILE_SIZE);
+  const row = Math.floor((e.clientY - offsetY) / TILE_SIZE);
+
+  if (col < 0 || col >= MAP_COLS || row < 0 || row >= MAP_ROWS) return;
+
+  if (game.moveMode) {
+    handleMoveClick(row, col);
+    return;
+  }
+
+  game.selectedTerritory = { r: row, c: col };
+  updateActionPanel();
+  drawStrategyMap();
+});
+
+function startMove() {
+  game.moveMode = !game.moveMode;
+  updateActionPanel();
+  drawStrategyMap();
+}
+
+function handleMoveClick(r, c) {
+  const from = game.selectedTerritory;
+  if (!from) return;
+
+  const adjacent = getAdjacentTerritories(from.r, from.c);
+  const isAdjacent = adjacent.some(a => a.r === r && a.c === c);
+  if (!isAdjacent) {
+    game.moveMode = false;
+    updateActionPanel();
+    drawStrategyMap();
+    return;
+  }
+
+  const targetOwner = getTerritoryOwner(r, c);
+  const currentFaction = game.factions[game.currentFaction];
+
+  if (targetOwner !== null && targetOwner !== game.currentFaction) {
+    // Attack!
+    game.moveMode = false;
+    startBattle(game.currentFaction, targetOwner, { r, c });
+  } else {
+    // Move to empty or own territory
+    if (targetOwner === null) {
+      currentFaction.territories.push({ r, c });
+      addLog(`${currentFaction.name}が${game.map[r][c].name}を占領した！`, 'log-info');
+    }
+    game.moveMode = false;
+    game.selectedTerritory = { r, c };
+    updateActionPanel();
+    drawStrategyMap();
+  }
+}
+
+// ============================================================
+// Hire Dialog
+// ============================================================
+function openHireDialog() {
+  const dialog = document.getElementById('hire-dialog');
+  const f = game.factions[game.currentFaction];
+
+  let html = `<h3>ユニット雇用 (所持金: ${f.gold}G)</h3>`;
+  for (const [key, type] of Object.entries(UNIT_TYPES)) {
+    const canAfford = f.gold >= type.cost;
+    html += `<div class="hire-unit">`;
+    html += `<div class="unit-info">${type.symbol} ${type.name} - ATK:${type.atk} DEF:${type.def} HP:${type.hp}</div>`;
+    html += `<div class="unit-cost">${type.cost}G</div>`;
+    html += `<button onclick="hireUnit('${key}')" ${canAfford ? '' : 'disabled'}>雇用</button>`;
+    html += `</div>`;
+  }
+  html += `<div style="text-align:center;margin-top:10px;"><button onclick="closeHireDialog()">閉じる</button></div>`;
+  dialog.innerHTML = html;
+  dialog.style.display = 'block';
+}
+
+function hireUnit(typeKey) {
+  const f = game.factions[game.currentFaction];
+  const type = UNIT_TYPES[typeKey];
+  if (f.gold < type.cost) return;
+
+  f.gold -= type.cost;
+  f.units.push({
+    ...type,
+    type: typeKey,
+    currentHp: type.hp,
+    maxHp: type.hp,
+    factionId: game.currentFaction,
+    moved: false,
+    level: 1,
+    exp: 0,
+  });
+
+  addLog(`${f.name}が${type.name}を雇用した (${type.cost}G)`, 'log-gold');
+  openHireDialog(); // Refresh
+  drawStrategyMap();
+}
+
+function closeHireDialog() {
+  document.getElementById('hire-dialog').style.display = 'none';
+}
+
+// ============================================================
+// Battle System
+// ============================================================
+let battleAnimFrame = null;
+
+function startBattle(attackerId, defenderId, territory) {
+  const attacker = game.factions[attackerId];
+  const defender = game.factions[defenderId];
+  const terrain = game.map[territory.r][territory.c];
+
+  addLog(`${attacker.name}が${defender.name}に攻撃！`, 'log-battle');
+
+  game.phase = 'battle';
+  const battleScreen = document.getElementById('battle-screen');
+  battleScreen.style.display = 'block';
+
+  // Create battle units with positions
+  const attackerUnits = attacker.units.map((u, i) => ({
+    ...u,
+    battleX: 1,
+    battleY: 1 + i,
+    targetX: null,
+    targetY: null,
+    animX: null,
+    animY: null,
+    side: 'attacker',
+    acted: false,
+  }));
+
+  const defenderUnits = defender.units.map((u, i) => ({
+    ...u,
+    battleX: BATTLE_COLS - 2,
+    battleY: 1 + i,
+    targetX: null,
+    targetY: null,
+    animX: null,
+    animY: null,
+    side: 'defender',
+    acted: false,
+  }));
+
+  game.battleState = {
+    attackerId,
+    defenderId,
+    territory,
+    terrain,
+    attackerUnits,
+    defenderUnits,
+    allUnits: [...attackerUnits, ...defenderUnits],
+    selectedUnit: null,
+    phase: 'playerTurn', // playerTurn, enemyTurn, animating, result
+    turnSide: attackerId === 0 ? 'attacker' : (defenderId === 0 ? 'defender' : 'attacker'),
+    battleTurn: 1,
+    moveHighlights: [],
+    attackHighlights: [],
+    message: '戦闘開始！',
+    messageTimer: 60,
+    battleLog: [],
+  };
+
+  // If player is not involved, auto-resolve
+  if (!attacker.isPlayer && !defender.isPlayer) {
+    autoResolveBattle();
+    return;
+  }
+
+  // Determine who goes first
+  if (attacker.isPlayer) {
+    game.battleState.phase = 'playerTurn';
+    game.battleState.turnSide = 'attacker';
+  } else {
+    game.battleState.phase = 'enemyTurn';
+    game.battleState.turnSide = 'attacker';
+    setTimeout(() => executeBattleAI(), 500);
+  }
+
+  drawBattle();
+  setupBattleInput();
+}
+
+function drawBattle() {
+  const bs = game.battleState;
+  if (!bs) return;
+
+  const bw = BATTLE_COLS * BATTLE_TILE;
+  const bh = BATTLE_ROWS * BATTLE_TILE;
+  const ox = (battleCanvas.width - bw) / 2;
+  const oy = (battleCanvas.height - bh) / 2;
+
+  battleCtx.fillStyle = '#0a0a1e';
+  battleCtx.fillRect(0, 0, battleCanvas.width, battleCanvas.height);
+
+  // Draw battle grid
+  for (let r = 0; r < BATTLE_ROWS; r++) {
+    for (let c = 0; c < BATTLE_COLS; c++) {
+      const x = ox + c * BATTLE_TILE;
+      const y = oy + r * BATTLE_TILE;
+
+      // Checkerboard pattern
+      battleCtx.fillStyle = (r + c) % 2 === 0 ? '#2a3a2a' : '#253525';
+      battleCtx.fillRect(x, y, BATTLE_TILE, BATTLE_TILE);
+
+      battleCtx.strokeStyle = '#1a2a1a';
+      battleCtx.lineWidth = 1;
+      battleCtx.strokeRect(x, y, BATTLE_TILE, BATTLE_TILE);
+    }
+  }
+
+  // Draw move highlights
+  for (const pos of bs.moveHighlights) {
+    const x = ox + pos.c * BATTLE_TILE;
+    const y = oy + pos.r * BATTLE_TILE;
+    battleCtx.fillStyle = '#0044ff33';
+    battleCtx.fillRect(x, y, BATTLE_TILE, BATTLE_TILE);
+    battleCtx.strokeStyle = '#4488ff88';
+    battleCtx.lineWidth = 2;
+    battleCtx.strokeRect(x + 1, y + 1, BATTLE_TILE - 2, BATTLE_TILE - 2);
+  }
+
+  // Draw attack highlights
+  for (const pos of bs.attackHighlights) {
+    const x = ox + pos.c * BATTLE_TILE;
+    const y = oy + pos.r * BATTLE_TILE;
+    battleCtx.fillStyle = '#ff000033';
+    battleCtx.fillRect(x, y, BATTLE_TILE, BATTLE_TILE);
+    battleCtx.strokeStyle = '#ff444488';
+    battleCtx.lineWidth = 2;
+    battleCtx.strokeRect(x + 1, y + 1, BATTLE_TILE - 2, BATTLE_TILE - 2);
+  }
+
+  // Draw units
+  for (const unit of bs.allUnits) {
+    if (unit.currentHp <= 0) continue;
+    const x = ox + unit.battleX * BATTLE_TILE;
+    const y = oy + unit.battleY * BATTLE_TILE;
+
+    const factionColor = unit.side === 'attacker'
+      ? game.factions[bs.attackerId].color
+      : game.factions[bs.defenderId].color;
+
+    // Unit body
+    battleCtx.fillStyle = factionColor;
+    battleCtx.beginPath();
+    battleCtx.arc(x + BATTLE_TILE/2, y + BATTLE_TILE/2 - 2, BATTLE_TILE/2 - 6, 0, Math.PI * 2);
+    battleCtx.fill();
+    battleCtx.strokeStyle = '#fff';
+    battleCtx.lineWidth = unit === bs.selectedUnit ? 3 : 1;
+    battleCtx.stroke();
+
+    // Unit symbol
+    battleCtx.fillStyle = '#fff';
+    battleCtx.font = 'bold 18px serif';
+    battleCtx.textAlign = 'center';
+    battleCtx.textBaseline = 'middle';
+    battleCtx.fillText(unit.symbol, x + BATTLE_TILE/2, y + BATTLE_TILE/2 - 2);
+
+    // HP bar
+    const hpPct = unit.currentHp / unit.maxHp;
+    const barW = BATTLE_TILE - 8;
+    const barH = 5;
+    const barX = x + 4;
+    const barY = y + BATTLE_TILE - 10;
+    battleCtx.fillStyle = '#333';
+    battleCtx.fillRect(barX, barY, barW, barH);
+    battleCtx.fillStyle = hpPct > 0.6 ? '#4f4' : hpPct > 0.3 ? '#ff4' : '#f44';
+    battleCtx.fillRect(barX, barY, barW * hpPct, barH);
+
+    // Acted indicator
+    if (unit.acted) {
+      battleCtx.fillStyle = '#00000066';
+      battleCtx.beginPath();
+      battleCtx.arc(x + BATTLE_TILE/2, y + BATTLE_TILE/2 - 2, BATTLE_TILE/2 - 6, 0, Math.PI * 2);
+      battleCtx.fill();
+    }
+  }
+
+  // Battle info
+  const attName = game.factions[bs.attackerId].name;
+  const defName = game.factions[bs.defenderId].name;
+  battleCtx.fillStyle = '#ffd700';
+  battleCtx.font = 'bold 16px monospace';
+  battleCtx.textAlign = 'center';
+  battleCtx.fillText(`⚔ ${attName} vs ${defName} - ターン ${bs.battleTurn}`, battleCanvas.width/2, oy - 20);
+
+  // Phase info
+  let phaseText = '';
+  if (bs.phase === 'playerTurn') phaseText = 'あなたのターン - ユニットをクリックして行動';
+  else if (bs.phase === 'enemyTurn') phaseText = '敵のターン...';
+  else if (bs.phase === 'result') phaseText = bs.message;
+
+  battleCtx.fillStyle = '#aaa';
+  battleCtx.font = '14px monospace';
+  battleCtx.fillText(phaseText, battleCanvas.width/2, oy + bh + 20);
+
+  // End turn button area
+  if (bs.phase === 'playerTurn') {
+    const btnX = ox + bw + 20;
+    const btnY = oy;
+    battleCtx.fillStyle = '#2a2a4a';
+    battleCtx.fillRect(btnX, btnY, 100, 30);
+    battleCtx.strokeStyle = '#6a6a8a';
+    battleCtx.strokeRect(btnX, btnY, 100, 30);
+    battleCtx.fillStyle = '#eee';
+    battleCtx.font = '12px monospace';
+    battleCtx.fillText('ターン終了', btnX + 50, btnY + 17);
+
+    // Retreat button
+    battleCtx.fillStyle = '#4a2a2a';
+    battleCtx.fillRect(btnX, btnY + 40, 100, 30);
+    battleCtx.strokeStyle = '#8a4a4a';
+    battleCtx.strokeRect(btnX, btnY + 40, 100, 30);
+    battleCtx.fillStyle = '#f88';
+    battleCtx.fillText('撤退', btnX + 50, btnY + 57);
+  }
+
+  // Battle log
+  const logX = ox;
+  const logY = oy + bh + 40;
+  battleCtx.fillStyle = 'rgba(0,0,0,0.7)';
+  battleCtx.fillRect(logX, logY, bw, 80);
+  battleCtx.fillStyle = '#aaa';
+  battleCtx.font = '11px monospace';
+  battleCtx.textAlign = 'left';
+  const recentLogs = bs.battleLog.slice(-4);
+  for (let i = 0; i < recentLogs.length; i++) {
+    battleCtx.fillText(recentLogs[i], logX + 5, logY + 15 + i * 18);
+  }
+
+  // Message overlay
+  if (bs.messageTimer > 0) {
+    battleCtx.fillStyle = 'rgba(0,0,0,0.5)';
+    battleCtx.textAlign = 'center';
+    battleCtx.fillStyle = '#ffd700';
+    battleCtx.font = 'bold 24px monospace';
+    battleCtx.fillText(bs.message, battleCanvas.width/2, battleCanvas.height/2);
+    bs.messageTimer--;
+  }
+}
+
+function setupBattleInput() {
+  battleCanvas.onclick = (e) => {
+    const bs = game.battleState;
+    if (!bs || bs.phase !== 'playerTurn') return;
+
+    const bw = BATTLE_COLS * BATTLE_TILE;
+    const bh = BATTLE_ROWS * BATTLE_TILE;
+    const ox = (battleCanvas.width - bw) / 2;
+    const oy = (battleCanvas.height - bh) / 2;
+
+    // Check end turn button
+    const btnX = ox + bw + 20;
+    const btnY = oy;
+    if (e.clientX >= btnX && e.clientX <= btnX + 100) {
+      if (e.clientY >= btnY && e.clientY <= btnY + 30) {
+        endBattleTurn();
+        return;
+      }
+      if (e.clientY >= btnY + 40 && e.clientY <= btnY + 70) {
+        retreatFromBattle();
+        return;
+      }
+    }
+
+    const col = Math.floor((e.clientX - ox) / BATTLE_TILE);
+    const row = Math.floor((e.clientY - oy) / BATTLE_TILE);
+    if (col < 0 || col >= BATTLE_COLS || row < 0 || row >= BATTLE_ROWS) return;
+
+    handleBattleClick(row, col);
+  };
+}
+
+function handleBattleClick(r, c) {
+  const bs = game.battleState;
+  const playerSide = game.factions[bs.attackerId].isPlayer ? 'attacker' : 'defender';
+
+  // Check if clicked on attack highlight
+  if (bs.selectedUnit && bs.attackHighlights.some(p => p.r === r && p.c === c)) {
+    const target = bs.allUnits.find(u => u.battleX === c && u.battleY === r && u.currentHp > 0);
+    if (target && target.side !== playerSide) {
+      executeBattleAttack(bs.selectedUnit, target);
+      return;
+    }
+  }
+
+  // Check if clicked on move highlight
+  if (bs.selectedUnit && bs.moveHighlights.some(p => p.r === r && p.c === c)) {
+    bs.selectedUnit.battleX = c;
+    bs.selectedUnit.battleY = r;
+    // After moving, show attack range
+    bs.moveHighlights = [];
+    bs.attackHighlights = getAttackRange(bs.selectedUnit);
+    if (bs.attackHighlights.length === 0) {
+      bs.selectedUnit.acted = true;
+      bs.selectedUnit = null;
+    }
+    drawBattle();
+    return;
+  }
+
+  // Check if clicked on own unit
+  const clickedUnit = bs.allUnits.find(u => u.battleX === c && u.battleY === r && u.currentHp > 0);
+  if (clickedUnit && clickedUnit.side === playerSide && !clickedUnit.acted) {
+    bs.selectedUnit = clickedUnit;
+    bs.moveHighlights = getMoveRange(clickedUnit);
+    bs.attackHighlights = getAttackRange(clickedUnit);
+    drawBattle();
+    return;
+  }
+
+  // Deselect
+  bs.selectedUnit = null;
+  bs.moveHighlights = [];
+  bs.attackHighlights = [];
+  drawBattle();
+}
+
+function getMoveRange(unit) {
+  const bs = game.battleState;
+  const positions = [];
+  const range = unit.moveRange;
+
+  for (let dr = -range; dr <= range; dr++) {
+    for (let dc = -range; dc <= range; dc++) {
+      if (Math.abs(dr) + Math.abs(dc) > range) continue;
+      if (dr === 0 && dc === 0) continue;
+      const nr = unit.battleY + dr;
+      const nc = unit.battleX + dc;
+      if (nr < 0 || nr >= BATTLE_ROWS || nc < 0 || nc >= BATTLE_COLS) continue;
+      // Check if occupied
+      if (bs.allUnits.some(u => u.battleX === nc && u.battleY === nr && u.currentHp > 0)) continue;
+      positions.push({ r: nr, c: nc });
+    }
+  }
+  return positions;
+}
+
+function getAttackRange(unit) {
+  const bs = game.battleState;
+  const positions = [];
+  const range = unit.range;
+
+  for (let dr = -range; dr <= range; dr++) {
+    for (let dc = -range; dc <= range; dc++) {
+      if (Math.abs(dr) + Math.abs(dc) > range) continue;
+      if (dr === 0 && dc === 0) continue;
+      const nr = unit.battleY + dr;
+      const nc = unit.battleX + dc;
+      if (nr < 0 || nr >= BATTLE_ROWS || nc < 0 || nc >= BATTLE_COLS) continue;
+      // Check if enemy unit is there
+      const target = bs.allUnits.find(u => u.battleX === nc && u.battleY === nr && u.currentHp > 0 && u.side !== unit.side);
+      if (target) positions.push({ r: nr, c: nc });
+    }
+  }
+  return positions;
+}
+
+function executeBattleAttack(attacker, defender) {
+  const bs = game.battleState;
+  const defBonus = bs.terrain.defBonus / 100;
+
+  // Damage calculation
+  let damage = Math.max(1, attacker.atk - defender.def * (1 + defBonus));
+  damage = Math.floor(damage * (0.8 + Math.random() * 0.4));
+
+  // Healer heals instead
+  if (attacker.type === 'HEALER' && attacker.side === defender.side) {
+    const heal = Math.floor(attacker.atk * 2);
+    defender.currentHp = Math.min(defender.maxHp, defender.currentHp + heal);
+    bs.battleLog.push(`${attacker.name}が${defender.name}を${heal}回復！`);
+  } else {
+    defender.currentHp -= damage;
+    bs.battleLog.push(`${attacker.name}が${defender.name}に${damage}ダメージ！`);
+
+    if (defender.currentHp <= 0) {
+      defender.currentHp = 0;
+      bs.battleLog.push(`${defender.name}が倒された！`);
+      attacker.exp += 30;
+      if (attacker.exp >= 100) {
+        attacker.level++;
+        attacker.exp -= 100;
+        attacker.atk += 2;
+        attacker.def += 1;
+        attacker.maxHp += 5;
+        attacker.currentHp = Math.min(attacker.currentHp + 5, attacker.maxHp);
+        bs.battleLog.push(`${attacker.name}がレベル${attacker.level}に上がった！`);
+      }
+    }
+
+    // Counter attack (melee only)
+    if (defender.currentHp > 0 && defender.range === 1 && attacker.range === 1) {
+      let counterDmg = Math.max(1, defender.atk * 0.5 - attacker.def * 0.3);
+      counterDmg = Math.floor(counterDmg * (0.8 + Math.random() * 0.4));
+      attacker.currentHp -= counterDmg;
+      bs.battleLog.push(`${defender.name}の反撃！${counterDmg}ダメージ！`);
+      if (attacker.currentHp <= 0) {
+        attacker.currentHp = 0;
+        bs.battleLog.push(`${attacker.name}が倒された！`);
+      }
+    }
+  }
+
+  attacker.acted = true;
+  bs.selectedUnit = null;
+  bs.moveHighlights = [];
+  bs.attackHighlights = [];
+
+  // Check battle end
+  checkBattleEnd();
+  drawBattle();
+}
+
+function endBattleTurn() {
+  const bs = game.battleState;
+  const playerSide = game.factions[bs.attackerId].isPlayer ? 'attacker' : 'defender';
+  const enemySide = playerSide === 'attacker' ? 'defender' : 'attacker';
+
+  // Reset player units
+  for (const u of bs.allUnits) {
+    if (u.side === playerSide) u.acted = false;
+  }
+
+  bs.selectedUnit = null;
+  bs.moveHighlights = [];
+  bs.attackHighlights = [];
+
+  // Enemy turn
+  bs.phase = 'enemyTurn';
+  bs.turnSide = enemySide;
+  drawBattle();
+  setTimeout(() => executeBattleAI(), 500);
+}
+
+function executeBattleAI() {
+  const bs = game.battleState;
+  const aiSide = bs.turnSide;
+  const aiUnits = bs.allUnits.filter(u => u.side === aiSide && u.currentHp > 0 && !u.acted);
+  const enemyUnits = bs.allUnits.filter(u => u.side !== aiSide && u.currentHp > 0);
+
+  let actionIndex = 0;
+
+  function nextAIAction() {
+    if (actionIndex >= aiUnits.length || checkBattleEnd()) {
+      // End AI turn
+      for (const u of bs.allUnits) {
+        if (u.side === aiSide) u.acted = false;
+      }
+      bs.battleTurn++;
+      // Check max turns
+      if (bs.battleTurn > 15) {
+        endBattleResult('defender');
+        return;
+      }
+      const playerSide = game.factions[bs.attackerId].isPlayer ? 'attacker' : 'defender';
+      if (playerSide === 'attacker' || playerSide === 'defender') {
+        bs.phase = 'playerTurn';
+        bs.turnSide = playerSide;
+      } else {
+        // Both AI - continue
+        bs.turnSide = aiSide === 'attacker' ? 'defender' : 'attacker';
+        setTimeout(() => executeBattleAI(), 300);
+      }
+      drawBattle();
+      return;
+    }
+
+    const unit = aiUnits[actionIndex];
+    actionIndex++;
+
+    if (enemyUnits.length === 0) {
+      nextAIAction();
+      return;
+    }
+
+    // Find nearest enemy
+    let nearest = null;
+    let minDist = Infinity;
+    for (const e of enemyUnits) {
+      if (e.currentHp <= 0) continue;
+      const dist = Math.abs(e.battleX - unit.battleX) + Math.abs(e.battleY - unit.battleY);
+      if (dist < minDist) { minDist = dist; nearest = e; }
+    }
+
+    if (!nearest) { nextAIAction(); return; }
+
+    // Try to attack first
+    const atkRange = getAttackRange(unit);
+    if (atkRange.length > 0) {
+      const target = bs.allUnits.find(u =>
+        u.battleX === atkRange[0].c && u.battleY === atkRange[0].r && u.currentHp > 0
+      );
+      if (target) {
+        executeBattleAttack(unit, target);
+        drawBattle();
+        setTimeout(nextAIAction, 400);
+        return;
+      }
+    }
+
+    // Move towards nearest enemy
+    const moves = getMoveRange(unit);
+    if (moves.length > 0) {
+      let bestMove = moves[0];
+      let bestDist = Infinity;
+      for (const m of moves) {
+        const dist = Math.abs(nearest.battleX - m.c) + Math.abs(nearest.battleY - m.r);
+        if (dist < bestDist) { bestDist = dist; bestMove = m; }
+      }
+      unit.battleX = bestMove.c;
+      unit.battleY = bestMove.r;
+
+      // Try attack after move
+      const atkAfter = getAttackRange(unit);
+      if (atkAfter.length > 0) {
+        const target = bs.allUnits.find(u =>
+          u.battleX === atkAfter[0].c && u.battleY === atkAfter[0].r && u.currentHp > 0
+        );
+        if (target) {
+          executeBattleAttack(unit, target);
+        }
+      }
+    }
+
+    unit.acted = true;
+    drawBattle();
+    setTimeout(nextAIAction, 400);
+  }
+
+  nextAIAction();
+}
+
+function checkBattleEnd() {
+  const bs = game.battleState;
+  const attackerAlive = bs.allUnits.filter(u => u.side === 'attacker' && u.currentHp > 0);
+  const defenderAlive = bs.allUnits.filter(u => u.side === 'defender' && u.currentHp > 0);
+
+  if (attackerAlive.length === 0) {
+    endBattleResult('defender');
+    return true;
+  }
+  if (defenderAlive.length === 0) {
+    endBattleResult('attacker');
+    return true;
+  }
+  return false;
+}
+
+function endBattleResult(winningSide) {
+  const bs = game.battleState;
+  const winnerId = winningSide === 'attacker' ? bs.attackerId : bs.defenderId;
+  const loserId = winningSide === 'attacker' ? bs.defenderId : bs.attackerId;
+
+  bs.phase = 'result';
+  bs.message = `${game.factions[winnerId].name} の勝利！`;
+
+  // Update faction units from battle
+  const winner = game.factions[winnerId];
+  const loser = game.factions[loserId];
+
+  // Surviving units go back to faction
+  const winnerUnits = bs.allUnits.filter(u =>
+    u.side === winningSide && u.currentHp > 0
+  ).map(u => ({
+    ...UNIT_TYPES[u.type],
+    type: u.type,
+    currentHp: u.currentHp,
+    maxHp: u.maxHp,
+    factionId: winnerId,
+    moved: false,
+    level: u.level,
+    exp: u.exp,
+    atk: u.atk,
+    def: u.def,
+  }));
+
+  const loserUnits = bs.allUnits.filter(u =>
+    u.side !== winningSide && u.currentHp > 0
+  ).map(u => ({
+    ...UNIT_TYPES[u.type],
+    type: u.type,
+    currentHp: u.currentHp,
+    maxHp: u.maxHp,
+    factionId: loserId,
+    moved: false,
+    level: u.level,
+    exp: u.exp,
+    atk: u.atk,
+    def: u.def,
+  }));
+
+  winner.units = winnerUnits;
+  loser.units = loserUnits;
+
+  // Territory changes
+  if (winningSide === 'attacker') {
+    const terrIdx = loser.territories.findIndex(t =>
+      t.r === bs.territory.r && t.c === bs.territory.c
+    );
+    if (terrIdx >= 0) {
+      loser.territories.splice(terrIdx, 1);
+      winner.territories.push(bs.territory);
+    }
+    addLog(`${winner.name}が${loser.name}の領地を奪った！`, 'log-battle');
+  } else {
+    addLog(`${winner.name}が防衛に成功した！`, 'log-battle');
+  }
+
+  // Check if loser is eliminated
+  if (loser.territories.length === 0) {
+    loser.alive = false;
+    loser.units = [];
+    addLog(`${loser.name}は滅亡した！`, 'log-battle');
+  }
+
+  // Loot gold
+  const loot = Math.floor(50 + Math.random() * 100);
+  winner.gold += loot;
+  addLog(`${winner.name}は${loot}Gを獲得した！`, 'log-gold');
+
+  drawBattle();
+
+  setTimeout(() => {
+    endBattle();
+  }, 2000);
+}
+
+function retreatFromBattle() {
+  const bs = game.battleState;
+  const playerSide = game.factions[bs.attackerId].isPlayer ? 'attacker' : 'defender';
+
+  // Player retreats - loses some units
+  const faction = game.factions[playerSide === 'attacker' ? bs.attackerId : bs.defenderId];
+  const survivingUnits = bs.allUnits.filter(u => u.side === playerSide && u.currentHp > 0);
+
+  // Lose 30% of units on retreat
+  const keepCount = Math.max(1, Math.ceil(survivingUnits.length * 0.7));
+  faction.units = survivingUnits.slice(0, keepCount).map(u => ({
+    ...UNIT_TYPES[u.type],
+    type: u.type,
+    currentHp: Math.floor(u.currentHp * 0.7),
+    maxHp: u.maxHp,
+    factionId: faction.id,
+    moved: false,
+    level: u.level,
+    exp: u.exp,
+    atk: u.atk,
+    def: u.def,
+  }));
+
+  addLog(`${faction.name}は撤退した！`, 'log-battle');
+  endBattle();
+}
+
+function endBattle() {
+  game.phase = 'strategy';
+  game.battleState = null;
+  document.getElementById('battle-screen').style.display = 'none';
+  battleCanvas.onclick = null;
+
+  // Check win condition
+  const aliveFactions = game.factions.filter(f => f.alive);
+  if (aliveFactions.length === 1) {
+    showVictory(aliveFactions[0]);
+    return;
+  }
+
+  drawStrategyMap();
+  updateActionPanel();
+}
+
+function autoResolveBattle() {
+  const bs = game.battleState;
+  const attacker = game.factions[bs.attackerId];
+  const defender = game.factions[bs.defenderId];
+
+  // Simple power calculation
+  const attPower = attacker.units.reduce((s, u) => s + u.atk + u.def + u.currentHp * 0.1, 0);
+  const defPower = defender.units.reduce((s, u) => s + u.atk + u.def + u.currentHp * 0.1 + bs.terrain.defBonus * 0.2, 0);
+
+  const attWinChance = attPower / (attPower + defPower);
+  const winner = Math.random() < attWinChance ? 'attacker' : 'defender';
+
+  // Apply losses
+  const winnerId = winner === 'attacker' ? bs.attackerId : bs.defenderId;
+  const loserId = winner === 'attacker' ? bs.defenderId : bs.attackerId;
+  const winFaction = game.factions[winnerId];
+  const loseFaction = game.factions[loserId];
+
+  // Winner loses ~30% units, loser loses ~60%
+  const winKeep = Math.max(1, Math.ceil(winFaction.units.length * 0.7));
+  const loseKeep = Math.max(0, Math.ceil(loseFaction.units.length * 0.4));
+  winFaction.units = winFaction.units.slice(0, winKeep);
+  winFaction.units.forEach(u => u.currentHp = Math.floor(u.currentHp * 0.8));
+  loseFaction.units = loseFaction.units.slice(0, loseKeep);
+  loseFaction.units.forEach(u => u.currentHp = Math.floor(u.currentHp * 0.5));
+
+  if (winner === 'attacker') {
+    const terrIdx = loseFaction.territories.findIndex(t =>
+      t.r === bs.territory.r && t.c === bs.territory.c
+    );
+    if (terrIdx >= 0) {
+      loseFaction.territories.splice(terrIdx, 1);
+      winFaction.territories.push(bs.territory);
+    }
+    addLog(`${winFaction.name}が${loseFaction.name}を破った！`, 'log-battle');
+  } else {
+    addLog(`${loseFaction.name}が防衛に成功！`, 'log-battle');
+  }
+
+  if (loseFaction.territories.length === 0) {
+    loseFaction.alive = false;
+    loseFaction.units = [];
+    addLog(`${loseFaction.name}は滅亡した！`, 'log-battle');
+  }
+
+  const loot = Math.floor(30 + Math.random() * 70);
+  winFaction.gold += loot;
+
+  endBattle();
+}
+
+// ============================================================
+// Turn Management
+// ============================================================
+function endTurn() {
+  closeHireDialog();
+  game.moveMode = false;
+  game.selectedTerritory = null;
+
+  // Next faction
+  let nextFaction = (game.currentFaction + 1) % game.factions.length;
+  while (!game.factions[nextFaction].alive) {
+    nextFaction = (nextFaction + 1) % game.factions.length;
+    if (nextFaction === game.currentFaction) break;
+  }
+
+  // New turn check
+  if (nextFaction <= game.currentFaction) {
+    game.turn++;
+    // Income phase
+    for (const f of game.factions) {
+      if (!f.alive) continue;
+      const income = f.territories.length * 50;
+      f.gold += income;
+      // Heal units
+      for (const u of f.units) {
+        u.currentHp = Math.min(u.maxHp, u.currentHp + Math.floor(u.maxHp * 0.1));
+        u.moved = false;
+      }
+    }
+    showTurnBanner();
+  }
+
+  game.currentFaction = nextFaction;
+
+  // Check win condition
+  const aliveFactions = game.factions.filter(f => f.alive);
+  if (aliveFactions.length === 1) {
+    showVictory(aliveFactions[0]);
+    return;
+  }
+
+  // If AI faction, execute AI
+  if (!game.factions[game.currentFaction].isPlayer) {
+    updateActionPanel();
+    drawStrategyMap();
+    setTimeout(() => executeStrategyAI(), 800);
+  } else {
+    updateActionPanel();
+    drawStrategyMap();
+  }
+}
+
+function showTurnBanner() {
+  const banner = document.getElementById('turn-banner');
+  banner.textContent = `ターン ${game.turn}`;
+  banner.style.display = 'block';
+  setTimeout(() => { banner.style.display = 'none'; }, 1500);
+}
+
+// ============================================================
+// Strategy AI
+// ============================================================
+function executeStrategyAI() {
+  const f = game.factions[game.currentFaction];
+  if (!f.alive) { endTurn(); return; }
+
+  // AI: Hire units if affordable
+  while (f.gold >= 50 && f.units.length < f.territories.length * 3 + 2) {
+    const affordable = Object.entries(UNIT_TYPES).filter(([, t]) => t.cost <= f.gold);
+    if (affordable.length === 0) break;
+    const [key, type] = affordable[Math.floor(Math.random() * affordable.length)];
+    f.gold -= type.cost;
+    f.units.push({
+      ...type,
+      type: key,
+      currentHp: type.hp,
+      maxHp: type.hp,
+      factionId: f.id,
+      moved: false,
+      level: 1,
+      exp: 0,
+    });
+  }
+
+  // AI: Attack adjacent enemy territories
+  if (f.units.length >= 2 && Math.random() < 0.5) {
+    for (const terr of f.territories) {
+      const adjacent = getAdjacentTerritories(terr.r, terr.c);
+      for (const adj of adjacent) {
+        const owner = getTerritoryOwner(adj.r, adj.c);
+        if (owner !== null && owner !== f.id && game.factions[owner].alive) {
+          addLog(`${f.name}が${game.factions[owner].name}に攻め入った！`, 'log-battle');
+          setTimeout(() => {
+            startBattle(f.id, owner, adj);
+          }, 500);
+          return;
+        }
+      }
+    }
+  }
+
+  // AI: Expand to empty territory
+  for (const terr of f.territories) {
+    const adjacent = getAdjacentTerritories(terr.r, terr.c);
+    for (const adj of adjacent) {
+      const owner = getTerritoryOwner(adj.r, adj.c);
+      if (owner === null) {
+        f.territories.push(adj);
+        addLog(`${f.name}が${game.map[adj.r][adj.c].name}を占領した`, 'log-info');
+        break;
+      }
+    }
+  }
+
+  drawStrategyMap();
+  setTimeout(() => endTurn(), 600);
+}
+
+// ============================================================
+// Victory Screen
+// ============================================================
+function showVictory(faction) {
+  const overlay = document.getElementById('ui-overlay');
+  overlay.innerHTML = `
+    <div style="position:absolute;top:0;left:0;width:100%;height:100%;
+         background:rgba(0,0,0,0.8);display:flex;flex-direction:column;
+         align-items:center;justify-content:center;">
+      <h1 style="color:#ffd700;font-size:48px;text-shadow:0 0 20px gold;">
+        ${faction.name} の勝利！
+      </h1>
+      <p style="color:#aaa;font-size:20px;margin:20px;">
+        ターン ${game.turn} で天下統一を達成！
+      </p>
+      <button onclick="location.reload()" style="font-size:18px;padding:10px 30px;
+        background:#2a2a4a;border:2px solid #ffd700;color:#ffd700;cursor:pointer;">
+        タイトルに戻る
+      </button>
+    </div>
+  `;
+}
+
+// ============================================================
+// Game Start
+// ============================================================
+function startGame() {
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('ui-overlay').style.display = 'block';
+
+  game = createGame();
+  updateActionPanel();
+  drawStrategyMap();
+
+  // Game loop
+  function gameLoop() {
+    if (game.phase === 'strategy') {
+      drawStrategyMap();
+    } else if (game.phase === 'battle' && game.battleState) {
+      drawBattle();
+    }
+    requestAnimationFrame(gameLoop);
+  }
+  gameLoop();
+
+  addLog('ゲーム開始！紅蓮帝国としてプレイ', 'log-info');
+  addLog('領地をクリックして選択、移動/攻撃で隣接領地へ', 'log-info');
+}
+
+// Keyboard controls
+document.addEventListener('keydown', (e) => {
+  if (!game) return;
+  const speed = 20;
+  if (e.key === 'ArrowUp') game.cameraY += speed;
+  if (e.key === 'ArrowDown') game.cameraY -= speed;
+  if (e.key === 'ArrowLeft') game.cameraX += speed;
+  if (e.key === 'ArrowRight') game.cameraX -= speed;
+  if (e.key === 'Escape') {
+    game.moveMode = false;
+    game.selectedTerritory = null;
+    closeHireDialog();
+    updateActionPanel();
+  }
+});
+</script>
+</body>
+</html>

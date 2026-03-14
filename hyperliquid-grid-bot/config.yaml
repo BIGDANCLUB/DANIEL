@@ -1,0 +1,33 @@
+# ============================================================
+# Hyperliquid Martingale Averaging Grid Bot - Configuration
+# この戦略は小さい利益を高頻度で積み重ねる「勝手にりえき」型です
+# ============================================================
+
+# --- Trading Pair ---
+symbol: "BTC"  # Hyperliquid perp coin name (e.g., BTC, ETH, SOL)
+
+# --- Leverage ---
+leverage: 5          # Fixed leverage (cross margin)
+is_cross: true       # true = cross margin, false = isolated
+
+# --- Grid Parameters ---
+grid_spacing_bps: 8       # Grid spacing in basis points (8 bps = 0.08%)
+initial_size_usd: 50.0    # Initial order size in USD notional
+
+# --- Martingale Parameters ---
+martingale_multiplier: 1.8   # Size multiplier on each adverse level
+max_levels: 4                # Max martingale grid levels before force-close & reset
+
+# --- Take Profit ---
+tp_percent: 0.25    # Take profit % from average entry price
+
+# --- Risk Management ---
+max_drawdown_pct: 10.0       # Account max drawdown % → full close + bot stop
+max_position_usd: 5000.0     # Max position size in USD notional per direction
+
+# --- Loop Interval ---
+loop_interval_sec: 15   # Main loop polling interval in seconds
+
+# --- Logging ---
+log_to_file: true
+log_dir: "logs"

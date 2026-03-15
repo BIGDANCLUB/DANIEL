@@ -3,281 +3,118 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>逆転裁判風 - 法廷バトル</title>
+<title>逆転法廷 〜最後の証拠〜</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  background: #1a0a0a;
-  color: #fff;
-  font-family: 'MS Gothic', 'Hiragino Kaku Gothic Pro', monospace;
-  overflow: hidden;
-  user-select: none;
-}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#1a0a0a; color:#fff; font-family:'MS Gothic','Hiragino Kaku Gothic Pro',monospace; overflow:hidden; user-select:none; }
+#game-container { width:100vw; height:100vh; position:relative; overflow:hidden; }
 
-#game-container {
-  width: 100vw; height: 100vh;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Title Screen */
+/* ===== TITLE ===== */
 #title-screen {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: linear-gradient(180deg, #0a0a2a 0%, #1a0a0a 50%, #0a0a2a 100%);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  z-index: 200;
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background:linear-gradient(180deg,#0a0a2a 0%,#1a0a0a 50%,#0a0a2a 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:200;
 }
-#title-screen h1 {
-  font-size: 52px; color: #ff4444;
-  text-shadow: 0 0 30px rgba(255,50,50,0.6), 2px 2px 0 #000;
-  letter-spacing: 12px; margin-bottom: 8px;
-}
-#title-screen .subtitle {
-  font-size: 20px; color: #ffcc00; margin-bottom: 50px; letter-spacing: 4px;
-}
-#title-screen button {
-  font-size: 22px; padding: 14px 50px; margin: 8px;
-  background: #2a1a1a; border: 2px solid #ff4444; color: #ff4444;
-  cursor: pointer; font-family: inherit; letter-spacing: 4px;
-  transition: all 0.2s;
-}
-#title-screen button:hover { background: #3a2a2a; box-shadow: 0 0 15px rgba(255,50,50,0.4); }
+#title-screen h1 { font-size:52px; color:#ff4444; text-shadow:0 0 30px rgba(255,50,50,.6),2px 2px 0 #000; letter-spacing:12px; margin-bottom:8px; }
+#title-screen .subtitle { font-size:20px; color:#ffcc00; margin-bottom:50px; letter-spacing:4px; }
+#title-screen button { font-size:22px; padding:14px 50px; margin:8px; background:#2a1a1a; border:2px solid #ff4444; color:#ff4444; cursor:pointer; font-family:inherit; letter-spacing:4px; transition:all .2s; }
+#title-screen button:hover { background:#3a2a2a; box-shadow:0 0 15px rgba(255,50,50,.4); }
 
-/* Courtroom Scene */
-#courtroom {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  display: none;
-}
+/* ===== COURTROOM ===== */
+#courtroom { position:absolute; top:0; left:0; width:100%; height:100%; display:none; }
+#court-bg { width:100%; height:55%; background:linear-gradient(180deg,#2a1a0a 0%,#3a2a1a 60%,#4a3a2a 100%); position:relative; border-bottom:4px solid #5a4a3a; }
 
-/* Background */
-#court-bg {
-  width: 100%; height: 55%;
-  background: linear-gradient(180deg, #2a1a0a 0%, #3a2a1a 60%, #4a3a2a 100%);
-  position: relative;
-  border-bottom: 4px solid #5a4a3a;
-}
+/* Character area */
+#character-area { position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:300px; height:360px; display:flex; align-items:flex-end; justify-content:center; }
+#char-canvas { display:block; image-rendering:pixelated; }
+#character-name-plate { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.8); border:1px solid #888; padding:3px 15px; font-size:14px; white-space:nowrap; border-radius:2px; }
 
-/* Character Display */
-#character-area {
-  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 300px; height: 350px;
-  display: flex; align-items: flex-end; justify-content: center;
-}
-#character-sprite {
-  font-size: 180px; line-height: 1;
-  filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.8));
-  transition: transform 0.1s;
-}
-#character-name-plate {
-  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-  background: rgba(0,0,0,0.8); border: 1px solid #888;
-  padding: 3px 15px; font-size: 14px; white-space: nowrap;
-  border-radius: 2px;
-}
+/* Furniture */
+#witness-stand { position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:200px; height:80px; background:linear-gradient(180deg,#6a5a3a,#4a3a2a); border-top:3px solid #8a7a5a; border-radius:5px 5px 0 0; }
+#attorney-desk { position:absolute; bottom:0; right:30px; width:180px; height:60px; background:linear-gradient(180deg,#5a4a2a,#3a2a1a); border-top:3px solid #7a6a4a; border-radius:5px 5px 0 0; }
+#prosecutor-desk { position:absolute; bottom:0; left:30px; width:180px; height:60px; background:linear-gradient(180deg,#5a4a2a,#3a2a1a); border-top:3px solid #7a6a4a; border-radius:5px 5px 0 0; }
 
-/* Witness stand */
-#witness-stand {
-  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 200px; height: 80px;
-  background: linear-gradient(180deg, #6a5a3a, #4a3a2a);
-  border-top: 3px solid #8a7a5a;
-  border-radius: 5px 5px 0 0;
-}
+/* Text box */
+#text-box { position:absolute; bottom:0; left:0; width:100%; height:45%; background:linear-gradient(180deg,#1a1a2a,#0a0a1a); border-top:3px solid #4a4a6a; padding:0; }
+#speaker-name { background:#aa2222; color:#fff; display:inline-block; padding:5px 20px; font-size:16px; font-weight:bold; margin:10px 0 0 20px; border-radius:3px; min-width:100px; text-align:center; }
+#dialogue-text { padding:12px 25px; font-size:18px; line-height:1.8; min-height:80px; letter-spacing:1px; }
+#dialogue-text .highlight { color:#ff4444; font-weight:bold; }
+#dialogue-text .blue { color:#44aaff; font-weight:bold; }
 
-/* Desk for attorney */
-#attorney-desk {
-  position: absolute; bottom: 0; right: 30px;
-  width: 180px; height: 60px;
-  background: linear-gradient(180deg, #5a4a2a, #3a2a1a);
-  border-top: 3px solid #7a6a4a;
-  border-radius: 5px 5px 0 0;
-}
-#prosecutor-desk {
-  position: absolute; bottom: 0; left: 30px;
-  width: 180px; height: 60px;
-  background: linear-gradient(180deg, #5a4a2a, #3a2a1a);
-  border-top: 3px solid #7a6a4a;
-  border-radius: 5px 5px 0 0;
-}
+/* Action buttons */
+#action-buttons { position:absolute; bottom:15px; right:20px; display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+#action-buttons button { padding:8px 18px; font-size:14px; cursor:pointer; font-family:inherit; border-radius:4px; transition:all .2s; border:2px solid; letter-spacing:2px; }
+.btn-next { background:#1a2a3a; border-color:#4488cc !important; color:#88bbee; }
+.btn-next:hover { background:#2a3a4a; }
+.btn-back { background:#1a1a2a; border-color:#666 !important; color:#aaa; }
+.btn-back:hover { background:#2a2a3a; }
+.btn-press { background:#2a2a1a; border-color:#ccaa44 !important; color:#ffdd66; }
+.btn-press:hover { background:#3a3a2a; }
+.btn-present { background:#3a1a1a; border-color:#cc4444 !important; color:#ff6666; }
+.btn-present:hover { background:#4a2a2a; box-shadow:0 0 10px rgba(255,50,50,.3); }
 
-/* Text Box */
-#text-box {
-  position: absolute; bottom: 0; left: 0; width: 100%; height: 45%;
-  background: linear-gradient(180deg, #1a1a2a, #0a0a1a);
-  border-top: 3px solid #4a4a6a;
-  padding: 0;
-}
-#speaker-name {
-  background: #aa2222; color: #fff; display: inline-block;
-  padding: 5px 20px; font-size: 16px; font-weight: bold;
-  margin: 10px 0 0 20px; border-radius: 3px;
-  min-width: 100px; text-align: center;
-}
-#dialogue-text {
-  padding: 12px 25px; font-size: 18px; line-height: 1.8;
-  min-height: 80px; letter-spacing: 1px;
-}
-#dialogue-text .highlight { color: #ff4444; font-weight: bold; }
+/* HUD */
+#penalty-bar { position:absolute; top:15px; left:20px; display:flex; align-items:center; gap:8px; }
+#penalty-label { font-size:13px; color:#aaa; }
+#penalty-gauge { width:200px; height:16px; background:#333; border:1px solid #666; border-radius:2px; overflow:hidden; }
+#penalty-fill { height:100%; background:linear-gradient(90deg,#44cc44,#88ee44); transition:width .5s; }
+#statement-counter { position:absolute; top:15px; right:80px; background:rgba(0,0,0,.7); border:1px solid #666; padding:5px 12px; font-size:13px; border-radius:3px; }
+#round-indicator { position:absolute; top:45px; left:20px; background:rgba(0,0,0,.7); border:1px solid #888; padding:4px 12px; font-size:12px; border-radius:3px; color:#ffcc44; }
 
-/* Statement Counter */
-#statement-counter {
-  position: absolute; top: 15px; right: 20px;
-  background: rgba(0,0,0,0.7); border: 1px solid #666;
-  padding: 5px 12px; font-size: 13px; border-radius: 3px;
-}
+/* BGM toggle */
+#bgm-toggle { position:absolute; top:15px; right:20px; background:rgba(0,0,0,.7); border:1px solid #666; color:#aaa; font-size:18px; padding:4px 10px; cursor:pointer; border-radius:3px; z-index:50; }
+#bgm-toggle:hover { border-color:#888; color:#fff; }
 
-/* Action Buttons */
-#action-buttons {
-  position: absolute; bottom: 15px; right: 20px;
-  display: flex; gap: 8px;
-}
-#action-buttons button {
-  padding: 8px 18px; font-size: 14px; cursor: pointer;
-  font-family: inherit; border-radius: 4px; transition: all 0.2s;
-  border: 2px solid; letter-spacing: 2px;
-}
-.btn-next {
-  background: #1a2a3a; border-color: #4488cc !important; color: #88bbee;
-}
-.btn-next:hover { background: #2a3a4a; }
-.btn-press {
-  background: #2a2a1a; border-color: #ccaa44 !important; color: #ffdd66;
-}
-.btn-press:hover { background: #3a3a2a; }
-.btn-present {
-  background: #3a1a1a; border-color: #cc4444 !important; color: #ff6666;
-}
-.btn-present:hover { background: #4a2a2a; box-shadow: 0 0 10px rgba(255,50,50,0.3); }
+/* ===== EVIDENCE PANEL ===== */
+#evidence-panel { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.92); z-index:100; display:none; flex-direction:column; }
+#evidence-header { background:#2a1a1a; padding:12px 20px; border-bottom:2px solid #aa4444; display:flex; justify-content:space-between; align-items:center; }
+#evidence-header h2 { color:#ff6666; font-size:20px; letter-spacing:4px; }
+#evidence-list { flex:1; overflow-y:auto; padding:10px; display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:10px; align-content:start; }
+.evidence-card { background:#1a1a2a; border:2px solid #3a3a5a; padding:12px; cursor:pointer; border-radius:4px; transition:all .2s; }
+.evidence-card:hover { border-color:#ff6666; background:#2a1a2a; box-shadow:0 0 10px rgba(255,50,50,.2); }
+.evidence-card.selected { border-color:#ff4444; background:#3a1a1a; box-shadow:0 0 15px rgba(255,50,50,.4); }
+.evidence-card h4 { color:#ffcc44; font-size:14px; margin-bottom:5px; }
+.evidence-card p { color:#aaa; font-size:12px; line-height:1.5; }
+.evidence-card .evidence-icon { font-size:28px; float:left; margin-right:10px; }
+.evidence-card.new-badge::after { content:'NEW'; background:#ff4444; color:#fff; font-size:10px; padding:1px 5px; border-radius:2px; margin-left:6px; }
+#evidence-detail { background:#0a0a1a; border-top:2px solid #3a3a5a; padding:15px 20px; min-height:100px; }
+#evidence-detail h3 { color:#ffcc44; margin-bottom:5px; }
+#evidence-detail p { color:#ccc; font-size:14px; line-height:1.6; }
+#evidence-actions { background:#1a1a2a; padding:10px 20px; border-top:1px solid #333; display:flex; justify-content:flex-end; gap:10px; }
+#evidence-actions button { padding:8px 20px; font-size:14px; cursor:pointer; font-family:inherit; border-radius:4px; }
 
-/* Evidence Panel */
-#evidence-panel {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.92); z-index: 100; display: none;
-  flex-direction: column;
-}
-#evidence-header {
-  background: #2a1a1a; padding: 12px 20px;
-  border-bottom: 2px solid #aa4444;
-  display: flex; justify-content: space-between; align-items: center;
-}
-#evidence-header h2 { color: #ff6666; font-size: 20px; letter-spacing: 4px; }
-#evidence-list {
-  flex: 1; overflow-y: auto; padding: 10px;
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 10px; align-content: start;
-}
-.evidence-card {
-  background: #1a1a2a; border: 2px solid #3a3a5a;
-  padding: 12px; cursor: pointer; border-radius: 4px;
-  transition: all 0.2s;
-}
-.evidence-card:hover {
-  border-color: #ff6666; background: #2a1a2a;
-  box-shadow: 0 0 10px rgba(255,50,50,0.2);
-}
-.evidence-card.selected {
-  border-color: #ff4444; background: #3a1a1a;
-  box-shadow: 0 0 15px rgba(255,50,50,0.4);
-}
-.evidence-card h4 { color: #ffcc44; font-size: 14px; margin-bottom: 5px; }
-.evidence-card p { color: #aaa; font-size: 12px; line-height: 1.5; }
-.evidence-card .evidence-icon { font-size: 28px; float: left; margin-right: 10px; }
+/* ===== PHOTO INVESTIGATION ===== */
+#photo-screen { position:absolute; top:0; left:0; width:100%; height:100%; background:#000; z-index:150; display:none; flex-direction:column; }
+#photo-header { background:#1a1a2a; padding:10px 20px; border-bottom:2px solid #4a4a6a; display:flex; justify-content:space-between; align-items:center; }
+#photo-header h2 { color:#ffcc44; font-size:18px; letter-spacing:4px; }
+#photo-canvas-wrap { flex:1; display:flex; align-items:center; justify-content:center; position:relative; cursor:crosshair; }
+#photo-canvas { display:block; }
+#photo-hint { background:rgba(0,0,0,.8); color:#ffcc44; position:absolute; bottom:10px; left:50%; transform:translateX(-50%); padding:8px 20px; border-radius:4px; font-size:14px; border:1px solid #888; white-space:nowrap; opacity:0; transition:opacity .3s; }
 
-#evidence-detail {
-  background: #0a0a1a; border-top: 2px solid #3a3a5a;
-  padding: 15px 20px; min-height: 100px;
-}
-#evidence-detail h3 { color: #ffcc44; margin-bottom: 5px; }
-#evidence-detail p { color: #ccc; font-size: 14px; line-height: 1.6; }
+/* ===== SHOUT / FLASH ===== */
+#shout-overlay { position:absolute; top:0; left:0; width:100%; height:100%; z-index:160; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.3); }
+#shout-text { font-size:72px; font-weight:bold; letter-spacing:8px; text-shadow:4px 4px 0 #000,0 0 30px currentColor; animation:shoutAnim .5s ease-out; }
+@keyframes shoutAnim { 0%{transform:scale(3) rotate(-5deg);opacity:0} 50%{transform:scale(1.1) rotate(1deg);opacity:1} 100%{transform:scale(1) rotate(0);opacity:1} }
+#flash-overlay { position:absolute; top:0; left:0; width:100%; height:100%; z-index:140; display:none; background:#fff; animation:flashAnim .3s ease-out forwards; }
+@keyframes flashAnim { 0%{opacity:1} 100%{opacity:0} }
 
-#evidence-actions {
-  background: #1a1a2a; padding: 10px 20px;
-  border-top: 1px solid #333;
-  display: flex; justify-content: flex-end; gap: 10px;
-}
-#evidence-actions button {
-  padding: 8px 20px; font-size: 14px; cursor: pointer;
-  font-family: inherit; border-radius: 4px;
-}
+/* ===== RESULT ===== */
+#result-screen { position:absolute; top:0; left:0; width:100%; height:100%; z-index:200; display:none; flex-direction:column; align-items:center; justify-content:center; }
+#result-screen.victory { background:linear-gradient(180deg,#0a1a0a,#1a2a1a,#0a1a0a); }
+#result-screen.defeat { background:linear-gradient(180deg,#1a0a0a,#2a1a1a,#1a0a0a); }
+#result-screen h1 { font-size:56px; margin-bottom:20px; letter-spacing:8px; }
+#result-screen p { font-size:18px; color:#aaa; margin-bottom:30px; text-align:center; max-width:600px; line-height:1.6; }
+#result-screen button { font-size:18px; padding:12px 40px; background:#2a2a2a; border:2px solid #888; color:#eee; cursor:pointer; font-family:inherit; }
 
-/* Objection / Hold It / Take That overlays */
-#shout-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  z-index: 150; display: none;
-  align-items: center; justify-content: center;
-  background: rgba(0,0,0,0.3);
-}
-#shout-text {
-  font-size: 72px; font-weight: bold; letter-spacing: 8px;
-  text-shadow: 4px 4px 0 #000, 0 0 30px currentColor;
-  animation: shoutAnim 0.5s ease-out;
-}
-@keyframes shoutAnim {
-  0% { transform: scale(3) rotate(-5deg); opacity: 0; }
-  50% { transform: scale(1.1) rotate(1deg); opacity: 1; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
-}
-
-/* Screen flash */
-#flash-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  z-index: 140; display: none; background: #fff;
-  animation: flashAnim 0.3s ease-out forwards;
-}
-@keyframes flashAnim {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-/* Health / Penalty Bar */
-#penalty-bar {
-  position: absolute; top: 15px; left: 20px;
-  display: flex; align-items: center; gap: 8px;
-}
-#penalty-label { font-size: 13px; color: #aaa; }
-#penalty-gauge {
-  width: 200px; height: 16px; background: #333;
-  border: 1px solid #666; border-radius: 2px; overflow: hidden;
-}
-#penalty-fill {
-  height: 100%; background: linear-gradient(90deg, #44cc44, #88ee44);
-  transition: width 0.5s;
-}
-
-/* Shake animation */
-.screen-shake {
-  animation: shake 0.4s ease-in-out;
-}
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10% { transform: translateX(-8px) rotate(-0.5deg); }
-  30% { transform: translateX(8px) rotate(0.5deg); }
-  50% { transform: translateX(-6px); }
-  70% { transform: translateX(6px); }
-  90% { transform: translateX(-3px); }
-}
-
-/* Result Screen */
-#result-screen {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  z-index: 200; display: none;
-  flex-direction: column; align-items: center; justify-content: center;
-}
-#result-screen.victory { background: linear-gradient(180deg, #0a1a0a, #1a2a1a, #0a1a0a); }
-#result-screen.defeat { background: linear-gradient(180deg, #1a0a0a, #2a1a1a, #1a0a0a); }
-#result-screen h1 { font-size: 56px; margin-bottom: 20px; letter-spacing: 8px; }
-#result-screen p { font-size: 18px; color: #aaa; margin-bottom: 30px; }
-#result-screen button {
-  font-size: 18px; padding: 12px 40px;
-  background: #2a2a2a; border: 2px solid #888; color: #eee;
-  cursor: pointer; font-family: inherit;
-}
+/* Shake */
+.screen-shake { animation:shake .4s ease-in-out; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 10%{transform:translateX(-8px) rotate(-.5deg)} 30%{transform:translateX(8px) rotate(.5deg)} 50%{transform:translateX(-6px)} 70%{transform:translateX(6px)} 90%{transform:translateX(-3px)} }
 </style>
 </head>
 <body>
-
 <div id="game-container">
-  <!-- Title Screen -->
+
+  <!-- Title -->
   <div id="title-screen">
     <h1>逆転法廷</h1>
     <div class="subtitle">〜 最後の証拠 〜</div>
@@ -291,7 +128,8 @@ body {
       <div id="witness-stand"></div>
       <div id="attorney-desk"></div>
       <div id="character-area">
-        <div id="character-sprite"></div>
+        <canvas id="char-canvas" width="280" height="360"></canvas>
+        <div id="character-name-plate">???</div>
       </div>
     </div>
     <div id="text-box">
@@ -303,7 +141,9 @@ body {
       <div id="penalty-label">ペナルティ</div>
       <div id="penalty-gauge"><div id="penalty-fill" style="width:100%"></div></div>
     </div>
+    <div id="round-indicator">第1ラウンド</div>
     <div id="statement-counter"></div>
+    <button id="bgm-toggle" onclick="toggleBGM()">🔊</button>
   </div>
 
   <!-- Evidence Panel -->
@@ -313,517 +153,1116 @@ body {
       <button onclick="closeEvidence()" style="background:#3a2a2a;border:1px solid #aa4444;color:#ff8888;padding:6px 16px;cursor:pointer;font-family:inherit;">閉じる</button>
     </div>
     <div id="evidence-list"></div>
-    <div id="evidence-detail">
-      <h3>証拠品を選択してください</h3>
-      <p>左の証拠品をクリックすると詳細が表示されます。</p>
-    </div>
+    <div id="evidence-detail"><h3>証拠品を選択してください</h3><p>左の証拠品をクリックすると詳細が表示されます。</p></div>
     <div id="evidence-actions">
       <button onclick="closeEvidence()" style="background:#2a2a3a;border:1px solid #666;color:#aaa;cursor:pointer;font-family:inherit;">戻る</button>
       <button id="btn-submit-evidence" onclick="submitEvidence()" style="background:#3a1a1a;border:2px solid #cc4444;color:#ff6666;cursor:pointer;font-family:inherit;display:none;">この証拠を突きつける！</button>
     </div>
   </div>
 
-  <!-- Shout Overlay -->
+  <!-- Photo Investigation -->
+  <div id="photo-screen">
+    <div id="photo-header">
+      <h2 id="photo-title">写真調査</h2>
+      <div style="font-size:13px;color:#aaa;">矛盾するポイントをクリックしてください</div>
+    </div>
+    <div id="photo-canvas-wrap">
+      <canvas id="photo-canvas" width="800" height="500"></canvas>
+      <div id="photo-hint"></div>
+    </div>
+  </div>
+
+  <!-- Shout / Flash -->
   <div id="shout-overlay"><div id="shout-text"></div></div>
   <div id="flash-overlay"></div>
 
-  <!-- Result Screen -->
+  <!-- Result -->
   <div id="result-screen">
     <h1 id="result-title"></h1>
     <p id="result-message"></p>
     <button onclick="location.reload()">タイトルに戻る</button>
   </div>
 </div>
-
 <script>
-// ============================================================
-// Game Data
-// ============================================================
+// ===================================================================
+// EVIDENCE DATA
+// ===================================================================
+const EVIDENCE_DB = [
+  { id:0,  name:'被害者の診断書',      icon:'📋', isNew:false,
+    desc:'被害者・山田太郎の死因は後頭部への強い打撃。死亡推定時刻は午後11時〜午前0時。',
+    detail:'司法解剖の結果、死因は後頭部への鈍器による一撃と断定。凶器は丸みを帯びた金属製の物体と推定される。死亡推定時刻は12月5日午後11時〜6日午前0時。' },
+  { id:1,  name:'凶器のトロフィー',    icon:'🏆', isNew:false,
+    desc:'犯行現場で発見された金属製トロフィー。被害者の血痕が付着。被告人の指紋が検出された。',
+    detail:'被害者の書斎で発見。高さ30cm、重さ1.2kgの金属製トロフィー。被告人は「以前触ったことがある」と証言。血痕は被害者のものと一致。' },
+  { id:2,  name:'現場の写真',          icon:'📷', isNew:false,
+    desc:'犯行現場である被害者の書斎の写真。窓が開いており、机の上の書類が散乱している。',
+    detail:'書斎の窓は外側から開けられた形跡がある。机の上には契約書の下書きが散乱。本棚の前にトロフィーが落ちていた。書斎の時計は午後11時15分で停止している。' },
+  { id:3,  name:'被告人のアリバイメモ', icon:'📝', isNew:false,
+    desc:'被告人・鈴木一郎は「当日は午後10時から自宅でテレビを見ていた」と主張。同居人の証言あり。',
+    detail:'被告人の妻が「夫は午後10時に帰宅し、一緒にテレビを見ていた」と証言。ただし妻は午前0時前に就寝しており、それ以降の行動は不明。被告人の自宅から現場まで車で15分。' },
+  { id:4,  name:'防犯カメラ映像記録',  icon:'🎥', isNew:false,
+    desc:'マンション入口の防犯カメラ記録。午後11時30分に不審な人影がマンションに入る様子が映っている。',
+    detail:'映像は不鮮明だが、身長170cm前後の人物がマンション正面入口から侵入。黒いコートを着用。顔は帽子で隠されている。被告人の身長は172cm。なお、裏口にはカメラが設置されていない。' },
+  { id:5,  name:'証人・佐藤の名刺',    icon:'💳', isNew:false,
+    desc:'証人・佐藤花子の名刺。被害者と同じ会社「山田商事」の経理部所属。',
+    detail:'佐藤花子は山田商事の経理部主任。被害者である社長・山田太郎の直属の部下。事件当日、被害者と会社の不正経理について話し合う予定だったと証言している。' },
+  { id:6,  name:'不正経理の帳簿',      icon:'📒', isNew:false,
+    desc:'山田商事の裏帳簿。約3000万円の使途不明金が記録されている。被害者の書斎から発見。',
+    detail:'過去2年間にわたり約3000万円が不明な口座に送金されていた記録。送金先の口座名義は「S.H」というイニシャルのみ判明。被害者がこの不正を調査していた形跡がある。' },
+  { id:7,  name:'証人の通話記録',      icon:'📱', isNew:false,
+    desc:'証人・佐藤花子の携帯電話の通話記録。事件当日の午後10時45分に被害者と15分間通話している。',
+    detail:'通話記録によると、佐藤花子は当日午後10時45分〜11時00分に被害者と通話。佐藤はこの通話について「翌日の会議の打ち合わせ」と説明している。' },
+  { id:8,  name:'黒いコート',          icon:'🧥', isNew:false,
+    desc:'被告人の自宅から押収された黒いコート。防犯カメラの人物と同型。繊維鑑定では現場の痕跡は検出されず。',
+    detail:'被告人所有の黒いコート。防犯カメラの人物が着用していたものと同じブランド・同じサイズ。しかし科学捜査の結果、現場に残された繊維とは一致しなかった。' },
+  { id:9,  name:'佐藤の銀行口座',      icon:'🏦', isNew:false,
+    desc:'捜査で判明した佐藤花子の隠し口座。イニシャル「S.H」名義。約3000万円の入金記録。',
+    detail:'佐藤花子が偽名で開設した銀行口座。過去2年間で約3000万円が入金されており、裏帳簿の使途不明金と金額・時期が完全に一致する。佐藤はこの口座の存在を否定している。' },
+  { id:10, name:'テレビ番組表',        icon:'📺', isNew:false,
+    desc:'事件当日（木曜日）の深夜テレビ番組表。「最後の約束」は水曜放送と記載。',
+    detail:'12月5日（木曜日）のテレビ番組表。証人・鈴木幸子が「一緒に見た」と述べた連続ドラマ「最後の約束」は、実際には毎週水曜日22時放送。木曜日には放送されていない。' },
+  { id:11, name:'マンション修理記録',  icon:'🔧', isNew:false,
+    desc:'被害者のマンションの設備修理記録。12月5日に裏口の鍵が故障していたことが記録されている。',
+    detail:'マンション管理会社の修理記録。12月5日（事件当日）の午後3時から翌日午前まで、裏口の電子錠が故障中で開錠状態にあったことが判明。翌日の午前9時に修理完了。' },
+  { id:12, name:'窓の鍵の写真',        icon:'🔒', isNew:true,
+    desc:'犯行現場の書斎の窓を撮影した拡大写真。窓の鍵が内側から施錠されていることが確認できる。',
+    detail:'写真を詳しく調べると、書斎の窓の鍵は「内側」から施錠されている。検察は「窓から侵入した」と主張しているが、内側から鍵がかかっていれば外から入ることは不可能。これは矛盾している。' },
+  { id:13, name:'コートの拡大写真',    icon:'🔍', isNew:true,
+    desc:'防犯カメラ映像の拡大写真。映っている人物のコートのボタンが女性用（左前合わせ）であることが判明。',
+    detail:'防犯カメラ映像を画像処理で拡大・鮮明化した写真。人物が着用しているコートのボタン留めが「左前」（向かって右から左へ）で、これは女性用コートの特徴。被告人・鈴木一郎は男性であり、男性用コートは「右前」が標準。' }
+];
 
-const EVIDENCE = [
+// どの証拠が解禁されているか
+let unlockedEvidence = [0,1,2,3,4,5,6,7,8,9,10,11];
+
+// ===================================================================
+// TESTIMONY ROUNDS DATA
+// ===================================================================
+const ROUNDS = [
+  // ---- Round 1: 鈴木幸子 ----
   {
-    id: 0,
-    name: '被害者の診断書',
-    icon: '📋',
-    desc: '被害者・山田太郎の死因は後頭部への強い打撃による外傷性脳損傷。死亡推定時刻は午後11時〜午前0時。',
-    detail: '司法解剖の結果、死因は後頭部への鈍器による一撃と断定。凶器は丸みを帯びた金属製の物体と推定される。死亡推定時刻は12月5日午後11時〜6日午前0時。'
+    roundNum: 1,
+    roundName: '第1ラウンド：被告人の妻の証言',
+    witness: '鈴木幸子',
+    witnessRole: '被告人の妻',
+    charKey: 'suzuki_wife',
+    intro: '証人・鈴木幸子が証言台に立ちます。彼女は被告人・鈴木一郎の妻であり、夫のアリバイを証言します。',
+    statements: [
+      { text:'主人は事件の日、午後7時ごろに帰宅しました。いつもより少し早かったので、よく覚えています。', pressText:'主人の帰宅時間は大体午後8時なのですが、その日は早く仕事が終わったと言っていました。', contradiction:false },
+      { text:'帰宅後は二人で夕食を作り、午後8時ごろに食べ終わりました。簡単なものですが、手料理でした。', pressText:'その日はシチューを作りました。時間がかかるので、一緒に作ったんです。', contradiction:false },
+      { text:'夕食の後は二人でリビングでゆっくりしていました。主人はソファで本を読んでいました。', pressText:'主人は読書が好きで、よく夜に本を読んでいます。', contradiction:false },
+      { text:'午後9時からは二人でテレビを見ていました。主人も私も大好きな連続ドラマがあるので。', pressText:'その時間帯には、楽しみにしているドラマが放映されるんです。', contradiction:false },
+      { text:'私たちが見ていたのは「最後の約束」というドラマです。あの日の話が特に印象に残っています。', pressText:'主人公と幼馴染が再会するシーンで、思わず泣いてしまいました。主人も一緒に見ていましたよ。', contradiction:true, correctEv:10, contradictExpl:'テレビ番組表と矛盾する', revealText:'少し待ってください！この<span class="highlight">テレビ番組表</span>を見てください！「最後の約束」は<span class="highlight">毎週水曜日</span>放送のドラマです。しかし事件が起きたのは<span class="highlight">12月5日・木曜日</span>。木曜日には放送されていません！あなたは本当にその夜、夫と一緒にテレビを見ていたんですか？！' },
+      { text:'11時ごろにはテレビを消して、二人で就寝しました。特に変わったことはありませんでした。', pressText:'いつも通りの夜でした。二人で寝室に行って…そのまま朝まで寝ていました。', contradiction:false },
+      { text:'翌朝6時に起きたとき、主人はいつも通り隣で寝ていました。', pressText:'私が先に目を覚まして、主人はまだ寝ていました。普通の朝でした。', contradiction:false },
+      { text:'主人が逮捕されたとき、信じられませんでした。主人はそんなことをする人ではありません。', pressText:'主人は温和で優しい人です。誰かを傷つけるなんて…考えられません。', contradiction:false },
+      { text:'主人と被害者の山田さんはビジネス上の付き合いだったと聞いています。個人的に深い仲ではないはずです。', pressText:'主人が山田さんの話をしたのは数回くらいです。会社の取引先だと言っていました。', contradiction:false },
+    ]
   },
+
+  // ---- Round 2: 佐藤花子（第1回）----
   {
-    id: 1,
-    name: '凶器のトロフィー',
-    icon: '🏆',
-    desc: '犯行現場で発見された金属製トロフィー。被害者の血痕が付着。被告人の指紋が検出された。',
-    detail: '被害者の書斎で発見。高さ30cm、重さ1.2kgの金属製トロフィー。被告人は「以前触ったことがある」と証言している。血痕は被害者のものと一致。'
+    roundNum: 2,
+    roundName: '第2ラウンド：佐藤花子の証言（第1回）',
+    witness: '佐藤花子',
+    witnessRole: '山田商事 経理部主任',
+    charKey: 'sato',
+    intro: '次に証人・佐藤花子が証言台に立ちます。彼女は被害者の直属の部下として、事件当日の状況を証言します。',
+    statements: [
+      { text:'私は事件当日、午後9時に会社を出ました。残業が続いていたので、その日は早めに退社しました。', pressText:'いつもは10時近くまで残業することも多いのですが、その日は体調があまりよくなかったので。', contradiction:false },
+      { text:'帰宅は午後9時半ごろです。電車で帰りました。一人暮らしの自宅に帰って、そのまま過ごしました。', pressText:'自宅は会社から電車で20分ほどのところです。いつも同じルートで帰っています。', contradiction:false },
+      { text:'帰宅後は夕食を食べて、少しテレビを見ました。外出は一切していません。', pressText:'一人暮らしなので誰も証明してくれる人はいませんが、本当に家にいたんです。', contradiction:false },
+      { text:'山田社長とはその日、会社で少し顔を合わせました。でも特に話はしていません。普通の一日でした。', pressText:'社長はよく経理部に書類の確認に来るんです。その日も少し立ち寄られましたが、業務の話をしただけです。', contradiction:true, correctEv:7, contradictExpl:'通話記録が証言と矛盾する', revealText:'「特に話はしていない」とおっしゃいましたね？しかしこの<span class="highlight">通話記録</span>を見てください！事件当日の<span class="highlight">午後10時45分</span>から<span class="highlight">15分間</span>、あなたは被害者と電話で話しているじゃないですか！自宅に帰ったはずのあなたが、なぜ深夜に社長と長電話をしていたんですか！？' },
+      { text:'山田社長が会社の経理について何か調査していたかどうか、私には分かりません。', pressText:'社長は経営全般を見ていますから、私のような経理担当者に調査の詳細を話すことはないと思います。', contradiction:false },
+      { text:'事件のことを知ったのは翌朝のニュースです。朝食を食べながら見て、本当に驚きました。', pressText:'テレビのニュース速報で「山田商事の社長が亡くなった」と聞いて、信じられませんでした。', contradiction:false },
+      { text:'被告人の鈴木さんとは面識がありません。お名前は今回の事件で初めて知りました。', pressText:'会社でも鈴木さんのことは聞いたことがありませんでした。別の部署の方なのでしょうか。', contradiction:false },
+      { text:'犯行に使われたトロフィーは社長室に飾ってあったと聞いています。私は触ったこともありません。', pressText:'確か創業10周年のときに作られた記念品だと聞いたことがあります。社長がとても大切にしていました。', contradiction:false },
+      { text:'マンションの裏口は普通、住人以外は使えないと聞いています。正面の入口しかないはずです。', pressText:'一般的なマンションはオートロックで管理されていますから、正面入口から入るしかないと思います。', contradiction:false },
+      { text:'私には犯行をする動機も機会もありません。本当のことを話しています。信じてください。', pressText:'社長のことは尊敬していました。こんなことになって、とても悲しいです。', contradiction:false },
+    ]
   },
+
+  // ---- Round 3: 伊藤正雄 ----
   {
-    id: 2,
-    name: '現場の写真',
-    icon: '📷',
-    desc: '犯行現場である被害者の書斎の写真。窓が開いており、机の上の書類が散乱している。',
-    detail: '書斎の窓は外側から開けられた形跡がある。机の上には契約書の下書きが散乱。本棚の前にトロフィーが落ちていた。書斎の時計は午後11時15分で停止している。'
+    roundNum: 3,
+    roundName: '第3ラウンド：マンション管理人の証言',
+    witness: '伊藤正雄',
+    witnessRole: 'マンション管理人',
+    charKey: 'ito',
+    intro: '証人・伊藤正雄が証言台に立ちます。被害者が居住するマンションの管理人として、事件当日のマンションの状況を証言します。',
+    statements: [
+      { text:'私はこのマンションの管理人を10年以上務めております。事件当日も通常通り勤務していました。', pressText:'管理室は正面入口のすぐそばにあります。出入りする方はほとんど把握しています。', contradiction:false },
+      { text:'正面入口の防犯カメラは24時間稼働しています。映像は2週間保存されます。', pressText:'カメラの管理は私が行っています。今回の事件で警察に映像を提供しました。', contradiction:false },
+      { text:'午後11時30分ごろ、黒いコートを着た人物がマンションに入るのをモニターで確認しました。', pressText:'身長は170cmくらいでしょうか。帽子を深くかぶっていて顔は見えませんでした。', contradiction:false },
+      { text:'その人物は正面入口から入っていきました。エレベーターを使って上の階に行ったようです。', pressText:'映像の解析で、その人物が4階のエレベーターボタンを押したことが確認できたと聞きました。', contradiction:false },
+      { text:'マンションの裏口は常に施錠されており、住人以外は絶対に使えない構造になっています。', pressText:'裏口の鍵は電子錠で、住人がIDカードをかざさないと開きません。外部の人が入ることは不可能です。', contradiction:true, correctEv:11, contradictExpl:'修理記録と矛盾する', revealText:'「裏口は常に施錠されている」とおっしゃいましたね？しかしこの<span class="highlight">マンション修理記録</span>を見てください！事件当日の12月5日、<span class="highlight">午後3時から翌朝9時まで</span>、裏口の電子錠が<span class="highlight">故障中</span>だったと記録されています！つまり事件当夜、裏口は誰でも開けられる状態だったんです！これはなぜ証言しなかったんですか！？' },
+      { text:'不審な音や物音は聞こえませんでした。静かな夜でした。', pressText:'管理室では音楽をかけていたので、多少の物音は聞こえなかったかもしれませんが…。', contradiction:false },
+      { text:'翌朝7時に清掃員が書斎から異変を発見し、すぐに私に連絡してきました。私が警察を呼びました。', pressText:'清掃員が清掃のために鍵を使って部屋に入ったところ、社長が倒れていたそうです。', contradiction:false },
+      { text:'防犯カメラには裏口付近を映したカメラが設置されていないので、裏口からの出入りは記録されていません。', pressText:'裏口のカメラ設置については以前から課題として認識していましたが、予算の関係で実現していませんでした。', contradiction:false },
+    ]
   },
+
+  // ---- Round 4: 佐藤花子（第2回）----
   {
-    id: 3,
-    name: '被告人のアリバイメモ',
-    icon: '📝',
-    desc: '被告人・鈴木一郎は「当日は午後10時から自宅でテレビを見ていた」と主張。同居人の証言あり。',
-    detail: '被告人の妻が「夫は午後10時に帰宅し、一緒にテレビを見ていた」と証言。ただし妻は午前0時前に就寝しており、それ以降の行動は不明。被告人の自宅から現場まで車で15分。'
+    roundNum: 4,
+    roundName: '第4ラウンド：佐藤花子の証言（第2回）',
+    witness: '佐藤花子',
+    witnessRole: '山田商事 経理部主任',
+    charKey: 'sato',
+    intro: '再び佐藤花子が証言台に立ちます。写真の調査で新たな証拠が発見され、弁護人はさらに追及します。',
+    statements: [
+      { text:'先ほどの電話のことですが…確かに電話はしました。翌日の会議の資料について確認の連絡をしたんです。', pressText:'社長はいつも急に資料を要求されることがあって、前日に確認しておくことも珍しくありませんでした。', contradiction:false },
+      { text:'15分という通話時間は少し長かったかもしれませんが、細かい数字の確認があったので。', pressText:'会計の数字の話は複雑なので、電話での確認に時間がかかることがあります。', contradiction:false },
+      { text:'会社の不正経理については、本当に何も知りません。帳簿を管理しているのは私ですが、異常は見当たりませんでした。', pressText:'毎月の帳簿は適切に処理しています。不正な取引があったとすれば、誰かが私の知らないところで行ったはずです。', contradiction:true, correctEv:9, contradictExpl:'隠し口座の存在が証言と矛盾する', revealText:'「不正経理を知らない」とおっしゃいましたね？では、この<span class="highlight">銀行口座</span>は何ですか！「S.H」…<span class="highlight">佐藤花子</span>、あなたのイニシャルです！裏帳簿の使途不明金3000万円と金額・日付が完全に一致するこの口座を、どう説明するんですか！！' },
+      { text:'「S.H」というイニシャルが私を指しているとは限りません。同じイニシャルの人は他にもいるはずです。', pressText:'日本全国を探せば、S.HというイニシャルをもつSuzuki HirokoやShimizu Hanakoのような方もいると思います。', contradiction:false },
+      { text:'裏帳簿の存在自体、今回の事件で初めて知りました。社長が書斎に保管していたとは驚きです。', pressText:'社長は几帳面な方で、書類の管理は徹底していましたから。', contradiction:false },
+      { text:'防犯カメラに映っている人物が私だとは言えません。黒いコートを着ている方はたくさんいます。', pressText:'あの時期は冬ですから、黒いコートを着ている人は珍しくありません。', contradiction:false },
+      { text:'私はこの事件と一切関係ありません。経理部で真面目に働いてきただけです。', pressText:'10年間、山田商事で働いてきました。それが全てです。', contradiction:false },
+      { text:'これ以上、私には話すことはありません。弁護人の質問には答えられません。', pressText:'私を犯人扱いするような質問には、これ以上お答えする気はありません。', contradiction:false },
+    ]
   },
+
+  // ---- Round 5: 佐藤花子（第3回・最終）----
   {
-    id: 4,
-    name: '防犯カメラ映像記録',
-    icon: '🎥',
-    desc: 'マンション入口の防犯カメラ記録。午後11時30分に不審な人影がマンションに入る様子が映っている。',
-    detail: '映像は不鮮明だが、身長170cm前後の人物がマンション正面入口から侵入。黒いコートを着用。顔は帽子で隠されている。被告人の身長は172cm。なお、裏口にはカメラが設置されていない。'
-  },
-  {
-    id: 5,
-    name: '証人・佐藤の名刺',
-    icon: '💳',
-    desc: '証人・佐藤花子の名刺。被害者と同じ会社「山田商事」の経理部所属。',
-    detail: '佐藤花子は山田商事の経理部主任。被害者である社長・山田太郎の直属の部下。事件当日、被害者と会社の不正経理について話し合う予定だったと証言している。'
-  },
-  {
-    id: 6,
-    name: '不正経理の帳簿',
-    icon: '📒',
-    desc: '山田商事の裏帳簿。約3000万円の使途不明金が記録されている。被害者の書斎から発見。',
-    detail: '過去2年間にわたり約3000万円が不明な口座に送金されていた記録。送金先の口座名義は「S.H」というイニシャルのみ判明。被害者がこの不正を調査していた形跡がある。'
-  },
-  {
-    id: 7,
-    name: '証人の通話記録',
-    icon: '📱',
-    desc: '証人・佐藤花子の携帯電話の通話記録。事件当日の午後10時45分に被害者と15分間通話している。',
-    detail: '通話記録によると、佐藤花子は当日午後10時45分〜11時00分に被害者と通話。佐藤はこの通話について「翌日の会議の打ち合わせ」と説明している。'
-  },
-  {
-    id: 8,
-    name: '黒いコート',
-    icon: '🧥',
-    desc: '被告人の自宅から押収された黒いコート。防犯カメラの人物と同型。ただし繊維鑑定では現場の痕跡は検出されず。',
-    detail: '被告人所有の黒いコート。防犯カメラの人物が着用していたものと同じブランド・同じサイズ。しかし科学捜査の結果、現場に残された繊維とは一致しなかった。'
-  },
-  {
-    id: 9,
-    name: '佐藤の銀行口座',
-    icon: '🏦',
-    desc: '捜査で判明した佐藤花子の隠し口座。イニシャル「S.H」（佐藤花子 = Sato Hanako）名義。約3000万円の入金記録。',
-    detail: '佐藤花子が偽名で開設した銀行口座。過去2年間で約3000万円が入金されており、裏帳簿の使途不明金と金額・時期が完全に一致する。佐藤はこの口座の存在を否定している。'
+    roundNum: 5,
+    roundName: '第5ラウンド：最終追及',
+    witness: '佐藤花子',
+    witnessRole: '山田商事 経理部主任',
+    charKey: 'sato',
+    intro: '最終の追及が始まります。弁護人は全ての証拠を集め、真犯人を追い詰める最後のチャンスです。',
+    statements: [
+      { text:'…分かりました。確かにあの口座は私のものです。でも、それには事情があるんです。', pressText:'全て話します。でも、誤解しないでください。', contradiction:false },
+      { text:'山田社長が私にその口座を管理するよう命じたんです。社長自身の資金を隠すためだったと聞いていました。', pressText:'社長から「この口座のことは誰にも言うな」と言われていました。社長の命令だったんです。', contradiction:false },
+      { text:'私はただ言われた通りに口座を管理していただけです。お金の流れには関わっていません。', pressText:'入金されてくるお金の処理を指示された通りにしただけで、その出所は知りません。', contradiction:false },
+      { text:'あの夜の電話で、社長は口座の資金を移動するよう指示してきたんです。それが15分の理由です。', pressText:'社長は何か焦っているようでした。「今すぐ動かせ」と言っていました。', contradiction:false },
+      { text:'電話が終わった後は自宅にいました。どこにも行っていません。', pressText:'電話を切った後は不安な気持ちで…でも、外には出ませんでした。', contradiction:false },
+      { text:'午後11時15分、書斎の時計が止まった時刻に、私は間違いなく自宅にいました。', pressText:'その時間帯、私は自宅のベッドに横たわっていました。本当です。', contradiction:true, correctEv:7, contradictExpl:'通話記録と移動時間から犯行可能を証明できる', revealText:'あなたは午後11時15分に自宅にいたと主張していますね？しかし<span class="highlight">通話記録</span>によれば、あなたは午後<span class="highlight">11時00分</span>まで被害者と電話していた。そして被害者のマンションとあなたの自宅は<span class="highlight">徒歩5分</span>の距離です！電話で「口座を移動しろ」と言いながら、逆に自分の不正を暴こうとする社長を<span class="highlight">止めに行く</span>動機も、時間も、十分にあったじゃないですか！！' },
+      { text:'犯行現場には一切行っていません。トロフィーには触っていません。', pressText:'私は…何もしていません。', contradiction:false },
+      { text:'私を信じてください。私はただの経理担当者です。人を傷つけることなどできません。', pressText:'お願いです…これ以上は何も言えません…', contradiction:false },
+    ]
   }
 ];
 
-const WITNESS_STATEMENTS = [
+// Photo investigation scenes
+const PHOTO_SCENES = [
   {
     id: 0,
-    speaker: '佐藤花子',
-    text: '私は事件当日、午後9時に会社を出て、まっすぐ帰宅しました。',
-    pressText: '残業が長引いて疲れていたので、寄り道せずに帰りました。自宅には午後9時半ごろ着いたと思います。',
-    contradiction: null,
-    correctEvidence: null,
+    title: '犯行現場写真の調査',
+    afterRound: 0,
+    addEvidenceId: 12,
+    intro: '裁判長の許可のもと、犯行現場の写真を詳しく調査します。写真の中に矛盾するポイントがあるはずです。',
+    hotspots: [
+      { x:600, y:120, w:80, h:60, correct:true,  label:'窓の鍵', msg:'窓の鍵が内側から施錠されている！' },
+      { x:200, y:280, w:100, h:80, correct:false, label:'散乱した書類', msg:'書類が散乱しているのは記録通りです。矛盾はありません。' },
+      { x:350, y:350, w:80, h:60, correct:false, label:'倒れたトロフィー', msg:'トロフィーが倒れているのは記録通りです。' },
+      { x:480, y:300, w:70, h:60, correct:false, label:'止まった時計', msg:'時計が11時15分を指しているのは記録通りです。' },
+    ],
+    revealText: '写真を見てください！書斎の窓の鍵は<span class="highlight">内側から施錠</span>されています！検察は「犯人が窓から侵入した」と主張していますが、内側から鍵がかかっていれば外から入ることは不可能です！つまり被告人は窓から入っていません！新しい証拠「窓の鍵の写真」を証拠品リストに追加します！',
+    wrongMsg: 'その部分に矛盾は見当たりません。もっとよく探してください。'
   },
   {
     id: 1,
-    speaker: '佐藤花子',
-    text: '帰宅後は一人で夕食を食べ、テレビを見ていました。外出はしていません。',
-    pressText: '一人暮らしなので、証明してくれる人はいませんが…本当に家にいたんです。',
-    contradiction: null,
-    correctEvidence: null,
-  },
-  {
-    id: 2,
-    speaker: '佐藤花子',
-    text: '社長…山田さんとは、その日は会社で顔を合わせただけで、特に話はしていません。',
-    contradiction: 7,
-    correctEvidence: 7,
-    contradictionExplanation: '通話記録が示す事実と矛盾する',
-    revealText: '佐藤さん、あなたは「山田さんとは話していない」と証言しましたね？しかし、この通話記録を見てください。事件当日の午後10時45分に、あなたは被害者と15分間も電話で話しているじゃないですか！',
-  },
-  {
-    id: 3,
-    speaker: '佐藤花子',
-    text: '会社の経理については、私は普通に業務をこなしていただけです。不正なんて知りません。',
-    contradiction: 9,
-    correctEvidence: 9,
-    contradictionExplanation: '隠し口座の存在が証言と矛盾する',
-    revealText: '「不正を知らない」ですって？では、この銀行口座は何ですか！「S.H」…佐藤花子、あなたのイニシャルです！裏帳簿の使途不明金3000万円と完全に一致するこの口座を、どう説明するんですか！',
-  },
-  {
-    id: 4,
-    speaker: '佐藤花子',
-    text: '山田社長が不正経理を調査していたなんて、初耳です。そんな話は聞いたことがありません。',
-    pressText: '社長は経営のことは幹部にしか話しませんから、経理部の私には関係のない話です。',
-    contradiction: null,
-    correctEvidence: null,
-  },
-  {
-    id: 5,
-    speaker: '佐藤花子',
-    text: '事件のことを知ったのは翌朝、ニュースで見たときです。本当に驚きました。',
-    pressText: 'テレビのニュース速報で「山田商事の社長が殺害」と流れて…信じられませんでした。',
-    contradiction: null,
-    correctEvidence: null,
-  },
-  {
-    id: 6,
-    speaker: '佐藤花子',
-    text: '被告人の鈴木さんとは面識がありません。会社で見かけたこともないです。',
-    pressText: '鈴木さんは別の部署の取引先だと聞いていますが、直接会ったことはありません。',
-    contradiction: null,
-    correctEvidence: null,
-  },
-  {
-    id: 7,
-    speaker: '佐藤花子',
-    text: 'マンションには裏口から入ることはできません。正面入口しかないはずです。',
-    contradiction: 4,
-    correctEvidence: 4,
-    contradictionExplanation: '防犯カメラ記録の情報と矛盾する',
-    revealText: 'ちょっと待ってください！この防犯カメラの記録によると、「裏口にはカメラが設置されていない」とあります。つまり裏口は存在するんです！なぜあなたは裏口がないと断言できるんですか？…実際に裏口を使ったことがあるからこそ、カメラがないことを知っていたのでは！？',
-  },
-  {
-    id: 8,
-    speaker: '佐藤花子',
-    text: '犯行に使われたトロフィーは、社長室に飾ってあったものだと思います。私は触ったこともありません。',
-    pressText: 'あのトロフィーは創業記念のもので、社長が大切にしていました。',
-    contradiction: null,
-    correctEvidence: null,
-  },
-  {
-    id: 9,
-    speaker: '佐藤花子',
-    text: '書斎の時計が午後11時15分で止まっていたそうですが、私はその時間、自宅にいました。',
-    contradiction: 7,
-    correctEvidence: 7,
-    contradictionExplanation: '通話記録から行動の矛盾が証明できる',
-    revealText: 'あなたは午後11時15分に自宅にいたと主張していますね。しかし通話記録では午後11時まで被害者と電話していた。そして被害者のマンションからあなたの自宅まで徒歩5分の距離です。電話の内容が「不正経理の追及」だったとしたら…あなたには動機も、時間的猶予も、十分にあったということです！',
-  },
+    title: '防犯カメラ映像の分析',
+    afterRound: 2,
+    addEvidenceId: 13,
+    intro: '防犯カメラの映像を画像処理で鮮明化した写真を調査します。人物の詳細を確認してください。',
+    hotspots: [
+      { x:320, y:200, w:90, h:120, correct:true,  label:'コートのボタン', msg:'コートのボタンが左前！これは女性用コートの特徴！' },
+      { x:250, y:100, w:80, h:70, correct:false, label:'帽子', msg:'帽子で顔が隠れているのは記録通りです。' },
+      { x:280, y:380, w:120, h:80, correct:false, label:'靴', msg:'靴については記録に特記事項はありません。' },
+      { x:450, y:250, w:100, h:60, correct:false, label:'建物の入口', msg:'入口の構造については問題ありません。' },
+    ],
+    revealText: '見てください！この人物のコートのボタン留めが<span class="highlight">左前</span>になっています！これは<span class="highlight">女性用コート</span>の特徴です！被告人・鈴木一郎は男性であり、男性用コートは「右前」が標準。つまりカメラに映っている人物は<span class="highlight">女性</span>の可能性が高い！新しい証拠「コートの拡大写真」を証拠品リストに追加します！',
+    wrongMsg: 'その部分に決定的な矛盾は見当たりません。コートをよく見てください。'
+  }
 ];
 
-// Total contradictions to find
-const TOTAL_CONTRADICTIONS = WITNESS_STATEMENTS.filter(s => s.contradiction !== null).length;
 
-// ============================================================
-// Game State
-// ============================================================
-let state = {
-  phase: 'title', // title, testimony, pressing, presenting, result
-  currentStatement: 0,
-  foundContradictions: 0,
-  penaltyHP: 100, // 0 = game over
-  selectedEvidence: null,
-  isPressing: false,
-  revealedContradictions: new Set(),
-  textQueue: [],
-  textIndex: 0,
+// ===================================================================
+// GAME STATE
+// ===================================================================
+let S = {
+  phase: 'title',
+  roundIdx: 0,
+  stmtIdx: 0,
+  prevStmts: [],        // stack for back button
+  foundInRound: false,  // contradiction found in current round
+  totalFound: 0,
+  penaltyHP: 100,
+  selectedEv: null,
+  isPresentMode: false,
   isTyping: false,
   currentText: '',
-  dialogueCallback: null,
-  shakeTimeout: null,
+  typingIdx: 0,
+  typingCb: null,
+  photoSolved: [false, false],
+  bgmOn: true,
+  shakeTO: null,
 };
 
-// ============================================================
-// Text Typing Effect
-// ============================================================
-function typeText(speaker, text, callback, speakerColor = '#aa2222') {
+// Scene sequence: rounds and photo scenes interleaved
+// [type, index] - type: 'round'|'photo'
+const SCENE_SEQUENCE = [
+  ['round',0], ['photo',0],
+  ['round',1], ['round',2], ['photo',1],
+  ['round',3], ['round',4]
+];
+let scenePos = 0;
+
+// ===================================================================
+// BGM - Web Audio API
+// ===================================================================
+let audioCtx = null;
+let bgmNodes = [];
+let bgmActive = false;
+
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+function playBGM(type) {
+  if (!S.bgmOn) return;
+  stopBGM();
+  initAudio();
+  bgmActive = true;
+
+  const masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0.18;
+  masterGain.connect(audioCtx.destination);
+
+  // Courtroom testimony theme - slow tense notes
+  const melodyNotes = type === 'tense'
+    ? [261,293,261,246,261,220,246,261,293,329,293,261]  // Cm-ish tense
+    : [220,246,261,293,261,246,220,196,220,246,261,246]; // Am-ish calm
+
+  const noteDur = type === 'tense' ? 0.35 : 0.5;
+  const loopLen = melodyNotes.length * noteDur;
+  let startT = audioCtx.currentTime + 0.05;
+
+  function scheduleLoop() {
+    if (!bgmActive) return;
+    melodyNotes.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      g.gain.setValueAtTime(0, startT + i * noteDur);
+      g.gain.linearRampToValueAtTime(0.7, startT + i * noteDur + 0.05);
+      g.gain.linearRampToValueAtTime(0, startT + i * noteDur + noteDur * 0.85);
+      osc.connect(g); g.connect(masterGain);
+      osc.start(startT + i * noteDur);
+      osc.stop(startT + i * noteDur + noteDur);
+      bgmNodes.push(osc);
+    });
+
+    // Bass line
+    const bassNotes = type === 'tense'
+      ? [65,65,58,58,65,65,55,55]
+      : [55,55,49,49,55,55,44,44];
+    bassNotes.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      const t0 = startT + i * (loopLen / bassNotes.length);
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(0.4, t0 + 0.04);
+      g.gain.linearRampToValueAtTime(0, t0 + (loopLen / bassNotes.length) * 0.8);
+      osc.connect(g); g.connect(masterGain);
+      osc.start(t0);
+      osc.stop(t0 + (loopLen / bassNotes.length));
+      bgmNodes.push(osc);
+    });
+
+    startT += loopLen;
+    bgmTimer = setTimeout(scheduleLoop, (loopLen - 0.5) * 1000);
+  }
+
+  let bgmTimer = null;
+  scheduleLoop();
+  bgmNodes._timer = () => clearTimeout(bgmTimer);
+}
+
+function stopBGM() {
+  bgmActive = false;
+  if (bgmNodes._timer) bgmNodes._timer();
+  bgmNodes.forEach(n => { try { n.stop(); } catch(e){} });
+  bgmNodes = [];
+}
+
+function playFanfare(victory) {
+  stopBGM();
+  initAudio();
+  const g = audioCtx.createGain();
+  g.gain.value = 0.3;
+  g.connect(audioCtx.destination);
+  const notes = victory
+    ? [523,659,784,1046, 784,1046]
+    : [293,261,246,220];
+  const dur = victory ? 0.25 : 0.4;
+  notes.forEach((freq, i) => {
+    const osc = audioCtx.createOscillator();
+    const og = audioCtx.createGain();
+    osc.type = victory ? 'square' : 'sawtooth';
+    osc.frequency.value = freq;
+    const t = audioCtx.currentTime + i * dur;
+    og.gain.setValueAtTime(0, t);
+    og.gain.linearRampToValueAtTime(0.8, t + 0.03);
+    og.gain.linearRampToValueAtTime(0, t + dur * 0.9);
+    osc.connect(og); og.connect(g);
+    osc.start(t); osc.stop(t + dur);
+  });
+}
+
+function toggleBGM() {
+  S.bgmOn = !S.bgmOn;
+  document.getElementById('bgm-toggle').textContent = S.bgmOn ? '🔊' : '🔇';
+  if (S.bgmOn) playBGM('calm');
+  else stopBGM();
+}
+
+// ===================================================================
+// CHARACTER DRAWING - Canvas-based portraits
+// ===================================================================
+const charCanvas = document.getElementById('char-canvas');
+const charCtx = charCanvas.getContext('2d');
+
+function drawCharacter(key, expr) {
+  charCtx.clearRect(0, 0, 280, 360);
+  switch(key) {
+    case 'judge':       drawJudge(expr); break;
+    case 'attorney':    drawAttorney(expr); break;
+    case 'prosecutor':  drawProsecutor(expr); break;
+    case 'suzuki_wife': drawSuzukiWife(expr); break;
+    case 'sato':        drawSato(expr); break;
+    case 'ito':         drawIto(expr); break;
+    default: break;
+  }
+  document.getElementById('character-name-plate').textContent = getCharName(key);
+}
+
+function getCharName(key) {
+  return {judge:'裁判長', attorney:'弁護人', prosecutor:'検察官',
+          suzuki_wife:'鈴木幸子', sato:'佐藤花子', ito:'伊藤正雄'}[key] || '???';
+}
+
+// Helper drawing functions
+function face(ctx, cx, cy, w, h, skin) {
+  ctx.fillStyle = skin || '#FFDBAC';
+  ctx.beginPath(); ctx.ellipse(cx, cy, w, h, 0, 0, Math.PI*2); ctx.fill();
+}
+function eye(ctx, x, y, expr) {
+  ctx.fillStyle = '#222';
+  if (expr === 'shocked') {
+    ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI*2); ctx.stroke();
+  } else if (expr === 'angry') {
+    ctx.beginPath(); ctx.arc(x, y+2, 5, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = '#222'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(x-8, y-6); ctx.lineTo(x+4, y-2); ctx.stroke();
+  } else if (expr === 'nervous') {
+    ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2); ctx.fill();
+    // sweat drop
+    ctx.fillStyle = '#88aaff';
+    ctx.beginPath(); ctx.arc(x+12, y-8, 4, 0, Math.PI*2); ctx.fill();
+  } else {
+    ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2); ctx.fill();
+    // highlight
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(x+2, y-2, 2, 0, Math.PI*2); ctx.fill();
+  }
+}
+function mouth(ctx, x, y, expr) {
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  ctx.beginPath();
+  if (expr === 'shocked') { ctx.ellipse(x, y+4, 8, 10, 0, 0, Math.PI*2); ctx.fillStyle='#666'; ctx.fill(); ctx.stroke(); }
+  else if (expr === 'angry') { ctx.moveTo(x-10, y+3); ctx.lineTo(x+10, y); ctx.stroke(); }
+  else if (expr === 'nervous') { ctx.moveTo(x-8, y); ctx.quadraticCurveTo(x, y+5, x+8, y); ctx.stroke(); }
+  else if (expr === 'confident') { ctx.moveTo(x-10, y+4); ctx.quadraticCurveTo(x, y-4, x+10, y+4); ctx.stroke(); }
+  else { ctx.moveTo(x-8, y+2); ctx.quadraticCurveTo(x, y-2, x+8, y+2); ctx.stroke(); }
+}
+function bg(ctx, col1, col2) {
+  const grad = ctx.createLinearGradient(0,0,0,360);
+  grad.addColorStop(0, col1); grad.addColorStop(1, col2);
+  ctx.fillStyle = grad; ctx.fillRect(0,0,280,360);
+}
+
+// ---- Judge ----
+function drawJudge(expr) {
+  bg(charCtx, '#1a2040', '#0a1020');
+  // Robe
+  charCtx.fillStyle = '#111';
+  charCtx.beginPath(); charCtx.moveTo(30,360); charCtx.lineTo(30,220); charCtx.lineTo(140,200); charCtx.lineTo(250,220); charCtx.lineTo(250,360); charCtx.fill();
+  charCtx.fillStyle = '#1a1a1a';
+  charCtx.fillRect(110,200,60,160);
+  // White collar
+  charCtx.fillStyle = '#eee';
+  charCtx.beginPath(); charCtx.moveTo(110,210); charCtx.lineTo(140,240); charCtx.lineTo(170,210); charCtx.fill();
+  // Face
+  face(charCtx, 140, 160, 60, 75, '#F5C89A');
+  // Bald head
+  charCtx.fillStyle = '#F5C89A';
+  charCtx.beginPath(); charCtx.arc(140, 100, 52, Math.PI, 0); charCtx.fill();
+  // White side hair
+  charCtx.fillStyle = '#ddd';
+  charCtx.beginPath(); charCtx.arc(88, 120, 22, 0, Math.PI*2); charCtx.fill();
+  charCtx.beginPath(); charCtx.arc(192, 120, 22, 0, Math.PI*2); charCtx.fill();
+  // Eyes
+  eye(charCtx, 118, 155, expr); eye(charCtx, 162, 155, expr);
+  // Eyebrows - thick
+  charCtx.strokeStyle = '#888'; charCtx.lineWidth = 5; charCtx.lineCap = 'round';
+  charCtx.beginPath(); charCtx.moveTo(108,142); charCtx.lineTo(128,145); charCtx.stroke();
+  charCtx.beginPath(); charCtx.moveTo(152,145); charCtx.lineTo(172,142); charCtx.stroke();
+  // White beard
+  charCtx.fillStyle = '#eee';
+  charCtx.beginPath(); charCtx.ellipse(140, 205, 38, 30, 0, 0, Math.PI); charCtx.fill();
+  mouth(charCtx, 140, 185, expr);
+}
+
+// ---- Attorney ----
+function drawAttorney(expr) {
+  bg(charCtx, '#0a1a30', '#050d18');
+  // Blue suit body
+  charCtx.fillStyle = '#1a4a8a';
+  charCtx.beginPath(); charCtx.moveTo(20,360); charCtx.lineTo(20,230); charCtx.lineTo(140,210); charCtx.lineTo(260,230); charCtx.lineTo(260,360); charCtx.fill();
+  // White shirt
+  charCtx.fillStyle = '#eee';
+  charCtx.beginPath(); charCtx.moveTo(115,215); charCtx.lineTo(140,250); charCtx.lineTo(165,215); charCtx.fill();
+  // Tie
+  charCtx.fillStyle = '#cc3333';
+  charCtx.beginPath(); charCtx.moveTo(133,230); charCtx.lineTo(140,245); charCtx.lineTo(147,230); charCtx.lineTo(143,220); charCtx.lineTo(137,220); charCtx.fill();
+  // Face
+  face(charCtx, 140, 155, 55, 70, '#FFDBAC');
+  // Spiky black hair
+  charCtx.fillStyle = '#1a1a1a';
+  charCtx.beginPath(); charCtx.arc(140, 100, 52, Math.PI, 0); charCtx.fill();
+  // Spikes
+  const spikes = [[-30,-15],[-15,-25],[0,-30],[15,-25],[30,-15],[40,-5]];
+  spikes.forEach(([ox,oy]) => {
+    charCtx.beginPath();
+    charCtx.moveTo(140+ox-8, 95+5);
+    charCtx.lineTo(140+ox, 68+oy);
+    charCtx.lineTo(140+ox+8, 95+5);
+    charCtx.fill();
+  });
+  // Eyes
+  eye(charCtx, 118, 152, expr); eye(charCtx, 162, 152, expr);
+  // Brows
+  charCtx.strokeStyle = '#1a1a1a'; charCtx.lineWidth = 3.5; charCtx.lineCap='round';
+  charCtx.beginPath(); charCtx.moveTo(108,140); charCtx.lineTo(128,142); charCtx.stroke();
+  charCtx.beginPath(); charCtx.moveTo(152,142); charCtx.lineTo(172,140); charCtx.stroke();
+  mouth(charCtx, 140, 178, expr);
+  // Badge on lapel
+  charCtx.fillStyle = '#ffcc00';
+  charCtx.beginPath(); charCtx.arc(100, 230, 8, 0, Math.PI*2); charCtx.fill();
+}
+
+// ---- Prosecutor ----
+function drawProsecutor(expr) {
+  bg(charCtx, '#200a10', '#100508');
+  // Dark red suit
+  charCtx.fillStyle = '#5a1a20';
+  charCtx.beginPath(); charCtx.moveTo(20,360); charCtx.lineTo(20,225); charCtx.lineTo(140,205); charCtx.lineTo(260,225); charCtx.lineTo(260,360); charCtx.fill();
+  charCtx.fillStyle = '#3a1015';
+  charCtx.beginPath(); charCtx.moveTo(140,205); charCtx.lineTo(140,360); charCtx.lineTo(110,360); charCtx.lineTo(105,205); charCtx.fill();
+  charCtx.beginPath(); charCtx.moveTo(140,205); charCtx.lineTo(140,360); charCtx.lineTo(170,360); charCtx.lineTo(175,205); charCtx.fill();
+  // White shirt/cravat
+  charCtx.fillStyle = '#f0f0f0';
+  charCtx.beginPath(); charCtx.moveTo(118,210); charCtx.lineTo(140,240); charCtx.lineTo(162,210); charCtx.fill();
+  // Face
+  face(charCtx, 140, 153, 55, 68, '#F0C090');
+  // Slicked silver hair
+  charCtx.fillStyle = '#c0c0c0';
+  charCtx.beginPath(); charCtx.arc(140, 96, 50, Math.PI, 0); charCtx.fill();
+  charCtx.fillRect(88, 90, 104, 30);
+  // Hair line details
+  charCtx.strokeStyle = '#999'; charCtx.lineWidth = 1.5;
+  for(let i=0;i<5;i++) {
+    charCtx.beginPath(); charCtx.moveTo(95+i*12, 96); charCtx.lineTo(93+i*12, 116); charCtx.stroke();
+  }
+  // Side part
+  charCtx.strokeStyle = '#aaa'; charCtx.lineWidth = 2;
+  charCtx.beginPath(); charCtx.moveTo(110, 90); charCtx.lineTo(115, 120); charCtx.stroke();
+  // Eyes
+  eye(charCtx, 118, 150, expr); eye(charCtx, 162, 150, expr);
+  // Sharp brows
+  charCtx.strokeStyle = '#888'; charCtx.lineWidth = 3; charCtx.lineCap='round';
+  charCtx.beginPath(); charCtx.moveTo(105,139); charCtx.lineTo(130,143); charCtx.stroke();
+  charCtx.beginPath(); charCtx.moveTo(150,143); charCtx.lineTo(175,139); charCtx.stroke();
+  mouth(charCtx, 140, 175, expr);
+  // Scar detail
+  charCtx.strokeStyle = '#cc8888'; charCtx.lineWidth = 1.5;
+  charCtx.beginPath(); charCtx.moveTo(162, 148); charCtx.lineTo(170, 162); charCtx.stroke();
+}
+
+// ---- Suzuki Wife ----
+function drawSuzukiWife(expr) {
+  bg(charCtx, '#1a1a30', '#0a0a1a');
+  // Blue cardigan
+  charCtx.fillStyle = '#3a5a8a';
+  charCtx.beginPath(); charCtx.moveTo(30,360); charCtx.lineTo(30,235); charCtx.lineTo(140,215); charCtx.lineTo(250,235); charCtx.lineTo(250,360); charCtx.fill();
+  // Collar
+  charCtx.fillStyle = '#c8d8f0';
+  charCtx.beginPath(); charCtx.moveTo(115,218); charCtx.lineTo(140,248); charCtx.lineTo(165,218); charCtx.fill();
+  charCtx.fillStyle = '#3a5a8a';
+  charCtx.beginPath(); charCtx.arc(140, 220, 28, 0, Math.PI); charCtx.fill();
+  // Face
+  face(charCtx, 140, 155, 52, 66, '#FFDAB0');
+  // Brown bob hair
+  charCtx.fillStyle = '#6a3a1a';
+  charCtx.beginPath(); charCtx.arc(140, 96, 52, Math.PI, 0); charCtx.fill();
+  charCtx.fillRect(88, 92, 20, 80);   // left
+  charCtx.fillRect(172, 92, 20, 80);  // right
+  // Bob bottom curve
+  charCtx.beginPath(); charCtx.ellipse(94, 170, 12, 22, -0.2, 0, Math.PI*2); charCtx.fill();
+  charCtx.beginPath(); charCtx.ellipse(186, 170, 12, 22, 0.2, 0, Math.PI*2); charCtx.fill();
+  // Eyes - softer
+  eye(charCtx, 120, 153, expr); eye(charCtx, 160, 153, expr);
+  // Soft brows
+  charCtx.strokeStyle = '#4a2a10'; charCtx.lineWidth = 2.5; charCtx.lineCap='round';
+  charCtx.beginPath(); charCtx.moveTo(110,141); charCtx.quadraticCurveTo(120,138,130,141); charCtx.stroke();
+  charCtx.beginPath(); charCtx.moveTo(150,141); charCtx.quadraticCurveTo(160,138,170,141); charCtx.stroke();
+  mouth(charCtx, 140, 176, expr);
+  // Blush
+  charCtx.fillStyle = 'rgba(255,120,100,0.25)';
+  charCtx.beginPath(); charCtx.ellipse(107, 168, 14, 8, 0, 0, Math.PI*2); charCtx.fill();
+  charCtx.beginPath(); charCtx.ellipse(173, 168, 14, 8, 0, 0, Math.PI*2); charCtx.fill();
+}
+
+// ---- Sato Hanako ----
+function drawSato(expr) {
+  bg(charCtx, '#101020', '#080810');
+  // Gray suit
+  charCtx.fillStyle = '#4a4a5a';
+  charCtx.beginPath(); charCtx.moveTo(25,360); charCtx.lineTo(25,228); charCtx.lineTo(140,208); charCtx.lineTo(255,228); charCtx.lineTo(255,360); charCtx.fill();
+  charCtx.fillStyle = '#3a3a48';
+  charCtx.fillRect(122, 208, 36, 152);
+  // White shirt
+  charCtx.fillStyle = '#eee';
+  charCtx.beginPath(); charCtx.moveTo(120,215); charCtx.lineTo(140,240); charCtx.lineTo(160,215); charCtx.fill();
+  // Face
+  face(charCtx, 140, 155, 50, 64, '#FFDBAC');
+  // Black ponytail hair
+  charCtx.fillStyle = '#111';
+  charCtx.beginPath(); charCtx.arc(140, 96, 50, Math.PI, 0); charCtx.fill();
+  charCtx.fillRect(88, 92, 14, 70);
+  charCtx.fillRect(178, 92, 14, 70);
+  // Ponytail
+  charCtx.beginPath(); charCtx.ellipse(195, 118, 12, 35, 0.5, 0, Math.PI*2); charCtx.fill();
+  charCtx.beginPath(); charCtx.ellipse(205, 158, 8, 30, 0.8, 0, Math.PI*2); charCtx.fill();
+  // Hair tie
+  charCtx.fillStyle = '#cc4444';
+  charCtx.beginPath(); charCtx.arc(192, 115, 7, 0, Math.PI*2); charCtx.fill();
+  // Glasses
+  charCtx.strokeStyle = '#333'; charCtx.lineWidth = 2.5;
+  charCtx.strokeRect(104, 146, 30, 18);
+  charCtx.strokeRect(146, 146, 30, 18);
+  charCtx.beginPath(); charCtx.moveTo(134,155); charCtx.lineTo(146,155); charCtx.stroke();
+  charCtx.beginPath(); charCtx.moveTo(80,152); charCtx.lineTo(104,152); charCtx.stroke();
+  charCtx.beginPath(); charCtx.moveTo(176,152); charCtx.lineTo(200,152); charCtx.stroke();
+  // Eyes (behind glasses)
+  eye(charCtx, 119, 153, expr); eye(charCtx, 161, 153, expr);
+  // Brows
+  charCtx.strokeStyle = '#111'; charCtx.lineWidth = 2.5; charCtx.lineCap='round';
+  charCtx.beginPath(); charCtx.moveTo(107,141); charCtx.lineTo(130,143); charCtx.stroke();
+  charCtx.beginPath(); charCtx.moveTo(150,143); charCtx.lineTo(173,141); charCtx.stroke();
+  mouth(charCtx, 140, 176, expr);
+}
+
+// ---- Ito Masao (Building Manager) ----
+function drawIto(expr) {
+  bg(charCtx, '#0a1808', '#050e04');
+  // Green uniform vest
+  charCtx.fillStyle = '#2a5a2a';
+  charCtx.beginPath(); charCtx.moveTo(20,360); charCtx.lineTo(20,232); charCtx.lineTo(140,212); charCtx.lineTo(260,232); charCtx.lineTo(260,360); charCtx.fill();
+  // Light shirt underneath
+  charCtx.fillStyle = '#d0d8c0';
+  charCtx.beginPath(); charCtx.moveTo(115,218); charCtx.lineTo(140,250); charCtx.lineTo(165,218); charCtx.fill();
+  // Vest lapels
+  charCtx.fillStyle = '#2a5a2a';
+  charCtx.beginPath(); charCtx.moveTo(140,215); charCtx.lineTo(110,250); charCtx.lineTo(100,360); charCtx.lineTo(140,360); charCtx.fill();
+  charCtx.beginPath(); charCtx.moveTo(140,215); charCtx.lineTo(170,250); charCtx.lineTo(180,360); charCtx.lineTo(140,360); charCtx.fill();
+  // Face - older, wider
+  face(charCtx, 140, 158, 58, 72, '#E8C090');
+  // Balding hair - brown sides
+  charCtx.fillStyle = '#7a5a30';
+  charCtx.beginPath(); charCtx.arc(90, 115, 30, 0, Math.PI*2); charCtx.fill();
+  charCtx.beginPath(); charCtx.arc(190, 115, 30, 0, Math.PI*2); charCtx.fill();
+  // Top mostly bald - skin color
+  charCtx.fillStyle = '#E8C090';
+  charCtx.beginPath(); charCtx.ellipse(140, 100, 40, 38, 0, 0, Math.PI*2); charCtx.fill();
+  // Mustache
+  charCtx.fillStyle = '#8a6a40';
+  charCtx.beginPath(); charCtx.ellipse(140, 185, 24, 8, 0, 0, Math.PI); charCtx.fill();
+  // Eyes
+  eye(charCtx, 118, 158, expr); eye(charCtx, 162, 158, expr);
+  // Bushy brows
+  charCtx.strokeStyle = '#5a4020'; charCtx.lineWidth = 5; charCtx.lineCap='round';
+  charCtx.beginPath(); charCtx.moveTo(104,143); charCtx.lineTo(132,146); charCtx.stroke();
+  charCtx.beginPath(); charCtx.moveTo(148,146); charCtx.lineTo(176,143); charCtx.stroke();
+  // Wrinkles
+  charCtx.strokeStyle = 'rgba(100,70,30,0.3)'; charCtx.lineWidth = 1.5;
+  charCtx.beginPath(); charCtx.moveTo(102,160); charCtx.quadraticCurveTo(106,168,102,174); charCtx.stroke();
+  charCtx.beginPath(); charCtx.moveTo(178,160); charCtx.quadraticCurveTo(174,168,178,174); charCtx.stroke();
+  mouth(charCtx, 140, 178, expr);
+}
+
+// ===================================================================
+// PHOTO INVESTIGATION DRAWING
+// ===================================================================
+const photoCanvas = document.getElementById('photo-canvas');
+const photoCtx = photoCanvas.getContext('2d');
+
+function drawPhotoScene(sceneId) {
+  if (sceneId === 0) drawCrimeScene();
+  else drawSecurityCamera();
+}
+
+function drawCrimeScene() {
+  const c = photoCtx, w=800, h=500;
+  // Room background
+  c.fillStyle = '#c4a870'; c.fillRect(0,0,w,h);
+  // Floor
+  c.fillStyle = '#8a6040'; c.fillRect(0,380,w,120);
+  // Wallpaper lines
+  c.strokeStyle = '#b09860'; c.lineWidth = 1;
+  for(let x=0;x<w;x+=40) { c.beginPath(); c.moveTo(x,0); c.lineTo(x,380); c.stroke(); }
+
+  // Bookshelf (left)
+  c.fillStyle = '#5a3a1a'; c.fillRect(20,80,160,320);
+  c.fillStyle = '#4a2a0a'; c.fillRect(25,85,150,305);
+  // Books
+  const bkColors = ['#aa3333','#3355aa','#228833','#aa8822','#883388','#226688'];
+  for(let r=0;r<5;r++) for(let b=0;b<6;b++) {
+    c.fillStyle = bkColors[(r+b)%bkColors.length];
+    c.fillRect(27+b*23, 95+r*52, 20, 44);
+    c.fillStyle = 'rgba(0,0,0,0.2)';
+    c.fillRect(27+b*23, 95+r*52, 2, 44);
+  }
+
+  // Desk (center-right)
+  c.fillStyle = '#6a4a20'; c.fillRect(280,270,380,130);
+  c.fillStyle = '#8a6030'; c.fillRect(280,260,380,20);
+  // Desk legs
+  c.fillStyle = '#5a3a10';
+  c.fillRect(290,390,20,80); c.fillRect(630,390,20,80);
+
+  // Scattered papers on desk
+  const papers = [[310,220,-5],[370,210,8],[440,225,-12],[500,215,5],[560,218,-3]];
+  papers.forEach(([px,py,ang]) => {
+    c.save(); c.translate(px,py); c.rotate(ang*Math.PI/180);
+    c.fillStyle = '#f5f0e0'; c.fillRect(-30,-20,70,50);
+    c.strokeStyle = '#aaa'; c.lineWidth = 0.5;
+    for(let i=0;i<4;i++) { c.beginPath(); c.moveTo(-25,-12+i*12); c.lineTo(32,-12+i*12); c.stroke(); }
+    c.restore();
+  });
+
+  // Trophy fallen on floor (in front of bookshelf)
+  c.save(); c.translate(195,340); c.rotate(-0.8);
+  c.fillStyle = '#daa520';
+  c.fillRect(-8,-30,16,50); // base
+  c.beginPath(); c.arc(0,-30,18,0,Math.PI*2); c.fillStyle='#ffd700'; c.fill();
+  c.strokeStyle='#aa8800'; c.lineWidth=2; c.stroke();
+  c.restore();
+
+  // Clock on wall
+  c.fillStyle = '#3a2a1a'; c.beginPath(); c.arc(700,100,42,0,Math.PI*2); c.fill();
+  c.fillStyle = '#f5f0e0'; c.beginPath(); c.arc(700,100,38,0,Math.PI*2); c.fill();
+  // Clock hands (stopped at 11:15)
+  c.strokeStyle = '#222'; c.lineWidth = 3; c.lineCap='round';
+  c.beginPath(); c.moveTo(700,100); c.lineTo(700,68); c.stroke(); // 12 o'clock minute hand
+  c.lineWidth = 4;
+  c.beginPath(); c.moveTo(700,100);
+  const hAngle = (11+15/60)/12 * Math.PI*2 - Math.PI/2;
+  c.lineTo(700+Math.cos(hAngle)*22, 100+Math.sin(hAngle)*22); c.stroke();
+
+  // WINDOW (right side) - key element
+  c.fillStyle = '#2a5a8a'; c.fillRect(580,80,180,200);
+  c.fillStyle = '#88c0e8'; c.fillRect(585,85,170,190);
+  // Window frame
+  c.strokeStyle = '#4a3a2a'; c.lineWidth = 6;
+  c.strokeRect(580,80,180,200);
+  c.beginPath(); c.moveTo(670,80); c.lineTo(670,280); c.stroke();
+  c.beginPath(); c.moveTo(580,180); c.lineTo(760,180); c.stroke();
+  // Window latch - LOCKED FROM INSIDE (key detail - highlighted)
+  c.fillStyle = '#aaa';
+  c.fillRect(662,170,16,16);
+  // Latch indicator - small arrow showing locked
+  c.fillStyle = '#ff4444';
+  c.beginPath(); c.arc(670,178,5,0,Math.PI*2); c.fill();
+  // "locked" glow
+  c.strokeStyle = 'rgba(255,100,100,0.5)'; c.lineWidth = 3;
+  c.beginPath(); c.arc(670,178,12,0,Math.PI*2); c.stroke();
+  // Outside view through window
+  c.fillStyle = '#112244'; c.fillRect(585,85,82,190); // night sky left pane
+  c.fillStyle = '#112244'; c.fillRect(672,85,83,190); // night sky right pane
+  // Stars
+  c.fillStyle = '#fff';
+  [[610,100],[640,130],[620,160],[700,105],[730,150]].forEach(([sx,sy]) => {
+    c.beginPath(); c.arc(sx,sy,1.5,0,Math.PI*2); c.fill();
+  });
+
+  // Label hint text
+  c.fillStyle = 'rgba(0,0,0,0.5)'; c.fillRect(0,460,800,40);
+  c.fillStyle = '#ffcc44'; c.font = '16px monospace';
+  c.fillText('写真をよく見てください。矛盾するポイントをクリック！', 200, 484);
+}
+
+function drawSecurityCamera() {
+  const c = photoCtx, w=800, h=500;
+  // Grainy dark background
+  c.fillStyle = '#0a0a0a'; c.fillRect(0,0,w,h);
+  // Add grain effect
+  for(let i=0;i<3000;i++) {
+    const gx=Math.random()*w, gy=Math.random()*h;
+    const gb=Math.random()*50+20;
+    c.fillStyle = `rgba(${gb},${gb},${gb},0.3)`;
+    c.fillRect(gx, gy, 1, 1);
+  }
+  // Scanlines
+  c.fillStyle = 'rgba(0,0,0,0.15)';
+  for(let y=0;y<h;y+=3) c.fillRect(0,y,w,1);
+
+  // Building entrance background
+  c.fillStyle = '#1a1a1a'; c.fillRect(150,50,500,420);
+  // Building walls
+  c.fillStyle = '#282828'; c.fillRect(150,50,120,420);
+  c.fillStyle = '#282828'; c.fillRect(530,50,120,420);
+  // Door frame
+  c.fillStyle = '#1a1a1a'; c.fillRect(300,200,200,270);
+  c.fillStyle = '#333'; c.strokeStyle='#555'; c.lineWidth=4;
+  c.strokeRect(300,200,200,270);
+  // Door
+  c.fillStyle = '#2a2a2a'; c.fillRect(305,205,190,265);
+  c.fillStyle = '#888'; c.beginPath(); c.arc(460,340,6,0,Math.PI*2); c.fill();
+  // Ground
+  c.fillStyle = '#222'; c.fillRect(150,430,500,40);
+  // Lights above door
+  c.fillStyle = '#aaaa66';
+  c.beginPath(); c.arc(400,190,12,0,Math.PI*2); c.fill();
+  const lightGrad = c.createRadialGradient(400,190,0,400,190,80);
+  lightGrad.addColorStop(0,'rgba(255,255,200,0.3)');
+  lightGrad.addColorStop(1,'rgba(0,0,0,0)');
+  c.fillStyle = lightGrad; c.fillRect(320,190,160,120);
+
+  // FIGURE - person in black coat
+  const fx=350, fy=200;
+  // Legs
+  c.fillStyle = '#111';
+  c.fillRect(fx+20, fy+200, 28, 100);
+  c.fillRect(fx+58, fy+200, 28, 100);
+  // Coat body
+  c.fillStyle = '#111';
+  c.beginPath(); c.moveTo(fx,fy+80); c.lineTo(fx+20,fy+210); c.lineTo(fx+110,fy+210); c.lineTo(fx+115,fy+80); c.fill();
+  // COAT BUTTONS - LEFT SIDE (women's style!) - KEY ELEMENT
+  c.fillStyle = '#555';
+  [130,155,180,205].forEach(by => {
+    c.beginPath(); c.arc(fx+42, fy+by, 5, 0, Math.PI*2); c.fill();
+    c.strokeStyle='#777'; c.lineWidth=1; c.stroke();
+  });
+  // Button highlight - left side positioning indicator
+  c.strokeStyle = 'rgba(255,100,100,0.6)'; c.lineWidth=2;
+  c.strokeRect(fx+30, fy+120, 28, 100);
+  // Arms
+  c.fillStyle = '#111';
+  c.fillRect(fx-12, fy+85, 25, 100); // left arm
+  c.fillRect(fx+98, fy+85, 25, 100); // right arm
+  // Hat
+  c.fillStyle = '#111';
+  c.fillRect(fx+15, fy+30, 82, 18);
+  c.beginPath(); c.arc(fx+56, fy+30, 42, Math.PI, 0); c.fill();
+  // Face hidden by hat brim
+  c.fillStyle = '#1a1a1a'; c.fillRect(fx+15, fy+45, 82, 30);
+  // Shoes
+  c.fillStyle = '#111'; c.fillRect(fx+14,fy+295,35,15); c.fillRect(fx+54,fy+295,35,15);
+
+  // Timestamp overlay
+  c.fillStyle = 'rgba(0,0,0,0.7)'; c.fillRect(0,0,w,35);
+  c.fillStyle = '#00ff44'; c.font = 'bold 14px monospace';
+  c.fillText('CAM-02  2024/12/05  23:30:42  REC', 20, 22);
+
+  // Label
+  c.fillStyle = 'rgba(0,0,0,0.5)'; c.fillRect(0,460,800,40);
+  c.fillStyle = '#ffcc44'; c.font = '16px monospace';
+  c.fillText('映像を拡大処理しました。人物の詳細をよく観察してください。', 180, 484);
+}
+
+// ===================================================================
+// TEXT TYPING SYSTEM
+// ===================================================================
+function typeText(speaker, text, callback, speakerColor) {
   const nameEl = document.getElementById('speaker-name');
   const textEl = document.getElementById('dialogue-text');
-
   nameEl.textContent = speaker;
-  nameEl.style.background = speakerColor;
+  nameEl.style.background = speakerColor || '#aa2222';
   textEl.innerHTML = '';
-  state.isTyping = true;
-  state.currentText = text;
-  state.textIndex = 0;
-  state.dialogueCallback = callback;
-
-  function typeNext() {
-    if (state.textIndex < text.length) {
-      // Handle HTML tags
-      if (text[state.textIndex] === '<') {
-        const closeIdx = text.indexOf('>', state.textIndex);
-        if (closeIdx !== -1) {
-          state.textIndex = closeIdx + 1;
-        }
-      }
-      textEl.innerHTML = text.substring(0, state.textIndex + 1);
-      state.textIndex++;
-      setTimeout(typeNext, 30);
-    } else {
-      state.isTyping = false;
-    }
-  }
+  S.isTyping = true;
+  S.currentText = text;
+  S.typingIdx = 0;
+  S.typingCb = callback;
   typeNext();
 }
-
+function typeNext() {
+  if (!S.isTyping) return;
+  if (S.typingIdx < S.currentText.length) {
+    if (S.currentText[S.typingIdx] === '<') {
+      const ci = S.currentText.indexOf('>', S.typingIdx);
+      if (ci !== -1) S.typingIdx = ci + 1;
+    }
+    document.getElementById('dialogue-text').innerHTML = S.currentText.substring(0, S.typingIdx + 1);
+    S.typingIdx++;
+    setTimeout(typeNext, 28);
+  } else {
+    S.isTyping = false;
+  }
+}
 function skipOrAdvance() {
-  if (state.isTyping) {
-    // Skip to end
-    const textEl = document.getElementById('dialogue-text');
-    textEl.innerHTML = state.currentText;
-    state.isTyping = false;
-    state.textIndex = state.currentText.length;
-  } else if (state.dialogueCallback) {
-    const cb = state.dialogueCallback;
-    state.dialogueCallback = null;
-    cb();
+  if (S.isTyping) {
+    document.getElementById('dialogue-text').innerHTML = S.currentText;
+    S.isTyping = false;
+    S.typingIdx = S.currentText.length;
+  } else if (S.typingCb) {
+    const cb = S.typingCb; S.typingCb = null; cb();
   }
 }
 
-// ============================================================
-// Shout Effects
-// ============================================================
-function showShout(text, color, callback) {
-  const overlay = document.getElementById('shout-overlay');
-  const textEl = document.getElementById('shout-text');
-  const flash = document.getElementById('flash-overlay');
-
-  // Flash
-  flash.style.display = 'block';
-  setTimeout(() => { flash.style.display = 'none'; }, 300);
-
-  textEl.textContent = text;
-  textEl.style.color = color;
-  overlay.style.display = 'flex';
-
-  // Remove and re-add for animation restart
-  textEl.style.animation = 'none';
-  void textEl.offsetHeight;
-  textEl.style.animation = 'shoutAnim 0.5s ease-out';
-
-  setTimeout(() => {
-    overlay.style.display = 'none';
-    if (callback) callback();
-  }, 1200);
+// ===================================================================
+// SHOUT / EFFECTS
+// ===================================================================
+function showShout(text, color, cb) {
+  const ov = document.getElementById('shout-overlay');
+  const el = document.getElementById('shout-text');
+  const fl = document.getElementById('flash-overlay');
+  fl.style.display = 'block';
+  setTimeout(() => fl.style.display = 'none', 300);
+  el.textContent = text; el.style.color = color;
+  ov.style.display = 'flex';
+  el.style.animation = 'none'; void el.offsetHeight; el.style.animation = 'shoutAnim .5s ease-out';
+  setTimeout(() => { ov.style.display = 'none'; if (cb) cb(); }, 1200);
 }
-
 function shakeScreen() {
-  const container = document.getElementById('courtroom');
-  container.classList.add('screen-shake');
-  clearTimeout(state.shakeTimeout);
-  state.shakeTimeout = setTimeout(() => {
-    container.classList.remove('screen-shake');
-  }, 400);
+  const c = document.getElementById('courtroom');
+  c.classList.add('screen-shake');
+  clearTimeout(S.shakeTO);
+  S.shakeTO = setTimeout(() => c.classList.remove('screen-shake'), 400);
 }
 
-// ============================================================
-// Character Display
-// ============================================================
-function showCharacter(type) {
-  const sprite = document.getElementById('character-sprite');
-  switch(type) {
-    case 'witness-normal':
-      sprite.textContent = '👩‍💼';
-      break;
-    case 'witness-nervous':
-      sprite.textContent = '😰';
-      break;
-    case 'witness-angry':
-      sprite.textContent = '😠';
-      break;
-    case 'witness-shocked':
-      sprite.textContent = '😱';
-      break;
-    case 'attorney':
-      sprite.textContent = '👨‍⚖️';
-      break;
-    case 'prosecutor':
-      sprite.textContent = '👨‍💼';
-      break;
-    case 'judge':
-      sprite.textContent = '👴';
-      break;
-    default:
-      sprite.textContent = '';
+// ===================================================================
+// PENALTY
+// ===================================================================
+function applyPenalty(amount) {
+  S.penaltyHP = Math.max(0, S.penaltyHP - amount);
+  const fill = document.getElementById('penalty-fill');
+  fill.style.width = S.penaltyHP + '%';
+  if (S.penaltyHP > 60) fill.style.background = 'linear-gradient(90deg,#44cc44,#88ee44)';
+  else if (S.penaltyHP > 30) fill.style.background = 'linear-gradient(90deg,#ccaa44,#eecc44)';
+  else fill.style.background = 'linear-gradient(90deg,#cc4444,#ee6644)';
+}
+
+// ===================================================================
+// EVIDENCE PANEL
+// ===================================================================
+function openEvidenceToPresent() {
+  S.isPresentMode = true;
+  S.selectedEv = null;
+  renderEvidencePanel();
+  document.getElementById('btn-submit-evidence').style.display = 'none';
+  document.getElementById('evidence-panel').style.display = 'flex';
+}
+function renderEvidencePanel() {
+  const list = document.getElementById('evidence-list');
+  list.innerHTML = unlockedEvidence.map(id => {
+    const ev = EVIDENCE_DB[id];
+    const isNew = ev.isNew ? ' new-badge' : '';
+    return `<div class="evidence-card${isNew}" id="ev-${id}" onclick="selectEvidence(${id})">
+      <span class="evidence-icon">${ev.icon}</span>
+      <h4>${ev.name}</h4><p>${ev.desc}</p></div>`;
+  }).join('');
+  document.getElementById('evidence-detail').innerHTML = '<h3>証拠品を選択してください</h3><p>突きつけたい証拠品をクリックしてください。</p>';
+}
+function selectEvidence(id) {
+  S.selectedEv = id;
+  const ev = EVIDENCE_DB[id];
+  document.querySelectorAll('.evidence-card').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById('ev-'+id);
+  if (card) card.classList.add('selected');
+  document.getElementById('evidence-detail').innerHTML = `<h3>${ev.icon} ${ev.name}</h3><p>${ev.detail}</p>`;
+  if (S.isPresentMode) document.getElementById('btn-submit-evidence').style.display = 'inline-block';
+}
+function closeEvidence() {
+  document.getElementById('evidence-panel').style.display = 'none';
+  S.isPresentMode = false;
+}
+function submitEvidence() {
+  if (S.selectedEv === null) return;
+  closeEvidence();
+  const round = ROUNDS[ROUNDS.findIndex((r,i) => getCurrentRoundIndexInAll() === i)];
+  const stmt = round.statements[S.stmtIdx];
+  if (stmt.contradiction && stmt.correctEv === S.selectedEv) {
+    correctPresentation(round, stmt);
+  } else {
+    wrongPresentation();
   }
 }
 
-// ============================================================
-// Game Flow
-// ============================================================
+// helper
+function getCurrentRoundIndexInAll() {
+  const scene = SCENE_SEQUENCE[scenePos];
+  if (scene[0] === 'round') return scene[1];
+  return -1;
+}
+function getCurrentRound() {
+  const scene = SCENE_SEQUENCE[scenePos];
+  if (scene[0] === 'round') return ROUNDS[scene[1]];
+  return null;
+}
+
+// ===================================================================
+// GAME FLOW
+// ===================================================================
 function startGame() {
+  initAudio();
   document.getElementById('title-screen').style.display = 'none';
   document.getElementById('courtroom').style.display = 'block';
-  state.phase = 'testimony';
+  playBGM('calm');
+  scenePos = 0;
+  startScene();
+}
 
-  showCharacter('judge');
-  typeText('裁判長', 'それでは、証人・佐藤花子の証言を開始します。弁護人は証言に矛盾があれば、証拠を突きつけてください。', () => {
-    showCharacter('witness-normal');
-    typeText('佐藤花子', 'はい、証言いたします。', () => {
-      showStatement(0);
+function startScene() {
+  const scene = SCENE_SEQUENCE[scenePos];
+  if (scene[0] === 'round') startRound(scene[1]);
+  else startPhotoScene(scene[1]);
+}
+
+function startRound(roundIdx) {
+  const round = ROUNDS[roundIdx];
+  S.stmtIdx = 0;
+  S.prevStmts = [];
+  S.foundInRound = false;
+  document.getElementById('round-indicator').textContent = round.roundName;
+  drawCharacter('judge', 'normal');
+  typeText('裁判長', `${round.roundName}を開始します。${round.intro}`, () => {
+    drawCharacter(round.charKey, 'normal');
+    typeText(round.witness, 'はい、証言いたします。', () => {
+      showStatement();
     }, '#884422');
   }, '#444488');
 }
 
-function showStatement(index) {
-  if (index >= WITNESS_STATEMENTS.length) {
-    // All statements heard
-    endTestimony();
-    return;
-  }
+function showStatement() {
+  const round = getCurrentRound();
+  if (!round) return;
+  const stmts = round.statements;
+  if (S.stmtIdx >= stmts.length) { endRound(); return; }
 
-  state.currentStatement = index;
-  state.isPressing = false;
-  const stmt = WITNESS_STATEMENTS[index];
-
-  document.getElementById('statement-counter').textContent =
-    `証言 ${index + 1} / ${WITNESS_STATEMENTS.length}　|　矛盾発見: ${state.foundContradictions} / ${TOTAL_CONTRADICTIONS}`;
-
-  showCharacter('witness-normal');
-  typeText(stmt.speaker, stmt.text, () => {
-    showStatementActions();
+  const stmt = stmts[S.stmtIdx];
+  updateCounter();
+  drawCharacter(round.charKey, 'normal');
+  typeText(round.witness, stmt.text, () => {
+    showStatementButtons();
   }, '#884422');
 }
 
-function showStatementActions() {
-  const btns = document.getElementById('action-buttons');
-  const stmt = WITNESS_STATEMENTS[state.currentStatement];
-  const alreadyRevealed = state.revealedContradictions.has(state.currentStatement);
+function updateCounter() {
+  const round = getCurrentRound();
+  if (!round) return;
+  const total = round.statements.filter(s => s.contradiction).length;
+  document.getElementById('statement-counter').textContent =
+    `証言 ${S.stmtIdx+1}/${round.statements.length} | 矛盾: ${S.foundInRound?'1':'0'}/1`;
+}
 
+function showStatementButtons() {
+  const round = getCurrentRound();
+  const stmt = round.statements[S.stmtIdx];
+  const btns = document.getElementById('action-buttons');
+  const canBack = S.stmtIdx > 0;
+  const contradictionDone = S.foundInRound;
   let html = '';
+  if (canBack) html += `<button class="btn-back" onclick="goBack()">◀ 戻る</button>`;
   html += `<button class="btn-next" onclick="nextStatement()">次へ ▶</button>`;
   html += `<button class="btn-press" onclick="pressWitness()">ゆさぶる</button>`;
-  if (!alreadyRevealed) {
+  if (stmt.contradiction && !contradictionDone)
     html += `<button class="btn-present" onclick="openEvidenceToPresent()">証拠を突きつける</button>`;
-  } else {
-    html += `<button class="btn-present" style="opacity:0.3;cursor:default;" disabled>矛盾解明済み ✓</button>`;
-  }
+  else if (contradictionDone)
+    html += `<button class="btn-present" style="opacity:.35;cursor:default;" disabled>矛盾解明済み ✓</button>`;
   btns.innerHTML = html;
+}
+
+function goBack() {
+  if (S.stmtIdx <= 0) return;
+  S.stmtIdx--;
+  document.getElementById('action-buttons').innerHTML = '';
+  showStatement();
 }
 
 function nextStatement() {
   document.getElementById('action-buttons').innerHTML = '';
-  showStatement(state.currentStatement + 1);
+  S.stmtIdx++;
+  showStatement();
 }
 
 function pressWitness() {
-  const stmt = WITNESS_STATEMENTS[state.currentStatement];
+  const round = getCurrentRound();
+  const stmt = round.statements[S.stmtIdx];
+  if (!stmt.pressText) { showStatementButtons(); return; }
   document.getElementById('action-buttons').innerHTML = '';
-
+  playBGM('tense');
   showShout('ゆさぶる！', '#ffcc00', () => {
-    showCharacter('witness-nervous');
-    typeText(stmt.speaker, stmt.pressText, () => {
-      showStatementActions();
+    drawCharacter(round.charKey, 'nervous');
+    typeText(round.witness, stmt.pressText, () => {
+      playBGM('calm');
+      showStatementButtons();
     }, '#884422');
   });
 }
 
-// ============================================================
-// Evidence Presentation
-// ============================================================
-function openEvidenceToPresent() {
-  state.selectedEvidence = null;
-  const panel = document.getElementById('evidence-panel');
-  const list = document.getElementById('evidence-list');
-  const submitBtn = document.getElementById('btn-submit-evidence');
-
-  let html = '';
-  for (const ev of EVIDENCE) {
-    html += `<div class="evidence-card" id="ev-card-${ev.id}" onclick="selectEvidence(${ev.id})">`;
-    html += `<span class="evidence-icon">${ev.icon}</span>`;
-    html += `<h4>${ev.name}</h4>`;
-    html += `<p>${ev.desc}</p>`;
-    html += `</div>`;
-  }
-  list.innerHTML = html;
-
-  document.getElementById('evidence-detail').innerHTML = '<h3>証拠品を選択してください</h3><p>突きつけたい証拠品をクリックしてください。</p>';
-  submitBtn.style.display = 'none';
-  panel.style.display = 'flex';
-}
-
-function selectEvidence(id) {
-  state.selectedEvidence = id;
-  const ev = EVIDENCE[id];
-
-  // Highlight selected
-  document.querySelectorAll('.evidence-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById(`ev-card-${id}`).classList.add('selected');
-
-  // Show detail
-  document.getElementById('evidence-detail').innerHTML =
-    `<h3>${ev.icon} ${ev.name}</h3><p>${ev.detail}</p>`;
-
-  document.getElementById('btn-submit-evidence').style.display = 'inline-block';
-}
-
-function closeEvidence() {
-  document.getElementById('evidence-panel').style.display = 'none';
-}
-
-function submitEvidence() {
-  if (state.selectedEvidence === null) return;
-  closeEvidence();
-
-  const stmt = WITNESS_STATEMENTS[state.currentStatement];
-  const ev = EVIDENCE[state.selectedEvidence];
-
-  if (stmt.correctEvidence === state.selectedEvidence) {
-    // Correct!
-    correctPresentation(stmt, ev);
-  } else {
-    // Wrong!
-    wrongPresentation(ev);
-  }
-}
-
-function correctPresentation(stmt, ev) {
+function correctPresentation(round, stmt) {
+  playBGM('tense');
   showShout('異議あり！', '#ff4444', () => {
     shakeScreen();
-    showCharacter('attorney');
+    drawCharacter('attorney', 'confident');
     typeText('弁護人', stmt.revealText, () => {
-      showCharacter('witness-shocked');
-      state.foundContradictions++;
-      state.revealedContradictions.add(state.currentStatement);
-
-      document.getElementById('statement-counter').textContent =
-        `証言 ${state.currentStatement + 1} / ${WITNESS_STATEMENTS.length}　|　矛盾発見: ${state.foundContradictions} / ${TOTAL_CONTRADICTIONS}`;
-
+      drawCharacter(round.charKey, 'shocked');
+      S.foundInRound = true;
+      S.totalFound++;
+      updateCounter();
       setTimeout(() => {
-        typeText('佐藤花子', 'そ…それは……！', () => {
-          // Check if all contradictions found
-          if (state.foundContradictions >= TOTAL_CONTRADICTIONS) {
-            allContradictionsFound();
-          } else {
-            showCharacter('witness-nervous');
-            typeText('裁判長', '証人、この点について説明を求めます。証言を続けなさい。', () => {
-              showStatement(state.currentStatement + 1);
-            }, '#444488');
-          }
+        typeText(round.witness, 'そ…それは……！', () => {
+          showShout('異議あり！', '#4488ff', () => {
+            drawCharacter('prosecutor', 'angry');
+            typeText('検察官', 'く…弁護人め。しかし、これだけでは証拠不十分だ！', () => {
+              drawCharacter('judge', 'normal');
+              typeText('裁判長', '証人、この点について説明を求めます。証言を続けなさい。', () => {
+                playBGM('calm');
+                S.stmtIdx++;
+                showStatement();
+              }, '#444488');
+            }, '#4444aa');
+          });
         }, '#884422');
       }, 800);
     }, '#2244aa');
   });
 }
 
-function wrongPresentation(ev) {
+function wrongPresentation() {
+  const ev = EVIDENCE_DB[S.selectedEv];
   showShout('異議あり！', '#ff4444', () => {
-    showCharacter('attorney');
-    typeText('弁護人', `この「${ev.name}」を見てください！ここに矛盾が…`, () => {
+    drawCharacter('attorney', 'normal');
+    typeText('弁護人', `この「${ev.name}」を見てください！`, () => {
       setTimeout(() => {
         showShout('異議あり！', '#4488ff', () => {
-          showCharacter('prosecutor');
-          typeText('検察官', 'それは的外れな指摘だ。弁護人には証拠の意味を理解する能力がないようだな。', () => {
+          drawCharacter('prosecutor', 'confident');
+          typeText('検察官', '的外れな指摘だ。もっとよく証拠を調べたまえ。', () => {
             shakeScreen();
-            // Penalty
-            state.penaltyHP -= 20;
-            document.getElementById('penalty-fill').style.width = state.penaltyHP + '%';
-
-            if (state.penaltyHP > 60) {
-              document.getElementById('penalty-fill').style.background = 'linear-gradient(90deg, #44cc44, #88ee44)';
-            } else if (state.penaltyHP > 30) {
-              document.getElementById('penalty-fill').style.background = 'linear-gradient(90deg, #ccaa44, #eecc44)';
-            } else {
-              document.getElementById('penalty-fill').style.background = 'linear-gradient(90deg, #cc4444, #ee6644)';
-            }
-
-            showCharacter('judge');
-            typeText('裁判長', `弁護人にペナルティを科します。無関係な証拠の提示は慎んでください。`, () => {
-              if (state.penaltyHP <= 0) {
-                gameOver();
-              } else {
-                showStatement(state.currentStatement);
-              }
+            applyPenalty(20);
+            drawCharacter('judge', 'angry');
+            typeText('裁判長', 'ペナルティを科します。関係のない証拠の提示は慎みなさい。', () => {
+              if (S.penaltyHP <= 0) { gameOver(); return; }
+              showStatement();
             }, '#444488');
           }, '#4444aa');
         });
@@ -832,20 +1271,139 @@ function wrongPresentation(ev) {
   });
 }
 
-// ============================================================
-// End Conditions
-// ============================================================
-function allContradictionsFound() {
-  showCharacter('witness-shocked');
-  typeText('佐藤花子', 'うぅ…もう…隠し通せない……', () => {
+function endRound() {
+  const round = getCurrentRound();
+  if (!S.foundInRound) {
+    // Missed contradiction - offer to retry
+    drawCharacter('judge', 'normal');
+    typeText('裁判長', '証言は以上です。弁護人、もう一度最初から聞きますか？', () => {
+      const btns = document.getElementById('action-buttons');
+      btns.innerHTML = `<button class="btn-next" onclick="retryRound()">最初から聞く</button>`;
+    }, '#444488');
+    return;
+  }
+  // Round complete - advance to next scene
+  drawCharacter('judge', 'normal');
+  typeText('裁判長', 'この証言の矛盾は明らかになりました。次の段階に進みます。', () => {
+    advanceScene();
+  }, '#444488');
+}
+
+function retryRound() {
+  document.getElementById('action-buttons').innerHTML = '';
+  S.stmtIdx = 0;
+  S.prevStmts = [];
+  showStatement();
+}
+
+function advanceScene() {
+  scenePos++;
+  if (scenePos >= SCENE_SEQUENCE.length) {
+    // All scenes done - final showdown
+    finalShowdown();
+    return;
+  }
+  startScene();
+}
+
+// ===================================================================
+// PHOTO INVESTIGATION
+// ===================================================================
+function startPhotoScene(photoIdx) {
+  const scene = PHOTO_SCENES[photoIdx];
+  document.getElementById('photo-title').textContent = scene.title;
+  document.getElementById('photo-hint').style.opacity = '0';
+  document.getElementById('photo-screen').style.display = 'flex';
+  drawPhotoScene(photoIdx);
+
+  // First show intro in courtroom dialog, then switch to photo screen
+  document.getElementById('photo-screen').style.display = 'none';
+  drawCharacter('judge', 'normal');
+  typeText('裁判長', scene.intro, () => {
+    document.getElementById('courtroom').style.display = 'block';
+    document.getElementById('photo-screen').style.display = 'flex';
+    drawPhotoScene(photoIdx);
+    setupPhotoHotspots(photoIdx);
+  }, '#444488');
+}
+
+function setupPhotoHotspots(photoIdx) {
+  const wrap = document.getElementById('photo-canvas-wrap');
+  wrap._photoIdx = photoIdx;
+  wrap.onclick = (e) => onPhotoClick(e, photoIdx);
+}
+
+function onPhotoClick(e, photoIdx) {
+  const canvas = document.getElementById('photo-canvas');
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = 800 / rect.width;
+  const scaleY = 500 / rect.height;
+  const cx = (e.clientX - rect.left) * scaleX;
+  const cy = (e.clientY - rect.top) * scaleY;
+
+  const scene = PHOTO_SCENES[photoIdx];
+  let hit = null;
+  for (const hs of scene.hotspots) {
+    if (cx >= hs.x && cx <= hs.x+hs.w && cy >= hs.y && cy <= hs.y+hs.h) {
+      hit = hs; break;
+    }
+  }
+
+  if (!hit) {
+    showPhotoHint('そこには矛盾はないようです…もっとよく見てください。');
+    return;
+  }
+
+  if (hit.correct) {
+    // Correct! 
+    document.getElementById('photo-canvas-wrap').onclick = null;
+    document.getElementById('photo-screen').style.display = 'none';
+
+    // Add new evidence
+    if (!unlockedEvidence.includes(scene.addEvidenceId)) {
+      unlockedEvidence.push(scene.addEvidenceId);
+      unlockedEvidence.sort((a,b) => a-b);
+    }
+
+    showShout('異議あり！', '#ff4444', () => {
+      shakeScreen();
+      drawCharacter('attorney', 'confident');
+      typeText('弁護人', scene.revealText, () => {
+        drawCharacter('judge', 'normal');
+        typeText('裁判長', '新たな証拠が確認されました。審議を続けます。', () => {
+          advanceScene();
+        }, '#444488');
+      }, '#2244aa');
+    });
+  } else {
+    showPhotoHint(scene.wrongMsg);
+    applyPenalty(10);
+    if (S.penaltyHP <= 0) { document.getElementById('photo-screen').style.display='none'; gameOver(); }
+  }
+}
+
+function showPhotoHint(msg) {
+  const hint = document.getElementById('photo-hint');
+  hint.textContent = msg; hint.style.opacity = '1';
+  setTimeout(() => hint.style.opacity = '0', 2500);
+}
+
+// ===================================================================
+// FINAL SHOWDOWN & ENDING
+// ===================================================================
+function finalShowdown() {
+  drawCharacter('sato', 'nervous');
+  typeText('佐藤花子', 'うぅ…もう…隠し通せない……全部、分かってしまったのね……', () => {
     shakeScreen();
     setTimeout(() => {
-      showCharacter('witness-angry');
-      typeText('佐藤花子', '…そうよ！私がやったのよ！あの男は不正を暴こうとした…私の全てを奪おうとしたのよ！だから…だから私は……！', () => {
+      drawCharacter('sato', 'angry');
+      typeText('佐藤花子', 'そうよ！私がやったのよ！あの男は不正を暴くつもりだった…私の全てを奪おうとしたの！だから…だから私は……！！', () => {
+        drawCharacter('sato', 'shocked');
         setTimeout(() => {
-          showCharacter('judge');
-          typeText('裁判長', '…証人の自白により、事件の真相が明らかになりました。', () => {
-            typeText('裁判長', '被告人・鈴木一郎に対し、<span class="highlight">無罪</span>を言い渡します！', () => {
+          drawCharacter('judge', 'normal');
+          typeText('裁判長', '……証人の自白により、事件の真相が明らかになりました。', () => {
+            typeText('裁判長', '被告人・鈴木一郎に対し、<span class="highlight">無罪</span>を言い渡します！弁護人の見事な弁護に敬意を表します！', () => {
+              playFanfare(true);
               setTimeout(() => showResult(true), 1000);
             }, '#444488');
           }, '#444488');
@@ -855,101 +1413,46 @@ function allContradictionsFound() {
   }, '#884422');
 }
 
-function endTestimony() {
-  if (state.foundContradictions >= TOTAL_CONTRADICTIONS) {
-    allContradictionsFound();
-  } else {
-    showCharacter('judge');
-    typeText('裁判長', '証言は以上です。弁護人、もう一度証言を聞きますか？', () => {
-      const btns = document.getElementById('action-buttons');
-      btns.innerHTML = `
-        <button class="btn-next" onclick="restartTestimony()">もう一度聞く</button>
-        <button class="btn-press" onclick="openEvidenceList()">証拠品を確認</button>
-      `;
-    }, '#444488');
-  }
-}
-
-function restartTestimony() {
-  document.getElementById('action-buttons').innerHTML = '';
-  showStatement(0);
-}
-
-function openEvidenceList() {
-  state.selectedEvidence = null;
-  const panel = document.getElementById('evidence-panel');
-  const list = document.getElementById('evidence-list');
-
-  let html = '';
-  for (const ev of EVIDENCE) {
-    html += `<div class="evidence-card" id="ev-card-${ev.id}" onclick="selectEvidenceView(${ev.id})">`;
-    html += `<span class="evidence-icon">${ev.icon}</span>`;
-    html += `<h4>${ev.name}</h4>`;
-    html += `<p>${ev.desc}</p>`;
-    html += `</div>`;
-  }
-  list.innerHTML = html;
-
-  document.getElementById('evidence-detail').innerHTML = '<h3>証拠品を選択してください</h3><p>証拠品をクリックすると詳細が表示されます。</p>';
-  document.getElementById('btn-submit-evidence').style.display = 'none';
-  panel.style.display = 'flex';
-}
-
-function selectEvidenceView(id) {
-  const ev = EVIDENCE[id];
-  document.querySelectorAll('.evidence-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById(`ev-card-${id}`).classList.add('selected');
-  document.getElementById('evidence-detail').innerHTML =
-    `<h3>${ev.icon} ${ev.name}</h3><p>${ev.detail}</p>`;
-}
-
 function gameOver() {
-  showResult(false);
+  playFanfare(false);
+  setTimeout(() => showResult(false), 500);
 }
 
 function showResult(victory) {
   const screen = document.getElementById('result-screen');
   const title = document.getElementById('result-title');
   const msg = document.getElementById('result-message');
-
   screen.className = victory ? 'victory' : 'defeat';
-
   if (victory) {
-    title.textContent = '無罪';
-    title.style.color = '#44ff44';
-    title.style.textShadow = '0 0 30px rgba(50,255,50,0.6)';
-    msg.textContent = `全ての矛盾を暴き、真犯人を追い詰めた！被告人・鈴木一郎は無罪となった。`;
+    title.textContent = '無罪'; title.style.color = '#44ff44';
+    title.style.textShadow = '0 0 30px rgba(50,255,50,.6)';
+    msg.textContent = '全ての矛盾を暴き、真犯人を追い詰めた！佐藤花子の自白により被告人・鈴木一郎は無罪となった。真の正義が実現された。';
   } else {
-    title.textContent = '有罪';
-    title.style.color = '#ff4444';
-    title.style.textShadow = '0 0 30px rgba(255,50,50,0.6)';
-    msg.textContent = `ペナルティが限界に達した…弁護は失敗に終わった。`;
+    title.textContent = '有罪'; title.style.color = '#ff4444';
+    title.style.textShadow = '0 0 30px rgba(255,50,50,.6)';
+    msg.textContent = 'ペナルティが限界に達した…弁護は失敗に終わった。真犯人は逃げ延び、無実の被告人が有罪とされてしまった。';
   }
-
   screen.style.display = 'flex';
+  stopBGM();
 }
 
-// ============================================================
-// Click to advance text
-// ============================================================
+// ===================================================================
+// EVENT HANDLERS
+// ===================================================================
 document.addEventListener('click', (e) => {
-  // Don't advance if clicking buttons or evidence panel
   if (e.target.closest('button') || e.target.closest('#evidence-panel') ||
-      e.target.closest('#evidence-actions') || e.target.closest('#title-screen') ||
-      e.target.closest('#result-screen')) return;
-
-  if (state.phase === 'title') return;
+      e.target.closest('#title-screen') || e.target.closest('#result-screen') ||
+      e.target.closest('#photo-canvas-wrap')) return;
+  if (S.phase === 'title') return;
   skipOrAdvance();
 });
 
-// Keyboard
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    skipOrAdvance();
-  }
-  if (e.key === 'Escape') {
-    closeEvidence();
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); skipOrAdvance(); }
+  if (e.key === 'Escape') closeEvidence();
+  if (e.key === 'b' || e.key === 'B') {
+    if (document.getElementById('evidence-panel').style.display === 'flex') { closeEvidence(); return; }
+    if (S.stmtIdx > 0 && getCurrentRound()) goBack();
   }
 });
 </script>

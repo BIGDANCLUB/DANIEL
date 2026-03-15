@@ -1124,6 +1124,7 @@ function getCurrentRound() {
 // ===================================================================
 function startGame() {
   initAudio();
+  S.phase = 'court';
   document.getElementById('title-screen').style.display = 'none';
   document.getElementById('courtroom').style.display = 'block';
   playBGM('calm');

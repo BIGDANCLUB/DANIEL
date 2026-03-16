@@ -1,0 +1,124 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import {
+  TECH_FIELDS,
+  getInvestmentData,
+  getFieldSummary,
+} from "@/lib/mock-data";
+import InvestmentChart from "@/components/InvestmentChart";
+import Link from "next/link";
+
+export default function DashboardPage() {
+  const [fieldIds, setFieldIds] = useState<string[]>([]);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Load selected fields
+    const stored = localStorage.getItem("selectedFields");
+    if (stored) {
+      setFieldIds(JSON.parse(stored));
+    } else {
+      // Default to a few popular fields if none selected
+      setFieldIds(["ai", "quantum", "biotech"]);
+    }
+
+    // Get user info
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setUserEmail(data.user?.email ?? null);
+    });
+  }, []);
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  }
+
+  const chartData = getInvestmentData(fieldIds);
+
+  return (
+    <div className="min-h-screen px-4 py-8">
+      {/* Header */}
+      <div className="mx-auto mb-8 flex max-w-6xl items-center justify-between">
+        <h1 className="text-2xl font-bold text-white">
+          Investment Dashboard
+        </h1>
+        <div className="flex items-center gap-4">
+          {userEmail && (
+            <span className="text-sm text-gray-400">{userEmail}</span>
+          )}
+          <Link
+            href="/fields"
+            className="rounded-lg border border-gray-600 px-4 py-2 text-sm text-gray-300 transition hover:border-gray-400"
+          >
+            分野を変更
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="rounded-lg border border-gray-600 px-4 py-2 text-sm text-gray-300 transition hover:border-red-400 hover:text-red-400"
+          >
+            ログアウト
+          </button>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-6xl space-y-8">
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {fieldIds.map((id) => {
+            const field = TECH_FIELDS.find((f) => f.id === id);
+            const summary = getFieldSummary(id);
+            const isPositive = summary.change >= 0;
+            return (
+              <div
+                key={id}
+                className="rounded-xl border border-gray-800 bg-gray-900 p-5"
+              >
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="text-xl">{field?.icon}</span>
+                  <span className="text-sm font-medium text-gray-300">
+                    {field?.label}
+                  </span>
+                </div>
+                <p className="text-2xl font-bold text-white">
+                  ${summary.latest}B
+                </p>
+                <p
+                  className={`mt-1 text-sm font-medium ${
+                    isPositive ? "text-green-400" : "text-red-400"
+                  }`}
+                >
+                  {isPositive ? "+" : ""}
+                  {summary.change.toFixed(1)}% vs 前四半期
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Chart */}
+        <div className="rounded-xl border border-gray-800 bg-gray-900 p-6">
+          <h2 className="mb-4 text-lg font-semibold text-white">
+            VC投資トレンド（四半期別）
+          </h2>
+          {fieldIds.length > 0 ? (
+            <InvestmentChart data={chartData} fieldIds={fieldIds} />
+          ) : (
+            <p className="py-12 text-center text-gray-500">
+              分野を選択してください
+            </p>
+          )}
+          <p className="mt-4 text-right text-xs text-gray-600">
+            * 現在は仮データを表示中。APIエンドポイント接続後にリアルデータに切り替わります。
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -14,30 +14,53 @@ import Link from "next/link";
 export default function DashboardPage() {
   const [fieldIds, setFieldIds] = useState<string[]>([]);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    // Load selected fields
-    const stored = localStorage.getItem("selectedFields");
-    if (stored) {
-      setFieldIds(JSON.parse(stored));
-    } else {
-      // Default to a few popular fields if none selected
-      setFieldIds(["ai", "quantum", "biotech"]);
-    }
+    async function load() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
 
-    // Get user info
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      setUserEmail(data.user?.email ?? null);
-    });
-  }, []);
+      if (!user) {
+        router.push("/auth/login");
+        return;
+      }
+
+      setUserEmail(user.email ?? null);
+
+      // Load selected fields from Supabase
+      const { data } = await supabase
+        .from("user_fields")
+        .select("field_id")
+        .eq("user_id", user.id);
+
+      if (data && data.length > 0) {
+        setFieldIds(data.map((r) => r.field_id));
+      } else {
+        // No fields selected yet — redirect to selection
+        router.push("/fields");
+        return;
+      }
+
+      setLoading(false);
+    }
+    load();
+  }, [router]);
 
   async function handleLogout() {
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/");
     router.refresh();
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-gray-400">読み込み中...</p>
+      </div>
+    );
   }
 
   const chartData = getInvestmentData(fieldIds);

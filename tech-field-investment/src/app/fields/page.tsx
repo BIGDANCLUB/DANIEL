@@ -1,12 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { TECH_FIELDS } from "@/lib/mock-data";
 
 export default function FieldSelectionPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const router = useRouter();
+
+  // Load existing selections from Supabase
+  useEffect(() => {
+    async function load() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data } = await supabase
+        .from("user_fields")
+        .select("field_id")
+        .eq("user_id", user.id);
+
+      if (data && data.length > 0) {
+        setSelected(new Set(data.map((r) => r.field_id)));
+      }
+      setLoading(false);
+    }
+    load();
+  }, []);
 
   function toggle(id: string) {
     setSelected((prev) => {
@@ -20,15 +46,33 @@ export default function FieldSelectionPage() {
     });
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (selected.size === 0) return;
-    // Store selections in localStorage for MVP
-    // In production, save to Supabase user_fields table
-    localStorage.setItem(
-      "selectedFields",
-      JSON.stringify(Array.from(selected))
-    );
+    setSaving(true);
+
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      // Delete existing selections, then insert new ones
+      await supabase.from("user_fields").delete().eq("user_id", user.id);
+      await supabase.from("user_fields").insert(
+        Array.from(selected).map((field_id) => ({
+          user_id: user.id,
+          field_id,
+        }))
+      );
+    }
+
     router.push("/dashboard");
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-gray-400">読み込み中...</p>
+      </div>
+    );
   }
 
   return (
@@ -70,10 +114,10 @@ export default function FieldSelectionPage() {
           </p>
           <button
             onClick={handleSubmit}
-            disabled={selected.size === 0}
+            disabled={selected.size === 0 || saving}
             className="rounded-lg bg-blue-600 px-8 py-3 font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            ダッシュボードへ
+            {saving ? "保存中..." : "ダッシュボードへ"}
           </button>
         </div>
       </div>

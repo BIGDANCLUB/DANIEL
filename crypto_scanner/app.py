@@ -140,7 +140,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("**Sort By**")
-    sort_col = st.selectbox("Sort Column", ["Score", "Vol Ratio", "24h %", "Price"], index=0)
+    sort_col = st.selectbox("Sort Column", ["Score", "Vol Ratio", "24h %", "Price", "Break Strength"], index=0)
     sort_asc = st.checkbox("Ascending", value=False)
 
     st.markdown("---")
@@ -288,9 +288,30 @@ else:
             return "background-color: rgba(255,82,82,0.15); color: #ff5252; font-weight: bold"
         return ""
 
+    def color_pattern(val):
+        pattern_colors = {
+            "Ascending Triangle": "color: #00e676",
+            "Falling Wedge": "color: #00e676",
+            "Rising Channel": "color: #66BB6A",
+            "Symmetrical Triangle": "color: #FFC107",
+            "Descending Triangle": "color: #ff5252",
+            "Rising Wedge": "color: #ff5252",
+            "Falling Channel": "color: #EF5350",
+        }
+        return pattern_colors.get(val, "")
+
+    def color_bool(val):
+        if val is True:
+            return "color: #00e676; font-weight: bold"
+        elif val is False:
+            return "color: #616161"
+        return ""
+
     styled = df_results.style.applymap(color_score, subset=["Score"])
     styled = styled.applymap(color_change, subset=["24h %", "Vol Ratio"])
     styled = styled.applymap(highlight_break, subset=["Trendline Break"])
+    styled = styled.applymap(color_pattern, subset=["Pattern"])
+    styled = styled.applymap(color_bool, subset=["Vol Confirm", "Social"])
     styled = styled.format({
         "Price": "${:,.4f}",
         "24h %": "{:+.2f}%",
@@ -597,13 +618,29 @@ else:
                 bt = sel_result.trendline_break.get("breakout_type") or "None"
                 st.metric("Breakout", bt.capitalize())
 
+            # Phase 2 extra details
+            scol5, scol6, scol7, scol8 = st.columns(4)
+            with scol5:
+                pattern = sel_result.trendline_break.get("pattern_label", "—")
+                st.metric("Pattern", pattern)
+            with scol6:
+                vc = "Yes" if sel_result.trendline_break.get("volume_confirmed") else "No"
+                st.metric("Vol Confirmed", vc)
+            with scol7:
+                cb = sel_result.trendline_break.get("confirmation_bars", 0)
+                st.metric("Confirm Bars", cb)
+            with scol8:
+                mtf = "Yes" if sel_result.trendline_break.get("multi_tf_confirmed") else "No"
+                st.metric("Multi-TF", mtf)
+
 
 # ──────────────────────────────────────────────
 # Footer
 # ──────────────────────────────────────────────
 st.markdown("---")
 st.caption(
-    "Crypto Trendline Break Scanner v1.1 — 100% Free APIs "
+    "Crypto Trendline Break Scanner v2.0 — Phase 2 | 100% Free APIs "
+    "| RANSAC trendlines + Multi-TF + Pattern detection + Social filter "
     "| CCXT + Binance FAPI + DexScreener + CryptoPanic | "
     "Not financial advice. DYOR."
 )

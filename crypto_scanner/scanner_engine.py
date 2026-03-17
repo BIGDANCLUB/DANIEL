@@ -1,4 +1,10 @@
-"""Core scanner engine: orchestrates fetching, analysis, and scoring."""
+"""
+Core scanner engine — Phase 2
+================================
+- Multi-timeframe trendline confirmation (1H + 4H)
+- CryptoPanic social filter integrated into scoring
+- Pattern classification in results
+"""
 
 import asyncio
 import logging
@@ -14,8 +20,10 @@ from technical_analysis import (
     is_above_ema,
     detect_volume_spike,
     detect_trendline_break,
+    confirm_trendline_multi_tf,
     compute_scan_score,
     compute_ema,
+    PATTERN_LABELS,
 )
 
 logger = logging.getLogger(__name__)
@@ -54,6 +62,9 @@ class ScanResult:
 
     def to_dict(self) -> dict:
         breakout = self.trendline_break.get("breakout_type") or "—"
+        pattern = self.trendline_break.get("pattern_label", "—")
+        vol_conf = self.trendline_break.get("volume_confirmed", False)
+        conf_bars = self.trendline_break.get("confirmation_bars", 0)
         return {
             "Symbol": self.symbol,
             "Source": self.source,
@@ -63,15 +74,18 @@ class ScanResult:
             "Vol Ratio": self.volume_ratio,
             "Above 200EMA": self.above_ema,
             "Trendline Break": breakout,
+            "Pattern": pattern,
+            "Vol Confirm": vol_conf,
+            "Conf Bars": conf_bars,
             "Break Strength": self.trendline_break.get("break_strength", 0),
-            "Social Boost": self.social_boost,
+            "Social": self.social_boost,
             "Score": self.score,
             "Scan Time": self.scan_time.strftime("%H:%M:%S"),
         }
 
 
 class ScannerEngine:
-    """Main scanner: fetches data, applies filters, returns scored results."""
+    """Main scanner — Phase 2."""
 
     def __init__(self):
         self.cex = CEXFetcher()
@@ -102,13 +116,13 @@ class ScannerEngine:
         return results
 
     async def _analyze_cex_symbol(self, symbol: str) -> Optional[ScanResult]:
-        """Analyze a single CEX symbol."""
-        # Fetch 1H OHLCV for volume spike + trendline
+        """Analyze a single CEX symbol with Phase 2 enhancements."""
+        # Fetch 1H OHLCV
         df_1h = await self.cex.fetch_ohlcv(symbol, timeframe="1h", limit=250)
         if df_1h.empty or len(df_1h) < 30:
             return None
 
-        # Fetch 4H OHLCV for 200 EMA check
+        # Fetch 4H OHLCV
         df_4h = await self.cex.fetch_ohlcv(symbol, timeframe="4h", limit=250)
 
         # Volume spike (1H)
@@ -119,11 +133,29 @@ class ScannerEngine:
         if df_4h is not None and len(df_4h) >= 200:
             ema_ok = is_above_ema(df_4h, period=200)
 
-        # Trendline break detection on 1H
-        tl_result = detect_trendline_break(df_1h)
+        # Multi-timeframe trendline break (Phase 2)
+        if df_4h is not None and len(df_4h) >= 30:
+            multi_tf = confirm_trendline_multi_tf(df_1h, df_4h)
+            tl_result = multi_tf["1h"]  # primary result from 1H
+            # Boost break_strength if 4H also confirms
+            if multi_tf["both_confirm"]:
+                tl_result["break_strength"] = min(
+                    tl_result.get("break_strength", 0) + 0.3, 1.0
+                )
+                tl_result["multi_tf_confirmed"] = True
+            else:
+                tl_result["multi_tf_confirmed"] = False
+        else:
+            tl_result = detect_trendline_break(df_1h)
+            tl_result["multi_tf_confirmed"] = False
 
-        # Social boost (Phase 2 placeholder — always False for now unless API key is set)
+        # Social boost via CryptoPanic (Phase 2 integration)
         social = False
+        try:
+            social_data = CryptoPanicFetcher.detect_social_boost(symbol)
+            social = social_data.get("boost", False)
+        except Exception:
+            pass
 
         # Score
         score = compute_scan_score(ema_ok, vol_spike, vol_ratio, tl_result, social)
@@ -177,30 +209,41 @@ class ScannerEngine:
 
             volume = pair.get("volume", {})
             vol_h1 = volume.get("h1", 0) or 0
-            vol_h6 = volume.get("h6", 0) or 0
             vol_h24 = volume.get("h24", 0) or 0
 
-            # Simple volume spike: h1 vol > (h24 vol / 24) * 3
             hourly_avg = vol_h24 / 24 if vol_h24 > 0 else 0
             vol_ratio = vol_h1 / hourly_avg if hourly_avg > 0 else 0
             vol_spike = vol_ratio >= Config.VOLUME_SPIKE_MULTIPLIER
 
-            # DEX pairs don't have deep OHLCV history, so trendline/EMA = simplified
+            # DEX simplified trendline (no deep OHLCV)
             tl_result = {
                 "resistance_break": h1_change > 5 and h6_change > 10,
                 "support_break": False,
                 "breakout_type": "bullish" if h1_change > 5 else None,
                 "break_strength": min(abs(h1_change) / 20, 1.0),
+                "volume_confirmed": vol_spike,
+                "pattern": "unknown",
+                "pattern_label": "—",
+                "confirmation_bars": 0,
+                "multi_tf_confirmed": False,
             }
 
-            above_ema = h24_change > 0  # simplified for DEX
+            above_ema = h24_change > 0
 
-            score = compute_scan_score(above_ema, vol_spike, vol_ratio, tl_result, False)
+            # Social boost for DEX token
+            social = False
+            symbol_name = pair.get("baseToken", {}).get("symbol", "?")
+            try:
+                social_data = CryptoPanicFetcher.detect_social_boost(symbol_name)
+                social = social_data.get("boost", False)
+            except Exception:
+                pass
+
+            score = compute_scan_score(above_ema, vol_spike, vol_ratio, tl_result, social)
 
             if score < 20:
                 return None
 
-            symbol_name = pair.get("baseToken", {}).get("symbol", "?")
             quote_name = pair.get("quoteToken", {}).get("symbol", "?")
             display_symbol = f"{symbol_name}/{quote_name}"
 
@@ -213,7 +256,7 @@ class ScannerEngine:
                 volume_ratio=round(vol_ratio, 2),
                 above_ema=above_ema,
                 trendline_break=tl_result,
-                social_boost=False,
+                social_boost=social,
                 score=score,
                 scan_time=datetime.now(timezone.utc),
                 extra={
@@ -231,13 +274,10 @@ class ScannerEngine:
 
     async def run_full_scan(self) -> list[ScanResult]:
         """Run full scan: CEX + DEX, sort by score."""
-        logger.info("Starting full scan...")
+        logger.info("Starting full scan (Phase 2)...")
         start = time.time()
 
-        # Run CEX async scan
         cex_results = await self.scan_cex()
-
-        # Run DEX scan (sync, runs fast)
         dex_results = self.scan_dex()
 
         all_results = cex_results + dex_results

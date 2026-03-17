@@ -1,11 +1,22 @@
-"""Chart builder: Plotly candlestick + volume with 200EMA overlay."""
+"""Chart builder: Plotly candlestick + volume with 200EMA overlay — Phase 2."""
+
+import logging
 
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from technical_analysis import compute_ema, get_volume_spike_mask, find_swing_points, fit_trendline
+logger = logging.getLogger(__name__)
+
+from technical_analysis import (
+    compute_ema,
+    get_volume_spike_mask,
+    find_swing_points_adaptive,
+    fit_trendline_ransac,
+    classify_pattern,
+    PATTERN_LABELS,
+)
 
 
 def build_candlestick_chart(
@@ -120,53 +131,115 @@ def build_candlestick_chart(
 
 
 def _add_trendlines(fig: go.Figure, df: pd.DataFrame, plot_df: pd.DataFrame):
-    """Add resistance/support trendlines to chart."""
+    """Add multiple trendline candidates with pattern label (Phase 2)."""
     try:
         df_reset = df.reset_index(drop=True)
-        sh_idx, _ = find_swing_points(df_reset["high"], order=5)
-        _, sl_idx = find_swing_points(df_reset["low"], order=5)
+        sh_idx, _ = find_swing_points_adaptive(df_reset["high"])
+        _, sl_idx = find_swing_points_adaptive(df_reset["low"])
 
-        # Resistance line
-        if len(sh_idx) >= 3:
-            res = fit_trendline(sh_idx, df_reset["high"].values, min_points=3)
-            if res and res["r_squared"] > 0.5:
-                x0 = int(res["indices"][0])
-                x1 = len(df_reset) - 1
-                y0 = res["slope"] * x0 + res["intercept"]
-                y1 = res["slope"] * x1 + res["intercept"]
-                fig.add_trace(
-                    go.Scatter(
-                        x=[plot_df["timestamp"].iloc[x0], plot_df["timestamp"].iloc[x1]],
-                        y=[y0, y1],
-                        mode="lines",
-                        name="Resistance",
-                        line=dict(color="#FF5252", width=1.5, dash="dash"),
+        # RANSAC resistance candidates (top 3)
+        res_colors = ["#FF5252", "#FF8A80", "#FFCDD2"]
+        res_candidates = fit_trendline_ransac(
+            sh_idx, df_reset["high"].values, line_type="resistance", min_points=3, max_candidates=3
+        )
+        for i, res in enumerate(res_candidates):
+            x0_idx = 0
+            x1_idx = len(df_reset) - 1
+            y0 = res["slope"] * x0_idx + res["intercept"]
+            y1 = res["slope"] * x1_idx + res["intercept"]
+            # Clamp start to first data point
+            start_x = max(int(res["indices"][0]) if len(res.get("indices", [])) > 0 else 0, 0)
+            start_x = min(start_x, len(plot_df) - 1)
+            fig.add_trace(
+                go.Scatter(
+                    x=[plot_df["timestamp"].iloc[start_x], plot_df["timestamp"].iloc[x1_idx]],
+                    y=[res["slope"] * start_x + res["intercept"], y1],
+                    mode="lines",
+                    name=f"Resistance #{i+1}" if i == 0 else f"Res alt #{i+1}",
+                    line=dict(
+                        color=res_colors[i],
+                        width=2.0 if i == 0 else 1.0,
+                        dash="dash" if i > 0 else "solid",
                     ),
-                    row=1,
-                    col=1,
-                )
+                    opacity=1.0 if i == 0 else 0.5,
+                ),
+                row=1, col=1,
+            )
 
-        # Support line
-        if len(sl_idx) >= 3:
-            sup = fit_trendline(sl_idx, df_reset["low"].values, min_points=3)
-            if sup and sup["r_squared"] > 0.5:
-                x0 = int(sup["indices"][0])
-                x1 = len(df_reset) - 1
-                y0 = sup["slope"] * x0 + sup["intercept"]
-                y1 = sup["slope"] * x1 + sup["intercept"]
-                fig.add_trace(
-                    go.Scatter(
-                        x=[plot_df["timestamp"].iloc[x0], plot_df["timestamp"].iloc[x1]],
-                        y=[y0, y1],
-                        mode="lines",
-                        name="Support",
-                        line=dict(color="#4CAF50", width=1.5, dash="dash"),
+        # RANSAC support candidates (top 3)
+        sup_colors = ["#4CAF50", "#81C784", "#C8E6C9"]
+        sup_candidates = fit_trendline_ransac(
+            sl_idx, df_reset["low"].values, line_type="support", min_points=3, max_candidates=3
+        )
+        for i, sup in enumerate(sup_candidates):
+            x0_idx = 0
+            x1_idx = len(df_reset) - 1
+            y1 = sup["slope"] * x1_idx + sup["intercept"]
+            start_x = max(int(sup["indices"][0]) if len(sup.get("indices", [])) > 0 else 0, 0)
+            start_x = min(start_x, len(plot_df) - 1)
+            fig.add_trace(
+                go.Scatter(
+                    x=[plot_df["timestamp"].iloc[start_x], plot_df["timestamp"].iloc[x1_idx]],
+                    y=[sup["slope"] * start_x + sup["intercept"], y1],
+                    mode="lines",
+                    name=f"Support #{i+1}" if i == 0 else f"Sup alt #{i+1}",
+                    line=dict(
+                        color=sup_colors[i],
+                        width=2.0 if i == 0 else 1.0,
+                        dash="dash" if i > 0 else "solid",
                     ),
-                    row=1,
-                    col=1,
-                )
-    except Exception:
-        pass  # Non-critical, skip if trendlines can't be drawn
+                    opacity=1.0 if i == 0 else 0.5,
+                ),
+                row=1, col=1,
+            )
+
+        # Pattern annotation
+        best_res = res_candidates[0] if res_candidates else None
+        best_sup = sup_candidates[0] if sup_candidates else None
+        pattern = classify_pattern(best_res, best_sup)
+        label = PATTERN_LABELS.get(pattern, "")
+        if label and label != "—":
+            fig.add_annotation(
+                x=plot_df["timestamp"].iloc[-1],
+                y=float(df_reset["high"].max()),
+                text=f"Pattern: {label}",
+                showarrow=False,
+                font=dict(size=11, color="#FFC107"),
+                bgcolor="rgba(0,0,0,0.6)",
+                bordercolor="#FFC107",
+                borderwidth=1,
+                borderpad=4,
+                xanchor="right",
+                yanchor="bottom",
+                row=1, col=1,
+            )
+
+        # Swing point markers
+        if len(sh_idx) > 0:
+            fig.add_trace(
+                go.Scatter(
+                    x=plot_df["timestamp"].iloc[sh_idx],
+                    y=df_reset["high"].iloc[sh_idx],
+                    mode="markers",
+                    name="Swing High",
+                    marker=dict(color="#FF5252", size=6, symbol="triangle-down"),
+                ),
+                row=1, col=1,
+            )
+        if len(sl_idx) > 0:
+            fig.add_trace(
+                go.Scatter(
+                    x=plot_df["timestamp"].iloc[sl_idx],
+                    y=df_reset["low"].iloc[sl_idx],
+                    mode="markers",
+                    name="Swing Low",
+                    marker=dict(color="#4CAF50", size=6, symbol="triangle-up"),
+                ),
+                row=1, col=1,
+            )
+
+    except Exception as e:
+        logger.debug("Trendline drawing error: %s", e)
 
 
 def build_order_book_chart(bids: list, asks: list, symbol: str) -> go.Figure:

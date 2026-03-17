@@ -69,6 +69,11 @@ st.markdown(
         font-size: 0.75rem;
         font-weight: bold;
     }
+    /* Fundamental driver window animation */
+    @keyframes funda-pulse {
+        0%, 100% { border-left-color: #448AFF; }
+        50% { border-left-color: #82B1FF; }
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -320,6 +325,97 @@ else:
             st.markdown(f"#### {selected} — {sel_result.source}")
 
             is_cex = "Binance" in sel_result.source
+
+            # ──────────────────────────────────────
+            # Fundamental Driver Detection Window
+            # ──────────────────────────────────────
+            if sel_result.change_pct > 0:
+                with st.spinner("Analyzing price driver..."):
+                    funda = CryptoPanicFetcher.analyze_fundamental_driver(selected)
+
+                if funda["is_funda_driven"]:
+                    st.markdown(
+                        f"""
+                        <div style="
+                            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+                            border-left: 4px solid #448AFF;
+                            border-radius: 8px;
+                            padding: 1rem 1.2rem;
+                            margin-bottom: 1rem;
+                        ">
+                            <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                <span style="font-size: 1.3rem; margin-right: 0.5rem;">📰</span>
+                                <span style="color: #82B1FF; font-weight: bold; font-size: 1.05rem;">
+                                    Fundamental Driver Detected
+                                </span>
+                            </div>
+                            <p style="color: #E3F2FD; margin: 0.3rem 0; font-size: 0.95rem;">
+                                {funda['summary']}
+                            </p>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+
+                    # Category breakdown cards
+                    driver_cols = st.columns(min(len(funda["drivers"]), 3))
+                    for i, driver in enumerate(funda["drivers"][:3]):
+                        with driver_cols[i]:
+                            conf_pct = f"{driver['confidence']:.0%}"
+                            kw_tags = " ".join(
+                                f'<span style="background:{driver["color"]}33;'
+                                f'color:{driver["color"]};padding:1px 6px;'
+                                f'border-radius:3px;font-size:0.75rem;margin-right:3px;">'
+                                f'{kw}</span>'
+                                for kw in driver["matched_keywords"][:4]
+                            )
+                            st.markdown(
+                                f"""
+                                <div style="
+                                    background-color: #1a1a2e;
+                                    border: 1px solid {driver['color']}66;
+                                    border-radius: 8px;
+                                    padding: 0.8rem;
+                                ">
+                                    <div style="color:{driver['color']};font-weight:bold;font-size:0.9rem;">
+                                        {driver['label']}
+                                    </div>
+                                    <div style="color:#9e9e9e;font-size:0.8rem;margin:0.3rem 0;">
+                                        {driver['article_count']} articles | Confidence: {conf_pct}
+                                    </div>
+                                    <div style="margin-top:0.4rem;">{kw_tags}</div>
+                                </div>
+                                """,
+                                unsafe_allow_html=True,
+                            )
+
+                    # Show matched articles in expander
+                    with st.expander("View related articles", expanded=False):
+                        for driver in funda["drivers"]:
+                            st.markdown(f"**{driver['label']}**")
+                            for art in driver["articles"][:3]:
+                                src = art.get("source", "")
+                                pub = art.get("published_at", "")[:16]
+                                st.markdown(f"- {art['title']} — _{src}_ ({pub})")
+                            st.markdown("")
+
+                elif funda["total_articles"] > 0:
+                    st.markdown(
+                        f"""
+                        <div style="
+                            background-color: #1a1a2e;
+                            border-left: 4px solid #66BB6A;
+                            border-radius: 8px;
+                            padding: 0.8rem 1.2rem;
+                            margin-bottom: 1rem;
+                        ">
+                            <span style="color: #A5D6A7; font-size: 0.9rem;">
+                                <b>Technical Move</b> — {funda['summary']}
+                            </span>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
 
             tab_chart, tab_funding, tab_ls, tab_orderbook, tab_social = st.tabs(
                 ["Chart", "Funding Rate", "Long/Short", "Order Book", "News/Social"]

@@ -9,7 +9,7 @@ from typing import Optional
 import pandas as pd
 
 from config import Config
-from data_fetcher import CEXFetcher, DexScreenerFetcher, LunarCrushFetcher
+from data_fetcher import CEXFetcher, DexScreenerFetcher, CryptoPanicFetcher
 from technical_analysis import (
     is_above_ema,
     detect_volume_spike,

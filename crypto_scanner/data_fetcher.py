@@ -366,8 +366,78 @@ class CryptoPanicFetcher:
         "pump", "surge", "rally", "moon", "explosion",
     ]
 
+    # Fundamental / news categories that drive price
+    FUNDA_CATEGORIES = {
+        "partnership": {
+            "keywords": [
+                "partner", "partnership", "collaborat", "integrat", "team up",
+                "join forces", "alliance", "deal with",
+            ],
+            "label": "Partnership / Integration",
+            "icon": "handshake",
+            "color": "#42A5F5",
+        },
+        "listing": {
+            "keywords": [
+                "list", "listing", "listed on", "adds", "added to",
+                "now available", "trading live", "launches on",
+            ],
+            "label": "Exchange Listing",
+            "icon": "exchange",
+            "color": "#AB47BC",
+        },
+        "upgrade": {
+            "keywords": [
+                "upgrade", "update", "hard fork", "mainnet", "testnet",
+                "v2", "v3", "launch", "release", "deploy", "migration",
+                "protocol upgrade",
+            ],
+            "label": "Protocol Upgrade / Launch",
+            "icon": "rocket",
+            "color": "#66BB6A",
+        },
+        "regulation": {
+            "keywords": [
+                "sec", "regulat", "approved", "approval", "etf",
+                "legal", "compliance", "license", "lawsuit", "ban",
+                "government", "congress", "legislation",
+            ],
+            "label": "Regulatory / Legal",
+            "icon": "gavel",
+            "color": "#FFA726",
+        },
+        "adoption": {
+            "keywords": [
+                "adopt", "accept", "payment", "merchant", "institutional",
+                "whale", "buy", "bought", "accumul", "inflow",
+                "corporate", "treasury",
+            ],
+            "label": "Adoption / Institutional Buy",
+            "icon": "trending_up",
+            "color": "#26A69A",
+        },
+        "tokenomics": {
+            "keywords": [
+                "burn", "buyback", "halving", "halvening", "supply",
+                "deflation", "staking", "airdrop", "unlock", "vest",
+            ],
+            "label": "Tokenomics Event",
+            "icon": "fire",
+            "color": "#EF5350",
+        },
+        "hack_exploit": {
+            "keywords": [
+                "hack", "exploit", "vulnerability", "breach", "attack",
+                "drain", "stolen", "compromis", "rug",
+            ],
+            "label": "Security Incident",
+            "icon": "warning",
+            "color": "#FF1744",
+        },
+    }
+
     @classmethod
-    def get_news(cls, symbol: str, limit: int = 10) -> list[dict]:
+    def get_news(cls, symbol: str, limit: int = 20) -> list[dict]:
         """Get recent news/posts for a coin."""
         clean = symbol.replace("/USDT:USDT", "").replace("/USDT", "").upper()
         params = {
@@ -410,3 +480,111 @@ class CryptoPanicFetcher:
             "breakout_mentions": len(matching),
             "matching_titles": matching[:3],
         }
+
+    @classmethod
+    def analyze_fundamental_driver(cls, symbol: str) -> dict:
+        """
+        Analyze whether a price move is driven by fundamental news.
+
+        Returns:
+        {
+            "is_funda_driven": bool,
+            "drivers": [
+                {
+                    "category": str,
+                    "label": str,
+                    "color": str,
+                    "confidence": float (0-1),
+                    "matched_keywords": [str],
+                    "articles": [{"title": str, "source": str, "published_at": str, "url": str}],
+                }
+            ],
+            "summary": str,
+            "total_articles": int,
+            "funda_articles": int,
+        }
+        """
+        posts = cls.get_news(symbol, limit=20)
+        result = {
+            "is_funda_driven": False,
+            "drivers": [],
+            "summary": "",
+            "total_articles": len(posts),
+            "funda_articles": 0,
+        }
+
+        if not posts:
+            result["summary"] = "No recent news found — price move likely technical or organic."
+            return result
+
+        # Classify each article into categories
+        category_hits: dict[str, list] = {}
+        for post in posts:
+            title = (post.get("title") or "").lower()
+            for cat_key, cat_def in cls.FUNDA_CATEGORIES.items():
+                matched_kws = [kw for kw in cat_def["keywords"] if kw in title]
+                if matched_kws:
+                    if cat_key not in category_hits:
+                        category_hits[cat_key] = []
+                    category_hits[cat_key].append({
+                        "title": post.get("title", ""),
+                        "source": post.get("source", {}).get("title", "Unknown"),
+                        "published_at": post.get("published_at", ""),
+                        "url": post.get("url", ""),
+                        "matched_keywords": matched_kws,
+                    })
+
+        if not category_hits:
+            result["summary"] = (
+                f"{len(posts)} articles found, but none match fundamental categories. "
+                "Price move is likely technical (trendline break, volume spike) or "
+                "driven by broader market sentiment."
+            )
+            return result
+
+        # Build drivers sorted by article count (strongest signal first)
+        drivers = []
+        total_funda = 0
+        for cat_key, articles in sorted(
+            category_hits.items(), key=lambda x: len(x[1]), reverse=True
+        ):
+            cat_def = cls.FUNDA_CATEGORIES[cat_key]
+            # Confidence: based on article count relative to total
+            confidence = min(len(articles) / max(len(posts), 1) * 3, 1.0)
+            all_kws = set()
+            for a in articles:
+                all_kws.update(a["matched_keywords"])
+            drivers.append({
+                "category": cat_key,
+                "label": cat_def["label"],
+                "color": cat_def["color"],
+                "confidence": round(confidence, 2),
+                "matched_keywords": sorted(all_kws),
+                "articles": articles[:5],
+                "article_count": len(articles),
+            })
+            total_funda += len(articles)
+
+        result["drivers"] = drivers
+        result["funda_articles"] = total_funda
+        result["is_funda_driven"] = total_funda >= 2 or (
+            total_funda >= 1 and drivers[0]["confidence"] >= 0.5
+        )
+
+        # Generate summary
+        if result["is_funda_driven"]:
+            top = drivers[0]
+            others = [d["label"] for d in drivers[1:3]]
+            summary = f"Price move likely driven by: {top['label']} ({top['article_count']} articles, {top['confidence']:.0%} confidence)"
+            if others:
+                summary += f". Also related: {', '.join(others)}"
+            summary += "."
+        else:
+            summary = (
+                f"Some fundamental news detected ({total_funda} articles), "
+                "but not enough to confirm as the primary driver. "
+                "Likely a mix of technical + fundamental factors."
+            )
+        result["summary"] = summary
+
+        return result

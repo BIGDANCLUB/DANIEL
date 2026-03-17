@@ -1,4 +1,4 @@
-"""Configuration management for Crypto Scanner."""
+"""Configuration management for Crypto Scanner — 100% Free APIs."""
 
 import os
 from dotenv import load_dotenv
@@ -7,9 +7,7 @@ load_dotenv()
 
 
 class Config:
-    # API Keys
-    COINGLASS_API_KEY: str = os.getenv("COINGLASS_API_KEY", "")
-    LUNARCRUSH_API_KEY: str = os.getenv("LUNARCRUSH_API_KEY", "")
+    # API Keys (optional, for higher rate limits only)
     BINANCE_API_KEY: str = os.getenv("BINANCE_API_KEY", "")
     BINANCE_API_SECRET: str = os.getenv("BINANCE_API_SECRET", "")
     BYBIT_API_KEY: str = os.getenv("BYBIT_API_KEY", "")
@@ -37,8 +35,9 @@ class Config:
     CCXT_RATE_LIMIT_MS: int = 100
     DEXSCREENER_RATE_LIMIT_S: float = 0.35
 
-    # CoinGlass
-    COINGLASS_BASE_URL: str = "https://open-api.coinglass.com/public/v2"
+    # Binance public API (free, no key required)
+    BINANCE_FAPI_BASE: str = "https://fapi.binance.com"
 
-    # LunarCrush
-    LUNARCRUSH_BASE_URL: str = "https://lunarcrush.com/api4/public"
+    # CryptoPanic (free tier, no key = public posts only)
+    CRYPTOPANIC_API_KEY: str = os.getenv("CRYPTOPANIC_API_KEY", "")
+    CRYPTOPANIC_BASE_URL: str = "https://cryptopanic.com/api/free/v1"

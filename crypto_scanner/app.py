@@ -2,8 +2,7 @@
 Crypto Trendline Break Scanner — Streamlit App
 ================================================
 6時間以内トレンドラインブレイク検知スキャナー
-
-Phase 1: Binance Futures + DexScreener + 基本条件フィルタ + 詳細ビュー
+100% 無料API構成: CCXT + Binance Public FAPI + DexScreener + CryptoPanic
 """
 
 import asyncio
@@ -34,54 +33,41 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    /* Global dark theme tweaks */
-    .stApp {
-        background-color: #0e1117;
-    }
-    .main .block-container {
-        padding-top: 1rem;
-    }
-    /* Score badge colors */
+    .stApp { background-color: #0e1117; }
+    .main .block-container { padding-top: 1rem; }
     .score-high { color: #00e676; font-weight: bold; }
     .score-mid  { color: #ffc107; font-weight: bold; }
     .score-low  { color: #ff5252; font-weight: bold; }
-    /* Header */
     .scanner-header {
         background: linear-gradient(90deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
         padding: 1rem 1.5rem;
         border-radius: 10px;
         margin-bottom: 1rem;
     }
-    .scanner-header h1 {
-        color: #e0e0e0;
-        margin: 0;
-        font-size: 1.6rem;
-    }
-    .scanner-header p {
-        color: #9e9e9e;
-        margin: 0.3rem 0 0 0;
-        font-size: 0.9rem;
-    }
-    /* Metric cards */
+    .scanner-header h1 { color: #e0e0e0; margin: 0; font-size: 1.6rem; }
+    .scanner-header p { color: #9e9e9e; margin: 0.3rem 0 0 0; font-size: 0.9rem; }
     div[data-testid="stMetric"] {
         background-color: #1a1a2e;
         border: 1px solid #2a2a4a;
         border-radius: 8px;
         padding: 0.8rem;
     }
-    /* Table styling */
-    .dataframe {
-        font-size: 0.85rem;
-    }
-    /* Tabs */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 2px;
-    }
+    .dataframe { font-size: 0.85rem; }
+    .stTabs [data-baseweb="tab-list"] { gap: 2px; }
     .stTabs [data-baseweb="tab"] {
         background-color: #1a1a2e;
         border-radius: 4px 4px 0 0;
         padding: 0.5rem 1rem;
         color: #e0e0e0;
+    }
+    .free-badge {
+        display: inline-block;
+        background: #1b5e20;
+        color: #69f0ae;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: bold;
     }
     </style>
     """,
@@ -95,7 +81,12 @@ from chart_builder import (
     build_funding_rate_chart,
     build_long_short_chart,
 )
-from data_fetcher import CEXFetcher, CoinGlassFetcher, LunarCrushFetcher
+from data_fetcher import (
+    CEXFetcher,
+    MultiExchangeFundingFetcher,
+    BinanceLongShortFetcher,
+    CryptoPanicFetcher,
+)
 
 
 # ──────────────────────────────────────────────
@@ -158,11 +149,12 @@ with st.sidebar:
     else:
         st.caption("No scan yet")
 
-    # API key status
-    from config import Config
-    st.markdown("**API Keys**")
-    st.caption(f"CoinGlass: {'Set' if Config.COINGLASS_API_KEY else 'Not set'}")
-    st.caption(f"LunarCrush: {'Set' if Config.LUNARCRUSH_API_KEY else 'Not set'}")
+    st.markdown("---")
+    st.markdown("**Data Sources** <span class='free-badge'>ALL FREE</span>", unsafe_allow_html=True)
+    st.caption("CCXT: OHLCV, Funding Rate, Order Book")
+    st.caption("Binance FAPI: Long/Short Ratio")
+    st.caption("DexScreener: DEX pairs")
+    st.caption("CryptoPanic: News/Social")
 
 
 # ──────────────────────────────────────────────
@@ -172,7 +164,8 @@ st.markdown(
     """
     <div class="scanner-header">
         <h1>Crypto Trendline Break Scanner</h1>
-        <p>6時間以内トレンドラインブレイク検知 — Volume Spike + 200 EMA + Trendline Break + Social Boost</p>
+        <p>6時間以内トレンドラインブレイク検知 — Volume Spike + 200 EMA + Trendline Break + Social
+        <span class="free-badge">100% FREE APIs</span></p>
     </div>
     """,
     unsafe_allow_html=True,
@@ -269,7 +262,7 @@ else:
     if sort_col in df_results.columns:
         df_results = df_results.sort_values(sort_col, ascending=sort_asc)
 
-    # Color-code score column
+    # Color-code
     def color_score(val):
         if val >= 70:
             return "color: #00e676; font-weight: bold"
@@ -326,8 +319,10 @@ else:
         if sel_result:
             st.markdown(f"#### {selected} — {sel_result.source}")
 
-            tab_chart, tab_funding, tab_ls, tab_orderbook = st.tabs(
-                ["Chart", "Funding Rate", "Long/Short", "Order Book"]
+            is_cex = "Binance" in sel_result.source
+
+            tab_chart, tab_funding, tab_ls, tab_orderbook, tab_social = st.tabs(
+                ["Chart", "Funding Rate", "Long/Short", "Order Book", "News/Social"]
             )
 
             # ── Tab: Chart ──
@@ -335,8 +330,6 @@ else:
                 timeframe = st.radio(
                     "Timeframe", ["1h", "4h"], horizontal=True, key="tf_radio"
                 )
-
-                is_cex = "Binance" in sel_result.source
 
                 if is_cex:
                     with st.spinner(f"Loading {timeframe} chart for {selected}..."):
@@ -373,41 +366,60 @@ else:
                                 f"${sel_result.extra.get('liquidity_usd', 0):,.0f}",
                             )
 
-            # ── Tab: Funding Rate ──
+            # ── Tab: Funding Rate (CCXT — free) ──
             with tab_funding:
                 if is_cex:
-                    with st.spinner("Loading funding rates..."):
-                        fr_data = CoinGlassFetcher.get_funding_rate(selected)
+                    st.caption("Data source: CCXT (Binance + Bybit) — Free, no API key needed")
+                    with st.spinner("Loading funding rates from multiple exchanges..."):
+                        fr_data = run_async(MultiExchangeFundingFetcher.fetch_all(selected))
                         fig_fr = build_funding_rate_chart(fr_data, selected)
                         st.plotly_chart(fig_fr, use_container_width=True)
 
-                        if not fr_data:
-                            st.info(
-                                "No funding rate data. Set COINGLASS_API_KEY in .env "
-                                "to enable this feature."
+                        if fr_data:
+                            fr_df = pd.DataFrame(fr_data)
+                            fr_df["rate_pct"] = fr_df["rate"].apply(
+                                lambda x: f"{(x or 0) * 100:+.4f}%"
                             )
+                            st.dataframe(
+                                fr_df[["exchange", "rate_pct"]].rename(
+                                    columns={"exchange": "Exchange", "rate_pct": "Funding Rate"}
+                                ),
+                                use_container_width=True,
+                            )
+                        else:
+                            st.info("Could not fetch funding rates. The symbol may not be listed on all exchanges.")
                 else:
                     st.info("Funding rate data is only available for CEX perpetual futures.")
 
-            # ── Tab: Long/Short ──
+            # ── Tab: Long/Short (Binance FAPI — free) ──
             with tab_ls:
                 if is_cex:
-                    with st.spinner("Loading long/short ratio..."):
-                        ls_data = CoinGlassFetcher.get_long_short_ratio(selected)
+                    st.caption("Data source: Binance Public Futures API — Free, no API key needed")
+                    with st.spinner("Loading long/short ratios..."):
+                        ls_data = BinanceLongShortFetcher.get_all_ratios(selected)
                         fig_ls = build_long_short_chart(ls_data, selected)
                         st.plotly_chart(fig_ls, use_container_width=True)
 
-                        if not ls_data:
-                            st.info(
-                                "No long/short data. Set COINGLASS_API_KEY in .env "
-                                "to enable this feature."
+                        if ls_data:
+                            ls_df = pd.DataFrame(ls_data)
+                            ls_df["Long %"] = ls_df["longRatio"].apply(lambda x: f"{x*100:.1f}%")
+                            ls_df["Short %"] = ls_df["shortRatio"].apply(lambda x: f"{x*100:.1f}%")
+                            ls_df["L/S Ratio"] = ls_df["longShortRatio"].apply(lambda x: f"{x:.3f}")
+                            st.dataframe(
+                                ls_df[["exchange", "Long %", "Short %", "L/S Ratio"]].rename(
+                                    columns={"exchange": "Source"}
+                                ),
+                                use_container_width=True,
                             )
+                        else:
+                            st.info("Long/short data not available for this symbol.")
                 else:
                     st.info("Long/Short ratio is only available for CEX perpetual futures.")
 
-            # ── Tab: Order Book ──
+            # ── Tab: Order Book (CCXT — free) ──
             with tab_orderbook:
                 if is_cex:
+                    st.caption("Data source: CCXT Order Book — Free")
                     with st.spinner("Loading order book..."):
                         try:
                             cex_fetcher = CEXFetcher()
@@ -444,6 +456,36 @@ else:
                 else:
                     st.info("Order book depth is only available for CEX pairs.")
 
+            # ── Tab: News/Social (CryptoPanic — free) ──
+            with tab_social:
+                st.caption("Data source: CryptoPanic — Free tier (no API key required)")
+                with st.spinner("Loading news & social data..."):
+                    social_data = CryptoPanicFetcher.detect_social_boost(selected)
+
+                    scol1, scol2, scol3 = st.columns(3)
+                    with scol1:
+                        boost_text = "Detected" if social_data["boost"] else "None"
+                        st.metric("Social Boost", boost_text)
+                    with scol2:
+                        st.metric("Total Posts", social_data["total_posts"])
+                    with scol3:
+                        st.metric("Breakout Mentions", social_data["breakout_mentions"])
+
+                    if social_data["matching_titles"]:
+                        st.markdown("**Matching Headlines:**")
+                        for title in social_data["matching_titles"]:
+                            st.markdown(f"- {title}")
+
+                    # Show recent news
+                    news = CryptoPanicFetcher.get_news(selected, limit=5)
+                    if news:
+                        st.markdown("**Recent News:**")
+                        for post in news:
+                            title = post.get("title", "")
+                            url = post.get("url", "")
+                            source = post.get("source", {}).get("title", "")
+                            st.markdown(f"- **{title}** ({source})")
+
             # ── Signal summary panel ──
             st.markdown("---")
             st.markdown("#### Signal Summary")
@@ -465,7 +507,7 @@ else:
 # ──────────────────────────────────────────────
 st.markdown("---")
 st.caption(
-    "Crypto Trendline Break Scanner v1.0 — Phase 1 "
-    "| Data: Binance (CCXT) + DexScreener | "
+    "Crypto Trendline Break Scanner v1.1 — 100% Free APIs "
+    "| CCXT + Binance FAPI + DexScreener + CryptoPanic | "
     "Not financial advice. DYOR."
 )

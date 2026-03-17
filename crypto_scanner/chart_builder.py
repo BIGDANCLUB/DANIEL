@@ -224,7 +224,7 @@ def build_order_book_chart(bids: list, asks: list, symbol: str) -> go.Figure:
 
 
 def build_funding_rate_chart(data: list[dict], symbol: str) -> go.Figure:
-    """Build funding rate comparison chart across exchanges."""
+    """Build funding rate comparison chart across exchanges (CCXT format)."""
     fig = go.Figure()
 
     if not data:
@@ -242,8 +242,8 @@ def build_funding_rate_chart(data: list[dict], symbol: str) -> go.Figure:
     colors = []
 
     for item in data:
-        ex_name = item.get("exchangeName", item.get("exchange", "Unknown"))
-        rate = item.get("rate", item.get("currentFundingRate", 0)) or 0
+        ex_name = item.get("exchange", "Unknown")
+        rate = item.get("rate", 0) or 0
         rate_pct = rate * 100
         exchanges.append(ex_name)
         rates.append(rate_pct)
@@ -254,13 +254,15 @@ def build_funding_rate_chart(data: list[dict], symbol: str) -> go.Figure:
             x=exchanges,
             y=rates,
             marker_color=colors,
+            text=[f"{r:+.4f}%" for r in rates],
+            textposition="outside",
             name="Funding Rate %",
         )
     )
 
     fig.update_layout(
         template="plotly_dark",
-        title=f"{symbol} Funding Rate (%)",
+        title=f"{symbol} Funding Rate (%) — via CCXT (free)",
         height=300,
         paper_bgcolor="#0e1117",
         plot_bgcolor="#0e1117",
@@ -272,7 +274,7 @@ def build_funding_rate_chart(data: list[dict], symbol: str) -> go.Figure:
 
 
 def build_long_short_chart(data: list[dict], symbol: str) -> go.Figure:
-    """Build long/short ratio chart."""
+    """Build long/short ratio chart (Binance public FAPI format)."""
     fig = go.Figure()
 
     if not data:
@@ -285,26 +287,32 @@ def build_long_short_chart(data: list[dict], symbol: str) -> go.Figure:
         )
         return fig
 
-    exchanges = []
+    labels = []
     long_pcts = []
     short_pcts = []
 
     for item in data:
-        ex_name = item.get("exchangeName", item.get("exchange", "Unknown"))
-        long_r = item.get("longRate", item.get("longRatio", 0.5)) or 0.5
-        short_r = item.get("shortRate", item.get("shortRatio", 0.5)) or 0.5
-        exchanges.append(ex_name)
+        label = item.get("exchange", "Unknown")
+        long_r = float(item.get("longRatio", 0.5))
+        short_r = float(item.get("shortRatio", 0.5))
+        labels.append(label)
         long_pcts.append(long_r * 100)
         short_pcts.append(short_r * 100)
 
-    fig.add_trace(go.Bar(x=exchanges, y=long_pcts, name="Long %", marker_color="#26a69a"))
-    fig.add_trace(go.Bar(x=exchanges, y=short_pcts, name="Short %", marker_color="#ef5350"))
+    fig.add_trace(go.Bar(
+        x=labels, y=long_pcts, name="Long %", marker_color="#26a69a",
+        text=[f"{v:.1f}%" for v in long_pcts], textposition="inside",
+    ))
+    fig.add_trace(go.Bar(
+        x=labels, y=short_pcts, name="Short %", marker_color="#ef5350",
+        text=[f"{v:.1f}%" for v in short_pcts], textposition="inside",
+    ))
 
     fig.update_layout(
         template="plotly_dark",
-        title=f"{symbol} Long/Short Ratio",
+        title=f"{symbol} Long/Short Ratio — Binance Public API (free)",
         barmode="stack",
-        height=300,
+        height=350,
         paper_bgcolor="#0e1117",
         plot_bgcolor="#0e1117",
         yaxis_title="Ratio %",

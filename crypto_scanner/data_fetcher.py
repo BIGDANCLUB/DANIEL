@@ -1,4 +1,10 @@
-"""Data fetching layer: CCXT (CEX) + DexScreener (DEX)."""
+"""Data fetching layer — 100% Free APIs.
+
+- CCXT (async): Binance/Bybit OHLCV, ticker, order book, funding rate
+- Binance Public FAPI: Long/Short ratio (no key required)
+- DexScreener: DEX pair discovery (no key required)
+- CryptoPanic: Social/news sentiment (free tier, key optional)
+"""
 
 import asyncio
 import time
@@ -18,22 +24,26 @@ logger = logging.getLogger(__name__)
 # CEX data via CCXT (async)
 # ──────────────────────────────────────────────
 class CEXFetcher:
-    """Fetch OHLCV and market data from CEX via CCXT async."""
+    """Fetch OHLCV, funding rate, and market data from CEX via CCXT async."""
 
-    def __init__(self):
+    def __init__(self, exchange_id: str = None):
         self._exchange: Optional[ccxt_async.Exchange] = None
+        self._exchange_id = exchange_id or Config.CEX_EXCHANGE
 
     async def _get_exchange(self) -> ccxt_async.Exchange:
         if self._exchange is None:
-            exchange_cls = getattr(ccxt_async, Config.CEX_EXCHANGE)
+            exchange_cls = getattr(ccxt_async, self._exchange_id)
             params = {
                 "enableRateLimit": True,
                 "rateLimit": Config.CCXT_RATE_LIMIT_MS,
                 "options": {"defaultType": Config.CEX_MARKET_TYPE},
             }
-            if Config.BINANCE_API_KEY:
+            if self._exchange_id == "binance" and Config.BINANCE_API_KEY:
                 params["apiKey"] = Config.BINANCE_API_KEY
                 params["secret"] = Config.BINANCE_API_SECRET
+            elif self._exchange_id == "bybit" and Config.BYBIT_API_KEY:
+                params["apiKey"] = Config.BYBIT_API_KEY
+                params["secret"] = Config.BYBIT_API_SECRET
             self._exchange = exchange_cls(params)
         return self._exchange
 
@@ -62,7 +72,7 @@ class CEXFetcher:
     async def fetch_ohlcv(
         self, symbol: str, timeframe: str = "1h", limit: int = 250
     ) -> pd.DataFrame:
-        """Fetch OHLCV as DataFrame with columns [timestamp, open, high, low, close, volume]."""
+        """Fetch OHLCV as DataFrame."""
         ex = await self._get_exchange()
         raw = await ex.fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
         df = pd.DataFrame(raw, columns=["timestamp", "open", "high", "low", "close", "volume"])
@@ -79,9 +89,178 @@ class CEXFetcher:
         ex = await self._get_exchange()
         return await ex.fetch_ticker(symbol)
 
+    async def fetch_funding_rate(self, symbol: str) -> dict:
+        """Fetch current funding rate via CCXT (free, no key needed)."""
+        ex = await self._get_exchange()
+        try:
+            fr = await ex.fetch_funding_rate(symbol)
+            return fr
+        except Exception as e:
+            logger.debug("CCXT funding rate error for %s: %s", symbol, e)
+            return {}
+
 
 # ──────────────────────────────────────────────
-# DEX data via DexScreener API
+# Multi-exchange funding rate (all free via CCXT)
+# ──────────────────────────────────────────────
+class MultiExchangeFundingFetcher:
+    """Fetch funding rates from multiple exchanges using CCXT (all free)."""
+
+    EXCHANGES = ["binance", "bybit"]
+
+    @classmethod
+    async def fetch_all(cls, symbol: str) -> list[dict]:
+        """Fetch funding rate for a symbol across multiple exchanges."""
+        results = []
+        # Map symbol to each exchange's format
+        base = symbol.replace("/USDT:USDT", "").replace("/USDT", "")
+        ccxt_symbol = f"{base}/USDT:USDT"
+
+        for ex_id in cls.EXCHANGES:
+            exchange = None
+            try:
+                exchange_cls = getattr(ccxt_async, ex_id)
+                exchange = exchange_cls({
+                    "enableRateLimit": True,
+                    "options": {"defaultType": "swap"},
+                })
+                await exchange.load_markets()
+                if ccxt_symbol in exchange.markets:
+                    fr = await exchange.fetch_funding_rate(ccxt_symbol)
+                    rate = fr.get("fundingRate", 0) or 0
+                    results.append({
+                        "exchange": ex_id.capitalize(),
+                        "rate": rate,
+                        "timestamp": fr.get("fundingTimestamp"),
+                        "next_timestamp": fr.get("nextFundingTimestamp"),
+                    })
+            except Exception as e:
+                logger.debug("Funding rate %s/%s error: %s", ex_id, symbol, e)
+            finally:
+                if exchange:
+                    await exchange.close()
+
+        return results
+
+
+# ──────────────────────────────────────────────
+# Binance Public FAPI — Long/Short ratio (free)
+# ──────────────────────────────────────────────
+class BinanceLongShortFetcher:
+    """Fetch long/short ratio from Binance public futures API (no key required)."""
+
+    @staticmethod
+    def _clean_symbol(symbol: str) -> str:
+        return symbol.replace("/USDT:USDT", "").replace("/USDT", "").upper() + "USDT"
+
+    @classmethod
+    def get_global_long_short_ratio(
+        cls, symbol: str, period: str = "1h", limit: int = 1
+    ) -> list[dict]:
+        """
+        Global long/short account ratio.
+        Binance FAPI: /futures/data/globalLongShortAccountRatio
+        Free, no API key needed.
+        """
+        clean = cls._clean_symbol(symbol)
+        try:
+            resp = requests.get(
+                f"{Config.BINANCE_FAPI_BASE}/futures/data/globalLongShortAccountRatio",
+                params={"symbol": clean, "period": period, "limit": limit},
+                timeout=10,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            return [
+                {
+                    "exchange": "Binance (Global)",
+                    "longRatio": float(d.get("longAccount", 0.5)),
+                    "shortRatio": float(d.get("shortAccount", 0.5)),
+                    "longShortRatio": float(d.get("longShortRatio", 1.0)),
+                    "timestamp": d.get("timestamp"),
+                }
+                for d in data
+            ]
+        except Exception as e:
+            logger.debug("Binance global LS ratio error: %s", e)
+            return []
+
+    @classmethod
+    def get_top_trader_long_short_ratio(
+        cls, symbol: str, period: str = "1h", limit: int = 1
+    ) -> list[dict]:
+        """
+        Top trader long/short ratio (accounts).
+        Binance FAPI: /futures/data/topLongShortAccountRatio
+        Free, no API key needed.
+        """
+        clean = cls._clean_symbol(symbol)
+        try:
+            resp = requests.get(
+                f"{Config.BINANCE_FAPI_BASE}/futures/data/topLongShortAccountRatio",
+                params={"symbol": clean, "period": period, "limit": limit},
+                timeout=10,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            return [
+                {
+                    "exchange": "Binance (Top Traders)",
+                    "longRatio": float(d.get("longAccount", 0.5)),
+                    "shortRatio": float(d.get("shortAccount", 0.5)),
+                    "longShortRatio": float(d.get("longShortRatio", 1.0)),
+                    "timestamp": d.get("timestamp"),
+                }
+                for d in data
+            ]
+        except Exception as e:
+            logger.debug("Binance top trader LS ratio error: %s", e)
+            return []
+
+    @classmethod
+    def get_top_trader_long_short_position_ratio(
+        cls, symbol: str, period: str = "1h", limit: int = 1
+    ) -> list[dict]:
+        """
+        Top trader long/short ratio (positions).
+        Binance FAPI: /futures/data/topLongShortPositionRatio
+        Free, no API key needed.
+        """
+        clean = cls._clean_symbol(symbol)
+        try:
+            resp = requests.get(
+                f"{Config.BINANCE_FAPI_BASE}/futures/data/topLongShortPositionRatio",
+                params={"symbol": clean, "period": period, "limit": limit},
+                timeout=10,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            return [
+                {
+                    "exchange": "Binance (Top Positions)",
+                    "longRatio": float(d.get("longAccount", 0.5)),
+                    "shortRatio": float(d.get("shortAccount", 0.5)),
+                    "longShortRatio": float(d.get("longShortRatio", 1.0)),
+                    "timestamp": d.get("timestamp"),
+                }
+                for d in data
+            ]
+        except Exception as e:
+            logger.debug("Binance top position LS ratio error: %s", e)
+            return []
+
+    @classmethod
+    def get_all_ratios(cls, symbol: str) -> list[dict]:
+        """Get all 3 types of long/short ratios combined."""
+        results = []
+        results.extend(cls.get_global_long_short_ratio(symbol))
+        results.extend(cls.get_top_trader_long_short_ratio(symbol))
+        results.extend(cls.get_top_trader_long_short_position_ratio(symbol))
+        return results
+
+
+# ──────────────────────────────────────────────
+# DEX data via DexScreener API (free, no key)
 # ──────────────────────────────────────────────
 class DexScreenerFetcher:
     """Fetch new/trending pairs from DexScreener (free, no key)."""
@@ -160,16 +339,11 @@ class DexScreenerFetcher:
             )
             resp.raise_for_status()
             pairs = resp.json().get("pairs", [])
-            now = time.time() * 1000
-            six_hours_ms = Config.LOOKBACK_HOURS * 3600 * 1000
             filtered = []
             for p in pairs:
-                created = p.get("pairCreatedAt", 0)
                 liq = p.get("liquidity", {}).get("usd", 0) or 0
                 vol = p.get("volume", {}).get("h24", 0) or 0
-                if (
-                    (now - created) <= six_hours_ms or True  # include established pairs too
-                ) and liq >= Config.DEXSCREENER_MIN_LIQUIDITY and vol >= Config.DEXSCREENER_MIN_VOLUME_24H:
+                if liq >= Config.DEXSCREENER_MIN_LIQUIDITY and vol >= Config.DEXSCREENER_MIN_VOLUME_24H:
                     filtered.append(p)
             return filtered
         except Exception as e:
@@ -178,99 +352,61 @@ class DexScreenerFetcher:
 
 
 # ──────────────────────────────────────────────
-# CoinGlass API
+# CryptoPanic API — Social/news (free tier)
 # ──────────────────────────────────────────────
-class CoinGlassFetcher:
-    """CoinGlass API for funding rate, long/short ratio, order book."""
+class CryptoPanicFetcher:
+    """
+    CryptoPanic free API for crypto news aggregation.
+    Free tier: public posts, no auth required (auth_token optional for more).
+    Detects 'breakout', 'trendline', 'pump' mentions.
+    """
 
-    @staticmethod
-    def _headers() -> dict:
-        return {
-            "accept": "application/json",
-            "CG-API-KEY": Config.COINGLASS_API_KEY,
-            "coinglassSecret": Config.COINGLASS_API_KEY,
+    BREAKOUT_KEYWORDS = [
+        "breakout", "trendline", "broke out", "breaking out",
+        "pump", "surge", "rally", "moon", "explosion",
+    ]
+
+    @classmethod
+    def get_news(cls, symbol: str, limit: int = 10) -> list[dict]:
+        """Get recent news/posts for a coin."""
+        clean = symbol.replace("/USDT:USDT", "").replace("/USDT", "").upper()
+        params = {
+            "currencies": clean,
+            "kind": "news",
+            "public": "true",
         }
+        if Config.CRYPTOPANIC_API_KEY:
+            params["auth_token"] = Config.CRYPTOPANIC_API_KEY
 
-    @classmethod
-    def get_funding_rate(cls, symbol: str) -> list[dict]:
-        """Get funding rate across exchanges."""
-        if not Config.COINGLASS_API_KEY:
-            return []
         try:
             resp = requests.get(
-                f"{Config.COINGLASS_BASE_URL}/funding",
-                headers=cls._headers(),
-                params={"symbol": symbol.replace("/USDT:USDT", "").replace("/USDT", "")},
+                f"{Config.CRYPTOPANIC_BASE_URL}/posts/",
+                params=params,
                 timeout=10,
             )
             resp.raise_for_status()
-            data = resp.json()
-            return data.get("data", [])
+            results = resp.json().get("results", [])
+            return results[:limit]
         except Exception as e:
-            logger.warning("CoinGlass funding rate error: %s", e)
+            logger.debug("CryptoPanic error for %s: %s", clean, e)
             return []
 
     @classmethod
-    def get_long_short_ratio(cls, symbol: str, interval: str = "h1") -> list[dict]:
-        """Get global long/short account ratio."""
-        if not Config.COINGLASS_API_KEY:
-            return []
-        try:
-            resp = requests.get(
-                f"{Config.COINGLASS_BASE_URL}/long_short",
-                headers=cls._headers(),
-                params={
-                    "symbol": symbol.replace("/USDT:USDT", "").replace("/USDT", ""),
-                    "interval": interval,
-                },
-                timeout=10,
-            )
-            resp.raise_for_status()
-            data = resp.json()
-            return data.get("data", [])
-        except Exception as e:
-            logger.warning("CoinGlass long/short error: %s", e)
-            return []
+    def detect_social_boost(cls, symbol: str) -> dict:
+        """
+        Check if there are recent breakout/trendline mentions.
+        Returns {boost: bool, mention_count: int, matching_titles: list}.
+        """
+        posts = cls.get_news(symbol)
+        matching = []
+        for post in posts:
+            title = (post.get("title") or "").lower()
+            if any(kw in title for kw in cls.BREAKOUT_KEYWORDS):
+                matching.append(post.get("title", ""))
 
-    @classmethod
-    def get_order_book_depth(cls, symbol: str) -> dict:
-        """Get aggregated order book from CoinGlass."""
-        if not Config.COINGLASS_API_KEY:
-            return {}
-        try:
-            resp = requests.get(
-                f"{Config.COINGLASS_BASE_URL}/orderbook",
-                headers=cls._headers(),
-                params={"symbol": symbol.replace("/USDT:USDT", "").replace("/USDT", "")},
-                timeout=10,
-            )
-            resp.raise_for_status()
-            return resp.json().get("data", {})
-        except Exception as e:
-            logger.warning("CoinGlass order book error: %s", e)
-            return {}
-
-
-# ──────────────────────────────────────────────
-# LunarCrush API (social boost)
-# ──────────────────────────────────────────────
-class LunarCrushFetcher:
-    """LunarCrush API for social mentions and sentiment."""
-
-    @classmethod
-    def get_social_metrics(cls, symbol: str) -> dict:
-        """Get social metrics for a given coin symbol."""
-        if not Config.LUNARCRUSH_API_KEY:
-            return {}
-        try:
-            clean = symbol.replace("/USDT:USDT", "").replace("/USDT", "").upper()
-            resp = requests.get(
-                f"{Config.LUNARCRUSH_BASE_URL}/coins/{clean}/v1",
-                headers={"Authorization": f"Bearer {Config.LUNARCRUSH_API_KEY}"},
-                timeout=10,
-            )
-            resp.raise_for_status()
-            return resp.json().get("data", {})
-        except Exception as e:
-            logger.warning("LunarCrush error for %s: %s", symbol, e)
-            return {}
+        return {
+            "boost": len(matching) >= 1,
+            "total_posts": len(posts),
+            "breakout_mentions": len(matching),
+            "matching_titles": matching[:3],
+        }

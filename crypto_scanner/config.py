@@ -24,7 +24,7 @@ class Config:
     # Supported CEX pairs (Binance Futures USDT-M)
     CEX_EXCHANGE: str = "binance"
     CEX_MARKET_TYPE: str = "future"
-    CEX_TOP_N: int = 80  # Top N by volume to scan
+    CEX_TOP_N: int = 150  # Top N by volume to scan
 
     # DexScreener
     DEXSCREENER_CHAINS: list = ["solana", "ethereum"]

@@ -243,16 +243,13 @@ def _add_trendlines(fig: go.Figure, df: pd.DataFrame, plot_df: pd.DataFrame):
 
 
 def build_order_book_chart(bids: list, asks: list, symbol: str) -> go.Figure:
-    """Build order book depth chart."""
+    """Build order book depth chart with whale wall annotations."""
     fig = go.Figure()
 
     if bids:
         bid_prices = [b[0] for b in bids]
-        bid_cumvol = []
-        cumsum = 0
-        for b in bids:
-            cumsum += b[1]
-            bid_cumvol.append(cumsum)
+        bid_sizes = [b[1] for b in bids]
+        bid_cumvol = list(np.cumsum(bid_sizes))
         fig.add_trace(
             go.Scatter(
                 x=bid_prices,
@@ -266,11 +263,8 @@ def build_order_book_chart(bids: list, asks: list, symbol: str) -> go.Figure:
 
     if asks:
         ask_prices = [a[0] for a in asks]
-        ask_cumvol = []
-        cumsum = 0
-        for a in asks:
-            cumsum += a[1]
-            ask_cumvol.append(cumsum)
+        ask_sizes = [a[1] for a in asks]
+        ask_cumvol = list(np.cumsum(ask_sizes))
         fig.add_trace(
             go.Scatter(
                 x=ask_prices,
@@ -290,6 +284,81 @@ def build_order_book_chart(bids: list, asks: list, symbol: str) -> go.Figure:
         plot_bgcolor="#0e1117",
         xaxis_title="Price",
         yaxis_title="Cumulative Volume",
+        font=dict(color="#fafafa"),
+    )
+
+    return fig
+
+
+def build_order_book_heatmap(bids: list, asks: list, symbol: str) -> go.Figure:
+    """Build order book heatmap showing size at each price level."""
+    fig = go.Figure()
+
+    all_prices = []
+    all_sizes = []
+    all_colors = []
+    all_sides = []
+
+    if bids:
+        for b in bids:
+            all_prices.append(b[0])
+            all_sizes.append(b[1])
+            all_colors.append("#26a69a")
+            all_sides.append("Bid")
+
+    if asks:
+        for a in asks:
+            all_prices.append(a[0])
+            all_sizes.append(a[1])
+            all_colors.append("#ef5350")
+            all_sides.append("Ask")
+
+    if not all_prices:
+        fig.add_annotation(text="No order book data", showarrow=False)
+        fig.update_layout(template="plotly_dark", height=300, paper_bgcolor="#0e1117", plot_bgcolor="#0e1117")
+        return fig
+
+    # Detect whale walls: levels > mean + 2*std
+    sizes_arr = np.array(all_sizes)
+    threshold = np.mean(sizes_arr) + 2 * np.std(sizes_arr)
+    bar_colors = []
+    for i, size in enumerate(all_sizes):
+        if size >= threshold:
+            bar_colors.append("#FFD600")  # Yellow = whale wall
+        else:
+            bar_colors.append(all_colors[i])
+
+    fig.add_trace(go.Bar(
+        x=all_prices,
+        y=all_sizes,
+        marker_color=bar_colors,
+        text=[f"{s:,.2f}" for s in all_sizes],
+        textposition="outside",
+        name="Size",
+    ))
+
+    # Whale wall annotations
+    for i, size in enumerate(all_sizes):
+        if size >= threshold:
+            fig.add_annotation(
+                x=all_prices[i],
+                y=size,
+                text="WHALE",
+                showarrow=True,
+                arrowhead=2,
+                arrowcolor="#FFD600",
+                font=dict(size=9, color="#FFD600"),
+                bgcolor="rgba(0,0,0,0.7)",
+            )
+
+    fig.update_layout(
+        template="plotly_dark",
+        title=f"{symbol} Order Book Heatmap (Yellow = Whale Wall)",
+        height=400,
+        paper_bgcolor="#0e1117",
+        plot_bgcolor="#0e1117",
+        xaxis_title="Price",
+        yaxis_title="Size",
         font=dict(color="#fafafa"),
     )
 
@@ -390,6 +459,214 @@ def build_long_short_chart(data: list[dict], symbol: str) -> go.Figure:
         plot_bgcolor="#0e1117",
         yaxis_title="Ratio %",
         font=dict(color="#fafafa"),
+    )
+
+    return fig
+
+
+# ──────────────────────────────────────────────
+# Phase 3: Historical Funding Rate Chart
+# ──────────────────────────────────────────────
+def build_funding_rate_history_chart(df: pd.DataFrame, symbol: str) -> go.Figure:
+    """Build historical funding rate timeline chart."""
+    fig = go.Figure()
+
+    if df.empty:
+        fig.add_annotation(text="No historical funding rate data", showarrow=False)
+        fig.update_layout(template="plotly_dark", height=300, paper_bgcolor="#0e1117", plot_bgcolor="#0e1117")
+        return fig
+
+    colors = ["#26a69a" if r >= 0 else "#ef5350" for r in df["fundingRate"]]
+
+    fig.add_trace(go.Bar(
+        x=df["fundingTime"],
+        y=df["fundingRate"] * 100,
+        marker_color=colors,
+        name="Funding Rate %",
+    ))
+
+    # Add zero line
+    fig.add_hline(y=0, line_dash="dot", line_color="#616161")
+
+    # Average line
+    avg_rate = df["fundingRate"].mean() * 100
+    fig.add_hline(
+        y=avg_rate,
+        line_dash="dash",
+        line_color="#FFC107",
+        annotation_text=f"Avg: {avg_rate:+.4f}%",
+        annotation_position="top right",
+        annotation_font_color="#FFC107",
+    )
+
+    fig.update_layout(
+        template="plotly_dark",
+        title=f"{symbol} Funding Rate History",
+        height=350,
+        paper_bgcolor="#0e1117",
+        plot_bgcolor="#0e1117",
+        xaxis_title="Time",
+        yaxis_title="Funding Rate %",
+        font=dict(color="#fafafa"),
+    )
+
+    return fig
+
+
+# ──────────────────────────────────────────────
+# Phase 3: Historical Long/Short Timeline
+# ──────────────────────────────────────────────
+def build_ls_history_chart(df: pd.DataFrame, symbol: str) -> go.Figure:
+    """Build historical long/short ratio timeline."""
+    fig = go.Figure()
+
+    if df.empty:
+        fig.add_annotation(text="No historical L/S data", showarrow=False)
+        fig.update_layout(template="plotly_dark", height=300, paper_bgcolor="#0e1117", plot_bgcolor="#0e1117")
+        return fig
+
+    fig.add_trace(go.Scatter(
+        x=df["timestamp"],
+        y=df["longAccount"].astype(float) * 100,
+        name="Long %",
+        line=dict(color="#26a69a", width=2),
+        fill="tonexty" if "shortAccount" in df.columns else None,
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=df["timestamp"],
+        y=df["shortAccount"].astype(float) * 100,
+        name="Short %",
+        line=dict(color="#ef5350", width=2),
+    ))
+
+    # 50% line
+    fig.add_hline(y=50, line_dash="dot", line_color="#616161", annotation_text="50%")
+
+    fig.update_layout(
+        template="plotly_dark",
+        title=f"{symbol} Long/Short Ratio History",
+        height=350,
+        paper_bgcolor="#0e1117",
+        plot_bgcolor="#0e1117",
+        xaxis_title="Time",
+        yaxis_title="Ratio %",
+        font=dict(color="#fafafa"),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+    )
+
+    return fig
+
+
+# ──────────────────────────────────────────────
+# Phase 3: Open Interest Chart
+# ──────────────────────────────────────────────
+def build_open_interest_chart(df: pd.DataFrame, symbol: str) -> go.Figure:
+    """Build open interest history chart with value overlay."""
+    fig = make_subplots(
+        rows=2, cols=1, shared_xaxes=True,
+        vertical_spacing=0.05,
+        row_heights=[0.6, 0.4],
+        subplot_titles=[f"{symbol} Open Interest (Contracts)", "OI Value (USD)"],
+    )
+
+    if df.empty:
+        fig.add_annotation(text="No open interest data", showarrow=False)
+        fig.update_layout(template="plotly_dark", height=400, paper_bgcolor="#0e1117", plot_bgcolor="#0e1117")
+        return fig
+
+    # OI in contracts
+    fig.add_trace(go.Scatter(
+        x=df["timestamp"],
+        y=df["sumOpenInterest"],
+        name="OI (contracts)",
+        line=dict(color="#42A5F5", width=2),
+        fill="tozeroy",
+        fillcolor="rgba(66,165,245,0.15)",
+    ), row=1, col=1)
+
+    # OI in USD value
+    fig.add_trace(go.Bar(
+        x=df["timestamp"],
+        y=df["sumOpenInterestValue"],
+        name="OI Value (USD)",
+        marker_color="rgba(171,71,188,0.6)",
+    ), row=2, col=1)
+
+    fig.update_layout(
+        template="plotly_dark",
+        height=450,
+        paper_bgcolor="#0e1117",
+        plot_bgcolor="#0e1117",
+        font=dict(color="#fafafa"),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        showlegend=True,
+    )
+    fig.update_xaxes(gridcolor="#1e222d")
+    fig.update_yaxes(gridcolor="#1e222d")
+
+    return fig
+
+
+# ──────────────────────────────────────────────
+# Phase 3: Liquidation Level Estimation
+# ──────────────────────────────────────────────
+def build_liquidation_chart(
+    current_price: float, symbol: str, leverages: list[int] = None
+) -> go.Figure:
+    """
+    Estimate liquidation price levels for common leverages.
+    For longs: liq_price = entry * (1 - 1/leverage)
+    For shorts: liq_price = entry * (1 + 1/leverage)
+    """
+    if leverages is None:
+        leverages = [2, 3, 5, 10, 20, 25, 50, 100]
+
+    fig = go.Figure()
+
+    long_liqs = [current_price * (1 - 1 / lev) for lev in leverages]
+    short_liqs = [current_price * (1 + 1 / lev) for lev in leverages]
+    labels = [f"{lev}x" for lev in leverages]
+
+    fig.add_trace(go.Bar(
+        x=labels,
+        y=long_liqs,
+        name="Long Liq Price",
+        marker_color="#ef5350",
+        text=[f"${p:,.2f}" for p in long_liqs],
+        textposition="outside",
+    ))
+
+    fig.add_trace(go.Bar(
+        x=labels,
+        y=short_liqs,
+        name="Short Liq Price",
+        marker_color="#26a69a",
+        text=[f"${p:,.2f}" for p in short_liqs],
+        textposition="outside",
+    ))
+
+    # Current price line
+    fig.add_hline(
+        y=current_price,
+        line_dash="dash",
+        line_color="#FFC107",
+        annotation_text=f"Current: ${current_price:,.2f}",
+        annotation_position="top right",
+        annotation_font_color="#FFC107",
+    )
+
+    fig.update_layout(
+        template="plotly_dark",
+        title=f"{symbol} Estimated Liquidation Levels by Leverage",
+        barmode="group",
+        height=400,
+        paper_bgcolor="#0e1117",
+        plot_bgcolor="#0e1117",
+        xaxis_title="Leverage",
+        yaxis_title="Liquidation Price (USD)",
+        font=dict(color="#fafafa"),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
     )
 
     return fig

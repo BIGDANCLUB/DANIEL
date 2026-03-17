@@ -258,6 +258,128 @@ class BinanceLongShortFetcher:
         results.extend(cls.get_top_trader_long_short_position_ratio(symbol))
         return results
 
+    @classmethod
+    def get_global_ls_history(
+        cls, symbol: str, period: str = "1h", limit: int = 30
+    ) -> pd.DataFrame:
+        """Get historical global long/short ratio as DataFrame."""
+        clean = cls._clean_symbol(symbol)
+        try:
+            resp = requests.get(
+                f"{Config.BINANCE_FAPI_BASE}/futures/data/globalLongShortAccountRatio",
+                params={"symbol": clean, "period": period, "limit": limit},
+                timeout=10,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            if not data:
+                return pd.DataFrame()
+            df = pd.DataFrame(data)
+            df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms", utc=True)
+            df["longAccount"] = df["longAccount"].astype(float)
+            df["shortAccount"] = df["shortAccount"].astype(float)
+            df["longShortRatio"] = df["longShortRatio"].astype(float)
+            return df.sort_values("timestamp")
+        except Exception as e:
+            logger.debug("Binance LS history error: %s", e)
+            return pd.DataFrame()
+
+
+# ──────────────────────────────────────────────
+# Binance FAPI — Funding Rate History (free)
+# ──────────────────────────────────────────────
+class BinanceFundingHistoryFetcher:
+    """Fetch historical funding rates from Binance FAPI (no key required)."""
+
+    @staticmethod
+    def _clean_symbol(symbol: str) -> str:
+        return symbol.replace("/USDT:USDT", "").replace("/USDT", "").upper() + "USDT"
+
+    @classmethod
+    def get_funding_history(cls, symbol: str, limit: int = 100) -> pd.DataFrame:
+        """
+        Binance FAPI: /fapi/v1/fundingRate
+        Free, no API key needed. Returns up to 1000 records.
+        """
+        clean = cls._clean_symbol(symbol)
+        try:
+            resp = requests.get(
+                f"{Config.BINANCE_FAPI_BASE}/fapi/v1/fundingRate",
+                params={"symbol": clean, "limit": limit},
+                timeout=10,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            if not data:
+                return pd.DataFrame()
+            df = pd.DataFrame(data)
+            df["fundingTime"] = pd.to_datetime(df["fundingTime"], unit="ms", utc=True)
+            df["fundingRate"] = df["fundingRate"].astype(float)
+            df["markPrice"] = df["markPrice"].astype(float)
+            return df.sort_values("fundingTime")
+        except Exception as e:
+            logger.debug("Binance funding history error: %s", e)
+            return pd.DataFrame()
+
+
+# ──────────────────────────────────────────────
+# Binance FAPI — Open Interest (free)
+# ──────────────────────────────────────────────
+class BinanceOpenInterestFetcher:
+    """Fetch open interest data from Binance FAPI (no key required)."""
+
+    @staticmethod
+    def _clean_symbol(symbol: str) -> str:
+        return symbol.replace("/USDT:USDT", "").replace("/USDT", "").upper() + "USDT"
+
+    @classmethod
+    def get_current_oi(cls, symbol: str) -> dict:
+        """Current open interest."""
+        clean = cls._clean_symbol(symbol)
+        try:
+            resp = requests.get(
+                f"{Config.BINANCE_FAPI_BASE}/fapi/v1/openInterest",
+                params={"symbol": clean},
+                timeout=10,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            return {
+                "openInterest": float(data.get("openInterest", 0)),
+                "symbol": data.get("symbol", ""),
+                "time": data.get("time", 0),
+            }
+        except Exception as e:
+            logger.debug("Binance OI error: %s", e)
+            return {}
+
+    @classmethod
+    def get_oi_history(cls, symbol: str, period: str = "1h", limit: int = 30) -> pd.DataFrame:
+        """
+        Historical open interest (sum).
+        Binance FAPI: /futures/data/openInterestHist
+        Free, no key required.
+        """
+        clean = cls._clean_symbol(symbol)
+        try:
+            resp = requests.get(
+                f"{Config.BINANCE_FAPI_BASE}/futures/data/openInterestHist",
+                params={"symbol": clean, "period": period, "limit": limit},
+                timeout=10,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            if not data:
+                return pd.DataFrame()
+            df = pd.DataFrame(data)
+            df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms", utc=True)
+            df["sumOpenInterest"] = df["sumOpenInterest"].astype(float)
+            df["sumOpenInterestValue"] = df["sumOpenInterestValue"].astype(float)
+            return df.sort_values("timestamp")
+        except Exception as e:
+            logger.debug("Binance OI history error: %s", e)
+            return pd.DataFrame()
+
 
 # ──────────────────────────────────────────────
 # DEX data via DexScreener API (free, no key)

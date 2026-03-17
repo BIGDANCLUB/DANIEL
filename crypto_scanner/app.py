@@ -83,13 +83,20 @@ from scanner_engine import ScannerEngine, ScanResult
 from chart_builder import (
     build_candlestick_chart,
     build_order_book_chart,
+    build_order_book_heatmap,
     build_funding_rate_chart,
+    build_funding_rate_history_chart,
     build_long_short_chart,
+    build_ls_history_chart,
+    build_open_interest_chart,
+    build_liquidation_chart,
 )
 from data_fetcher import (
     CEXFetcher,
     MultiExchangeFundingFetcher,
     BinanceLongShortFetcher,
+    BinanceFundingHistoryFetcher,
+    BinanceOpenInterestFetcher,
     CryptoPanicFetcher,
 )
 
@@ -438,8 +445,8 @@ else:
                         unsafe_allow_html=True,
                     )
 
-            tab_chart, tab_funding, tab_ls, tab_orderbook, tab_social = st.tabs(
-                ["Chart", "Funding Rate", "Long/Short", "Order Book", "News/Social"]
+            tab_chart, tab_funding, tab_ls, tab_oi, tab_orderbook, tab_liq, tab_social = st.tabs(
+                ["Chart", "Funding Rate", "Long/Short", "Open Interest", "Order Book", "Liquidation", "News/Social"]
             )
 
             # ── Tab: Chart ──
@@ -483,11 +490,13 @@ else:
                                 f"${sel_result.extra.get('liquidity_usd', 0):,.0f}",
                             )
 
-            # ── Tab: Funding Rate (CCXT — free) ──
+            # ── Tab: Funding Rate (CCXT + Binance History) ──
             with tab_funding:
                 if is_cex:
-                    st.caption("Data source: CCXT (Binance + Bybit) — Free, no API key needed")
-                    with st.spinner("Loading funding rates from multiple exchanges..."):
+                    st.caption("Data source: CCXT + Binance FAPI — All free")
+                    with st.spinner("Loading funding rates..."):
+                        # Current rates across exchanges
+                        st.markdown("**Current Funding Rate (Multi-Exchange)**")
                         fr_data = run_async(MultiExchangeFundingFetcher.fetch_all(selected))
                         fig_fr = build_funding_rate_chart(fr_data, selected)
                         st.plotly_chart(fig_fr, use_container_width=True)
@@ -503,16 +512,47 @@ else:
                                 ),
                                 use_container_width=True,
                             )
+
+                        # Historical funding rate
+                        st.markdown("---")
+                        st.markdown("**Funding Rate History (Binance)**")
+                        fr_period = st.radio(
+                            "History length", ["50", "100", "200"],
+                            horizontal=True, key="fr_hist_len", index=1
+                        )
+                        fr_hist_df = BinanceFundingHistoryFetcher.get_funding_history(
+                            selected, limit=int(fr_period)
+                        )
+                        if not fr_hist_df.empty:
+                            fig_fr_hist = build_funding_rate_history_chart(fr_hist_df, selected)
+                            st.plotly_chart(fig_fr_hist, use_container_width=True)
+
+                            # Summary stats
+                            hcol1, hcol2, hcol3, hcol4 = st.columns(4)
+                            with hcol1:
+                                avg_fr = fr_hist_df["fundingRate"].mean() * 100
+                                st.metric("Avg Rate", f"{avg_fr:+.4f}%")
+                            with hcol2:
+                                max_fr = fr_hist_df["fundingRate"].max() * 100
+                                st.metric("Max Rate", f"{max_fr:+.4f}%")
+                            with hcol3:
+                                min_fr = fr_hist_df["fundingRate"].min() * 100
+                                st.metric("Min Rate", f"{min_fr:+.4f}%")
+                            with hcol4:
+                                pos_pct = (fr_hist_df["fundingRate"] > 0).mean() * 100
+                                st.metric("Positive %", f"{pos_pct:.0f}%")
                         else:
-                            st.info("Could not fetch funding rates. The symbol may not be listed on all exchanges.")
+                            st.info("No historical funding rate data available.")
                 else:
                     st.info("Funding rate data is only available for CEX perpetual futures.")
 
-            # ── Tab: Long/Short (Binance FAPI — free) ──
+            # ── Tab: Long/Short (Binance FAPI — current + history) ──
             with tab_ls:
                 if is_cex:
-                    st.caption("Data source: Binance Public Futures API — Free, no API key needed")
+                    st.caption("Data source: Binance Public Futures API — Free")
                     with st.spinner("Loading long/short ratios..."):
+                        # Current snapshot
+                        st.markdown("**Current L/S Ratio**")
                         ls_data = BinanceLongShortFetcher.get_all_ratios(selected)
                         fig_ls = build_long_short_chart(ls_data, selected)
                         st.plotly_chart(fig_ls, use_container_width=True)
@@ -528,10 +568,68 @@ else:
                                 ),
                                 use_container_width=True,
                             )
+
+                        # Historical timeline
+                        st.markdown("---")
+                        st.markdown("**L/S Ratio History (Global)**")
+                        ls_hist_df = BinanceLongShortFetcher.get_global_ls_history(
+                            selected, period="1h", limit=48
+                        )
+                        if not ls_hist_df.empty:
+                            fig_ls_hist = build_ls_history_chart(ls_hist_df, selected)
+                            st.plotly_chart(fig_ls_hist, use_container_width=True)
                         else:
-                            st.info("Long/short data not available for this symbol.")
+                            st.info("No historical L/S data available.")
                 else:
                     st.info("Long/Short ratio is only available for CEX perpetual futures.")
+
+            # ── Tab: Open Interest (Binance FAPI — free) ──
+            with tab_oi:
+                if is_cex:
+                    st.caption("Data source: Binance Public Futures API — Free")
+                    with st.spinner("Loading open interest..."):
+                        # Current OI
+                        oi_current = BinanceOpenInterestFetcher.get_current_oi(selected)
+                        if oi_current:
+                            oicol1, oicol2 = st.columns(2)
+                            with oicol1:
+                                st.metric(
+                                    "Current OI",
+                                    f"{oi_current.get('openInterest', 0):,.2f} contracts",
+                                )
+                            with oicol2:
+                                oi_val = oi_current.get("openInterest", 0) * sel_result.price
+                                st.metric("OI Value (est.)", f"${oi_val:,.0f}")
+
+                        # Historical OI
+                        st.markdown("---")
+                        oi_period = st.radio(
+                            "Period", ["5m", "15m", "1h", "4h"],
+                            horizontal=True, key="oi_period", index=2
+                        )
+                        oi_hist = BinanceOpenInterestFetcher.get_oi_history(
+                            selected, period=oi_period, limit=48
+                        )
+                        if not oi_hist.empty:
+                            fig_oi = build_open_interest_chart(oi_hist, selected)
+                            st.plotly_chart(fig_oi, use_container_width=True)
+
+                            # OI change metrics
+                            if len(oi_hist) >= 2:
+                                oi_first = float(oi_hist["sumOpenInterestValue"].iloc[0])
+                                oi_last = float(oi_hist["sumOpenInterestValue"].iloc[-1])
+                                oi_change = ((oi_last - oi_first) / oi_first * 100) if oi_first > 0 else 0
+                                chcol1, chcol2, chcol3 = st.columns(3)
+                                with chcol1:
+                                    st.metric("OI Start", f"${oi_first:,.0f}")
+                                with chcol2:
+                                    st.metric("OI Latest", f"${oi_last:,.0f}")
+                                with chcol3:
+                                    st.metric("OI Change", f"{oi_change:+.2f}%")
+                        else:
+                            st.info("No OI history data available.")
+                else:
+                    st.info("Open interest data is only available for CEX perpetual futures.")
 
             # ── Tab: Order Book (CCXT — free) ──
             with tab_orderbook:
@@ -546,32 +644,111 @@ else:
                             bids = ob.get("bids", [])
                             asks = ob.get("asks", [])
 
+                            # Depth chart
                             fig_ob = build_order_book_chart(bids, asks, selected)
                             st.plotly_chart(fig_ob, use_container_width=True)
 
-                            # Whale wall detection
+                            # Heatmap
+                            st.markdown("---")
+                            fig_hm = build_order_book_heatmap(bids, asks, selected)
+                            st.plotly_chart(fig_hm, use_container_width=True)
+
+                            # Whale wall detection (improved)
+                            st.markdown("---")
                             st.markdown("**Whale Walls (Top 5 by size)**")
                             all_levels = (
                                 [("Bid", b[0], b[1]) for b in bids]
                                 + [("Ask", a[0], a[1]) for a in asks]
                             )
                             all_levels.sort(key=lambda x: x[2], reverse=True)
-                            whale_df = pd.DataFrame(
-                                all_levels[:5], columns=["Side", "Price", "Size"]
-                            )
-                            whale_df["Value (USD)"] = whale_df["Price"] * whale_df["Size"]
-                            st.dataframe(
-                                whale_df.style.format({
-                                    "Price": "${:,.2f}",
-                                    "Size": "{:,.4f}",
-                                    "Value (USD)": "${:,.0f}",
-                                }),
-                                use_container_width=True,
-                            )
+
+                            if all_levels:
+                                sizes = [l[2] for l in all_levels]
+                                import numpy as np_ob
+                                mean_size = np_ob.mean(sizes)
+                                std_size = np_ob.std(sizes)
+
+                                whale_rows = []
+                                for side, price, size in all_levels[:10]:
+                                    z_score = (size - mean_size) / std_size if std_size > 0 else 0
+                                    is_whale = z_score > 2.0
+                                    whale_rows.append({
+                                        "Side": side,
+                                        "Price": price,
+                                        "Size": size,
+                                        "Value (USD)": price * size,
+                                        "Z-Score": round(z_score, 2),
+                                        "Whale": "YES" if is_whale else "",
+                                    })
+
+                                whale_df = pd.DataFrame(whale_rows[:5])
+                                st.dataframe(
+                                    whale_df.style.format({
+                                        "Price": "${:,.2f}",
+                                        "Size": "{:,.4f}",
+                                        "Value (USD)": "${:,.0f}",
+                                        "Z-Score": "{:.2f}",
+                                    }),
+                                    use_container_width=True,
+                                )
+
+                                # Bid/Ask imbalance
+                                total_bid = sum(b[1] for b in bids)
+                                total_ask = sum(a[1] for a in asks)
+                                imbalance = (total_bid - total_ask) / (total_bid + total_ask) * 100 if (total_bid + total_ask) > 0 else 0
+                                imcol1, imcol2, imcol3 = st.columns(3)
+                                with imcol1:
+                                    st.metric("Total Bid Size", f"{total_bid:,.2f}")
+                                with imcol2:
+                                    st.metric("Total Ask Size", f"{total_ask:,.2f}")
+                                with imcol3:
+                                    color = "normal" if abs(imbalance) < 10 else ("inverse" if imbalance < 0 else "normal")
+                                    st.metric("Bid/Ask Imbalance", f"{imbalance:+.1f}%")
+
                         except Exception as e:
                             st.error(f"Order book error: {e}")
                 else:
                     st.info("Order book depth is only available for CEX pairs.")
+
+            # ── Tab: Liquidation Levels ──
+            with tab_liq:
+                if is_cex:
+                    st.caption("Estimated liquidation prices assuming entry at current price")
+                    fig_liq = build_liquidation_chart(sel_result.price, selected)
+                    st.plotly_chart(fig_liq, use_container_width=True)
+
+                    st.markdown("**Liquidation Price Table**")
+                    leverages = [2, 3, 5, 10, 20, 25, 50, 100]
+                    liq_rows = []
+                    for lev in leverages:
+                        long_liq = sel_result.price * (1 - 1 / lev)
+                        short_liq = sel_result.price * (1 + 1 / lev)
+                        long_dist = (sel_result.price - long_liq) / sel_result.price * 100
+                        short_dist = (short_liq - sel_result.price) / sel_result.price * 100
+                        liq_rows.append({
+                            "Leverage": f"{lev}x",
+                            "Long Liq Price": long_liq,
+                            "Long Distance %": long_dist,
+                            "Short Liq Price": short_liq,
+                            "Short Distance %": short_dist,
+                        })
+                    liq_df = pd.DataFrame(liq_rows)
+                    st.dataframe(
+                        liq_df.style.format({
+                            "Long Liq Price": "${:,.4f}",
+                            "Long Distance %": "{:.2f}%",
+                            "Short Liq Price": "${:,.4f}",
+                            "Short Distance %": "{:.2f}%",
+                        }),
+                        use_container_width=True,
+                    )
+
+                    st.caption(
+                        "Note: Actual liquidation depends on margin mode (cross/isolated), "
+                        "maintenance margin rate, and unrealized PnL. These are simplified estimates."
+                    )
+                else:
+                    st.info("Liquidation data is only available for CEX perpetual futures.")
 
             # ── Tab: News/Social (CryptoPanic — free) ──
             with tab_social:
@@ -599,7 +776,6 @@ else:
                         st.markdown("**Recent News:**")
                         for post in news:
                             title = post.get("title", "")
-                            url = post.get("url", "")
                             source = post.get("source", {}).get("title", "")
                             st.markdown(f"- **{title}** ({source})")
 
@@ -639,8 +815,8 @@ else:
 # ──────────────────────────────────────────────
 st.markdown("---")
 st.caption(
-    "Crypto Trendline Break Scanner v2.0 — Phase 2 | 100% Free APIs "
-    "| RANSAC trendlines + Multi-TF + Pattern detection + Social filter "
+    "Crypto Trendline Break Scanner v3.0 — Phase 3 | 100% Free APIs "
+    "| FR History + L/S Timeline + Open Interest + Order Book Heatmap + Liquidation "
     "| CCXT + Binance FAPI + DexScreener + CryptoPanic | "
     "Not financial advice. DYOR."
 )

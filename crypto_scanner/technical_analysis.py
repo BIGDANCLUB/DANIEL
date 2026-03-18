@@ -20,7 +20,7 @@ from itertools import combinations
 
 import numpy as np
 import pandas as pd
-import pandas_ta as ta
+import talib
 from scipy import stats
 from scipy.signal import argrelextrema
 
@@ -33,8 +33,10 @@ logger = logging.getLogger(__name__)
 # 200 EMA
 # ──────────────────────────────────────────────
 def compute_ema(df: pd.DataFrame, period: int = 200, col: str = "close") -> pd.Series:
-    """Compute EMA using pandas_ta."""
-    return ta.ema(df[col], length=period)
+    """Compute EMA using ta-lib."""
+    values = df[col].astype(float).values
+    ema_arr = talib.EMA(values, timeperiod=period)
+    return pd.Series(ema_arr, index=df.index)
 
 
 def is_above_ema(df: pd.DataFrame, period: int = 200) -> bool:
@@ -572,8 +574,10 @@ def compute_scan_score(
 # Phase 6: RSI
 # ──────────────────────────────────────────────
 def compute_rsi(df: pd.DataFrame, period: int = 14, col: str = "close") -> pd.Series:
-    """Compute RSI using pandas_ta."""
-    return ta.rsi(df[col], length=period)
+    """Compute RSI using ta-lib."""
+    values = df[col].astype(float).values
+    rsi_arr = talib.RSI(values, timeperiod=period)
+    return pd.Series(rsi_arr, index=df.index)
 
 
 def get_rsi_signal(df: pd.DataFrame, period: int = 14) -> dict:
@@ -613,15 +617,18 @@ def get_rsi_signal(df: pd.DataFrame, period: int = 14) -> dict:
 # Phase 6: MACD
 # ──────────────────────────────────────────────
 def compute_macd(
-    df: pd.DataFrame, fast: int = 12, slow: int = 26, signal: int = 9, col: str = "close"
+    df: pd.DataFrame, fast: int = 12, slow: int = 26, signal_period: int = 9, col: str = "close"
 ) -> pd.DataFrame:
-    """Compute MACD using pandas_ta. Returns DataFrame with MACD, signal, histogram."""
-    result = ta.macd(df[col], fast=fast, slow=slow, signal=signal)
-    if result is None:
-        return pd.DataFrame()
-    # pandas_ta returns columns like MACD_12_26_9, MACDs_12_26_9, MACDh_12_26_9
-    result.columns = ["macd", "histogram", "signal"]
-    return result
+    """Compute MACD using ta-lib. Returns DataFrame with macd, signal, histogram."""
+    values = df[col].astype(float).values
+    macd_line, signal_line, histogram = talib.MACD(
+        values, fastperiod=fast, slowperiod=slow, signalperiod=signal_period
+    )
+    return pd.DataFrame({
+        "macd": macd_line,
+        "signal": signal_line,
+        "histogram": histogram,
+    }, index=df.index)
 
 
 def get_macd_signal(df: pd.DataFrame) -> dict:
@@ -669,13 +676,20 @@ def get_macd_signal(df: pd.DataFrame) -> dict:
 def compute_bollinger_bands(
     df: pd.DataFrame, period: int = 20, std_dev: float = 2.0, col: str = "close"
 ) -> pd.DataFrame:
-    """Compute Bollinger Bands. Returns DataFrame with lower, mid, upper, bandwidth, %b."""
-    bb = ta.bbands(df[col], length=period, std=std_dev)
-    if bb is None:
-        return pd.DataFrame()
-    # pandas_ta returns: BBL, BBM, BBU, BBB, BBP
-    bb.columns = ["lower", "mid", "upper", "bandwidth", "pct_b"]
-    return bb
+    """Compute Bollinger Bands using ta-lib. Returns DataFrame with lower, mid, upper, bandwidth, %b."""
+    values = df[col].astype(float).values
+    upper, mid, lower = talib.BBANDS(values, timeperiod=period, nbdevup=std_dev, nbdevdn=std_dev)
+
+    bandwidth = np.where(mid != 0, (upper - lower) / mid, 0)
+    pct_b = np.where((upper - lower) != 0, (values - lower) / (upper - lower), 0.5)
+
+    return pd.DataFrame({
+        "lower": lower,
+        "mid": mid,
+        "upper": upper,
+        "bandwidth": bandwidth,
+        "pct_b": pct_b,
+    }, index=df.index)
 
 
 def get_bb_signal(df: pd.DataFrame) -> dict:

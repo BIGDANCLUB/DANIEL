@@ -1,14 +1,15 @@
 """
-Crypto Trendline Break Scanner — Streamlit App (Phase 5)
+Crypto Trendline Break Scanner — Streamlit App (Phase 6)
 =========================================================
 6時間以内トレンドラインブレイク検知スキャナー
 100% 無料API構成: CCXT + Binance Public FAPI + DexScreener + CryptoPanic
 
-Phase 5 additions:
-- Market dashboard (BTC/ETH price, Fear & Greed)
-- Watchlist UI (add/remove/filter/scan)
-- Signal history tracking with hit-rate analysis
-- Alert configuration panel with triggered alert display
+Phase 6 additions:
+- RSI / MACD / Bollinger Bands on charts
+- Multi-indicator enhanced scoring (v2)
+- Signal heatmap (treemap visualization)
+- Mini backtester with equity curve
+- TA indicator summary panel per coin
 """
 
 import asyncio
@@ -121,6 +122,7 @@ from scanner_engine import (
     ScannerEngine,
     ScanResult,
     MarketOverview,
+    MiniBacktester,
     load_watchlist,
     save_watchlist,
     add_to_watchlist,
@@ -143,6 +145,8 @@ from chart_builder import (
     build_ls_history_chart,
     build_open_interest_chart,
     build_liquidation_chart,
+    build_signal_heatmap,
+    build_backtest_chart,
 )
 from data_fetcher import (
     CEXFetcher,
@@ -262,7 +266,7 @@ st.markdown(
         <h1>Crypto Trendline Break Scanner</h1>
         <p>6時間以内トレンドラインブレイク検知 — Volume Spike + 200 EMA + Trendline Break + Social
         <span class="free-badge">100% FREE APIs</span>
-        <span class="free-badge" style="background:#0d47a1;color:#82b1ff;margin-left:4px;">Phase 5</span></p>
+        <span class="free-badge" style="background:#0d47a1;color:#82b1ff;margin-left:4px;">Phase 6</span></p>
     </div>
     """,
     unsafe_allow_html=True,
@@ -423,8 +427,8 @@ if auto_refresh:
 # ──────────────────────────────────────────────
 # Main content — tabs: Signals | History | Alerts
 # ──────────────────────────────────────────────
-main_tab_signals, main_tab_history, main_tab_alerts = st.tabs(
-    ["Signals", "Signal History", "Alert Settings"]
+main_tab_signals, main_tab_heatmap, main_tab_backtest, main_tab_history, main_tab_alerts = st.tabs(
+    ["Signals", "Heatmap", "Backtest", "Signal History", "Alert Settings"]
 )
 
 
@@ -653,15 +657,21 @@ with main_tab_signals:
                             unsafe_allow_html=True,
                         )
 
-                tab_chart, tab_funding, tab_ls, tab_oi, tab_orderbook, tab_liq, tab_social = st.tabs(
-                    ["Chart", "Funding Rate", "Long/Short", "Open Interest", "Order Book", "Liquidation", "News/Social"]
+                tab_chart, tab_ta, tab_funding, tab_ls, tab_oi, tab_orderbook, tab_liq, tab_social = st.tabs(
+                    ["Chart", "TA Indicators", "Funding Rate", "Long/Short", "Open Interest", "Order Book", "Liquidation", "News/Social"]
                 )
 
                 # ── Tab: Chart ──
                 with tab_chart:
-                    timeframe = st.radio(
-                        "Timeframe", ["1h", "4h"], horizontal=True, key="tf_radio"
-                    )
+                    tc1, tc2 = st.columns([1, 1])
+                    with tc1:
+                        timeframe = st.radio(
+                            "Timeframe", ["1h", "4h"], horizontal=True, key="tf_radio"
+                        )
+                    with tc2:
+                        show_indicators = st.checkbox(
+                            "Show RSI / MACD / Bollinger Bands", value=False, key="show_ta"
+                        )
 
                     if is_cex:
                         with st.spinner(f"Loading {timeframe} chart for {selected}..."):
@@ -674,7 +684,9 @@ with main_tab_signals:
 
                                 if not ohlcv_df.empty:
                                     fig = build_candlestick_chart(
-                                        ohlcv_df, selected, show_trendlines=True
+                                        ohlcv_df, selected,
+                                        show_trendlines=True,
+                                        show_indicators=show_indicators,
                                     )
                                     st.plotly_chart(fig, use_container_width=True)
                                 else:
@@ -697,6 +709,135 @@ with main_tab_signals:
                                     "Liquidity",
                                     f"${sel_result.extra.get('liquidity_usd', 0):,.0f}",
                                 )
+
+                # ── Tab: TA Indicators (Phase 6) ──
+                with tab_ta:
+                    st.markdown("#### Technical Indicator Summary")
+                    rsi_info = sel_result.extra.get("rsi", {})
+                    macd_info = sel_result.extra.get("macd", {})
+                    bb_info = sel_result.extra.get("bb", {})
+
+                    if rsi_info or macd_info or bb_info:
+                        ta_col1, ta_col2, ta_col3 = st.columns(3)
+
+                        # RSI Card
+                        with ta_col1:
+                            rsi_val = rsi_info.get("value", 0)
+                            rsi_sig = rsi_info.get("signal", "neutral")
+                            if rsi_val > 70:
+                                rsi_color = "#ff5252"
+                            elif rsi_val < 30:
+                                rsi_color = "#00e676"
+                            else:
+                                rsi_color = "#ffc107"
+
+                            st.markdown(
+                                f"""
+                                <div style="background:#1a1a2e;border:1px solid {rsi_color}66;
+                                     border-radius:8px;padding:1rem;">
+                                    <div style="color:{rsi_color};font-size:2rem;font-weight:bold;">
+                                        {rsi_val:.1f}
+                                    </div>
+                                    <div style="color:#e0e0e0;font-weight:bold;">RSI (14)</div>
+                                    <div style="color:#9e9e9e;font-size:0.85rem;margin-top:0.3rem;">
+                                        Signal: {rsi_sig.replace('_', ' ').title()}<br>
+                                        {'Oversold zone' if rsi_info.get('oversold') else
+                                         'Overbought zone' if rsi_info.get('overbought') else
+                                         'Bullish zone' if rsi_info.get('bullish_zone') else 'Neutral zone'}
+                                    </div>
+                                </div>
+                                """,
+                                unsafe_allow_html=True,
+                            )
+
+                        # MACD Card
+                        with ta_col2:
+                            macd_trend = macd_info.get("trend", "neutral")
+                            macd_color = "#00e676" if macd_trend == "bullish" else (
+                                "#ff5252" if macd_trend == "bearish" else "#ffc107"
+                            )
+                            cross_text = ""
+                            if macd_info.get("bullish_cross"):
+                                cross_text = "Bullish Cross!"
+                            elif macd_info.get("bearish_cross"):
+                                cross_text = "Bearish Cross!"
+
+                            st.markdown(
+                                f"""
+                                <div style="background:#1a1a2e;border:1px solid {macd_color}66;
+                                     border-radius:8px;padding:1rem;">
+                                    <div style="color:{macd_color};font-size:1.5rem;font-weight:bold;">
+                                        {macd_trend.upper()}
+                                    </div>
+                                    <div style="color:#e0e0e0;font-weight:bold;">MACD (12,26,9)</div>
+                                    <div style="color:#9e9e9e;font-size:0.85rem;margin-top:0.3rem;">
+                                        MACD: {macd_info.get('macd', 0):.6f}<br>
+                                        Signal: {macd_info.get('signal_line', 0):.6f}<br>
+                                        Histogram: {macd_info.get('histogram', 0):.6f}
+                                        {'<br><b style="color:#ffc107;">' + cross_text + '</b>' if cross_text else ''}
+                                    </div>
+                                </div>
+                                """,
+                                unsafe_allow_html=True,
+                            )
+
+                        # BB Card
+                        with ta_col3:
+                            bb_sig = bb_info.get("signal", "neutral")
+                            bb_squeeze = bb_info.get("squeeze", False)
+                            bb_color = "#ffc107" if bb_squeeze else (
+                                "#00e676" if bb_sig == "above_upper" else
+                                "#ff5252" if bb_sig == "below_lower" else "#82b1ff"
+                            )
+
+                            st.markdown(
+                                f"""
+                                <div style="background:#1a1a2e;border:1px solid {bb_color}66;
+                                     border-radius:8px;padding:1rem;">
+                                    <div style="color:{bb_color};font-size:1.5rem;font-weight:bold;">
+                                        {'SQUEEZE' if bb_squeeze else bb_sig.replace('_', ' ').upper()}
+                                    </div>
+                                    <div style="color:#e0e0e0;font-weight:bold;">Bollinger Bands (20,2)</div>
+                                    <div style="color:#9e9e9e;font-size:0.85rem;margin-top:0.3rem;">
+                                        Upper: ${bb_info.get('upper', 0):,.4f}<br>
+                                        Mid: ${bb_info.get('mid', 0):,.4f}<br>
+                                        Lower: ${bb_info.get('lower', 0):,.4f}<br>
+                                        %B: {bb_info.get('pct_b', 0):.2f} | BW: {bb_info.get('bandwidth', 0):.4f}
+                                    </div>
+                                </div>
+                                """,
+                                unsafe_allow_html=True,
+                            )
+
+                        # Confluence score explanation
+                        st.markdown("---")
+                        st.markdown("**Indicator Confluence:**")
+                        confluence = []
+                        if rsi_info.get("bullish_zone") or rsi_info.get("signal") == "bullish_cross":
+                            confluence.append(("RSI Bullish", "#00e676"))
+                        if rsi_info.get("oversold"):
+                            confluence.append(("RSI Oversold (reversal)", "#ffc107"))
+                        if macd_info.get("bullish_cross"):
+                            confluence.append(("MACD Bullish Cross", "#00e676"))
+                        if macd_info.get("trend") == "bullish":
+                            confluence.append(("MACD Bullish Trend", "#66BB6A"))
+                        if bb_info.get("squeeze"):
+                            confluence.append(("BB Squeeze (breakout imminent)", "#ffc107"))
+                        if bb_info.get("signal") == "above_upper":
+                            confluence.append(("Above BB Upper (strong momentum)", "#00e676"))
+
+                        if confluence:
+                            tags_html = " ".join(
+                                f'<span style="background:{c}22;color:{c};padding:3px 10px;'
+                                f'border-radius:4px;font-size:0.85rem;margin:2px;">{label}</span>'
+                                for label, c in confluence
+                            )
+                            st.markdown(tags_html, unsafe_allow_html=True)
+                            st.markdown(f"**Confluence count: {len(confluence)}/6**")
+                        else:
+                            st.caption("No strong indicator confluence detected.")
+                    else:
+                        st.info("TA indicator data not available for this signal. Run a new scan to generate.")
 
                 # ── Tab: Funding Rate (CCXT + Binance History) ──
                 with tab_funding:
@@ -1004,6 +1145,133 @@ with main_tab_signals:
 
 
 # ════════════════════════════════════════════════
+# TAB: HEATMAP (Phase 6)
+# ════════════════════════════════════════════════
+with main_tab_heatmap:
+    st.markdown("### Signal Heatmap")
+    st.caption("Treemap visualization — size = 24h volume, color = selected metric")
+
+    results_for_heatmap: list[ScanResult] = st.session_state.results
+
+    if not results_for_heatmap:
+        st.info("Run a scan first to see the heatmap.")
+    else:
+        hm_color = st.radio(
+            "Color by", ["score", "change_pct", "volume_ratio"],
+            horizontal=True, key="hm_color",
+            format_func=lambda x: {"score": "Score", "change_pct": "24h Change %",
+                                   "volume_ratio": "Volume Ratio"}[x]
+        )
+        fig_hm = build_signal_heatmap(results_for_heatmap, color_by=hm_color)
+        st.plotly_chart(fig_hm, use_container_width=True)
+
+        # Summary stats below heatmap
+        hm_col1, hm_col2, hm_col3, hm_col4 = st.columns(4)
+        with hm_col1:
+            top_score = max(results_for_heatmap, key=lambda r: r.score)
+            st.metric("Top Score", f"{top_score.symbol.split('/')[0]} ({top_score.score:.0f})")
+        with hm_col2:
+            top_change = max(results_for_heatmap, key=lambda r: r.change_pct)
+            st.metric("Top Change", f"{top_change.symbol.split('/')[0]} ({top_change.change_pct:+.1f}%)")
+        with hm_col3:
+            top_vol = max(results_for_heatmap, key=lambda r: r.volume_ratio)
+            st.metric("Top Vol Ratio", f"{top_vol.symbol.split('/')[0]} ({top_vol.volume_ratio:.1f}x)")
+        with hm_col4:
+            bullish_count = sum(1 for r in results_for_heatmap
+                                if r.trendline_break.get("breakout_type") == "bullish")
+            st.metric("Bullish / Total", f"{bullish_count} / {len(results_for_heatmap)}")
+
+
+# ════════════════════════════════════════════════
+# TAB: BACKTEST (Phase 6)
+# ════════════════════════════════════════════════
+with main_tab_backtest:
+    st.markdown("### Mini Backtester")
+    st.caption(
+        "Backtest the trendline break strategy on historical data. "
+        "Uses the Phase 6 multi-indicator scoring (RSI + MACD + BB + trendline)."
+    )
+
+    bt_col1, bt_col2 = st.columns(2)
+    with bt_col1:
+        bt_symbol = st.text_input("Symbol", value="BTC/USDT:USDT", key="bt_symbol")
+        bt_exchange = st.selectbox("Exchange", ["binance", "bybit"], key="bt_exchange")
+        bt_timeframe = st.selectbox("Timeframe", ["1h", "4h"], key="bt_tf")
+        bt_bars = st.slider("History (bars)", 200, 1000, 500, step=100, key="bt_bars")
+    with bt_col2:
+        bt_tp = st.slider("Take Profit %", 1.0, 10.0, 3.0, step=0.5, key="bt_tp")
+        bt_sl = st.slider("Stop Loss %", 0.5, 5.0, 2.0, step=0.5, key="bt_sl")
+        bt_max_hold = st.slider("Max Hold (bars)", 6, 48, 24, step=6, key="bt_hold")
+        bt_min_score = st.slider("Min Score to Enter", 20, 80, 40, step=5, key="bt_score")
+
+    if st.button("Run Backtest", type="primary", key="bt_run"):
+        with st.spinner(f"Backtesting {bt_symbol} on {bt_exchange} ({bt_bars} bars)..."):
+            try:
+                backtester = MiniBacktester(
+                    take_profit_pct=bt_tp,
+                    stop_loss_pct=bt_sl,
+                    max_hold_bars=bt_max_hold,
+                    min_score=bt_min_score,
+                )
+                bt_result = run_async(
+                    backtester.run_backtest(bt_symbol, bt_exchange, bt_timeframe, bt_bars)
+                )
+
+                trades = bt_result["trades"]
+                stats = bt_result["stats"]
+
+                if stats.get("error"):
+                    st.error(stats["error"])
+                elif not trades:
+                    st.warning("No trades generated. Try lowering the min score or using more bars.")
+                else:
+                    # Stats cards
+                    st.markdown("#### Backtest Results")
+                    bc1, bc2, bc3, bc4, bc5 = st.columns(5)
+                    with bc1:
+                        st.metric("Total Trades", stats["total"])
+                    with bc2:
+                        wr_color = "normal" if stats["win_rate"] >= 0.5 else "inverse"
+                        st.metric("Win Rate", f"{stats['win_rate']:.1%}")
+                    with bc3:
+                        st.metric("Total PnL", f"{stats['total_pnl']:+.2f}%")
+                    with bc4:
+                        st.metric("Profit Factor", f"{stats['profit_factor']:.2f}")
+                    with bc5:
+                        st.metric("Avg Bars Held", f"{stats['avg_bars']:.0f}")
+
+                    bc6, bc7, bc8, bc9 = st.columns(4)
+                    with bc6:
+                        st.metric("Wins", stats["wins"])
+                    with bc7:
+                        st.metric("Losses", stats["losses"])
+                    with bc8:
+                        st.metric("Max Win", f"{stats['max_win']:+.2f}%")
+                    with bc9:
+                        st.metric("Max Loss", f"{stats['max_loss']:+.2f}%")
+
+                    # Equity curve chart
+                    fig_bt = build_backtest_chart(trades, bt_symbol)
+                    st.plotly_chart(fig_bt, use_container_width=True)
+
+                    # Trade log
+                    with st.expander("Trade Log", expanded=False):
+                        trades_df = pd.DataFrame(trades)
+                        st.dataframe(
+                            trades_df.style.format({
+                                "entry_price": "${:,.4f}",
+                                "exit_price": "${:,.4f}",
+                                "pnl_pct": "{:+.2f}%",
+                            }),
+                            use_container_width=True,
+                        )
+
+            except Exception as e:
+                st.error(f"Backtest failed: {e}")
+                logger.exception("Backtest error")
+
+
+# ════════════════════════════════════════════════
 # TAB: SIGNAL HISTORY (Phase 5)
 # ════════════════════════════════════════════════
 with main_tab_history:
@@ -1184,7 +1452,8 @@ with main_tab_alerts:
 # ──────────────────────────────────────────────
 st.markdown("---")
 st.caption(
-    "Crypto Trendline Break Scanner v5.0 — Phase 5 | 100% Free APIs "
+    "Crypto Trendline Break Scanner v6.0 — Phase 6 | 100% Free APIs "
+    "| RSI + MACD + Bollinger Bands + Heatmap + Backtester "
     "| Market Dashboard + Watchlist + Signal History + Alerts "
     "| Multi-CEX (Binance + Bybit) + DEX "
     "| CCXT + Binance FAPI + DexScreener + CryptoPanic | "

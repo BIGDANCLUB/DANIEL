@@ -1,4 +1,11 @@
-"""Chart builder: Plotly candlestick + volume with 200EMA overlay — Phase 2."""
+"""Chart builder: Plotly candlestick + volume with 200EMA overlay — Phase 6.
+
+Phase 6 additions:
+- RSI subplot
+- MACD subplot
+- Bollinger Bands overlay
+- Signal heatmap (treemap)
+"""
 
 import logging
 
@@ -16,6 +23,9 @@ from technical_analysis import (
     fit_trendline_ransac,
     classify_pattern,
     PATTERN_LABELS,
+    compute_rsi,
+    compute_macd,
+    compute_bollinger_bands,
 )
 
 
@@ -24,23 +34,36 @@ def build_candlestick_chart(
     symbol: str,
     ema_period: int = 200,
     show_trendlines: bool = True,
+    show_indicators: bool = False,
     height: int = 700,
 ) -> go.Figure:
     """
     Build interactive Plotly candlestick chart with:
-    - Candlestick (main)
+    - Candlestick (main) + Bollinger Bands overlay
     - Volume bars (subplot) with spike coloring
     - 200 EMA overlay
     - Optional trendlines
+    - Phase 6: Optional RSI + MACD subplots
     """
-    fig = make_subplots(
-        rows=2,
-        cols=1,
-        shared_xaxes=True,
-        vertical_spacing=0.03,
-        row_heights=[0.75, 0.25],
-        subplot_titles=[f"{symbol} — Candlestick", "Volume"],
-    )
+    if show_indicators:
+        fig = make_subplots(
+            rows=4,
+            cols=1,
+            shared_xaxes=True,
+            vertical_spacing=0.02,
+            row_heights=[0.45, 0.15, 0.2, 0.2],
+            subplot_titles=[f"{symbol} — Candlestick", "Volume", "RSI (14)", "MACD"],
+        )
+        height = 1000
+    else:
+        fig = make_subplots(
+            rows=2,
+            cols=1,
+            shared_xaxes=True,
+            vertical_spacing=0.03,
+            row_heights=[0.75, 0.25],
+            subplot_titles=[f"{symbol} — Candlestick", "Volume"],
+        )
 
     # Reset index for plotly (need datetime column)
     plot_df = df.reset_index()
@@ -105,6 +128,96 @@ def build_candlestick_chart(
         row=2,
         col=1,
     )
+
+    # ── Phase 6: Bollinger Bands overlay ──
+    if show_indicators and len(df) >= 20:
+        try:
+            bb = compute_bollinger_bands(df)
+            if not bb.empty:
+                bb_clean = bb.dropna()
+                bb_idx = plot_df["timestamp"].iloc[-len(bb_clean):]
+                fig.add_trace(
+                    go.Scatter(
+                        x=bb_idx, y=bb_clean["upper"].values,
+                        name="BB Upper", line=dict(color="#64B5F6", width=1, dash="dot"),
+                        showlegend=False,
+                    ), row=1, col=1,
+                )
+                fig.add_trace(
+                    go.Scatter(
+                        x=bb_idx, y=bb_clean["lower"].values,
+                        name="BB Lower", line=dict(color="#64B5F6", width=1, dash="dot"),
+                        fill="tonexty", fillcolor="rgba(100,181,246,0.08)",
+                        showlegend=False,
+                    ), row=1, col=1,
+                )
+                fig.add_trace(
+                    go.Scatter(
+                        x=bb_idx, y=bb_clean["mid"].values,
+                        name="BB Mid", line=dict(color="#64B5F6", width=0.8, dash="dash"),
+                    ), row=1, col=1,
+                )
+        except Exception as e:
+            logger.debug("BB overlay error: %s", e)
+
+    # ── Phase 6: RSI subplot ──
+    if show_indicators and len(df) >= 14:
+        try:
+            rsi = compute_rsi(df)
+            if rsi is not None:
+                rsi_clean = rsi.dropna()
+                rsi_idx = plot_df["timestamp"].iloc[-len(rsi_clean):]
+
+                rsi_colors = ["#00e676" if v > 50 else "#ff5252" for v in rsi_clean.values]
+                fig.add_trace(
+                    go.Scatter(
+                        x=rsi_idx, y=rsi_clean.values,
+                        name="RSI (14)", line=dict(color="#AB47BC", width=1.5),
+                    ), row=3, col=1,
+                )
+                # RSI zones
+                fig.add_hline(y=70, line_dash="dot", line_color="#ff5252", row=3, col=1)
+                fig.add_hline(y=30, line_dash="dot", line_color="#00e676", row=3, col=1)
+                fig.add_hline(y=50, line_dash="dot", line_color="#616161", row=3, col=1)
+                fig.add_hrect(y0=70, y1=100, fillcolor="rgba(255,82,82,0.08)",
+                              line_width=0, row=3, col=1)
+                fig.add_hrect(y0=0, y1=30, fillcolor="rgba(0,230,118,0.08)",
+                              line_width=0, row=3, col=1)
+        except Exception as e:
+            logger.debug("RSI subplot error: %s", e)
+
+    # ── Phase 6: MACD subplot ──
+    if show_indicators and len(df) >= 26:
+        try:
+            macd_df = compute_macd(df)
+            if not macd_df.empty:
+                macd_clean = macd_df.dropna()
+                macd_idx = plot_df["timestamp"].iloc[-len(macd_clean):]
+
+                fig.add_trace(
+                    go.Scatter(
+                        x=macd_idx, y=macd_clean["macd"].values,
+                        name="MACD", line=dict(color="#42A5F5", width=1.5),
+                    ), row=4, col=1,
+                )
+                fig.add_trace(
+                    go.Scatter(
+                        x=macd_idx, y=macd_clean["signal"].values,
+                        name="Signal", line=dict(color="#FFA726", width=1.5),
+                    ), row=4, col=1,
+                )
+                hist_colors = ["#26a69a" if h >= 0 else "#ef5350"
+                               for h in macd_clean["histogram"].values]
+                fig.add_trace(
+                    go.Bar(
+                        x=macd_idx, y=macd_clean["histogram"].values,
+                        name="Histogram", marker_color=hist_colors,
+                        showlegend=False,
+                    ), row=4, col=1,
+                )
+                fig.add_hline(y=0, line_dash="dot", line_color="#616161", row=4, col=1)
+        except Exception as e:
+            logger.debug("MACD subplot error: %s", e)
 
     # ── Layout ──
     fig.update_layout(
@@ -668,5 +781,164 @@ def build_liquidation_chart(
         font=dict(color="#fafafa"),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
     )
+
+    return fig
+
+
+# ──────────────────────────────────────────────
+# Phase 6: Signal Heatmap (Treemap)
+# ──────────────────────────────────────────────
+def build_signal_heatmap(results: list, color_by: str = "score") -> go.Figure:
+    """
+    Build a treemap heatmap of all scan results.
+    color_by: 'score' | 'change_pct' | 'volume_ratio'
+    Size = 24h volume, Color = chosen metric.
+    """
+    if not results:
+        fig = go.Figure()
+        fig.add_annotation(text="No signals to display", showarrow=False)
+        fig.update_layout(template="plotly_dark", height=400,
+                          paper_bgcolor="#0e1117", plot_bgcolor="#0e1117")
+        return fig
+
+    labels = []
+    parents = []
+    values = []
+    colors = []
+    hover_texts = []
+
+    for r in results:
+        base = r.symbol.split("/")[0]
+        labels.append(base)
+        parents.append("")
+        values.append(max(r.volume_24h, 1))
+
+        if color_by == "score":
+            colors.append(r.score)
+        elif color_by == "change_pct":
+            colors.append(r.change_pct)
+        elif color_by == "volume_ratio":
+            colors.append(r.volume_ratio)
+        else:
+            colors.append(r.score)
+
+        bt = r.trendline_break.get("breakout_type") or "—"
+        pattern = r.trendline_break.get("pattern_label", "—")
+        hover_texts.append(
+            f"{r.symbol}<br>"
+            f"Score: {r.score:.1f}<br>"
+            f"24h: {r.change_pct:+.2f}%<br>"
+            f"Vol: {r.volume_ratio:.1f}x<br>"
+            f"{bt} | {pattern}"
+        )
+
+    if color_by == "change_pct":
+        colorscale = [[0, "#ef5350"], [0.5, "#424242"], [1, "#00e676"]]
+        cmid = 0
+    else:
+        colorscale = [[0, "#ef5350"], [0.5, "#ffc107"], [1, "#00e676"]]
+        cmid = 50 if color_by == "score" else None
+
+    fig = go.Figure(go.Treemap(
+        labels=labels,
+        parents=parents,
+        values=values,
+        marker=dict(
+            colors=colors,
+            colorscale=colorscale,
+            cmid=cmid,
+            colorbar=dict(title=color_by.replace("_", " ").title()),
+        ),
+        text=hover_texts,
+        hovertemplate="%{text}<extra></extra>",
+        textinfo="label+text",
+        texttemplate="<b>%{label}</b><br>%{color:.1f}",
+    ))
+
+    fig.update_layout(
+        template="plotly_dark",
+        title=f"Signal Heatmap (color: {color_by.replace('_', ' ').title()}, size: Volume)",
+        height=500,
+        paper_bgcolor="#0e1117",
+        plot_bgcolor="#0e1117",
+        font=dict(color="#fafafa"),
+        margin=dict(l=10, r=10, t=50, b=10),
+    )
+
+    return fig
+
+
+# ──────────────────────────────────────────────
+# Phase 6: Backtest Equity Curve Chart
+# ──────────────────────────────────────────────
+def build_backtest_chart(trades: list[dict], symbol: str) -> go.Figure:
+    """Build backtest equity curve and trade markers."""
+    fig = make_subplots(
+        rows=2, cols=1, shared_xaxes=True,
+        vertical_spacing=0.05,
+        row_heights=[0.6, 0.4],
+        subplot_titles=[f"{symbol} Backtest — Entry/Exit Points", "Equity Curve"],
+    )
+
+    if not trades:
+        fig.add_annotation(text="No trades generated", showarrow=False)
+        fig.update_layout(template="plotly_dark", height=400,
+                          paper_bgcolor="#0e1117", plot_bgcolor="#0e1117")
+        return fig
+
+    # Equity curve
+    equity = [100.0]  # Start at 100
+    times = []
+    entry_times = []
+    entry_prices = []
+    exit_times = []
+    exit_prices = []
+    pnl_colors = []
+
+    for t in trades:
+        pnl_pct = t.get("pnl_pct", 0)
+        equity.append(equity[-1] * (1 + pnl_pct / 100))
+        times.append(t.get("exit_time") or t.get("entry_time"))
+        entry_times.append(t.get("entry_time"))
+        entry_prices.append(t.get("entry_price", 0))
+        exit_times.append(t.get("exit_time"))
+        exit_prices.append(t.get("exit_price", 0))
+        pnl_colors.append("#00e676" if pnl_pct >= 0 else "#ff5252")
+
+    # Entry markers
+    fig.add_trace(go.Scatter(
+        x=entry_times, y=entry_prices,
+        mode="markers", name="Entry",
+        marker=dict(color="#42A5F5", size=8, symbol="triangle-up"),
+    ), row=1, col=1)
+
+    # Exit markers
+    fig.add_trace(go.Scatter(
+        x=exit_times, y=exit_prices,
+        mode="markers", name="Exit",
+        marker=dict(color=pnl_colors, size=8, symbol="triangle-down"),
+    ), row=1, col=1)
+
+    # Equity line
+    fig.add_trace(go.Scatter(
+        x=times, y=equity[1:],
+        name="Equity",
+        line=dict(color="#FFC107", width=2),
+        fill="tozeroy",
+        fillcolor="rgba(255,193,7,0.1)",
+    ), row=2, col=1)
+
+    fig.add_hline(y=100, line_dash="dot", line_color="#616161", row=2, col=1)
+
+    fig.update_layout(
+        template="plotly_dark",
+        height=600,
+        paper_bgcolor="#0e1117",
+        plot_bgcolor="#0e1117",
+        font=dict(color="#fafafa"),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+    )
+    fig.update_xaxes(gridcolor="#1e222d")
+    fig.update_yaxes(gridcolor="#1e222d")
 
     return fig

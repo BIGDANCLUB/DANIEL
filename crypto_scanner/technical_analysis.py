@@ -1,5 +1,5 @@
 """
-Technical analysis — Phase 2
+Technical analysis — Phase 6
 =============================
 - 200 EMA (pandas_ta)
 - Volume spike detection
@@ -10,6 +10,8 @@ Technical analysis — Phase 2
   - Volume-confirmed breakout validation
   - Pattern classification (wedge, channel, triangle)
   - Multi-timeframe confirmation
+- Phase 6: RSI, MACD, Bollinger Bands
+- Phase 6: Multi-indicator composite scoring
 """
 
 import logging
@@ -564,3 +566,247 @@ def compute_scan_score(
         score += 10.0
 
     return round(min(score, 100.0), 1)
+
+
+# ──────────────────────────────────────────────
+# Phase 6: RSI
+# ──────────────────────────────────────────────
+def compute_rsi(df: pd.DataFrame, period: int = 14, col: str = "close") -> pd.Series:
+    """Compute RSI using pandas_ta."""
+    return ta.rsi(df[col], length=period)
+
+
+def get_rsi_signal(df: pd.DataFrame, period: int = 14) -> dict:
+    """
+    Evaluate RSI conditions.
+    Returns: {value, oversold, overbought, bullish_zone, signal}
+    """
+    rsi = compute_rsi(df, period)
+    if rsi is None or rsi.dropna().empty:
+        return {"value": 50, "oversold": False, "overbought": False, "bullish_zone": False, "signal": "neutral"}
+
+    current = float(rsi.dropna().iloc[-1])
+    prev = float(rsi.dropna().iloc[-2]) if len(rsi.dropna()) >= 2 else current
+
+    signal = "neutral"
+    if current < 30:
+        signal = "oversold"
+    elif current > 70:
+        signal = "overbought"
+    elif 40 <= current <= 60:
+        signal = "neutral"
+    elif current > 50 and prev <= 50:
+        signal = "bullish_cross"  # RSI crossed above 50
+    elif current < 50 and prev >= 50:
+        signal = "bearish_cross"
+
+    return {
+        "value": round(current, 2),
+        "oversold": current < 30,
+        "overbought": current > 70,
+        "bullish_zone": 50 < current < 70,
+        "signal": signal,
+    }
+
+
+# ──────────────────────────────────────────────
+# Phase 6: MACD
+# ──────────────────────────────────────────────
+def compute_macd(
+    df: pd.DataFrame, fast: int = 12, slow: int = 26, signal: int = 9, col: str = "close"
+) -> pd.DataFrame:
+    """Compute MACD using pandas_ta. Returns DataFrame with MACD, signal, histogram."""
+    result = ta.macd(df[col], fast=fast, slow=slow, signal=signal)
+    if result is None:
+        return pd.DataFrame()
+    # pandas_ta returns columns like MACD_12_26_9, MACDs_12_26_9, MACDh_12_26_9
+    result.columns = ["macd", "histogram", "signal"]
+    return result
+
+
+def get_macd_signal(df: pd.DataFrame) -> dict:
+    """
+    Evaluate MACD conditions.
+    Returns: {macd, signal_line, histogram, bullish_cross, bearish_cross, trend}
+    """
+    macd_df = compute_macd(df)
+    if macd_df.empty:
+        return {"macd": 0, "signal_line": 0, "histogram": 0,
+                "bullish_cross": False, "bearish_cross": False, "trend": "neutral"}
+
+    clean = macd_df.dropna()
+    if len(clean) < 2:
+        return {"macd": 0, "signal_line": 0, "histogram": 0,
+                "bullish_cross": False, "bearish_cross": False, "trend": "neutral"}
+
+    curr_macd = float(clean["macd"].iloc[-1])
+    curr_signal = float(clean["signal"].iloc[-1])
+    curr_hist = float(clean["histogram"].iloc[-1])
+    prev_hist = float(clean["histogram"].iloc[-2])
+
+    bullish_cross = prev_hist < 0 and curr_hist >= 0
+    bearish_cross = prev_hist > 0 and curr_hist <= 0
+
+    trend = "neutral"
+    if curr_macd > curr_signal and curr_hist > 0:
+        trend = "bullish"
+    elif curr_macd < curr_signal and curr_hist < 0:
+        trend = "bearish"
+
+    return {
+        "macd": round(curr_macd, 6),
+        "signal_line": round(curr_signal, 6),
+        "histogram": round(curr_hist, 6),
+        "bullish_cross": bullish_cross,
+        "bearish_cross": bearish_cross,
+        "trend": trend,
+    }
+
+
+# ──────────────────────────────────────────────
+# Phase 6: Bollinger Bands
+# ──────────────────────────────────────────────
+def compute_bollinger_bands(
+    df: pd.DataFrame, period: int = 20, std_dev: float = 2.0, col: str = "close"
+) -> pd.DataFrame:
+    """Compute Bollinger Bands. Returns DataFrame with lower, mid, upper, bandwidth, %b."""
+    bb = ta.bbands(df[col], length=period, std=std_dev)
+    if bb is None:
+        return pd.DataFrame()
+    # pandas_ta returns: BBL, BBM, BBU, BBB, BBP
+    bb.columns = ["lower", "mid", "upper", "bandwidth", "pct_b"]
+    return bb
+
+
+def get_bb_signal(df: pd.DataFrame) -> dict:
+    """
+    Evaluate Bollinger Band conditions.
+    Returns: {upper, mid, lower, bandwidth, pct_b, squeeze, signal}
+    """
+    bb = compute_bollinger_bands(df)
+    if bb.empty:
+        return {"upper": 0, "mid": 0, "lower": 0, "bandwidth": 0,
+                "pct_b": 0.5, "squeeze": False, "signal": "neutral"}
+
+    clean = bb.dropna()
+    if clean.empty:
+        return {"upper": 0, "mid": 0, "lower": 0, "bandwidth": 0,
+                "pct_b": 0.5, "squeeze": False, "signal": "neutral"}
+
+    row = clean.iloc[-1]
+    bw = float(row["bandwidth"])
+    pct_b = float(row["pct_b"])
+
+    # Squeeze: bandwidth is in lowest 20th percentile of recent history
+    recent_bw = clean["bandwidth"].iloc[-50:] if len(clean) >= 50 else clean["bandwidth"]
+    squeeze = bw <= float(recent_bw.quantile(0.2))
+
+    signal = "neutral"
+    if pct_b > 1.0:
+        signal = "above_upper"  # Price above upper band
+    elif pct_b < 0.0:
+        signal = "below_lower"  # Price below lower band
+    elif squeeze:
+        signal = "squeeze"  # Volatility contraction — breakout imminent
+
+    return {
+        "upper": round(float(row["upper"]), 6),
+        "mid": round(float(row["mid"]), 6),
+        "lower": round(float(row["lower"]), 6),
+        "bandwidth": round(bw, 4),
+        "pct_b": round(pct_b, 4),
+        "squeeze": squeeze,
+        "signal": signal,
+    }
+
+
+# ──────────────────────────────────────────────
+# Phase 6: Enhanced composite scoring
+# ──────────────────────────────────────────────
+def compute_scan_score_v2(
+    above_ema: bool,
+    volume_spike: bool,
+    volume_ratio: float,
+    trendline_break: dict,
+    social_boost: bool = False,
+    rsi_data: dict = None,
+    macd_data: dict = None,
+    bb_data: dict = None,
+) -> float:
+    """
+    Enhanced composite score 0-100. Phase 6 weights:
+        - 200 EMA above:       15
+        - Volume spike:        15 (scaled by ratio)
+        - Trendline break:     30 (with volume confirm + pattern bonuses)
+        - Social boost:         8
+        - RSI signal:          12
+        - MACD signal:         10
+        - BB signal:           10
+    """
+    score = 0.0
+
+    # EMA
+    if above_ema:
+        score += 15.0
+
+    # Volume
+    if volume_spike:
+        vol_score = min(volume_ratio / 5.0, 1.0) * 15.0
+        score += vol_score
+
+    # Trendline break
+    if trendline_break.get("resistance_break"):
+        base = 15.0
+        strength_bonus = trendline_break.get("break_strength", 0) * 10.0
+        score += base + strength_bonus
+
+        if trendline_break.get("volume_confirmed"):
+            score += 5.0
+
+        pattern = trendline_break.get("pattern", "unknown")
+        if pattern in ("ascending_triangle", "falling_wedge"):
+            score += 7.0
+        elif pattern in ("symmetrical_triangle", "channel_up"):
+            score += 4.0
+        elif pattern != "unknown":
+            score += 2.0
+
+        confirm = trendline_break.get("confirmation_bars", 0)
+        score += min(confirm * 1.5, 4.0)
+
+    # Social
+    if social_boost:
+        score += 8.0
+
+    # RSI (Phase 6)
+    if rsi_data:
+        rsi_val = rsi_data.get("value", 50)
+        rsi_sig = rsi_data.get("signal", "neutral")
+        if rsi_sig == "bullish_cross":
+            score += 12.0
+        elif rsi_data.get("bullish_zone"):
+            score += 8.0
+        elif rsi_sig == "oversold":
+            score += 6.0  # Potential reversal
+        elif rsi_sig == "overbought":
+            score -= 3.0  # Slight negative
+
+    # MACD (Phase 6)
+    if macd_data:
+        if macd_data.get("bullish_cross"):
+            score += 10.0
+        elif macd_data.get("trend") == "bullish":
+            score += 6.0
+        elif macd_data.get("bearish_cross"):
+            score -= 2.0
+
+    # Bollinger Bands (Phase 6)
+    if bb_data:
+        if bb_data.get("squeeze"):
+            score += 8.0  # Volatility squeeze → breakout likely
+        if bb_data.get("signal") == "above_upper":
+            score += 5.0  # Strong momentum
+        elif bb_data.get("signal") == "below_lower":
+            score -= 2.0
+
+    return round(max(min(score, 100.0), 0.0), 1)

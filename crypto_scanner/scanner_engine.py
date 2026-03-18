@@ -28,7 +28,11 @@ from technical_analysis import (
     detect_trendline_break,
     confirm_trendline_multi_tf,
     compute_scan_score,
+    compute_scan_score_v2,
     compute_ema,
+    get_rsi_signal,
+    get_macd_signal,
+    get_bb_signal,
     PATTERN_LABELS,
 )
 
@@ -519,6 +523,11 @@ class ScannerEngine:
             tl_result = detect_trendline_break(df_1h)
             tl_result["multi_tf_confirmed"] = False
 
+        # Phase 6: RSI, MACD, BB signals
+        rsi_data = get_rsi_signal(df_1h)
+        macd_data = get_macd_signal(df_1h)
+        bb_data = get_bb_signal(df_1h)
+
         # Social boost
         social = False
         try:
@@ -527,7 +536,11 @@ class ScannerEngine:
         except Exception:
             pass
 
-        score = compute_scan_score(ema_ok, vol_spike, vol_ratio, tl_result, social)
+        # Phase 6: Enhanced scoring with all indicators
+        score = compute_scan_score_v2(
+            ema_ok, vol_spike, vol_ratio, tl_result, social,
+            rsi_data=rsi_data, macd_data=macd_data, bb_data=bb_data,
+        )
 
         if not (vol_spike or tl_result.get("resistance_break")):
             return None
@@ -549,7 +562,12 @@ class ScannerEngine:
             social_boost=social,
             score=score,
             scan_time=datetime.now(timezone.utc),
-            extra={"timeframe_analysis": "1H+4H"},
+            extra={
+                "timeframe_analysis": "1H+4H",
+                "rsi": rsi_data,
+                "macd": macd_data,
+                "bb": bb_data,
+            },
         )
 
     def scan_dex(self) -> list[ScanResult]:
@@ -708,3 +726,157 @@ class ScannerEngine:
     @property
     def triggered_alerts(self) -> list[dict]:
         return self._last_triggered_alerts
+
+
+# ──────────────────────────────────────────────
+# Phase 6: Mini Backtester
+# ──────────────────────────────────────────────
+class MiniBacktester:
+    """
+    Backtest trendline break strategy on historical OHLCV data.
+    Simulates entries on trendline break signals, exits on:
+    - Take profit: +X%
+    - Stop loss: -Y%
+    - Max hold: N bars
+    """
+
+    def __init__(
+        self,
+        take_profit_pct: float = 3.0,
+        stop_loss_pct: float = 2.0,
+        max_hold_bars: int = 24,
+        min_score: float = 40.0,
+    ):
+        self.take_profit_pct = take_profit_pct
+        self.stop_loss_pct = stop_loss_pct
+        self.max_hold_bars = max_hold_bars
+        self.min_score = min_score
+
+    async def run_backtest(
+        self, symbol: str, exchange_id: str = "binance", timeframe: str = "1h", bars: int = 500
+    ) -> dict:
+        """
+        Run backtest on a single symbol.
+        Returns: {trades: [...], stats: {...}}
+        """
+        fetcher = CEXFetcher(exchange_id=exchange_id)
+        try:
+            df = await fetcher.fetch_ohlcv(symbol, timeframe=timeframe, limit=bars)
+        finally:
+            await fetcher.close()
+
+        if df.empty or len(df) < 100:
+            return {"trades": [], "stats": {"error": "Insufficient data"}}
+
+        trades = []
+        position = None  # {entry_price, entry_idx, entry_time}
+
+        # Slide a window through the data
+        window_size = 100
+        for i in range(window_size, len(df)):
+            window = df.iloc[i - window_size:i + 1].copy()
+
+            if position is not None:
+                # Check exit conditions
+                current_price = float(df["close"].iloc[i])
+                entry_price = position["entry_price"]
+                bars_held = i - position["entry_idx"]
+                pnl_pct = (current_price - entry_price) / entry_price * 100
+
+                exit_reason = None
+                if pnl_pct >= self.take_profit_pct:
+                    exit_reason = "TP"
+                elif pnl_pct <= -self.stop_loss_pct:
+                    exit_reason = "SL"
+                elif bars_held >= self.max_hold_bars:
+                    exit_reason = "timeout"
+
+                if exit_reason:
+                    trades.append({
+                        "entry_time": position["entry_time"],
+                        "entry_price": entry_price,
+                        "exit_time": str(df.index[i]),
+                        "exit_price": current_price,
+                        "pnl_pct": round(pnl_pct, 2),
+                        "bars_held": bars_held,
+                        "exit_reason": exit_reason,
+                    })
+                    position = None
+                continue
+
+            # Check for entry signal (every 6 bars to avoid over-trading)
+            if i % 6 != 0:
+                continue
+
+            from technical_analysis import (
+                detect_trendline_break as _dtb,
+                detect_volume_spike as _dvs,
+                is_above_ema as _iae,
+                get_rsi_signal as _grs,
+                get_macd_signal as _gms,
+                get_bb_signal as _gbs,
+                compute_scan_score_v2 as _css2,
+            )
+
+            tl = _dtb(window)
+            vs, vr = _dvs(window)
+            ema_ok = _iae(window) if len(window) >= 200 else False
+            rsi_d = _grs(window)
+            macd_d = _gms(window)
+            bb_d = _gbs(window)
+
+            score = _css2(ema_ok, vs, vr, tl, False,
+                          rsi_data=rsi_d, macd_data=macd_d, bb_data=bb_d)
+
+            if score >= self.min_score and tl.get("resistance_break"):
+                position = {
+                    "entry_price": float(df["close"].iloc[i]),
+                    "entry_idx": i,
+                    "entry_time": str(df.index[i]),
+                }
+
+        # Close any remaining position at end
+        if position:
+            final_price = float(df["close"].iloc[-1])
+            pnl_pct = (final_price - position["entry_price"]) / position["entry_price"] * 100
+            trades.append({
+                "entry_time": position["entry_time"],
+                "entry_price": position["entry_price"],
+                "exit_time": str(df.index[-1]),
+                "exit_price": final_price,
+                "pnl_pct": round(pnl_pct, 2),
+                "bars_held": len(df) - 1 - position["entry_idx"],
+                "exit_reason": "end",
+            })
+
+        # Compute stats
+        stats = self._compute_stats(trades)
+        return {"trades": trades, "stats": stats}
+
+    @staticmethod
+    def _compute_stats(trades: list[dict]) -> dict:
+        if not trades:
+            return {"total": 0, "wins": 0, "losses": 0, "win_rate": 0,
+                    "avg_pnl": 0, "total_pnl": 0, "max_win": 0, "max_loss": 0,
+                    "profit_factor": 0, "avg_bars": 0}
+
+        pnls = [t["pnl_pct"] for t in trades]
+        wins = [p for p in pnls if p > 0]
+        losses = [p for p in pnls if p <= 0]
+        bars = [t["bars_held"] for t in trades]
+
+        gross_profit = sum(wins) if wins else 0
+        gross_loss = abs(sum(losses)) if losses else 0
+
+        return {
+            "total": len(trades),
+            "wins": len(wins),
+            "losses": len(losses),
+            "win_rate": len(wins) / max(len(trades), 1),
+            "avg_pnl": sum(pnls) / len(pnls),
+            "total_pnl": sum(pnls),
+            "max_win": max(pnls) if pnls else 0,
+            "max_loss": min(pnls) if pnls else 0,
+            "profit_factor": gross_profit / max(gross_loss, 0.01),
+            "avg_bars": sum(bars) / max(len(bars), 1),
+        }

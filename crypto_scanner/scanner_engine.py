@@ -1,13 +1,16 @@
 """
-Core scanner engine — Phase 2
+Core scanner engine — Phase 4
 ================================
-- Multi-timeframe trendline confirmation (1H + 4H)
-- CryptoPanic social filter integrated into scoring
-- Pattern classification in results
+- Multi-exchange CEX scanning (Binance + Bybit)
+- CryptoPanic social filter
+- Multi-TF trendline confirmation
+- Watchlist support
 """
 
 import asyncio
+import json
 import logging
+import os
 import time
 from datetime import datetime, timezone
 from typing import Optional
@@ -27,6 +30,8 @@ from technical_analysis import (
 )
 
 logger = logging.getLogger(__name__)
+
+WATCHLIST_FILE = os.path.join(os.path.dirname(__file__), ".watchlist.json")
 
 
 class ScanResult:
@@ -84,46 +89,145 @@ class ScanResult:
         }
 
 
+# ──────────────────────────────────────────────
+# Watchlist persistence
+# ──────────────────────────────────────────────
+def load_watchlist() -> list[str]:
+    """Load watchlist from file."""
+    try:
+        if os.path.exists(WATCHLIST_FILE):
+            with open(WATCHLIST_FILE, "r") as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return []
+
+
+def save_watchlist(symbols: list[str]):
+    """Save watchlist to file."""
+    try:
+        with open(WATCHLIST_FILE, "w") as f:
+            json.dump(sorted(set(symbols)), f, indent=2)
+    except Exception as e:
+        logger.warning("Failed to save watchlist: %s", e)
+
+
+def add_to_watchlist(symbol: str):
+    wl = load_watchlist()
+    if symbol not in wl:
+        wl.append(symbol)
+        save_watchlist(wl)
+
+
+def remove_from_watchlist(symbol: str):
+    wl = load_watchlist()
+    wl = [s for s in wl if s != symbol]
+    save_watchlist(wl)
+
+
+# ──────────────────────────────────────────────
+# Market overview data
+# ──────────────────────────────────────────────
+class MarketOverview:
+    """Fetch market-wide metrics (all free)."""
+
+    @staticmethod
+    def get_btc_dominance_and_fear() -> dict:
+        """Fetch BTC price + rough market data from CCXT/Binance."""
+        import requests
+        result = {
+            "btc_price": 0,
+            "btc_change_24h": 0,
+            "eth_price": 0,
+            "eth_change_24h": 0,
+            "fear_greed_value": 0,
+            "fear_greed_label": "N/A",
+        }
+        # BTC/ETH from Binance public
+        try:
+            resp = requests.get(
+                "https://api.binance.com/api/v3/ticker/24hr",
+                params={"symbols": '["BTCUSDT","ETHUSDT"]'},
+                timeout=10,
+            )
+            resp.raise_for_status()
+            for t in resp.json():
+                if t["symbol"] == "BTCUSDT":
+                    result["btc_price"] = float(t["lastPrice"])
+                    result["btc_change_24h"] = float(t["priceChangePercent"])
+                elif t["symbol"] == "ETHUSDT":
+                    result["eth_price"] = float(t["lastPrice"])
+                    result["eth_change_24h"] = float(t["priceChangePercent"])
+        except Exception:
+            pass
+
+        # Fear & Greed Index (free API)
+        try:
+            resp = requests.get(
+                "https://api.alternative.me/fng/?limit=1",
+                timeout=10,
+            )
+            resp.raise_for_status()
+            data = resp.json().get("data", [{}])[0]
+            result["fear_greed_value"] = int(data.get("value", 0))
+            result["fear_greed_label"] = data.get("value_classification", "N/A")
+        except Exception:
+            pass
+
+        return result
+
+
+# ──────────────────────────────────────────────
+# Scanner Engine — Phase 4 (Multi-Exchange)
+# ──────────────────────────────────────────────
 class ScannerEngine:
-    """Main scanner — Phase 2."""
+    """Main scanner — Phase 4 with multi-exchange support."""
+
+    # Exchanges to scan
+    CEX_EXCHANGES = ["binance", "bybit"]
 
     def __init__(self):
-        self.cex = CEXFetcher()
         self._results_cache: list[ScanResult] = []
         self._last_scan: Optional[datetime] = None
+        self._scan_stats: dict = {}
 
-    async def scan_cex(self) -> list[ScanResult]:
-        """Scan top CEX futures pairs."""
+    async def scan_cex_exchange(
+        self, exchange_id: str, top_n: int = None
+    ) -> list[ScanResult]:
+        """Scan a single CEX exchange."""
         results = []
+        fetcher = CEXFetcher(exchange_id=exchange_id)
+        source_name = f"{exchange_id.capitalize()} Futures"
         try:
-            symbols = await self.cex.fetch_top_symbols()
-            logger.info("Scanning %d CEX symbols...", len(symbols))
+            top_n = top_n or Config.CEX_TOP_N
+            symbols = await fetcher.fetch_top_symbols(top_n=top_n)
+            logger.info("Scanning %d symbols on %s...", len(symbols), exchange_id)
 
             for symbol in symbols:
                 try:
-                    result = await self._analyze_cex_symbol(symbol)
+                    result = await self._analyze_cex_symbol(fetcher, symbol, source_name)
                     if result:
                         results.append(result)
                 except Exception as e:
-                    logger.debug("Error analyzing %s: %s", symbol, e)
+                    logger.debug("Error analyzing %s on %s: %s", symbol, exchange_id, e)
                     continue
 
         except Exception as e:
-            logger.error("CEX scan failed: %s", e)
+            logger.error("%s scan failed: %s", exchange_id, e)
         finally:
-            await self.cex.close()
+            await fetcher.close()
 
         return results
 
-    async def _analyze_cex_symbol(self, symbol: str) -> Optional[ScanResult]:
-        """Analyze a single CEX symbol with Phase 2 enhancements."""
-        # Fetch 1H OHLCV
-        df_1h = await self.cex.fetch_ohlcv(symbol, timeframe="1h", limit=250)
+    async def _analyze_cex_symbol(
+        self, fetcher: CEXFetcher, symbol: str, source: str
+    ) -> Optional[ScanResult]:
+        """Analyze a single CEX symbol."""
+        df_1h = await fetcher.fetch_ohlcv(symbol, timeframe="1h", limit=250)
         if df_1h.empty or len(df_1h) < 30:
             return None
 
-        # Fetch 4H OHLCV
-        df_4h = await self.cex.fetch_ohlcv(symbol, timeframe="4h", limit=250)
+        df_4h = await fetcher.fetch_ohlcv(symbol, timeframe="4h", limit=250)
 
         # Volume spike (1H)
         vol_spike, vol_ratio = detect_volume_spike(df_1h, recent_bars=1, lookback_bars=24)
@@ -133,11 +237,10 @@ class ScannerEngine:
         if df_4h is not None and len(df_4h) >= 200:
             ema_ok = is_above_ema(df_4h, period=200)
 
-        # Multi-timeframe trendline break (Phase 2)
+        # Multi-timeframe trendline break
         if df_4h is not None and len(df_4h) >= 30:
             multi_tf = confirm_trendline_multi_tf(df_1h, df_4h)
-            tl_result = multi_tf["1h"]  # primary result from 1H
-            # Boost break_strength if 4H also confirms
+            tl_result = multi_tf["1h"]
             if multi_tf["both_confirm"]:
                 tl_result["break_strength"] = min(
                     tl_result.get("break_strength", 0) + 0.3, 1.0
@@ -149,7 +252,7 @@ class ScannerEngine:
             tl_result = detect_trendline_break(df_1h)
             tl_result["multi_tf_confirmed"] = False
 
-        # Social boost via CryptoPanic (Phase 2 integration)
+        # Social boost
         social = False
         try:
             social_data = CryptoPanicFetcher.detect_social_boost(symbol)
@@ -157,21 +260,19 @@ class ScannerEngine:
         except Exception:
             pass
 
-        # Score
         score = compute_scan_score(ema_ok, vol_spike, vol_ratio, tl_result, social)
 
-        # Only include if at least one core condition is met
         if not (vol_spike or tl_result.get("resistance_break")):
             return None
 
         current_price = float(df_1h["close"].iloc[-1])
-        ticker = await self.cex.fetch_ticker(symbol)
+        ticker = await fetcher.fetch_ticker(symbol)
         change_pct = ticker.get("percentage", 0) or 0
         volume_24h = ticker.get("quoteVolume", 0) or 0
 
         return ScanResult(
             symbol=symbol,
-            source="Binance Futures",
+            source=source,
             price=current_price,
             change_pct=round(change_pct, 2),
             volume_24h=round(volume_24h, 0),
@@ -215,7 +316,6 @@ class ScannerEngine:
             vol_ratio = vol_h1 / hourly_avg if hourly_avg > 0 else 0
             vol_spike = vol_ratio >= Config.VOLUME_SPIKE_MULTIPLIER
 
-            # DEX simplified trendline (no deep OHLCV)
             tl_result = {
                 "resistance_break": h1_change > 5 and h6_change > 10,
                 "support_break": False,
@@ -230,7 +330,6 @@ class ScannerEngine:
 
             above_ema = h24_change > 0
 
-            # Social boost for DEX token
             social = False
             symbol_name = pair.get("baseToken", {}).get("symbol", "?")
             try:
@@ -272,23 +371,54 @@ class ScannerEngine:
             logger.debug("DEX pair analysis error: %s", e)
             return None
 
-    async def run_full_scan(self) -> list[ScanResult]:
-        """Run full scan: CEX + DEX, sort by score."""
-        logger.info("Starting full scan (Phase 2)...")
+    async def run_full_scan(
+        self, exchanges: list[str] = None, include_dex: bool = True
+    ) -> list[ScanResult]:
+        """Run full scan: multi-CEX + DEX, sort by score."""
+        exchanges = exchanges or self.CEX_EXCHANGES
+        logger.info("Starting full scan (Phase 4) — exchanges: %s", exchanges)
         start = time.time()
 
-        cex_results = await self.scan_cex()
-        dex_results = self.scan_dex()
+        all_results = []
+        stats = {}
 
-        all_results = cex_results + dex_results
-        all_results.sort(key=lambda r: r.score, reverse=True)
+        # Scan each CEX exchange
+        for ex_id in exchanges:
+            ex_results = await self.scan_cex_exchange(ex_id)
+            all_results.extend(ex_results)
+            stats[ex_id] = len(ex_results)
+            logger.info("%s: %d signals", ex_id, len(ex_results))
 
-        self._results_cache = all_results
+        # DEX scan
+        if include_dex:
+            dex_results = self.scan_dex()
+            all_results.extend(dex_results)
+            stats["dex"] = len(dex_results)
+
+        # Deduplicate: if same base symbol appears on multiple exchanges, keep highest score
+        seen = {}
+        deduped = []
+        for r in sorted(all_results, key=lambda x: x.score, reverse=True):
+            base = r.symbol.split("/")[0]
+            if base not in seen:
+                seen[base] = r
+                deduped.append(r)
+            else:
+                # Keep both but mark the lower one
+                deduped.append(r)
+
+        deduped.sort(key=lambda r: r.score, reverse=True)
+
+        self._results_cache = deduped
         self._last_scan = datetime.now(timezone.utc)
+        self._scan_stats = stats
 
         elapsed = time.time() - start
-        logger.info("Scan complete: %d results in %.1fs", len(all_results), elapsed)
-        return all_results
+        logger.info(
+            "Scan complete: %d results in %.1fs (stats: %s)",
+            len(deduped), elapsed, stats,
+        )
+        return deduped
 
     @property
     def cached_results(self) -> list[ScanResult]:
@@ -297,3 +427,7 @@ class ScannerEngine:
     @property
     def last_scan_time(self) -> Optional[datetime]:
         return self._last_scan
+
+    @property
+    def scan_stats(self) -> dict:
+        return self._scan_stats

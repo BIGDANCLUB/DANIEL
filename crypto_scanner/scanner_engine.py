@@ -1,10 +1,13 @@
 """
-Core scanner engine — Phase 4
+Core scanner engine — Phase 5
 ================================
 - Multi-exchange CEX scanning (Binance + Bybit)
 - CryptoPanic social filter
 - Multi-TF trendline confirmation
 - Watchlist support
+- Signal history tracking & hit-rate analysis
+- Alert condition engine
+- Market overview dashboard data
 """
 
 import asyncio
@@ -126,6 +129,269 @@ def remove_from_watchlist(symbol: str):
 
 
 # ──────────────────────────────────────────────
+# Signal history tracking & hit-rate analysis
+# ──────────────────────────────────────────────
+SIGNAL_HISTORY_FILE = os.path.join(os.path.dirname(__file__), ".signal_history.json")
+MAX_HISTORY_RECORDS = 500
+
+
+def load_signal_history() -> list[dict]:
+    try:
+        if os.path.exists(SIGNAL_HISTORY_FILE):
+            with open(SIGNAL_HISTORY_FILE, "r") as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return []
+
+
+def save_signal_history(records: list[dict]):
+    try:
+        # Keep only the latest MAX_HISTORY_RECORDS
+        trimmed = records[-MAX_HISTORY_RECORDS:]
+        with open(SIGNAL_HISTORY_FILE, "w") as f:
+            json.dump(trimmed, f, indent=2, default=str)
+    except Exception as e:
+        logger.warning("Failed to save signal history: %s", e)
+
+
+def record_signals(results: list["ScanResult"]):
+    """Append current scan results to signal history."""
+    history = load_signal_history()
+    for r in results:
+        history.append({
+            "symbol": r.symbol,
+            "source": r.source,
+            "price_at_signal": r.price,
+            "score": r.score,
+            "breakout_type": r.trendline_break.get("breakout_type"),
+            "pattern": r.trendline_break.get("pattern_label", "—"),
+            "volume_ratio": r.volume_ratio,
+            "above_ema": r.above_ema,
+            "social_boost": r.social_boost,
+            "scan_time": r.scan_time.isoformat(),
+            "price_after_1h": None,
+            "price_after_4h": None,
+            "price_after_24h": None,
+            "hit": None,  # True if price rose >2% within 24h
+        })
+    save_signal_history(history)
+
+
+async def update_signal_outcomes():
+    """Check past signals and update their outcome prices."""
+    history = load_signal_history()
+    if not history:
+        return
+
+    now = datetime.now(timezone.utc)
+    updated = False
+    fetcher = None
+
+    try:
+        for record in history:
+            if record.get("hit") is not None:
+                continue  # Already resolved
+            signal_time = datetime.fromisoformat(record["scan_time"])
+            hours_elapsed = (now - signal_time).total_seconds() / 3600
+
+            # Only check CEX signals (we can fetch ticker)
+            if "DEX" in record.get("source", ""):
+                if hours_elapsed >= 24:
+                    record["hit"] = False  # Can't track DEX, mark as unknown
+                    updated = True
+                continue
+
+            symbol = record["symbol"]
+
+            # Check at 1h, 4h, 24h marks
+            needs_check = False
+            if hours_elapsed >= 1 and record.get("price_after_1h") is None:
+                needs_check = True
+            if hours_elapsed >= 4 and record.get("price_after_4h") is None:
+                needs_check = True
+            if hours_elapsed >= 24 and record.get("price_after_24h") is None:
+                needs_check = True
+
+            if not needs_check:
+                continue
+
+            if fetcher is None:
+                fetcher = CEXFetcher()
+
+            try:
+                ticker = await fetcher.fetch_ticker(symbol)
+                current_price = ticker.get("last", 0) or 0
+                if current_price <= 0:
+                    continue
+
+                if hours_elapsed >= 1 and record.get("price_after_1h") is None:
+                    record["price_after_1h"] = current_price
+                    updated = True
+                if hours_elapsed >= 4 and record.get("price_after_4h") is None:
+                    record["price_after_4h"] = current_price
+                    updated = True
+                if hours_elapsed >= 24 and record.get("price_after_24h") is None:
+                    record["price_after_24h"] = current_price
+                    updated = True
+
+                # Determine hit/miss after 24h
+                if hours_elapsed >= 24 and record.get("hit") is None:
+                    entry = record["price_at_signal"]
+                    if entry > 0:
+                        max_price = max(
+                            record.get("price_after_1h") or entry,
+                            record.get("price_after_4h") or entry,
+                            record.get("price_after_24h") or entry,
+                        )
+                        gain_pct = (max_price - entry) / entry * 100
+                        record["hit"] = gain_pct >= 2.0  # 2% threshold
+                        record["max_gain_pct"] = round(gain_pct, 2)
+                    updated = True
+            except Exception:
+                continue
+
+    finally:
+        if fetcher:
+            await fetcher.close()
+
+    if updated:
+        save_signal_history(history)
+
+
+def compute_hit_rate_stats() -> dict:
+    """Compute hit-rate statistics from signal history."""
+    history = load_signal_history()
+    if not history:
+        return {"total": 0, "resolved": 0, "hits": 0, "misses": 0, "hit_rate": 0, "avg_gain": 0}
+
+    resolved = [r for r in history if r.get("hit") is not None]
+    hits = [r for r in resolved if r["hit"]]
+    misses = [r for r in resolved if not r["hit"]]
+    gains = [r.get("max_gain_pct", 0) for r in resolved if "max_gain_pct" in r]
+
+    return {
+        "total": len(history),
+        "resolved": len(resolved),
+        "hits": len(hits),
+        "misses": len(misses),
+        "hit_rate": len(hits) / max(len(resolved), 1),
+        "avg_gain": sum(gains) / max(len(gains), 1) if gains else 0,
+        "pending": len(history) - len(resolved),
+    }
+
+
+# ──────────────────────────────────────────────
+# Alert condition engine
+# ──────────────────────────────────────────────
+ALERTS_FILE = os.path.join(os.path.dirname(__file__), ".alerts.json")
+
+
+def load_alerts() -> list[dict]:
+    try:
+        if os.path.exists(ALERTS_FILE):
+            with open(ALERTS_FILE, "r") as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return []
+
+
+def save_alerts(alerts: list[dict]):
+    try:
+        with open(ALERTS_FILE, "w") as f:
+            json.dump(alerts, f, indent=2)
+    except Exception as e:
+        logger.warning("Failed to save alerts: %s", e)
+
+
+def add_alert(alert: dict):
+    """Add a new alert condition.
+    alert = {
+        "name": str,
+        "min_score": int (0-100),
+        "breakout_type": "bullish" | "bearish" | "any" | None,
+        "patterns": [str] or None,
+        "min_volume_ratio": float or None,
+        "require_social": bool,
+        "require_multi_tf": bool,
+        "symbols": [str] or None (empty = all),
+        "enabled": True,
+    }
+    """
+    alerts = load_alerts()
+    alert.setdefault("enabled", True)
+    alert.setdefault("created_at", datetime.now(timezone.utc).isoformat())
+    alerts.append(alert)
+    save_alerts(alerts)
+
+
+def remove_alert(index: int):
+    alerts = load_alerts()
+    if 0 <= index < len(alerts):
+        alerts.pop(index)
+        save_alerts(alerts)
+
+
+def check_alerts(results: list["ScanResult"]) -> list[dict]:
+    """Check scan results against configured alerts. Returns triggered alerts."""
+    alerts = load_alerts()
+    triggered = []
+
+    for alert in alerts:
+        if not alert.get("enabled", True):
+            continue
+
+        for r in results:
+            # Symbol filter
+            if alert.get("symbols") and r.symbol not in alert["symbols"]:
+                continue
+
+            # Score filter
+            if r.score < alert.get("min_score", 0):
+                continue
+
+            # Breakout type filter
+            req_type = alert.get("breakout_type")
+            actual_type = r.trendline_break.get("breakout_type")
+            if req_type and req_type != "any" and actual_type != req_type:
+                continue
+
+            # Pattern filter
+            req_patterns = alert.get("patterns")
+            if req_patterns:
+                actual_pattern = r.trendline_break.get("pattern_label", "")
+                if actual_pattern not in req_patterns:
+                    continue
+
+            # Volume ratio filter
+            min_vr = alert.get("min_volume_ratio")
+            if min_vr and r.volume_ratio < min_vr:
+                continue
+
+            # Social filter
+            if alert.get("require_social") and not r.social_boost:
+                continue
+
+            # Multi-TF filter
+            if alert.get("require_multi_tf") and not r.trendline_break.get("multi_tf_confirmed"):
+                continue
+
+            triggered.append({
+                "alert_name": alert.get("name", "Unnamed"),
+                "symbol": r.symbol,
+                "source": r.source,
+                "score": r.score,
+                "price": r.price,
+                "breakout_type": actual_type,
+                "pattern": r.trendline_break.get("pattern_label", "—"),
+                "time": datetime.now(timezone.utc).isoformat(),
+            })
+
+    return triggered
+
+
+# ──────────────────────────────────────────────
 # Market overview data
 # ──────────────────────────────────────────────
 class MarketOverview:
@@ -190,6 +456,7 @@ class ScannerEngine:
         self._results_cache: list[ScanResult] = []
         self._last_scan: Optional[datetime] = None
         self._scan_stats: dict = {}
+        self._last_triggered_alerts: list[dict] = []
 
     async def scan_cex_exchange(
         self, exchange_id: str, top_n: int = None
@@ -413,6 +680,12 @@ class ScannerEngine:
         self._last_scan = datetime.now(timezone.utc)
         self._scan_stats = stats
 
+        # Phase 5: Record signals to history
+        record_signals(deduped)
+
+        # Phase 5: Check alerts
+        self._last_triggered_alerts = check_alerts(deduped)
+
         elapsed = time.time() - start
         logger.info(
             "Scan complete: %d results in %.1fs (stats: %s)",
@@ -431,3 +704,7 @@ class ScannerEngine:
     @property
     def scan_stats(self) -> dict:
         return self._scan_stats
+
+    @property
+    def triggered_alerts(self) -> list[dict]:
+        return self._last_triggered_alerts

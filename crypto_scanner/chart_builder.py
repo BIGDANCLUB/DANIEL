@@ -1,4 +1,4 @@
-"""Chart builder: Plotly candlestick + volume with 200EMA overlay — Phase 6.
+"""Chart builder: Plotly candlestick + volume with 200EMA overlay — Phase 7.
 
 Phase 6 additions:
 - RSI subplot
@@ -26,6 +26,8 @@ from technical_analysis import (
     compute_rsi,
     compute_macd,
     compute_bollinger_bands,
+    compute_fibonacci_levels,
+    find_sr_clusters,
 )
 
 
@@ -940,5 +942,159 @@ def build_backtest_chart(trades: list[dict], symbol: str) -> go.Figure:
     )
     fig.update_xaxes(gridcolor="#1e222d")
     fig.update_yaxes(gridcolor="#1e222d")
+
+    return fig
+
+
+# ──────────────────────────────────────────────
+# Phase 7: Fibonacci Level Chart
+# ──────────────────────────────────────────────
+def build_fibonacci_chart(df: pd.DataFrame, symbol: str) -> tuple:
+    """Build candlestick chart with Fibonacci retracement/extension overlays."""
+    fib = compute_fibonacci_levels(df)
+
+    fig = go.Figure()
+
+    plot_df = df.reset_index()
+    if "timestamp" not in plot_df.columns:
+        plot_df["timestamp"] = plot_df.index
+
+    fig.add_trace(go.Candlestick(
+        x=plot_df["timestamp"],
+        open=plot_df["open"], high=plot_df["high"],
+        low=plot_df["low"], close=plot_df["close"],
+        name="OHLC",
+        increasing_line_color="#26a69a",
+        decreasing_line_color="#ef5350",
+    ))
+
+    fib_colors = {
+        0.0: "#ffffff", 0.236: "#82B1FF", 0.382: "#448AFF",
+        0.5: "#FFC107", 0.618: "#FF9800", 0.786: "#FF5722", 1.0: "#F44336",
+    }
+    for level in fib.get("retracement", []):
+        color = fib_colors.get(level["ratio"], "#9e9e9e")
+        fig.add_hline(
+            y=level["price"], line_dash="dash", line_color=color, line_width=1,
+            annotation_text=f'Fib {level["label"]} — ${level["price"]:,.4f}',
+            annotation_position="right",
+            annotation_font_color=color, annotation_font_size=10,
+        )
+
+    for level in fib.get("extension", []):
+        if level["ratio"] == 1.0:
+            continue
+        fig.add_hline(
+            y=level["price"], line_dash="dot", line_color="#AB47BC", line_width=1,
+            annotation_text=f'Ext {level["label"]} — ${level["price"]:,.4f}',
+            annotation_position="left",
+            annotation_font_color="#CE93D8", annotation_font_size=9,
+        )
+
+    trend_text = f"Trend: {fib.get('trend', 'unknown').title()} | Range: ${fib.get('range', 0):,.4f}"
+    fig.update_layout(
+        template="plotly_dark",
+        title=f"{symbol} Fibonacci Levels — {trend_text}",
+        height=600, paper_bgcolor="#0e1117", plot_bgcolor="#0e1117",
+        xaxis_rangeslider_visible=False, font=dict(color="#fafafa"),
+    )
+    fig.update_xaxes(gridcolor="#1e222d")
+    fig.update_yaxes(gridcolor="#1e222d")
+
+    return fig, fib
+
+
+# ──────────────────────────────────────────────
+# Phase 7: S/R Cluster Zone Chart
+# ──────────────────────────────────────────────
+def build_sr_cluster_chart(df: pd.DataFrame, symbol: str) -> tuple:
+    """Build candlestick chart with S/R cluster zones highlighted."""
+    clusters = find_sr_clusters(df)
+    fig = go.Figure()
+    plot_df = df.reset_index()
+    if "timestamp" not in plot_df.columns:
+        plot_df["timestamp"] = plot_df.index
+
+    fig.add_trace(go.Candlestick(
+        x=plot_df["timestamp"],
+        open=plot_df["open"], high=plot_df["high"],
+        low=plot_df["low"], close=plot_df["close"],
+        name="OHLC",
+        increasing_line_color="#26a69a", decreasing_line_color="#ef5350",
+    ))
+
+    current_price = float(df["close"].iloc[-1])
+    for zone in clusters:
+        is_resistance = zone["type"] == "resistance"
+        base_color = "#ff5252" if is_resistance else "#00e676"
+        opacity = 0.08 + zone["strength"] * 0.12
+        band = current_price * 0.0025
+
+        r = int(base_color[1:3], 16)
+        g = int(base_color[3:5], 16)
+        b = int(base_color[5:7], 16)
+        fig.add_hrect(
+            y0=zone["price"] - band, y1=zone["price"] + band,
+            fillcolor=f"rgba({r},{g},{b},{opacity})", line_width=0,
+        )
+        fig.add_hline(
+            y=zone["price"], line_dash="dot", line_color=base_color, line_width=1,
+            annotation_text=(
+                f'{zone["type"].title()} ({zone["touches"]}t) '
+                f'${zone["price"]:,.4f} [{zone["distance_pct"]:+.1f}%]'
+            ),
+            annotation_position="right" if is_resistance else "left",
+            annotation_font_color=base_color, annotation_font_size=10,
+        )
+
+    fig.update_layout(
+        template="plotly_dark",
+        title=f"{symbol} Support / Resistance Clusters",
+        height=550, paper_bgcolor="#0e1117", plot_bgcolor="#0e1117",
+        xaxis_rangeslider_visible=False, font=dict(color="#fafafa"),
+    )
+    fig.update_xaxes(gridcolor="#1e222d")
+    fig.update_yaxes(gridcolor="#1e222d")
+
+    return fig, clusters
+
+
+# ──────────────────────────────────────────────
+# Phase 7: Correlation Chart
+# ──────────────────────────────────────────────
+def build_correlation_chart(
+    rolling_corr: pd.Series, symbol: str, ref_symbol: str = "BTC"
+) -> go.Figure:
+    """Build rolling correlation timeline chart."""
+    fig = go.Figure()
+    if rolling_corr.empty:
+        fig.add_annotation(text="Insufficient data for correlation", showarrow=False)
+        fig.update_layout(template="plotly_dark", height=300,
+                          paper_bgcolor="#0e1117", plot_bgcolor="#0e1117")
+        return fig
+
+    clean = rolling_corr.dropna()
+    fig.add_trace(go.Scatter(
+        x=list(range(len(clean))), y=clean.values,
+        name=f"{symbol} vs {ref_symbol}",
+        line=dict(color="#42A5F5", width=2),
+        fill="tozeroy", fillcolor="rgba(66,165,245,0.15)",
+    ))
+
+    fig.add_hline(y=0, line_dash="solid", line_color="#616161")
+    fig.add_hline(y=0.7, line_dash="dot", line_color="#00e676",
+                  annotation_text="High +corr", annotation_font_color="#00e676")
+    fig.add_hline(y=-0.7, line_dash="dot", line_color="#ff5252",
+                  annotation_text="High -corr", annotation_font_color="#ff5252")
+    fig.add_hrect(y0=0.7, y1=1.0, fillcolor="rgba(0,230,118,0.05)", line_width=0)
+    fig.add_hrect(y0=-1.0, y1=-0.7, fillcolor="rgba(255,82,82,0.05)", line_width=0)
+
+    fig.update_layout(
+        template="plotly_dark",
+        title=f"{symbol} vs {ref_symbol} Rolling Correlation (30-bar)",
+        height=350, paper_bgcolor="#0e1117", plot_bgcolor="#0e1117",
+        yaxis_title="Correlation", yaxis_range=[-1.05, 1.05],
+        font=dict(color="#fafafa"),
+    )
 
     return fig

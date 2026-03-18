@@ -1,15 +1,15 @@
 """
-Crypto Trendline Break Scanner — Streamlit App (Phase 6)
+Crypto Trendline Break Scanner — Streamlit App (Phase 7)
 =========================================================
 6時間以内トレンドラインブレイク検知スキャナー
 100% 無料API構成: CCXT + Binance Public FAPI + DexScreener + CryptoPanic
 
-Phase 6 additions:
-- RSI / MACD / Bollinger Bands on charts
-- Multi-indicator enhanced scoring (v2)
-- Signal heatmap (treemap visualization)
-- Mini backtester with equity curve
-- TA indicator summary panel per coin
+Phase 7 additions:
+- Fibonacci retracement/extension levels
+- Support/Resistance cluster zones
+- Position size calculator with risk/reward
+- BTC correlation analysis
+- CSV export for scan results & backtest
 """
 
 import asyncio
@@ -147,7 +147,11 @@ from chart_builder import (
     build_liquidation_chart,
     build_signal_heatmap,
     build_backtest_chart,
+    build_fibonacci_chart,
+    build_sr_cluster_chart,
+    build_correlation_chart,
 )
+from technical_analysis import compute_correlation
 from data_fetcher import (
     CEXFetcher,
     MultiExchangeFundingFetcher,
@@ -266,7 +270,7 @@ st.markdown(
         <h1>Crypto Trendline Break Scanner</h1>
         <p>6時間以内トレンドラインブレイク検知 — Volume Spike + 200 EMA + Trendline Break + Social
         <span class="free-badge">100% FREE APIs</span>
-        <span class="free-badge" style="background:#0d47a1;color:#82b1ff;margin-left:4px;">Phase 6</span></p>
+        <span class="free-badge" style="background:#0d47a1;color:#82b1ff;margin-left:4px;">Phase 7</span></p>
     </div>
     """,
     unsafe_allow_html=True,
@@ -427,8 +431,8 @@ if auto_refresh:
 # ──────────────────────────────────────────────
 # Main content — tabs: Signals | History | Alerts
 # ──────────────────────────────────────────────
-main_tab_signals, main_tab_heatmap, main_tab_backtest, main_tab_history, main_tab_alerts = st.tabs(
-    ["Signals", "Heatmap", "Backtest", "Signal History", "Alert Settings"]
+main_tab_signals, main_tab_heatmap, main_tab_risk, main_tab_backtest, main_tab_history, main_tab_alerts = st.tabs(
+    ["Signals", "Heatmap", "Risk Calculator", "Backtest", "Signal History", "Alert Settings"]
 )
 
 
@@ -657,8 +661,9 @@ with main_tab_signals:
                             unsafe_allow_html=True,
                         )
 
-                tab_chart, tab_ta, tab_funding, tab_ls, tab_oi, tab_orderbook, tab_liq, tab_social = st.tabs(
-                    ["Chart", "TA Indicators", "Funding Rate", "Long/Short", "Open Interest", "Order Book", "Liquidation", "News/Social"]
+                tab_chart, tab_ta, tab_fib, tab_sr, tab_corr, tab_funding, tab_ls, tab_oi, tab_orderbook, tab_liq, tab_social = st.tabs(
+                    ["Chart", "TA Indicators", "Fibonacci", "S/R Zones", "BTC Corr",
+                     "Funding Rate", "Long/Short", "Open Interest", "Order Book", "Liquidation", "News/Social"]
                 )
 
                 # ── Tab: Chart ──
@@ -838,6 +843,158 @@ with main_tab_signals:
                             st.caption("No strong indicator confluence detected.")
                     else:
                         st.info("TA indicator data not available for this signal. Run a new scan to generate.")
+
+                # ── Tab: Fibonacci (Phase 7) ──
+                with tab_fib:
+                    if is_cex:
+                        with st.spinner("Computing Fibonacci levels..."):
+                            try:
+                                cex_fetcher = CEXFetcher()
+                                fib_df = run_async(
+                                    cex_fetcher.fetch_ohlcv(selected, timeframe="1h", limit=250)
+                                )
+                                run_async(cex_fetcher.close())
+
+                                if not fib_df.empty:
+                                    fig_fib, fib_data = build_fibonacci_chart(fib_df, selected)
+                                    st.plotly_chart(fig_fib, use_container_width=True)
+
+                                    # Fibonacci level table
+                                    st.markdown("**Retracement Levels:**")
+                                    fib_rows = []
+                                    current_p = float(fib_df["close"].iloc[-1])
+                                    for lvl in fib_data.get("retracement", []):
+                                        dist = (lvl["price"] - current_p) / current_p * 100
+                                        fib_rows.append({
+                                            "Level": lvl["label"],
+                                            "Price": lvl["price"],
+                                            "Distance %": f"{dist:+.2f}%",
+                                        })
+                                    if fib_rows:
+                                        st.dataframe(
+                                            pd.DataFrame(fib_rows).style.format({"Price": "${:,.4f}"}),
+                                            use_container_width=True,
+                                        )
+
+                                    if fib_data.get("extension"):
+                                        st.markdown("**Extension Levels:**")
+                                        ext_rows = []
+                                        for lvl in fib_data["extension"]:
+                                            dist = (lvl["price"] - current_p) / current_p * 100
+                                            ext_rows.append({
+                                                "Level": lvl["label"],
+                                                "Price": lvl["price"],
+                                                "Distance %": f"{dist:+.2f}%",
+                                            })
+                                        st.dataframe(
+                                            pd.DataFrame(ext_rows).style.format({"Price": "${:,.4f}"}),
+                                            use_container_width=True,
+                                        )
+                                else:
+                                    st.warning("No OHLCV data available")
+                            except Exception as e:
+                                st.error(f"Fibonacci error: {e}")
+                    else:
+                        st.info("Fibonacci analysis requires CEX OHLCV data.")
+
+                # ── Tab: S/R Zones (Phase 7) ──
+                with tab_sr:
+                    if is_cex:
+                        with st.spinner("Finding S/R cluster zones..."):
+                            try:
+                                cex_fetcher = CEXFetcher()
+                                sr_df = run_async(
+                                    cex_fetcher.fetch_ohlcv(selected, timeframe="1h", limit=250)
+                                )
+                                run_async(cex_fetcher.close())
+
+                                if not sr_df.empty:
+                                    fig_sr, sr_clusters = build_sr_cluster_chart(sr_df, selected)
+                                    st.plotly_chart(fig_sr, use_container_width=True)
+
+                                    if sr_clusters:
+                                        st.markdown("**Cluster Zones:**")
+                                        sr_rows = []
+                                        for z in sr_clusters:
+                                            sr_rows.append({
+                                                "Type": z["type"].title(),
+                                                "Price": z["price"],
+                                                "Touches": z["touches"],
+                                                "Strength": f"{z['strength']:.0%}",
+                                                "Distance %": f"{z['distance_pct']:+.2f}%",
+                                            })
+                                        sr_df_display = pd.DataFrame(sr_rows)
+                                        st.dataframe(
+                                            sr_df_display.style.format({"Price": "${:,.4f}"}),
+                                            use_container_width=True,
+                                        )
+                                    else:
+                                        st.info("No significant S/R clusters found.")
+                                else:
+                                    st.warning("No data available")
+                            except Exception as e:
+                                st.error(f"S/R error: {e}")
+                    else:
+                        st.info("S/R analysis requires CEX OHLCV data.")
+
+                # ── Tab: BTC Correlation (Phase 7) ──
+                with tab_corr:
+                    if is_cex and "BTC" not in selected.upper().split("/")[0]:
+                        st.caption("Rolling 30-bar correlation with BTC")
+                        with st.spinner("Computing BTC correlation..."):
+                            try:
+                                cex_fetcher = CEXFetcher()
+                                coin_df = run_async(
+                                    cex_fetcher.fetch_ohlcv(selected, timeframe="1h", limit=200)
+                                )
+                                btc_df = run_async(
+                                    cex_fetcher.fetch_ohlcv("BTC/USDT:USDT", timeframe="1h", limit=200)
+                                )
+                                run_async(cex_fetcher.close())
+
+                                if not coin_df.empty and not btc_df.empty:
+                                    corr_data = compute_correlation(
+                                        coin_df["close"], btc_df["close"], window=30
+                                    )
+
+                                    # Summary metrics
+                                    cc1, cc2, cc3, cc4 = st.columns(4)
+                                    with cc1:
+                                        cv = corr_data["current_corr"]
+                                        c_color = "#00e676" if cv > 0.5 else ("#ff5252" if cv < -0.5 else "#ffc107")
+                                        st.metric("Current", f"{cv:.3f}")
+                                    with cc2:
+                                        st.metric("Average", f"{corr_data['avg_corr']:.3f}")
+                                    with cc3:
+                                        st.metric("Min", f"{corr_data.get('min_corr', 0):.3f}")
+                                    with cc4:
+                                        st.metric("Max", f"{corr_data.get('max_corr', 0):.3f}")
+
+                                    fig_corr = build_correlation_chart(
+                                        corr_data["rolling"], selected.split("/")[0]
+                                    )
+                                    st.plotly_chart(fig_corr, use_container_width=True)
+
+                                    # Interpretation
+                                    cv = corr_data["current_corr"]
+                                    if cv > 0.7:
+                                        st.success("Strong positive correlation — coin moves with BTC.")
+                                    elif cv > 0.3:
+                                        st.info("Moderate positive correlation with BTC.")
+                                    elif cv > -0.3:
+                                        st.warning("Low/no correlation — independent price action.")
+                                    elif cv > -0.7:
+                                        st.info("Moderate negative correlation — moves opposite to BTC.")
+                                    else:
+                                        st.error("Strong negative correlation — inverse to BTC.")
+                                else:
+                                    st.warning("Insufficient data for correlation analysis.")
+                            except Exception as e:
+                                st.error(f"Correlation error: {e}")
+                    elif "BTC" in selected.upper().split("/")[0]:
+                        st.info("This is BTC itself. Select a different coin for correlation analysis.")
+                    else:
+                        st.info("BTC correlation requires CEX data.")
 
                 # ── Tab: Funding Rate (CCXT + Binance History) ──
                 with tab_funding:
@@ -1183,6 +1340,125 @@ with main_tab_heatmap:
 
 
 # ════════════════════════════════════════════════
+# TAB: RISK CALCULATOR (Phase 7)
+# ════════════════════════════════════════════════
+with main_tab_risk:
+    st.markdown("### Position Size & Risk/Reward Calculator")
+    st.caption("Calculate optimal position size based on your risk tolerance.")
+
+    rk_col1, rk_col2 = st.columns(2)
+    with rk_col1:
+        account_size = st.number_input("Account Size (USD)", min_value=100.0, value=10000.0, step=500.0, key="rk_acct")
+        risk_pct = st.slider("Risk per Trade (%)", 0.5, 5.0, 1.0, step=0.25, key="rk_risk")
+        entry_price = st.number_input("Entry Price", min_value=0.0001, value=100.0, step=0.01, key="rk_entry")
+    with rk_col2:
+        stop_loss_price = st.number_input("Stop Loss Price", min_value=0.0001, value=97.0, step=0.01, key="rk_sl")
+        take_profit_price = st.number_input("Take Profit Price", min_value=0.0001, value=106.0, step=0.01, key="rk_tp")
+        leverage = st.selectbox("Leverage", [1, 2, 3, 5, 10, 20, 25, 50], index=0, key="rk_lev")
+
+    if entry_price > 0 and stop_loss_price > 0 and stop_loss_price != entry_price:
+        risk_amount = account_size * (risk_pct / 100)
+        sl_distance = abs(entry_price - stop_loss_price)
+        sl_pct = sl_distance / entry_price * 100
+        tp_distance = abs(take_profit_price - entry_price)
+        tp_pct = tp_distance / entry_price * 100
+
+        # Position size
+        position_size_units = risk_amount / sl_distance
+        position_value = position_size_units * entry_price
+        position_with_leverage = position_value / leverage if leverage > 0 else position_value
+
+        # Risk/Reward ratio
+        rr_ratio = tp_distance / sl_distance if sl_distance > 0 else 0
+
+        # P&L at TP and SL
+        pnl_at_tp = position_size_units * tp_distance * leverage
+        pnl_at_sl = -risk_amount * leverage
+
+        st.markdown("---")
+        st.markdown("#### Results")
+
+        r_col1, r_col2, r_col3, r_col4 = st.columns(4)
+        with r_col1:
+            st.metric("Position Size", f"{position_size_units:,.4f} units")
+            st.metric("Position Value", f"${position_value:,.2f}")
+        with r_col2:
+            st.metric("Margin Required", f"${position_with_leverage:,.2f}")
+            st.metric("Leverage", f"{leverage}x")
+        with r_col3:
+            rr_color = "normal" if rr_ratio >= 2 else "inverse"
+            st.metric("Risk:Reward", f"1:{rr_ratio:.2f}")
+            st.metric("Risk Amount", f"${risk_amount:,.2f}")
+        with r_col4:
+            st.metric("Profit at TP", f"${pnl_at_tp:,.2f} (+{tp_pct:.2f}%)")
+            st.metric("Loss at SL", f"-${abs(pnl_at_sl):,.2f} (-{sl_pct:.2f}%)")
+
+        # Visual R/R bar
+        total_range = tp_distance + sl_distance
+        tp_ratio = tp_distance / total_range * 100
+        sl_ratio = sl_distance / total_range * 100
+
+        st.markdown(
+            f"""
+            <div style="margin:1rem 0;">
+                <div style="display:flex;height:30px;border-radius:6px;overflow:hidden;">
+                    <div style="width:{sl_ratio}%;background:#ef5350;display:flex;
+                         align-items:center;justify-content:center;font-size:0.8rem;color:white;
+                         font-weight:bold;">SL -{sl_pct:.1f}%</div>
+                    <div style="width:{tp_ratio}%;background:#26a69a;display:flex;
+                         align-items:center;justify-content:center;font-size:0.8rem;color:white;
+                         font-weight:bold;">TP +{tp_pct:.1f}%</div>
+                </div>
+                <div style="color:#9e9e9e;font-size:0.8rem;margin-top:4px;text-align:center;">
+                    R:R = 1:{rr_ratio:.2f} {'(Good)' if rr_ratio >= 2 else '(Consider improving)' if rr_ratio >= 1 else '(Poor — TP < SL)'}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        # Kelly Criterion (simplified)
+        if rr_ratio > 0:
+            # Assume 50% win rate as default
+            assumed_wr = 0.5
+            kelly_pct = (assumed_wr * rr_ratio - (1 - assumed_wr)) / rr_ratio
+            kelly_pct = max(kelly_pct, 0)
+            st.caption(
+                f"Kelly Criterion (50% win rate): {kelly_pct:.1%} of account per trade. "
+                f"Half-Kelly (safer): {kelly_pct/2:.1%}"
+            )
+
+    # CSV Export section
+    st.markdown("---")
+    st.markdown("### Export Data")
+    results_for_export: list[ScanResult] = st.session_state.results
+    if results_for_export:
+        export_rows = [r.to_dict() for r in results_for_export]
+        export_df = pd.DataFrame(export_rows)
+        csv_data = export_df.to_csv(index=False)
+        st.download_button(
+            "Download Scan Results (CSV)",
+            csv_data,
+            file_name="scan_results.csv",
+            mime="text/csv",
+            key="csv_export",
+        )
+    else:
+        st.caption("Run a scan first to enable CSV export.")
+
+    history = load_signal_history()
+    if history:
+        hist_csv = pd.DataFrame(history).to_csv(index=False)
+        st.download_button(
+            "Download Signal History (CSV)",
+            hist_csv,
+            file_name="signal_history.csv",
+            mime="text/csv",
+            key="csv_history_export",
+        )
+
+
+# ════════════════════════════════════════════════
 # TAB: BACKTEST (Phase 6)
 # ════════════════════════════════════════════════
 with main_tab_backtest:
@@ -1452,8 +1728,9 @@ with main_tab_alerts:
 # ──────────────────────────────────────────────
 st.markdown("---")
 st.caption(
-    "Crypto Trendline Break Scanner v6.0 — Phase 6 | 100% Free APIs "
-    "| RSI + MACD + Bollinger Bands + Heatmap + Backtester "
+    "Crypto Trendline Break Scanner v7.0 — Phase 7 | 100% Free APIs "
+    "| Fibonacci + S/R Clusters + BTC Correlation + Risk Calculator + CSV Export "
+    "| RSI + MACD + BB + Heatmap + Backtester "
     "| Market Dashboard + Watchlist + Signal History + Alerts "
     "| Multi-CEX (Binance + Bybit) + DEX "
     "| CCXT + Binance FAPI + DexScreener + CryptoPanic | "

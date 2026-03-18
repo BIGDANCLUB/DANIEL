@@ -1,5 +1,5 @@
 """
-Technical analysis — Phase 6
+Technical analysis — Phase 7
 =============================
 - 200 EMA (pandas_ta)
 - Volume spike detection
@@ -810,3 +810,188 @@ def compute_scan_score_v2(
             score -= 2.0
 
     return round(max(min(score, 100.0), 0.0), 1)
+
+
+# ──────────────────────────────────────────────
+# Phase 7: Fibonacci Retracement & Extension
+# ──────────────────────────────────────────────
+FIBONACCI_RATIOS = [0.0, 0.236, 0.382, 0.5, 0.618, 0.786, 1.0]
+FIBONACCI_EXT_RATIOS = [1.0, 1.272, 1.414, 1.618, 2.0, 2.618]
+
+
+def compute_fibonacci_levels(
+    df: pd.DataFrame, lookback: int = 100
+) -> dict:
+    """
+    Compute Fibonacci retracement and extension levels based on
+    recent swing high/low within the lookback window.
+    """
+    if len(df) < 20:
+        return {"retracement": [], "extension": [], "swing_high": 0, "swing_low": 0, "trend": "unknown"}
+
+    subset = df.iloc[-lookback:] if len(df) >= lookback else df
+    swing_high = float(subset["high"].max())
+    swing_low = float(subset["low"].min())
+
+    high_idx = int(subset["high"].idxmax() if hasattr(subset["high"].idxmax(), '__int__') else 0)
+    low_idx = int(subset["low"].idxmin() if hasattr(subset["low"].idxmin(), '__int__') else 0)
+
+    diff = swing_high - swing_low
+    if diff <= 0:
+        return {"retracement": [], "extension": [], "swing_high": swing_high, "swing_low": swing_low, "trend": "flat"}
+
+    # Determine trend: if high came after low → uptrend, else downtrend
+    # Use position index for comparison
+    high_pos = subset.index.get_loc(subset["high"].idxmax())
+    low_pos = subset.index.get_loc(subset["low"].idxmin())
+    is_uptrend = high_pos > low_pos
+
+    retracement = []
+    extension = []
+
+    if is_uptrend:
+        # Retracement from high back toward low
+        for ratio in FIBONACCI_RATIOS:
+            level = swing_high - diff * ratio
+            retracement.append({
+                "ratio": ratio,
+                "label": f"{ratio:.1%}",
+                "price": round(level, 6),
+            })
+        # Extension above high
+        for ratio in FIBONACCI_EXT_RATIOS:
+            level = swing_low + diff * ratio
+            extension.append({
+                "ratio": ratio,
+                "label": f"{ratio:.1%}",
+                "price": round(level, 6),
+            })
+    else:
+        # Retracement from low back toward high (downtrend bounce)
+        for ratio in FIBONACCI_RATIOS:
+            level = swing_low + diff * ratio
+            retracement.append({
+                "ratio": ratio,
+                "label": f"{ratio:.1%}",
+                "price": round(level, 6),
+            })
+        # Extension below low
+        for ratio in FIBONACCI_EXT_RATIOS:
+            level = swing_high - diff * ratio
+            extension.append({
+                "ratio": ratio,
+                "label": f"{ratio:.1%}",
+                "price": round(level, 6),
+            })
+
+    return {
+        "retracement": retracement,
+        "extension": extension,
+        "swing_high": swing_high,
+        "swing_low": swing_low,
+        "trend": "uptrend" if is_uptrend else "downtrend",
+        "range": diff,
+    }
+
+
+# ──────────────────────────────────────────────
+# Phase 7: Support / Resistance Cluster Zones
+# ──────────────────────────────────────────────
+def find_sr_clusters(
+    df: pd.DataFrame, n_zones: int = 6, lookback: int = 200
+) -> list[dict]:
+    """
+    Find support/resistance cluster zones by analyzing
+    price level density from swing points + volume concentration.
+    Returns sorted list of {price, strength, type, touches}.
+    """
+    subset = df.iloc[-lookback:] if len(df) >= lookback else df
+
+    # Collect candidate levels from swing points
+    sh_idx, sl_idx = find_swing_points_adaptive(subset["high"])
+    _, sl_low_idx = find_swing_points_adaptive(subset["low"])
+
+    levels = []
+    for idx in sh_idx:
+        levels.append(float(subset["high"].iloc[idx]))
+    for idx in sl_low_idx:
+        levels.append(float(subset["low"].iloc[idx]))
+
+    if not levels:
+        return []
+
+    levels = np.array(levels)
+    current_price = float(subset["close"].iloc[-1])
+
+    # Cluster nearby levels using a tolerance of 0.5% of current price
+    tolerance = current_price * 0.005
+    clusters = []
+    used = set()
+
+    for i, level in enumerate(levels):
+        if i in used:
+            continue
+        cluster_prices = [level]
+        used.add(i)
+        for j, other in enumerate(levels):
+            if j not in used and abs(other - level) <= tolerance:
+                cluster_prices.append(other)
+                used.add(j)
+
+        avg_price = np.mean(cluster_prices)
+        touches = len(cluster_prices)
+        strength = min(touches / 5.0, 1.0)  # Normalize by 5 touches
+
+        sr_type = "resistance" if avg_price > current_price else "support"
+
+        clusters.append({
+            "price": round(avg_price, 6),
+            "strength": round(strength, 2),
+            "type": sr_type,
+            "touches": touches,
+            "distance_pct": round((avg_price - current_price) / current_price * 100, 2),
+        })
+
+    # Sort by distance from current price
+    clusters.sort(key=lambda x: abs(x["distance_pct"]))
+    return clusters[:n_zones]
+
+
+# ──────────────────────────────────────────────
+# Phase 7: BTC Correlation
+# ──────────────────────────────────────────────
+def compute_correlation(
+    series_a: pd.Series, series_b: pd.Series, window: int = 30
+) -> dict:
+    """
+    Compute rolling correlation between two price series.
+    Returns: {current_corr, avg_corr, min_corr, max_corr, rolling_series}
+    """
+    if len(series_a) < window or len(series_b) < window:
+        return {"current_corr": 0, "avg_corr": 0, "rolling": pd.Series(dtype=float)}
+
+    # Align lengths
+    min_len = min(len(series_a), len(series_b))
+    a = series_a.iloc[-min_len:].pct_change().dropna()
+    b = series_b.iloc[-min_len:].pct_change().dropna()
+
+    min_len2 = min(len(a), len(b))
+    a = a.iloc[-min_len2:]
+    b = b.iloc[-min_len2:]
+
+    if len(a) < window:
+        return {"current_corr": 0, "avg_corr": 0, "rolling": pd.Series(dtype=float)}
+
+    rolling_corr = a.rolling(window=window).corr(b)
+    clean = rolling_corr.dropna()
+
+    if clean.empty:
+        return {"current_corr": 0, "avg_corr": 0, "rolling": pd.Series(dtype=float)}
+
+    return {
+        "current_corr": round(float(clean.iloc[-1]), 3),
+        "avg_corr": round(float(clean.mean()), 3),
+        "min_corr": round(float(clean.min()), 3),
+        "max_corr": round(float(clean.max()), 3),
+        "rolling": rolling_corr,
+    }

@@ -20,7 +20,6 @@ from itertools import combinations
 
 import numpy as np
 import pandas as pd
-import talib
 from scipy import stats
 from scipy.signal import argrelextrema
 
@@ -33,10 +32,8 @@ logger = logging.getLogger(__name__)
 # 200 EMA
 # ──────────────────────────────────────────────
 def compute_ema(df: pd.DataFrame, period: int = 200, col: str = "close") -> pd.Series:
-    """Compute EMA using ta-lib."""
-    values = df[col].astype(float).values
-    ema_arr = talib.EMA(values, timeperiod=period)
-    return pd.Series(ema_arr, index=df.index)
+    """Compute EMA using pandas ewm (no external TA library needed)."""
+    return df[col].astype(float).ewm(span=period, adjust=False).mean()
 
 
 def is_above_ema(df: pd.DataFrame, period: int = 200) -> bool:
@@ -574,10 +571,15 @@ def compute_scan_score(
 # Phase 6: RSI
 # ──────────────────────────────────────────────
 def compute_rsi(df: pd.DataFrame, period: int = 14, col: str = "close") -> pd.Series:
-    """Compute RSI using ta-lib."""
-    values = df[col].astype(float).values
-    rsi_arr = talib.RSI(values, timeperiod=period)
-    return pd.Series(rsi_arr, index=df.index)
+    """Compute RSI using pure pandas (Wilder's smoothing)."""
+    delta = df[col].astype(float).diff()
+    gain = delta.clip(lower=0)
+    loss = -delta.clip(upper=0)
+    avg_gain = gain.ewm(alpha=1 / period, min_periods=period, adjust=False).mean()
+    avg_loss = loss.ewm(alpha=1 / period, min_periods=period, adjust=False).mean()
+    rs = avg_gain / avg_loss.replace(0, np.nan)
+    rsi = 100 - (100 / (1 + rs))
+    return rsi
 
 
 def get_rsi_signal(df: pd.DataFrame, period: int = 14) -> dict:
@@ -619,11 +621,13 @@ def get_rsi_signal(df: pd.DataFrame, period: int = 14) -> dict:
 def compute_macd(
     df: pd.DataFrame, fast: int = 12, slow: int = 26, signal_period: int = 9, col: str = "close"
 ) -> pd.DataFrame:
-    """Compute MACD using ta-lib. Returns DataFrame with macd, signal, histogram."""
-    values = df[col].astype(float).values
-    macd_line, signal_line, histogram = talib.MACD(
-        values, fastperiod=fast, slowperiod=slow, signalperiod=signal_period
-    )
+    """Compute MACD using pure pandas EWM."""
+    series = df[col].astype(float)
+    ema_fast = series.ewm(span=fast, adjust=False).mean()
+    ema_slow = series.ewm(span=slow, adjust=False).mean()
+    macd_line = ema_fast - ema_slow
+    signal_line = macd_line.ewm(span=signal_period, adjust=False).mean()
+    histogram = macd_line - signal_line
     return pd.DataFrame({
         "macd": macd_line,
         "signal": signal_line,
@@ -676,9 +680,13 @@ def get_macd_signal(df: pd.DataFrame) -> dict:
 def compute_bollinger_bands(
     df: pd.DataFrame, period: int = 20, std_dev: float = 2.0, col: str = "close"
 ) -> pd.DataFrame:
-    """Compute Bollinger Bands using ta-lib. Returns DataFrame with lower, mid, upper, bandwidth, %b."""
-    values = df[col].astype(float).values
-    upper, mid, lower = talib.BBANDS(values, timeperiod=period, nbdevup=std_dev, nbdevdn=std_dev)
+    """Compute Bollinger Bands using pure pandas. Returns DataFrame with lower, mid, upper, bandwidth, %b."""
+    series = df[col].astype(float)
+    mid = series.rolling(window=period).mean().values
+    rolling_std = series.rolling(window=period).std(ddof=0).values
+    upper = mid + std_dev * rolling_std
+    lower = mid - std_dev * rolling_std
+    values = series.values
 
     bandwidth = np.where(mid != 0, (upper - lower) / mid, 0)
     pct_b = np.where((upper - lower) != 0, (values - lower) / (upper - lower), 0.5)

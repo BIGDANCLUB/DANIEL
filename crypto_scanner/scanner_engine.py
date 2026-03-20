@@ -1,13 +1,15 @@
 """
-Core scanner engine — Phase 5
+Core scanner engine — Phase 8
 ================================
 - Multi-exchange CEX scanning (Binance + Bybit)
 - CryptoPanic social filter
-- Multi-TF trendline confirmation
+- Multi-TF trendline confirmation (Phase 8A: enhanced 15m/1h/4h)
 - Watchlist support
 - Signal history tracking & hit-rate analysis
 - Alert condition engine
 - Market overview dashboard data
+- AI win prediction integration (Phase 8C)
+- Notification dispatch (Phase 8D)
 """
 
 import asyncio
@@ -35,6 +37,9 @@ from technical_analysis import (
     get_bb_signal,
     PATTERN_LABELS,
 )
+from mtf_strategy import compute_mtf_signal, fetch_mtf_data, MTFSignal
+from ai_predictor import SignalPredictor
+from notifier import UnifiedNotifier
 
 logger = logging.getLogger(__name__)
 
@@ -451,7 +456,7 @@ class MarketOverview:
 # Scanner Engine — Phase 4 (Multi-Exchange)
 # ──────────────────────────────────────────────
 class ScannerEngine:
-    """Main scanner — Phase 4 with multi-exchange support."""
+    """Main scanner — Phase 8 with MTF + AI + Notifications."""
 
     # Exchanges to scan
     CEX_EXCHANGES = ["binance", "bybit"]
@@ -461,6 +466,10 @@ class ScannerEngine:
         self._last_scan: Optional[datetime] = None
         self._scan_stats: dict = {}
         self._last_triggered_alerts: list[dict] = []
+        # Phase 8 additions
+        self.ai_predictor = SignalPredictor()
+        self.notifier = UnifiedNotifier()
+        self._mtf_signals: dict[str, MTFSignal] = {}  # symbol -> MTFSignal
 
     async def scan_cex_exchange(
         self, exchange_id: str, top_n: int = None
@@ -493,12 +502,15 @@ class ScannerEngine:
     async def _analyze_cex_symbol(
         self, fetcher: CEXFetcher, symbol: str, source: str
     ) -> Optional[ScanResult]:
-        """Analyze a single CEX symbol."""
+        """Analyze a single CEX symbol with Phase 8 MTF + AI."""
         df_1h = await fetcher.fetch_ohlcv(symbol, timeframe="1h", limit=250)
         if df_1h.empty or len(df_1h) < 30:
             return None
 
         df_4h = await fetcher.fetch_ohlcv(symbol, timeframe="4h", limit=250)
+
+        # Phase 8A: Fetch 15m for MTF strategy
+        df_15m = await fetcher.fetch_ohlcv(symbol, timeframe="15m", limit=200)
 
         # Volume spike (1H)
         vol_spike, vol_ratio = detect_volume_spike(df_1h, recent_bars=1, lookback_bars=24)
@@ -542,6 +554,22 @@ class ScannerEngine:
             rsi_data=rsi_data, macd_data=macd_data, bb_data=bb_data,
         )
 
+        # Phase 8A: MTF strategy signal
+        mtf_signal = None
+        tf_data = {"1h": df_1h}
+        if df_4h is not None and not df_4h.empty:
+            tf_data["4h"] = df_4h
+        if df_15m is not None and not df_15m.empty:
+            tf_data["15m"] = df_15m
+
+        if len(tf_data) >= 2:
+            try:
+                mtf_signal = compute_mtf_signal(symbol, tf_data)
+                score = min(score + mtf_signal.mtf_score_bonus, 100)
+                self._mtf_signals[symbol] = mtf_signal
+            except Exception as e:
+                logger.debug("MTF analysis error for %s: %s", symbol, e)
+
         if not (vol_spike or tl_result.get("resistance_break")):
             return None
 
@@ -550,7 +578,7 @@ class ScannerEngine:
         change_pct = ticker.get("percentage", 0) or 0
         volume_24h = ticker.get("quoteVolume", 0) or 0
 
-        return ScanResult(
+        result = ScanResult(
             symbol=symbol,
             source=source,
             price=current_price,
@@ -563,12 +591,29 @@ class ScannerEngine:
             score=score,
             scan_time=datetime.now(timezone.utc),
             extra={
-                "timeframe_analysis": "1H+4H",
+                "timeframe_analysis": "15M+1H+4H",
                 "rsi": rsi_data,
                 "macd": macd_data,
                 "bb": bb_data,
+                "mtf": {
+                    "htf_trend": mtf_signal.htf_trend if mtf_signal else "N/A",
+                    "ltf_entry": mtf_signal.ltf_entry if mtf_signal else "N/A",
+                    "alignment_score": mtf_signal.alignment_score if mtf_signal else 0,
+                    "entry_quality": mtf_signal.entry_quality if mtf_signal else "N/A",
+                    "recommended_action": mtf_signal.recommended_action if mtf_signal else "wait",
+                    "confluence_factors": mtf_signal.confluence_factors[:5] if mtf_signal else [],
+                },
             },
         )
+
+        # Phase 8C: AI prediction
+        try:
+            ai_pred = self.ai_predictor.predict(result)
+            result.extra["ai_prediction"] = ai_pred
+        except Exception as e:
+            logger.debug("AI prediction error for %s: %s", symbol, e)
+
+        return result
 
     def scan_dex(self) -> list[ScanResult]:
         """Scan DexScreener for trending DEX pairs."""
@@ -704,6 +749,15 @@ class ScannerEngine:
         # Phase 5: Check alerts
         self._last_triggered_alerts = check_alerts(deduped)
 
+        # Phase 8D: Send notifications for triggered alerts
+        if deduped and self.notifier.any_configured:
+            try:
+                await self.notifier.notify_signals(
+                    deduped, datetime.now(timezone.utc)
+                )
+            except Exception as e:
+                logger.debug("Notification error: %s", e)
+
         elapsed = time.time() - start
         logger.info(
             "Scan complete: %d results in %.1fs (stats: %s)",
@@ -726,6 +780,13 @@ class ScannerEngine:
     @property
     def triggered_alerts(self) -> list[dict]:
         return self._last_triggered_alerts
+
+    @property
+    def mtf_signals(self) -> dict:
+        return self._mtf_signals
+
+    def get_mtf_signal(self, symbol: str) -> Optional[MTFSignal]:
+        return self._mtf_signals.get(symbol)
 
 
 # ──────────────────────────────────────────────

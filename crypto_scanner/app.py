@@ -1,15 +1,14 @@
 """
-Crypto Trendline Break Scanner — Streamlit App (Phase 7)
+Crypto Trendline Break Scanner — Streamlit App (Phase 8)
 =========================================================
 6時間以内トレンドラインブレイク検知スキャナー
 100% 無料API構成: CCXT + Binance Public FAPI + DexScreener + CryptoPanic
 
-Phase 7 additions:
-- Fibonacci retracement/extension levels
-- Support/Resistance cluster zones
-- Position size calculator with risk/reward
-- BTC correlation analysis
-- CSV export for scan results & backtest
+Phase 8 additions:
+- Multi-Timeframe strategy (15m/1h/4h alignment + entry quality)
+- Real-time WebSocket price/liquidation stream
+- AI win probability prediction (ML model)
+- Telegram & Discord notification bot
 """
 
 import asyncio
@@ -160,6 +159,9 @@ from data_fetcher import (
     BinanceOpenInterestFetcher,
     CryptoPanicFetcher,
 )
+from ai_predictor import SignalPredictor
+from realtime_ws import RealtimePoller, LiquidationAggregator
+from notifier import UnifiedNotifier
 
 
 # ──────────────────────────────────────────────
@@ -431,8 +433,9 @@ if auto_refresh:
 # ──────────────────────────────────────────────
 # Main content — tabs: Signals | History | Alerts
 # ──────────────────────────────────────────────
-main_tab_signals, main_tab_heatmap, main_tab_risk, main_tab_backtest, main_tab_history, main_tab_alerts = st.tabs(
-    ["Signals", "Heatmap", "Risk Calculator", "Backtest", "Signal History", "Alert Settings"]
+main_tab_signals, main_tab_heatmap, main_tab_mtf, main_tab_realtime, main_tab_ai, main_tab_risk, main_tab_backtest, main_tab_history, main_tab_alerts, main_tab_notify = st.tabs(
+    ["Signals", "Heatmap", "MTF Strategy", "Real-Time", "AI Predict",
+     "Risk Calculator", "Backtest", "Signal History", "Alert Settings", "Notifications"]
 )
 
 
@@ -1340,6 +1343,313 @@ with main_tab_heatmap:
 
 
 # ════════════════════════════════════════════════
+# TAB: MTF STRATEGY (Phase 8A)
+# ════════════════════════════════════════════════
+with main_tab_mtf:
+    st.markdown("### Multi-Timeframe Strategy")
+    st.caption("HTF (4h) direction + LTF (15m/1h) entry — Alignment score shows TF confluence")
+
+    results_for_mtf: list[ScanResult] = st.session_state.results
+    scanner = st.session_state.scanner
+
+    if not results_for_mtf:
+        st.info("Run a scan first to see multi-timeframe analysis.")
+    else:
+        # MTF summary table
+        mtf_rows = []
+        for r in results_for_mtf:
+            mtf_data = (r.extra or {}).get("mtf", {})
+            ai_data = (r.extra or {}).get("ai_prediction", {})
+            mtf_rows.append({
+                "Symbol": r.symbol,
+                "Score": r.score,
+                "HTF Trend": mtf_data.get("htf_trend", "N/A"),
+                "LTF Entry": mtf_data.get("ltf_entry", "N/A"),
+                "Alignment": mtf_data.get("alignment_score", 0),
+                "Quality": mtf_data.get("entry_quality", "N/A"),
+                "Action": mtf_data.get("recommended_action", "wait"),
+                "AI Win%": f"{ai_data.get('win_probability', 0):.0%}" if ai_data.get("win_probability") else "—",
+            })
+
+        mtf_df = pd.DataFrame(mtf_rows)
+
+        def color_trend(val):
+            if val == "bullish":
+                return "color: #00e676; font-weight: bold"
+            elif val == "bearish":
+                return "color: #ff5252; font-weight: bold"
+            return "color: #9e9e9e"
+
+        def color_quality(val):
+            colors = {"premium": "#00e676", "high": "#66BB6A", "medium": "#ffc107", "low": "#ff5252"}
+            c = colors.get(val, "#9e9e9e")
+            return f"color: {c}; font-weight: bold"
+
+        def color_action(val):
+            if "long" in str(val):
+                return "color: #00e676; font-weight: bold"
+            elif "short" in str(val):
+                return "color: #ff5252; font-weight: bold"
+            return "color: #9e9e9e"
+
+        styled_mtf = mtf_df.style.applymap(color_trend, subset=["HTF Trend", "LTF Entry"])
+        styled_mtf = styled_mtf.applymap(color_quality, subset=["Quality"])
+        styled_mtf = styled_mtf.applymap(color_action, subset=["Action"])
+        styled_mtf = styled_mtf.format({"Score": "{:.0f}", "Alignment": "{:.1f}"})
+
+        st.dataframe(styled_mtf, use_container_width=True, height=min(400, 50 + len(mtf_df) * 35))
+
+        # Detail view for selected coin
+        st.markdown("---")
+        st.markdown("#### MTF Detail")
+        mtf_symbol = st.selectbox("Select coin", [r.symbol for r in results_for_mtf], key="mtf_detail_sym")
+
+        if mtf_symbol:
+            sel = next((r for r in results_for_mtf if r.symbol == mtf_symbol), None)
+            if sel:
+                mtf_info = (sel.extra or {}).get("mtf", {})
+
+                mc1, mc2, mc3, mc4, mc5 = st.columns(5)
+                with mc1:
+                    trend = mtf_info.get("htf_trend", "N/A")
+                    t_color = "#00e676" if trend == "bullish" else ("#ff5252" if trend == "bearish" else "#ffc107")
+                    st.markdown(f"""
+                    <div style="background:#1a1a2e;border:1px solid {t_color}66;border-radius:8px;padding:1rem;text-align:center;">
+                        <div style="color:#9e9e9e;font-size:0.8rem;">HTF Trend (4h)</div>
+                        <div style="color:{t_color};font-size:1.5rem;font-weight:bold;">{trend.upper()}</div>
+                    </div>""", unsafe_allow_html=True)
+                with mc2:
+                    entry = mtf_info.get("ltf_entry", "N/A")
+                    e_color = "#00e676" if entry == "bullish" else ("#ff5252" if entry == "bearish" else "#ffc107")
+                    st.markdown(f"""
+                    <div style="background:#1a1a2e;border:1px solid {e_color}66;border-radius:8px;padding:1rem;text-align:center;">
+                        <div style="color:#9e9e9e;font-size:0.8rem;">LTF Entry (15m)</div>
+                        <div style="color:{e_color};font-size:1.5rem;font-weight:bold;">{entry.upper()}</div>
+                    </div>""", unsafe_allow_html=True)
+                with mc3:
+                    align = mtf_info.get("alignment_score", 0)
+                    a_color = "#00e676" if align >= 70 else ("#ffc107" if align >= 40 else "#ff5252")
+                    st.markdown(f"""
+                    <div style="background:#1a1a2e;border:1px solid {a_color}66;border-radius:8px;padding:1rem;text-align:center;">
+                        <div style="color:#9e9e9e;font-size:0.8rem;">Alignment</div>
+                        <div style="color:{a_color};font-size:1.5rem;font-weight:bold;">{align:.1f}%</div>
+                    </div>""", unsafe_allow_html=True)
+                with mc4:
+                    quality = mtf_info.get("entry_quality", "N/A")
+                    q_colors = {"premium": "#00e676", "high": "#66BB6A", "medium": "#ffc107", "low": "#ff5252"}
+                    q_color = q_colors.get(quality, "#9e9e9e")
+                    st.markdown(f"""
+                    <div style="background:#1a1a2e;border:1px solid {q_color}66;border-radius:8px;padding:1rem;text-align:center;">
+                        <div style="color:#9e9e9e;font-size:0.8rem;">Entry Quality</div>
+                        <div style="color:{q_color};font-size:1.5rem;font-weight:bold;">{quality.upper()}</div>
+                    </div>""", unsafe_allow_html=True)
+                with mc5:
+                    action = mtf_info.get("recommended_action", "wait")
+                    act_color = "#00e676" if "long" in action else ("#ff5252" if "short" in action else "#ffc107")
+                    st.markdown(f"""
+                    <div style="background:#1a1a2e;border:1px solid {act_color}66;border-radius:8px;padding:1rem;text-align:center;">
+                        <div style="color:#9e9e9e;font-size:0.8rem;">Recommended</div>
+                        <div style="color:{act_color};font-size:1.3rem;font-weight:bold;">{action.upper()}</div>
+                    </div>""", unsafe_allow_html=True)
+
+                # Confluence factors
+                factors = mtf_info.get("confluence_factors", [])
+                if factors:
+                    st.markdown("**Confluence Factors:**")
+                    tags = " ".join(
+                        f'<span style="background:#1a237e;color:#82b1ff;padding:3px 10px;'
+                        f'border-radius:4px;font-size:0.85rem;margin:2px;display:inline-block;">{f}</span>'
+                        for f in factors
+                    )
+                    st.markdown(tags, unsafe_allow_html=True)
+
+
+# ════════════════════════════════════════════════
+# TAB: REAL-TIME (Phase 8B)
+# ════════════════════════════════════════════════
+with main_tab_realtime:
+    st.markdown("### Real-Time Market Data")
+    st.caption("Live price updates & liquidation feed via Binance Futures API")
+
+    results_for_rt: list[ScanResult] = st.session_state.results
+
+    if not results_for_rt:
+        st.info("Run a scan first, then real-time data will track scanned symbols.")
+    else:
+        rt_symbols = [r.symbol for r in results_for_rt[:20]]
+
+        if st.button("Refresh Prices", key="rt_refresh"):
+            with st.spinner("Polling live prices..."):
+                poller = RealtimePoller(rt_symbols, interval_sec=0)
+                rt_prices = run_async(poller.poll_prices())
+
+                if rt_prices:
+                    rt_rows = []
+                    for sym, p in sorted(rt_prices.items(), key=lambda x: abs(x[1].change_pct), reverse=True):
+                        rt_rows.append({
+                            "Symbol": p.symbol,
+                            "Price": p.price,
+                            "24h %": p.change_pct,
+                            "24h Volume": p.volume_24h,
+                        })
+
+                    rt_df = pd.DataFrame(rt_rows)
+
+                    def color_rt_change(val):
+                        if isinstance(val, (int, float)):
+                            return "color: #00e676" if val >= 0 else "color: #ff5252"
+                        return ""
+
+                    st.dataframe(
+                        rt_df.style.applymap(color_rt_change, subset=["24h %"])
+                        .format({"Price": "${:,.4f}", "24h %": "{:+.2f}%", "24h Volume": "${:,.0f}"}),
+                        use_container_width=True,
+                    )
+                else:
+                    st.warning("Could not fetch live prices.")
+
+        # Open Interest section
+        st.markdown("---")
+        st.markdown("#### Open Interest Snapshot")
+        if st.button("Fetch OI", key="rt_oi"):
+            with st.spinner("Polling open interest..."):
+                poller = RealtimePoller(rt_symbols, interval_sec=0)
+                rt_prices = run_async(poller.poll_prices())
+                rt_oi = run_async(poller.poll_open_interest())
+
+                if rt_oi:
+                    oi_rows = []
+                    for sym, oi in sorted(rt_oi.items(), key=lambda x: x[1].oi_value_usd, reverse=True):
+                        oi_rows.append({
+                            "Symbol": oi.symbol,
+                            "Open Interest": f"{oi.open_interest:,.2f}",
+                            "OI Value (USD)": f"${oi.oi_value_usd:,.0f}",
+                        })
+                    st.dataframe(pd.DataFrame(oi_rows), use_container_width=True)
+                else:
+                    st.info("No OI data available.")
+
+        st.markdown("---")
+        st.caption(
+            "Note: Streamlit uses REST polling for real-time data. "
+            "For true WebSocket streaming, run the standalone WS monitor: "
+            "`python realtime_ws.py`"
+        )
+
+
+# ════════════════════════════════════════════════
+# TAB: AI PREDICTION (Phase 8C)
+# ════════════════════════════════════════════════
+with main_tab_ai:
+    st.markdown("### AI Win Prediction")
+    st.caption("Machine learning model predicts win probability based on historical signal outcomes")
+
+    predictor = SignalPredictor()
+
+    # Model status
+    model_info = predictor.model_info
+    if model_info["status"] == "trained":
+        st.markdown(
+            f"""
+            <div style="background:#1a1a2e;border:1px solid #00e67666;border-radius:8px;padding:1rem;margin-bottom:1rem;">
+                <div style="color:#00e676;font-weight:bold;font-size:1.1rem;">Model Status: Trained</div>
+                <div style="color:#9e9e9e;font-size:0.85rem;margin-top:0.3rem;">
+                    Samples: {model_info.get('n_samples', '?')} |
+                    CV Accuracy: {model_info.get('cv_accuracy', 0):.1%} |
+                    Trained: {model_info.get('trained_at', '?')[:16]} |
+                    Type: {model_info.get('model_type', '?')}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(
+            """
+            <div style="background:#1a1a2e;border:1px solid #ffc10766;border-radius:8px;padding:1rem;margin-bottom:1rem;">
+                <div style="color:#ffc107;font-weight:bold;font-size:1.1rem;">Model Status: Not Trained</div>
+                <div style="color:#9e9e9e;font-size:0.85rem;margin-top:0.3rem;">
+                    Need 30+ resolved signals with outcomes. Run scans, update outcomes, then train.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    # Train button
+    ai_col1, ai_col2, ai_col3 = st.columns([1, 1, 4])
+    with ai_col1:
+        if st.button("Train Model", type="primary", key="ai_train"):
+            with st.spinner("Training AI model..."):
+                history = load_signal_history()
+                result = predictor.train(history)
+
+                if "error" in result:
+                    st.warning(result["error"])
+                else:
+                    st.success(
+                        f"Model trained! Samples: {result['samples']}, "
+                        f"CV Accuracy: {result['cv_accuracy']:.1%}"
+                    )
+                    st.rerun()
+
+    with ai_col2:
+        if st.button("Update Outcomes", key="ai_update_outcomes"):
+            with st.spinner("Checking past signal prices..."):
+                run_async(update_signal_outcomes())
+            st.rerun()
+
+    # Predictions for current signals
+    results_for_ai: list[ScanResult] = st.session_state.results
+    if results_for_ai and predictor.is_trained:
+        st.markdown("---")
+        st.markdown("#### Predictions for Current Signals")
+
+        ai_rows = []
+        for r in results_for_ai:
+            pred = (r.extra or {}).get("ai_prediction", {})
+            if not pred or pred.get("win_probability") is None:
+                pred = predictor.predict(r)
+
+            ai_rows.append({
+                "Symbol": r.symbol,
+                "Score": r.score,
+                "Win Prob": pred.get("win_probability", 0),
+                "Confidence": pred.get("confidence", "N/A"),
+                "Prediction": pred.get("prediction", "N/A"),
+            })
+
+        ai_df = pd.DataFrame(ai_rows).sort_values("Win Prob", ascending=False)
+
+        def color_win_prob(val):
+            if isinstance(val, (int, float)):
+                if val >= 0.7:
+                    return "color: #00e676; font-weight: bold"
+                elif val >= 0.5:
+                    return "color: #ffc107; font-weight: bold"
+                return "color: #ff5252"
+            return ""
+
+        st.dataframe(
+            ai_df.style.applymap(color_win_prob, subset=["Win Prob"])
+            .format({"Score": "{:.0f}", "Win Prob": "{:.1%}"}),
+            use_container_width=True,
+        )
+
+    # Feature importance
+    if predictor.is_trained:
+        st.markdown("---")
+        st.markdown("#### Feature Importance")
+        feat_imp = predictor.get_feature_importance()
+        if feat_imp:
+            imp_df = pd.DataFrame(feat_imp[:15])
+            st.bar_chart(imp_df.set_index("feature")["importance"])
+
+    elif not results_for_ai:
+        st.info("Run a scan first to see AI predictions.")
+
+
+# ════════════════════════════════════════════════
 # TAB: RISK CALCULATOR (Phase 7)
 # ════════════════════════════════════════════════
 with main_tab_risk:
@@ -1723,12 +2033,113 @@ with main_tab_alerts:
             st.rerun()
 
 
+# ════════════════════════════════════════════════
+# TAB: NOTIFICATIONS (Phase 8D)
+# ════════════════════════════════════════════════
+with main_tab_notify:
+    st.markdown("### Notification Settings")
+    st.caption("Configure Telegram & Discord notifications for scan alerts")
+
+    notifier = UnifiedNotifier()
+    status = notifier.status
+
+    # Status display
+    n_col1, n_col2 = st.columns(2)
+
+    with n_col1:
+        tg_configured = status["telegram"]["configured"]
+        tg_color = "#00e676" if tg_configured else "#ff5252"
+        tg_status = "Connected" if tg_configured else "Not Configured"
+        st.markdown(
+            f"""
+            <div style="background:#1a1a2e;border:1px solid {tg_color}66;border-radius:8px;padding:1rem;">
+                <div style="color:{tg_color};font-weight:bold;font-size:1.1rem;">
+                    Telegram: {tg_status}
+                </div>
+                <div style="color:#9e9e9e;font-size:0.85rem;margin-top:0.3rem;">
+                    {'Chat ID: ' + status['telegram']['chat_id'] if tg_configured else 'Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env'}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with n_col2:
+        dc_configured = status["discord"]["configured"]
+        dc_color = "#00e676" if dc_configured else "#ff5252"
+        dc_status = "Connected" if dc_configured else "Not Configured"
+        st.markdown(
+            f"""
+            <div style="background:#1a1a2e;border:1px solid {dc_color}66;border-radius:8px;padding:1rem;">
+                <div style="color:{dc_color};font-weight:bold;font-size:1.1rem;">
+                    Discord: {dc_status}
+                </div>
+                <div style="color:#9e9e9e;font-size:0.85rem;margin-top:0.3rem;">
+                    {'Webhook configured' if dc_configured else 'Set DISCORD_WEBHOOK_URL in .env'}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    # Test notification
+    if notifier.any_configured:
+        st.markdown("---")
+        if st.button("Send Test Notification", key="test_notify"):
+            with st.spinner("Sending test..."):
+                test_result = run_async(notifier.send_test())
+                for channel, result in test_result.items():
+                    if result == "success":
+                        st.success(f"{channel.capitalize()}: Test sent!")
+                    else:
+                        st.error(f"{channel.capitalize()}: {result}")
+
+    # Setup instructions
+    st.markdown("---")
+    st.markdown("#### Setup Guide")
+
+    with st.expander("Telegram Setup", expanded=False):
+        st.markdown("""
+        1. Create a bot via [@BotFather](https://t.me/BotFather) on Telegram
+        2. Copy the Bot Token
+        3. Start a chat with your bot, then get your Chat ID via [@userinfobot](https://t.me/userinfobot)
+        4. Add to `.env`:
+        ```
+        TELEGRAM_BOT_TOKEN=your_bot_token_here
+        TELEGRAM_CHAT_ID=your_chat_id_here
+        ```
+        5. Restart the app
+        """)
+
+    with st.expander("Discord Setup", expanded=False):
+        st.markdown("""
+        1. In your Discord server, go to Channel Settings > Integrations > Webhooks
+        2. Create a new Webhook, copy the URL
+        3. Add to `.env`:
+        ```
+        DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
+        ```
+        4. Restart the app
+        """)
+
+    with st.expander("Notification Settings", expanded=False):
+        st.markdown(f"""
+        Configure in `.env`:
+        ```
+        NOTIFY_MIN_SCORE=50        # Min score to notify (current: {notifier.telegram._last_send if hasattr(notifier, 'telegram') else 50})
+        NOTIFY_COOLDOWN_SEC=300    # Cooldown per symbol (5 min)
+        NOTIFY_MAX_PER_SCAN=5      # Max notifications per scan
+        ```
+        """)
+
+
 # ──────────────────────────────────────────────
 # Footer
 # ──────────────────────────────────────────────
 st.markdown("---")
 st.caption(
-    "Crypto Trendline Break Scanner v7.0 — Phase 7 | 100% Free APIs "
+    "Crypto Trendline Break Scanner v8.0 — Phase 8 | 100% Free APIs "
+    "| MTF Strategy (15m/1h/4h) + Real-Time WebSocket + AI Win Prediction + Telegram/Discord Notify "
     "| Fibonacci + S/R Clusters + BTC Correlation + Risk Calculator + CSV Export "
     "| RSI + MACD + BB + Heatmap + Backtester "
     "| Market Dashboard + Watchlist + Signal History + Alerts "

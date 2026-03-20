@@ -1,4 +1,4 @@
-"""Configuration management for Crypto Scanner — 100% Free APIs."""
+"""Configuration management for Crypto Scanner — 100% Free APIs (Phase 8)."""
 
 import os
 from dotenv import load_dotenv
@@ -41,3 +41,14 @@ class Config:
     # CryptoPanic (free tier, no key = public posts only)
     CRYPTOPANIC_API_KEY: str = os.getenv("CRYPTOPANIC_API_KEY", "")
     CRYPTOPANIC_BASE_URL: str = "https://cryptopanic.com/api/free/v1"
+
+    # Phase 8: Telegram / Discord notifications
+    TELEGRAM_BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    TELEGRAM_CHAT_ID: str = os.getenv("TELEGRAM_CHAT_ID", "")
+    DISCORD_WEBHOOK_URL: str = os.getenv("DISCORD_WEBHOOK_URL", "")
+
+    # Phase 8: AI predictor
+    AI_MIN_TRAIN_SAMPLES: int = 30
+
+    # Phase 8: MTF timeframes
+    MTF_TIMEFRAMES: list = ["15m", "1h", "4h"]

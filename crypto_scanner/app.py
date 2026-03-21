@@ -582,23 +582,87 @@ with main_tab_signals:
             "Score": "{:.1f}",
         })
 
-        st.dataframe(
-            styled,
-            use_container_width=True,
-            height=min(400, 50 + len(df_results) * 35),
+        # ── Clickable coin cards (replaces static table) ──
+        st.markdown(
+            """<style>
+            .coin-card {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                border: 1px solid #2a2a4a;
+                border-radius: 10px;
+                padding: 0.7rem 0.9rem;
+                margin-bottom: 0.4rem;
+                transition: border-color 0.2s, box-shadow 0.2s;
+            }
+            .coin-card:hover { border-color: #448AFF; }
+            .coin-card.active {
+                border-color: #00e676;
+                box-shadow: 0 0 8px rgba(0,230,118,0.25);
+            }
+            .coin-name { font-size: 1.05rem; font-weight: bold; color: #e0e0e0; }
+            .coin-score-high { color: #00e676; font-weight: bold; font-size: 1.1rem; }
+            .coin-score-mid  { color: #ffc107; font-weight: bold; font-size: 1.1rem; }
+            .coin-score-low  { color: #ff5252; font-weight: bold; font-size: 1.1rem; }
+            .coin-tag {
+                display: inline-block;
+                padding: 1px 6px;
+                border-radius: 3px;
+                font-size: 0.72rem;
+                margin-right: 3px;
+            }
+            .coin-tag-bull { background: rgba(0,230,118,0.15); color: #00e676; }
+            .coin-tag-bear { background: rgba(255,82,82,0.15); color: #ff5252; }
+            .coin-meta { color: #9e9e9e; font-size: 0.8rem; }
+            </style>""",
+            unsafe_allow_html=True,
         )
 
-        # ── Watchlist quick add buttons ──
-        st.markdown("**Quick add to watchlist:**")
-        wl_cols = st.columns(min(len(results), 6))
-        for i, r in enumerate(results[:6]):
-            with wl_cols[i]:
-                if r.symbol not in watchlist:
-                    if st.button(f"+ {r.symbol.split('/')[0]}", key=f"wl_quick_{i}"):
-                        add_to_watchlist(r.symbol)
+        # Render coin cards in a grid
+        card_cols_per_row = 3
+        for row_start in range(0, len(results), card_cols_per_row):
+            row_results = results[row_start : row_start + card_cols_per_row]
+            cols = st.columns(card_cols_per_row)
+            for i, r in enumerate(row_results):
+                with cols[i]:
+                    short_name = r.symbol.split("/")[0]
+                    break_type = r.trendline_break.get("breakout_type", "")
+                    score_cls = (
+                        "coin-score-high" if r.score >= 70
+                        else "coin-score-mid" if r.score >= 40
+                        else "coin-score-low"
+                    )
+                    tag_cls = "coin-tag-bull" if break_type == "bullish" else "coin-tag-bear"
+                    active = "active" if st.session_state.selected_symbol == r.symbol else ""
+                    chg = f"{r.change_pct:+.2f}%" if r.change_pct else "N/A"
+                    chg_color = "#00e676" if (r.change_pct or 0) >= 0 else "#ff5252"
+                    wl_star = " ★" if r.symbol in watchlist else ""
+
+                    st.markdown(
+                        f"""<div class="coin-card {active}">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <span class="coin-name">{short_name}{wl_star}</span>
+                                <span class="{score_cls}">{r.score:.0f}</span>
+                            </div>
+                            <div style="margin:0.3rem 0;">
+                                <span class="coin-tag {tag_cls}">{break_type or 'N/A'}</span>
+                                <span class="coin-tag" style="background:rgba(68,138,255,0.15);color:#82b1ff;">
+                                    {r.pattern or 'N/A'}
+                                </span>
+                            </div>
+                            <div class="coin-meta">
+                                Price: ${r.price:,.4f} &nbsp;|&nbsp;
+                                <span style="color:{chg_color}">{chg}</span> &nbsp;|&nbsp;
+                                {r.source}
+                            </div>
+                        </div>""",
+                        unsafe_allow_html=True,
+                    )
+                    if st.button(
+                        f"View {short_name}",
+                        key=f"coin_select_{row_start + i}",
+                        use_container_width=True,
+                    ):
+                        st.session_state.selected_symbol = r.symbol
                         st.rerun()
-                else:
-                    st.caption(f"★ {r.symbol.split('/')[0]}")
 
         # ──────────────────────────────────────────
         # Detail view: select a coin
@@ -607,10 +671,17 @@ with main_tab_signals:
         st.markdown("### Detail View")
 
         symbol_options = [r.symbol for r in results]
+
+        # Determine initial index from session state
+        _sel_idx = 0
+        if st.session_state.selected_symbol in symbol_options:
+            _sel_idx = symbol_options.index(st.session_state.selected_symbol)
+
         selected = st.selectbox(
             "Select coin for detailed analysis",
             options=symbol_options,
-            index=0 if symbol_options else None,
+            index=_sel_idx,
+            key="detail_selectbox",
         )
 
         if selected:

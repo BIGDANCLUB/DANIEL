@@ -499,8 +499,8 @@ class ScannerEngine:
                     continue
 
         except Exception as e:
-            logger.error("%s scan failed: %s", exchange_id, e)
-            errors.insert(0, f"EXCHANGE ERROR: {e}")
+            logger.error("%s scan failed: %s", exchange_id, repr(e))
+            errors.insert(0, f"EXCHANGE ERROR: {type(e).__name__}: {e}")
         finally:
             await fetcher.close()
 

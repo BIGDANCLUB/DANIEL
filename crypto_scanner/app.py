@@ -355,13 +355,30 @@ if st.session_state.triggered_alerts:
 # ──────────────────────────────────────────────
 # Scan button
 # ──────────────────────────────────────────────
-col_btn1, col_btn2, col_btn3, col_btn4 = st.columns([1, 1, 1, 3])
+col_btn1, col_btn2, col_btn3, col_btn4, col_btn5 = st.columns([1, 1, 1, 1, 2])
 with col_btn1:
     scan_clicked = st.button("Scan Now", type="primary", use_container_width=True)
 with col_btn2:
     clear_clicked = st.button("Clear", use_container_width=True)
 with col_btn3:
     refresh_market = st.button("Refresh Market", use_container_width=True)
+with col_btn4:
+    test_api = st.button("Test API", use_container_width=True)
+
+if test_api:
+    import requests as _req
+    test_urls = {
+        "Binance Spot": "https://api.binance.com/api/v3/ping",
+        "Binance Futures": "https://fapi.binance.com/fapi/v1/ping",
+        "Bybit": "https://api.bybit.com/v5/market/time",
+        "DexScreener": "https://api.dexscreener.com/latest/dex/search?q=SOL",
+    }
+    for name, url in test_urls.items():
+        try:
+            resp = _req.get(url, timeout=10)
+            st.success(f"{name}: OK (status {resp.status_code})")
+        except Exception as ex:
+            st.error(f"{name}: FAILED — {type(ex).__name__}: {ex}")
 
 if refresh_market:
     st.session_state.market_data = None

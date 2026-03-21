@@ -412,9 +412,16 @@ if scan_clicked:
                 filtered.append(r)
 
             # Store debug info in session_state so it survives rerun
+            detail_info = ""
+            for key, val in scanner.scan_stats.items():
+                if isinstance(val, dict):
+                    detail_info += f"\n  {key}: {val}"
+                else:
+                    detail_info += f"\n  {key}: {val}"
             st.session_state.scan_debug = (
                 f"Scan complete: {len(results)} raw results, "
                 f"{len(filtered)} after filtering (min_score={min_score})"
+                f"\nStats: {detail_info}"
             )
 
             st.session_state.results = filtered

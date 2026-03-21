@@ -478,6 +478,9 @@ class ScannerEngine:
         results = []
         fetcher = CEXFetcher(exchange_id=exchange_id)
         source_name = f"{exchange_id.capitalize()} Futures"
+        errors = []
+        scanned = 0
+        filtered_out = 0
         try:
             top_n = top_n or Config.CEX_TOP_N
             symbols = await fetcher.fetch_top_symbols(top_n=top_n)
@@ -485,17 +488,36 @@ class ScannerEngine:
 
             for symbol in symbols:
                 try:
+                    scanned += 1
                     result = await self._analyze_cex_symbol(fetcher, symbol, source_name)
                     if result:
                         results.append(result)
+                    else:
+                        filtered_out += 1
                 except Exception as e:
-                    logger.info("Error analyzing %s on %s: %s", symbol, exchange_id, e)
+                    errors.append(f"{symbol}: {e}")
                     continue
 
         except Exception as e:
             logger.error("%s scan failed: %s", exchange_id, e)
+            errors.insert(0, f"EXCHANGE ERROR: {e}")
         finally:
             await fetcher.close()
+
+        # Store diagnostic info
+        self._scan_stats[f"{exchange_id}_detail"] = {
+            "scanned": scanned,
+            "signals": len(results),
+            "filtered_out": filtered_out,
+            "errors": len(errors),
+            "sample_errors": errors[:5],
+        }
+        logger.info(
+            "%s: scanned=%d, signals=%d, filtered_out=%d, errors=%d",
+            exchange_id, scanned, len(results), filtered_out, len(errors),
+        )
+        if errors:
+            logger.info("%s sample errors: %s", exchange_id, errors[:3])
 
         return results
 

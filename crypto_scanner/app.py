@@ -397,6 +397,8 @@ if scan_clicked:
                 include_dex=show_dex,
             ))
 
+            st.info(f"Scan returned {len(results)} raw results before filtering.")
+
             # Filter by source preference + min score + watchlist
             watchlist = load_watchlist()
             filtered = []
@@ -408,6 +410,8 @@ if scan_clicked:
                         continue
                 filtered.append(r)
 
+            st.info(f"After filtering (min_score={min_score}): {len(filtered)} results.")
+
             st.session_state.results = filtered
             st.session_state.last_scan_time = datetime.now(timezone.utc)
             st.session_state.triggered_alerts = scanner.triggered_alerts
@@ -415,6 +419,8 @@ if scan_clicked:
             st.rerun()
         except Exception as e:
             st.error(f"Scan failed: {e}")
+            import traceback
+            st.code(traceback.format_exc())
             logger.exception("Scan failed")
             st.session_state.scan_running = False
 

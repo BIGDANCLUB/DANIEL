@@ -397,8 +397,6 @@ if scan_clicked:
                 include_dex=show_dex,
             ))
 
-            st.info(f"Scan returned {len(results)} raw results before filtering.")
-
             # Filter by source preference + min score + watchlist
             watchlist = load_watchlist()
             filtered = []
@@ -410,7 +408,11 @@ if scan_clicked:
                         continue
                 filtered.append(r)
 
-            st.info(f"After filtering (min_score={min_score}): {len(filtered)} results.")
+            # Store debug info in session_state so it survives rerun
+            st.session_state.scan_debug = (
+                f"Scan complete: {len(results)} raw results, "
+                f"{len(filtered)} after filtering (min_score={min_score})"
+            )
 
             st.session_state.results = filtered
             st.session_state.last_scan_time = datetime.now(timezone.utc)
@@ -418,9 +420,8 @@ if scan_clicked:
             st.session_state.scan_running = False
             st.rerun()
         except Exception as e:
-            st.error(f"Scan failed: {e}")
             import traceback
-            st.code(traceback.format_exc())
+            st.session_state.scan_debug = f"Scan failed: {e}\n{traceback.format_exc()}"
             logger.exception("Scan failed")
             st.session_state.scan_running = False
 
@@ -449,6 +450,15 @@ main_tab_signals, main_tab_heatmap, main_tab_mtf, main_tab_realtime, main_tab_ai
 # TAB: SIGNALS
 # ════════════════════════════════════════════════
 with main_tab_signals:
+    # Show scan debug info if available
+    if st.session_state.get("scan_debug"):
+        debug_msg = st.session_state.scan_debug
+        if "failed" in debug_msg.lower():
+            st.error(debug_msg)
+        else:
+            st.success(debug_msg)
+        st.session_state.scan_debug = None
+
     results: list[ScanResult] = st.session_state.results
 
     if not results:

@@ -30,15 +30,25 @@ class CEXFetcher:
         self._exchange: Optional[ccxt_async.Exchange] = None
         self._exchange_id = exchange_id or Config.CEX_EXCHANGE
 
+    # Map generic exchange names to CCXT futures-specific IDs
+    _FUTURES_EXCHANGE_MAP = {
+        "binance": "binanceusdm",
+        "bybit": "bybit",
+    }
+
     async def _get_exchange(self) -> ccxt_async.Exchange:
         if self._exchange is None:
-            exchange_cls = getattr(ccxt_async, self._exchange_id)
+            # Use futures-specific exchange class for Binance
+            ccxt_id = self._FUTURES_EXCHANGE_MAP.get(
+                self._exchange_id, self._exchange_id
+            )
+            exchange_cls = getattr(ccxt_async, ccxt_id)
             params = {
                 "enableRateLimit": True,
                 "rateLimit": Config.CCXT_RATE_LIMIT_MS,
-                "options": {"defaultType": Config.CEX_MARKET_TYPE},
+                "options": {"defaultType": "swap"},
             }
-            if self._exchange_id == "binance" and Config.BINANCE_API_KEY:
+            if self._exchange_id in ("binance", "binanceusdm") and Config.BINANCE_API_KEY:
                 params["apiKey"] = Config.BINANCE_API_KEY
                 params["secret"] = Config.BINANCE_API_SECRET
             elif self._exchange_id == "bybit" and Config.BYBIT_API_KEY:

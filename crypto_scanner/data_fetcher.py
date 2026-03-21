@@ -1,6 +1,7 @@
-"""Data fetching layer — 100% Free APIs.
+"""Data fetching layer — 100% Free APIs (Direct REST).
 
-- CCXT (async): Binance/Bybit OHLCV, ticker, order book, funding rate
+- Binance FAPI: Futures OHLCV, ticker, order book, funding rate (no key required)
+- Bybit V5 API: Futures OHLCV, ticker (no key required)
 - Binance Public FAPI: Long/Short ratio (no key required)
 - DexScreener: DEX pair discovery (no key required)
 - CryptoPanic: Social/news sentiment (free tier, key optional)
@@ -11,7 +12,6 @@ import time
 import logging
 from typing import Optional
 
-import ccxt.async_support as ccxt_async
 import pandas as pd
 import requests
 
@@ -19,102 +19,254 @@ from config import Config
 
 logger = logging.getLogger(__name__)
 
+# Try importing ccxt for backward compatibility (optional)
+try:
+    import ccxt.async_support as ccxt_async
+    HAS_CCXT = True
+except ImportError:
+    HAS_CCXT = False
+
 
 # ──────────────────────────────────────────────
-# CEX data via CCXT (async)
+# CEX data via Direct REST API (no CCXT dependency)
 # ──────────────────────────────────────────────
 class CEXFetcher:
-    """Fetch OHLCV, funding rate, and market data from CEX via CCXT async."""
+    """Fetch OHLCV, funding rate, and market data via direct REST API calls."""
+
+    _BINANCE_FAPI = "https://fapi.binance.com"
+    _BYBIT_API = "https://api.bybit.com"
 
     def __init__(self, exchange_id: str = None):
-        self._exchange: Optional[ccxt_async.Exchange] = None
         self._exchange_id = exchange_id or Config.CEX_EXCHANGE
-
-    # Map generic exchange names to CCXT futures-specific IDs
-    _FUTURES_EXCHANGE_MAP = {
-        "binance": "binanceusdm",
-        "bybit": "bybit",
-    }
-
-    async def _get_exchange(self) -> ccxt_async.Exchange:
-        if self._exchange is None:
-            # Use futures-specific exchange class for Binance
-            ccxt_id = self._FUTURES_EXCHANGE_MAP.get(
-                self._exchange_id, self._exchange_id
-            )
-            exchange_cls = getattr(ccxt_async, ccxt_id)
-            params = {
-                "enableRateLimit": True,
-                "rateLimit": Config.CCXT_RATE_LIMIT_MS,
-                "options": {"defaultType": "swap"},
-            }
-            if self._exchange_id in ("binance", "binanceusdm") and Config.BINANCE_API_KEY:
-                params["apiKey"] = Config.BINANCE_API_KEY
-                params["secret"] = Config.BINANCE_API_SECRET
-            elif self._exchange_id == "bybit" and Config.BYBIT_API_KEY:
-                params["apiKey"] = Config.BYBIT_API_KEY
-                params["secret"] = Config.BYBIT_API_SECRET
-            self._exchange = exchange_cls(params)
-        return self._exchange
+        self._session = requests.Session()
+        self._session.headers.update({
+            "User-Agent": "CryptoScanner/1.0",
+            "Accept": "application/json",
+        })
 
     async def close(self):
-        if self._exchange:
-            await self._exchange.close()
-            self._exchange = None
+        """Close the session."""
+        self._session.close()
 
+    def _get(self, url: str, params: dict = None, timeout: int = 15) -> dict:
+        """Make a GET request with error handling."""
+        resp = self._session.get(url, params=params, timeout=timeout)
+        resp.raise_for_status()
+        return resp.json()
+
+    @staticmethod
+    def _clean_symbol(symbol: str) -> str:
+        """Convert CCXT-style symbol to exchange format: BTC/USDT:USDT -> BTCUSDT"""
+        return symbol.replace("/USDT:USDT", "").replace("/USDT", "").upper() + "USDT"
+
+    @staticmethod
+    def _to_ccxt_symbol(raw: str) -> str:
+        """Convert BTCUSDT -> BTC/USDT:USDT for internal use."""
+        base = raw.replace("USDT", "")
+        return f"{base}/USDT:USDT"
+
+    # ── Top symbols ──
     async def fetch_top_symbols(self, top_n: int = None) -> list[str]:
         """Return top N USDT perpetual symbols by 24h quote volume."""
         top_n = top_n or Config.CEX_TOP_N
-        ex = await self._get_exchange()
-        await ex.load_markets()
-        perps = [
-            s for s, m in ex.markets.items()
-            if m.get("swap") and m.get("quote") == "USDT" and m.get("active")
-        ]
-        tickers = await ex.fetch_tickers(perps)
-        ranked = sorted(
-            tickers.values(),
-            key=lambda t: t.get("quoteVolume") or 0,
-            reverse=True,
-        )
-        return [t["symbol"] for t in ranked[:top_n]]
 
+        if self._exchange_id in ("binance", "binanceusdm"):
+            return await self._binance_top_symbols(top_n)
+        elif self._exchange_id == "bybit":
+            return await self._bybit_top_symbols(top_n)
+        else:
+            return []
+
+    async def _binance_top_symbols(self, top_n: int) -> list[str]:
+        data = self._get(f"{self._BINANCE_FAPI}/fapi/v1/ticker/24hr")
+        # Filter USDT perpetuals and sort by quoteVolume
+        perps = [
+            t for t in data
+            if t["symbol"].endswith("USDT") and not t["symbol"].endswith("_PERP")
+        ]
+        ranked = sorted(perps, key=lambda t: float(t.get("quoteVolume", 0)), reverse=True)
+        return [self._to_ccxt_symbol(t["symbol"]) for t in ranked[:top_n]]
+
+    async def _bybit_top_symbols(self, top_n: int) -> list[str]:
+        data = self._get(
+            f"{self._BYBIT_API}/v5/market/tickers",
+            params={"category": "linear"},
+        )
+        tickers = data.get("result", {}).get("list", [])
+        # Filter USDT pairs and sort by turnover24h
+        usdt = [t for t in tickers if t["symbol"].endswith("USDT")]
+        ranked = sorted(usdt, key=lambda t: float(t.get("turnover24h", 0)), reverse=True)
+        return [self._to_ccxt_symbol(t["symbol"]) for t in ranked[:top_n]]
+
+    # ── OHLCV ──
     async def fetch_ohlcv(
         self, symbol: str, timeframe: str = "1h", limit: int = 250
     ) -> pd.DataFrame:
         """Fetch OHLCV as DataFrame."""
-        ex = await self._get_exchange()
-        raw = await ex.fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
-        df = pd.DataFrame(raw, columns=["timestamp", "open", "high", "low", "close", "volume"])
+        if self._exchange_id in ("binance", "binanceusdm"):
+            return await self._binance_ohlcv(symbol, timeframe, limit)
+        elif self._exchange_id == "bybit":
+            return await self._bybit_ohlcv(symbol, timeframe, limit)
+        return pd.DataFrame()
+
+    async def _binance_ohlcv(self, symbol: str, timeframe: str, limit: int) -> pd.DataFrame:
+        clean = self._clean_symbol(symbol)
+        # Binance uses interval names like 1m, 5m, 1h, 4h, 1d
+        data = self._get(
+            f"{self._BINANCE_FAPI}/fapi/v1/klines",
+            params={"symbol": clean, "interval": timeframe, "limit": limit},
+        )
+        if not data:
+            return pd.DataFrame()
+        df = pd.DataFrame(data, columns=[
+            "timestamp", "open", "high", "low", "close", "volume",
+            "close_time", "quote_volume", "trades", "taker_buy_vol",
+            "taker_buy_quote_vol", "ignore",
+        ])
+        df = df[["timestamp", "open", "high", "low", "close", "volume"]].copy()
+        for col in ["open", "high", "low", "close", "volume"]:
+            df[col] = df[col].astype(float)
         df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms", utc=True)
         df.set_index("timestamp", inplace=True)
         return df
 
+    async def _bybit_ohlcv(self, symbol: str, timeframe: str, limit: int) -> pd.DataFrame:
+        clean = self._clean_symbol(symbol)
+        # Bybit interval mapping
+        interval_map = {"1m": "1", "5m": "5", "15m": "15", "30m": "30",
+                        "1h": "60", "4h": "240", "1d": "D"}
+        interval = interval_map.get(timeframe, "60")
+        data = self._get(
+            f"{self._BYBIT_API}/v5/market/kline",
+            params={"category": "linear", "symbol": clean,
+                    "interval": interval, "limit": limit},
+        )
+        rows = data.get("result", {}).get("list", [])
+        if not rows:
+            return pd.DataFrame()
+        # Bybit returns [startTime, open, high, low, close, volume, turnover] newest first
+        df = pd.DataFrame(rows, columns=[
+            "timestamp", "open", "high", "low", "close", "volume", "turnover",
+        ])
+        df = df[["timestamp", "open", "high", "low", "close", "volume"]].copy()
+        for col in ["open", "high", "low", "close", "volume"]:
+            df[col] = df[col].astype(float)
+        df["timestamp"] = pd.to_datetime(df["timestamp"].astype(int), unit="ms", utc=True)
+        df.set_index("timestamp", inplace=True)
+        df.sort_index(inplace=True)  # Bybit returns newest first
+        return df
+
+    # ── Ticker ──
+    async def fetch_ticker(self, symbol: str) -> dict:
+        """Fetch 24h ticker data."""
+        if self._exchange_id in ("binance", "binanceusdm"):
+            return await self._binance_ticker(symbol)
+        elif self._exchange_id == "bybit":
+            return await self._bybit_ticker(symbol)
+        return {}
+
+    async def _binance_ticker(self, symbol: str) -> dict:
+        clean = self._clean_symbol(symbol)
+        data = self._get(
+            f"{self._BINANCE_FAPI}/fapi/v1/ticker/24hr",
+            params={"symbol": clean},
+        )
+        return {
+            "symbol": symbol,
+            "last": float(data.get("lastPrice", 0)),
+            "percentage": float(data.get("priceChangePercent", 0)),
+            "quoteVolume": float(data.get("quoteVolume", 0)),
+        }
+
+    async def _bybit_ticker(self, symbol: str) -> dict:
+        clean = self._clean_symbol(symbol)
+        data = self._get(
+            f"{self._BYBIT_API}/v5/market/tickers",
+            params={"category": "linear", "symbol": clean},
+        )
+        tickers = data.get("result", {}).get("list", [])
+        if not tickers:
+            return {"symbol": symbol, "last": 0, "percentage": 0, "quoteVolume": 0}
+        t = tickers[0]
+        last = float(t.get("lastPrice", 0))
+        prev = float(t.get("prevPrice24h", 0))
+        pct = ((last - prev) / prev * 100) if prev > 0 else 0
+        return {
+            "symbol": symbol,
+            "last": last,
+            "percentage": round(pct, 2),
+            "quoteVolume": float(t.get("turnover24h", 0)),
+        }
+
+    # ── Order Book ──
     async def fetch_order_book(self, symbol: str, limit: int = 20) -> dict:
         """Fetch order book depth."""
-        ex = await self._get_exchange()
-        return await ex.fetch_order_book(symbol, limit=limit)
+        if self._exchange_id in ("binance", "binanceusdm"):
+            clean = self._clean_symbol(symbol)
+            data = self._get(
+                f"{self._BINANCE_FAPI}/fapi/v1/depth",
+                params={"symbol": clean, "limit": limit},
+            )
+            return {
+                "bids": [[float(p), float(q)] for p, q in data.get("bids", [])],
+                "asks": [[float(p), float(q)] for p, q in data.get("asks", [])],
+            }
+        elif self._exchange_id == "bybit":
+            clean = self._clean_symbol(symbol)
+            data = self._get(
+                f"{self._BYBIT_API}/v5/market/orderbook",
+                params={"category": "linear", "symbol": clean, "limit": limit},
+            )
+            result = data.get("result", {})
+            return {
+                "bids": [[float(p), float(q)] for p, q in result.get("b", [])],
+                "asks": [[float(p), float(q)] for p, q in result.get("a", [])],
+            }
+        return {"bids": [], "asks": []}
 
-    async def fetch_ticker(self, symbol: str) -> dict:
-        ex = await self._get_exchange()
-        return await ex.fetch_ticker(symbol)
-
+    # ── Funding Rate ──
     async def fetch_funding_rate(self, symbol: str) -> dict:
-        """Fetch current funding rate via CCXT (free, no key needed)."""
-        ex = await self._get_exchange()
-        try:
-            fr = await ex.fetch_funding_rate(symbol)
-            return fr
-        except Exception as e:
-            logger.debug("CCXT funding rate error for %s: %s", symbol, e)
+        """Fetch current funding rate."""
+        if self._exchange_id in ("binance", "binanceusdm"):
+            clean = self._clean_symbol(symbol)
+            try:
+                data = self._get(
+                    f"{self._BINANCE_FAPI}/fapi/v1/premiumIndex",
+                    params={"symbol": clean},
+                )
+                return {
+                    "fundingRate": float(data.get("lastFundingRate", 0)),
+                    "fundingTimestamp": data.get("nextFundingTime"),
+                    "markPrice": float(data.get("markPrice", 0)),
+                }
+            except Exception as e:
+                logger.debug("Binance funding rate error for %s: %s", symbol, e)
+                return {}
+        elif self._exchange_id == "bybit":
+            clean = self._clean_symbol(symbol)
+            try:
+                data = self._get(
+                    f"{self._BYBIT_API}/v5/market/tickers",
+                    params={"category": "linear", "symbol": clean},
+                )
+                tickers = data.get("result", {}).get("list", [])
+                if tickers:
+                    return {
+                        "fundingRate": float(tickers[0].get("fundingRate", 0)),
+                        "fundingTimestamp": None,
+                        "markPrice": float(tickers[0].get("markPrice", 0)),
+                    }
+            except Exception as e:
+                logger.debug("Bybit funding rate error for %s: %s", symbol, e)
             return {}
+        return {}
 
 
 # ──────────────────────────────────────────────
-# Multi-exchange funding rate (all free via CCXT)
+# Multi-exchange funding rate (direct REST)
 # ──────────────────────────────────────────────
 class MultiExchangeFundingFetcher:
-    """Fetch funding rates from multiple exchanges using CCXT (all free)."""
+    """Fetch funding rates from multiple exchanges using direct REST API."""
 
     EXCHANGES = ["binance", "bybit"]
 
@@ -122,33 +274,46 @@ class MultiExchangeFundingFetcher:
     async def fetch_all(cls, symbol: str) -> list[dict]:
         """Fetch funding rate for a symbol across multiple exchanges."""
         results = []
-        # Map symbol to each exchange's format
-        base = symbol.replace("/USDT:USDT", "").replace("/USDT", "")
-        ccxt_symbol = f"{base}/USDT:USDT"
+        base = symbol.replace("/USDT:USDT", "").replace("/USDT", "").upper()
+        clean = base + "USDT"
 
-        for ex_id in cls.EXCHANGES:
-            exchange = None
-            try:
-                exchange_cls = getattr(ccxt_async, ex_id)
-                exchange = exchange_cls({
-                    "enableRateLimit": True,
-                    "options": {"defaultType": "swap"},
+        # Binance
+        try:
+            resp = requests.get(
+                f"https://fapi.binance.com/fapi/v1/premiumIndex",
+                params={"symbol": clean},
+                timeout=10,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            results.append({
+                "exchange": "Binance",
+                "rate": float(data.get("lastFundingRate", 0)),
+                "timestamp": data.get("time"),
+                "next_timestamp": data.get("nextFundingTime"),
+            })
+        except Exception as e:
+            logger.debug("Binance funding rate error: %s", e)
+
+        # Bybit
+        try:
+            resp = requests.get(
+                f"https://api.bybit.com/v5/market/tickers",
+                params={"category": "linear", "symbol": clean},
+                timeout=10,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            tickers = data.get("result", {}).get("list", [])
+            if tickers:
+                results.append({
+                    "exchange": "Bybit",
+                    "rate": float(tickers[0].get("fundingRate", 0)),
+                    "timestamp": None,
+                    "next_timestamp": None,
                 })
-                await exchange.load_markets()
-                if ccxt_symbol in exchange.markets:
-                    fr = await exchange.fetch_funding_rate(ccxt_symbol)
-                    rate = fr.get("fundingRate", 0) or 0
-                    results.append({
-                        "exchange": ex_id.capitalize(),
-                        "rate": rate,
-                        "timestamp": fr.get("fundingTimestamp"),
-                        "next_timestamp": fr.get("nextFundingTimestamp"),
-                    })
-            except Exception as e:
-                logger.debug("Funding rate %s/%s error: %s", ex_id, symbol, e)
-            finally:
-                if exchange:
-                    await exchange.close()
+        except Exception as e:
+            logger.debug("Bybit funding rate error: %s", e)
 
         return results
 

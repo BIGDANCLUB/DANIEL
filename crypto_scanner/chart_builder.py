@@ -808,6 +808,7 @@ def build_signal_heatmap(results: list, color_by: str = "score") -> go.Figure:
     values = []
     colors = []
     hover_texts = []
+    tile_texts = []  # Text shown directly on tiles
 
     for r in results:
         base = r.symbol.split("/")[0]
@@ -824,22 +825,49 @@ def build_signal_heatmap(results: list, color_by: str = "score") -> go.Figure:
         else:
             colors.append(r.score)
 
+        # Format change with sign
+        chg_str = f"{r.change_pct:+.2f}%"
+
         bt = r.trendline_break.get("breakout_type") or "—"
         pattern = r.trendline_break.get("pattern_label", "—")
         hover_texts.append(
             f"{r.symbol}<br>"
             f"Score: {r.score:.1f}<br>"
-            f"24h: {r.change_pct:+.2f}%<br>"
+            f"24h: {chg_str}<br>"
             f"Vol: {r.volume_ratio:.1f}x<br>"
             f"{bt} | {pattern}"
         )
+        # Show symbol name + daily change on tile
+        tile_texts.append(chg_str)
 
+    # Vivid color scales with high saturation
     if color_by == "change_pct":
-        colorscale = [[0, "#ef5350"], [0.5, "#424242"], [1, "#00e676"]]
+        colorscale = [
+            [0.0, "#FF1744"],   # vivid red
+            [0.3, "#FF5252"],
+            [0.5, "#37474F"],   # dark neutral
+            [0.7, "#69F0AE"],
+            [1.0, "#00E676"],   # vivid green
+        ]
         cmid = 0
+    elif color_by == "score":
+        colorscale = [
+            [0.0, "#FF1744"],   # vivid red (low score)
+            [0.25, "#FF6D00"],  # vivid orange
+            [0.5, "#FFD600"],   # vivid yellow
+            [0.75, "#76FF03"],  # vivid lime
+            [1.0, "#00E676"],   # vivid green (high score)
+        ]
+        cmid = 50
     else:
-        colorscale = [[0, "#ef5350"], [0.5, "#ffc107"], [1, "#00e676"]]
-        cmid = 50 if color_by == "score" else None
+        # volume_ratio
+        colorscale = [
+            [0.0, "#B388FF"],   # purple (low vol)
+            [0.33, "#448AFF"],  # blue
+            [0.66, "#18FFFF"],  # cyan
+            [1.0, "#00E676"],   # green (high vol)
+        ]
+        cmid = None
 
     fig = go.Figure(go.Treemap(
         labels=labels,
@@ -850,17 +878,20 @@ def build_signal_heatmap(results: list, color_by: str = "score") -> go.Figure:
             colorscale=colorscale,
             cmid=cmid,
             colorbar=dict(title=color_by.replace("_", " ").title()),
+            line=dict(width=1.5, color="#1a1a2e"),
         ),
-        text=hover_texts,
-        hovertemplate="%{text}<extra></extra>",
+        text=tile_texts,
+        hovertext=hover_texts,
+        hovertemplate="%{hovertext}<extra></extra>",
         textinfo="label+text",
-        texttemplate="<b>%{label}</b><br>%{color:.1f}",
+        texttemplate="<b>%{label}</b><br><span style='font-size:0.85em'>%{text}</span>",
+        textfont=dict(size=14),
     ))
 
     fig.update_layout(
         template="plotly_dark",
         title=f"Signal Heatmap (color: {color_by.replace('_', ' ').title()}, size: Volume)",
-        height=500,
+        height=550,
         paper_bgcolor="#0e1117",
         plot_bgcolor="#0e1117",
         font=dict(color="#fafafa"),

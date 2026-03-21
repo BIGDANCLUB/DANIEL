@@ -134,6 +134,10 @@ def extract_features_from_history(history: list[dict]) -> pd.DataFrame:
         if col not in df.columns:
             df[col] = 0
 
+    # Ensure hit column exists
+    if "hit" not in df.columns:
+        df["hit"] = None
+
     return df
 
 

@@ -785,52 +785,126 @@ with main_tab_signals:
 
                 # ── Tab: Chart ──
                 with tab_chart:
-                    tc1, tc2 = st.columns([1, 1])
+                    # Convert symbol to TradingView format
+                    def _to_tv_symbol(sym: str, source: str) -> str:
+                        """BTC/USDT:USDT -> BINANCE:BTCUSDT.P"""
+                        base = sym.replace("/USDT:USDT", "").replace("/USDT", "").upper()
+                        if "Binance" in source:
+                            return f"BINANCE:{base}USDT.P"
+                        elif "Bybit" in source:
+                            return f"BYBIT:{base}USDT.P"
+                        else:
+                            return f"BINANCE:{base}USDT"
+
+                    tv_symbol = _to_tv_symbol(selected, sel_result.source)
+
+                    tc1, tc2, tc3 = st.columns([1, 1, 1])
                     with tc1:
-                        timeframe = st.radio(
-                            "Timeframe", ["1h", "4h"], horizontal=True, key="tf_radio"
+                        chart_mode = st.radio(
+                            "Chart Source",
+                            ["TradingView", "Built-in"],
+                            horizontal=True,
+                            key="chart_mode",
                         )
                     with tc2:
+                        tv_interval_map = {
+                            "1m": "1", "5m": "5", "15m": "15", "30m": "30",
+                            "1h": "60", "4h": "240", "1D": "D", "1W": "W",
+                        }
+                        timeframe = st.radio(
+                            "Timeframe",
+                            list(tv_interval_map.keys()),
+                            index=5,  # default 4h
+                            horizontal=True,
+                            key="tf_radio",
+                        )
+                    with tc3:
                         show_indicators = st.checkbox(
-                            "Show RSI / MACD / Bollinger Bands", value=False, key="show_ta"
+                            "Show RSI / MACD / BB", value=False, key="show_ta"
                         )
 
-                    if is_cex:
-                        with st.spinner(f"Loading {timeframe} chart for {selected}..."):
-                            try:
-                                cex_fetcher = CEXFetcher()
-                                ohlcv_df = run_async(
-                                    cex_fetcher.fetch_ohlcv(selected, timeframe=timeframe, limit=250)
-                                )
-                                run_async(cex_fetcher.close())
+                    if chart_mode == "TradingView":
+                        # Build TradingView studies list
+                        tv_studies = []
+                        if show_indicators:
+                            tv_studies = [
+                                "RSI@tv-basicstudies",
+                                "MACD@tv-basicstudies",
+                                "BB@tv-basicstudies",
+                            ]
+                        studies_js = str(tv_studies).replace("'", '"')
+                        tv_interval = tv_interval_map.get(timeframe, "60")
 
-                                if not ohlcv_df.empty:
-                                    fig = build_candlestick_chart(
-                                        ohlcv_df, selected,
-                                        show_trendlines=True,
-                                        show_indicators=show_indicators,
-                                    )
-                                    st.plotly_chart(fig, use_container_width=True)
-                                else:
-                                    st.warning("No OHLCV data available")
-                            except Exception as e:
-                                st.error(f"Chart error: {e}")
+                        import streamlit.components.v1 as components
+                        tv_html = f"""
+                        <div id="tv_chart_container" style="width:100%;height:550px;">
+                          <script src="https://s3.tradingview.com/tv.js"></script>
+                          <script>
+                            new TradingView.widget({{
+                              "container_id": "tv_chart_container",
+                              "symbol": "{tv_symbol}",
+                              "interval": "{tv_interval}",
+                              "theme": "dark",
+                              "style": "1",
+                              "locale": "ja",
+                              "toolbar_bg": "#0e1117",
+                              "enable_publishing": false,
+                              "hide_side_toolbar": false,
+                              "allow_symbol_change": true,
+                              "save_image": true,
+                              "studies": {studies_js},
+                              "width": "100%",
+                              "height": 550,
+                              "withdateranges": true,
+                              "hide_volume": false,
+                              "show_popup_button": true,
+                              "popup_width": "1200",
+                              "popup_height": "700"
+                            }});
+                          </script>
+                        </div>
+                        """
+                        components.html(tv_html, height=570)
+
                     else:
-                        st.info(
-                            "DEX chart: Full candlestick charts for DEX tokens require "
-                            "on-chain OHLCV aggregation. Showing summary data instead."
-                        )
-                        if sel_result.extra:
-                            col1, col2, col3 = st.columns(3)
-                            with col1:
-                                st.metric("1H Change", f"{sel_result.extra.get('h1_change', 0):+.2f}%")
-                            with col2:
-                                st.metric("6H Change", f"{sel_result.extra.get('h6_change', 0):+.2f}%")
-                            with col3:
-                                st.metric(
-                                    "Liquidity",
-                                    f"${sel_result.extra.get('liquidity_usd', 0):,.0f}",
-                                )
+                        # Built-in Plotly chart (fallback)
+                        if is_cex:
+                            with st.spinner(f"Loading {timeframe} chart for {selected}..."):
+                                try:
+                                    cex_fetcher = CEXFetcher()
+                                    ohlcv_tf = timeframe if timeframe in ("1h", "4h") else "1h"
+                                    ohlcv_df = run_async(
+                                        cex_fetcher.fetch_ohlcv(selected, timeframe=ohlcv_tf, limit=250)
+                                    )
+                                    run_async(cex_fetcher.close())
+
+                                    if not ohlcv_df.empty:
+                                        fig = build_candlestick_chart(
+                                            ohlcv_df, selected,
+                                            show_trendlines=True,
+                                            show_indicators=show_indicators,
+                                        )
+                                        st.plotly_chart(fig, use_container_width=True)
+                                    else:
+                                        st.warning("No OHLCV data available")
+                                except Exception as e:
+                                    st.error(f"Chart error: {e}")
+                        else:
+                            st.info(
+                                "DEX chart: Full candlestick charts for DEX tokens require "
+                                "on-chain OHLCV aggregation. Showing summary data instead."
+                            )
+                            if sel_result.extra:
+                                col1, col2, col3 = st.columns(3)
+                                with col1:
+                                    st.metric("1H Change", f"{sel_result.extra.get('h1_change', 0):+.2f}%")
+                                with col2:
+                                    st.metric("6H Change", f"{sel_result.extra.get('h6_change', 0):+.2f}%")
+                                with col3:
+                                    st.metric(
+                                        "Liquidity",
+                                        f"${sel_result.extra.get('liquidity_usd', 0):,.0f}",
+                                    )
 
                 # ── Tab: TA Indicators (Phase 6) ──
                 with tab_ta:

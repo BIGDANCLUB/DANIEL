@@ -489,7 +489,7 @@ class ScannerEngine:
                     if result:
                         results.append(result)
                 except Exception as e:
-                    logger.debug("Error analyzing %s on %s: %s", symbol, exchange_id, e)
+                    logger.info("Error analyzing %s on %s: %s", symbol, exchange_id, e)
                     continue
 
         except Exception as e:
@@ -570,7 +570,9 @@ class ScannerEngine:
             except Exception as e:
                 logger.debug("MTF analysis error for %s: %s", symbol, e)
 
-        if not (vol_spike or tl_result.get("resistance_break")):
+        # Allow results through if they have any notable signal
+        if not (vol_spike or tl_result.get("resistance_break") or
+                tl_result.get("support_break") or score >= 15):
             return None
 
         current_price = float(df_1h["close"].iloc[-1])
@@ -670,7 +672,7 @@ class ScannerEngine:
 
             score = compute_scan_score(above_ema, vol_spike, vol_ratio, tl_result, social)
 
-            if score < 20:
+            if score < 10:
                 return None
 
             quote_name = pair.get("quoteToken", {}).get("symbol", "?")

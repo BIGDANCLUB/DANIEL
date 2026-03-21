@@ -373,10 +373,13 @@ if clear_clicked:
     st.session_state.triggered_alerts = []
     st.rerun()
 
+st.caption(f"[DEBUG] scan_clicked={scan_clicked}")
+
 if scan_clicked:
     st.session_state.scan_running = True
     # Refresh market data on scan
     st.session_state.market_data = None
+    st.session_state.scan_debug = "Scan started..."
 
     with st.spinner("Scanning markets... (Multi-CEX + DEX, 30-90 seconds)"):
         try:

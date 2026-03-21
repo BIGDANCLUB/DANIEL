@@ -642,16 +642,25 @@ class ScannerEngine:
     def scan_dex(self) -> list[ScanResult]:
         """Scan DexScreener for trending DEX pairs."""
         results = []
+        dex_errors = []
+        total_pairs = 0
         for chain in Config.DEXSCREENER_CHAINS:
             try:
                 pairs = DexScreenerFetcher.get_trending_tokens(chain)
                 logger.info("DexScreener: %d pairs for %s", len(pairs), chain)
+                total_pairs += len(pairs)
                 for pair in pairs[:20]:
                     result = self._analyze_dex_pair(pair, chain)
                     if result:
                         results.append(result)
             except Exception as e:
+                dex_errors.append(f"{chain}: {e}")
                 logger.warning("DexScreener scan error (%s): %s", chain, e)
+        self._scan_stats["dex_detail"] = {
+            "total_pairs": total_pairs,
+            "signals": len(results),
+            "errors": dex_errors[:3],
+        }
         return results
 
     def _analyze_dex_pair(self, pair: dict, chain: str) -> Optional[ScanResult]:
@@ -765,7 +774,8 @@ class ScannerEngine:
 
         self._results_cache = deduped
         self._last_scan = datetime.now(timezone.utc)
-        self._scan_stats = stats
+        # Merge basic stats into detail stats (don't overwrite)
+        self._scan_stats.update(stats)
 
         # Phase 5: Record signals to history
         record_signals(deduped)

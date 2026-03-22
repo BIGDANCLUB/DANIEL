@@ -866,6 +866,38 @@ with main_tab_signals:
                         """
                         components.html(tv_html, height=570)
 
+                        # Show trendline break info below TradingView chart
+                        if sel_result:
+                            tb = sel_result.trendline_break
+                            bt = tb.get("breakout_type")
+                            pattern = tb.get("pattern_label", "—")
+                            vol_conf = tb.get("volume_confirmed", False)
+                            conf_bars = tb.get("confirmation_bars", 0)
+                            strength = tb.get("break_strength", 0)
+                            mtf = tb.get("multi_tf_confirmed", False)
+
+                            if bt:
+                                bt_color = "#00e676" if bt == "bullish" else "#ff5252"
+                                bt_icon = "▲" if bt == "bullish" else "▼"
+                                st.markdown(
+                                    f"""<div style="background:rgba(30,30,60,0.7);border:1px solid {bt_color};
+                                    border-radius:8px;padding:0.8rem 1.2rem;margin-top:0.5rem;">
+                                    <span style="font-size:1.1rem;font-weight:bold;color:{bt_color};">
+                                        {bt_icon} Trendline Break: {bt.upper()}
+                                    </span>
+                                    <span style="margin-left:1.5rem;color:#b0bec5;">
+                                        Pattern: <b>{pattern}</b> &nbsp;|&nbsp;
+                                        Strength: <b>{strength:.1f}</b> &nbsp;|&nbsp;
+                                        Vol Confirmed: <b>{'Yes' if vol_conf else 'No'}</b> &nbsp;|&nbsp;
+                                        Confirm Bars: <b>{conf_bars}</b> &nbsp;|&nbsp;
+                                        Multi-TF: <b>{'Yes' if mtf else 'No'}</b>
+                                    </span>
+                                    </div>""",
+                                    unsafe_allow_html=True,
+                                )
+                            else:
+                                st.caption("No trendline break detected for this symbol.")
+
                     else:
                         # Built-in Plotly chart (fallback)
                         if is_cex:

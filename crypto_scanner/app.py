@@ -645,7 +645,7 @@ with main_tab_signals:
                             <div style="margin:0.3rem 0;">
                                 <span class="coin-tag {tag_cls}">{break_type or 'N/A'}</span>
                                 <span class="coin-tag" style="background:rgba(68,138,255,0.15);color:#82b1ff;">
-                                    {r.pattern or 'N/A'}
+                                    {r.trendline_break.get('pattern_label', 'N/A')}
                                 </span>
                             </div>
                             <div class="coin-meta">

@@ -207,7 +207,7 @@ with st.sidebar:
     st.markdown("### Scanner Settings")
 
     st.markdown("**Filters**")
-    min_score = st.slider("Min Score", 0, 100, 20, step=5)
+    min_score = st.slider("Min Score", 0, 100, 50, step=5)
     vol_multiplier = st.slider("Volume Spike Multiplier", 1.5, 10.0, 3.0, step=0.5)
 
     st.markdown("**Exchanges**")
@@ -445,6 +445,16 @@ if scan_clicked:
             st.session_state.last_scan_time = datetime.now(timezone.utc)
             st.session_state.triggered_alerts = scanner.triggered_alerts
             st.session_state.scan_running = False
+
+            # Toast notification for high-score signals (>= 90)
+            high_score_signals = [r for r in filtered if r.score >= 90]
+            for sig in high_score_signals:
+                direction = "BULL" if sig.extra.get("is_bullish") else "BEAR"
+                st.toast(
+                    f"🔥 HIGH SCORE {sig.score} | {sig.symbol} ({direction}) "
+                    f"| Price: {sig.price:.6g} | Vol x{sig.extra.get('volume_ratio', 0):.1f}",
+                    icon="🚨",
+                )
             st.rerun()
         except Exception as e:
             import traceback

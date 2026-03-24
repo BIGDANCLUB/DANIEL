@@ -201,8 +201,9 @@ class Alts15mBreakStrategy:
             logger.info(f"[{self.strategy_name}] 注文結果: {result}")
 
             # 注文失敗チェック
-            if isinstance(result, dict) and result.get("status") == "err":
-                logger.error(f"[{self.strategy_name}] 注文失敗: {result.get('response', '')}")
+            if not result or (hasattr(result, 'get') and result.get("status") == "err"):
+                err_msg = result.get('response', '') if hasattr(result, 'get') else str(result)
+                logger.error(f"[{self.strategy_name}] 注文失敗: {err_msg}")
                 return
 
             # ATR取得（トレーリング用）

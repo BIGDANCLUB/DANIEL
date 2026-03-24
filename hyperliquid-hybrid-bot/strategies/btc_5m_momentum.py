@@ -243,8 +243,9 @@ class BTC5mMomentumStrategy:
             logger.info(f"[{self.STRATEGY_NAME}] 注文結果: {result}")
 
             # 注文失敗チェック
-            if isinstance(result, dict) and result.get("status") == "err":
-                logger.error(f"[{self.STRATEGY_NAME}] 注文失敗: {result.get('response', '')}")
+            if not result or (hasattr(result, 'get') and result.get("status") == "err"):
+                err_msg = result.get('response', '') if hasattr(result, 'get') else str(result)
+                logger.error(f"[{self.STRATEGY_NAME}] 注文失敗: {err_msg}")
                 return
 
             if is_buy:

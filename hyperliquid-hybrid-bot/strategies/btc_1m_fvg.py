@@ -292,6 +292,13 @@ class BTC1mFVGStrategy:
             logger.warning(f"[{self.STRATEGY_NAME}] サイズ0のためエントリーキャンセル")
             return
 
+        # サイズをHyperliquidの許容桁数に丸める
+        sz_decimals = self.exchange.info.asset_to_sz_decimals.get(self.coin, 5)
+        size = round(size, sz_decimals)
+        if size <= 0:
+            logger.warning(f"[{self.STRATEGY_NAME}] 丸め後サイズ0のためエントリーキャンセル")
+            return
+
         try:
             # Hyperliquid SDKで成行注文
             result = self.exchange.market_open(

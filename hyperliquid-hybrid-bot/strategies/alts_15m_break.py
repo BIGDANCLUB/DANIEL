@@ -190,6 +190,12 @@ class Alts15mBreakStrategy:
         if size <= 0:
             return
 
+        # サイズをHyperliquidの許容桁数に丸める
+        sz_decimals = self.exchange.info.asset_to_sz_decimals.get(self.coin, 2)
+        size = round(size, sz_decimals)
+        if size <= 0:
+            return
+
         try:
             result = self.exchange.market_open(self.coin, is_buy, size, None, 0.01)
             logger.info(f"[{self.strategy_name}] 注文結果: {result}")
@@ -298,6 +304,11 @@ class Alts15mBreakStrategy:
             return
 
         close_size = self.position["original_size"] * self.tp1_close_ratio
+        # サイズをHyperliquidの許容桁数に丸める
+        sz_decimals = self.exchange.info.asset_to_sz_decimals.get(self.coin, 2)
+        close_size = round(close_size, sz_decimals)
+        if close_size <= 0:
+            return
 
         try:
             is_buy = self.position["side"] == "buy"

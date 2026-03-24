@@ -198,6 +198,12 @@ class Alts1hBreakStrategy:
         if size <= 0:
             return
 
+        # サイズをHyperliquidの許容桁数に丸める
+        sz_decimals = self.exchange.info.asset_to_sz_decimals.get(self.coin, 2)
+        size = round(size, sz_decimals)
+        if size <= 0:
+            return
+
         try:
             result = self.exchange.market_open(self.coin, is_buy, size, None, 0.01)
             logger.info(f"[{self.strategy_name}] 注文結果: {result}")

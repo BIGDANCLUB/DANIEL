@@ -92,6 +92,7 @@ from strategies.btc_1m_fvg import BTC1mFVGStrategy
 from strategies.btc_5m_momentum import BTC5mMomentumStrategy
 from strategies.alts_15m_break import Alts15mBreakStrategy
 from strategies.alts_1h_break import Alts1hBreakStrategy
+from strategies.alts_trendline_retest import AltsTrendlineRetestStrategy
 
 
 def setup_logging(config: dict):
@@ -321,6 +322,21 @@ def main():
             )
             threads.append(t)
             logger.info(f"[Main] Alts_1H_Break_{coin} 戦略を登録")
+
+    # 5. Alts_TrendlineRetest × N銘柄
+    if config.get("alts_trendline_retest", {}).get("enabled", False):
+        for coin in config["alts_trendline_retest"]["coins"]:
+            strat = AltsTrendlineRetestStrategy(
+                info, exchange, config, risk_manager, telegram, coin
+            )
+            all_strategies.append(strat)
+            t = threading.Thread(
+                target=strat.run,
+                name=f"Alts_TL_{coin}",
+                daemon=True
+            )
+            threads.append(t)
+            logger.info(f"[Main] Alts_TL_Retest_{coin} 戦略を登録")
 
     # 日次リセットワーカー
     daily_thread = threading.Thread(

@@ -103,6 +103,28 @@
         "loop_interval_sec": 30
     },
 
+    "_comment_alts_tl": "アルト トレンドラインブレイク → 裏タッチリテスト",
+    "alts_trendline_retest": {
+        "enabled": false,
+        "coins": ["SOL", "HYPE"],
+        "leverage": 5,
+        "swing_lookback": 3,
+        "min_touches": 2,
+        "trendline_lookback": 60,
+        "breakout_vol_multiplier": 2.0,
+        "retest_tolerance_pct": 0.3,
+        "retest_timeout_bars": 12,
+        "rejection_wick_ratio": 1.5,
+        "tp1_pct": 2.0,
+        "tp1_close_ratio": 0.5,
+        "atr_period": 14,
+        "atr_trailing_multiplier": 2.5,
+        "sl_pct": 1.0,
+        "candle_count": 150,
+        "interval": "15m",
+        "loop_interval_sec": 15
+    },
+
     "_comment_logging": "ログ設定",
     "logging": {
         "level": "INFO",

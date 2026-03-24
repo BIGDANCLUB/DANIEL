@@ -306,6 +306,11 @@ class BTC1mFVGStrategy:
             )
             logger.info(f"[{self.STRATEGY_NAME}] 注文結果: {result}")
 
+            # 注文失敗チェック
+            if isinstance(result, dict) and result.get("status") == "err":
+                logger.error(f"[{self.STRATEGY_NAME}] 注文失敗: {result.get('response', '')}")
+                return
+
             # SL/TP設定
             if is_buy:
                 sl_price = current_price * (1 - self.sl_pct / 100)

@@ -208,6 +208,11 @@ class Alts1hBreakStrategy:
             result = self.exchange.market_open(self.coin, is_buy, size, None, 0.01)
             logger.info(f"[{self.strategy_name}] 注文結果: {result}")
 
+            # 注文失敗チェック
+            if isinstance(result, dict) and result.get("status") == "err":
+                logger.error(f"[{self.strategy_name}] 注文失敗: {result.get('response', '')}")
+                return
+
             if is_buy:
                 sl_price = current_price * (1 - self.sl_pct / 100)
                 tp_price = current_price * (1 + self.tp_min / 100)

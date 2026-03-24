@@ -169,28 +169,23 @@ def init_hyperliquid(config: dict):
         base_url = constants.MAINNET_API_URL
         logger.info("=== MAINNET モードで起動 ===")
 
-    # Info: マーケットデータ取得用（認証不要）
     # SDK v0.22+ ではテストネットの spot_meta が空で IndexError になるため
     # 先に spot_meta を取得し、空なら空データを渡してスキップ
+    empty_spot = {"universe": [], "tokens": []}
     try:
         info = Info(base_url, skip_ws=True)
     except (IndexError, KeyError):
         logger.warning("spot_meta取得失敗 - perps専用モードで初期化")
-        empty_spot = {"universe": [], "tokens": []}
         info = Info(base_url, skip_ws=True, spot_meta=empty_spot)
 
     # Exchange: 注文実行用（秘密鍵で認証）
-    exchange = Exchange(
-        wallet=None,  # 直接秘密鍵を使う場合
-        base_url=base_url,
-        account_address=account_address
-    )
-    # SDK の setup パターンに合わせて秘密鍵をセット
-    # 注意: SDK バージョンにより初期化方法が異なる場合あり
-    # example_utils.setup() 相当の処理
     from eth_account import Account
     wallet = Account.from_key(api_secret)
-    exchange = Exchange(wallet, base_url, account_address=account_address)
+    try:
+        exchange = Exchange(wallet, base_url, account_address=account_address)
+    except (IndexError, KeyError):
+        logger.warning("Exchange spot_meta取得失敗 - perps専用モードで初期化")
+        exchange = Exchange(wallet, base_url, account_address=account_address, spot_meta=empty_spot)
 
     logger.info(f"Hyperliquid SDK初期化完了 (network={network})")
     logger.info(f"アカウント: {account_address}")

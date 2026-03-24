@@ -170,7 +170,14 @@ def init_hyperliquid(config: dict):
         logger.info("=== MAINNET モードで起動 ===")
 
     # Info: マーケットデータ取得用（認証不要）
-    info = Info(base_url, skip_ws=True)
+    # SDK v0.22+ ではテストネットの spot_meta が空で IndexError になるため
+    # 先に spot_meta を取得し、空なら空データを渡してスキップ
+    try:
+        info = Info(base_url, skip_ws=True)
+    except (IndexError, KeyError):
+        logger.warning("spot_meta取得失敗 - perps専用モードで初期化")
+        empty_spot = {"universe": [], "tokens": []}
+        info = Info(base_url, skip_ws=True, spot_meta=empty_spot)
 
     # Exchange: 注文実行用（秘密鍵で認証）
     exchange = Exchange(

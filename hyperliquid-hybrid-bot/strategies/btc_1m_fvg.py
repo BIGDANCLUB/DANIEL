@@ -9,8 +9,10 @@ BTC_1m_UltraScalp 戦略
 3. Order Block: 直近Swing High/Lowの直前キャンドルボディをOBゾーンとして認識
 4. EMA9/21でトレンドバイアス確認
 5. FVGゾーン + OBゾーン + EMAバイアスが一致した場合エントリー
-6. TP 0.4〜0.8%, トレーリングストップ, タイトSL 0.3%
-7. レバレッジ10x固定
+6. SL = ATR × 倍率（動的SL - ボラティリティ適応）
+7. TP = SLの2倍以上（R:R 1:2保証）
+8. トレーリングストップ
+9. レバレッジ3x
 """
 
 import time
@@ -49,7 +51,10 @@ class BTC1mFVGStrategy:
         self.ema_slow = self.cfg["ema_slow"]
         self.tp_min = self.cfg["tp_min_pct"]
         self.tp_max = self.cfg["tp_max_pct"]
-        self.sl_pct = self.cfg["sl_pct"]
+        self.sl_pct = self.cfg["sl_pct"]              # フォールバック固定SL
+        self.atr_period = self.cfg.get("atr_period", 14)
+        self.atr_sl_multiplier = self.cfg.get("atr_sl_multiplier", 1.5)
+        self.min_rr_ratio = self.cfg.get("min_rr_ratio", 2.0)  # 最低R:R比
         self.trailing_activation = self.cfg["trailing_activation_pct"]
         self.trailing_step = self.cfg["trailing_step_pct"]
         self.candle_count = self.cfg["candle_count"]
@@ -111,7 +116,7 @@ class BTC1mFVGStrategy:
 
         signal = self._check_entry_signal(df)
         if signal:
-            self._open_position(signal, current_price)
+            self._open_position(signal, current_price, df)
 
     def _get_candles(self) -> Optional[pd.DataFrame]:
         """1分足キャンドルを取得してDataFrameに変換"""
@@ -137,6 +142,16 @@ class BTC1mFVGStrategy:
             # EMA計算
             df["ema_fast"] = df["close"].ewm(span=self.ema_fast, adjust=False).mean()
             df["ema_slow"] = df["close"].ewm(span=self.ema_slow, adjust=False).mean()
+
+            # ATR計算（動的SL用）
+            df["tr"] = np.maximum(
+                df["high"] - df["low"],
+                np.maximum(
+                    abs(df["high"] - df["close"].shift(1)),
+                    abs(df["low"] - df["close"].shift(1))
+                )
+            )
+            df["atr"] = df["tr"].rolling(window=self.atr_period).mean()
 
             return df
         except Exception as e:
@@ -275,51 +290,71 @@ class BTC1mFVGStrategy:
 
         return None
 
-    def _open_position(self, signal: str, current_price: float):
-        """ポジションを開く"""
+    def _open_position(self, signal: str, current_price: float, df: pd.DataFrame = None):
+        """ポジションを開く（ATRベース動的SL）"""
         is_buy = signal == "long"
         side = "buy" if is_buy else "sell"
 
-        # ポジションサイズ計算
+        # ATRベースのSL幅を計算
+        atr_sl_pct = self.sl_pct  # フォールバック
+        if df is not None and "atr" in df.columns:
+            current_atr = df["atr"].iloc[-1]
+            if not pd.isna(current_atr) and current_atr > 0:
+                atr_sl_pct = (current_atr * self.atr_sl_multiplier / current_price) * 100
+                # 最低SL: 0.15%, 最大SL: 1.0%（暴走防止）
+                atr_sl_pct = max(0.15, min(atr_sl_pct, 1.0))
+
+        # R:R比チェック: TPがSLのmin_rr_ratio倍以上あるか
+        tp_pct = self.tp_min
+        if tp_pct < atr_sl_pct * self.min_rr_ratio:
+            tp_pct = atr_sl_pct * self.min_rr_ratio
+            if tp_pct > self.tp_max:
+                logger.info(
+                    f"[{self.STRATEGY_NAME}] R:R不足でスキップ: "
+                    f"SL={atr_sl_pct:.3f}%, 必要TP={tp_pct:.3f}% > 上限{self.tp_max}%"
+                )
+                return
+
+        # ポジションサイズ計算（ATRベースSLで計算）
         size = self.risk_manager.calculate_position_size(
             strategy_name=self.STRATEGY_NAME,
             leverage=self.leverage,
             entry_price=current_price,
-            sl_pct=self.sl_pct,
+            sl_pct=atr_sl_pct,
             is_btc=True
         )
 
         if size <= 0:
-            logger.warning(f"[{self.STRATEGY_NAME}] サイズ0のためエントリーキャンセル")
             return
 
-        # サイズをHyperliquidの許容桁数に丸める
         sz_decimals = self.exchange.info.asset_to_sz_decimals.get(self.coin, 5)
         size = round(size, sz_decimals)
         if size <= 0:
-            logger.warning(f"[{self.STRATEGY_NAME}] 丸め後サイズ0のためエントリーキャンセル")
             return
 
         try:
-            # Hyperliquid SDKで成行注文
             result = self.exchange.market_open(
                 self.coin, is_buy, size, None, 0.01
             )
             logger.info(f"[{self.STRATEGY_NAME}] 注文結果: {result}")
 
-            # 注文成功チェック（statuses内のエラーも検出）
             success, err_msg = validate_order_result(result)
             if not success:
                 logger.error(f"[{self.STRATEGY_NAME}] 注文失敗: {err_msg}")
                 return
 
-            # SL/TP設定
+            # ATRベース動的SL/TP設定
             if is_buy:
-                sl_price = current_price * (1 - self.sl_pct / 100)
-                tp_price = current_price * (1 + self.tp_min / 100)
+                sl_price = current_price * (1 - atr_sl_pct / 100)
+                tp_price = current_price * (1 + tp_pct / 100)
             else:
-                sl_price = current_price * (1 + self.sl_pct / 100)
-                tp_price = current_price * (1 - self.tp_min / 100)
+                sl_price = current_price * (1 + atr_sl_pct / 100)
+                tp_price = current_price * (1 - tp_pct / 100)
+
+            logger.info(
+                f"[{self.STRATEGY_NAME}] ATR動的SL: {atr_sl_pct:.3f}%, "
+                f"TP: {tp_pct:.3f}%, R:R=1:{tp_pct/atr_sl_pct:.1f}"
+            )
 
             self.position = {
                 "side": side,

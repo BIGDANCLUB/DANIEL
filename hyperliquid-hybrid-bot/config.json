@@ -15,7 +15,7 @@
 
     "_comment_risk": "共通リスク管理パラメータ",
     "risk": {
-        "max_total_exposure_pct": 50.0,
+        "max_total_exposure_pct": 300.0,
         "max_risk_per_trade_pct": 0.5,
         "daily_drawdown_limit_pct": 10.0,
         "btc_correlation_window_minutes": 15,

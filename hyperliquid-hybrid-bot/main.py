@@ -77,7 +77,7 @@ import time
 import logging
 import threading
 from logging.handlers import TimedRotatingFileHandler
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 # Hyperliquid SDK
 from hyperliquid.info import Info
@@ -213,7 +213,7 @@ def daily_reset_worker(risk_manager: RiskManager, telegram: TelegramAlert):
     毎日0時（UTC）にリスクマネージャーをリセットし、日次P&Lレポートを送信。
     """
     while not shutdown_event.is_set():
-        now = datetime.utcnow()
+        now = datetime.now(tz=timezone.utc)
         # 次の0時までの秒数を計算
         tomorrow = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
         wait_seconds = (tomorrow - now).total_seconds()

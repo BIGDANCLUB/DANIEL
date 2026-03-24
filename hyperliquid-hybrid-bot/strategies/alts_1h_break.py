@@ -15,6 +15,7 @@ import logging
 import pandas as pd
 import numpy as np
 from typing import Optional
+from utils import validate_order_result
 
 logger = logging.getLogger(__name__)
 
@@ -208,9 +209,9 @@ class Alts1hBreakStrategy:
             result = self.exchange.market_open(self.coin, is_buy, size, None, 0.01)
             logger.info(f"[{self.strategy_name}] 注文結果: {result}")
 
-            # 注文成功チェック（成功の場合のみ続行）
-            if not isinstance(result, dict) or result.get("status") != "ok":
-                err_msg = result.get("response", str(result)) if isinstance(result, dict) else str(result)
+            # 注文成功チェック（statuses内のエラーも検出）
+            success, err_msg = validate_order_result(result)
+            if not success:
                 logger.error(f"[{self.strategy_name}] 注文失敗: {err_msg}")
                 return
 

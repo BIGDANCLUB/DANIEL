@@ -115,8 +115,11 @@ class BTC1mFVGStrategy:
     def _get_candles(self) -> Optional[pd.DataFrame]:
         """1分足キャンドルを取得してDataFrameに変換"""
         try:
-            # SDK の candles_snapshot を使用
-            candles = self.info.candles_snapshot(self.coin, self.interval, self.candle_count)
+            # SDK v0.22+ では startTime, endTime が必須
+            import time
+            end_time = int(time.time() * 1000)
+            start_time = end_time - self.candle_count * 60 * 1000  # 1m = 60s
+            candles = self.info.candles_snapshot(self.coin, self.interval, start_time, end_time)
             if not candles:
                 return None
 

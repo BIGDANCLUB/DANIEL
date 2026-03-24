@@ -100,7 +100,10 @@ class Alts15mBreakStrategy:
     def _get_candles(self) -> Optional[pd.DataFrame]:
         """15分足キャンドルを取得"""
         try:
-            candles = self.info.candles_snapshot(self.coin, self.interval, self.candle_count)
+            import time
+            end_time = int(time.time() * 1000)
+            start_time = end_time - self.candle_count * 15 * 60 * 1000  # 15m = 900s
+            candles = self.info.candles_snapshot(self.coin, self.interval, start_time, end_time)
             if not candles:
                 return None
 

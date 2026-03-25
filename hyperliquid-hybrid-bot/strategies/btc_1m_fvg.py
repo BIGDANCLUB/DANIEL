@@ -20,7 +20,7 @@ import logging
 import pandas as pd
 import numpy as np
 from typing import Optional, Tuple
-from utils import validate_order_result
+from utils import validate_order_result, place_exchange_sl, update_exchange_sl, cancel_exchange_sl
 
 logger = logging.getLogger(__name__)
 
@@ -61,8 +61,12 @@ class BTC1mFVGStrategy:
         self.interval = self.cfg["interval"]
         self.loop_interval = self.cfg["loop_interval_sec"]
 
+        # アカウントアドレス（取引所SL注文用）
+        self.account_address = config["account_address"]
+
         # ポジション状態
         self.position: Optional[dict] = None  # {side, size, entry_price, sl, tp, highest/lowest}
+        self._sl_oid: Optional[int] = None  # 取引所SL注文のorder ID
         self.running = True
 
     def run(self):
@@ -111,11 +115,11 @@ class BTC1mFVGStrategy:
             return
 
         # ポジションなし → エントリーシグナル探索
-        if not self.risk_manager.can_open_position(self.STRATEGY_NAME):
-            return
-
         signal = self._check_entry_signal(df)
         if signal:
+            side = "buy" if signal == "long" else "sell"
+            if not self.risk_manager.can_open_position(self.STRATEGY_NAME, self.coin, side):
+                return
             self._open_position(signal, current_price, df)
 
     def _get_candles(self) -> Optional[pd.DataFrame]:
@@ -367,6 +371,12 @@ class BTC1mFVGStrategy:
                 "trailing_active": False
             }
 
+            # 取引所SL注文を配置
+            self._sl_oid = place_exchange_sl(
+                self.exchange, self.info, self.account_address,
+                self.coin, is_buy, size, sl_price, self.STRATEGY_NAME
+            )
+
             # リスクマネージャーに登録
             self.risk_manager.register_position(
                 self.STRATEGY_NAME, self.coin, side, size, current_price
@@ -391,16 +401,14 @@ class BTC1mFVGStrategy:
         # 現在のP&L%
         if is_long:
             pnl_pct = ((current_price - entry) / entry) * 100
-            # 最高値更新
             if self.position["highest"] is None or current_price > self.position["highest"]:
                 self.position["highest"] = current_price
         else:
             pnl_pct = ((entry - current_price) / entry) * 100
-            # 最安値更新
             if self.position["lowest"] is None or current_price < self.position["lowest"]:
                 self.position["lowest"] = current_price
 
-        # SLヒット判定
+        # SLヒット判定（ソフトウェアSL - 取引所SLのバックアップ）
         if is_long and current_price <= self.position["sl"]:
             self._close_position("SLヒット")
             return
@@ -421,26 +429,37 @@ class BTC1mFVGStrategy:
             self.position["trailing_active"] = True
 
         if self.position["trailing_active"]:
+            old_sl = self.position["sl"]
             if is_long:
-                # 最高値からtrailing_step%下がったらSL引き上げ
                 new_sl = self.position["highest"] * (1 - self.trailing_step / 100)
                 if new_sl > self.position["sl"]:
                     self.position["sl"] = new_sl
-                    logger.debug(f"[{self.STRATEGY_NAME}] トレーリングSL更新: {new_sl:.2f}")
             else:
                 new_sl = self.position["lowest"] * (1 + self.trailing_step / 100)
                 if new_sl < self.position["sl"]:
                     self.position["sl"] = new_sl
-                    logger.debug(f"[{self.STRATEGY_NAME}] トレーリングSL更新: {new_sl:.2f}")
+
+            # SL更新があれば取引所SL注文も更新
+            if self.position["sl"] != old_sl:
+                logger.debug(f"[{self.STRATEGY_NAME}] トレーリングSL更新: {self.position['sl']:.2f}")
+                self._sl_oid = update_exchange_sl(
+                    self.exchange, self.info, self.account_address,
+                    self.coin, is_long, self.position["size"],
+                    self.position["sl"], self._sl_oid, self.STRATEGY_NAME
+                )
 
     def _close_position(self, reason: str):
         """ポジションクローズ"""
         if not self.position:
             return
 
+        # 取引所SL注文をキャンセル
+        if self._sl_oid:
+            cancel_exchange_sl(self.exchange, self.coin, self._sl_oid, self.STRATEGY_NAME)
+            self._sl_oid = None
+
         try:
             is_buy = self.position["side"] == "buy"
-            # 反対売買で決済
             result = self.exchange.market_close(self.coin)
             logger.info(f"[{self.STRATEGY_NAME}] 決済: {reason}, 結果: {result}")
 

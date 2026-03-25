@@ -18,7 +18,7 @@ import logging
 import pandas as pd
 import numpy as np
 from typing import Optional
-from utils import validate_order_result
+from utils import validate_order_result, place_exchange_sl, update_exchange_sl, cancel_exchange_sl
 
 logger = logging.getLogger(__name__)
 
@@ -54,8 +54,10 @@ class BTC5mMomentumStrategy:
         self.interval = self.cfg["interval"]
         self.loop_interval = self.cfg["loop_interval_sec"]
 
+        self.account_address = config["account_address"]
         self.position: Optional[dict] = None
         self.running = True
+        self._sl_oid: Optional[int] = None
         # モメンタム方向記録（押し目/戻り待ち用）
         self._momentum_direction: Optional[str] = None  # "bullish" or "bearish"
         self._momentum_confirmed_at: float = 0
@@ -96,11 +98,11 @@ class BTC5mMomentumStrategy:
             self._manage_position(current_price)
             return
 
-        if not self.risk_manager.can_open_position(self.STRATEGY_NAME):
-            return
-
         signal = self._check_entry_signal(df)
         if signal:
+            side = "buy" if signal == "long" else "sell"
+            if not self.risk_manager.can_open_position(self.STRATEGY_NAME, self.coin, side):
+                return
             self._open_position(signal, current_price)
 
     def _get_candles(self) -> Optional[pd.DataFrame]:
@@ -204,14 +206,16 @@ class BTC5mMomentumStrategy:
 
         # === フェーズ2: リトレースメント検出 ===
         if self._momentum_direction == "bullish":
-            # 押し目: RSIが一旦下がってから再上昇
-            if self.rsi_oversold < rsi < 50 and curr["close"] > prev["close"]:
+            # 押し目: RSIが過熱圏から中立方向に戻り（50-60帯）、
+            # かつ陽線で反発確認 → LONG
+            if 45 < rsi < 60 and curr["close"] > prev["close"] and curr["close"] > curr["open"]:
                 self._momentum_direction = None
                 return "long"
 
         elif self._momentum_direction == "bearish":
-            # 戻り: RSIが一旦上がってから再下降
-            if 50 < rsi < self.rsi_overbought and curr["close"] < prev["close"]:
+            # 戻り: RSIが過売圏から中立方向に戻り（40-55帯）、
+            # かつ陰線で反落確認 → SHORT
+            if 40 < rsi < 55 and curr["close"] < prev["close"] and curr["close"] < curr["open"]:
                 self._momentum_direction = None
                 return "short"
 
@@ -267,6 +271,12 @@ class BTC5mMomentumStrategy:
                 "trailing_active": False
             }
 
+            # 取引所SL注文を配置
+            self._sl_oid = place_exchange_sl(
+                self.exchange, self.info, self.account_address,
+                self.coin, is_buy, size, sl_price, self.STRATEGY_NAME
+            )
+
             self.risk_manager.register_position(
                 self.STRATEGY_NAME, self.coin, side, size, current_price
             )
@@ -294,7 +304,7 @@ class BTC5mMomentumStrategy:
             if self.position["lowest"] is None or current_price < self.position["lowest"]:
                 self.position["lowest"] = current_price
 
-        # SLチェック
+        # SLチェック（ソフトウェアSL - 取引所SLのバックアップ）
         if is_long and current_price <= self.position["sl"]:
             self._close_position("SLヒット")
             return
@@ -315,6 +325,7 @@ class BTC5mMomentumStrategy:
             self.position["trailing_active"] = True
 
         if self.position["trailing_active"]:
+            old_sl = self.position["sl"]
             if is_long:
                 new_sl = self.position["highest"] * (1 - self.trailing_step / 100)
                 if new_sl > self.position["sl"]:
@@ -324,10 +335,21 @@ class BTC5mMomentumStrategy:
                 if new_sl < self.position["sl"]:
                     self.position["sl"] = new_sl
 
+            if self.position["sl"] != old_sl:
+                self._sl_oid = update_exchange_sl(
+                    self.exchange, self.info, self.account_address,
+                    self.coin, is_long, self.position["size"],
+                    self.position["sl"], self._sl_oid, self.STRATEGY_NAME
+                )
+
     def _close_position(self, reason: str):
         """ポジションクローズ"""
         if not self.position:
             return
+
+        if self._sl_oid:
+            cancel_exchange_sl(self.exchange, self.coin, self._sl_oid, self.STRATEGY_NAME)
+            self._sl_oid = None
 
         try:
             result = self.exchange.market_close(self.coin)

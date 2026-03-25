@@ -188,11 +188,12 @@ class RiskManager:
                 del self._positions[strategy_name]
                 logger.info(f"[RiskManager] ポジション解除: {strategy_name}")
 
-    def can_open_position(self, strategy_name: str) -> bool:
+    def can_open_position(self, strategy_name: str, coin: str = None, side: str = None) -> bool:
         """
         新規ポジションを開けるかチェック。
         - 日次DD停止中でないか
         - アルト戦略の場合、BTC相関停止中でないか
+        - 同一コインの逆方向ポジションが既にないか
         """
         with self._lock:
             if self.is_daily_stopped:
@@ -203,6 +204,26 @@ class RiskManager:
             if "alts" in strategy_name.lower() and self.is_alts_paused:
                 logger.warning(f"[RiskManager] {strategy_name}: BTC急落によりアルト戦略停止中")
                 return False
+
+            # 同一コインの既存ポジションチェック
+            if coin and side:
+                for name, pos in self._positions.items():
+                    if name == strategy_name:
+                        continue
+                    if pos.get("coin") == coin:
+                        existing_side = pos.get("side")
+                        if existing_side != side:
+                            logger.warning(
+                                f"[RiskManager] {strategy_name}: {coin}に逆方向ポジション"
+                                f"({name}: {existing_side})が既にあるためスキップ"
+                            )
+                            return False
+                        else:
+                            logger.info(
+                                f"[RiskManager] {strategy_name}: {coin}に同方向ポジション"
+                                f"({name}: {existing_side})が既にあるためスキップ"
+                            )
+                            return False
 
             return True
 

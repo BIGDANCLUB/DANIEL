@@ -15,7 +15,7 @@ import logging
 import pandas as pd
 import numpy as np
 from typing import Optional
-from utils import validate_order_result
+from utils import validate_order_result, place_exchange_sl, update_exchange_sl, cancel_exchange_sl
 
 logger = logging.getLogger(__name__)
 
@@ -49,8 +49,10 @@ class Alts1hBreakStrategy:
         self.interval = self.cfg["interval"]
         self.loop_interval = self.cfg["loop_interval_sec"]
 
+        self.account_address = config["account_address"]
         self.position: Optional[dict] = None
         self.running = True
+        self._sl_oid: Optional[int] = None
 
     def run(self):
         """メインループ"""
@@ -86,11 +88,11 @@ class Alts1hBreakStrategy:
             self._manage_position(current_price)
             return
 
-        if not self.risk_manager.can_open_position(self.strategy_name):
-            return
-
         signal = self._check_entry_signal(df)
         if signal:
+            side = "buy" if signal == "long" else "sell"
+            if not self.risk_manager.can_open_position(self.strategy_name, self.coin, side):
+                return
             self._open_position(signal, current_price)
 
     def _get_candles(self) -> Optional[pd.DataFrame]:
@@ -233,6 +235,12 @@ class Alts1hBreakStrategy:
                 "trailing_active": False
             }
 
+            # 取引所SL注文を配置
+            self._sl_oid = place_exchange_sl(
+                self.exchange, self.info, self.account_address,
+                self.coin, is_buy, size, sl_price, self.strategy_name
+            )
+
             self.risk_manager.register_position(
                 self.strategy_name, self.coin, side, size, current_price
             )
@@ -260,7 +268,7 @@ class Alts1hBreakStrategy:
             if self.position["lowest"] is None or current_price < self.position["lowest"]:
                 self.position["lowest"] = current_price
 
-        # SL
+        # SL（ソフトウェアSL - 取引所SLのバックアップ）
         if is_long and current_price <= self.position["sl"]:
             self._close_position("SLヒット")
             return
@@ -281,6 +289,7 @@ class Alts1hBreakStrategy:
             self.position["trailing_active"] = True
 
         if self.position["trailing_active"]:
+            old_sl = self.position["sl"]
             if is_long:
                 new_sl = self.position["highest"] * (1 - self.trailing_step / 100)
                 if new_sl > self.position["sl"]:
@@ -290,10 +299,21 @@ class Alts1hBreakStrategy:
                 if new_sl < self.position["sl"]:
                     self.position["sl"] = new_sl
 
+            if self.position["sl"] != old_sl:
+                self._sl_oid = update_exchange_sl(
+                    self.exchange, self.info, self.account_address,
+                    self.coin, is_long, self.position["size"],
+                    self.position["sl"], self._sl_oid, self.strategy_name
+                )
+
     def _close_position(self, reason: str):
         """ポジション全決済"""
         if not self.position:
             return
+
+        if self._sl_oid:
+            cancel_exchange_sl(self.exchange, self.coin, self._sl_oid, self.strategy_name)
+            self._sl_oid = None
 
         try:
             result = self.exchange.market_close(self.coin)

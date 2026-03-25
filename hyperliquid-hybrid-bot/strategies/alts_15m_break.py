@@ -16,7 +16,7 @@ import logging
 import pandas as pd
 import numpy as np
 from typing import Optional, Dict
-from utils import validate_order_result
+from utils import validate_order_result, place_exchange_sl, update_exchange_sl, cancel_exchange_sl
 
 logger = logging.getLogger(__name__)
 
@@ -53,8 +53,10 @@ class Alts15mBreakStrategy:
         self.interval = self.cfg["interval"]
         self.loop_interval = self.cfg["loop_interval_sec"]
 
+        self.account_address = config["account_address"]
         self.position: Optional[dict] = None
         self.running = True
+        self._sl_oid: Optional[int] = None
 
     def run(self):
         """メインループ"""
@@ -91,11 +93,11 @@ class Alts15mBreakStrategy:
             self._manage_position(current_price, df)
             return
 
-        if not self.risk_manager.can_open_position(self.strategy_name):
-            return
-
         signal = self._check_entry_signal(df)
         if signal:
+            side = "buy" if signal == "long" else "sell"
+            if not self.risk_manager.can_open_position(self.strategy_name, self.coin, side):
+                return
             self._open_position(signal, current_price, df)
 
     def _get_candles(self) -> Optional[pd.DataFrame]:
@@ -231,6 +233,12 @@ class Alts15mBreakStrategy:
                 "lowest": current_price if not is_buy else None,
             }
 
+            # 取引所SL注文を配置
+            self._sl_oid = place_exchange_sl(
+                self.exchange, self.info, self.account_address,
+                self.coin, is_buy, size, sl_price, self.strategy_name
+            )
+
             self.risk_manager.register_position(
                 self.strategy_name, self.coin, side, size, current_price
             )
@@ -293,17 +301,24 @@ class Alts15mBreakStrategy:
         # === TP1後: ATRトレーリングストップ ===
         atr = self.position["atr"]
         if atr > 0:
+            old_sl = self.position["sl"]
             trailing_distance = atr * self.atr_trailing_mult
             if is_long:
                 new_sl = self.position["highest"] - trailing_distance
                 if new_sl > self.position["sl"]:
                     self.position["sl"] = new_sl
-                    logger.debug(f"[{self.strategy_name}] ATRトレーリングSL: {new_sl:.4f}")
             else:
                 new_sl = self.position["lowest"] + trailing_distance
                 if new_sl < self.position["sl"]:
                     self.position["sl"] = new_sl
-                    logger.debug(f"[{self.strategy_name}] ATRトレーリングSL: {new_sl:.4f}")
+
+            if self.position["sl"] != old_sl:
+                logger.debug(f"[{self.strategy_name}] ATRトレーリングSL: {self.position['sl']:.4f}")
+                self._sl_oid = update_exchange_sl(
+                    self.exchange, self.info, self.account_address,
+                    self.coin, is_long, self.position["size"],
+                    self.position["sl"], self._sl_oid, self.strategy_name
+                )
 
     def _partial_close(self, reason: str):
         """TP1で半分利確"""
@@ -351,6 +366,10 @@ class Alts15mBreakStrategy:
         """ポジション全決済"""
         if not self.position:
             return
+
+        if self._sl_oid:
+            cancel_exchange_sl(self.exchange, self.coin, self._sl_oid, self.strategy_name)
+            self._sl_oid = None
 
         try:
             result = self.exchange.market_close(self.coin)

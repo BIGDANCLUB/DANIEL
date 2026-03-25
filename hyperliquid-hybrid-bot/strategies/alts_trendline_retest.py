@@ -104,11 +104,11 @@ class AltsTrendlineRetestStrategy:
             self._manage_position(current_price, df)
             return
 
-        if not self.risk_manager.can_open_position(self.strategy_name):
-            return
-
         signal = self._check_entry_signal(df)
         if signal:
+            side = "buy" if signal == "long" else "sell"
+            if not self.risk_manager.can_open_position(self.strategy_name, self.coin, side):
+                return
             self._open_position(signal, current_price, df)
 
     # ================================================================

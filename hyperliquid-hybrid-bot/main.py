@@ -95,6 +95,8 @@ from strategies.alts_1h_break import Alts1hBreakStrategy
 from strategies.alts_trendline_retest import AltsTrendlineRetestStrategy
 from strategies.btc_mean_reversion import BTCMeanReversionStrategy
 from strategies.alts_mean_reversion import AltsMeanReversionStrategy
+from strategies.btc_adaptive import BTCAdaptiveStrategy
+from strategies.alts_adaptive import AltsAdaptiveStrategy
 
 
 def setup_logging(config: dict):
@@ -366,6 +368,33 @@ def main():
             )
             threads.append(t)
             logger.info(f"[Main] Alts_MeanRev_{coin} 戦略を登録")
+
+    # 8. BTC_Adaptive（レジーム自動切替）
+    if config.get("btc_adaptive", {}).get("enabled", False):
+        btc_adp = BTCAdaptiveStrategy(info, exchange, config, risk_manager, telegram)
+        all_strategies.append(btc_adp)
+        t = threading.Thread(
+            target=btc_adp.run,
+            name="BTC_Adaptive",
+            daemon=True
+        )
+        threads.append(t)
+        logger.info("[Main] BTC_Adaptive 戦略を登録")
+
+    # 9. Alts_Adaptive × N銘柄（レジーム自動切替）
+    if config.get("alts_adaptive", {}).get("enabled", False):
+        for coin in config["alts_adaptive"]["coins"]:
+            strat = AltsAdaptiveStrategy(
+                info, exchange, config, risk_manager, telegram, coin
+            )
+            all_strategies.append(strat)
+            t = threading.Thread(
+                target=strat.run,
+                name=f"Alts_Adp_{coin}",
+                daemon=True
+            )
+            threads.append(t)
+            logger.info(f"[Main] Alts_Adaptive_{coin} 戦略を登録")
 
     # 日次リセットワーカー
     daily_thread = threading.Thread(

@@ -153,7 +153,7 @@
 [nm t="ナレーション"]
 水路を抜け、魔王城の内部通路へと戻る。[p]
 
-[set f.chap2_slime=1]
+[set f.b1f_slime=1]
 
 [nm t="ナレーション"]
 ——地下水路を突破した。[p]
@@ -161,4 +161,4 @@
 [fadeout time="1000" color="0x000000"]
 [wait time=300]
 
-[jump storage="chap2_explore.ks" target="*chap2_hub"]
+[jump storage="chap2_explore.ks" target="*hub_b1f"]

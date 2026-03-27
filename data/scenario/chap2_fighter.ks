@@ -1,0 +1,118 @@
+;==========================================================
+; chap2_fighter.ks - 1F「女戦士」
+;==========================================================
+*fighter_start
+
+; [bg storage="bg_training_hall.jpg" time="500"]
+
+[fadein time="800"]
+
+[nm t="ナレーション"]
+鍛錬場のような広い部屋。中央に、鎧姿の女戦士が一人、剣を振っていた。[p]
+
+; [chara_show name="fighter" storage="chara/fighter_normal.png" pos="center" time="500"]
+
+[nm t="女戦士" color="#ffcc88"]
+「……勇者か。待っていた」[l]
+
+[nm t="女戦士" color="#ffcc88"]
+「私はここの衛兵隊長だ。通るなら私を倒してからにしろ」[l]
+
+[nm t="女戦士" color="#ffcc88"]
+「……ただし、倒し方は問わない。魔王様は生きて連れてこいと言っていたが……私個人は、強い者が好きだ」[p]
+
+[select text="どう対処する？"
+  option="正々堂々と剣で戦う" target="*fighter_duel"
+  option="女神の加護を使って奇襲する" target="*fighter_ambush"
+  option="「話し合いで解決できないか」と申し出る" target="*fighter_talk"
+]
+
+*fighter_duel
+
+[nm t="ナレーション"]
+互いに剣を構える。女戦士は強い——だが女神の加護が勇者の剣に力を与える。[l]
+
+[nm t="ナレーション"]
+激しい打ち合いの末、女戦士の剣が弾かれた。[p]
+
+[nm t="女戦士" color="#ffcc88"]
+「……負けた。見事だ、勇者」[l]
+
+[nm t="女戦士" color="#ffcc88"]
+「……通っていい。ただし——」[l]
+
+[nm t="女戦士" color="#ffcc88"]
+「勇者、あなたの精を少し分けてくれ。戦士として、あなたの力の根源が知りたい」[p]
+
+[select text="どうする？"
+  option="「……わかった」→ 同意" target="*fighter_offer"
+  option="「それは断る」→ そのまま通る" target="*fighter_pass"
+]
+
+*fighter_ambush
+
+[nm t="ナレーション"]
+女神の光を一気に放出——！ 女戦士が目を眩ませた隙に、横を駆け抜けた。[p]
+
+[nm t="女戦士" color="#ffcc88"]
+「……ッ！ 卑怯な！」[l]
+
+[nm t="ナレーション"]
+「戦場に卑怯はない——そう教わっただろう」[l]
+
+[nm t="ナレーション"]
+振り返らず走り抜けた。[p]
+
+[set f.resist_count=f.resist_count+1]
+[jump target="*fighter_clear"]
+
+*fighter_talk
+
+[nm t="勇者" color="#aaddff"]
+「……俺はあなたと戦いたくない」[l]
+
+[nm t="女戦士" color="#ffcc88"]
+「……なぜだ」[l]
+
+[nm t="勇者" color="#aaddff"]
+「あなたは強い。こんな場所で戦うより、もっと価値ある戦い場があるはずだ」[p]
+
+[nm t="女戦士" color="#ffcc88"]
+「……」[l]
+
+[nm t="女戦士" color="#ffcc88"]
+「……面白いことを言う。ならば、その言葉の代償を払え」[l]
+
+[nm t="女戦士" color="#ffcc88"]
+「戦いの代わりに、あなたの精を一度いただく。それで見逃してやる」[p]
+
+[jump target="*fighter_offer"]
+
+*fighter_offer
+
+[set f.surrender_count=f.surrender_count+1]
+
+; ====【Hシーン：女戦士・武人搾精】====
+; (ここにHシーン本文・CG挿入)
+; [cutin storage="event/fighter_h_offer01.jpg"]
+; ==========================================
+
+[nm t="女戦士" color="#ffcc88"]
+「……満足した。行け」[p]
+
+[call storage="system/init.ks" target="*squeeze_event"]
+[jump target="*fighter_clear"]
+
+*fighter_pass
+
+[nm t="ナレーション"]
+女戦士は黙ってうなずき、道を開けた。[p]
+
+*fighter_clear
+
+[set f.f1_fighter=1]
+[nm t="ナレーション"]
+——女戦士を突破した。[p]
+
+[fadeout time="800" color="0x000000"]
+[jump storage="chap2_explore.ks" target="*hub_1f"]

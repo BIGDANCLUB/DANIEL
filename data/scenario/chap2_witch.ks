@@ -190,7 +190,7 @@
 [nm t="ナレーション"]
 東の塔を抜け、城の中央通路へ戻る。[p]
 
-[set f.chap2_witch=1]
+[set f.f3_witch=1]
 
 [nm t="ナレーション"]
 ——魔女の実験室を突破した。[p]
@@ -198,4 +198,4 @@
 [fadeout time="1000" color="0x000000"]
 [wait time=300]
 
-[jump storage="chap2_explore.ks" target="*chap2_hub"]
+[jump storage="chap2_explore.ks" target="*hub_3f"]

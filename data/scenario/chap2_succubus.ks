@@ -50,14 +50,13 @@
 [nm t="サキュバス" color="#ff88cc"]
 「……さあ、力を抜いて。ここは夢の中みたいに、気持ちよくしてあげるわ」[p]
 
-; 淫紋レベルで耐性チェック
-[if exp="f.inmaku>=2"]
+; 淫紋の影響（刻まれているだけで感じやすい体質になっている）
+[if exp="f.inmaku==1"]
   [nm t="ナレーション"]
-  淫紋が共鳴するように脈動する——通常より強く魅了が効いてしまう。[p]
-  [jump target="*succubus_choice_weak"]
-[else]
-  [jump target="*succubus_choice_normal"]
+  淫紋が共鳴するように脈動する——声だけで身体が反応してしまう。[p]
 [endif]
+
+[jump target="*succubus_choice_normal"]
 
 ;==========================================================
 ; 通常耐性時の選択肢
@@ -73,18 +72,6 @@
   option="サキュバスと話し合う" target="*succubus_talk"
 ]
 
-;==========================================================
-; 淫紋強化時の選択肢（耐性低下）
-;==========================================================
-*succubus_choice_weak
-
-[nm t="勇者" color="#aaddff"]
-「（あ……頭が……ぼんやりする）」[p]
-
-[select text="どう対処する？"
-  option="必死に意識を保ちながら突進する" target="*succubus_rush_weak"
-  option="膝をついてしまう→ 抵抗する" target="*succubus_captured"
-]
 
 ;==========================================================
 ; 選択A: 突進
@@ -182,23 +169,6 @@
 
 [jump target="*succubus_escape"]
 
-;==========================================================
-; 淫紋強化・突進（ふらつきながら）
-;==========================================================
-*succubus_rush_weak
-
-[nm t="ナレーション"]
-ぼんやりする意識を振り絞り、前へ踏み出す。[l]
-
-[nm t="女神" color="#ffffaa"]
-「……踏ん張って！」[l]
-
-[nm t="ナレーション"]
-女神の加護が一瞬だけ輝き、魅了を打ち破る。その隙に走り抜けた。[p]
-
-[set f.resist_count=f.resist_count+1]
-
-[jump target="*succubus_escape"]
 
 ;==========================================================
 ; 捕獲イベント
@@ -234,7 +204,7 @@
 [nm t="ナレーション"]
 上層回廊を抜けた。先には城の中枢へと続く階段が見える。[p]
 
-[set f.chap2_succubus=1]
+[set f.f2_succubus=1]
 
 [nm t="ナレーション"]
 ——上層回廊を突破した。[p]
@@ -242,4 +212,4 @@
 [fadeout time="1000" color="0x000000"]
 [wait time=300]
 
-[jump storage="chap2_explore.ks" target="*chap2_hub"]
+[jump storage="chap2_explore.ks" target="*hub_2f"]

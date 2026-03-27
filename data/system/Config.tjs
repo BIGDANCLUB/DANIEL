@@ -1,0 +1,34 @@
+// ============================================================
+// Config.tjs - ゲーム基本設定
+// ============================================================
+
+// ゲームタイトル
+var GameTitle = "勇者と魔王城の淫紋";
+
+// ウィンドウサイズ (DLsite標準: 1280x720 or 800x600)
+var ScreenWidth  = 1280;
+var ScreenHeight = 720;
+
+// テキストウィンドウ設定
+var DefaultTextSpeed = 50;       // テキスト表示速度 (ms/文字)
+var DefaultAutoSpeed = 2000;     // オートモード待機時間 (ms)
+
+// セーブスロット数
+var SaveSlotNum = 20;
+
+// ログ（バックログ）行数
+var BacklogMax = 200;
+
+// スキップ設定
+var SkipUnreadText = false;      // 未読テキストのスキップ禁止
+
+// 音量初期値 (0-100)
+var DefaultBgmVolume = 80;
+var DefaultSeVolume  = 80;
+var DefaultVoiceVolume = 100;
+
+// フルスクリーン初期設定
+var DefaultFullScreen = false;
+
+// 年齢確認画面を表示するか
+var AgeCheck = true;

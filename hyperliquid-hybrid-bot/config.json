@@ -24,9 +24,9 @@
         "alts_allocation_pct": 50.0
     },
 
-    "_comment_btc_1m": "BTC 1分足 UltraScalp（FVG + Order Block）",
+    "_comment_btc_1m": "BTC 1分足 UltraScalp（FVG + Order Block）- 無効化",
     "btc_1m_fvg": {
-        "enabled": true,
+        "enabled": false,
         "coin": "BTC",
         "leverage": 3,
         "ema_fast": 9,
@@ -44,9 +44,9 @@
         "loop_interval_sec": 5
     },
 
-    "_comment_btc_5m": "BTC 5分足 MomentumRetrace（RSI + MACD + Volume）",
+    "_comment_btc_5m": "BTC 5分足 MomentumRetrace - 無効化",
     "btc_5m_momentum": {
-        "enabled": true,
+        "enabled": false,
         "coin": "BTC",
         "leverage": 3,
         "rsi_period": 14,
@@ -67,9 +67,9 @@
         "loop_interval_sec": 10
     },
 
-    "_comment_alts_15m": "アルト 15分足 ShortBreak（レンジブレイク）",
+    "_comment_alts_15m": "アルト 15分足 ShortBreak - 無効化",
     "alts_15m_break": {
-        "enabled": true,
+        "enabled": false,
         "coins": ["SOL", "HYPE", "WIF"],
         "leverage": 5,
         "range_period": 20,
@@ -86,9 +86,9 @@
         "loop_interval_sec": 15
     },
 
-    "_comment_alts_1h": "アルト 1時間足 MidBreak（レンジブレイク）",
+    "_comment_alts_1h": "アルト 1時間足 MidBreak - 無効化",
     "alts_1h_break": {
-        "enabled": true,
+        "enabled": false,
         "coins": ["SOL", "HYPE"],
         "leverage": 5,
         "range_period": 50,
@@ -106,7 +106,7 @@
         "loop_interval_sec": 30
     },
 
-    "_comment_alts_tl": "アルト トレンドラインブレイク → 裏タッチリテスト",
+    "_comment_alts_tl": "アルト トレンドラインブレイク → 裏タッチリテスト - 無効化",
     "alts_trendline_retest": {
         "enabled": false,
         "coins": ["SOL", "HYPE"],
@@ -124,6 +124,49 @@
         "atr_trailing_multiplier": 2.5,
         "sl_pct": 1.0,
         "candle_count": 150,
+        "interval": "15m",
+        "loop_interval_sec": 15
+    },
+
+    "_comment_btc_mr": "BTC 5分足 逆張りミーンリバージョン（RSI + BB）",
+    "btc_mean_reversion": {
+        "enabled": true,
+        "coin": "BTC",
+        "leverage": 3,
+        "rsi_period": 14,
+        "rsi_oversold": 30,
+        "rsi_overbought": 70,
+        "bb_period": 20,
+        "bb_std": 2.0,
+        "atr_period": 14,
+        "atr_sl_multiplier": 2.0,
+        "volume_spike_multiplier": 1.2,
+        "tp_to_bb_middle": true,
+        "sl_pct_max": 1.5,
+        "trailing_activation_pct": 0.8,
+        "trailing_step_pct": 0.2,
+        "candle_count": 200,
+        "interval": "5m",
+        "loop_interval_sec": 10
+    },
+
+    "_comment_alts_mr": "アルト 15分足 逆張りミーンリバージョン（RSI + BB）",
+    "alts_mean_reversion": {
+        "enabled": true,
+        "coins": ["SOL", "HYPE"],
+        "leverage": 5,
+        "rsi_period": 14,
+        "rsi_oversold": 25,
+        "rsi_overbought": 75,
+        "bb_period": 20,
+        "bb_std": 2.0,
+        "atr_period": 14,
+        "atr_sl_multiplier": 2.0,
+        "volume_spike_multiplier": 1.2,
+        "tp1_close_ratio": 0.5,
+        "atr_trailing_multiplier": 2.5,
+        "sl_pct_max": 2.0,
+        "candle_count": 200,
         "interval": "15m",
         "loop_interval_sec": 15
     },

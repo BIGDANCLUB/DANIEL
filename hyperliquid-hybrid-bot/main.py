@@ -93,6 +93,8 @@ from strategies.btc_5m_momentum import BTC5mMomentumStrategy
 from strategies.alts_15m_break import Alts15mBreakStrategy
 from strategies.alts_1h_break import Alts1hBreakStrategy
 from strategies.alts_trendline_retest import AltsTrendlineRetestStrategy
+from strategies.btc_mean_reversion import BTCMeanReversionStrategy
+from strategies.alts_mean_reversion import AltsMeanReversionStrategy
 
 
 def setup_logging(config: dict):
@@ -338,6 +340,33 @@ def main():
             threads.append(t)
             logger.info(f"[Main] Alts_TL_Retest_{coin} 戦略を登録")
 
+    # 6. BTC_MeanReversion（逆張り）
+    if config.get("btc_mean_reversion", {}).get("enabled", False):
+        btc_mr = BTCMeanReversionStrategy(info, exchange, config, risk_manager, telegram)
+        all_strategies.append(btc_mr)
+        t = threading.Thread(
+            target=btc_mr.run,
+            name="BTC_MeanRev",
+            daemon=True
+        )
+        threads.append(t)
+        logger.info("[Main] BTC_MeanReversion 戦略を登録")
+
+    # 7. Alts_MeanReversion × N銘柄（逆張り）
+    if config.get("alts_mean_reversion", {}).get("enabled", False):
+        for coin in config["alts_mean_reversion"]["coins"]:
+            strat = AltsMeanReversionStrategy(
+                info, exchange, config, risk_manager, telegram, coin
+            )
+            all_strategies.append(strat)
+            t = threading.Thread(
+                target=strat.run,
+                name=f"Alts_MR_{coin}",
+                daemon=True
+            )
+            threads.append(t)
+            logger.info(f"[Main] Alts_MeanRev_{coin} 戦略を登録")
+
     # 日次リセットワーカー
     daily_thread = threading.Thread(
         target=daily_reset_worker,
@@ -358,11 +387,11 @@ def main():
 
     # ステータス表示ループ
     logger.info("[Main] 全戦略稼働中。Ctrl+C で停止。")
+    active_names = [s.STRATEGY_NAME if hasattr(s, 'STRATEGY_NAME') else s.strategy_name
+                    for s in all_strategies]
     telegram.notify_system(
         f"全{len(all_strategies)}戦略が稼働開始しました。\n"
-        f"BTC戦略: 1m FVG + 5m Momentum\n"
-        f"アルト戦略: 15m Break({', '.join(config['alts_15m_break']['coins'])}) "
-        f"+ 1H Break({', '.join(config['alts_1h_break']['coins'])})"
+        f"稼働中: {', '.join(active_names)}"
     )
 
     try:

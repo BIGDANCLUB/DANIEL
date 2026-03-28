@@ -3,10 +3,9 @@
 ;==========================================================
 *start
 
-; マクロ定義読み込み
 [call storage="system/macro.ks"]
 
-[wait time=500]
+[wait time=300]
 
 ; タイトルBGM
 ; [bgm storage="title.ogg" loop=true]
@@ -14,23 +13,50 @@
 ; タイトル背景
 ; [bg storage="title_bg.jpg" time="1000"]
 
-; タイトルメニュー表示
-[showmenu]
+; ---- カスタムタイトルメニュー ----
+[nm t=""]
+
+[r]
+[r]
+[r]
+[r]
+[r]
+[r]
+勇者と魔王城の淫紋[r]
+[r]
+[link target="*newgame"]　　►  ニューゲーム[endlink][r]
+[link target="*load"]　　►  ロード[endlink][r]
+[link target="*config"]　　►  設定[endlink][r]
+[link target="*recollection"]　　►  回想部屋[endlink][r]
+[s]
 
 ;==========================================================
 ; ニューゲーム開始
 ;==========================================================
 *newgame
 
-; 変数初期化
 [call storage="system/init.ks" target="*init"]
-
-; プロローグへ
 [jump storage="prologue.ks"]
+
+;==========================================================
+; ロード
+;==========================================================
+*load
+
+[showload]
+[jump storage="first.ks" target="*start"]
 
 ;==========================================================
 ; コンフィグ
 ;==========================================================
 *config
+
 [showconfig]
 [jump storage="first.ks" target="*start"]
+
+;==========================================================
+; 回想部屋
+;==========================================================
+*recollection
+
+[jump storage="recollection_room.ks" target="*recollection_start"]

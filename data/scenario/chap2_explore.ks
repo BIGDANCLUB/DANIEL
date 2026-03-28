@@ -17,7 +17,7 @@
 ;==========================================================
 *chap2_start
 
-[set f.chapter=2]
+[eval exp="f.chapter=2"]
 [jump target="*floor_select"]
 
 ;==========================================================
@@ -342,7 +342,7 @@
 [nm t="勇者" color="#aaddff"]
 「……行きます」[p]
 
-[set f.chapter=3]
+[eval exp="f.chapter=3"]
 
 [fadeout time="2000" color="0x000000"]
 [wait time=500]

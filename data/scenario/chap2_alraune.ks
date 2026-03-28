@@ -41,7 +41,7 @@
 [nm t="ナレーション"]
 新鮮な空気を吸い込む。花粉の影響が薄れていく。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*alraune_clear"]
 
 *alraune_negotiate
@@ -93,7 +93,7 @@
 「この先も安全に通れるようにしてあげる」[p]
 
 [call storage="system/init.ks" target="*squeeze_event"]
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 [jump target="*alraune_clear"]
 
 *alraune_sleep
@@ -133,7 +133,7 @@
 
 *alraune_clear
 
-[set f.f3_alraune=1]
+[eval exp="f.f3_alraune=1"]
 [nm t="ナレーション"]
 ——アルラウネの温室を突破した。[p]
 

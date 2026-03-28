@@ -57,12 +57,12 @@
 [nm t="ナレーション"]
 シスターが静かに道を開ける。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*sister_clear"]
 
 *sister_accept
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 
 [nm t="シスター" color="#ddddff"]
 「では……神のお名前のもとに、儀式を始めます」[p]
@@ -111,7 +111,7 @@
 
 *sister_clear
 
-[set f.f4_sister=1]
+[eval exp="f.f4_sister=1"]
 [nm t="ナレーション"]
 ——礼拝堂を通り抜けた。[p]
 

@@ -30,7 +30,7 @@
 [nm t="ナレーション"]
 全力疾走で触手の群れを抜けた。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 
 [jump target="*tentacle_clear"]
 
@@ -45,7 +45,7 @@
 [nm t="ナレーション"]
 松明を壁に投げつけ、触手の注意を引きつけてから反対方向へ走り抜けた。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 
 [jump target="*tentacle_clear"]
 
@@ -100,7 +100,7 @@
 
 *tentacle_clear
 
-[set f.b1f_tentacle=1]
+[eval exp="f.b1f_tentacle=1"]
 
 [nm t="ナレーション"]
 ——触手系魔物の区画を突破した。[p]

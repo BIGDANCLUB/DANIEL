@@ -3,7 +3,7 @@
 ;==========================================================
 *prologue_start
 
-[set f.chapter=0]
+[eval exp="f.chapter=0"]
 
 ; --- 演出: 魔王城前、嵐 ---
 ; [bg storage="bg_maou_castle_front.jpg" time="1000"]
@@ -83,7 +83,7 @@
 「これで快楽攻撃には一切抵抗できなくなる……うふふ、楽しみね」[p]
 
 ; 淫紋フラグON（刻まれた）
-[set f.inmaku=1]
+[eval exp="f.inmaku=1"]
 
 [nm t="ナレーション"]
 意識が遠のく中、勇者は引きずられていった。[p]

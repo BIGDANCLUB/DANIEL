@@ -127,7 +127,7 @@
 ;==========================================================
 *witch_deal
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 
 [nm t="魔女" color="#cc88ff"]
 「では……採取を始めるわ。リラックスして。最大限快適にするから」[p]
@@ -178,7 +178,7 @@
 [call storage="system/init.ks" target="*squeeze_event"]
 
 ; 魔王戦でのボーナスフラグ
-[set f.witch_info=1]
+[eval exp="f.witch_info=1"]
 
 [jump target="*witch_escape"]
 
@@ -242,7 +242,7 @@
 [nm t="ナレーション"]
 東の塔を抜け、城の中央通路へ戻る。[p]
 
-[set f.f3_witch=1]
+[eval exp="f.f3_witch=1"]
 
 [nm t="ナレーション"]
 ——魔女の実験室を突破した。[p]

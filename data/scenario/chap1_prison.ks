@@ -3,7 +3,7 @@
 ;==========================================================
 *chap1_start
 
-[set f.chapter=1]
+[eval exp="f.chapter=1"]
 
 ; [bg storage="bg_prison_cell.jpg" time="1000"]
 ; [bgm storage="bgm_dungeon_ambient.ogg" loop=true]
@@ -133,8 +133,8 @@
 [nm t="女神" color="#ffffaa"]
 「勇者よ……城内には危険な魔物がたくさんいる。でも必ず道はあるわ。私がガイドする」[p]
 
-[set f.chap1_done=1]
-[set f.chapter=2]
+[eval exp="f.chap1_done=1"]
+[eval exp="f.chapter=2"]
 
 [fadeout time="1500" color="0x000000"]
 [wait time=500]

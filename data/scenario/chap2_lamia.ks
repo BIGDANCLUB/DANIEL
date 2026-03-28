@@ -47,7 +47,7 @@
 [nm t="ナレーション"]
 怯んだ隙に走り抜けた。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*lamia_clear"]
 
 *lamia_distract
@@ -61,7 +61,7 @@
 [nm t="ラミア" color="#88ff88"]
 「あ、逃げた……」[l]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*lamia_clear"]
 
 *lamia_hypno
@@ -119,7 +119,7 @@
 
 *lamia_clear
 
-[set f.f2_lamia=1]
+[eval exp="f.f2_lamia=1"]
 [nm t="ナレーション"]
 ——ラミアの回廊を突破した。[p]
 

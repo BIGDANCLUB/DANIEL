@@ -63,12 +63,12 @@
 [nm t="ナレーション"]
 驚いた女盗賊が後退した隙に、通路を駆け抜けた。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*thief_clear"]
 
 *thief_offer
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 
 ; ====【Hシーン：女盗賊・取引搾精】====
 ; [cutin storage="event/thief_h_deal01.jpg"]
@@ -138,7 +138,7 @@
 
 *thief_clear
 
-[set f.f1_thief=1]
+[eval exp="f.f1_thief=1"]
 [nm t="ナレーション"]
 ——女盗賊を突破した。[p]
 

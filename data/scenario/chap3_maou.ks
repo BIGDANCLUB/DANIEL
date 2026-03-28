@@ -3,7 +3,7 @@
 ;==========================================================
 *maou_approach
 
-[set f.chapter=3]
+[eval exp="f.chapter=3"]
 
 ; [bg storage="bg_throne_room_approach.jpg" time="1000"]
 ; [bgm storage="bgm_final_approach.ogg" loop=true]
@@ -370,7 +370,7 @@
 [nm t="ナレーション"]
 どちらも、それが嘘だとわかっていた。[p]
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 [call storage="system/init.ks" target="*squeeze_event"]
 
 ; ==========================================

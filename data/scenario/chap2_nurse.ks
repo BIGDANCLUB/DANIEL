@@ -121,7 +121,7 @@
 
 *nurse_clear
 
-[set f.f3_nurse=1]
+[eval exp="f.f3_nurse=1"]
 [nm t="ナレーション"]
 ——医務室を突破した。[p]
 

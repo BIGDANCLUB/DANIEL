@@ -51,12 +51,12 @@
 [nm t="ナレーション"]
 マッサージ師が静かに道を開けた。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*massage_clear"]
 
 *massage_accept
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 
 [nm t="マッサージ師" color="#ffddaa"]
 「では、横になって。全部任せていいわ」[p]
@@ -114,7 +114,7 @@
 
 *massage_clear
 
-[set f.f4_massage=1]
+[eval exp="f.f4_massage=1"]
 [nm t="ナレーション"]
 ——マッサージ室を通り抜けた。[p]
 

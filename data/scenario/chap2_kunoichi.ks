@@ -37,7 +37,7 @@
 [nm t="ナレーション"]
 煙の中に飛び込み、反対方向へ走り抜けた。くのいちが追ってくる気配があるが、曲がり角を連続して曲がり、撒くことができた。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*kunoichi_clear"]
 
 *kunoichi_fight
@@ -54,7 +54,7 @@
 [nm t="ナレーション"]
 たたらを踏んだくのいちの脇をすり抜けた。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*kunoichi_clear"]
 
 *kunoichi_captured
@@ -109,7 +109,7 @@
 
 *kunoichi_clear
 
-[set f.f1_kunoichi=1]
+[eval exp="f.f1_kunoichi=1"]
 [nm t="ナレーション"]
 ——くのいちの追跡を突破した。[p]
 

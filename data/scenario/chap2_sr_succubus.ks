@@ -104,7 +104,7 @@
 [nm t="上級サキュバス" color="#ff44aa"]
 「戦いでも……別の意味でも、ね」[p]
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 
 ;==========================================================
 ; Hシーン（共通）
@@ -164,7 +164,7 @@
 
 [call storage="system/init.ks" target="*squeeze_event"]
 
-[set f.f5_sr_succubus=1]
+[eval exp="f.f5_sr_succubus=1"]
 
 [nm t="ナレーション"]
 ——上級サキュバスを突破した。玉座への道が開いた。[p]

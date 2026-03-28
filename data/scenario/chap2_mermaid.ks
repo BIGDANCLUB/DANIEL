@@ -55,7 +55,7 @@
 
 *mermaid_offer
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 
 [nm t="マーメイド" color="#88ccff"]
 「ありがとう……じゃあ、遠慮なく」[p]
@@ -144,7 +144,7 @@
 
 *mermaid_clear
 
-[set f.b1f_mermaid=1]
+[eval exp="f.b1f_mermaid=1"]
 
 [nm t="ナレーション"]
 ——地下湖を渡った。[p]

@@ -38,7 +38,7 @@
 [nm t="ナレーション"]
 娼婦は名残惜しそうにしながらも、静かに道を開けた。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*prostitute_clear"]
 
 *prostitute_talk
@@ -58,7 +58,7 @@
 [nm t="娼婦" color="#ffaadd"]
 「あなた、本当に魔王様を止めに来たの？ なら……応援するわ。私なりの方法で」[p]
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 
 *prostitute_accept
 
@@ -109,7 +109,7 @@
 
 *prostitute_clear
 
-[set f.f4_prostitute=1]
+[eval exp="f.f4_prostitute=1"]
 [nm t="ナレーション"]
 ——娼婦の部屋を通り抜けた。[p]
 

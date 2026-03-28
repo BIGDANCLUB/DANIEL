@@ -146,7 +146,7 @@
 ;==========================================================
 *succubus_offer
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 
 [nm t="勇者" color="#aaddff"]
 「……少しだけ、だぞ」[p]
@@ -259,7 +259,7 @@
 [nm t="ナレーション"]
 上層回廊を抜けた。先には城の中枢へと続く階段が見える。[p]
 
-[set f.f2_succubus=1]
+[eval exp="f.f2_succubus=1"]
 
 [nm t="ナレーション"]
 ——上層回廊を突破した。[p]

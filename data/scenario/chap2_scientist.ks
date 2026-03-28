@@ -44,7 +44,7 @@
 [nm t="ナレーション"]
 実験器具を蹴散らしながら出口へ。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*scientist_clear"]
 
 *scientist_talk
@@ -64,12 +64,12 @@
 [nm t="勇者" color="#aaddff"]
 「……わかった。協力する」[p]
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 [jump target="*scientist_offer_exec"]
 
 *scientist_offer
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 
 *scientist_offer_exec
 
@@ -120,7 +120,7 @@
 
 *scientist_clear
 
-[set f.f3_scientist=1]
+[eval exp="f.f3_scientist=1"]
 [nm t="ナレーション"]
 ——科学者の実験室を突破した。[p]
 

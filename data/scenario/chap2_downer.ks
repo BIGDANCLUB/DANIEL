@@ -47,7 +47,7 @@
 [nm t="ナレーション"]
 女性は何も言わず、道を開けた。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*downer_clear"]
 
 *downer_talk
@@ -76,12 +76,12 @@
 [nm t="？？？" color="#aaaaaa"]
 「……さっきの話。受けてあげる」[p]
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 [jump target="*downer_accept_exec"]
 
 *downer_accept
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 
 *downer_accept_exec
 
@@ -138,7 +138,7 @@
 
 *downer_clear
 
-[set f.f4_downer=1]
+[eval exp="f.f4_downer=1"]
 [nm t="ナレーション"]
 ——薄暗い部屋を通り抜けた。[p]
 

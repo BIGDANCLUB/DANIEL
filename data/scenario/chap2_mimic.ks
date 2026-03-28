@@ -107,7 +107,7 @@
 
 *mimic_clear
 
-[set f.b1f_mimic=1]
+[eval exp="f.b1f_mimic=1"]
 
 [nm t="ナレーション"]
 ——ミミックの部屋を突破した。[p]

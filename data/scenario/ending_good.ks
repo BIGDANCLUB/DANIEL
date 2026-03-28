@@ -7,7 +7,7 @@
 ;==========================================================
 *ending_peace
 
-[set f.chapter=99]
+[eval exp="f.chapter=99"]
 
 ; [bg storage="bg_throne_room_dawn.jpg" time="2000"]
 ; [bgm storage="bgm_ending_peaceful.ogg" loop=true]
@@ -86,7 +86,7 @@
 ;==========================================================
 *ending_friendship
 
-[set f.chapter=99]
+[eval exp="f.chapter=99"]
 
 ; [bg storage="bg_castle_garden.jpg" time="2000"]
 ; [bgm storage="bgm_ending_warm.ogg" loop=true]

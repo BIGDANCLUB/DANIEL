@@ -38,7 +38,7 @@
 [nm t="ナレーション"]
 その隙に廊下を駆け抜けた。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*harpy_clear"]
 
 *harpy_lure
@@ -52,7 +52,7 @@
 [nm t="ナレーション"]
 ハーピーが食べ物に飛びついた隙に通り過ぎた。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*harpy_clear"]
 
 *harpy_captured
@@ -107,7 +107,7 @@
 
 *harpy_clear
 
-[set f.f2_harpy=1]
+[eval exp="f.f2_harpy=1"]
 [nm t="ナレーション"]
 ——ハーピーを突破した。[p]
 

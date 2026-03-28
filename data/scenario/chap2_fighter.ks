@@ -63,7 +63,7 @@
 [nm t="ナレーション"]
 振り返らず走り抜けた。[p]
 
-[set f.resist_count=f.resist_count+1]
+[eval exp="f.resist_count=f.resist_count+1"]
 [jump target="*fighter_clear"]
 
 *fighter_talk
@@ -90,7 +90,7 @@
 
 *fighter_offer
 
-[set f.surrender_count=f.surrender_count+1]
+[eval exp="f.surrender_count=f.surrender_count+1"]
 
 ; ====【Hシーン：女戦士・武人搾精】====
 ; [cutin storage="event/fighter_h_offer01.jpg"]
@@ -136,7 +136,7 @@
 
 *fighter_clear
 
-[set f.f1_fighter=1]
+[eval exp="f.f1_fighter=1"]
 [nm t="ナレーション"]
 ——女戦士を突破した。[p]
 

@@ -1,42 +1,118 @@
-// ============================================================
-// Config.tjs - ティラノスクリプト V6 標準設定
-// ============================================================
+// Config.tjs - ティラノスクリプト V6 設定
+// Copyright (C) 2012-2021 ShikemokuMK
+
+;global.config_version = "6.00"; // この行を消さないでください
 
 // ゲームタイトル
-var title = "勇者と魔王城の淫紋";
+;System.title = "勇者と魔王城の淫紋";
 
-// バージョン
-var version = "1.0.0";
+// プロジェクトID
+;projectID = tyranoproject;
 
-// 最初に読み込むシナリオ
-var first_scenario = "first.ks";
+// リリースバージョン
+;game_version = 1.0;
 
-// ウィンドウサイズ
-var window_width = 1280;
-var window_height = 720;
+// 画面サイズ
+;scWidth = 1280;
+;scHeight = 720;
 
-// フルスクリーン初期設定
-var full_screen = false;
+// 画面比率
+;ScreenRatio = fix;
 
-// テキスト設定
-var defaultTextColor = "white";
-var defaultTextSize = 26;
-var defaultTextSpeed = 40;
-var defaultAutoSpeed = 2000;
+// 3D機能（不要なのでfalse）
+;use3D = false;
 
-// 音量初期値 (0-100)
-var defaultBgmVolume = 80;
-var defaultSeVolume = 80;
-var defaultVoiceVolume = 100;
+// テキスト表示スピード（ミリ秒/文字）
+;chSpeed = 30;
+;chSpeeds.fast = 10;
+;chSpeeds.normal = 30;
+;chSpeeds.slow = 50;
 
-// セーブスロット数
-var save_slot = 20;
+// テキストアニメーション効果
+;defaultChEffect = none;
 
-// バックログ最大行数
-var backlog_max = 200;
+// スキップスピード
+;skipSpeed = 30;
+;skipEffectIgnore = true;
 
-// 未読スキップ禁止
-var skip_unread = false;
+// オートスピード
+;autoSpeed = 1300;
+;autoClickStop = true;
+;autoSpeedWithText = 60;
 
-// 年齢確認
-var age_check = true;
+// BGM・SE音量（0〜100）
+;defaultBgmVolume = 80;
+;defaultSeVolume = 80;
+;defaultMovieVolume = 100;
+
+// サウンドスロット数
+;defaultBgmSlotNum = 1;
+;defaultSoundSlotNum = 3;
+
+// セーブ設定
+;configSave = webstorage;
+;configSaveSlotNum = 20;
+;configThumbnail = true;
+;configThumbnailQuality = middle;
+;configThumbnailScale = 0.3;
+;configSaveDateFormat = yyyy/M/d h:mm:ss;
+
+// バックログ
+;maxBackLogNum = 200;
+
+// 既読スキップ
+;autoRecordLabel = false;
+;unReadTextSkip = false;
+;alreadyReadTextColor = 0x87cefa;
+
+// キャラクターレイヤー数
+;numCharacterLayers = 3;
+
+// メッセージレイヤー数
+;numMessageLayers = 2;
+;initialMessageLayerVisible = true;
+
+// マージン
+;marginL = 8;
+;marginT = 8;
+;marginR = 8;
+;marginB = 8;
+
+// メッセージウィンドウ位置
+;ml = 16;
+;mt = 16;
+;mw = 960-32;
+;mh = 640-32;
+
+// メッセージレイヤー色・透明度
+;frameColor = 0x000000;
+;frameOpacity = 128;
+
+// テキストフォントサイズ
+;defaultFontSize = 28;
+
+// テキスト色（0xRRGGBB形式）
+;defaultChColor = 0xffffff;
+
+// 行間・字間
+;defaultLineSpacing = 8;
+;defaultPitch = 0;
+
+// フォント
+;userFace = "Yu Gothic", YuGothic, Meiryo, sans-serif;
+
+// ボールド
+;defaultBold = false;
+
+// アンチエイリアス（0:無効 1:弱め 2:強め）
+;defaultAntialiased = 1;
+
+// 影
+;defaultShadow = false;
+;defaultShadowColor = 0x000000;
+
+// デバッグメニュー（リリース時はfalseに）
+;debugMenu.visible = true;
+
+// 自動改行
+;defaultAutoReturn = true;

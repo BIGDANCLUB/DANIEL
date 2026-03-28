@@ -1,34 +1,42 @@
 // ============================================================
-// Config.tjs - ゲーム基本設定
+// Config.tjs - ティラノスクリプト V6 標準設定
 // ============================================================
 
 // ゲームタイトル
-var GameTitle = "勇者と魔王城の淫紋";
+var title = "勇者と魔王城の淫紋";
 
-// ウィンドウサイズ (DLsite標準: 1280x720 or 800x600)
-var ScreenWidth  = 1280;
-var ScreenHeight = 720;
+// バージョン
+var version = "1.0.0";
 
-// テキストウィンドウ設定
-var DefaultTextSpeed = 50;       // テキスト表示速度 (ms/文字)
-var DefaultAutoSpeed = 2000;     // オートモード待機時間 (ms)
+// 最初に読み込むシナリオ
+var first_scenario = "first.ks";
 
-// セーブスロット数
-var SaveSlotNum = 20;
-
-// ログ（バックログ）行数
-var BacklogMax = 200;
-
-// スキップ設定
-var SkipUnreadText = false;      // 未読テキストのスキップ禁止
-
-// 音量初期値 (0-100)
-var DefaultBgmVolume = 80;
-var DefaultSeVolume  = 80;
-var DefaultVoiceVolume = 100;
+// ウィンドウサイズ
+var window_width = 1280;
+var window_height = 720;
 
 // フルスクリーン初期設定
-var DefaultFullScreen = false;
+var full_screen = false;
 
-// 年齢確認画面を表示するか
-var AgeCheck = true;
+// テキスト設定
+var defaultTextColor = "white";
+var defaultTextSize = 26;
+var defaultTextSpeed = 40;
+var defaultAutoSpeed = 2000;
+
+// 音量初期値 (0-100)
+var defaultBgmVolume = 80;
+var defaultSeVolume = 80;
+var defaultVoiceVolume = 100;
+
+// セーブスロット数
+var save_slot = 20;
+
+// バックログ最大行数
+var backlog_max = 200;
+
+// 未読スキップ禁止
+var skip_unread = false;
+
+// 年齢確認
+var age_check = true;

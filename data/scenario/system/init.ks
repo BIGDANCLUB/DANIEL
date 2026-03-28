@@ -4,9 +4,9 @@
 *init
 
 ;--- ステータス ---
-[eval exp="f.hp=100"]              ; 体力 (0で戦闘不能)
-[eval exp="f.inmaku=0"]            ; 淫紋フラグ: 0=なし / 1=刻まれている
-[eval exp="f.seishi=50"]           ; 精液充填量 0-100
+[eval exp="f.hp=100"]
+[eval exp="f.inmaku=0"]
+[eval exp="f.seishi=50"]
 
 ;--- チャプターフラグ ---
 [eval exp="f.chapter=0"]
@@ -41,14 +41,14 @@
 [eval exp="f.f5_sr_succubus=0"]
 
 ;--- 搾精記録 (エンディング分岐用) ---
-[eval exp="f.squeeze_total=0"]     ; 搾精された合計回数
-[eval exp="f.resist_count=0"]      ; 抵抗成功回数
-[eval exp="f.surrender_count=0"]   ; 自ら従った回数
+[eval exp="f.squeeze_total=0"]
+[eval exp="f.resist_count=0"]
+[eval exp="f.surrender_count=0"]
 
 ;--- イベントフラグ ---
 [eval exp="f.maou_met=0"]
 [eval exp="f.goddess_power=1"]
-[eval exp="f.witch_info=0"]        ; 魔女から情報入手済み
+[eval exp="f.witch_info=0"]
 
 [return]
 

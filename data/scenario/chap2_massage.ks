@@ -24,11 +24,11 @@
 [nm t="マッサージ師" color="#ffddaa"]
 「あなた……施術を受けてみない？ ただし、私のやり方で」[p]
 
-[select text="どう対処する？"
-  option="「……少しだけなら」→ 受ける" target="*massage_accept"
-  option="「結構だ」→ 断って通る" target="*massage_refuse"
-  option="「やり方とは？」→ 確認する" target="*massage_ask"
-]
+どう対処する？[r]
+[link target="*massage_accept"]「……少しだけなら」→ 受ける[endlink][r]
+[link target="*massage_refuse"]「結構だ」→ 断って通る[endlink][r]
+[link target="*massage_ask"]「やり方とは？」→ 確認する[endlink][r]
+[s]
 
 *massage_ask
 
@@ -38,10 +38,10 @@
 [nm t="マッサージ師" color="#ffddaa"]
 「あなた、淫紋の影響で身体が張っているでしょう。解してあげる」[p]
 
-[select text="どうする？"
-  option="「……お願いする」" target="*massage_accept"
-  option="「断る」" target="*massage_refuse"
-]
+どうする？[r]
+[link target="*massage_accept"]「……お願いする」[endlink][r]
+[link target="*massage_refuse"]「断る」[endlink][r]
+[s]
 
 *massage_refuse
 

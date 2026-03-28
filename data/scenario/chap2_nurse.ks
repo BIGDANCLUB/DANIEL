@@ -24,11 +24,11 @@
 [nm t="勇者" color="#aaddff"]
 「（罠かもしれないが……確かに疲弊している）」[p]
 
-[select text="どう対処する？"
-  option="「ありがとう」→ 診てもらう" target="*nurse_accept"
-  option="「大丈夫だ」→ 断って通る" target="*nurse_refuse"
-  option="「……少し休ませてほしい」" target="*nurse_rest"
-]
+どう対処する？[r]
+[link target="*nurse_accept"]「ありがとう」→ 診てもらう[endlink][r]
+[link target="*nurse_refuse"]「大丈夫だ」→ 断って通る[endlink][r]
+[link target="*nurse_rest"]「……少し休ませてほしい」[endlink][r]
+[s]
 
 *nurse_refuse
 

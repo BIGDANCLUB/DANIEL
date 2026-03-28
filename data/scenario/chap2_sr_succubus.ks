@@ -38,10 +38,10 @@
 [nm t="上級サキュバス" color="#ff44aa"]
 「拒否するなら……力ずくよ」[p]
 
-[select text="どう対処する？"
-  option="「力ずくで突破する」→ 戦う" target="*sr_battle"
-  option="「……条件を聞こう」→ 交渉" target="*sr_negotiate"
-]
+どう対処する？[r]
+[link target="*sr_battle"]「力ずくで突破する」→ 戦う[endlink][r]
+[link target="*sr_negotiate"]「……条件を聞こう」→ 交渉[endlink][r]
+[s]
 
 ;==========================================================
 ; 戦闘ルート

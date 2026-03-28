@@ -23,11 +23,11 @@
 [nm t="くのいち" color="#ff9999"]
 「魔王様の命令——勇者を無力化して連れてこい。……でも私、独自のやり方があってね」[p]
 
-[select text="どう対処する？"
-  option="煙幕を利用して逃げる" target="*kunoichi_escape_smoke"
-  option="正面から戦う" target="*kunoichi_fight"
-  option="（麻痺針を打たれてしまった）" target="*kunoichi_captured"
-]
+どう対処する？[r]
+[link target="*kunoichi_escape_smoke"]煙幕を利用して逃げる[endlink][r]
+[link target="*kunoichi_fight"]正面から戦う[endlink][r]
+[link target="*kunoichi_captured"]（麻痺針を打たれてしまった）[endlink][r]
+[s]
 
 *kunoichi_escape_smoke
 

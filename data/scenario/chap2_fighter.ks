@@ -21,11 +21,11 @@
 [nm t="女戦士" color="#ffcc88"]
 「……ただし、倒し方は問わない。魔王様は生きて連れてこいと言っていたが……私個人は、強い者が好きだ」[p]
 
-[select text="どう対処する？"
-  option="正々堂々と剣で戦う" target="*fighter_duel"
-  option="女神の加護を使って奇襲する" target="*fighter_ambush"
-  option="「話し合いで解決できないか」と申し出る" target="*fighter_talk"
-]
+どう対処する？[r]
+[link target="*fighter_duel"]正々堂々と剣で戦う[endlink][r]
+[link target="*fighter_ambush"]女神の加護を使って奇襲する[endlink][r]
+[link target="*fighter_talk"]「話し合いで解決できないか」と申し出る[endlink][r]
+[s]
 
 *fighter_duel
 
@@ -44,10 +44,10 @@
 [nm t="女戦士" color="#ffcc88"]
 「勇者、あなたの精を少し分けてくれ。戦士として、あなたの力の根源が知りたい」[p]
 
-[select text="どうする？"
-  option="「……わかった」→ 同意" target="*fighter_offer"
-  option="「それは断る」→ そのまま通る" target="*fighter_pass"
-]
+どうする？[r]
+[link target="*fighter_offer"]「……わかった」→ 同意[endlink][r]
+[link target="*fighter_pass"]「それは断る」→ そのまま通る[endlink][r]
+[s]
 
 *fighter_ambush
 

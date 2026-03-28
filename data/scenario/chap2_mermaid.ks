@@ -21,11 +21,11 @@
 [nm t="マーメイド" color="#88ccff"]
 「渡してあげてもいいけど……お礼が欲しいな」[p]
 
-[select text="どう対処する？"
-  option="「お礼とは？」→ 交渉する" target="*mermaid_negotiate"
-  option="泳いで渡ろうとする" target="*mermaid_swim"
-  option="「わかった」→ お礼を渡す" target="*mermaid_offer"
-]
+どう対処する？[r]
+[link target="*mermaid_negotiate"]「お礼とは？」→ 交渉する[endlink][r]
+[link target="*mermaid_swim"]泳いで渡ろうとする[endlink][r]
+[link target="*mermaid_offer"]「わかった」→ お礼を渡す[endlink][r]
+[s]
 
 *mermaid_negotiate
 
@@ -38,10 +38,10 @@
 [nm t="勇者" color="#aaddff"]
 「（困った顔をしている……）」[p]
 
-[select text="どうする？"
-  option="「……少しだけなら」→ 同意" target="*mermaid_offer"
-  option="「嫌だ」→ 別の方法を探す" target="*mermaid_swim"
-]
+どうする？[r]
+[link target="*mermaid_offer"]「……少しだけなら」→ 同意[endlink][r]
+[link target="*mermaid_swim"]「嫌だ」→ 別の方法を探す[endlink][r]
+[s]
 
 *mermaid_swim
 

@@ -48,11 +48,11 @@
 [nm t="ナレーション"]
 スライムの動きは読みやすい。どう対処する？[p]
 
-[select text="行動を選べ"
-  option="正面から剣で切り裂く" target="*slime_attack"
-  option="素早く横へ回り込む" target="*slime_dodge"
-  option="（スライムに飛びつかれた）→ 抵抗する" target="*slime_resist"
-]
+行動を選べ[r]
+[link target="*slime_attack"]正面から剣で切り裂く[endlink][r]
+[link target="*slime_dodge"]素早く横へ回り込む[endlink][r]
+[link target="*slime_resist"]（スライムに飛びつかれた）→ 抵抗する[endlink][r]
+[s]
 
 ;==========================================================
 ; 選択A: 攻撃

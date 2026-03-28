@@ -21,11 +21,11 @@
 [nm t="勇者" color="#aaddff"]
 「……金で動く、か」[p]
 
-[select text="どう対処する？"
-  option="「いくら欲しい？」→ 交渉する" target="*thief_negotiate"
-  option="隙を突いて反撃する" target="*thief_counter"
-  option="（短剣を押しつけられ、抵抗できない）" target="*thief_captured"
-]
+どう対処する？[r]
+[link target="*thief_negotiate"]「いくら欲しい？」→ 交渉する[endlink][r]
+[link target="*thief_counter"]隙を突いて反撃する[endlink][r]
+[link target="*thief_captured"]（短剣を押しつけられ、抵抗できない）[endlink][r]
+[s]
 
 *thief_negotiate
 
@@ -47,10 +47,10 @@
 [nm t="女盗賊" color="#aaaaff"]
 「まずは……担保を置いてもらおうか。あなたの身体で」[p]
 
-[select text="どうする？"
-  option="「……わかった」→ 同意" target="*thief_offer"
-  option="「断る」→ 力ずくで突破" target="*thief_counter"
-]
+どうする？[r]
+[link target="*thief_offer"]「……わかった」→ 同意[endlink][r]
+[link target="*thief_counter"]「断る」→ 力ずくで突破[endlink][r]
+[s]
 
 *thief_counter
 

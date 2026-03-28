@@ -16,10 +16,10 @@
 
 [wait time=2000]
 
-[select text="どうする？"
-  option="タイトルに戻る" target="*go_title"
-  option="ロードする" target="*go_load"
-]
+どうする？[r]
+[link target="*go_title"]タイトルに戻る[endlink][r]
+[link target="*go_load"]ロードする[endlink][r]
+[s]
 
 *go_title
 [jump storage="first.ks" target="*start"]

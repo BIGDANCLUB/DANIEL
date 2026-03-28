@@ -24,11 +24,11 @@
 [nm t="シスター" color="#ddddff"]
 「この礼拝堂を通るには、清めの儀式が必要なのです。……私が執り行います」[p]
 
-[select text="どう対処する？"
-  option="「儀式とは何をするのか」→ 聞く" target="*sister_ask"
-  option="「儀式は結構」→ 強引に通り抜ける" target="*sister_force"
-  option="「わかりました」→ 儀式を受ける" target="*sister_accept"
-]
+どう対処する？[r]
+[link target="*sister_ask"]「儀式とは何をするのか」→ 聞く[endlink][r]
+[link target="*sister_force"]「儀式は結構」→ 強引に通り抜ける[endlink][r]
+[link target="*sister_accept"]「わかりました」→ 儀式を受ける[endlink][r]
+[s]
 
 *sister_ask
 
@@ -38,10 +38,10 @@
 [nm t="シスター" color="#ddddff"]
 「女神の加護を受けた勇者様の精は……この上ない供物になります」[p]
 
-[select text="どうする？"
-  option="「……わかった、受けよう」" target="*sister_accept"
-  option="「信仰は違っても、神への供物は断る」" target="*sister_force"
-]
+どうする？[r]
+[link target="*sister_accept"]「……わかった、受けよう」[endlink][r]
+[link target="*sister_force"]「信仰は違っても、神への供物は断る」[endlink][r]
+[s]
 
 *sister_force
 

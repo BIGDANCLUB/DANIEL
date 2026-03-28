@@ -27,11 +27,11 @@
 [nm t="ナレーション"]
 ラミアの瞳が渦を巻くように光る——催眠だ！[p]
 
-[select text="どう対処する？"
-  option="目を逸らして女神に祈る" target="*lamia_avert"
-  option="（目を見てしまった……）" target="*lamia_hypno"
-  option="剣を投げて注意を引き、逃げる" target="*lamia_distract"
-]
+どう対処する？[r]
+[link target="*lamia_avert"]目を逸らして女神に祈る[endlink][r]
+[link target="*lamia_hypno"]（目を見てしまった……）[endlink][r]
+[link target="*lamia_distract"]剣を投げて注意を引き、逃げる[endlink][r]
+[s]
 
 *lamia_avert
 

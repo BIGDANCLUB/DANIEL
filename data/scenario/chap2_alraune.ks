@@ -21,11 +21,11 @@
 [nm t="アルラウネ" color="#ffaaff"]
 「大丈夫。ゆっくり休んでいって。……あなたの栄養を少し分けてもらいながら」[p]
 
-[select text="どう対処する？"
-  option="息を止めて走り抜ける" target="*alraune_rush"
-  option="「花粉の解毒を教えてくれ」と交渉する" target="*alraune_negotiate"
-  option="（花粉で意識が……）" target="*alraune_sleep"
-]
+どう対処する？[r]
+[link target="*alraune_rush"]息を止めて走り抜ける[endlink][r]
+[link target="*alraune_negotiate"]「花粉の解毒を教えてくれ」と交渉する[endlink][r]
+[link target="*alraune_sleep"]（花粉で意識が……）[endlink][r]
+[s]
 
 *alraune_rush
 

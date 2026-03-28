@@ -33,11 +33,11 @@
 [nm t="ナレーション"]
 感情のない声。でも——その目に、かすかな何かが灯っている。[p]
 
-[select text="どう対処する？"
-  option="「……わかった」→ 同意する" target="*downer_accept"
-  option="「急いでいる」→ 断って通る" target="*downer_pass"
-  option="「あなたは何者なんだ？」→ 話を聞く" target="*downer_talk"
-]
+どう対処する？[r]
+[link target="*downer_accept"]「……わかった」→ 同意する[endlink][r]
+[link target="*downer_pass"]「急いでいる」→ 断って通る[endlink][r]
+[link target="*downer_talk"]「あなたは何者なんだ？」→ 話を聞く[endlink][r]
+[s]
 
 *downer_pass
 

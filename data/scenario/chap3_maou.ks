@@ -250,10 +250,10 @@
 [nm t="ナレーション"]
 夜明けまで、まだ時間がある。[p]
 
-[select text="どうする？"
-  option="「今夜は話を続けよう」→ 話し合いへ" target="*maou_talk_only"
-  option="「……俺にも、お前への気持ちがある」→ 魔王Hシーンへ" target="*maou_h_route"
-]
+どうする？[r]
+[link target="*maou_talk_only"]「今夜は話を続けよう」→ 話し合いへ[endlink][r]
+[link target="*maou_h_route"]「……俺にも、お前への気持ちがある」→ 魔王Hシーンへ[endlink][r]
+[s]
 
 ;==========================================================
 ; 話し合いルート（Hシーンなし）

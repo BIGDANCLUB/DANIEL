@@ -74,10 +74,10 @@
 [nm t="ナレーション"]
 ただ——廊下の向こうから、足音が聞こえてくる。[p]
 
-[select text="どうする？"
-  option="加護の力で鍵を開けて急ぐ" target="*escape_quick"
-  option="足音の主を確認してから動く" target="*check_guard"
-]
+どうする？[r]
+[link target="*escape_quick"]加護の力で鍵を開けて急ぐ[endlink][r]
+[link target="*check_guard"]足音の主を確認してから動く[endlink][r]
+[s]
 
 ;==========================================================
 ; 選択肢A: 急いで脱出

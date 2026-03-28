@@ -30,11 +30,11 @@
 [nm t="科学者" color="#aaffff"]
 「安心して。痛くしないから。科学的に、効率よく」[p]
 
-[select text="どう対処する？"
-  option="「絶対に嫌だ」→ 逃げる" target="*scientist_escape"
-  option="「……研究の内容を教えてくれ」→ 話を聞く" target="*scientist_talk"
-  option="「（まあ、科学の発展のためなら）」→ 同意" target="*scientist_offer"
-]
+どう対処する？[r]
+[link target="*scientist_escape"]「絶対に嫌だ」→ 逃げる[endlink][r]
+[link target="*scientist_talk"]「……研究の内容を教えてくれ」→ 話を聞く[endlink][r]
+[link target="*scientist_offer"]「（まあ、科学の発展のためなら）」→ 同意[endlink][r]
+[s]
 
 *scientist_escape
 

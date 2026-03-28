@@ -24,11 +24,11 @@
 [nm t="娼婦" color="#ffaadd"]
 「私はプロよ。他の子みたいに無理やりじゃなく……気持ちよく、ゆっくりお相手するわ」[p]
 
-[select text="どう対処する？"
-  option="「……お願いする」→ サービスを受ける" target="*prostitute_accept"
-  option="「急いでいる、通してくれ」→ 断る" target="*prostitute_refuse"
-  option="「あなたはなぜここで働いているのか」→ 話を聞く" target="*prostitute_talk"
-]
+どう対処する？[r]
+[link target="*prostitute_accept"]「……お願いする」→ サービスを受ける[endlink][r]
+[link target="*prostitute_refuse"]「急いでいる、通してくれ」→ 断る[endlink][r]
+[link target="*prostitute_talk"]「あなたはなぜここで働いているのか」→ 話を聞く[endlink][r]
+[s]
 
 *prostitute_refuse
 

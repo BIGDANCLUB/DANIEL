@@ -13,11 +13,11 @@
 [nm t="ナレーション"]
 触手の先端が勇者の匂いを嗅ぐように揺れる。意思を持った生物——触手系の魔物だ。[p]
 
-[select text="どう対処する？"
-  option="剣で切り払いながら突進する" target="*tentacle_rush"
-  option="触手の動きを観察してから動く" target="*tentacle_observe"
-  option="（触手に捕まってしまった）" target="*tentacle_captured"
-]
+どう対処する？[r]
+[link target="*tentacle_rush"]剣で切り払いながら突進する[endlink][r]
+[link target="*tentacle_observe"]触手の動きを観察してから動く[endlink][r]
+[link target="*tentacle_captured"]（触手に捕まってしまった）[endlink][r]
+[s]
 
 *tentacle_rush
 

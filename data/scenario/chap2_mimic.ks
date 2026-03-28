@@ -13,11 +13,11 @@
 [nm t="勇者" color="#aaddff"]
 「（宝箱……中に武器か回復薬があれば）」[p]
 
-[select text="どう対処する？"
-  option="宝箱を開ける" target="*mimic_open"
-  option="様子を見てから近づく" target="*mimic_cautious"
-  option="無視して通り過ぎる" target="*mimic_ignore"
-]
+どう対処する？[r]
+[link target="*mimic_open"]宝箱を開ける[endlink][r]
+[link target="*mimic_cautious"]様子を見てから近づく[endlink][r]
+[link target="*mimic_ignore"]無視して通り過ぎる[endlink][r]
+[s]
 
 *mimic_open
 

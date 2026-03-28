@@ -66,11 +66,11 @@
 [nm t="勇者" color="#aaddff"]
 「（くっ……声だけでこれか。気を引き締めろ）」[p]
 
-[select text="どう対処する？"
-  option="目を閉じ、女神に祈りながら突進する" target="*succubus_rush"
-  option="耳を塞いで声を遮断する" target="*succubus_ear_block"
-  option="サキュバスと話し合う" target="*succubus_talk"
-]
+どう対処する？[r]
+[link target="*succubus_rush"]目を閉じ、女神に祈りながら突進する[endlink][r]
+[link target="*succubus_ear_block"]耳を塞いで声を遮断する[endlink][r]
+[link target="*succubus_talk"]サキュバスと話し合う[endlink][r]
+[s]
 
 
 ;==========================================================
@@ -136,10 +136,10 @@
 [nm t="勇者" color="#aaddff"]
 「（……どうする）」[p]
 
-[select text="選択"
-  option="「少しだけなら……」→ 自ら提供する" target="*succubus_offer"
-  option="「それはできない」→ 戦う" target="*succubus_rush"
-]
+選択[r]
+[link target="*succubus_offer"]「少しだけなら……」→ 自ら提供する[endlink][r]
+[link target="*succubus_rush"]「それはできない」→ 戦う[endlink][r]
+[s]
 
 ;==========================================================
 ; 自発的提供（搾精同意ルート）

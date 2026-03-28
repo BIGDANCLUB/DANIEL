@@ -58,11 +58,11 @@
 ; 選択肢 - 脱出を試みるか
 ;==========================================================
 
-[select text="どう対処する？"
-  option="加護の力で魔法陣を壊す" target="*witch_break_seal"
-  option="言葉で交渉する" target="*witch_negotiate"
-  option="（どうにもならない）→ 魔女の実験に従う" target="*witch_submit"
-]
+どう対処する？[r]
+[link target="*witch_break_seal"]加護の力で魔法陣を壊す[endlink][r]
+[link target="*witch_negotiate"]言葉で交渉する[endlink][r]
+[link target="*witch_submit"]（どうにもならない）→ 魔女の実験に従う[endlink][r]
+[s]
 
 ;==========================================================
 ; 選択A: 魔法陣を壊す
@@ -117,10 +117,10 @@
 [nm t="魔女" color="#cc88ff"]
 「……わかった。取引しましょう。サンプルを少し提供してくれるなら、情報を教えてあげる」[p]
 
-[select text="取引するか？"
-  option="「……わかった」→ 同意する" target="*witch_deal"
-  option="「嫌だ、別の方法を探す」→ 拒否" target="*witch_break_seal"
-]
+取引するか？[r]
+[link target="*witch_deal"]「……わかった」→ 同意する[endlink][r]
+[link target="*witch_break_seal"]「嫌だ、別の方法を探す」→ 拒否[endlink][r]
+[s]
 
 ;==========================================================
 ; 取引ルート（同意搾精）

@@ -24,11 +24,11 @@
 [nm t="ナレーション"]
 興奮気味のハーピーが旋回しながら迫ってくる。[p]
 
-[select text="どう対処する？"
-  option="上空へ向けて女神の光を放つ" target="*harpy_light"
-  option="食べ物を囮にして誘導する" target="*harpy_lure"
-  option="（翼で押さえ込まれた）" target="*harpy_captured"
-]
+どう対処する？[r]
+[link target="*harpy_light"]上空へ向けて女神の光を放つ[endlink][r]
+[link target="*harpy_lure"]食べ物を囮にして誘導する[endlink][r]
+[link target="*harpy_captured"]（翼で押さえ込まれた）[endlink][r]
+[s]
 
 *harpy_light
 

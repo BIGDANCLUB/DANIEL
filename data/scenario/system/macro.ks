@@ -7,15 +7,13 @@
 [position layer="message0" page=fore name="%t"]
 [endmacro]
 
-; [fadeout time=xxx color=xxx] → 暗転マクロ
+; [fadeout time=xxx color=xxx] → 暗転（素材なし期間は待機のみ）
 [macro name="fadeout"]
-[layeropt layer="base" opacity=0]
 [wait time="%time"]
 [endmacro]
 
-; [fadein time=xxx] → 明転マクロ
+; [fadein time=xxx] → 明転（素材なし期間は待機のみ）
 [macro name="fadein"]
-[layeropt layer="base" opacity=255]
 [wait time="%time"]
 [endmacro]
 

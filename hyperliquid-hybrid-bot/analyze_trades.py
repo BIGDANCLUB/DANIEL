@@ -9,7 +9,7 @@ import json
 from hyperliquid.info import Info
 from hyperliquid.utils import constants
 
-with open("config.json") as f:
+with open("config.json", encoding="utf-8") as f:
     config = json.load(f)
 
 info = Info(constants.TESTNET_API_URL, skip_ws=True)

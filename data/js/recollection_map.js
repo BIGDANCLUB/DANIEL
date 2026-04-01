@@ -7,6 +7,7 @@
     var CANVAS_H = 720;
     var PLAYER_R = 12;
     var NPC_R = 18;
+    var BOOK_R = 16;
     var INTERACT_RANGE = 55;
     var MOVE_SPEED = 3;
 
@@ -41,10 +42,27 @@
         { id: 'maou',       name: '魔王リリス',   x: 1150, y: 200, scenes: 3, area: '魔王' },
     ];
 
+    // 古い本オブジェ（回想全開放）
+    var BOOK = { x: 480, y: 290, label: '古い本' };
+
     // プレイヤー状態
-    var player = { x: 640, y: 400 };
+    var savedX = 0, savedY = 0;
+    try {
+        savedX = TYRANO.kag.stat.f['recall_return_x'] || 0;
+        savedY = TYRANO.kag.stat.f['recall_return_y'] || 0;
+        TYRANO.kag.stat.f['recall_return_x'] = 0;
+        TYRANO.kag.stat.f['recall_return_y'] = 0;
+    } catch (e) {}
+    var player = {
+        x: savedX > 0 ? savedX : 640,
+        y: savedY > 0 ? savedY : 400
+    };
+
     var nearbyNPC = null;
+    var nearBook = false;
     var showMenu = false;
+    var showBookConfirm = false;
+    var bookConfirmIndex = 1; // 0=はい, 1=いいえ (default いいえ)
     var selectedNPC = null;
     var menuIndex = 0;
     var keys = {};
@@ -80,6 +98,8 @@
     // シーン再生
     function playScene(npcId, n) {
         setFlag('from_recall', 1);
+        setFlag('recall_return_x', player.x);
+        setFlag('recall_return_y', player.y);
         cleanup();
         canvas.remove();
         try {
@@ -107,21 +127,36 @@
     // キーダウン
     function onKeyDown(e) {
         keys[e.key] = true;
-        if (showMenu) {
-            if (e.key === 'ArrowUp') { menuIndex = Math.max(0, menuIndex - 1); e.preventDefault(); }
-            if (e.key === 'ArrowDown') { menuIndex = Math.min(selectedNPC.scenes, menuIndex + 1); e.preventDefault(); }
+
+        if (showBookConfirm) {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { bookConfirmIndex = 0; e.preventDefault(); }
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { bookConfirmIndex = 1; e.preventDefault(); }
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                if (menuIndex < selectedNPC.scenes) {
-                    var n = menuIndex + 1;
-                    if (isUnlocked(selectedNPC.id, n)) { playScene(selectedNPC.id, n); }
-                } else {
-                    unlockAll();
-                }
+                if (bookConfirmIndex === 0) { unlockAll(); }
+                showBookConfirm = false;
+            }
+            if (e.key === 'Escape' || e.key === 'x' || e.key === 'X') {
+                showBookConfirm = false;
+            }
+            return;
+        }
+
+        if (showMenu) {
+            if (e.key === 'ArrowUp') { menuIndex = Math.max(0, menuIndex - 1); e.preventDefault(); }
+            if (e.key === 'ArrowDown') { menuIndex = Math.min(selectedNPC.scenes - 1, menuIndex + 1); e.preventDefault(); }
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                var n = menuIndex + 1;
+                if (isUnlocked(selectedNPC.id, n)) { playScene(selectedNPC.id, n); }
             }
             if (e.key === 'Escape' || e.key === 'x' || e.key === 'X') { showMenu = false; }
         } else {
-            if ((e.key === ' ' || e.key === 'Enter') && nearbyNPC) {
+            if ((e.key === ' ' || e.key === 'Enter') && nearBook) {
+                e.preventDefault();
+                showBookConfirm = true;
+                bookConfirmIndex = 1;
+            } else if ((e.key === ' ' || e.key === 'Enter') && nearbyNPC) {
                 e.preventDefault();
                 showMenu = true; selectedNPC = nearbyNPC; menuIndex = 0;
             }
@@ -140,7 +175,7 @@
 
     // 更新
     function update() {
-        if (showMenu) return;
+        if (showMenu || showBookConfirm) return;
         var dx = 0, dy = 0;
         if (keys['ArrowLeft']  || keys['a'] || keys['A']) dx = -MOVE_SPEED;
         if (keys['ArrowRight'] || keys['d'] || keys['D']) dx =  MOVE_SPEED;
@@ -157,6 +192,8 @@
                 nearbyNPC = npc; break;
             }
         }
+
+        nearBook = Math.hypot(BOOK.x - player.x, BOOK.y - player.y) < INTERACT_RANGE;
     }
 
     // ヒントテキスト
@@ -204,10 +241,8 @@
         // エリア区切り線
         ctx.strokeStyle = '#332255';
         ctx.lineWidth = 2;
-        // 縦区切り
         ctx.beginPath(); ctx.moveTo(420, 50); ctx.lineTo(420, CANVAS_H - 35); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(950, 50); ctx.lineTo(950, CANVAS_H - 35); ctx.stroke();
-        // 横区切り
         ctx.beginPath(); ctx.moveTo(0, 450); ctx.lineTo(950, 450); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(0, 570); ctx.lineTo(950, 570); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(950, 320); ctx.lineTo(CANVAS_W, 320); ctx.stroke();
@@ -223,6 +258,27 @@
         ctx.fillText('4F  居住棟エリア',   460, 548);
         ctx.fillText('5F  最上階エリア',   970, 428);
         ctx.fillText('魔王の間',           990, 240);
+
+        // 古い本オブジェを描画
+        ctx.beginPath();
+        ctx.arc(BOOK.x, BOOK.y, BOOK_R, 0, Math.PI * 2);
+        ctx.fillStyle = nearBook ? '#8b6914' : '#5a4010';
+        ctx.fill();
+        ctx.strokeStyle = nearBook ? '#ffd700' : '#aa8820';
+        ctx.lineWidth = nearBook ? 3 : 1.5;
+        ctx.stroke();
+        ctx.font = '12px sans-serif';
+        ctx.fillStyle = '#ffd700';
+        ctx.textAlign = 'center';
+        ctx.fillText('📖', BOOK.x, BOOK.y + 5);
+        ctx.font = '11px sans-serif';
+        ctx.fillStyle = '#ccaa44';
+        ctx.fillText(BOOK.label, BOOK.x, BOOK.y + BOOK_R + 13);
+        if (nearBook && !showBookConfirm) {
+            ctx.font = 'bold 13px sans-serif';
+            ctx.fillStyle = '#ffff44';
+            ctx.fillText('Spaceで調べる', BOOK.x, BOOK.y - BOOK_R - 6);
+        }
 
         // NPCを描画
         for (var i = 0; i < NPC_DATA.length; i++) {
@@ -280,6 +336,7 @@
 
         // メニュー
         if (showMenu && selectedNPC) { drawMenu(); }
+        if (showBookConfirm) { drawBookConfirm(); }
 
         ctx.textAlign = 'left';
     }
@@ -287,7 +344,7 @@
     function drawMenu() {
         var npc = selectedNPC;
         var W = 620, itemH = 52;
-        var totalItems = npc.scenes + 1;
+        var totalItems = npc.scenes;
         var H = totalItems * itemH + 80;
         var mx = (CANVAS_W - W) / 2;
         var my = Math.max(60, (CANVAS_H - H) / 2);
@@ -334,23 +391,68 @@
             }
         }
 
-        // 全開放ボタン
-        var uy = my + 58 + npc.scenes * itemH;
-        var uSel = (menuIndex === npc.scenes);
-        if (uSel) {
-            ctx.fillStyle = 'rgba(20,80,20,0.6)';
-            ctx.fillRect(mx + 8, uy + 2, W - 16, itemH - 4);
-        }
-        ctx.font = 'bold 15px sans-serif';
-        ctx.fillStyle = uSel ? '#88ff88' : '#55aa55';
-        ctx.textAlign = 'center';
-        ctx.fillText('★  全回想一括解放', mx + W / 2, uy + 30);
-
         // ヒント
         ctx.font = '12px sans-serif';
         ctx.fillStyle = '#666666';
         ctx.textAlign = 'center';
         ctx.fillText('↑↓: 選択   Enter/Space: 決定   Esc: 閉じる', mx + W / 2, my + H - 12);
+    }
+
+    function drawBookConfirm() {
+        var W = 480, H = 180;
+        var mx = (CANVAS_W - W) / 2;
+        var my = (CANVAS_H - H) / 2;
+
+        // 背景
+        ctx.fillStyle = 'rgba(8,0,20,0.97)';
+        ctx.strokeStyle = '#aa8820';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        if (ctx.roundRect) { ctx.roundRect(mx, my, W, H, 10); } else { ctx.rect(mx, my, W, H); }
+        ctx.fill(); ctx.stroke();
+
+        // 本のアイコンとタイトル
+        ctx.font = 'bold 18px sans-serif';
+        ctx.fillStyle = '#ffd700';
+        ctx.textAlign = 'center';
+        ctx.fillText('古い本', mx + W / 2, my + 36);
+
+        ctx.font = '15px sans-serif';
+        ctx.fillStyle = '#dddddd';
+        ctx.fillText('回想全開放しますか？', mx + W / 2, my + 72);
+
+        // はい / いいえボタン
+        var btnW = 140, btnH = 44;
+        var yesX = mx + W / 2 - btnW - 20;
+        var noX  = mx + W / 2 + 20;
+        var btnY = my + 100;
+
+        // はい
+        ctx.fillStyle = bookConfirmIndex === 0 ? 'rgba(20,100,20,0.8)' : 'rgba(20,60,20,0.4)';
+        ctx.beginPath();
+        if (ctx.roundRect) { ctx.roundRect(yesX, btnY, btnW, btnH, 6); } else { ctx.rect(yesX, btnY, btnW, btnH); }
+        ctx.fill();
+        ctx.strokeStyle = bookConfirmIndex === 0 ? '#66ff66' : '#336633';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillStyle = bookConfirmIndex === 0 ? '#aaffaa' : '#669966';
+        ctx.fillText('はい', yesX + btnW / 2, btnY + 28);
+
+        // いいえ
+        ctx.fillStyle = bookConfirmIndex === 1 ? 'rgba(100,20,20,0.8)' : 'rgba(60,20,20,0.4)';
+        ctx.beginPath();
+        if (ctx.roundRect) { ctx.roundRect(noX, btnY, btnW, btnH, 6); } else { ctx.rect(noX, btnY, btnW, btnH); }
+        ctx.fill();
+        ctx.strokeStyle = bookConfirmIndex === 1 ? '#ff6666' : '#663333';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = bookConfirmIndex === 1 ? '#ffaaaa' : '#996666';
+        ctx.fillText('いいえ', noX + btnW / 2, btnY + 28);
+
+        ctx.font = '11px sans-serif';
+        ctx.fillStyle = '#666666';
+        ctx.fillText('←→: 選択   Enter/Space: 決定   Esc: キャンセル', mx + W / 2, my + H - 10);
     }
 
     // ゲームループ

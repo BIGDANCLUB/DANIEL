@@ -54,6 +54,8 @@
 [eval exp="f.enemy_mistakes=0"]
 [eval exp="f.enemy_last_mistake=0"]
 [eval exp="f.from_recall=0"]
+[eval exp="f.recall_return_x=0"]
+[eval exp="f.recall_return_y=0"]
 
 ;--- 回想解放システム ---
 [eval exp="f.scene_all_unlocked=0"]

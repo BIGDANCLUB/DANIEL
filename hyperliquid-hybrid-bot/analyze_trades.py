@@ -12,7 +12,11 @@ from hyperliquid.utils import constants
 with open("config.json", encoding="utf-8") as f:
     config = json.load(f)
 
-info = Info(constants.TESTNET_API_URL, skip_ws=True)
+try:
+    info = Info(constants.TESTNET_API_URL, skip_ws=True)
+except (IndexError, KeyError):
+    info = Info(constants.TESTNET_API_URL, skip_ws=True,
+                spot_meta={"universe": [], "tokens": []})
 addr = config["account_address"]
 
 fills = info.user_fills(addr)

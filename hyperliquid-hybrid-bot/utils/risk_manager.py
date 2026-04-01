@@ -73,7 +73,21 @@ class RiskManager:
         try:
             user_state = self.info.user_state(self.account_address)
             # marginSummary.accountValue が総資産
-            equity = float(user_state.get("marginSummary", {}).get("accountValue", 0))
+            margin_summary = user_state.get("marginSummary", {})
+            equity = float(margin_summary.get("accountValue", 0))
+
+            # Testnetで0が返る場合、crossMarginSummaryも試す
+            if equity == 0:
+                cross = user_state.get("crossMarginSummary", {})
+                equity = float(cross.get("accountValue", 0))
+
+            # それでも0の場合、withdrawableを試す
+            if equity == 0:
+                equity = float(user_state.get("withdrawable", 0))
+
+            if equity == 0:
+                logger.debug(f"[RiskManager] user_state keys: {list(user_state.keys())}")
+
             return equity
         except Exception as e:
             logger.error(f"[RiskManager] アカウント資産取得失敗: {e}")

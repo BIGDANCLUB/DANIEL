@@ -1,270 +1,166 @@
-;==========================================================
-; chap2_succubus.ks - 上層回廊「サキュバスの回廊」
-;==========================================================
+;=== chap2_succubus.ks - サキュバス ===
 *succubus_start
-
-; [bg storage="bg_upper_corridor.jpg" time="800"]
-; [bgm storage="bgm_seductive.ogg" loop=true]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-上層へ続く回廊。石壁に彫られた装飾が艶めかしく、薄紫の光が漂っている。[p]
-
+2階廊下。甘い香りが漂ってきた。[p]
 [nm t="ナレーション"]
-——背後から、甘い香りがした。[p]
-
-; [chara_show name="succubus" storage="chara/succubus_normal.png" pos="right" time="600"]
-
-[nm t="サキュバス" color="#ff88cc"]
-「あら……珍しいお客様ね。勇者くん？」[l]
-
-[nm t="ナレーション"]
-振り向くと、そこには翼を持つ美しい女性が浮かんでいた。艶やかな黒髪、妖艶な瞳。[l]
-
-[nm t="ナレーション"]
-サキュバス——魅了と催眠を武器にする夢魔だ。[p]
-
-[nm t="サキュバス" color="#ff88cc"]
-「その匂い……すごくいい。女神の加護の匂いかしら？」[l]
-
-[nm t="サキュバス" color="#ff88cc"]
-「じゅるり……ねえ、ちょっとだけ分けてくれない？」[p]
-
-[nm t="勇者" color="#aaddff"]
-「……断る。通してくれ」[l]
-
-[nm t="サキュバス" color="#ff88cc"]
-「フフ……素直じゃないのね。じゃあ、力ずくで」[p]
-
-; [se storage="se_wing_flap.ogg"]
-
-;==========================================================
-; サキュバス戦 - 魅了攻撃
-;==========================================================
-*succubus_battle
-
-[nm t="ナレーション"]
-サキュバスが歌うように囁く。その声だけで、身体の芯に甘い痺れが走った。[p]
-
-[nm t="サキュバス" color="#ff88cc"]
-「……さあ、力を抜いて。ここは夢の中みたいに、気持ちよくしてあげるわ」[p]
-
-; 淫紋の影響（刻まれているだけで感じやすい体質になっている）
-[if exp="f.inmaku==1"]
-  [nm t="ナレーション"]
-  淫紋が共鳴するように脈動する——声だけで身体が反応してしまう。[p]
-[endif]
-
-[jump target="*succubus_choice_normal"]
-
-;==========================================================
-; 通常耐性時の選択肢
-;==========================================================
-*succubus_choice_normal
-
-[nm t="勇者" color="#aaddff"]
-「（くっ……声だけでこれか。気を引き締めろ）」[p]
-
-どう対処する？[r]
-[link target="*succubus_rush"]目を閉じ、女神に祈りながら突進する[endlink][r]
-[link target="*succubus_ear_block"]耳を塞いで声を遮断する[endlink][r]
-[link target="*succubus_talk"]サキュバスと話し合う[endlink][r]
+艶やかな服を着たサキュバスが壁にもたれ、こちらを見ている。[p]
+[nm t="サキュバス"]
+「あら勇者様♪ こんな危険なところに来ちゃって。……私が慰めてあげようか？」[p]
+*succubus_c1_prompt
+どうする？[r]
+[link target="*succubus_c1_safe"]サキュバスの誘惑を一蹴する[endlink][r]
+[link target="*succubus_c1_wrong"]サキュバスの話に乗ってしまう[endlink][r]
 [s]
-
-
-;==========================================================
-; 選択A: 突進
-;==========================================================
-*succubus_rush
-
+*succubus_c1_safe
 [nm t="ナレーション"]
-目を閉じ、女神への祈りを口の中で唱えながら一直線に走る。[l]
-
-[nm t="女神" color="#ffffaa"]
-「——私が守る！」[l]
-
-; [se storage="se_goddess_shield.ogg"]
-
+毅然と断った。サキュバスが面白そうに笑った。[p]
+[jump target="*succubus_c2_prompt"]
+*succubus_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-金色の光がサキュバスの魅了を打ち消す。サキュバスが驚いて後退した。[p]
-
-[nm t="サキュバス" color="#ff88cc"]
-「女神の加護……！ チッ、面倒ね」[l]
-
+話に乗った途端、気づけば壁際に追い詰められていた。[p]
+[nm t="サキュバス"]
+「引っかかった♪ 素直な勇者様ね」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*succubus_h_dispatch"][endif]
 [nm t="ナレーション"]
-その隙に脇をすり抜け、回廊の先へ走り抜けた。[p]
-
-[jump target="*succubus_escape"]
-
-;==========================================================
-; 選択B: 耳を塞ぐ
-;==========================================================
-*succubus_ear_block
-
-[nm t="ナレーション"]
-耳を塞ぐと魅了が弱まる。その間に加護の力を収束させ——[l]
-
-[nm t="勇者" color="#aaddff"]
-「女神の光よ……！」[l]
-
-[nm t="ナレーション"]
-閃光がサキュバスを怯ませる。サキュバスは手で目を覆い、後退した。[p]
-
-[jump target="*succubus_escape"]
-
-;==========================================================
-; 選択C: 話し合い（特殊ルート）
-;==========================================================
-*succubus_talk
-
-[nm t="勇者" color="#aaddff"]
-「……待ってくれ。お前は何が欲しいんだ？」[p]
-
-[nm t="サキュバス" color="#ff88cc"]
-「……え？ 急に何を」[l]
-
-[nm t="勇者" color="#aaddff"]
-「俺の目的は魔王を止めることだ。お前と戦うことじゃない」[p]
-
-[nm t="サキュバス" color="#ff88cc"]
-「……フフ。面白い子ね」[l]
-
-[nm t="サキュバス" color="#ff88cc"]
-「正直に言うわ——私はただ、お腹が空いているだけよ。勇者の精力はとびきり上等な食事なの」[p]
-
-[nm t="勇者" color="#aaddff"]
-「（……どうする）」[p]
-
-選択[r]
-[link target="*succubus_offer"]「少しだけなら……」→ 自ら提供する[endlink][r]
-[link target="*succubus_rush"]「それはできない」→ 戦う[endlink][r]
+かろうじて脱する。[p]
+[jump target="*succubus_c2_prompt"]
+*succubus_c2_prompt
+どうする？[r]
+[link target="*succubus_c2_safe"]夢魔の魔法に抗う[endlink][r]
+[link target="*succubus_c2_wrong"]夢魔の幻覚に引き込まれる[endlink][r]
 [s]
-
-;==========================================================
-; 自発的提供（搾精同意ルート）
-;==========================================================
-*succubus_offer
-
-[eval exp="f.surrender_count=f.surrender_count+1"]
-
-[nm t="勇者" color="#aaddff"]
-「……少しだけ、だぞ」[p]
-
-[nm t="サキュバス" color="#ff88cc"]
-「……本当に？ わあ、素直な子ね！ じゃあ……遠慮なく♪」[p]
-
-; ====【Hシーン：サキュバス・合意搾精】====
-; [cutin storage="event/succubus_h_consent01.jpg"]
-
-[nm t="サキュバス" color="#ff88cc"]
-「……素直でいい子ね。じゃあ、たっぷり楽しませてあげる」[p]
-
+*succubus_c2_safe
 [nm t="ナレーション"]
-サキュバスが勇者の目の前に降り立った。翼をゆっくりと畳み、妖艶な笑みを浮かべながら近づいてくる。[l]
-
+意識を強く保って幻覚を振り払った。[p]
+[jump target="*succubus_c3_prompt"]
+*succubus_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-魅了の魔法——しかし今回は攻撃ではなく、快感の増幅に使われた。触れるたびに身体が敏感になっていく。[p]
-
-[nm t="サキュバス" color="#ff88cc"]
-「……嫌いじゃないでしょ、私のこと」[l]
-
-[nm t="勇者" color="#aaddff"]
-「……それとこれとは別だ」[l]
-
-[nm t="サキュバス" color="#ff88cc"]
-「そういうこと言える余裕があるうちが花よ♪」[p]
-
+幻覚の中で気持ちよい夢を見始めた——危険だ。[p]
+[nm t="サキュバス"]
+「……夢の中は逃げられないわよ♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*succubus_h_dispatch"][endif]
 [nm t="ナレーション"]
-経験を積んだサキュバスの技術は、正直なところ恐ろしいほどだった。どこが気持ちいいかを完全に把握していて、逃げ道を一つ一つ塞いでいく。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……く……やば……これは……」[l]
-
-[nm t="サキュバス" color="#ff88cc"]
-「もう限界？ ……うふふ、早いわね」[l]
-
+かろうじて脱する。[p]
+[jump target="*succubus_c3_prompt"]
+*succubus_c3_prompt
+どうする？[r]
+[link target="*succubus_c3_safe"]サキュバスの背後を取ろうとする[endlink][r]
+[link target="*succubus_c3_wrong"]サキュバスの囁きに聞き惚れる[endlink][r]
+[s]
+*succubus_c3_safe
 [nm t="ナレーション"]
-耳元でくすくすと笑う声を聞きながら、勇者は呆気なく白旗を揚げた。[p]
-; ==========================================
-
-[nm t="サキュバス" color="#ff88cc"]
-「……ふあっ、おいしい……これが女神の加護の味……♪」[l]
-
-[nm t="サキュバス" color="#ff88cc"]
-「ありがとう、勇者くん。約束通り通してあげる。……また来てね？」[p]
-
+素早く回り込んで優位に立った。[p]
+[jump target="*succubus_c4_prompt"]
+*succubus_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
+[nm t="ナレーション"]
+囁きに引き込まれ、足が止まってしまった。[p]
+[nm t="サキュバス"]
+「声が好き？もっと聞かせてあげる♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*succubus_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*succubus_c4_prompt"]
+*succubus_c4_prompt
+どうする？[r]
+[link target="*succubus_c4_safe"]加護の光でサキュバスを牽制する[endlink][r]
+[link target="*succubus_c4_wrong"]サキュバスに触れてしまう[endlink][r]
+[s]
+*succubus_c4_safe
+[nm t="ナレーション"]
+光でサキュバスが怯んだ。[p]
+[jump target="*succubus_c5_prompt"]
+*succubus_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
+[nm t="ナレーション"]
+触れた瞬間、甘い電流のような感覚が全身に走った。[p]
+[nm t="サキュバス"]
+「感じた？これが私の魔力よ♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*succubus_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*succubus_c5_prompt"]
+*succubus_c5_prompt
+どうする？[r]
+[link target="*succubus_c5_safe"]一気に突破して先へ進む[endlink][r]
+[link target="*succubus_c5_wrong"]魔力に引き込まれて動けない[endlink][r]
+[s]
+*succubus_c5_safe
+[nm t="ナレーション"]
+全速力で走り抜けた。サキュバスが追えなかった。[p]
+[jump target="*succubus_win"]
+*succubus_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+魔力に縛られ、一歩も動けなくなった。[p]
+[nm t="サキュバス"]
+「諦めて♪ 気持ちよくしてあげるから」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*succubus_h_dispatch"][endif]
+[jump target="*succubus_h_dispatch"]
+*succubus_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*succubus_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*succubus_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*succubus_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*succubus_h4"][endif]
+[jump target="*succubus_h5"]
+*succubus_h1
+[eval exp="f.scene_succubus_h1=1"]
+[nm t="ナレーション"]
+サキュバスに押し倒された。甘い香りの中、巧みな手が全身を這い回る。「ふふ♪ 勇者様の反応、可愛い」プロの誘惑者として、的確に急所を責め続けてくる。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-[jump target="*succubus_escape"]
-
-
-;==========================================================
-; 捕獲イベント
-;==========================================================
-*succubus_captured
-
 [nm t="ナレーション"]
-膝が崩れた。サキュバスがふわりと降り立ち、勇者の顎を持ち上げる。[p]
-
-[nm t="サキュバス" color="#ff88cc"]
-「フフ……素直でいいわ♪ 美味しくいただくわね」[p]
-
-; ====【Hシーン：サキュバス・強制搾精】====
-; [cutin storage="event/succubus_h_force01.jpg"]
-
-[nm t="サキュバス" color="#ff88cc"]
-「フフ……素直でいいわ♪」[l]
-
+やがてサキュバスは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*succubus_h2
+[eval exp="f.scene_succubus_h2=1"]
 [nm t="ナレーション"]
-崩れた膝を、サキュバスが支えた。柔らかい手が顎を持ち上げ、目を合わせてくる。[p]
-
-[nm t="サキュバス" color="#ff88cc"]
-「……瞳がとろんとしてる。もうだいぶ魅了が効いてるみたいね」[l]
-
-[nm t="ナレーション"]
-朧げな意識の中、サキュバスが動き始めた。[l]
-
-[nm t="ナレーション"]
-夢の中にいるような——現実感が薄く、しかし感覚だけが鮮明な、不思議な状態。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……あ……待、って……」[l]
-
-[nm t="サキュバス" color="#ff88cc"]
-「待てないわ。あなたの匂いで私も限界なの」[p]
-
-[nm t="ナレーション"]
-魅了が感度をさらに引き上げる。サキュバスの動きは貪欲で、しかし不思議と乱暴ではなかった。[p]
-
-[nm t="ナレーション"]
-夢と現実の境界が溶けていく中で、勇者は静かに限界を迎えた。[p]
-; ==========================================
-
-[nm t="ナレーション"]
-どれほど時間が経ったか——サキュバスが満足そうに翼を広げ、上空へ舞い上がった。[p]
-
+幻覚の中で翻弄された。夢か現実かわからない状態で、サキュバスの技術に溺れていく。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-[nm t="サキュバス" color="#ff88cc"]
-「……ごちそうさま。もう行っていいわよ、勇者くん」[p]
-
-[jump target="*succubus_escape"]
-
-;==========================================================
-; 脱出・クリア
-;==========================================================
-*succubus_escape
-
 [nm t="ナレーション"]
-上層回廊を抜けた。先には城の中枢へと続く階段が見える。[p]
-
+やがてサキュバスは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*succubus_h3
+[eval exp="f.scene_succubus_h3=1"]
+[nm t="ナレーション"]
+囁きに引き込まれたまま、サキュバスのペースで全てが進んだ。「声だけで落ちちゃうなんて♪ かわいい」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてサキュバスは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*succubus_h4
+[eval exp="f.scene_succubus_h4=1"]
+[nm t="ナレーション"]
+触れた感電のような感覚が抜けないまま、サキュバスに絡みつかれた。「ずっとこの感覚、続けてあげる♪」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてサキュバスは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*succubus_h5
+[eval exp="f.scene_succubus_h5=1"]
+[nm t="ナレーション"]
+魔力に縛られたまま、サキュバスは時間をかけてじっくりと全てを引き出した。「大収穫♪」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてサキュバスは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*succubus_win
 [eval exp="f.f2_succubus=1"]
-
 [nm t="ナレーション"]
-——上層回廊を突破した。[p]
-
-[fadeout time="1000" color="0x000000"]
-[wait time=300]
-
+サキュバスがウインクした。「また遊びましょ♪」先へ進む。[p]
+[fadeout time="800" color="0x000000"][wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_2f"]

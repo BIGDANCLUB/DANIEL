@@ -1,127 +1,166 @@
-;==========================================================
-; chap2_lamia.ks - 2F「ラミア」
-;==========================================================
+;=== chap2_lamia.ks - ラミア ===
 *lamia_start
-
-; [bg storage="bg_upper_corridor_lamia.jpg" time="500"]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-上層回廊の一角。床に大きな鱗の跡がある。[l]
-
+2階廊下。床が石畳から滑らかな大理石に変わった。[p]
 [nm t="ナレーション"]
-天井から、するりと長い身体が降りてきた——上半身は女性、下半身は巨大な蛇のラミアだ。[p]
-
-; [chara_show name="lamia" storage="chara/lamia_normal.png" pos="center" time="500"]
-
-[nm t="ラミア" color="#88ff88"]
-「……迷い込んだの？ 可哀想に」[l]
-
-[nm t="ラミア" color="#88ff88"]
-「でもちょうどよかった。あなた、いい匂いがするわ」[l]
-
-[nm t="ラミア" color="#88ff88"]
-「私の目を見て……ほら、楽になるわよ？」[p]
-
-[nm t="ナレーション"]
-ラミアの瞳が渦を巻くように光る——催眠だ！[p]
-
-どう対処する？[r]
-[link target="*lamia_avert"]目を逸らして女神に祈る[endlink][r]
-[link target="*lamia_hypno"]（目を見てしまった……）[endlink][r]
-[link target="*lamia_distract"]剣を投げて注意を引き、逃げる[endlink][r]
+蛇のような気配——ラミアだ。上半身は美しい女性、下半身は巨大な蛇。[p]
+[nm t="ラミア"]
+「あら……勇者様？こんなところまで来るなんて。でも——ここから先には行かせないわ」[p]
+*lamia_c1_prompt
+どうする？[r]
+[link target="*lamia_c1_safe"]ラミアの目を見ないように視線を逸らす[endlink][r]
+[link target="*lamia_c1_wrong"]ラミアの美しい上半身に見惚れてしまう[endlink][r]
 [s]
-
-*lamia_avert
-
-[nm t="勇者" color="#aaddff"]
-「（見るな……女神様、力を！）」[l]
-
+*lamia_c1_safe
 [nm t="ナレーション"]
-女神の加護が金色の光で目を守る。ラミアの催眠が弾かれた。[p]
-
-[nm t="ラミア" color="#88ff88"]
-「……！ 女神の加護を持っているの」[l]
-
+視線を逸らすことで催眠の影響を受けずに済んだ。[p]
+[jump target="*lamia_c2_prompt"]
+*lamia_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-怯んだ隙に走り抜けた。[p]
-
-[eval exp="f.resist_count=f.resist_count+1"]
-[jump target="*lamia_clear"]
-
-*lamia_distract
-
+目が合った瞬間、視界が揺らぎ始めた——催眠の目だ。[p]
+[nm t="ラミア"]
+「……視線が合った。もう逃げられないわ♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*lamia_h_dispatch"][endif]
 [nm t="ナレーション"]
-剣を遠くに投げつけた——ラミアが音に反応して視線を逸らす。[l]
-
+かろうじて脱する。[p]
+[jump target="*lamia_c2_prompt"]
+*lamia_c2_prompt
+どうする？[r]
+[link target="*lamia_c2_safe"]蛇体の動きを読んで距離を保つ[endlink][r]
+[link target="*lamia_c2_wrong"]ラミアの話に耳を傾ける[endlink][r]
+[s]
+*lamia_c2_safe
 [nm t="ナレーション"]
-その瞬間、横を全力で駆け抜けた。[p]
-
-[nm t="ラミア" color="#88ff88"]
-「あ、逃げた……」[l]
-
-[eval exp="f.resist_count=f.resist_count+1"]
-[jump target="*lamia_clear"]
-
-*lamia_hypno
-
+蛇体の動きを予測して距離を保てた。[p]
+[jump target="*lamia_c3_prompt"]
+*lamia_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-ラミアの瞳に引き込まれた。意識がぼんやりとする……[l]
-
-[nm t="ラミア" color="#88ff88"]
-「いい子ね……おいで」[l]
-
+会話に集中している間に、いつの間にか尾で足首を囲まれていた。[p]
+[nm t="ラミア"]
+「おしゃべりしている間に……ね♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*lamia_h_dispatch"][endif]
 [nm t="ナレーション"]
-ラミアの尾が身体に巻きついてきた。拘束される。でも——なぜか怖くない。[p]
-
-; ====【Hシーン：ラミア・催眠拘束搾精】====
-; [cutin storage="event/lamia_h01.jpg"]
-
+かろうじて脱する。[p]
+[jump target="*lamia_c3_prompt"]
+*lamia_c3_prompt
+どうする？[r]
+[link target="*lamia_c3_safe"]加護の光でラミアの拘束を防ぐ[endlink][r]
+[link target="*lamia_c3_wrong"]ラミアの滑らかな尾の感触に気が散る[endlink][r]
+[s]
+*lamia_c3_safe
 [nm t="ナレーション"]
-意識はある。だが身体が言うことを聞かない——催眠に落ちた身体は、ラミアの誘導通りに動く。[p]
-
-[nm t="ラミア" color="#88ff88"]
-「怖くないわよ……ほら、楽になって。気持ちよくしてあげる」[l]
-
+光の障壁がラミアの尾を阻んだ。[p]
+[jump target="*lamia_c4_prompt"]
+*lamia_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
 [nm t="ナレーション"]
-ラミアの長い尾が、勇者の身体にゆっくりと絡みついてくる。蛇の鱗は思ったより滑らかで、締め付けはごく穏やかだった。[p]
-
+尾の感触が不思議と心地よく、抵抗する気が薄れてしまう。[p]
+[nm t="ラミア"]
+「……抵抗する気が失せてきた？それでいいのよ」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*lamia_h_dispatch"][endif]
 [nm t="ナレーション"]
-催眠の効果で、触れられるだけで快感が増幅される。ラミアはそれを知っていて、わざとゆっくりと動いていた。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……あ……これ……だめだ……」[l]
-
-[nm t="ラミア" color="#88ff88"]
-「うふふ……素直な反応。可愛い」[l]
-
+かろうじて脱する。[p]
+[jump target="*lamia_c4_prompt"]
+*lamia_c4_prompt
+どうする？[r]
+[link target="*lamia_c4_safe"]催眠から覚めるよう強く意識を集中する[endlink][r]
+[link target="*lamia_c4_wrong"]催眠の心地よさに身を任せてしまう[endlink][r]
+[s]
+*lamia_c4_safe
 [nm t="ナレーション"]
-尾の締め付けが、リズムを刻む。そのたびに意識が遠のきそうになる——しかしラミアは絶頂の直前で止めた。[p]
-
-[nm t="ラミア" color="#88ff88"]
-「……もっと欲しい？ お願いしてみて」[p]
-
-[nm t="勇者" color="#aaddff"]
-「……た、頼む……」[l]
-
-[nm t="ラミア" color="#88ff88"]
-「いい子♪」[p]
-
+強い意志で催眠を振り払った。ラミアが驚いた顔をした。[p]
+[jump target="*lamia_c5_prompt"]
+*lamia_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
 [nm t="ナレーション"]
-尾が再び動き始め——今度は、止まらなかった。[p]
-; ==========================================
-
+催眠に深く落ちていく——全身の力が抜けていく。[p]
+[nm t="ラミア"]
+「……もっと深く。ラミアの声を聞いていて……」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*lamia_h_dispatch"][endif]
 [nm t="ナレーション"]
-しばらくして意識が戻ると、ラミアは満足そうに尾を緩めていた。[p]
-
+かろうじて脱する。[p]
+[jump target="*lamia_c5_prompt"]
+*lamia_c5_prompt
+どうする？[r]
+[link target="*lamia_c5_safe"]加護を解放して一気に突破する[endlink][r]
+[link target="*lamia_c5_wrong"]催眠状態のまま動けない[endlink][r]
+[s]
+*lamia_c5_safe
+[nm t="ナレーション"]
+加護の光が催眠を打ち破った。ラミアが怯んだ。[p]
+[jump target="*lamia_win"]
+*lamia_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+催眠で身動きができないまま、ラミアに近づかれた。[p]
+[nm t="ラミア"]
+「……動けないのね。じゃあ、ゆっくり味わわせてもらうわ」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*lamia_h_dispatch"][endif]
+[jump target="*lamia_h_dispatch"]
+*lamia_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*lamia_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*lamia_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*lamia_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*lamia_h4"][endif]
+[jump target="*lamia_h5"]
+*lamia_h1
+[eval exp="f.scene_lamia_h1=1"]
+[nm t="ナレーション"]
+ラミアの長い尾が全身に絡みつく。締め付けるのではなく、優しく包み込むように。「苦しくしないから。ただ……全部いただくだけよ」滑らかな鱗肌の感触が全身を這い回り、催眠の心地よさと相まって抵抗する意思が溶けていく。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-*lamia_clear
-
+[nm t="ナレーション"]
+やがてラミアは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*lamia_h2
+[eval exp="f.scene_lamia_h2=1"]
+[nm t="ナレーション"]
+催眠にかかったまま、ラミアに抱きしめられた。美しい上半身が密着し、尾が下半身に絡みつく。「大丈夫よ。気持ちよくしてあげるから」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてラミアは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*lamia_h3
+[eval exp="f.scene_lamia_h3=1"]
+[nm t="ナレーション"]
+視線が合ったまま動けない。ラミアの深い目が全ての意思を溶かしていく。「逃げなくていいのよ。ここが一番安全な場所だから」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてラミアは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*lamia_h4
+[eval exp="f.scene_lamia_h4=1"]
+[nm t="ナレーション"]
+催眠の快感の中で、ラミアの尾が全身を包んだ。蛇の力が全身を締め上げ、そして——解放する、を繰り返す。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてラミアは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*lamia_h5
+[eval exp="f.scene_lamia_h5=1"]
+[nm t="ナレーション"]
+全身を絡めとられたまま、ラミアは時間をかけてゆっくりと搾り取っていった。催眠の夢の中にいるような、あの長い時間。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてラミアは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*lamia_win
 [eval exp="f.f2_lamia=1"]
 [nm t="ナレーション"]
-——ラミアの回廊を突破した。[p]
-
-[fadeout time="800" color="0x000000"]
+ラミアが尾を解いた。「……強い意志ね。行きなさい」道を開けた。[p]
+[fadeout time="800" color="0x000000"][wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_2f"]

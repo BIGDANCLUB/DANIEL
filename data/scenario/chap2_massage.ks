@@ -1,122 +1,164 @@
-;==========================================================
-; chap2_massage.ks - 4F「マッサージ師」
-;==========================================================
+;=== chap2_massage.ks - マッサージ師 ===
 *massage_start
-
-; [bg storage="bg_massage_room.jpg" time="500"]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-扉を開けると、アロマの香りが漂う部屋だった。[l]
-
-[nm t="ナレーション"]
-施術台が一つ。手技の達人と思われる女性が振り向いた。[p]
-
-; [chara_show name="massage" storage="chara/massage_normal.png" pos="right" time="500"]
-
-[nm t="マッサージ師" color="#ffddaa"]
-「……随分疲れた顔をしているわね」[l]
-
-[nm t="マッサージ師" color="#ffddaa"]
-「私はこの城の専属マッサージ師。戦士たちのコンディションを管理しているの」[l]
-
-[nm t="マッサージ師" color="#ffddaa"]
-「あなた……施術を受けてみない？ ただし、私のやり方で」[p]
-
-どう対処する？[r]
-[link target="*massage_accept"]「……少しだけなら」→ 受ける[endlink][r]
-[link target="*massage_refuse"]「結構だ」→ 断って通る[endlink][r]
-[link target="*massage_ask"]「やり方とは？」→ 確認する[endlink][r]
-[s]
-
-*massage_ask
-
-[nm t="マッサージ師" color="#ffddaa"]
-「全身のコンディションを整えるわ。……特に、溜め込んでいる部分を重点的に」[l]
-
-[nm t="マッサージ師" color="#ffddaa"]
-「あなた、淫紋の影響で身体が張っているでしょう。解してあげる」[p]
-
+4階の一室。香油の香りが漂う。マッサージ台が置かれ、女性が待っている。[p]
+[nm t="マッサージ師"]
+「あら、お疲れでしょう？全身ほぐしてあげますよ♪」[p]
+*massage_c1_prompt
 どうする？[r]
-[link target="*massage_accept"]「……お願いする」[endlink][r]
-[link target="*massage_refuse"]「断る」[endlink][r]
+[link target="*massage_c1_safe"]マッサージを断る[endlink][r]
+[link target="*massage_c1_wrong"]少しだけなら、と台に横になる[endlink][r]
 [s]
-
-*massage_refuse
-
-[nm t="マッサージ師" color="#ffddaa"]
-「そう。……でも、帰り道に必ずここを通るのよ？ 覚悟しておいて」[l]
-
+*massage_c1_safe
 [nm t="ナレーション"]
-マッサージ師が静かに道を開けた。[p]
-
-[eval exp="f.resist_count=f.resist_count+1"]
-[jump target="*massage_clear"]
-
-*massage_accept
-
-[eval exp="f.surrender_count=f.surrender_count+1"]
-
-[nm t="マッサージ師" color="#ffddaa"]
-「では、横になって。全部任せていいわ」[p]
-
-; ====【Hシーン：マッサージ・手技搾精】====
-; [cutin storage="event/massage_h01.jpg"]
-
-[nm t="マッサージ師" color="#ffddaa"]
-「……うつ伏せになって。まず全体を解してから」[p]
-
+断った。マッサージ師が残念そうな顔をした。[p]
+[jump target="*massage_c2_prompt"]
+*massage_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-施術台に横になると、オイルの滑らかな感触が背中に広がった。[l]
-
+横になった途端、腰と手首が柔らかく固定された。[p]
+[nm t="マッサージ師"]
+「動かないでくださいね。これがベースポジションです♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*massage_h_dispatch"][endif]
 [nm t="ナレーション"]
-マッサージ師の手は確かだった。筋肉のどこが張っているかを指先で読み取り、ピンポイントで圧をかける。[p]
-
-[nm t="マッサージ師" color="#ffddaa"]
-「……随分疲れているわね。ここ、凝り固まってる」[l]
-
+かろうじて脱する。[p]
+[jump target="*massage_c2_prompt"]
+*massage_c2_prompt
+どうする？[r]
+[link target="*massage_c2_safe"]固定を外そうとする[endlink][r]
+[link target="*massage_c2_wrong"]固定が気持ちよくて抵抗できない[endlink][r]
+[s]
+*massage_c2_safe
 [nm t="ナレーション"]
-押されるたびに、身体の奥から力が抜けていく感覚。[l]
-
-[nm t="マッサージ師" color="#ffddaa"]
-「では仰向けになって。次は……こちらを解消しましょうか」[p]
-
+固定を外して起き上がった。[p]
+[jump target="*massage_c3_prompt"]
+*massage_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-その言い方は穏やかだったが、向かう場所は明確だった。[l]
-
-[nm t="勇者" color="#aaddff"]
-「……あの、それは——」[l]
-
-[nm t="マッサージ師" color="#ffddaa"]
-「溜め込んでいると身体によくないの。任せて」[p]
-
+固定の感触が心地よく、力が抜けていく。[p]
+[nm t="マッサージ師"]
+「そう、力を抜いて。それが正しいマッサージの受け方です♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*massage_h_dispatch"][endif]
 [nm t="ナレーション"]
-プロの技術は、こういう場所にも遺憾なく発揮された。[l]
-
+かろうじて脱する。[p]
+[jump target="*massage_c3_prompt"]
+*massage_c3_prompt
+どうする？[r]
+[link target="*massage_c3_safe"]香油の匂いが怪しいと気づく[endlink][r]
+[link target="*massage_c3_wrong"]香油の心地よさに身を任せる[endlink][r]
+[s]
+*massage_c3_safe
 [nm t="ナレーション"]
-弛緩した身体に、じわじわと快感が積み上がっていく。抵抗するような筋肉はすでに解されていた。[p]
-
-[nm t="マッサージ師" color="#ffddaa"]
-「……もう少し。ほら、力を抜いて——」[p]
-
+香油を避けた。マッサージ師が苦笑いした。[p]
+[jump target="*massage_c4_prompt"]
+*massage_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
 [nm t="ナレーション"]
-ため息のように、静かに限界が来た。[p]
-; ==========================================
-
-[nm t="マッサージ師" color="#ffddaa"]
-「……施術完了。スッキリしたでしょ？」[p]
-
-; 体力・充填量を整える
-[eval exp="f.hp = Math.min(f.hp + 15, 100)"]
-
+香油が肌に染み込むと、全身の感度が上がった。[p]
+[nm t="マッサージ師"]
+「特製の香油ですの。効果が出てきましたね♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*massage_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*massage_c4_prompt"]
+*massage_c4_prompt
+どうする？[r]
+[link target="*massage_c4_safe"]起き上がって逃げようとする[endlink][r]
+[link target="*massage_c4_wrong"]指圧の気持ちよさに抗えない[endlink][r]
+[s]
+*massage_c4_safe
+[nm t="ナレーション"]
+素早く起き上がって台から降りた。[p]
+[jump target="*massage_c5_prompt"]
+*massage_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
+[nm t="ナレーション"]
+指圧の快感で身体が動かない。[p]
+[nm t="マッサージ師"]
+「もう少しですよ。ほら、もっと気持ちよくなりますから♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*massage_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*massage_c5_prompt"]
+*massage_c5_prompt
+どうする？[r]
+[link target="*massage_c5_safe"]加護の力で感覚を遮断する[endlink][r]
+[link target="*massage_c5_wrong"]完全に脱力してしまう[endlink][r]
+[s]
+*massage_c5_safe
+[nm t="ナレーション"]
+加護で感覚を遮断し、正気を保った。[p]
+[jump target="*massage_win"]
+*massage_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+全身の力が完全に抜け、身動きできなくなった。[p]
+[nm t="マッサージ師"]
+「完全にリラックスできましたね♪ では——仕上げです」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*massage_h_dispatch"][endif]
+[jump target="*massage_h_dispatch"]
+*massage_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*massage_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*massage_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*massage_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*massage_h4"][endif]
+[jump target="*massage_h5"]
+*massage_h1
+[eval exp="f.scene_massage_h1=1"]
+[nm t="ナレーション"]
+マッサージ台で固定されたまま、マッサージ師の手が全身を這い回る。「コリがほぐれると、ここも解放されますよ♪」プロの技で的確に急所を捉え、搾り取っていく。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-*massage_clear
-
+[nm t="ナレーション"]
+やがてマッサージ師は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*massage_h2
+[eval exp="f.scene_massage_h2=1"]
+[nm t="ナレーション"]
+香油で感度が上がった状態で施術された。「反応が良いですね。お疲れだったんですね♪」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてマッサージ師は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*massage_h3
+[eval exp="f.scene_massage_h3=1"]
+[nm t="ナレーション"]
+指圧の快感の中、マッサージ師の「特別メニュー」が始まった。「これが最高の癒しですよ♪」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてマッサージ師は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*massage_h4
+[eval exp="f.scene_massage_h4=1"]
+[nm t="ナレーション"]
+脱力した身体を、マッサージ師が丁寧に扱う。「リラックスしたまま委ねてください♪」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてマッサージ師は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*massage_h5
+[eval exp="f.scene_massage_h5=1"]
+[nm t="ナレーション"]
+完全に脱力したまま、長時間の「施術」が行われた。「大変お疲れでしたね。またどうぞ♪」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてマッサージ師は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*massage_win
 [eval exp="f.f4_massage=1"]
 [nm t="ナレーション"]
-——マッサージ室を通り抜けた。[p]
-
-[fadeout time="800" color="0x000000"]
+マッサージ師が満足そうに頷いた。「では、お気をつけて♪」先へ進む。[p]
+[fadeout time="800" color="0x000000"][wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_4f"]

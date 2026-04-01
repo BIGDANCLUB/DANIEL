@@ -1,117 +1,164 @@
-;==========================================================
-; chap2_prostitute.ks - 4F「娼婦」
-;==========================================================
+;=== chap2_prostitute.ks - 娼婦 ===
 *prostitute_start
-
-; [bg storage="bg_tavern_room.jpg" time="500"]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-居住区の一室——酒の匂いと、妖艶な雰囲気が漂う部屋だった。[l]
-
-[nm t="ナレーション"]
-豪華な服をまとった女性が、こちらを見て微笑んだ。[p]
-
-; [chara_show name="prostitute" storage="chara/prostitute_normal.png" pos="right" time="500"]
-
-[nm t="娼婦" color="#ffaadd"]
-「あら、珍しいお客様ね。勇者様だって？」[l]
-
-[nm t="娼婦" color="#ffaadd"]
-「うふふ……噂は聞いているわよ。城中の子たちがあなたの匂いで大騒ぎ」[l]
-
-[nm t="娼婦" color="#ffaadd"]
-「私はプロよ。他の子みたいに無理やりじゃなく……気持ちよく、ゆっくりお相手するわ」[p]
-
-どう対処する？[r]
-[link target="*prostitute_accept"]「……お願いする」→ サービスを受ける[endlink][r]
-[link target="*prostitute_refuse"]「急いでいる、通してくれ」→ 断る[endlink][r]
-[link target="*prostitute_talk"]「あなたはなぜここで働いているのか」→ 話を聞く[endlink][r]
+4階の一室。豪奢な調度品。扉を開けると、経験豊かそうな女性がソファに座っていた。[p]
+[nm t="娼婦"]
+「いらっしゃい、勇者様。……特別なサービスをご用意してますよ」[p]
+*prostitute_c1_prompt
+どうする？[r]
+[link target="*prostitute_c1_safe"]用件だけ聞いて立ち去ろうとする[endlink][r]
+[link target="*prostitute_c1_wrong"]値段を聞いてみる[endlink][r]
 [s]
-
-*prostitute_refuse
-
-[nm t="娼婦" color="#ffaadd"]
-「……そう。残念だわ」[l]
-
+*prostitute_c1_safe
 [nm t="ナレーション"]
-娼婦は名残惜しそうにしながらも、静かに道を開けた。[p]
-
-[eval exp="f.resist_count=f.resist_count+1"]
-[jump target="*prostitute_clear"]
-
-*prostitute_talk
-
-[nm t="娼婦" color="#ffaadd"]
-「……珍しいことを聞くのね」[l]
-
-[nm t="娼婦" color="#ffaadd"]
-「別に不満はないわよ。ここの待遇はいいし、魔王様は優しいし」[l]
-
-[nm t="娼婦" color="#ffaadd"]
-「ただ……最近、この戦争が長引いているのは嫌ね。平和な方がいいに決まってる」[p]
-
-[nm t="勇者" color="#aaddff"]
-「……そうか」[l]
-
-[nm t="娼婦" color="#ffaadd"]
-「あなた、本当に魔王様を止めに来たの？ なら……応援するわ。私なりの方法で」[p]
-
-[eval exp="f.surrender_count=f.surrender_count+1"]
-
-*prostitute_accept
-
-; ====【Hシーン：娼婦・プロの手搾精】====
-; [cutin storage="event/prostitute_h01.jpg"]
-
-[nm t="娼婦" color="#ffaadd"]
-「……緊張してる？ 大丈夫よ、ゆっくりしていって」[p]
-
+素っ気なく断った。娼婦が面白そうに目を細めた。[p]
+[jump target="*prostitute_c2_prompt"]
+*prostitute_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-娼婦が慣れた様子でそっと寄り添ってくる。強引さがない。むしろ、相手が心地よくなるよう空気を作るのが上手かった。[p]
-
-[nm t="娼婦" color="#ffaadd"]
-「……本当にいい匂いね。噂に違わず」[l]
-
+値段を聞いた途端、「お支払いは現物で」と言って近づいてきた。[p]
+[nm t="娼婦"]
+「お金より……あなたの精力の方が価値があるの」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*prostitute_h_dispatch"][endif]
 [nm t="ナレーション"]
-その声も、仕草も、計算されているはずなのに——不思議と安心感があった。[l]
-
-[nm t="娼婦" color="#ffaadd"]
-「嫌なことがあったら言って。私はあなたに気持ちよくなってほしいの」[p]
-
+かろうじて脱する。[p]
+[jump target="*prostitute_c2_prompt"]
+*prostitute_c2_prompt
+どうする？[r]
+[link target="*prostitute_c2_safe"]契約書の内容を確認する[endlink][r]
+[link target="*prostitute_c2_wrong"]サービスの内容を聞いてしまう[endlink][r]
+[s]
+*prostitute_c2_safe
 [nm t="ナレーション"]
-その言葉を信じてしまう自分がいた。[l]
-
+契約書に罠を発見して断った。[p]
+[jump target="*prostitute_c3_prompt"]
+*prostitute_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-娼婦の手は、急かさない。焦らさない。でも確実に、じわじわと追い詰めてくる。プロの技術が随所に光る。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……あなた、本当に上手いな……」[l]
-
-[nm t="娼婦" color="#ffaadd"]
-「うふふ、ありがとう。……もうすぐよ？」[p]
-
+詳細を聞いている間に、いつの間にか座らされていた。[p]
+[nm t="娼婦"]
+「座ったということは……契約成立ね♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*prostitute_h_dispatch"][endif]
 [nm t="ナレーション"]
-教えてくれる優しさに、かえって羞恥心が増した。[l]
-
+かろうじて脱する。[p]
+[jump target="*prostitute_c3_prompt"]
+*prostitute_c3_prompt
+どうする？[r]
+[link target="*prostitute_c3_safe"]娼婦の話術に乗らないよう意識する[endlink][r]
+[link target="*prostitute_c3_wrong"]話の流れで飲み物を受け取る[endlink][r]
+[s]
+*prostitute_c3_safe
 [nm t="ナレーション"]
-しかし身体はその優しさの中で、素直に限界を迎えた。[p]
-; ==========================================
-
-[nm t="娼婦" color="#ffaadd"]
-「……どう？ 私のサービス、悪くなかったでしょ」[l]
-
-[nm t="娼婦" color="#ffaadd"]
-「頑張ってね、勇者様。……応援してるわ」[p]
-
+話術を分析して冷静に対処した。[p]
+[jump target="*prostitute_c4_prompt"]
+*prostitute_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
+[nm t="ナレーション"]
+飲み物に何か入っていたようだ。身体が熱くなってきた。[p]
+[nm t="娼婦"]
+「特製のドリンクよ。効いてきたでしょ？」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*prostitute_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*prostitute_c4_prompt"]
+*prostitute_c4_prompt
+どうする？[r]
+[link target="*prostitute_c4_safe"]部屋から出ようとする[endlink][r]
+[link target="*prostitute_c4_wrong"]娼婦の技術に引き込まれてしまう[endlink][r]
+[s]
+*prostitute_c4_safe
+[nm t="ナレーション"]
+素早く扉へ向かった。娼婦が苦笑いした。[p]
+[jump target="*prostitute_c5_prompt"]
+*prostitute_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
+[nm t="ナレーション"]
+娼婦の手が触れた瞬間、脚から力が抜けた。[p]
+[nm t="娼婦"]
+「逃げなくていいのよ。気持ちよくしてあげるから」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*prostitute_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*prostitute_c5_prompt"]
+*prostitute_c5_prompt
+どうする？[r]
+[link target="*prostitute_c5_safe"]加護で体の熱を冷ます[endlink][r]
+[link target="*prostitute_c5_wrong"]完全に熱に負けてしまう[endlink][r]
+[s]
+*prostitute_c5_safe
+[nm t="ナレーション"]
+加護の力で薬の効果を中和した。[p]
+[jump target="*prostitute_win"]
+*prostitute_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+熱で思考が定まらないまま、娼婦に押し倒された。[p]
+[nm t="娼婦"]
+「観念して。プロの技を見せてあげる」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*prostitute_h_dispatch"][endif]
+[jump target="*prostitute_h_dispatch"]
+*prostitute_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*prostitute_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*prostitute_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*prostitute_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*prostitute_h4"][endif]
+[jump target="*prostitute_h5"]
+*prostitute_h1
+[eval exp="f.scene_prostitute_h1=1"]
+[nm t="ナレーション"]
+プロの技術で翻弄された。「こんな反応、久しぶりに見たわ♪」経験豊かな手つきで的確に急所を捉え、あっという間に限界まで追い込んでいく。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-*prostitute_clear
-
+[nm t="ナレーション"]
+やがて娼婦は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*prostitute_h2
+[eval exp="f.scene_prostitute_h2=1"]
+[nm t="ナレーション"]
+薬で熱くなった身体を娼婦に委ねた。「素直でいい子ね」甘い声で言いながら、長年磨いた技術で丁寧に搾り取っていく。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて娼婦は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*prostitute_h3
+[eval exp="f.scene_prostitute_h3=1"]
+[nm t="ナレーション"]
+話術に引き込まれたまま、娼婦のペースで全てが進んだ。「こういう子、好きよ」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて娼婦は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*prostitute_h4
+[eval exp="f.scene_prostitute_h4=1"]
+[nm t="ナレーション"]
+脚の力が完全に抜けた。娼婦がゆっくりと近づいてくる。「大丈夫。プロに任せて♪」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて娼婦は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*prostitute_h5
+[eval exp="f.scene_prostitute_h5=1"]
+[nm t="ナレーション"]
+完全に熱に負けた状態で、娼婦は長時間かけて丁寧に全てを引き出した。「満足してもらえた？」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて娼婦は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*prostitute_win
 [eval exp="f.f4_prostitute=1"]
 [nm t="ナレーション"]
-——娼婦の部屋を通り抜けた。[p]
-
-[fadeout time="800" color="0x000000"]
+娼婦が優雅にお辞儀した。「またいつでも♪」先へ進む。[p]
+[fadeout time="800" color="0x000000"][wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_4f"]

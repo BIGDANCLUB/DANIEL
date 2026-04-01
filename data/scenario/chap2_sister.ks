@@ -1,119 +1,164 @@
-;==========================================================
-; chap2_sister.ks - 4F「シスター」
-;==========================================================
+;=== chap2_sister.ks - シスター ===
 *sister_start
-
-; [bg storage="bg_chapel.jpg" time="500"]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-居住区の一角に、小さな礼拝堂がある。蝋燭の光が揺れ、静謐な空気が漂っていた。[l]
-
-[nm t="ナレーション"]
-修道服の女性が祈りを捧げていた。その手元に——奇妙な魔法書が開かれている。[p]
-
-; [chara_show name="sister" storage="chara/sister_normal.png" pos="center" time="500"]
-
-[nm t="シスター" color="#ddddff"]
-「……勇者様？ よくここまで来られました」[l]
-
-[nm t="シスター" color="#ddddff"]
-「私は魔族の神に仕える者です。でも……あなたのことは、嫌いではありません」[l]
-
-[nm t="シスター" color="#ddddff"]
-「この礼拝堂を通るには、清めの儀式が必要なのです。……私が執り行います」[p]
-
-どう対処する？[r]
-[link target="*sister_ask"]「儀式とは何をするのか」→ 聞く[endlink][r]
-[link target="*sister_force"]「儀式は結構」→ 強引に通り抜ける[endlink][r]
-[link target="*sister_accept"]「わかりました」→ 儀式を受ける[endlink][r]
-[s]
-
-*sister_ask
-
-[nm t="シスター" color="#ddddff"]
-「……精を奉納していただきます。神への供物として」[l]
-
-[nm t="シスター" color="#ddddff"]
-「女神の加護を受けた勇者様の精は……この上ない供物になります」[p]
-
+4階居住棟。礼拝堂のような部屋。蝋燭の光の中、シスターが祈りを捧げている。[p]
+[nm t="シスター"]
+「……神よ。この罪人にお慈悲を。——勇者よ、贖罪の時です」[p]
+*sister_c1_prompt
 どうする？[r]
-[link target="*sister_accept"]「……わかった、受けよう」[endlink][r]
-[link target="*sister_force"]「信仰は違っても、神への供物は断る」[endlink][r]
+[link target="*sister_c1_safe"]シスターの「贖罪」の意図を警戒する[endlink][r]
+[link target="*sister_c1_wrong"]シスターの言葉に耳を傾ける[endlink][r]
 [s]
-
-*sister_force
-
+*sister_c1_safe
 [nm t="ナレーション"]
-強引に礼拝堂を通り抜けようとした。[l]
-
+警戒して距離を保った。シスターが困った顔をした。[p]
+[jump target="*sister_c2_prompt"]
+*sister_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-シスターが呪文を唱え始める——しかし女神の加護が呪いを弾いた。[p]
-
-[nm t="シスター" color="#ddddff"]
-「……さすが、女神の勇者様」[l]
-
+言葉に引き込まれた隙に、聖水を振りかけられた。[p]
+[nm t="シスター"]
+「清めの儀式です。動かないで」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*sister_h_dispatch"][endif]
 [nm t="ナレーション"]
-シスターが静かに道を開ける。[p]
-
-[eval exp="f.resist_count=f.resist_count+1"]
-[jump target="*sister_clear"]
-
-*sister_accept
-
-[eval exp="f.surrender_count=f.surrender_count+1"]
-
-[nm t="シスター" color="#ddddff"]
-「では……神のお名前のもとに、儀式を始めます」[p]
-
-; ====【Hシーン：シスター・儀式的搾精】====
-; [cutin storage="event/sister_h01.jpg"]
-
-[nm t="シスター" color="#ddddff"]
-「……祈りの中で行います。お声は出しても構いません。神は全てをお聞きになっています」[p]
-
+かろうじて脱する。[p]
+[jump target="*sister_c2_prompt"]
+*sister_c2_prompt
+どうする？[r]
+[link target="*sister_c2_safe"]聖水の効果に抗う[endlink][r]
+[link target="*sister_c2_wrong"]聖水の心地よさに驚く[endlink][r]
+[s]
+*sister_c2_safe
 [nm t="ナレーション"]
-蝋燭の灯り。静寂。シスターが目を閉じ、低く祈りを唱え始めた。[p]
-
+精神力で抗った。シスターが驚いた。[p]
+[jump target="*sister_c3_prompt"]
+*sister_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-その手が、祈りの言葉と共に触れてくる。神聖な場所で、神聖な行為として捧げられる——なのに、身体は確かに反応していた。[p]
-
-[nm t="シスター" color="#ddddff"]
-「……緊張しなくて大丈夫です。これは神への奉仕。あなたは何も恥じることはない」[l]
-
-[nm t="勇者" color="#aaddff"]
-「……いや、でも……」[l]
-
-[nm t="シスター" color="#ddddff"]
-「神の御名のもとに、全てを受け入れなさい」[p]
-
+聖水が肌に触れると、不思議と全身が敏感になった。[p]
+[nm t="シスター"]
+「身体が清められると、感覚が開かれるのです」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*sister_h_dispatch"][endif]
 [nm t="ナレーション"]
-静かな声で命じられると、抗えなかった。礼拝堂の神聖な空気と、シスターの慈しむような手つき——相反する要素が混ざり合い、独特の陶酔感が生まれる。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……っ……すみません……」[l]
-
-[nm t="シスター" color="#ddddff"]
-「謝らないで。これが神の御意志です……」[p]
-
+かろうじて脱する。[p]
+[jump target="*sister_c3_prompt"]
+*sister_c3_prompt
+どうする？[r]
+[link target="*sister_c3_safe"]シスターの誘導を断る[endlink][r]
+[link target="*sister_c3_wrong"]祈りに引き込まれてしまう[endlink][r]
+[s]
+*sister_c3_safe
 [nm t="ナレーション"]
-祈りの言葉が続く中、勇者は静かに限界を迎えた。[p]
-; ==========================================
-
-[nm t="シスター" color="#ddddff"]
-「……供物、確かに受け取りました。道をお通りください」[l]
-
-[nm t="シスター" color="#ddddff"]
-「……どうか、ご無事で」[p]
-
+きっぱり断った。シスターが悲しそうに目を伏せた。[p]
+[jump target="*sister_c4_prompt"]
+*sister_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
+[nm t="ナレーション"]
+祈りの言葉に引き込まれ、意識が朦朧としてきた。[p]
+[nm t="シスター"]
+「……神の御声が聞こえるでしょう？」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*sister_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*sister_c4_prompt"]
+*sister_c4_prompt
+どうする？[r]
+[link target="*sister_c4_safe"]加護の力でシスターの魔法を防ぐ[endlink][r]
+[link target="*sister_c4_wrong"]シスターの手を取ってしまう[endlink][r]
+[s]
+*sister_c4_safe
+[nm t="ナレーション"]
+加護がシスターの術を弾いた。[p]
+[jump target="*sister_c5_prompt"]
+*sister_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
+[nm t="ナレーション"]
+手を取った瞬間、温かい感覚が全身に流れた。[p]
+[nm t="シスター"]
+「繋がりました。もう離せません」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*sister_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*sister_c5_prompt"]
+*sister_c5_prompt
+どうする？[r]
+[link target="*sister_c5_safe"]礼拝堂から逃げ出す[endlink][r]
+[link target="*sister_c5_wrong"]跪いてしまう[endlink][r]
+[s]
+*sister_c5_safe
+[nm t="ナレーション"]
+素早く扉へ走った。シスターが慌てて追った。[p]
+[jump target="*sister_win"]
+*sister_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+跪いた瞬間、シスターが覆いかぶさってきた。[p]
+[nm t="シスター"]
+「跪いてくれましたね。では——お清めを続けましょう」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*sister_h_dispatch"][endif]
+[jump target="*sister_h_dispatch"]
+*sister_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*sister_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*sister_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*sister_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*sister_h4"][endif]
+[jump target="*sister_h5"]
+*sister_h1
+[eval exp="f.scene_sister_h1=1"]
+[nm t="ナレーション"]
+祭壇の前で拘束された。シスターが聖典を読みながら近づいてくる。「贖罪は痛みではなく、身体の奉納によって行われます」穏やかな声で言いながら、丁寧に、信仰の名の下に。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-*sister_clear
-
+[nm t="ナレーション"]
+やがてシスターは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*sister_h2
+[eval exp="f.scene_sister_h2=1"]
+[nm t="ナレーション"]
+聖水で感度が上がった身体をシスターに委ねた。「清められた身体は、より敏感になります。これも神の御心」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてシスターは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*sister_h3
+[eval exp="f.scene_sister_h3=1"]
+[nm t="ナレーション"]
+祈りの言葉の中で意識が遠くなる。シスターの手が全身を這い回る感覚だけが鮮明だ。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてシスターは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*sister_h4
+[eval exp="f.scene_sister_h4=1"]
+[nm t="ナレーション"]
+シスターの手を取ったまま、床に引き倒された。「罪を清めましょう。ゆっくり、丁寧に」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてシスターは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*sister_h5
+[eval exp="f.scene_sister_h5=1"]
+[nm t="ナレーション"]
+跪いた勇者に、シスターが優しく覆いかぶさった。「良い信者ですね。神は喜んでおられます」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてシスターは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*sister_win
 [eval exp="f.f4_sister=1"]
 [nm t="ナレーション"]
-——礼拝堂を通り抜けた。[p]
-
-[fadeout time="800" color="0x000000"]
+シスターが深々と一礼した。「お清めが済みました。お行きなさい」[p]
+[fadeout time="800" color="0x000000"][wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_4f"]

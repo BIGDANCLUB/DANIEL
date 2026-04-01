@@ -1,175 +1,166 @@
-;==========================================================
-; chap2_sr_succubus.ks - 5F「上級サキュバス」ボス
-; ※クリア必須エンカウント
-;==========================================================
+;=== chap2_sr_succubus.ks - 上級サキュバス ===
 *sr_succubus_start
-
-; [bg storage="bg_top_floor_boss.jpg" time="800"]
-; [bgm storage="bgm_miniboss.ogg" loop=true]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
-[nm t="女神" color="#ffffaa"]
-「……強い魔力を感じる。気をつけて」[p]
-
 [nm t="ナレーション"]
-5Fの扉を開けると——豪華な部屋に、一人の女性が待っていた。[l]
-
+5階最上フロア。魔力が濃く漂う。広い部屋の中央、圧倒的な存在感を持つサキュバスが待っていた。[p]
 [nm t="ナレーション"]
-通常のサキュバスとは纏う魔力が違う。格が上——上級サキュバスだ。[p]
-
-; [chara_show name="sr_succubus" storage="chara/sr_succubus_normal.png" pos="center" time="600"]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「……よく来たわね、勇者。私がここの門番よ」[l]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「サキュバス族の中でも上位に位置する私が相手よ。覚悟はいい？」[p]
-
-[nm t="勇者" color="#aaddff"]
-「……通してもらう」[l]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「フフ……強がりね。でも、嫌いじゃない」[l]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「条件を提示するわ。私を満足させることができれば、通してあげる」[l]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「拒否するなら……力ずくよ」[p]
-
-どう対処する？[r]
-[link target="*sr_battle"]「力ずくで突破する」→ 戦う[endlink][r]
-[link target="*sr_negotiate"]「……条件を聞こう」→ 交渉[endlink][r]
+普通のサキュバスとは格が違う——上級サキュバス。その瞳が勇者を品定めするように見つめる。[p]
+[nm t="上級サキュバス"]
+「……来たのね、勇者。この私の前まで。それだけでも賞賛に値するわ。でも——ここから先には進ませない」[p]
+*sr_succubus_c1_prompt
+どうする？[r]
+[link target="*sr_succubus_c1_safe"]上級サキュバスの魔力に抗って正気を保つ[endlink][r]
+[link target="*sr_succubus_c1_wrong"]上級サキュバスの美しさに圧倒される[endlink][r]
 [s]
-
-;==========================================================
-; 戦闘ルート
-;==========================================================
-*sr_battle
-
+*sr_succubus_c1_safe
 [nm t="ナレーション"]
-上級サキュバスの魅了魔法が炸裂した。通常のサキュバスの比ではない。[l]
-
+強い意志で魔力を押しのけた。上級サキュバスが驚いた顔をした。[p]
+[jump target="*sr_succubus_c2_prompt"]
+*sr_succubus_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-全身に甘い痺れが走る——しかし女神の加護が後押しする。[p]
-
-[nm t="女神" color="#ffffaa"]
-「……全力で守る！」[l]
-
+美しさに見惚れた瞬間、精神に直接魅了の魔法が流れ込んできた。[p]
+[nm t="上級サキュバス"]
+「……見惚れた。人間は正直ね」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*sr_succubus_h_dispatch"][endif]
 [nm t="ナレーション"]
-激しい攻防の末——[p]
-
-; 搾精総数が多いと苦戦
-[if exp="f.squeeze_total>=8"]
-  [jump target="*sr_battle_hard"]
-[else]
-  [jump target="*sr_battle_win"]
-[endif]
-
-*sr_battle_win
-
+かろうじて脱する。[p]
+[jump target="*sr_succubus_c2_prompt"]
+*sr_succubus_c2_prompt
+どうする？[r]
+[link target="*sr_succubus_c2_safe"]夢と現実の境界を保つ[endlink][r]
+[link target="*sr_succubus_c2_wrong"]夢幻魔法に引き込まれる[endlink][r]
+[s]
+*sr_succubus_c2_safe
 [nm t="ナレーション"]
-女神の加護を全開にした一撃が、上級サキュバスを打ち抜いた。[p]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「……ッ！ 本当に勇者ね」[l]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「……わかった、約束通り通してあげる。でも——」[l]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「せめて、私のこれだけ受け取って」[p]
-
-[jump target="*sr_h_scene"]
-
-*sr_battle_hard
-
+女神の加護を盾に夢幻魔法を弾いた。[p]
+[jump target="*sr_succubus_c3_prompt"]
+*sr_succubus_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-疲弊した身体では魅了に抗いきれない——意識が遠のいていく。[p]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「……思ったより消耗しているのね。仕方ない、特別に楽にしてあげる」[p]
-
-[jump target="*sr_h_scene"]
-
-;==========================================================
-; 交渉ルート
-;==========================================================
-*sr_negotiate
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「条件は一つ。私に、あなたの全力を一度見せて」[l]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「戦いでも……別の意味でも、ね」[p]
-
-[eval exp="f.surrender_count=f.surrender_count+1"]
-
-;==========================================================
-; Hシーン（共通）
-;==========================================================
-*sr_h_scene
-
-; ====【Hシーン：上級サキュバス・上位搾精】====
-; [cutin storage="event/sr_succubus_h01.jpg"]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「……では、始めましょうか。覚悟はいい？」[p]
-
+夢の中に引き込まれかけた——美しい夢。[p]
+[nm t="上級サキュバス"]
+「……もっと深く来て。夢の中は心地よいでしょう？」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*sr_succubus_h_dispatch"][endif]
 [nm t="ナレーション"]
-上級サキュバスの魅了は、通常のものと次元が違った。[l]
-
+かろうじて脱する。[p]
+[jump target="*sr_succubus_c3_prompt"]
+*sr_succubus_c3_prompt
+どうする？[r]
+[link target="*sr_succubus_c3_safe"]上級サキュバスの言葉を信じない[endlink][r]
+[link target="*sr_succubus_c3_wrong"]上級サキュバスの提案を聞いてしまう[endlink][r]
+[s]
+*sr_succubus_c3_safe
 [nm t="ナレーション"]
-触れられた瞬間、全身の感覚が数倍に増幅される。指先一本でも、全身に電流が走るような快感。[p]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「……想像以上ね。女神の加護の精、こんなに濃いとは」[l]
-
+言葉の罠を見抜いて応じなかった。[p]
+[jump target="*sr_succubus_c4_prompt"]
+*sr_succubus_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
 [nm t="ナレーション"]
-彼女は慌てない。サキュバスとしての矜持から、じっくりと——相手が限界を超えるギリギリまで追い詰め、そこで止める。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……っ……もう……！」[l]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「まだよ。私が許すまで、達してはダメ」[p]
-
+提案に耳を傾けた途端、魔法陣に踏み込んでいた。[p]
+[nm t="上級サキュバス"]
+「……踏み込んだ。契約成立よ」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*sr_succubus_h_dispatch"][endif]
 [nm t="ナレーション"]
-命令に、身体が従おうとする——しかし上限はある。[l]
-
+かろうじて脱する。[p]
+[jump target="*sr_succubus_c4_prompt"]
+*sr_succubus_c4_prompt
+どうする？[r]
+[link target="*sr_succubus_c4_safe"]魔力を加護で中和する[endlink][r]
+[link target="*sr_succubus_c4_wrong"]魔力の快感に溺れる[endlink][r]
+[s]
+*sr_succubus_c4_safe
 [nm t="ナレーション"]
-上級サキュバスは何度もその限界の直前で止め、また積み上げ——を繰り返した。[p]
-
-; [cutin storage="event/sr_succubus_h02.jpg"]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「……いいわ。今度こそ——全部、頂戴」[p]
-
+加護の光が上級サキュバスの魔力を中和した。[p]
+[jump target="*sr_succubus_c5_prompt"]
+*sr_succubus_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
 [nm t="ナレーション"]
-解放の瞬間、意識が一瞬白く飛んだ。[l]
-
+魔力の快感が全身に広がり、抵抗する気が失われていく。[p]
+[nm t="上級サキュバス"]
+「……気持ちいいでしょう？これが上級の魔力よ」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*sr_succubus_h_dispatch"][endif]
 [nm t="ナレーション"]
-上級サキュバスが目を閉じ、ゆっくりと深呼吸する。その表情に、初めて満足の色が浮かんだ。[p]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「……素晴らしかったわ。久しぶりに本気になった」[p]
-; ================================================
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「……素晴らしかった。女神の加護の精、格が違うわ」[l]
-
-[nm t="上級サキュバス" color="#ff44aa"]
-「……約束よ。玉座への扉は開けておく。行きなさい」[p]
-
+かろうじて脱する。[p]
+[jump target="*sr_succubus_c5_prompt"]
+*sr_succubus_c5_prompt
+どうする？[r]
+[link target="*sr_succubus_c5_safe"]加護を全力解放で決着をつける[endlink][r]
+[link target="*sr_succubus_c5_wrong"]快感の中で意識が溶ける[endlink][r]
+[s]
+*sr_succubus_c5_safe
+[nm t="ナレーション"]
+全力の加護解放で上級サキュバスを圧倒した。[p]
+[jump target="*sr_succubus_win"]
+*sr_succubus_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+意識が溶ける中、上級サキュバスに抱きとめられた。[p]
+[nm t="上級サキュバス"]
+「……落ちた。では——ゆっくり味わわせてもらうわ」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*sr_succubus_h_dispatch"][endif]
+[jump target="*sr_succubus_h_dispatch"]
+*sr_succubus_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*sr_succubus_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*sr_succubus_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*sr_succubus_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*sr_succubus_h4"][endif]
+[jump target="*sr_succubus_h5"]
+*sr_succubus_h1
+[eval exp="f.scene_sr_succubus_h1=1"]
+[nm t="ナレーション"]
+上級サキュバスの翼に包まれた。普通のサキュバスとは比べ物にならない魔力が全身を貫く。「あなたは特別に時間をかけて味わうわ」格の違う技術で、全身を支配されていく。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-[eval exp="f.f5_sr_succubus=1"]
-
 [nm t="ナレーション"]
-——上級サキュバスを突破した。玉座への道が開いた。[p]
-
-[fadeout time="1500" color="0x000000"]
-[wait time=500]
-
-[jump storage="chap2_explore.ks" target="*floor_select"]
+やがて上級サキュバスは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_5f"]
+*sr_succubus_h2
+[eval exp="f.scene_sr_succubus_h2=1"]
+[nm t="ナレーション"]
+夢幻魔法の中、現実か夢か判断できない状態で翻弄された。「夢の中でも、搾られる感覚は本物よ」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて上級サキュバスは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_5f"]
+*sr_succubus_h3
+[eval exp="f.scene_sr_succubus_h3=1"]
+[nm t="ナレーション"]
+魔法陣の中で身動きが取れない。上級サキュバスが優雅に近づいてくる。「契約通り、全てもらうわ」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて上級サキュバスは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_5f"]
+*sr_succubus_h4
+[eval exp="f.scene_sr_succubus_h4=1"]
+[nm t="ナレーション"]
+魔力の快感に溺れたまま、上級サキュバスに全身を委ねた。「素直ね。その方が気持ちいいでしょう？」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて上級サキュバスは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_5f"]
+*sr_succubus_h5
+[eval exp="f.scene_sr_succubus_h5=1"]
+[nm t="ナレーション"]
+意識が溶ける中、上級サキュバスは何時間もかけてじっくりと、全てを余すことなく搾り取っていった。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて上級サキュバスは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_5f"]
+*sr_succubus_win
+[eval exp="f.f5_sr_succubus=1"]
+[nm t="ナレーション"]
+上級サキュバスが深々と一礼した。「……認める。先へ行きなさい」翼を畳んで道を開けた。[p]
+[fadeout time="800" color="0x000000"][wait time=300]
+[jump storage="chap2_explore.ks" target="*hub_5f"]

@@ -1,115 +1,166 @@
-;==========================================================
-; chap2_harpy.ks - 2F「ハーピー」
-;==========================================================
+;=== chap2_harpy.ks - ハーピー ===
 *harpy_start
-
-; [bg storage="bg_upper_corridor_sky.jpg" time="500"]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-吹き抜けになった廊下の上空から、甲高い鳴き声が聞こえた。[l]
-
+2階の吹き抜け。羽音が聞こえたと思ったら、天井から急降下してきた。[p]
 [nm t="ナレーション"]
-翼を広げた女性が急降下してくる——ハーピーだ。[p]
-
-; [chara_show name="harpy" storage="chara/harpy_normal.png" pos="center" time="300"]
-
-[nm t="ハーピー" color="#ffdd88"]
-「キャー！ 珍しい！ 勇者？」[l]
-
-[nm t="ハーピー" color="#ffdd88"]
-「匂い嗅がせて！ いい匂い！ 欲しい！ 欲しい！」[p]
-
-[nm t="ナレーション"]
-興奮気味のハーピーが旋回しながら迫ってくる。[p]
-
-どう対処する？[r]
-[link target="*harpy_light"]上空へ向けて女神の光を放つ[endlink][r]
-[link target="*harpy_lure"]食べ物を囮にして誘導する[endlink][r]
-[link target="*harpy_captured"]（翼で押さえ込まれた）[endlink][r]
+ハーピー——鳥の翼と脚を持つ女性型魔物。[p]
+[nm t="ハーピー"]
+「きゃあっ！えさ、えさ！勇者のにおい！」[p]
+*harpy_c1_prompt
+どうする？[r]
+[link target="*harpy_c1_safe"]盾で急降下を防ぐ[endlink][r]
+[link target="*harpy_c1_wrong"]急降下を避けようとして転ぶ[endlink][r]
 [s]
-
-*harpy_light
-
+*harpy_c1_safe
 [nm t="ナレーション"]
-上空へ向けて女神の光を収束——ハーピーが光を嫌がり上昇した！[l]
-
+盾で急降下を受け止めた。衝撃は大きいが体勢を保てた。[p]
+[jump target="*harpy_c2_prompt"]
+*harpy_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-その隙に廊下を駆け抜けた。[p]
-
-[eval exp="f.resist_count=f.resist_count+1"]
-[jump target="*harpy_clear"]
-
-*harpy_lure
-
+避けようとして転倒。ハーピーが上から覆いかぶさってきた。[p]
+[nm t="ハーピー"]
+「つかまえた！えさ！えさ！」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*harpy_h_dispatch"][endif]
 [nm t="ナレーション"]
-ポーチの中の携帯食を取り出し、廊下の反対方向に投げた。[l]
-
-[nm t="ハーピー" color="#ffdd88"]
-「食べ物！」[l]
-
+かろうじて脱する。[p]
+[jump target="*harpy_c2_prompt"]
+*harpy_c2_prompt
+どうする？[r]
+[link target="*harpy_c2_safe"]翼の動きを読んで次の攻撃に備える[endlink][r]
+[link target="*harpy_c2_wrong"]ハーピーの羽毛に触れてしまう[endlink][r]
+[s]
+*harpy_c2_safe
 [nm t="ナレーション"]
-ハーピーが食べ物に飛びついた隙に通り過ぎた。[p]
-
-[eval exp="f.resist_count=f.resist_count+1"]
-[jump target="*harpy_clear"]
-
-*harpy_captured
-
+翼の動きを読んで回避できた。[p]
+[jump target="*harpy_c3_prompt"]
+*harpy_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-翼が両腕を押さえつけた。驚くほど力が強い。[p]
-
-[nm t="ハーピー" color="#ffdd88"]
-「捕まえた！ やったー！ 絶対離さない！」[p]
-
-; ====【Hシーン：ハーピー・強引搾精】====
-; [cutin storage="event/harpy_h01.jpg"]
-
-[nm t="ハーピー" color="#ffdd88"]
-「やった！ 捕まえた！ これが勇者の匂いね！ すごい！」[p]
-
+羽毛に触れた瞬間、くすぐったい感触と共に絡め取られた。[p]
+[nm t="ハーピー"]
+「ふわふわ、気持ちいい？わたしもきもちいい！」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*harpy_h_dispatch"][endif]
 [nm t="ナレーション"]
-ハーピーの興奮は本物だった。翼で両腕を押さえつけたまま、羽毛の柔らかさで全身を包み込んでくる。[p]
-
+かろうじて脱する。[p]
+[jump target="*harpy_c3_prompt"]
+*harpy_c3_prompt
+どうする？[r]
+[link target="*harpy_c3_safe"]加護の光でハーピーを牽制する[endlink][r]
+[link target="*harpy_c3_wrong"]ハーピーの歌に聞き惚れる[endlink][r]
+[s]
+*harpy_c3_safe
 [nm t="ナレーション"]
-翼の羽毛は驚くほど細かく、素肌に触れるとくすぐったいのか気持ちいいのか判断がつかない感触をもたらした。[p]
-
-[nm t="ハーピー" color="#ffdd88"]
-「なんでもっと早く来てくれなかったの！ ずっと待ってたのに！」[l]
-
-[nm t="勇者" color="#aaddff"]
-「待ってたって……今日初めて会ったろう」[l]
-
-[nm t="ハーピー" color="#ffdd88"]
-「細かいことはいい！ それよりここが一番いい匂い！ もっとくれ！」[p]
-
+光でハーピーが怯んだ。高い場所への移動を諦めた。[p]
+[jump target="*harpy_c4_prompt"]
+*harpy_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
 [nm t="ナレーション"]
-無邪気で、悪意がない。それがかえって、抵抗の気持ちを萎えさせた。[l]
-
+ハーピーの鳴き声が不思議と心地よく、足が止まってしまった。[p]
+[nm t="ハーピー"]
+「すきでしょ？わたしのうた。もっときかせてあげる！」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*harpy_h_dispatch"][endif]
 [nm t="ナレーション"]
-ハーピーは無我夢中で——しかしその本能的な動きは、的確に急所を外さなかった。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……っ、ちょっ……待って……！」[l]
-
-[nm t="ハーピー" color="#ffdd88"]
-「待たない！ もうちょっと！ もうちょっとだから！」[p]
-
+かろうじて脱する。[p]
+[jump target="*harpy_c4_prompt"]
+*harpy_c4_prompt
+どうする？[r]
+[link target="*harpy_c4_safe"]巣への誘導を断固として断る[endlink][r]
+[link target="*harpy_c4_wrong"]ハーピーの誘導に従って進む[endlink][r]
+[s]
+*harpy_c4_safe
 [nm t="ナレーション"]
-まくし立てられながら、あっという間に限界を迎えた。[p]
-; ==========================================
-
+強い意志で誘導を断った。ハーピーが困った顔をした。[p]
+[jump target="*harpy_c5_prompt"]
+*harpy_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
 [nm t="ナレーション"]
-ハーピーがようやく満足して翼を緩めた。[p]
-
+ハーピーに連れられて行くと、巣の中に引き込まれていた。[p]
+[nm t="ハーピー"]
+「巣についた！ここがおうち！」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*harpy_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*harpy_c5_prompt"]
+*harpy_c5_prompt
+どうする？[r]
+[link target="*harpy_c5_safe"]一気に走り抜ける[endlink][r]
+[link target="*harpy_c5_wrong"]疲弊して動けない[endlink][r]
+[s]
+*harpy_c5_safe
+[nm t="ナレーション"]
+全速力で走り抜け、ハーピーの届かない場所へ出た。[p]
+[jump target="*harpy_win"]
+*harpy_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+力が尽きて立ち止まった瞬間、ハーピーに捕まった。[p]
+[nm t="ハーピー"]
+「もうにげられない！えさ！えさ！」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*harpy_h_dispatch"][endif]
+[jump target="*harpy_h_dispatch"]
+*harpy_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*harpy_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*harpy_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*harpy_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*harpy_h4"][endif]
+[jump target="*harpy_h5"]
+*harpy_h1
+[eval exp="f.scene_harpy_h1=1"]
+[nm t="ナレーション"]
+ハーピーが翼で包み込んだ。羽毛は柔らかく温かく、不思議と心地よい。「えさ、えさ！」ハーピーは本能のままに勇者に絡みつき、羽毛で全身を撫で回す。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-*harpy_clear
-
+[nm t="ナレーション"]
+やがてハーピーは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*harpy_h2
+[eval exp="f.scene_harpy_h2=1"]
+[nm t="ナレーション"]
+巣の中。柔らかい羽毛の上で、ハーピーが興奮した様子でのしかかってくる。「わたしの巣！わたしのえさ！」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてハーピーは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*harpy_h3
+[eval exp="f.scene_harpy_h3=1"]
+[nm t="ナレーション"]
+ハーピーの歌声が続く中、羽毛に包まれた。全身が温かく包まれ、ハーピーの本能的な動きに翻弄される。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてハーピーは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*harpy_h4
+[eval exp="f.scene_harpy_h4=1"]
+[nm t="ナレーション"]
+翼に包まれたまま宙に浮いた。高所での密着——逃げ場がない。ハーピーが無邪気に、しかし確実に目的を果たしていく。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてハーピーは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*harpy_h5
+[eval exp="f.scene_harpy_h5=1"]
+[nm t="ナレーション"]
+ハーピーは長い時間をかけて、大切な「えさ」をじっくり味わっていった。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてハーピーは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_2f"]
+*harpy_win
 [eval exp="f.f2_harpy=1"]
 [nm t="ナレーション"]
-——ハーピーを突破した。[p]
-
-[fadeout time="800" color="0x000000"]
+ハーピーが満足そうに飛び去った。先へ進む。[p]
+[fadeout time="800" color="0x000000"][wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_2f"]

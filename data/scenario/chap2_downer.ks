@@ -1,146 +1,166 @@
-;==========================================================
-; chap2_downer.ks - 4F「ダウナー女性」
-;==========================================================
+;=== chap2_downer.ks - ダウナー女性 ===
 *downer_start
-
-; [bg storage="bg_dark_room.jpg" time="500"]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-薄暗い部屋。窓から差し込む僅かな光の中、女性が壁にもたれて座っていた。[l]
-
+4階の薄暗い部屋。窓も少なく、空気が淀んでいる。[p]
 [nm t="ナレーション"]
-表情がない。ただ、こちらを見ている。[p]
-
-; [chara_show name="downer" storage="chara/downer_normal.png" pos="center" time="600"]
-
-[nm t="？？？" color="#aaaaaa"]
-「……勇者」[l]
-
-[nm t="？？？" color="#aaaaaa"]
-「ここに何しに来たの」[p]
-
-[nm t="勇者" color="#aaddff"]
-「……魔王を倒しに。通してほしい」[l]
-
-[nm t="？？？" color="#aaaaaa"]
-「……別に止めはしない。でも」[l]
-
-[nm t="？？？" color="#aaaaaa"]
-「……あなたの匂い、すごく良い。少し、分けてくれない」[p]
-
-[nm t="ナレーション"]
-感情のない声。でも——その目に、かすかな何かが灯っている。[p]
-
-どう対処する？[r]
-[link target="*downer_accept"]「……わかった」→ 同意する[endlink][r]
-[link target="*downer_pass"]「急いでいる」→ 断って通る[endlink][r]
-[link target="*downer_talk"]「あなたは何者なんだ？」→ 話を聞く[endlink][r]
+虚ろな目の女性がベッドに腰かけていた。やる気のなさそうな表情。[p]
+[nm t="ダウナー女性"]
+「……あ、勇者。どうせ通り抜けたいんでしょ。……めんどくさい」[p]
+*downer_c1_prompt
+どうする？[r]
+[link target="*downer_c1_safe"]声をかけて話しかける[endlink][r]
+[link target="*downer_c1_wrong"]無視して通り抜けようとする[endlink][r]
 [s]
-
-*downer_pass
-
-[nm t="？？？" color="#aaaaaa"]
-「……そう」[l]
-
+*downer_c1_safe
 [nm t="ナレーション"]
-女性は何も言わず、道を開けた。[p]
-
-[eval exp="f.resist_count=f.resist_count+1"]
-[jump target="*downer_clear"]
-
-*downer_talk
-
-[nm t="？？？" color="#aaaaaa"]
-「……私？ 魔王の城で働いている。それだけ」[l]
-
-[nm t="勇者" color="#aaddff"]
-「なぜここに？ 望んでここにいるのか？」[l]
-
-[nm t="？？？" color="#aaaaaa"]
-「……居場所が、ここしかなかった。外の世界は……疲れた」[p]
-
+丁寧に話しかけると、女性が少し目を開いた。[p]
+[jump target="*downer_c2_prompt"]
+*downer_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-長い沈黙。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……そうか」[l]
-
+通り抜けようとしたら、床に仕掛けられた糸で転んだ。[p]
+[nm t="ダウナー女性"]
+「……ちゃんと設置してた。えらい、わたし」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*downer_h_dispatch"][endif]
 [nm t="ナレーション"]
-それ以上は聞かなかった。[p]
-
-[nm t="？？？" color="#aaaaaa"]
-「……優しいのね、勇者」[l]
-
-[nm t="？？？" color="#aaaaaa"]
-「……さっきの話。受けてあげる」[p]
-
-[eval exp="f.surrender_count=f.surrender_count+1"]
-[jump target="*downer_accept_exec"]
-
-*downer_accept
-
-[eval exp="f.surrender_count=f.surrender_count+1"]
-
-*downer_accept_exec
-
-[nm t="？？？" color="#aaaaaa"]
-「……じゃあ、こっちに来て」[p]
-
-; ====【Hシーン：ダウナー・静かな搾精】====
-; [cutin storage="event/downer_h01.jpg"]
-
-[nm t="？？？" color="#aaaaaa"]
-「……横に、なって」[l]
-
+かろうじて脱する。[p]
+[jump target="*downer_c2_prompt"]
+*downer_c2_prompt
+どうする？[r]
+[link target="*downer_c2_safe"]女性の話をちゃんと聞く[endlink][r]
+[link target="*downer_c2_wrong"]適当に相槌を打って誤魔化す[endlink][r]
+[s]
+*downer_c2_safe
 [nm t="ナレーション"]
-命令ではなく、独り言のような言い方だった。[l]
-
+真剣に聞くと、女性の表情が少し柔らかくなった。[p]
+[jump target="*downer_c3_prompt"]
+*downer_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-隣に座った女性が、ゆっくりと手を伸ばしてくる。感情を込めない動き。しかしその手は——驚くほど丁寧だった。[p]
-
-[nm t="？？？" color="#aaaaaa"]
-「……あなた、怖くないの。私のこと」[l]
-
-[nm t="勇者" color="#aaddff"]
-「……怖くはない」[l]
-
-[nm t="？？？" color="#aaaaaa"]
-「……そう」[p]
-
+適当な返事をしたのがバレて、女性が不機嫌になった。[p]
+[nm t="ダウナー女性"]
+「……嘘つき。罰として……ここにいてもらう」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*downer_h_dispatch"][endif]
 [nm t="ナレーション"]
-それだけ言って、また沈黙。静かな部屋に、小さな音だけが響く。[l]
-
+かろうじて脱する。[p]
+[jump target="*downer_c3_prompt"]
+*downer_c3_prompt
+どうする？[r]
+[link target="*downer_c3_safe"]部屋の仕掛けに注意する[endlink][r]
+[link target="*downer_c3_wrong"]部屋の雰囲気に呑まれてしまう[endlink][r]
+[s]
+*downer_c3_safe
 [nm t="ナレーション"]
-急かすことも、煽ることも、声を荒げることもない。ただ静かに、丁寧に——[l]
-
+注意深く観察して罠を避けた。[p]
+[jump target="*downer_c4_prompt"]
+*downer_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
 [nm t="ナレーション"]
-それなのに確実に追い詰めてくる。感情がないように見えて、その手は相手のことをよく見ていた。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……っ……あの、もうすぐ……」[l]
-
-[nm t="？？？" color="#aaaaaa"]
-「……知ってる」[p]
-
+淀んだ空気に当てられ、なんとなくだるくなってきた。[p]
+[nm t="ダウナー女性"]
+「……この部屋の空気、特製なの。やる気なくなるでしょ」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*downer_h_dispatch"][endif]
 [nm t="ナレーション"]
-静寂の中で、勇者は静かに果てた。[l]
-
-[nm t="？？？" color="#aaaaaa"]
-「……ありがとう。久しぶりに、少し温かくなった」[p]
-; ==========================================
-
-[nm t="？？？" color="#aaaaaa"]
-「……ありがとう。久しぶりに、少し温かくなった」[p]
-
+かろうじて脱する。[p]
+[jump target="*downer_c4_prompt"]
+*downer_c4_prompt
+どうする？[r]
+[link target="*downer_c4_safe"]女性の感情的な言葉に動じない[endlink][r]
+[link target="*downer_c4_wrong"]女性の寂しさに共感してしまう[endlink][r]
+[s]
+*downer_c4_safe
+[nm t="ナレーション"]
+冷静に対処した。女性が少し驚いた。[p]
+[jump target="*downer_c5_prompt"]
+*downer_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
+[nm t="ナレーション"]
+共感して近づいたら、手を掴まれた。[p]
+[nm t="ダウナー女性"]
+「……離さない。ひとりはいや」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*downer_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*downer_c5_prompt"]
+*downer_c5_prompt
+どうする？[r]
+[link target="*downer_c5_safe"]加護の力で拘束から逃れる[endlink][r]
+[link target="*downer_c5_wrong"]気力を失ったまま動けない[endlink][r]
+[s]
+*downer_c5_safe
+[nm t="ナレーション"]
+加護の光で拘束を解いた。[p]
+[jump target="*downer_win"]
+*downer_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+気力が完全に失われ、その場に座り込んだ。[p]
+[nm t="ダウナー女性"]
+「……あなたも動けなくなった。いっしょにいよう」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*downer_h_dispatch"][endif]
+[jump target="*downer_h_dispatch"]
+*downer_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*downer_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*downer_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*downer_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*downer_h4"][endif]
+[jump target="*downer_h5"]
+*downer_h1
+[eval exp="f.scene_downer_h1=1"]
+[nm t="ナレーション"]
+糸に絡まったまま、女性がゆっくり近づいてきた。「……面倒だけど、あなたのがほしくなった」やる気なさそうに、でも確実に、時間をかけてじっくりと。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-*downer_clear
-
+[nm t="ナレーション"]
+やがてダウナー女性は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*downer_h2
+[eval exp="f.scene_downer_h2=1"]
+[nm t="ナレーション"]
+女性が手を離さないまま、ゆっくりと押し倒した。「……逃げないでよ。めんどくさいから」無気力そうな声で言いながら、したたかに搾り取っていく。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてダウナー女性は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*downer_h3
+[eval exp="f.scene_downer_h3=1"]
+[nm t="ナレーション"]
+淀んだ空気の中、二人とも気力が薄れた状態で絡み合った。「……別に、嫌いじゃないよ。あなたのこと」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてダウナー女性は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*downer_h4
+[eval exp="f.scene_downer_h4=1"]
+[nm t="ナレーション"]
+手を握られたまま離してもらえない。女性がゆっくりと覆いかぶさってくる。「……ひとりはいやなの」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてダウナー女性は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*downer_h5
+[eval exp="f.scene_downer_h5=1"]
+[nm t="ナレーション"]
+気力を失ったまま、女性に長時間付き合わされた。「……満足した。……ちょっとだけ元気出た」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてダウナー女性は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_4f"]
+*downer_win
 [eval exp="f.f4_downer=1"]
 [nm t="ナレーション"]
-——薄暗い部屋を通り抜けた。[p]
-
-[fadeout time="800" color="0x000000"]
+女性がため息をついた。「……行っていいよ。どうせまた来るでしょ」先へ進む。[p]
+[fadeout time="800" color="0x000000"][wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_4f"]

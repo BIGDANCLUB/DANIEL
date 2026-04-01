@@ -1,116 +1,166 @@
-;==========================================================
-; chap2_mimic.ks - B1F「ミミック」
-;==========================================================
+;=== chap2_mimic.ks - ミミック ===
 *mimic_start
-
-; [bg storage="bg_underground_storage.jpg" time="500"]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-倉庫らしき部屋に、古い宝箱が一つ置かれていた。[p]
-
-[nm t="勇者" color="#aaddff"]
-「（宝箱……中に武器か回復薬があれば）」[p]
-
-どう対処する？[r]
-[link target="*mimic_open"]宝箱を開ける[endlink][r]
-[link target="*mimic_cautious"]様子を見てから近づく[endlink][r]
-[link target="*mimic_ignore"]無視して通り過ぎる[endlink][r]
+宝物庫の一角。金貨や宝石が散らばる中、ひときわ大きな宝箱が目を引く。[p]
+[nm t="ナレーション"]
+鍵穴に淡い光が見える。どこか不自然な輝きだ。[p]
+[nm t="ミミック"]
+「……ごそごそ……おいで、おいで……」[p]
+*mimic_c1_prompt
+どうする？[r]
+[link target="*mimic_c1_safe"]周囲を調べてから宝箱を観察する[endlink][r]
+[link target="*mimic_c1_wrong"]すぐに宝箱に近づいて開けようとする[endlink][r]
 [s]
-
-*mimic_open
-
+*mimic_c1_safe
 [nm t="ナレーション"]
-宝箱に手をかけた瞬間——蓋が開き、中から舌が伸びてきた！[p]
-
-; [se storage="se_mimic_appear.ogg"]
-; [chara_show name="mimic" storage="chara/mimic_open.png" pos="center" time="300"]
-
-[nm t="ミミック" color="#cc8833"]
-「……捕まえた♪」[p]
-
-[jump target="*mimic_captured"]
-
-*mimic_cautious
-
+慎重に観察すると、宝箱の隅に微かな粘液の跡を発見した。罠だ。[p]
+[jump target="*mimic_c2_prompt"]
+*mimic_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-少し離れた場所から眺めていると——宝箱がわずかに動いた。[l]
-
-[nm t="勇者" color="#aaddff"]
-「ミミックか！」[l]
-
+近づいた瞬間、蓋が勢いよく開き触手が飛び出した。[p]
+[nm t="ミミック"]
+「……おそい。でも、きた」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*mimic_h_dispatch"][endif]
 [nm t="ナレーション"]
-身構えた瞬間、宝箱が跳び上がり、蓋が大きく開く。[p]
-
-[jump target="*mimic_captured"]
-
-*mimic_ignore
-
+かろうじて脱する。[p]
+[jump target="*mimic_c2_prompt"]
+*mimic_c2_prompt
+どうする？[r]
+[link target="*mimic_c2_safe"]加護の光で鍵穴を調べる[endlink][r]
+[link target="*mimic_c2_wrong"]鍵穴に手を入れて確かめる[endlink][r]
+[s]
+*mimic_c2_safe
 [nm t="ナレーション"]
-宝箱には近づかず、部屋の端を伝って通り過ぎようとした。[l]
-
+光を当てると粘液が滴っているのが見えた。やはり罠だ。[p]
+[jump target="*mimic_c3_prompt"]
+*mimic_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-しかし——ドスン、と宝箱が勇者の前に飛び込んできた。[p]
-
-[nm t="ミミック" color="#cc8833"]
-「……逃がさない」[p]
-
-[jump target="*mimic_captured"]
-
-*mimic_captured
-
+指先が入った途端、ぬめりとした何かが絡みついた。[p]
+[nm t="ミミック"]
+「……てを、つかまえた。もっと、こっちに」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*mimic_h_dispatch"][endif]
 [nm t="ナレーション"]
-宝箱の内側は——不思議な空間になっていた。柔らかく、温かく、粘度のある何かに包まれる。[p]
-
-[nm t="ミミック" color="#cc8833"]
-「……いいにおい。ゆっくり、食べる」[p]
-
-; ====【Hシーン：ミミック・箱内搾精】====
-; [cutin storage="event/mimic_h01.jpg"]
-
+かろうじて脱する。[p]
+[jump target="*mimic_c3_prompt"]
+*mimic_c3_prompt
+どうする？[r]
+[link target="*mimic_c3_safe"]剣で蓋を叩いて反応を見る[endlink][r]
+[link target="*mimic_c3_wrong"]蓋の隙間から中を覗き込む[endlink][r]
+[s]
+*mimic_c3_safe
 [nm t="ナレーション"]
-宝箱の内部は——外観からは想像できない広い空間だった。[l]
-
+剣で叩くと宝箱全体がびくりと震えた。やはり生き物だ。[p]
+[jump target="*mimic_c4_prompt"]
+*mimic_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
 [nm t="ナレーション"]
-壁も床も天井も、柔らかく湿った何かで覆われている。触れると吸い付くような粘着性。暗いが、ぼんやりと発光している。[p]
-
-[nm t="ミミック" color="#cc8833"]
-「……ゆっくり、食べる。逃げられない」[l]
-
+顔を近づけた瞬間、甘い香りで視界がぼやける。[p]
+[nm t="ミミック"]
+「……かおが、ちかい。いいにおい」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*mimic_h_dispatch"][endif]
 [nm t="ナレーション"]
-内壁が蠢き、無数の突起が伸びてきた。人の手のような形をしているものも混じっている。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……っ……！」[l]
-
+かろうじて脱する。[p]
+[jump target="*mimic_c4_prompt"]
+*mimic_c4_prompt
+どうする？[r]
+[link target="*mimic_c4_safe"]一気に距離を取る[endlink][r]
+[link target="*mimic_c4_wrong"]宝箱の側面を蹴る[endlink][r]
+[s]
+*mimic_c4_safe
 [nm t="ナレーション"]
-複数の"手"が同時に動いた。服を器用に脱がせ、全身をくまなく探るように撫で回す。どこへ逃げようとしても、内壁が追いかけてくる。[p]
-
-[nm t="ミミック" color="#cc8833"]
-「……いいにおい。もっと、でてきて」[l]
-
+素早く後退して触手が空振りした。[p]
+[jump target="*mimic_c5_prompt"]
+*mimic_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
 [nm t="ナレーション"]
-暗闇と密室の閉塞感。しかしミミックの"手"は意外なほど繊細で——焦らすように、じわじわと追い詰めていく。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……く……あ……っ、もう……」[l]
-
+蹴った足が粘液で固定され引き寄せられた。[p]
+[nm t="ミミック"]
+「……あし、つかまえた。もうにげられない」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*mimic_h_dispatch"][endif]
 [nm t="ナレーション"]
-抗いきれずに達した。ミミックが満足げに震えた。[p]
-; =========================================
-
+かろうじて脱する。[p]
+[jump target="*mimic_c5_prompt"]
+*mimic_c5_prompt
+どうする？[r]
+[link target="*mimic_c5_safe"]加護の光を爆発させて突破する[endlink][r]
+[link target="*mimic_c5_wrong"]触手をくぐり抜けようとする[endlink][r]
+[s]
+*mimic_c5_safe
 [nm t="ナレーション"]
-ミミックが満足すると、外へ放り出された。[p]
-
+光の爆発でミミックが怯んだ隙に走り抜けた。[p]
+[jump target="*mimic_win"]
+*mimic_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+触手を避けきれず全身に絡みつかれた。[p]
+[nm t="ミミック"]
+「……ぜんぶ、つかまえた。ゆっくり、たのしむ」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*mimic_h_dispatch"][endif]
+[jump target="*mimic_h_dispatch"]
+*mimic_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*mimic_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*mimic_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*mimic_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*mimic_h4"][endif]
+[jump target="*mimic_h5"]
+*mimic_h1
+[eval exp="f.scene_mimic_h1=1"]
+[nm t="ナレーション"]
+宝箱の中に引き込まれた。内側は広く温かく湿った空間だった。粘液がゆっくりと全身を包み込み、服を溶かすように滲み込んでくる。ミミックの意思なのか、粘液が性感帯を正確に捉えじわじわと刺激し続ける。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-*mimic_clear
-
-[eval exp="f.b1f_mimic=1"]
-
 [nm t="ナレーション"]
-——ミミックの部屋を突破した。[p]
-
-[fadeout time="800" color="0x000000"]
+やがてミミックは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_b1f"]
+*mimic_h2
+[eval exp="f.scene_mimic_h2=1"]
+[nm t="ナレーション"]
+鍵穴から入り込んだ粘液が腕を這い上がり全身へと広がっていく。ゆっくりと、じっくりと全身に回っていく。ミミックは焦らない——時間をかけて余すことなく味わうように。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてミミックは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_b1f"]
+*mimic_h3
+[eval exp="f.scene_mimic_h3=1"]
+[nm t="ナレーション"]
+甘い香りで理性が朦朧とする中、宝箱の蓋が閉まった。暗闇の中粘液が全身を包む。香りがさらに濃くなり身体の感度が増す。ミミックにとってこの状態の獲物こそ最上のご馳走だ。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてミミックは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_b1f"]
+*mimic_h4
+[eval exp="f.scene_mimic_h4=1"]
+[nm t="ナレーション"]
+足首を固定されたまま宝箱が近づいてくる。蓋が開き粘液が足首からゆっくり這い上がる——抵抗できない。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてミミックは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_b1f"]
+*mimic_h5
+[eval exp="f.scene_mimic_h5=1"]
+[nm t="ナレーション"]
+全身を触手に包まれ宝箱の内部へ引き込まれた。暗く温かい空間でミミックは時間をかけてじっくりと全てを絞り取っていく。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてミミックは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_b1f"]
+*mimic_win
+[eval exp="f.b1f_mimic=1"]
+[nm t="ナレーション"]
+宝箱が震えながら壁の隅へ這いずっていく。先へ進む。[p]
+[fadeout time="800" color="0x000000"][wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_b1f"]

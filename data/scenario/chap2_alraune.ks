@@ -1,141 +1,166 @@
-;==========================================================
-; chap2_alraune.ks - 3F「アルラウネ」
-;==========================================================
+;=== chap2_alraune.ks - アルラウネ ===
 *alraune_start
-
-; [bg storage="bg_greenhouse.jpg" time="500"]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-研究棟の一室——温室のようになっている。甘い花の香りが充満していた。[l]
-
+3階研究棟。植物の香りが強くなってきた。廊下の中央に巨大な花が咲いている。[p]
 [nm t="ナレーション"]
-部屋の中央に、大きな花が咲いている。その中から、女性の上半身が現れた——アルラウネだ。[p]
-
-; [chara_show name="alraune" storage="chara/alraune_normal.png" pos="center" time="600"]
-
-[nm t="アルラウネ" color="#ffaaff"]
-「……いらっしゃい。私の花粉で、眠くなってきたでしょう？」[l]
-
-[nm t="アルラウネ" color="#ffaaff"]
-「大丈夫。ゆっくり休んでいって。……あなたの栄養を少し分けてもらいながら」[p]
-
-どう対処する？[r]
-[link target="*alraune_rush"]息を止めて走り抜ける[endlink][r]
-[link target="*alraune_negotiate"]「花粉の解毒を教えてくれ」と交渉する[endlink][r]
-[link target="*alraune_sleep"]（花粉で意識が……）[endlink][r]
+その花の中心から、上半身だけの女性が顔を出した——アルラウネ。[p]
+[nm t="アルラウネ"]
+「……客人。花の蜜はいかが？とても……甘いわよ」[p]
+*alraune_c1_prompt
+どうする？[r]
+[link target="*alraune_c1_safe"]花粉を吸わないよう息を止めて通り抜ける[endlink][r]
+[link target="*alraune_c1_wrong"]花の美しさに引き寄せられて近づく[endlink][r]
 [s]
-
-*alraune_rush
-
+*alraune_c1_safe
 [nm t="ナレーション"]
-息を止め、一気に走り抜ける！[l]
-
+息を止めて素早く通り抜けた。花粉の影響を受けずに済んだ。[p]
+[jump target="*alraune_c2_prompt"]
+*alraune_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-花粉の中を駆け抜け、出口へ——！ 意識が朦朧とするが、なんとか抜け出た。[p]
-
-[nm t="勇者" color="#aaddff"]
-「はあ……はあ……抜けた」[l]
-
+近づいた瞬間、大量の花粉が噴き出した。[p]
+[nm t="アルラウネ"]
+「……来てくれた。もう、動けないでしょう？」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*alraune_h_dispatch"][endif]
 [nm t="ナレーション"]
-新鮮な空気を吸い込む。花粉の影響が薄れていく。[p]
-
-[eval exp="f.resist_count=f.resist_count+1"]
-[jump target="*alraune_clear"]
-
-*alraune_negotiate
-
-[nm t="勇者" color="#aaddff"]
-「……花粉の毒を消す方法を教えてくれ。その代わり、俺に何か手伝えることがあれば」[p]
-
-[nm t="アルラウネ" color="#ffaaff"]
-「……手伝う？」[l]
-
-[nm t="アルラウネ" color="#ffaaff"]
-「じゃあ……受粉の手伝いをしてほしいの。人型の雄の力が必要で」[p]
-
-; ====【Hシーン：アルラウネ・受粉搾精】====
-; [cutin storage="event/alraune_h_deal01.jpg"]
-
-[nm t="アルラウネ" color="#ffaaff"]
-「では……始めましょう。リラックスして。花粉が手伝ってくれるから」[p]
-
+かろうじて脱する。[p]
+[jump target="*alraune_c2_prompt"]
+*alraune_c2_prompt
+どうする？[r]
+[link target="*alraune_c2_safe"]加護の光で花粉を払う[endlink][r]
+[link target="*alraune_c2_wrong"]花の蜜の甘い香りに誘われる[endlink][r]
+[s]
+*alraune_c2_safe
 [nm t="ナレーション"]
-甘い香りが濃くなった。花粉が意識を柔らかくほぐす——抵抗する気力が自然と和らいでいく。[l]
-
+光が花粉を焼き払った。アルラウネが悲鳴を上げた。[p]
+[jump target="*alraune_c3_prompt"]
+*alraune_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-アルラウネの蔓が、ゆっくりと伸びてきた。細い蔓は触れるか触れないかの力で、肌の上を這い回る。[p]
-
-[nm t="アルラウネ" color="#ffaaff"]
-「……温かい。あなた、生命力が強いのね」[l]
-
+甘い香りに引き寄せられ、気づけば花弁の中に半分入っていた。[p]
+[nm t="アルラウネ"]
+「……香り、気に入ってくれた？もっと、深く来て」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*alraune_h_dispatch"][endif]
 [nm t="ナレーション"]
-花びらが広がるように、アルラウネが身体を傾けてくる。花の中心から甘い蜜が滲んでいた。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……あ……こういうの……」[l]
-
-[nm t="アルラウネ" color="#ffaaff"]
-「声を出して。その振動も、私の栄養になるから」[p]
-
+かろうじて脱する。[p]
+[jump target="*alraune_c3_prompt"]
+*alraune_c3_prompt
+どうする？[r]
+[link target="*alraune_c3_safe"]蔓の動きに注意しながら迂回する[endlink][r]
+[link target="*alraune_c3_wrong"]アルラウネと会話しようとする[endlink][r]
+[s]
+*alraune_c3_safe
 [nm t="ナレーション"]
-花粉の効果で、触れられる全てが快感に変換される。蔓が巻きつき、花弁が包み込み——[p]
-
+蔓を避けながら迂回路を見つけた。[p]
+[jump target="*alraune_c4_prompt"]
+*alraune_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
 [nm t="ナレーション"]
-やがて、アルラウネが満足そうに花を揺らした。[p]
-; ==========================================
-
-[nm t="アルラウネ" color="#ffaaff"]
-「……ありがとう。これが解毒の花粉よ」[l]
-
-[nm t="アルラウネ" color="#ffaaff"]
-「この先も安全に通れるようにしてあげる」[p]
-
+会話中に蔓が足首を捕らえていた。[p]
+[nm t="アルラウネ"]
+「……お話、ありがとう。でも逃さないわ」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*alraune_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*alraune_c4_prompt"]
+*alraune_c4_prompt
+どうする？[r]
+[link target="*alraune_c4_safe"]強引に蔓を切り払って進む[endlink][r]
+[link target="*alraune_c4_wrong"]蔓の引力に抵抗できない[endlink][r]
+[s]
+*alraune_c4_safe
+[nm t="ナレーション"]
+剣で蔓を次々と切り払い、道を作った。[p]
+[jump target="*alraune_c5_prompt"]
+*alraune_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
+[nm t="ナレーション"]
+蔓の力が強すぎて、引き寄せられてしまった。[p]
+[nm t="アルラウネ"]
+「……植物の力は侮れないでしょう？」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*alraune_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*alraune_c5_prompt"]
+*alraune_c5_prompt
+どうする？[r]
+[link target="*alraune_c5_safe"]加護の力で一気に突破する[endlink][r]
+[link target="*alraune_c5_wrong"]花粉で感覚が麻痺してきた[endlink][r]
+[s]
+*alraune_c5_safe
+[nm t="ナレーション"]
+加護の力で花粉と蔓を同時に押しのけた。[p]
+[jump target="*alraune_win"]
+*alraune_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+感覚が麻痺し、動けなくなったところを捕まった。[p]
+[nm t="アルラウネ"]
+「……もう動けない。花の中で、ゆっくり休んでいって」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*alraune_h_dispatch"][endif]
+[jump target="*alraune_h_dispatch"]
+*alraune_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*alraune_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*alraune_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*alraune_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*alraune_h4"][endif]
+[jump target="*alraune_h5"]
+*alraune_h1
+[eval exp="f.scene_alraune_h1=1"]
+[nm t="ナレーション"]
+花弁の中に引き込まれた。柔らかく温かい花の内側。甘い蜜が全身を包み、アルラウネの蔓が優しく這い回る。「……美味しそう。ゆっくりいただくわ」[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-[eval exp="f.surrender_count=f.surrender_count+1"]
-[jump target="*alraune_clear"]
-
-*alraune_sleep
-
 [nm t="ナレーション"]
-花粉が肺に入り込む。甘い匂いが頭を満たし、意識が遠くなっていく……[p]
-
-[nm t="アルラウネ" color="#ffaaff"]
-「いい子……そのまま眠って。夢を見ているみたいに気持ちよくしてあげる」[p]
-
-; ====【Hシーン：アルラウネ・睡眠搾精】====
-; [cutin storage="event/alraune_h_sleep01.jpg"]
-
+やがてアルラウネは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*alraune_h2
+[eval exp="f.scene_alraune_h2=1"]
 [nm t="ナレーション"]
-意識は夢と現実の境界を漂っていた。[l]
-
-[nm t="ナレーション"]
-花の香りの中、身体だけが正直に感じている。[l]
-
-[nm t="アルラウネ" color="#ffaaff"]
-「……いい子。夢の中で、感じていいよ」[l]
-
-[nm t="ナレーション"]
-蔓と花弁が、眠ったままの勇者を丁寧に扱う。意識がないのに——いや、だからこそ、防御が一切ない。[p]
-
-[nm t="ナレーション"]
-夢の中で、誰かに触れられているような感覚。温かく、甘く、逃げられない。[p]
-
-[nm t="ナレーション"]
-目覚めた時、自分が何をされたのかを全て理解した。[p]
-; ==========================================
-
-[nm t="ナレーション"]
-目が覚めると部屋の出口前に横たわっていた。アルラウネは根を伸ばして道を示している。[p]
-
+花粉で感覚が鋭くなった状態で蔓に捕まった。わずかな刺激でも全身が反応する。アルラウネは的確にその変化を利用していく。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-*alraune_clear
-
+[nm t="ナレーション"]
+やがてアルラウネは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*alraune_h3
+[eval exp="f.scene_alraune_h3=1"]
+[nm t="ナレーション"]
+蔓が全身を優しく縛り上げた。逃げられない、でも痛くない。甘い蜜の香りの中で、アルラウネは丁寧に、時間をかけて。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてアルラウネは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*alraune_h4
+[eval exp="f.scene_alraune_h4=1"]
+[nm t="ナレーション"]
+引き寄せられたまま花弁に包まれた。外の世界が遠ざかっていく。甘い空間の中で、アルラウネと二人きり。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてアルラウネは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*alraune_h5
+[eval exp="f.scene_alraune_h5=1"]
+[nm t="ナレーション"]
+完全に取り込まれた。花の内側は心地よく、アルラウネは長い時間をかけて全てを絞り取っていった。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてアルラウネは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*alraune_win
 [eval exp="f.f3_alraune=1"]
 [nm t="ナレーション"]
-——アルラウネの温室を突破した。[p]
-
-[fadeout time="800" color="0x000000"]
+アルラウネが花弁を閉じた。道が開いた。先へ進む。[p]
+[fadeout time="800" color="0x000000"][wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_3f"]

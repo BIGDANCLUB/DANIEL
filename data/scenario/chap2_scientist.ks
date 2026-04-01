@@ -1,128 +1,166 @@
-;==========================================================
-; chap2_scientist.ks - 3F「科学者」
-;==========================================================
+;=== chap2_scientist.ks - 科学者 ===
 *scientist_start
-
-; [bg storage="bg_laboratory.jpg" time="500"]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-研究棟の実験室。様々な機械と薬品が並んでいる。[l]
-
+3階研究棟の奥。実験器具が所狭しと並んでいる。[p]
 [nm t="ナレーション"]
-白衣の女性が顕微鏡を覗いていた——魔法と科学を組み合わせた研究者のようだ。[p]
-
-; [chara_show name="scientist" storage="chara/scientist_normal.png" pos="left" time="500"]
-
-[nm t="科学者" color="#aaffff"]
-「あら……不法侵入者ね。でも丁度いいかも」[l]
-
-[nm t="科学者" color="#aaffff"]
-「女神の加護を持つ生体サンプル——長年欲しかったの。採取させてもらうわよ」[p]
-
-[nm t="勇者" color="#aaddff"]
-「……採取？」[p]
-
-[nm t="科学者" color="#aaffff"]
-「精液よ。魔法的に非常に希少なサンプルなの。論文が書けるわ」[l]
-
-[nm t="科学者" color="#aaffff"]
-「安心して。痛くしないから。科学的に、効率よく」[p]
-
-どう対処する？[r]
-[link target="*scientist_escape"]「絶対に嫌だ」→ 逃げる[endlink][r]
-[link target="*scientist_talk"]「……研究の内容を教えてくれ」→ 話を聞く[endlink][r]
-[link target="*scientist_offer"]「（まあ、科学の発展のためなら）」→ 同意[endlink][r]
+白衣の女性科学者が振り返った。冷静な目でこちらを見ている。[p]
+[nm t="科学者"]
+「勇者のサンプルを採取できるとは。これは貴重なデータになる」[p]
+*scientist_c1_prompt
+どうする？[r]
+[link target="*scientist_c1_safe"]科学者の意図を警戒して距離を保つ[endlink][r]
+[link target="*scientist_c1_wrong"]興味本位で実験器具を触る[endlink][r]
 [s]
-
-*scientist_escape
-
+*scientist_c1_safe
 [nm t="ナレーション"]
-踵を返して走り出した。科学者が「待って！」と叫ぶが、追いつける速さではない。[l]
-
+距離を保ちながら科学者の行動を観察する。[p]
+[jump target="*scientist_c2_prompt"]
+*scientist_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-実験器具を蹴散らしながら出口へ。[p]
-
-[eval exp="f.resist_count=f.resist_count+1"]
-[jump target="*scientist_clear"]
-
-*scientist_talk
-
-[nm t="科学者" color="#aaffff"]
-「魔物と人間の身体の違いを研究しているの。共存できる社会のために」[l]
-
-[nm t="科学者" color="#aaffff"]
-「女神の加護のサンプルは、解析できればすごい発見になる。魔法医学の革命よ」[p]
-
-[nm t="勇者" color="#aaddff"]
-「……その研究が、戦争を終わらせる役に立つ？」[l]
-
-[nm t="科学者" color="#aaffff"]
-「……確実ではないけど。可能性はある」[p]
-
-[nm t="勇者" color="#aaddff"]
-「……わかった。協力する」[p]
-
-[eval exp="f.surrender_count=f.surrender_count+1"]
-[jump target="*scientist_offer_exec"]
-
-*scientist_offer
-
-[eval exp="f.surrender_count=f.surrender_count+1"]
-
-*scientist_offer_exec
-
-; ====【Hシーン：科学者・実験的搾精】====
-; [cutin storage="event/scientist_h01.jpg"]
-
-[nm t="科学者" color="#aaffff"]
-「では採取を開始します。……緊張しないで。私は専門家よ」[p]
-
+触れた途端、器具が起動して拘束装置が作動した。[p]
+[nm t="科学者"]
+「トラップです。データ収集開始します」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*scientist_h_dispatch"][endif]
 [nm t="ナレーション"]
-科学者が手順書を確認するように手元を見る。それから勇者を向いて、白衣のポケットから手袋を取り出した。[p]
-
-[nm t="科学者" color="#aaffff"]
-「まず全体的な反応を確認して……それから部位ごとに——」[l]
-
-[nm t="勇者" color="#aaddff"]
-「……実況しながらやるの？」[l]
-
-[nm t="科学者" color="#aaffff"]
-「記録が大事なの。……あ、でも、あなたが嫌なら口頭はやめるわ」[l]
-
-[nm t="科学者" color="#aaffff"]
-「代わりに、自分で感じることに集中してちょうだい」[p]
-
+かろうじて脱する。[p]
+[jump target="*scientist_c2_prompt"]
+*scientist_c2_prompt
+どうする？[r]
+[link target="*scientist_c2_safe"]申し出た実験を断固として断る[endlink][r]
+[link target="*scientist_c2_wrong"]実験の詳細を聞いてみる[endlink][r]
+[s]
+*scientist_c2_safe
 [nm t="ナレーション"]
-白衣の袖をまくり上げ、科学者が作業を始めた。[l]
-
+断固として断った。科学者は少し残念そうだ。[p]
+[jump target="*scientist_c3_prompt"]
+*scientist_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-医学的な知識に裏打ちされた手技は——予想外に巧みだった。身体のどこに神経が集中しているかを知り尽くしている。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……これ、科学的じゃないだろ……」[l]
-
-[nm t="科学者" color="#aaffff"]
-「何でもやってみなければわからないのが科学よ。……さあ、もう少し」[p]
-
+詳細を聞いている間に、ガスが充満してきた。[p]
+[nm t="科学者"]
+「説明中に気体麻酔を投与しました。効率的でしょう？」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*scientist_h_dispatch"][endif]
 [nm t="ナレーション"]
-論文を書く手と同じ手で、科学者は勇者を丁寧に、確実に追い詰めた。[p]
-; ==========================================
-
-[nm t="科学者" color="#aaffff"]
-「……データ取得完了。ありがとう、最高のサンプルだったわ」[l]
-
-[nm t="科学者" color="#aaffff"]
-「お礼に、この通行証を持っていって。研究棟内は自由に動けるようになるわ」[p]
-
+かろうじて脱する。[p]
+[jump target="*scientist_c3_prompt"]
+*scientist_c3_prompt
+どうする？[r]
+[link target="*scientist_c3_safe"]ガスを感知して息を止める[endlink][r]
+[link target="*scientist_c3_wrong"]ガスの影響で意識が朦朧とする[endlink][r]
+[s]
+*scientist_c3_safe
+[nm t="ナレーション"]
+素早く布で口を覆い、ガスの影響を最小限にした。[p]
+[jump target="*scientist_c4_prompt"]
+*scientist_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
+[nm t="ナレーション"]
+ガスで視界がぼやけてきた。膝が震える。[p]
+[nm t="科学者"]
+「麻酔は身体に残ります。もうすぐ動けなくなります」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*scientist_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*scientist_c4_prompt"]
+*scientist_c4_prompt
+どうする？[r]
+[link target="*scientist_c4_safe"]加護でガスを無効化する[endlink][r]
+[link target="*scientist_c4_wrong"]测定器に近づいてしまう[endlink][r]
+[s]
+*scientist_c4_safe
+[nm t="ナレーション"]
+加護の光がガスを中和した。科学者が驚いた。[p]
+[jump target="*scientist_c5_prompt"]
+*scientist_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
+[nm t="ナレーション"]
+測定器に捕まり、拘束ベルトが自動で巻きついた。[p]
+[nm t="科学者"]
+「よく来てくれました。測定開始します」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*scientist_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*scientist_c5_prompt"]
+*scientist_c5_prompt
+どうする？[r]
+[link target="*scientist_c5_safe"]一気に脱出を図る[endlink][r]
+[link target="*scientist_c5_wrong"]拘束された状態で抵抗する[endlink][r]
+[s]
+*scientist_c5_safe
+[nm t="ナレーション"]
+全力で走り抜けて実験室を脱出した。[p]
+[jump target="*scientist_win"]
+*scientist_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+拘束を解こうとするが、科学者に押さえられた。[p]
+[nm t="科学者"]
+「逃がしません。サンプル採取が完了するまでは」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*scientist_h_dispatch"][endif]
+[jump target="*scientist_h_dispatch"]
+*scientist_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*scientist_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*scientist_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*scientist_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*scientist_h4"][endif]
+[jump target="*scientist_h5"]
+*scientist_h1
+[eval exp="f.scene_scientist_h1=1"]
+[nm t="ナレーション"]
+拘束台に固定された。科学者が白手袋をつけながら近づいてくる。「では、採取を始めます。苦痛は最小限にします」科学的に、淡々と、しかし確実に採取していく。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-*scientist_clear
-
+[nm t="ナレーション"]
+やがて科学者は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*scientist_h2
+[eval exp="f.scene_scientist_h2=1"]
+[nm t="ナレーション"]
+ガスで感覚が鋭くなった状態で拘束された。科学者が測定しながら刺激を加えていく。「数値が上がっています。面白いデータです」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて科学者は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*scientist_h3
+[eval exp="f.scene_scientist_h3=1"]
+[nm t="ナレーション"]
+測定器が全身のデータを取り続ける中、科学者の「実験」が始まった。「反応を記録します」感情のない声で言いながら、効率よく搾り取っていく。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて科学者は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*scientist_h4
+[eval exp="f.scene_scientist_h4=1"]
+[nm t="ナレーション"]
+拘束ベルトで動けない。科学者が観察しながら丁寧に進めていく。「良いサンプルが取れそうです」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて科学者は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*scientist_h5
+[eval exp="f.scene_scientist_h5=1"]
+[nm t="ナレーション"]
+科学者は長時間にわたってデータを収集した。「豊富なサンプルが取れました。ありがとうございます」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて科学者は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*scientist_win
 [eval exp="f.f3_scientist=1"]
 [nm t="ナレーション"]
-——科学者の実験室を突破した。[p]
-
-[fadeout time="800" color="0x000000"]
+科学者がデータを記録している隙に脱出した。[p]
+[fadeout time="800" color="0x000000"][wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_3f"]

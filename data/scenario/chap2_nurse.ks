@@ -1,129 +1,166 @@
-;==========================================================
-; chap2_nurse.ks - 3F「ナース」
-;==========================================================
+;=== chap2_nurse.ks - ナース ===
 *nurse_start
-
-; [bg storage="bg_infirmary.jpg" time="500"]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-魔王城の医務室らしき部屋。白い内装に医療器具が整然と並んでいる。[l]
-
+研究棟の一角に白い部屋。医療用ベッドと器具が並んでいる。[p]
 [nm t="ナレーション"]
-白衣に看護帽の女性が、こちらを振り向いた。[p]
-
-; [chara_show name="nurse" storage="chara/nurse_normal.png" pos="right" time="500"]
-
-[nm t="ナース" color="#ffffff"]
-「あら——怪我をしているの？ ここは医務室よ」[l]
-
-[nm t="ナース" color="#ffffff"]
-「座って。診てあげる」[p]
-
-[nm t="勇者" color="#aaddff"]
-「（罠かもしれないが……確かに疲弊している）」[p]
-
-どう対処する？[r]
-[link target="*nurse_accept"]「ありがとう」→ 診てもらう[endlink][r]
-[link target="*nurse_refuse"]「大丈夫だ」→ 断って通る[endlink][r]
-[link target="*nurse_rest"]「……少し休ませてほしい」[endlink][r]
+白衣のナースが微笑みながら近づいてきた。[p]
+[nm t="ナース"]
+「あら、怪我してる？診てあげましょうか♪」[p]
+*nurse_c1_prompt
+どうする？[r]
+[link target="*nurse_c1_safe"]怪我していないと断る[endlink][r]
+[link target="*nurse_c1_wrong"]怪我を診てもらう[endlink][r]
 [s]
-
-*nurse_refuse
-
-[nm t="ナース" color="#ffffff"]
-「そう……でも、顔色が悪いわよ」[l]
-
+*nurse_c1_safe
 [nm t="ナレーション"]
-ナースが道を開けた。通り過ぎようとした——その時、注射器が光った。[p]
-
-[nm t="ナース" color="#ffffff"]
-「ちょっとだけ、採血させてもらうわね」[p]
-
-[jump target="*nurse_captured"]
-
-*nurse_rest
-
-[nm t="ナース" color="#ffffff"]
-「ベッドで休んで。私が様子を見ているから」[p]
-
+きっぱり断った。ナースが少し悲しそうな顔をした。[p]
+[jump target="*nurse_c2_prompt"]
+*nurse_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-ベッドに横になった。疲れが出て、すぐに眠くなってくる。[l]
-
+診察台に座った途端、腕を拘束された。[p]
+[nm t="ナース"]
+「動かないでください。治療中ですよ♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*nurse_h_dispatch"][endif]
 [nm t="ナレーション"]
-うとうとしていると——柔らかい感触が。[p]
-
-[jump target="*nurse_captured"]
-
-*nurse_accept
-
-[nm t="ナース" color="#ffffff"]
-「傷は大したことないわ。でも……疲労が溜まっているわね」[l]
-
-[nm t="ナース" color="#ffffff"]
-「特別な治療をしてあげる。この城の医療は少し……独特なの」[p]
-
-[jump target="*nurse_captured"]
-
-*nurse_captured
-
-; ====【Hシーン：ナース・医療的搾精】====
-; [cutin storage="event/nurse_h01.jpg"]
-
-[nm t="ナース" color="#ffffff"]
-「では治療を始めますね。……力を抜いて、リラックスしてください」[p]
-
+かろうじて脱する。[p]
+[jump target="*nurse_c2_prompt"]
+*nurse_c2_prompt
+どうする？[r]
+[link target="*nurse_c2_safe"]ナースの手が不自然なことに気づく[endlink][r]
+[link target="*nurse_c2_wrong"]注射を勧められて受け入れる[endlink][r]
+[s]
+*nurse_c2_safe
 [nm t="ナレーション"]
-柔らかい声。施術台の上、ナースが慣れた手つきで始める。[l]
-
-[nm t="ナース" color="#ffffff"]
-「淫紋の影響で、こちらに力が溜まっていますね。解消しないと身体によくないんです」[l]
-
-[nm t="勇者" color="#aaddff"]
-「……そういう医療なのか、ここは」[l]
-
-[nm t="ナース" color="#ffffff"]
-「魔族の医療は、人間のものとは少し違うんです。でも効果は保証します」[p]
-
+不自然な動きに気づき、その手を払った。[p]
+[jump target="*nurse_c3_prompt"]
+*nurse_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-ナースの手が、プロフェッショナルの動きで触れてくる。[l]
-
+注射を受けた。甘い液体が体内に回っていく感覚。[p]
+[nm t="ナース"]
+「……効いてきたみたいですね。感度が上がりますよ♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*nurse_h_dispatch"][endif]
 [nm t="ナレーション"]
-「治療」としての冷静さがあるはずなのに——勇者の身体は正直に反応していく。[p]
-
-[nm t="ナース" color="#ffffff"]
-「……反応が出てきましたね。いい傾向です」[l]
-
-[nm t="ナース" color="#ffffff"]
-「このまま、自然に任せてください。……無理に我慢しなくていいですよ」[p]
-
-[nm t="勇者" color="#aaddff"]
-「……我慢、できない……」[l]
-
-[nm t="ナース" color="#ffffff"]
-「それで大丈夫です。……はい、そのまま——」[p]
-
+かろうじて脱する。[p]
+[jump target="*nurse_c3_prompt"]
+*nurse_c3_prompt
+どうする？[r]
+[link target="*nurse_c3_safe"]薬の影響に抗う[endlink][r]
+[link target="*nurse_c3_wrong"]薬の心地よさに流される[endlink][r]
+[s]
+*nurse_c3_safe
 [nm t="ナレーション"]
-白衣の清潔な香りの中、勇者は「治療」を完了した。[p]
-; ==========================================
-
-[nm t="ナース" color="#ffffff"]
-「……お疲れ様。体力も回復したはずよ」[l]
-
-; HP回復ボーナス
-[eval exp="f.hp = Math.min(f.hp + 20, 100)"]
-
-[nm t="ナース" color="#ffffff"]
-「また具合が悪くなったら来てね」[p]
-
+強い意志で薬に抗った。ナースが驚いた顔をした。[p]
+[jump target="*nurse_c4_prompt"]
+*nurse_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
+[nm t="ナレーション"]
+薬の影響で身体が言うことを聞かなくなる。[p]
+[nm t="ナース"]
+「大丈夫ですよ。ナースに任せて♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*nurse_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*nurse_c4_prompt"]
+*nurse_c4_prompt
+どうする？[r]
+[link target="*nurse_c4_safe"]診察台から逃げ出す[endlink][r]
+[link target="*nurse_c4_wrong"]ナースの指示に従ってしまう[endlink][r]
+[s]
+*nurse_c4_safe
+[nm t="ナレーション"]
+診察台から素早く飛び降りた。[p]
+[jump target="*nurse_c5_prompt"]
+*nurse_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
+[nm t="ナレーション"]
+ナースの指示通りに動いたら、いつの間にか拘束されていた。[p]
+[nm t="ナース"]
+「おとなしくて良い患者さんですね♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*nurse_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*nurse_c5_prompt"]
+*nurse_c5_prompt
+どうする？[r]
+[link target="*nurse_c5_safe"]加護の力で脱出する[endlink][r]
+[link target="*nurse_c5_wrong"]薬で動けなくなっている[endlink][r]
+[s]
+*nurse_c5_safe
+[nm t="ナレーション"]
+加護の力で拘束を壊して脱出した。[p]
+[jump target="*nurse_win"]
+*nurse_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+薬の影響で完全に動けなくなった。[p]
+[nm t="ナース"]
+「では……治療を始めましょうか♪」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*nurse_h_dispatch"][endif]
+[jump target="*nurse_h_dispatch"]
+*nurse_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*nurse_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*nurse_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*nurse_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*nurse_h4"][endif]
+[jump target="*nurse_h5"]
+*nurse_h1
+[eval exp="f.scene_nurse_h1=1"]
+[nm t="ナレーション"]
+診察台に拘束された。ナースが丁寧に「治療」を始める。「痛くしないですよ。気持ちよくなるだけです♪」医療的な所作で、しかし確実に搾り取っていく。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-*nurse_clear
-
+[nm t="ナレーション"]
+やがてナースは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*nurse_h2
+[eval exp="f.scene_nurse_h2=1"]
+[nm t="ナレーション"]
+注射の薬で感度が上がった状態で拘束された。ナースの手が全身を這い回るたびに過剰な反応が出てしまう。「反応が良いですね♪」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてナースは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*nurse_h3
+[eval exp="f.scene_nurse_h3=1"]
+[nm t="ナレーション"]
+薬で動けなくなったまま、ナースの「治療」が続く。「これも治療のうちですよ」笑顔で言いながら、丁寧に時間をかけて。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてナースは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*nurse_h4
+[eval exp="f.scene_nurse_h4=1"]
+[nm t="ナレーション"]
+ナースの指示に従い続けた結果、完全に拘束されていた。「信頼してくれてありがとう。きちんと治療しますよ♪」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてナースは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*nurse_h5
+[eval exp="f.scene_nurse_h5=1"]
+[nm t="ナレーション"]
+ナースは長い時間をかけて「治療」を行った。「完治しました。またいつでも来てください♪」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてナースは離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*nurse_win
 [eval exp="f.f3_nurse=1"]
 [nm t="ナレーション"]
-——医務室を突破した。[p]
-
-[fadeout time="800" color="0x000000"]
+ナースが深々と頭を下げた。「お大事に♪」先へ進む。[p]
+[fadeout time="800" color="0x000000"][wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_3f"]

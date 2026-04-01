@@ -1,144 +1,166 @@
-;==========================================================
-; chap2_fighter.ks - 1F「女戦士」
-;==========================================================
+;=== chap2_fighter.ks - 女戦士 ===
 *fighter_start
-
-; [bg storage="bg_training_hall.jpg" time="500"]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-鍛錬場のような広い部屋。中央に、鎧姿の女戦士が一人、剣を振っていた。[p]
-
-; [chara_show name="fighter" storage="chara/fighter_normal.png" pos="center" time="500"]
-
-[nm t="女戦士" color="#ffcc88"]
-「……勇者か。待っていた」[l]
-
-[nm t="女戦士" color="#ffcc88"]
-「私はここの衛兵隊長だ。通るなら私を倒してからにしろ」[l]
-
-[nm t="女戦士" color="#ffcc88"]
-「……ただし、倒し方は問わない。魔王様は生きて連れてこいと言っていたが……私個人は、強い者が好きだ」[p]
-
-どう対処する？[r]
-[link target="*fighter_duel"]正々堂々と剣で戦う[endlink][r]
-[link target="*fighter_ambush"]女神の加護を使って奇襲する[endlink][r]
-[link target="*fighter_talk"]「話し合いで解決できないか」と申し出る[endlink][r]
-[s]
-
-*fighter_duel
-
+廊下の先に人影。重装備の女戦士が剣を構えている。[p]
 [nm t="ナレーション"]
-互いに剣を構える。女戦士は強い——だが女神の加護が勇者の剣に力を与える。[l]
-
-[nm t="ナレーション"]
-激しい打ち合いの末、女戦士の剣が弾かれた。[p]
-
-[nm t="女戦士" color="#ffcc88"]
-「……負けた。見事だ、勇者」[l]
-
-[nm t="女戦士" color="#ffcc88"]
-「……通っていい。ただし——」[l]
-
-[nm t="女戦士" color="#ffcc88"]
-「勇者、あなたの精を少し分けてくれ。戦士として、あなたの力の根源が知りたい」[p]
-
+「魔王様の命令だ。ここは通さない」[p]
+[nm t="女戦士"]
+「勇者よ、覚悟しろ。手加減はしない」[p]
+*fighter_c1_prompt
 どうする？[r]
-[link target="*fighter_offer"]「……わかった」→ 同意[endlink][r]
-[link target="*fighter_pass"]「それは断る」→ そのまま通る[endlink][r]
+[link target="*fighter_c1_safe"]盾を構えて正面から受け止める[endlink][r]
+[link target="*fighter_c1_wrong"]素早く横へ回り込もうとする[endlink][r]
 [s]
-
-*fighter_ambush
-
+*fighter_c1_safe
 [nm t="ナレーション"]
-女神の光を一気に放出——！ 女戦士が目を眩ませた隙に、横を駆け抜けた。[p]
-
-[nm t="女戦士" color="#ffcc88"]
-「……ッ！ 卑怯な！」[l]
-
+盾で受け止めると、女戦士が力比べに移行した。主導権は互角だ。[p]
+[jump target="*fighter_c2_prompt"]
+*fighter_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-「戦場に卑怯はない——そう教わっただろう」[l]
-
+回り込もうとしたが、女戦士の反応が速く剣で行く手を塞がれた。[p]
+[nm t="女戦士"]
+「甘い。その程度の動きは読めている」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*fighter_h_dispatch"][endif]
 [nm t="ナレーション"]
-振り返らず走り抜けた。[p]
-
-[eval exp="f.resist_count=f.resist_count+1"]
-[jump target="*fighter_clear"]
-
-*fighter_talk
-
-[nm t="勇者" color="#aaddff"]
-「……俺はあなたと戦いたくない」[l]
-
-[nm t="女戦士" color="#ffcc88"]
-「……なぜだ」[l]
-
-[nm t="勇者" color="#aaddff"]
-「あなたは強い。こんな場所で戦うより、もっと価値ある戦い場があるはずだ」[p]
-
-[nm t="女戦士" color="#ffcc88"]
-「……」[l]
-
-[nm t="女戦士" color="#ffcc88"]
-「……面白いことを言う。ならば、その言葉の代償を払え」[l]
-
-[nm t="女戦士" color="#ffcc88"]
-「戦いの代わりに、あなたの精を一度いただく。それで見逃してやる」[p]
-
-[jump target="*fighter_offer"]
-
-*fighter_offer
-
-[eval exp="f.surrender_count=f.surrender_count+1"]
-
-; ====【Hシーン：女戦士・武人搾精】====
-; [cutin storage="event/fighter_h_offer01.jpg"]
-
-[nm t="女戦士" color="#ffcc88"]
-「……では、始める。正々堂々とな」[p]
-
+かろうじて脱する。[p]
+[jump target="*fighter_c2_prompt"]
+*fighter_c2_prompt
+どうする？[r]
+[link target="*fighter_c2_safe"]加護の力で防御を固める[endlink][r]
+[link target="*fighter_c2_wrong"]攻撃の隙を狙って反撃する[endlink][r]
+[s]
+*fighter_c2_safe
 [nm t="ナレーション"]
-女戦士が鎧の手袋を外した。素手になった手は、武器を握り続けてきた武人の手——しかし今は、別の使い方をする。[p]
-
-[nm t="女戦士" color="#ffcc88"]
-「……ふむ。確かに、これは特別な力だ」[l]
-
+加護の光の盾が女戦士の剣を弾いた。[p]
+[jump target="*fighter_c3_prompt"]
+*fighter_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-一切の遠慮がない。戦士として相手を試すように、正面から向き合ってくる。[l]
-
+反撃しようとした瞬間、腕を取られてアームロックをかけられた。[p]
+[nm t="女戦士"]
+「隙を作ったのはお前だ」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*fighter_h_dispatch"][endif]
 [nm t="ナレーション"]
-その真剣さが、かえって恥ずかしかった。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……そんな真剣な顔でしないでくれ……」[l]
-
-[nm t="女戦士" color="#ffcc88"]
-「何事も真剣にやるのが私の流儀だ。……我慢するな。勇者も、限界を見せろ」[p]
-
+かろうじて脱する。[p]
+[jump target="*fighter_c3_prompt"]
+*fighter_c3_prompt
+どうする？[r]
+[link target="*fighter_c3_safe"]女戦士の剣筋を読んで避ける[endlink][r]
+[link target="*fighter_c3_wrong"]力勝負を挑む[endlink][r]
+[s]
+*fighter_c3_safe
 [nm t="ナレーション"]
-命令口調で言われると、逆らえない気持ちになった。[l]
-
+剣筋を読んで回避。女戦士がわずかに体勢を崩した。[p]
+[jump target="*fighter_c4_prompt"]
+*fighter_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
 [nm t="ナレーション"]
-女戦士の手が、ためらいなく追い詰めてくる。[p]
-; ==========================================
-
-[nm t="女戦士" color="#ffcc88"]
-「……満足した。行け」[p]
-
+力比べに持ち込んだが、女戦士の膂力が上だった。押し倒される。[p]
+[nm t="女戦士"]
+「力では私に勝てん。認めろ」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*fighter_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*fighter_c4_prompt"]
+*fighter_c4_prompt
+どうする？[r]
+[link target="*fighter_c4_safe"]足元を崩して転倒を狙う[endlink][r]
+[link target="*fighter_c4_wrong"]正面から剣を受け止めようとする[endlink][r]
+[s]
+*fighter_c4_safe
+[nm t="ナレーション"]
+足元を払うと女戦士がよろめいた。[p]
+[jump target="*fighter_c5_prompt"]
+*fighter_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
+[nm t="ナレーション"]
+剣を受け止めようとしたが、重すぎて弾き飛ばされた。[p]
+[nm t="女戦士"]
+「武器を失った。これで終わりだ」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*fighter_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*fighter_c5_prompt"]
+*fighter_c5_prompt
+どうする？[r]
+[link target="*fighter_c5_safe"]加護を全開放して決着をつける[endlink][r]
+[link target="*fighter_c5_wrong"]傷を負ったまま戦い続ける[endlink][r]
+[s]
+*fighter_c5_safe
+[nm t="ナレーション"]
+加護の全開放で女戦士を圧倒した。[p]
+[jump target="*fighter_win"]
+*fighter_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+力尽きて膝をついた瞬間、女戦士に組み伏せられた。[p]
+[nm t="女戦士"]
+「降参か？……いや、まだ目が生きている。ならば——」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*fighter_h_dispatch"][endif]
+[jump target="*fighter_h_dispatch"]
+*fighter_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*fighter_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*fighter_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*fighter_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*fighter_h4"][endif]
+[jump target="*fighter_h5"]
+*fighter_h1
+[eval exp="f.scene_fighter_h1=1"]
+[nm t="ナレーション"]
+組み伏せられた。女戦士は強引に、しかし丁寧に扱ってくる。「負けた者は勝者に従う。それが戦士の掟だ」重い身体で全身を押さえつけながら、淡々と目的を果たしていく。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-[jump target="*fighter_clear"]
-
-*fighter_pass
-
 [nm t="ナレーション"]
-女戦士は黙ってうなずき、道を開けた。[p]
-
-*fighter_clear
-
+やがて女戦士は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_1f"]
+*fighter_h2
+[eval exp="f.scene_fighter_h2=1"]
+[nm t="ナレーション"]
+アームロックをかけられたまま動けない。女戦士の力は圧倒的で、抵抗できない。「大人しくしろ。無駄な抵抗はするな」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて女戦士は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_1f"]
+*fighter_h3
+[eval exp="f.scene_fighter_h3=1"]
+[nm t="ナレーション"]
+押し倒されたまま、女戦士に見下ろされた。「……勇者とはいえ、捕虜だ」仕事として、感情を抑えながら——それでも確実に。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて女戦士は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_1f"]
+*fighter_h4
+[eval exp="f.scene_fighter_h4=1"]
+[nm t="ナレーション"]
+武器を失い無防備になったところを女戦士に捕まえられた。「丸腰の相手を傷つけるのは不本意だが……別の方法で制圧する」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて女戦士は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_1f"]
+*fighter_h5
+[eval exp="f.scene_fighter_h5=1"]
+[nm t="ナレーション"]
+力尽きた勇者を、女戦士は静かに押さえつけた。「戦士として勝者の特権を行使する」そう言って、時間をかけて徹底的に。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて女戦士は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_1f"]
+*fighter_win
 [eval exp="f.f1_fighter=1"]
 [nm t="ナレーション"]
-——女戦士を突破した。[p]
-
-[fadeout time="800" color="0x000000"]
+女戦士が剣を収めた。「……腕は認める。通れ」道を開けて壁際に退いた。[p]
+[fadeout time="800" color="0x000000"][wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_1f"]

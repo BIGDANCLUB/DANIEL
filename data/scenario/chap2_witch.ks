@@ -1,253 +1,166 @@
-;==========================================================
-; chap2_witch.ks - 東の塔「魔女の実験室」
-;==========================================================
+;=== chap2_witch.ks - 魔女 ===
 *witch_start
-
-; [bg storage="bg_witch_lab.jpg" time="800"]
-; [bgm storage="bgm_mysterious.ogg" loop=true]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-東の塔。奇妙な薬品の匂いと、棚に並ぶ無数のフラスコ。魔法の実験室だ。[p]
-
+3階研究棟の奥。魔法陣が床に描かれている。[p]
 [nm t="ナレーション"]
-奥の作業台に、一人の女性が背を向けて作業している。黒いローブに三角帽子——魔女だ。[p]
-
-[nm t="魔女" color="#cc88ff"]
-「……来ると思っていたわよ、勇者」[l]
-
-[nm t="ナレーション"]
-振り向かずに魔女が言う。[p]
-
-[nm t="勇者" color="#aaddff"]
-「なぜわかった？」[l]
-
-[nm t="魔女" color="#cc88ff"]
-「占いは得意なの。それより——」[l]
-
-[nm t="ナレーション"]
-魔女がゆっくりと振り向いた。眼鏡越しに、鋭い目が勇者を値踏みするように見る。[p]
-
-[nm t="魔女" color="#cc88ff"]
-「長年探し求めていたサンプルがそこにある。女神の加護を受けた勇者の……エキス」[l]
-
-[nm t="魔女" color="#cc88ff"]
-「研究の為に少し分けてもらうわよ。抵抗しても無駄だけどね」[p]
-
-;==========================================================
-; 魔女の罠
-;==========================================================
-
-[nm t="ナレーション"]
-足元に魔法陣が浮かび上がった！ 動けない！[p]
-
-; [se storage="se_magic_circle.ogg"]
-; [bg storage="bg_witch_lab_trapped.jpg" time="300"]
-
-[nm t="勇者" color="#aaddff"]
-「くっ……！ 魔法の拘束か！」[l]
-
-[nm t="魔女" color="#cc88ff"]
-「慌てないで。痛いことはしないわ……むしろ、気持ちよくしてあげるつもりよ」[l]
-
-[nm t="魔女" color="#cc88ff"]
-「淫紋もあるし……ふふ、いい被験体ね」[p]
-
-;==========================================================
-; 選択肢 - 脱出を試みるか
-;==========================================================
-
-どう対処する？[r]
-[link target="*witch_break_seal"]加護の力で魔法陣を壊す[endlink][r]
-[link target="*witch_negotiate"]言葉で交渉する[endlink][r]
-[link target="*witch_submit"]（どうにもならない）→ 魔女の実験に従う[endlink][r]
+黒衣の魔女が振り返った。鋭い目でこちらを見ている。[p]
+[nm t="魔女"]
+「……来たか、勇者。私の魔法の実験台になってもらおうか」[p]
+*witch_c1_prompt
+どうする？[r]
+[link target="*witch_c1_safe"]魔法陣を踏まないよう迂回する[endlink][r]
+[link target="*witch_c1_wrong"]魔法陣の模様に見惚れてしまう[endlink][r]
 [s]
-
-;==========================================================
-; 選択A: 魔法陣を壊す
-;==========================================================
-*witch_break_seal
-
+*witch_c1_safe
 [nm t="ナレーション"]
-女神の加護を魔法陣の中心へ集中させる——！[l]
-
-[nm t="女神" color="#ffffaa"]
-「今よ——！」[l]
-
-; [se storage="se_seal_break.ogg"]
-
+注意深く迂回して魔法陣を避けた。[p]
+[jump target="*witch_c2_prompt"]
+*witch_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-光が爆発し、魔法陣が砕け散る。[p]
-
-[nm t="魔女" color="#cc88ff"]
-「……！ 女神の加護がここまで……！」[l]
-
+気づいたら魔法陣の中心に立っていた。[p]
+[nm t="魔女"]
+「……踏んだ。発動する」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*witch_h_dispatch"][endif]
 [nm t="ナレーション"]
-怯んだ魔女の脇を抜け、塔の出口へと走る。魔女が追いかけてくるが、複雑な実験器具が邪魔をして追いつけない。[p]
-
-[nm t="魔女" color="#cc88ff"]
-「覚えておきなさい……次は必ず採取するわよ！」[p]
-
-[jump target="*witch_escape"]
-
-;==========================================================
-; 選択B: 交渉
-;==========================================================
-*witch_negotiate
-
-[nm t="勇者" color="#aaddff"]
-「待ってくれ……あなたは何の研究をしているんだ？」[p]
-
-[nm t="魔女" color="#cc88ff"]
-「……魔物と人間の共存を可能にする魔法薬よ」[l]
-
-[nm t="魔女" color="#cc88ff"]
-「女神の加護の成分が必要なの。魔王様には内緒だけど……本当は戦争なんて望んでいない」[p]
-
-[nm t="勇者" color="#aaddff"]
-「……それなら、俺と共通の目的があるかもしれない」[l]
-
-[nm t="勇者" color="#aaddff"]
-「魔王を倒して——いや、止めて。平和を取り戻したい」[p]
-
-[nm t="魔女" color="#cc88ff"]
-「……面白いことを言うわね」[l]
-
-[nm t="魔女" color="#cc88ff"]
-「……わかった。取引しましょう。サンプルを少し提供してくれるなら、情報を教えてあげる」[p]
-
-取引するか？[r]
-[link target="*witch_deal"]「……わかった」→ 同意する[endlink][r]
-[link target="*witch_break_seal"]「嫌だ、別の方法を探す」→ 拒否[endlink][r]
+かろうじて脱する。[p]
+[jump target="*witch_c2_prompt"]
+*witch_c2_prompt
+どうする？[r]
+[link target="*witch_c2_safe"]魔女の呪文を遮断する[endlink][r]
+[link target="*witch_c2_wrong"]呪文の響きに聞き惚れる[endlink][r]
 [s]
-
-;==========================================================
-; 取引ルート（同意搾精）
-;==========================================================
-*witch_deal
-
-[eval exp="f.surrender_count=f.surrender_count+1"]
-
-[nm t="魔女" color="#cc88ff"]
-「では……採取を始めるわ。リラックスして。最大限快適にするから」[p]
-
-; ====【Hシーン：魔女・実験搾精】====
-; [cutin storage="event/witch_h_deal01.jpg"]
-
-[nm t="魔女" color="#cc88ff"]
-「では測定を始めるわ。……リラックスして。データが乱れるから」[p]
-
+*witch_c2_safe
 [nm t="ナレーション"]
-魔女が手袋を外し、精密な作業をするための素手になった。眼鏡を指で押し上げ、至近距離から勇者を観察している。[p]
-
-[nm t="魔女" color="#cc88ff"]
-「……体温、正常。魔力反応……予想より高い。これは期待できる」[l]
-
-[nm t="勇者" color="#aaddff"]
-「……その解説、やめてくれると助かる」[l]
-
-[nm t="魔女" color="#cc88ff"]
-「研究者として記録は必要なの。黙って」[p]
-
+加護の力で呪文を打ち消した。[p]
+[jump target="*witch_c3_prompt"]
+*witch_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-淡々と語りながら、しかし手の動きは非常に的確だった。研究のために人体構造を熟知しているせいか、どこに触れれば最も効果的かを把握している。[p]
-
-[nm t="魔女" color="#cc88ff"]
-「……反応良好。サンプルの質も最高クラスね」[l]
-
-[nm t="勇者" color="#aaddff"]
-「……れいせ、いに……言うな……」[l]
-
-[nm t="魔女" color="#cc88ff"]
-「論文に感情は不要よ。……さあ、採取するわ」[p]
-
+呪文の音の心地よさに聞き入ってしまった。[p]
+[nm t="魔女"]
+「……呪文の効果が出ている。もう逃げられない」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*witch_h_dispatch"][endif]
 [nm t="ナレーション"]
-冷静を装った魔女の頬が、わずかに赤くなっていた。[p]
-; =====================================
-
-[nm t="魔女" color="#cc88ff"]
-「……データ収集完了。約束通り、情報を教えてあげる」[p]
-
-[nm t="魔女" color="#cc88ff"]
-「魔王様の弱点は——感情よ。あの方は孤独なの。真正面からぶつかれば、きっと……」[p]
-
-[nm t="勇者" color="#aaddff"]
-「……ありがとう」[p]
-
+かろうじて脱する。[p]
+[jump target="*witch_c3_prompt"]
+*witch_c3_prompt
+どうする？[r]
+[link target="*witch_c3_safe"]変化したものを飲まない[endlink][r]
+[link target="*witch_c3_wrong"]魔女が差し出したものを受け取る[endlink][r]
+[s]
+*witch_c3_safe
+[nm t="ナレーション"]
+断固として断った。魔女が舌打ちした。[p]
+[jump target="*witch_c4_prompt"]
+*witch_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
+[nm t="ナレーション"]
+受け取って口をつけた瞬間、全身が火照り始めた。[p]
+[nm t="魔女"]
+「……効いてきた。媚薬入りだ」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*witch_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*witch_c4_prompt"]
+*witch_c4_prompt
+どうする？[r]
+[link target="*witch_c4_safe"]加護で媚薬を中和する[endlink][r]
+[link target="*witch_c4_wrong"]媚薬の熱に身を任せる[endlink][r]
+[s]
+*witch_c4_safe
+[nm t="ナレーション"]
+加護が媚薬の効果を打ち消した。[p]
+[jump target="*witch_c5_prompt"]
+*witch_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
+[nm t="ナレーション"]
+熱が全身に広がり、抵抗する気力が薄れていく。[p]
+[nm t="魔女"]
+「……媚薬に負けた。あとは簡単だ」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*witch_h_dispatch"][endif]
+[nm t="ナレーション"]
+かろうじて脱する。[p]
+[jump target="*witch_c5_prompt"]
+*witch_c5_prompt
+どうする？[r]
+[link target="*witch_c5_safe"]魔女の最後の呪文を防ぐ[endlink][r]
+[link target="*witch_c5_wrong"]熱で動けなくなっている[endlink][r]
+[s]
+*witch_c5_safe
+[nm t="ナレーション"]
+加護を全開放して呪文を弾いた。[p]
+[jump target="*witch_win"]
+*witch_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+熱で立っていられなくなり、床に崩れた。[p]
+[nm t="魔女"]
+「……もらった。ゆっくり実験させてもらおう」[l]
+[if exp="f.enemy_mistakes>=2"][jump target="*witch_h_dispatch"][endif]
+[jump target="*witch_h_dispatch"]
+*witch_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*witch_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*witch_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*witch_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*witch_h4"][endif]
+[jump target="*witch_h5"]
+*witch_h1
+[eval exp="f.scene_witch_h1=1"]
+[nm t="ナレーション"]
+魔法陣の中で拘束された。魔女が冷静に近づいてくる。「勇者の精力を採取する実験だ。被験者として協力しろ」学術的な口調で言いながら、淡々と進めていく。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-; 魔王戦でのボーナスフラグ
-[eval exp="f.witch_info=1"]
-
-[jump target="*witch_escape"]
-
-;==========================================================
-; 従うルート（強制）
-;==========================================================
-*witch_submit
-
 [nm t="ナレーション"]
-魔法の拘束は解けない。魔女がゆっくりと近づいてきた。[p]
-
-[nm t="魔女" color="#cc88ff"]
-「大人しくしていれば、すぐ終わるわ。……でも、気持ちよくなっても知らないわよ？」[p]
-
-; ====【Hシーン：魔女・拘束搾精】====
-; [cutin storage="event/witch_h_bind01.jpg"]
-
+やがて魔女は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*witch_h2
+[eval exp="f.scene_witch_h2=1"]
 [nm t="ナレーション"]
-魔法の拘束は、蜘蛛の糸のように全身を固定していた。見えない力に縫い止められ、指一本動かせない。[p]
-
-[nm t="魔女" color="#cc88ff"]
-「大人しくしていれば痛くはしないわ。……でも気持ちよくなっても知らないわよ、とは言ったわよね」[l]
-
-[nm t="ナレーション"]
-魔女が近づいてくる。眼鏡の奥の目が、好奇心と何か別の感情を宿している。[p]
-
-[nm t="魔女" color="#cc88ff"]
-「……体温が上がってる。淫紋の影響ね」[l]
-
-[nm t="ナレーション"]
-触れられた瞬間、淫紋が強く反応した。拘束されているせいで逃げることも、身をよじることもできない。[p]
-
-[nm t="勇者" color="#aaddff"]
-「……っ……！ 待、それは……」[l]
-
-[nm t="魔女" color="#cc88ff"]
-「……データ通り、感度が高い。淫紋の効果は本物ね」[l]
-
-[nm t="ナレーション"]
-平静を装う声だったが——その手の動きは、研究者の域を超えていた。[p]
-; =====================================
-
-[nm t="魔女" color="#cc88ff"]
-「……採取完了。満足ね」[l]
-
-[nm t="ナレーション"]
-魔法陣が消え、拘束が解かれた。[p]
-
+呪文で感覚が鋭くなった状態で拘束された。「感度上昇の呪文だ。効率がいい」魔女が記録しながら的確に搾り取っていく。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-[nm t="魔女" color="#cc88ff"]
-「……行っていいわよ。ただし——また来なさい。定期的にサンプルが必要だから」[p]
-
-[jump target="*witch_escape"]
-
-;==========================================================
-; 脱出・クリア
-;==========================================================
-*witch_escape
-
 [nm t="ナレーション"]
-東の塔を抜け、城の中央通路へ戻る。[p]
-
+やがて魔女は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*witch_h3
+[eval exp="f.scene_witch_h3=1"]
+[nm t="ナレーション"]
+媚薬で火照った状態を、魔女が冷静に観察しながら利用した。「データ通りの反応だ」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて魔女は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*witch_h4
+[eval exp="f.scene_witch_h4=1"]
+[nm t="ナレーション"]
+媚薬の熱の中、魔女が覆いかぶさってきた。「手間が省けた。直接採取する」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて魔女は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*witch_h5
+[eval exp="f.scene_witch_h5=1"]
+[nm t="ナレーション"]
+力尽きた勇者を、魔女は丁寧に長時間かけて実験した。「良いデータが取れた。感謝する」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがて魔女は離れていった。[p]
+[if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
+[jump storage="chap2_explore.ks" target="*hub_3f"]
+*witch_win
 [eval exp="f.f3_witch=1"]
-
 [nm t="ナレーション"]
-——魔女の実験室を突破した。[p]
-
-[fadeout time="1000" color="0x000000"]
-[wait time=300]
-
+魔女が実験ノートに何かを記した。「通れ。データは取れた」先へ進む。[p]
+[fadeout time="800" color="0x000000"][wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_3f"]

@@ -1,117 +1,192 @@
-;==========================================================
-; chap2_kunoichi.ks - 1F「くのいち」
-;==========================================================
+;=== chap2_kunoichi.ks - くのいち ===
 *kunoichi_start
-
-; [bg storage="bg_central_hall_shadow.jpg" time="500"]
-
+[eval exp="f.enemy_mistakes=0"]
+[eval exp="f.enemy_last_mistake=0"]
 [fadein time="800"]
-
 [nm t="ナレーション"]
-気配を感じた瞬間、煙幕が炸裂した。[p]
-
-; [se storage="se_smoke_bomb.ogg"]
-
+廊下の影が揺れた。風もないのに。[p]
 [nm t="ナレーション"]
-煙が晴れると——目の前に黒装束の女が立っていた。[p]
-
-; [chara_show name="kunoichi" storage="chara/kunoichi_normal.png" pos="center" time="300"]
-
-[nm t="くのいち" color="#ff9999"]
-「……見つけた。ターゲット確認」[l]
-
-[nm t="くのいち" color="#ff9999"]
-「魔王様の命令——勇者を無力化して連れてこい。……でも私、独自のやり方があってね」[p]
-
-どう対処する？[r]
-[link target="*kunoichi_escape_smoke"]煙幕を利用して逃げる[endlink][r]
-[link target="*kunoichi_fight"]正面から戦う[endlink][r]
-[link target="*kunoichi_captured"]（麻痺針を打たれてしまった）[endlink][r]
+それだけで、勇者は警戒を最大限に高めた——くのいち。魔王軍の忍びだ。[p]
+[nm t="くのいち"]
+「……気づいていたか。さすが勇者。だが、遅い」[p]
+*kunoichi_c1_prompt
+どうする？[r]
+[link target="*kunoichi_c1_safe"]忍びの動きを読んで先手を打つ[endlink][r]
+[link target="*kunoichi_c1_wrong"]身構えて様子を見る[endlink][r]
 [s]
-
-*kunoichi_escape_smoke
-
-[nm t="勇者" color="#aaddff"]
-「（煙がまだ残っている……今だ）」[l]
-
+*kunoichi_c1_safe
 [nm t="ナレーション"]
-煙の中に飛び込み、反対方向へ走り抜けた。くのいちが追ってくる気配があるが、曲がり角を連続して曲がり、撒くことができた。[p]
-
-[eval exp="f.resist_count=f.resist_count+1"]
-[jump target="*kunoichi_clear"]
-
-*kunoichi_fight
-
+先手を打つことでくのいちが後手に回った。主導権を握れた。[p]
+[jump target="*kunoichi_c2_prompt"]
+*kunoichi_c1_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=1"]
 [nm t="ナレーション"]
-剣を構えると、くのいちも短刀を抜いた。[l]
-
+身構えていた瞬間、首筋に冷たいものが触れた——吹き矢だ。[p]
+[nm t="くのいち"]
+「毒ではない。睡眠薬だ。……だが少量だから眠れはしない」[l]
+[if exp="f.enemy_mistakes>=2"]
+[jump target="*kunoichi_h_dispatch"]
+[endif]
 [nm t="ナレーション"]
-素早い攻撃を受け流し、女神の加護を乗せた一撃が炸裂する——！[p]
-
-[nm t="くのいち" color="#ff9999"]
-「……！ 速い」[l]
-
+かろうじて脱する。しかし状況は悪化している。[p]
+[jump target="*kunoichi_c2_prompt"]
+*kunoichi_c2_prompt
+どうする？[r]
+[link target="*kunoichi_c2_safe"]薬の効果に抗って意識を保つ[endlink][r]
+[link target="*kunoichi_c2_wrong"]薬の影響で動きが鈍る[endlink][r]
+[s]
+*kunoichi_c2_safe
 [nm t="ナレーション"]
-たたらを踏んだくのいちの脇をすり抜けた。[p]
-
-[eval exp="f.resist_count=f.resist_count+1"]
-[jump target="*kunoichi_clear"]
-
-*kunoichi_captured
-
+精神力で薬に抵抗する。くのいちが驚いた顔をした。[p]
+[jump target="*kunoichi_c3_prompt"]
+*kunoichi_c2_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=2"]
 [nm t="ナレーション"]
-気がつくと背後を取られていた。首元に針の感触——麻痺毒だ。[l]
-
+動きが鈍った隙を突かれ、手首を取られた。[p]
+[nm t="くのいち"]
+「……やはり人間は弱い。これで終わりだ」[l]
+[if exp="f.enemy_mistakes>=2"]
+[jump target="*kunoichi_h_dispatch"]
+[endif]
 [nm t="ナレーション"]
-身体の力が抜けていく。[p]
-
-[nm t="くのいち" color="#ff9999"]
-「……おとなしく。任務だからね」[l]
-
-[nm t="くのいち" color="#ff9999"]
-「……それに、あなたの匂いは、思ってたより……ずっといい」[p]
-
-; ====【Hシーン：くのいち・麻痺搾精】====
-; [cutin storage="event/kunoichi_h01.jpg"]
-
+かろうじて脱する。しかし状況は悪化している。[p]
+[jump target="*kunoichi_c3_prompt"]
+*kunoichi_c3_prompt
+どうする？[r]
+[link target="*kunoichi_c3_safe"]加護の力で薬を中和する[endlink][r]
+[link target="*kunoichi_c3_wrong"]くのいちの技の流れを見極めようとする[endlink][r]
+[s]
+*kunoichi_c3_safe
 [nm t="ナレーション"]
-麻痺毒は全身の随意筋を封じていた。倒れることも、声を上げることも、できない。ただ感覚だけが残されている。[p]
-
-[nm t="くのいち" color="#ff9999"]
-「……感覚は残る。安心して」[l]
-
+加護の光が薬を中和した。くのいちが舌打ちした。[p]
+[jump target="*kunoichi_c4_prompt"]
+*kunoichi_c3_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=3"]
 [nm t="ナレーション"]
-くのいちが無表情のまま、勇者の前にしゃがむ。[l]
-
-[nm t="くのいち" color="#ff9999"]
-「……任務は捕獲だけど。あなたの精力の噂は私も聞いていた」[l]
-
-[nm t="くのいち" color="#ff9999"]
-「……少し、いただく。それくらいは許してほしい」[p]
-
+技を見極めようとしている間に、二の腕に針が刺さっていた。[p]
+[nm t="くのいち"]
+「……観察は良い心がけだ。だが隙ができていた」[l]
+[if exp="f.enemy_mistakes>=2"]
+[jump target="*kunoichi_h_dispatch"]
+[endif]
 [nm t="ナレーション"]
-感情のない声。しかし手の動きは——丁寧だった。[l]
-
+かろうじて脱する。しかし状況は悪化している。[p]
+[jump target="*kunoichi_c4_prompt"]
+*kunoichi_c4_prompt
+どうする？[r]
+[link target="*kunoichi_c4_safe"]くのいちの死角を突く[endlink][r]
+[link target="*kunoichi_c4_wrong"]正面突破を試みる[endlink][r]
+[s]
+*kunoichi_c4_safe
 [nm t="ナレーション"]
-動けない身体の中で、刺激だけが増していく。抵抗も逃げることもできず、ただ感じるしかない。[p]
-
-[nm t="くのいち" color="#ff9999"]
-「……もうすぐ」[l]
-
+死角から攻めると、くのいちが初めて後退した。[p]
+[jump target="*kunoichi_c5_prompt"]
+*kunoichi_c4_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=4"]
 [nm t="ナレーション"]
-静かな部屋に、勇者の押し殺した息遣いだけが響いた。[p]
-; ==========================================
-
+正面から向かった瞬間、足払いをかけられた。[p]
+[nm t="くのいち"]
+「……正面突破は愚策だ」[l]
+[if exp="f.enemy_mistakes>=2"]
+[jump target="*kunoichi_h_dispatch"]
+[endif]
 [nm t="ナレーション"]
-麻痺が切れた頃、くのいちは満足した様子で姿を消していた。[p]
-
+かろうじて脱する。しかし状況は悪化している。[p]
+[jump target="*kunoichi_c5_prompt"]
+*kunoichi_c5_prompt
+どうする？[r]
+[link target="*kunoichi_c5_safe"]全力で加護を解放して決着をつける[endlink][r]
+[link target="*kunoichi_c5_wrong"]疲弊しながらも向かっていく[endlink][r]
+[s]
+*kunoichi_c5_safe
+[nm t="ナレーション"]
+加護の全開放でくのいちを圧倒した。[p]
+[jump target="*kunoichi_win"]
+*kunoichi_c5_wrong
+[eval exp="f.enemy_mistakes+=1"]
+[eval exp="f.enemy_last_mistake=5"]
+[nm t="ナレーション"]
+力が尽きた瞬間、くのいちに組み伏せられた。[p]
+[nm t="くのいち"]
+「……降伏せよ。これ以上は無用だ」[l]
+[if exp="f.enemy_mistakes>=2"]
+[jump target="*kunoichi_h_dispatch"]
+[endif]
+[jump target="*kunoichi_h_dispatch"]
+*kunoichi_h_dispatch
+[if exp="f.enemy_last_mistake==1"][jump target="*kunoichi_h1"][endif]
+[if exp="f.enemy_last_mistake==2"][jump target="*kunoichi_h2"][endif]
+[if exp="f.enemy_last_mistake==3"][jump target="*kunoichi_h3"][endif]
+[if exp="f.enemy_last_mistake==4"][jump target="*kunoichi_h4"][endif]
+[jump target="*kunoichi_h5"]
+*kunoichi_h1
+[eval exp="f.scene_kunoichi_h1=1"]
+[nm t="ナレーション"]
+組み伏せられた。くのいちの動きに無駄がない。淡々と、職務として搾り取っていく。「任務だ。抵抗しても無意味だ」感情のない声で言いながら、確実に目的を果たしていく。[p]
 [call storage="system/init.ks" target="*squeeze_event"]
-
-*kunoichi_clear
-
+[nm t="ナレーション"]
+やがてくのいちは離れていった。[p]
+[if exp="f.from_recall==1"]
+[eval exp="f.from_recall=0"]
+[jump storage="recollection_room.ks" target="*recollection_start"]
+[endif]
+[jump storage="chap2_explore.ks" target="*hub_1f"]
+*kunoichi_h2
+[eval exp="f.scene_kunoichi_h2=1"]
+[nm t="ナレーション"]
+毒に近い感覚。意識はあるのに身体が動かない。その状態で、くのいちは精密に作業を進めていく。「……声を抑えろ。聞こえる」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてくのいちは離れていった。[p]
+[if exp="f.from_recall==1"]
+[eval exp="f.from_recall=0"]
+[jump storage="recollection_room.ks" target="*recollection_start"]
+[endif]
+[jump storage="chap2_explore.ks" target="*hub_1f"]
+*kunoichi_h3
+[eval exp="f.scene_kunoichi_h3=1"]
+[nm t="ナレーション"]
+薬で感覚が鋭くなっている状態で組み伏せられた。通常より数倍の刺激が全身を走る。「……反応が大きい。薬の副作用だ」[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてくのいちは離れていった。[p]
+[if exp="f.from_recall==1"]
+[eval exp="f.from_recall=0"]
+[jump storage="recollection_room.ks" target="*recollection_start"]
+[endif]
+[jump storage="chap2_explore.ks" target="*hub_1f"]
+*kunoichi_h4
+[eval exp="f.scene_kunoichi_h4=1"]
+[nm t="ナレーション"]
+足を払われたまま拘束された。くのいちは淡々と、しかし確実に——任務を遂行していく。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてくのいちは離れていった。[p]
+[if exp="f.from_recall==1"]
+[eval exp="f.from_recall=0"]
+[jump storage="recollection_room.ks" target="*recollection_start"]
+[endif]
+[jump storage="chap2_explore.ks" target="*hub_1f"]
+*kunoichi_h5
+[eval exp="f.scene_kunoichi_h5=1"]
+[nm t="ナレーション"]
+力尽きた身体に、くのいちが馬乗りになった。「……抵抗しなければ、長くはかからない」そう言いながら、丁寧に、徹底的に。[p]
+[call storage="system/init.ks" target="*squeeze_event"]
+[nm t="ナレーション"]
+やがてくのいちは離れていった。[p]
+[if exp="f.from_recall==1"]
+[eval exp="f.from_recall=0"]
+[jump storage="recollection_room.ks" target="*recollection_start"]
+[endif]
+[jump storage="chap2_explore.ks" target="*hub_1f"]
+*kunoichi_win
 [eval exp="f.f1_kunoichi=1"]
 [nm t="ナレーション"]
-——くのいちの追跡を突破した。[p]
-
+くのいちが素早く後退し、闇に消えた。先へ進む。[p]
 [fadeout time="800" color="0x000000"]
+[wait time=300]
 [jump storage="chap2_explore.ks" target="*hub_1f"]

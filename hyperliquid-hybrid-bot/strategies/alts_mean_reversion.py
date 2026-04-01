@@ -1,14 +1,21 @@
 """
-Alts_MeanReversion 戦略
+Alts_MeanReversion 戦略 v2
 ========================
-アルト逆張り: 下がったら買う、上がったら売る。複数銘柄対応。
+アルト逆張り専用（厳格化版）。複数銘柄対応。
+
+改善点（v2）:
+- RSI閾値を厳格化（20/80）
+- 2本連続の過熱/過売確認
+- RSI反転方向確認
+- 連続損切クールダウン（3連敗後300秒休止）
 
 ロジック:
-1. RSI(14) + ボリンジャーバンド(20, 2σ) で過熱/過売を検出
-2. RSI ≤ 25 + BB下限タッチ + 陽線 → LONG
-3. RSI ≥ 75 + BB上限タッチ + 陰線 → SHORT
+1. RSI(14) + BB(20, 2σ) で過熱/過売を検出
+2. RSI ≤ 20 + BB下限タッチ + 陽線 + 2本連続過売 → LONG
+3. RSI ≥ 80 + BB上限タッチ + 陰線 + 2本連続過熱 → SHORT
 4. TP1 = 50%をBBミドルで利確、残りはATRトレーリング
 5. SL = ATRベース動的SL
+6. 連続損切クールダウン
 """
 
 import time
@@ -54,10 +61,17 @@ class AltsMeanReversionStrategy:
         self.interval = self.cfg["interval"]
         self.loop_interval = self.cfg["loop_interval_sec"]
 
+        # v2: 厳格化
+        self.consecutive_loss_limit = self.cfg.get("consecutive_loss_limit", 3)
+        self.cooldown_sec = self.cfg.get("cooldown_sec", 300)
+        self.require_double_confirm = self.cfg.get("require_double_confirm", True)
+
         self.account_address = config["account_address"]
         self.position: Optional[dict] = None
         self.running = True
         self._sl_oid: Optional[int] = None
+        self._consecutive_losses: int = 0
+        self._last_loss_time: float = 0
 
     def run(self):
         logger.info(f"[{self.strategy_name}] 戦略開始 - {self.coin} {self.interval} MeanReversion")
@@ -90,6 +104,11 @@ class AltsMeanReversionStrategy:
 
         if self.position:
             self._manage_position(current_price, df)
+            return
+
+        # クールダウンチェック
+        if (self._consecutive_losses >= self.consecutive_loss_limit
+                and time.time() - self._last_loss_time < self.cooldown_sec):
             return
 
         signal = self._check_entry_signal(df)
@@ -150,35 +169,51 @@ class AltsMeanReversionStrategy:
         return 100 - (100 / (1 + rs))
 
     def _check_entry_signal(self, df: pd.DataFrame) -> Optional[str]:
+        if len(df) < 3:
+            return None
+
         curr = df.iloc[-1]
+        prev = df.iloc[-2]
+
         rsi = curr["rsi"]
+        prev_rsi = prev["rsi"]
         close = curr["close"]
         vol = curr["volume"]
         vol_ma = curr["vol_ma"]
 
-        if pd.isna(rsi) or pd.isna(curr["bb_lower"]) or pd.isna(vol_ma) or vol_ma == 0:
+        if pd.isna(rsi) or pd.isna(prev_rsi) or pd.isna(curr["bb_lower"]) or pd.isna(vol_ma) or vol_ma == 0:
             return None
 
         vol_ratio = vol / vol_ma
 
-        # LONG: 売られすぎ
+        # LONG: 売られすぎ（厳格化: 2本連続 + RSI反転確認）
+        double_confirm = (prev_rsi <= self.rsi_oversold + 5) if self.require_double_confirm else True
+        rsi_turning_up = rsi > prev_rsi
+
         if (rsi <= self.rsi_oversold
+                and double_confirm
                 and curr["low"] <= curr["bb_lower"]
                 and close > curr["open"]
+                and rsi_turning_up
                 and vol_ratio >= self.vol_spike_mult):
             logger.info(
-                f"[{self.strategy_name}] LONG: RSI={rsi:.1f}, "
+                f"[{self.strategy_name}] LONG: RSI={rsi:.1f}(前={prev_rsi:.1f}), "
                 f"BB下限={curr['bb_lower']:.4f}, Vol比={vol_ratio:.1f}x"
             )
             return "long"
 
-        # SHORT: 買われすぎ
+        # SHORT: 買われすぎ（厳格化: 2本連続 + RSI反転確認）
+        double_confirm = (prev_rsi >= self.rsi_overbought - 5) if self.require_double_confirm else True
+        rsi_turning_down = rsi < prev_rsi
+
         if (rsi >= self.rsi_overbought
+                and double_confirm
                 and curr["high"] >= curr["bb_upper"]
                 and close < curr["open"]
+                and rsi_turning_down
                 and vol_ratio >= self.vol_spike_mult):
             logger.info(
-                f"[{self.strategy_name}] SHORT: RSI={rsi:.1f}, "
+                f"[{self.strategy_name}] SHORT: RSI={rsi:.1f}(前={prev_rsi:.1f}), "
                 f"BB上限={curr['bb_upper']:.4f}, Vol比={vol_ratio:.1f}x"
             )
             return "short"
@@ -372,6 +407,16 @@ class AltsMeanReversionStrategy:
                 pnl = pnl_pct / 100 * entry * self.position["size"]
             else:
                 pnl, pnl_pct = 0.0, 0.0
+
+            # 連続損切トラッキング
+            if pnl < 0:
+                self._consecutive_losses += 1
+                self._last_loss_time = time.time()
+                logger.info(
+                    f"[{self.strategy_name}] 損切: {self._consecutive_losses}連敗"
+                )
+            else:
+                self._consecutive_losses = 0
 
             self.telegram.notify_exit(
                 self.strategy_name, self.coin, self.position["side"],

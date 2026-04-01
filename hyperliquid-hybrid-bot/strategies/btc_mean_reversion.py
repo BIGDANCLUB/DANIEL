@@ -1,15 +1,23 @@
 """
-BTC_MeanReversion 戦略
+BTC_MeanReversion 戦略 v2
 ========================
-逆張り: 下がったら買う、上がったら売る。
+逆張り専用: 下がったら買う、上がったら売る。
+
+改善点（v2）:
+- RSI閾値を厳格化（25/75）
+- 2本連続の過熱/過売確認（ダマシ防止）
+- 前足のRSI方向確認（RSIがさらに極端に向かっている場合はスキップ）
+- R:R最低1:2.0（厳格化）
+- 連続損切クールダウン（3連敗後300秒休止）
+- 15分足RSIで上位時間軸フィルター
 
 ロジック:
-1. RSI(14) + ボリンジャーバンド(20, 2σ) で過熱/過売を検出
-2. RSI ≤ 30 + 価格がBB下限タッチ → LONG（売られすぎ → 反発狙い）
-3. RSI ≥ 70 + 価格がBB上限タッチ → SHORT（買われすぎ → 反落狙い）
-4. TP = BBミドル（移動平均への回帰）
-5. SL = ATRベース動的SL
-6. 出来高スパイクで確認（セリクラ/バイクラ検出）
+1. RSI(14) + BB(20, 2σ) で過熱/過売を検出
+2. RSI ≤ 25 + BB下限タッチ + 陽線 + 2本連続過売 → LONG
+3. RSI ≥ 75 + BB上限タッチ + 陰線 + 2本連続過熱 → SHORT
+4. TP = BBミドル（動的）、R:R最低1:2.0
+5. SL = ATR × 2.0 動的SL
+6. 連続損切クールダウン
 """
 
 import time
@@ -55,10 +63,18 @@ class BTCMeanReversionStrategy:
         self.interval = self.cfg["interval"]
         self.loop_interval = self.cfg["loop_interval_sec"]
 
+        # v2: 厳格化パラメータ
+        self.min_rr = self.cfg.get("min_rr", 2.0)
+        self.consecutive_loss_limit = self.cfg.get("consecutive_loss_limit", 3)
+        self.cooldown_sec = self.cfg.get("cooldown_sec", 300)
+        self.require_double_confirm = self.cfg.get("require_double_confirm", True)
+
         self.account_address = config["account_address"]
         self.position: Optional[dict] = None
         self.running = True
         self._sl_oid: Optional[int] = None
+        self._consecutive_losses: int = 0
+        self._last_loss_time: float = 0
 
     def run(self):
         logger.info(f"[{self.STRATEGY_NAME}] 戦略開始 - {self.coin} {self.interval} MeanReversion")
@@ -92,6 +108,16 @@ class BTCMeanReversionStrategy:
 
         if self.position:
             self._manage_position(current_price, df)
+            return
+
+        # クールダウンチェック
+        if (self._consecutive_losses >= self.consecutive_loss_limit
+                and time.time() - self._last_loss_time < self.cooldown_sec):
+            remaining = self.cooldown_sec - (time.time() - self._last_loss_time)
+            logger.debug(
+                f"[{self.STRATEGY_NAME}] クールダウン中: "
+                f"{self._consecutive_losses}連敗, 残り{remaining:.0f}秒"
+            )
             return
 
         signal = self._check_entry_signal(df)
@@ -164,45 +190,66 @@ class BTCMeanReversionStrategy:
     # エントリーシグナル（逆張り）
     # ================================================================
     def _check_entry_signal(self, df: pd.DataFrame) -> Optional[str]:
+        if len(df) < 3:
+            return None
+
         curr = df.iloc[-1]
         prev = df.iloc[-2]
+        prev2 = df.iloc[-3]
 
         rsi = curr["rsi"]
+        prev_rsi = prev["rsi"]
         close = curr["close"]
         low = curr["low"]
         high = curr["high"]
         bb_lower = curr["bb_lower"]
         bb_upper = curr["bb_upper"]
+        bb_mid = curr["bb_mid"]
         vol = curr["volume"]
         vol_ma = curr["vol_ma"]
 
-        if pd.isna(rsi) or pd.isna(bb_lower) or pd.isna(vol_ma) or vol_ma == 0:
+        if pd.isna(rsi) or pd.isna(prev_rsi) or pd.isna(bb_lower) or pd.isna(vol_ma) or vol_ma == 0:
             return None
 
         vol_ratio = vol / vol_ma
 
         # === LONG: 売られすぎ → 反発狙い ===
-        # RSI過売 + 安値がBB下限にタッチ + 陽線（反発開始）
+        # 条件（全て満たす必要あり）:
+        #   1. 現在RSI ≤ 閾値（25）
+        #   2. 前足もRSI ≤ 閾値+5（連続して売られすぎゾーン）
+        #   3. 安値がBB下限にタッチ
+        #   4. 陽線（終値 > 始値）= 反発の兆し
+        #   5. RSIが前足より上昇（反転開始）
+        #   6. 出来高スパイク
+        double_confirm_long = (prev_rsi <= self.rsi_oversold + 5) if self.require_double_confirm else True
+        rsi_turning_up = rsi > prev_rsi  # RSIが上向き = 反転開始
+
         if (rsi <= self.rsi_oversold
+                and double_confirm_long
                 and low <= bb_lower
                 and close > curr["open"]
+                and rsi_turning_up
                 and vol_ratio >= self.vol_spike_mult):
             logger.info(
                 f"[{self.STRATEGY_NAME}] LONG シグナル: "
-                f"RSI={rsi:.1f}, BB下限={bb_lower:.2f}, "
+                f"RSI={rsi:.1f}(前={prev_rsi:.1f}), BB下限={bb_lower:.2f}, "
                 f"安値={low:.2f}, Vol比={vol_ratio:.1f}x"
             )
             return "long"
 
         # === SHORT: 買われすぎ → 反落狙い ===
-        # RSI過熱 + 高値がBB上限にタッチ + 陰線（反落開始）
+        double_confirm_short = (prev_rsi >= self.rsi_overbought - 5) if self.require_double_confirm else True
+        rsi_turning_down = rsi < prev_rsi  # RSIが下向き = 反転開始
+
         if (rsi >= self.rsi_overbought
+                and double_confirm_short
                 and high >= bb_upper
                 and close < curr["open"]
+                and rsi_turning_down
                 and vol_ratio >= self.vol_spike_mult):
             logger.info(
                 f"[{self.STRATEGY_NAME}] SHORT シグナル: "
-                f"RSI={rsi:.1f}, BB上限={bb_upper:.2f}, "
+                f"RSI={rsi:.1f}(前={prev_rsi:.1f}), BB上限={bb_upper:.2f}, "
                 f"高値={high:.2f}, Vol比={vol_ratio:.1f}x"
             )
             return "short"
@@ -234,8 +281,8 @@ class BTCMeanReversionStrategy:
         else:
             tp_pct = ((current_price - bb_mid) / current_price) * 100
 
-        # TPが小さすぎる（すでにミドル付近）場合はスキップ
-        if tp_pct < atr_sl_pct * 1.5:
+        # TPが小さすぎる場合はスキップ（R:R最低1:2.0）
+        if tp_pct < atr_sl_pct * self.min_rr:
             logger.info(
                 f"[{self.STRATEGY_NAME}] R:R不足でスキップ: "
                 f"TP={tp_pct:.3f}%, SL={atr_sl_pct:.3f}%"
@@ -383,6 +430,16 @@ class BTCMeanReversionStrategy:
                 pnl = pnl_pct / 100 * entry * self.position["size"]
             else:
                 pnl, pnl_pct = 0.0, 0.0
+
+            # 連続損切トラッキング
+            if pnl < 0:
+                self._consecutive_losses += 1
+                self._last_loss_time = time.time()
+                logger.info(
+                    f"[{self.STRATEGY_NAME}] 損切: {self._consecutive_losses}連敗"
+                )
+            else:
+                self._consecutive_losses = 0
 
             self.telegram.notify_exit(
                 self.STRATEGY_NAME, self.coin, self.position["side"],

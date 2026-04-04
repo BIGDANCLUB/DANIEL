@@ -5,6 +5,16 @@
 
 [call storage="system/macro.ks"]
 
+[iscript]
+(function() {
+    if (document.getElementById('hold_skip_loaded')) return;
+    var s = document.createElement('script');
+    s.id = 'hold_skip_loaded';
+    s.src = 'data/js/hold_skip.js?' + Date.now();
+    document.head.appendChild(s);
+})();
+[endscript]
+
 [wait time=300]
 
 ; タイトルBGM

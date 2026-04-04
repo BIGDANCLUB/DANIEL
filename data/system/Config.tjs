@@ -32,7 +32,7 @@
 ;defaultChEffect = none;
 
 // スキップスピード
-;skipSpeed = 30;
+;skipSpeed = 0;
 ;skipEffectIgnore = true;
 
 // オートスピード

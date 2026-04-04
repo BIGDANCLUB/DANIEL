@@ -7,11 +7,18 @@
 
 [iscript]
 (function() {
-    if (document.getElementById('hold_skip_loaded')) return;
-    var s = document.createElement('script');
-    s.id = 'hold_skip_loaded';
-    s.src = 'data/js/hold_skip.js?' + Date.now();
-    document.head.appendChild(s);
+    if (!document.getElementById('hold_skip_loaded')) {
+        var s1 = document.createElement('script');
+        s1.id = 'hold_skip_loaded';
+        s1.src = 'data/js/hold_skip.js?' + Date.now();
+        document.head.appendChild(s1);
+    }
+    if (!document.getElementById('msg_controls_loaded')) {
+        var s2 = document.createElement('script');
+        s2.id = 'msg_controls_loaded';
+        s2.src = 'data/js/message_controls.js?' + Date.now();
+        document.head.appendChild(s2);
+    }
 })();
 [endscript]
 

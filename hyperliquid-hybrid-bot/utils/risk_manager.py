@@ -31,6 +31,7 @@ class RiskManager:
         """
         self.info = info
         self.config = config
+        self.network = config.get("network", "MAINNET").upper()
         self._lock = threading.Lock()
 
         # リスクパラメータ
@@ -85,8 +86,44 @@ class RiskManager:
             if equity == 0:
                 equity = float(user_state.get("withdrawable", 0))
 
+            # Unified account: SpotのUSDC残高をチェック
             if equity == 0:
-                logger.debug(f"[RiskManager] user_state keys: {list(user_state.keys())}")
+                try:
+                    spot_state = self.info.spot_user_state(self.account_address)
+                    balances = spot_state.get("balances", [])
+                    for b in balances:
+                        token = b.get("coin", b.get("token", ""))
+                        if token in ("USDC", "USDT", "USD"):
+                            hold = float(b.get("hold", b.get("total", 0)))
+                            total = float(b.get("total", hold))
+                            equity += total
+                    if equity > 0:
+                        logger.info(f"[RiskManager] Spot USDC残高から資産取得: ${equity:,.2f}")
+                except Exception as e2:
+                    logger.debug(f"[RiskManager] spot_user_state取得失敗: {e2}")
+
+            # それでも0の場合、直接APIを叩く
+            if equity == 0:
+                try:
+                    import requests
+                    from hyperliquid.utils import constants
+                    base_url = constants.TESTNET_API_URL if self.network == "TESTNET" else constants.MAINNET_API_URL
+                    resp = requests.post(
+                        f"{base_url}/info",
+                        json={"type": "spotClearinghouseState", "user": self.account_address},
+                        timeout=10
+                    )
+                    spot_data = resp.json()
+                    for b in spot_data.get("balances", []):
+                        token = b.get("coin", b.get("token", ""))
+                        if token in ("USDC", "USDT", "USD"):
+                            equity += float(b.get("hold", b.get("total", 0)))
+                            equity += float(b.get("total", 0))
+                            # holdとtotalが同じ場合重複するので最大値を取る
+                    if equity > 0:
+                        logger.info(f"[RiskManager] 直接API Spot残高: ${equity:,.2f}")
+                except Exception as e3:
+                    logger.debug(f"[RiskManager] 直接API失敗: {e3}")
 
             return equity
         except Exception as e:

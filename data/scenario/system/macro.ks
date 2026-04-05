@@ -2,6 +2,9 @@
 ; macro.ks - カスタムマクロ定義
 ;==========================================================
 
+; アセットマクロ（cg / bg_set / bgm_on 等）を読み込む
+[call storage="system/assets.ks"]
+
 ; [nm t="キャラ名"] → 名前ボックスに名前を表示するマクロ
 [macro name="nm"]
 [position layer="message0" page=fore name="%t"]

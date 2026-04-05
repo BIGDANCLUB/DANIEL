@@ -43,6 +43,9 @@ class RiskManager:
         self.btc_alloc_pct = config["risk"]["btc_allocation_pct"]
         self.alts_alloc_pct = config["risk"]["alts_allocation_pct"]
 
+        # 手動資産設定（Unified accountでAPI残高が0の場合に使用）
+        self.manual_equity = config["risk"].get("manual_equity_usd", 0)
+
         # 状態管理
         self.account_address = config["account_address"]
         self.daily_start_equity: Optional[float] = None
@@ -133,7 +136,12 @@ class RiskManager:
     def get_total_equity(self) -> float:
         """現在の総資産を取得"""
         equity = self._get_account_equity()
-        return equity if equity else 0.0
+        if equity and equity > 0:
+            return equity
+        # API残高が0の場合、手動設定を使用
+        if self.manual_equity > 0:
+            return self.manual_equity
+        return 0.0
 
     def get_btc_allocation(self) -> float:
         """BTC戦略に割り当てられた資金額を返す"""

@@ -13,8 +13,9 @@
         "chat_id": "8072089836"
     },
 
-    "_comment_risk": "共通リスク管理パラメータ",
+    "_comment_risk": "共通リスク管理パラメータ（manual_equity_usd: Unified accountでAPI残高が0の場合に手動設定）",
     "risk": {
+        "manual_equity_usd": 850.0,
         "max_total_exposure_pct": 300.0,
         "max_risk_per_trade_pct": 0.5,
         "daily_drawdown_limit_pct": 10.0,

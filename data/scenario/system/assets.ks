@@ -39,6 +39,13 @@
 ;    [se_on f="chain_break"]        → sound/se_chain_break.ogg を1回再生
 ;    [se_on f="slime_move" v="60"]
 ;
+;  ■ 白フラッシュ（明滅演出）
+;    [flash_w]              → 白フラッシュ1回
+;    [flash_w s="50"]       → 速さ指定（ms）
+;    [flash_w2]             → 2回明滅
+;    [flash_w3]             → 3回明滅（クライマックス等）
+;    [flash_w5]             → 5回明滅（激しい演出）
+;
 ;  ■ 動画
 ;    [mv f="opening"]               → video/mv_opening.mp4 を再生
 ;
@@ -143,6 +150,51 @@
 ; 例: [mv f="opening"]
 [macro name="mv"]
 [movie storage="video/mv_%f%.mp4"]
+[endmacro]
+
+; ---- 白フラッシュ（明滅演出）----
+;
+; [flash_w]              → 白フラッシュ1回（標準速）
+; [flash_w s="50"]       → 速いフラッシュ（s=点灯ms / 消灯も同じ時間）
+; [flash_w s="200"]      → ゆっくりフラッシュ
+;
+; 複数回の明滅:
+; [flash_w2]             → 2回
+; [flash_w3]             → 3回（クライマックス等に）
+; [flash_w5]             → 5回（激しい明滅）
+;
+; ★使い方例:
+;   ...テキスト...[p]
+;   [flash_w3]                      ← 3回明滅
+;   [cg f="witch_h1_03"]
+;   ...テキスト...
+;
+; ★白フラッシュ+SEを組み合わせると効果的:
+;   [se_on f="flash"]
+;   [flash_w3]
+
+[macro name="flash_w"]
+[white time="%s|80"]
+[fadein time="%s|80"]
+[endmacro]
+
+[macro name="flash_w2"]
+[flash_w s="%s|80"]
+[flash_w s="%s|80"]
+[endmacro]
+
+[macro name="flash_w3"]
+[flash_w s="%s|80"]
+[flash_w s="%s|80"]
+[flash_w s="%s|80"]
+[endmacro]
+
+[macro name="flash_w5"]
+[flash_w s="%s|60"]
+[flash_w s="%s|60"]
+[flash_w s="%s|60"]
+[flash_w s="%s|60"]
+[flash_w s="%s|60"]
 [endmacro]
 
 [return]

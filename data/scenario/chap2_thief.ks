@@ -126,14 +126,14 @@
 *thief_h1
 [eval exp="f.scene_thief_h1=1"]
 ; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
-; [cg f="thief_h1_01"]              ← 最初のCG
+; [cg f="thief_h1_01"]              ← CG①（最初）
 [nm t="ナレーション"]
 煙の中、盗賊に押し倒された。身軽な手が素早く動き、あっという間に拘束される。「勇者の精液って高く売れるって聞いたけど……自分でもらうことにしたわ」そう言いながら、慣れた手つきで勇者を翻弄してくる。[p]
-; [cg f="thief_h1_02"]              ← 中盤CG
+; [cg f="thief_h1_02"]              ← CG②
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがて女盗賊は離れていった。[p]
-; [cg f="thief_h1_03"]              ← クライマックスCG
+; [cg f="thief_h1_03"]              ← CG③（必要なら下に ④⑤... と追加可）
 [if exp="f.from_recall==1"]
 [eval exp="f.from_recall=0"]
 [jump storage="recollection_room.ks" target="*recollection_start"]
@@ -142,14 +142,14 @@
 *thief_h2
 [eval exp="f.scene_thief_h2=1"]
 ; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
-; [cg f="thief_h2_01"]              ← 最初のCG
+; [cg f="thief_h2_01"]              ← CG①（最初）
 [nm t="ナレーション"]
 羽交い締めにされたまま壁に押しつけられた。盗賊の身体が背中から密着し、器用な指が前から動き始める。「大人しくしてれば、痛くしないわよ♪」[p]
-; [cg f="thief_h2_02"]              ← 中盤CG
+; [cg f="thief_h2_02"]              ← CG②
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがて女盗賊は離れていった。[p]
-; [cg f="thief_h2_03"]              ← クライマックスCG
+; [cg f="thief_h2_03"]              ← CG③（必要なら下に ④⑤... と追加可）
 [if exp="f.from_recall==1"]
 [eval exp="f.from_recall=0"]
 [jump storage="recollection_room.ks" target="*recollection_start"]
@@ -158,14 +158,14 @@
 *thief_h3
 [eval exp="f.scene_thief_h3=1"]
 ; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
-; [cg f="thief_h3_01"]              ← 最初のCG
+; [cg f="thief_h3_01"]              ← CG①（最初）
 [nm t="ナレーション"]
 煙の中で感覚が鋭くなっている。盗賊の手の動きがやけにはっきり伝わってくる。見えない分だけ、触覚が増幅される。「暗闇は盗賊のお庭よ。逆らわない方がいいわ」[p]
-; [cg f="thief_h3_02"]              ← 中盤CG
+; [cg f="thief_h3_02"]              ← CG②
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがて女盗賊は離れていった。[p]
-; [cg f="thief_h3_03"]              ← クライマックスCG
+; [cg f="thief_h3_03"]              ← CG③（必要なら下に ④⑤... と追加可）
 [if exp="f.from_recall==1"]
 [eval exp="f.from_recall=0"]
 [jump storage="recollection_room.ks" target="*recollection_start"]
@@ -174,14 +174,14 @@
 *thief_h4
 [eval exp="f.scene_thief_h4=1"]
 ; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
-; [cg f="thief_h4_01"]              ← 最初のCG
+; [cg f="thief_h4_01"]              ← CG①（最初）
 [nm t="ナレーション"]
 罠に絡まったまま、盗賊に翻弄された。身動きできない状態で、盗賊はじっくり時間をかけて「いただいて」いく。[p]
-; [cg f="thief_h4_02"]              ← 中盤CG
+; [cg f="thief_h4_02"]              ← CG②
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがて女盗賊は離れていった。[p]
-; [cg f="thief_h4_03"]              ← クライマックスCG
+; [cg f="thief_h4_03"]              ← CG③（必要なら下に ④⑤... と追加可）
 [if exp="f.from_recall==1"]
 [eval exp="f.from_recall=0"]
 [jump storage="recollection_room.ks" target="*recollection_start"]
@@ -190,14 +190,14 @@
 *thief_h5
 [eval exp="f.scene_thief_h5=1"]
 ; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
-; [cg f="thief_h5_01"]              ← 最初のCG
+; [cg f="thief_h5_01"]              ← CG①（最初）
 [nm t="ナレーション"]
 押し倒されたまま、盗賊は勇者の全てを奪っていった。「やっぱり勇者サマは上物ね」満足そうに笑いながら、颯爽と去っていった。[p]
-; [cg f="thief_h5_02"]              ← 中盤CG
+; [cg f="thief_h5_02"]              ← CG②
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがて女盗賊は離れていった。[p]
-; [cg f="thief_h5_03"]              ← クライマックスCG
+; [cg f="thief_h5_03"]              ← CG③（必要なら下に ④⑤... と追加可）
 [if exp="f.from_recall==1"]
 [eval exp="f.from_recall=0"]
 [jump storage="recollection_room.ks" target="*recollection_start"]

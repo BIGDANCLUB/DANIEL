@@ -116,66 +116,66 @@
 *mimic_h1
 [eval exp="f.scene_mimic_h1=1"]
 ; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
-; [cg f="mimic_h1_01"]              ← 最初のCG
+; [cg f="mimic_h1_01"]              ← CG①（最初）
 [nm t="ナレーション"]
 宝箱の中に引き込まれた。内側は広く温かく湿った空間だった。粘液がゆっくりと全身を包み込み、服を溶かすように滲み込んでくる。ミミックの意思なのか、粘液が性感帯を正確に捉えじわじわと刺激し続ける。[p]
-; [cg f="mimic_h1_02"]              ← 中盤CG
+; [cg f="mimic_h1_02"]              ← CG②
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがてミミックは離れていった。[p]
-; [cg f="mimic_h1_03"]              ← クライマックスCG
+; [cg f="mimic_h1_03"]              ← CG③（必要なら下に ④⑤... と追加可）
 [if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
 [jump storage="chap2_explore.ks" target="*hub_b1f"]
 *mimic_h2
 [eval exp="f.scene_mimic_h2=1"]
 ; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
-; [cg f="mimic_h2_01"]              ← 最初のCG
+; [cg f="mimic_h2_01"]              ← CG①（最初）
 [nm t="ナレーション"]
 鍵穴から入り込んだ粘液が腕を這い上がり全身へと広がっていく。ゆっくりと、じっくりと全身に回っていく。ミミックは焦らない——時間をかけて余すことなく味わうように。[p]
-; [cg f="mimic_h2_02"]              ← 中盤CG
+; [cg f="mimic_h2_02"]              ← CG②
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがてミミックは離れていった。[p]
-; [cg f="mimic_h2_03"]              ← クライマックスCG
+; [cg f="mimic_h2_03"]              ← CG③（必要なら下に ④⑤... と追加可）
 [if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
 [jump storage="chap2_explore.ks" target="*hub_b1f"]
 *mimic_h3
 [eval exp="f.scene_mimic_h3=1"]
 ; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
-; [cg f="mimic_h3_01"]              ← 最初のCG
+; [cg f="mimic_h3_01"]              ← CG①（最初）
 [nm t="ナレーション"]
 甘い香りで理性が朦朧とする中、宝箱の蓋が閉まった。暗闇の中粘液が全身を包む。香りがさらに濃くなり身体の感度が増す。ミミックにとってこの状態の獲物こそ最上のご馳走だ。[p]
-; [cg f="mimic_h3_02"]              ← 中盤CG
+; [cg f="mimic_h3_02"]              ← CG②
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがてミミックは離れていった。[p]
-; [cg f="mimic_h3_03"]              ← クライマックスCG
+; [cg f="mimic_h3_03"]              ← CG③（必要なら下に ④⑤... と追加可）
 [if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
 [jump storage="chap2_explore.ks" target="*hub_b1f"]
 *mimic_h4
 [eval exp="f.scene_mimic_h4=1"]
 ; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
-; [cg f="mimic_h4_01"]              ← 最初のCG
+; [cg f="mimic_h4_01"]              ← CG①（最初）
 [nm t="ナレーション"]
 足首を固定されたまま宝箱が近づいてくる。蓋が開き粘液が足首からゆっくり這い上がる——抵抗できない。[p]
-; [cg f="mimic_h4_02"]              ← 中盤CG
+; [cg f="mimic_h4_02"]              ← CG②
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがてミミックは離れていった。[p]
-; [cg f="mimic_h4_03"]              ← クライマックスCG
+; [cg f="mimic_h4_03"]              ← CG③（必要なら下に ④⑤... と追加可）
 [if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
 [jump storage="chap2_explore.ks" target="*hub_b1f"]
 *mimic_h5
 [eval exp="f.scene_mimic_h5=1"]
 ; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
-; [cg f="mimic_h5_01"]              ← 最初のCG
+; [cg f="mimic_h5_01"]              ← CG①（最初）
 [nm t="ナレーション"]
 全身を触手に包まれ宝箱の内部へ引き込まれた。暗く温かい空間でミミックは時間をかけてじっくりと全てを絞り取っていく。[p]
-; [cg f="mimic_h5_02"]              ← 中盤CG
+; [cg f="mimic_h5_02"]              ← CG②
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがてミミックは離れていった。[p]
-; [cg f="mimic_h5_03"]              ← クライマックスCG
+; [cg f="mimic_h5_03"]              ← CG③（必要なら下に ④⑤... と追加可）
 [if exp="f.from_recall==1"][eval exp="f.from_recall=0"][jump storage="recollection_room.ks" target="*recollection_start"][endif]
 [jump storage="chap2_explore.ks" target="*hub_b1f"]
 *mimic_win

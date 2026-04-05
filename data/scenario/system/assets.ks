@@ -3,10 +3,13 @@
 ;
 ; 【使い方一覧】
 ;
-;  ■ CG（Hシーン差分）
+;  ■ CG（Hシーン差分・枚数は任意）
 ;    [cg f="slime_h1_01"]          → cg/slime_h1_01.jpg を表示（300ms fade）
+;    [cg f="slime_h1_02"]          → 次の差分（02, 03, 04... と連番で何枚でも）
 ;    [cg f="slime_h1_02" t="0"]    → 瞬間切り替え
 ;    [cg f="slime_h1_03" t="500"]  → ゆっくりfade
+;
+;    ※ 枚数はシーンごとに自由。多い場合は _01〜_08 等、連番で追加してください。
 ;
 ;  ■ 背景（探索・バトル画面）
 ;    [bg_set f="dungeon_b1f"]       → bg/dungeon_b1f.jpg
@@ -36,7 +39,8 @@
 ;
 ; 【ファイル命名規則】
 ;   CG差分  : data/bgimage/cg/  → {敵名}_h{n}_{フレーム2桁}.jpg
-;             例: slime_h1_01.jpg / slime_h1_02.jpg / slime_h2_01.jpg
+;             例: slime_h1_01.jpg 〜 slime_h1_06.jpg（枚数自由）
+;                 slime_h2_01.jpg 〜 slime_h2_04.jpg（シーンごとに枚数が違ってOK）
 ;   背景    : data/bgimage/bg/  → {場所名}.jpg
 ;             例: dungeon_b1f.jpg / throne_room.jpg / prison_cell.jpg
 ;   イベントCG: data/bgimage/ev/ → {シーンID}.jpg

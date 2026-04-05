@@ -24,11 +24,16 @@
 ;    [ch_hide e="slime"]
 ;    [ch_all_hide]
 ;
-;  ■ BGM
+;  ■ BGM（1系統）
 ;    [bgm_on f="battle_b1f"]        → bgm/bgm_battle_b1f.ogg をloop再生
 ;    [bgm_on f="h_scene" v="70"]    → 音量70で再生
 ;    [bgm_off]                       → 1500msでフェードアウト停止
 ;    [bgm_off t="0"]                 → 即停止
+;
+;  ■ BGM レイヤー2（BGMと同時再生可能）
+;    [bgm2_on f="h_scene_layer2"]   → SEチャンネルbuf=1でloopさせる（BGMと重ねられる）
+;    [bgm2_on f="ambient" v="50"]   → 音量50で
+;    [bgm2_off]                      → レイヤー2だけ停止
 ;
 ;  ■ SE
 ;    [se_on f="chain_break"]        → sound/se_chain_break.ogg を1回再生
@@ -104,6 +109,27 @@
 [macro name="bgm_off"]
 [bgmopt time="%t|1500"]
 [stopbgm]
+[endmacro]
+
+; ---- BGM レイヤー2（SEチャンネルでループ再生。BGMと同時に流せる）----
+; 例: [bgm2_on f="ambient_cave"]        → BGMと同時に環境音・重ねBGMを再生
+; 例: [bgm2_on f="h_voice" v="60"]     → 音量60で再生
+; 例: [bgm2_off]                         → フェードアウト停止
+;
+; ★使い方イメージ:
+;   [bgm_on f="h_scene"]            ← ベースBGM（BGMチャンネル）
+;   [bgm2_on f="h_scene_layer2"]    ← 重ねる音（SEチャンネルでloop）
+;   ...テキスト...
+;   [bgm2_off]                      ← レイヤー2だけ止める
+;   [bgm_off]                       ← ベースBGMも止める
+[macro name="bgm2_on"]
+[playse storage="bgm_%f%.ogg" loop=true volume="%v|70" buf="1"]
+[endmacro]
+
+; ---- BGM レイヤー2 停止 ----
+; 例: [bgm2_off]
+[macro name="bgm2_off"]
+[stopse buf="1"]
 [endmacro]
 
 ; ---- SE 再生 ----

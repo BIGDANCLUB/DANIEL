@@ -113,13 +113,17 @@
 [jump target="*prostitute_h5"]
 *prostitute_h1
 [eval exp="f.scene_prostitute_h1=1"]
+; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
+; [cg f="prostitute_h1_01"]              ← 最初のCG
 [nm t="ナレーション"]
 娼婦が椅子から立ち上がり、ゆっくりと近づいてきた。急がない。慌てない。この職業で長年磨いた「相手のペースに合わせる」技術が、全身の動きに出ていた。[p]
+; [cg f="prostitute_h1_02"]              ← 中盤CG
 [nm t="娼婦" color="#ffaacc"]
 「怖くないよ。……ねえ、こっちおいで。ゆっくりしよ」[l]
 [nm t="ナレーション"]
 温かい手が引かれた。抵抗できない理由が見当たらない——それが娼婦の技術だった。誘導する言葉、安心させる体温、急所への誘い込みが自然すぎて、気づいた時には全て始まっていた。[l]
 「うん、そう。力抜いて」娼婦は経験の積み上げだけで動いていた。一切の迷いなく、一切の遠慮なく——でも一切の痛みなく。全てがプロの仕事として完遂された。「こんな反応久しぶりに見た♪」満足そうな声が聞こえた。[p]
+; [cg f="prostitute_h1_03"]              ← クライマックスCG
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがて娼婦は離れていった。[p]
@@ -127,13 +131,17 @@
 [jump storage="chap2_explore.ks" target="*hub_4f"]
 *prostitute_h2
 [eval exp="f.scene_prostitute_h2=1"]
+; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
+; [cg f="prostitute_h2_01"]              ← 最初のCG
 [nm t="ナレーション"]
 部屋に引き込まれた。豪華ではないが、細部まで計算された空間——明かりの角度、香りの種類、寝台の硬さ。全てが目的のために最適化されている。[p]
+; [cg f="prostitute_h2_02"]              ← 中盤CG
 [nm t="娼婦" color="#ffaacc"]
 「横になって。客のもてなしは慣れてるから、任せてよ♪」[l]
 [nm t="ナレーション"]
 言われた通りにした途端、全ての主導権が娼婦に移った。どこに手を置くべきか、どの体勢が最も効果的か——娼婦はそれを知り尽くしている。淫紋の位置も、一度触れた瞬間に把握していた。[l]
 「こっちの方が気持ちいいでしょ」と言いながら、試すように位置を変える。体が反応するたびに「ほら」と言って笑う。この仕事のプロフェッショナルは、相手の身体のことを当人より詳しかった。[p]
+; [cg f="prostitute_h2_03"]              ← クライマックスCG
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがて娼婦は離れていった。[p]
@@ -141,13 +149,17 @@
 [jump storage="chap2_explore.ks" target="*hub_4f"]
 *prostitute_h3
 [eval exp="f.scene_prostitute_h3=1"]
+; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
+; [cg f="prostitute_h3_01"]              ← 最初のCG
 [nm t="ナレーション"]
 「あのね」と娼婦が言った。「私、淫紋持ちの客は初めてなの」話しながら、手は動いていた。話と手が完全に別々に機能している。[p]
+; [cg f="prostitute_h3_02"]              ← 中盤CG
 [nm t="娼婦" color="#ffaacc"]
 「だから逆に興味あって。どこが一番反応するか、ちゃんと確かめたいなって♪」[l]
 [nm t="ナレーション"]
 言葉で注意を引きながら、手は別のことをする。これも技術だ。会話で緊張を解きながら、身体への侵入を自然にする。気づいた時には既にペースが完全に掌握されていた。[l]
 「こういう子、好きよ」娼婦が言った。感情的な言葉なのか、営業的な言葉なのか判断できない。でもその声は温かかった。そしてその後の処置は、容赦がなかった。[p]
+; [cg f="prostitute_h3_03"]              ← クライマックスCG
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがて娼婦は離れていった。[p]
@@ -155,13 +167,17 @@
 [jump storage="chap2_explore.ks" target="*hub_4f"]
 *prostitute_h4
 [eval exp="f.scene_prostitute_h4=1"]
+; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
+; [cg f="prostitute_h4_01"]              ← 最初のCG
 [nm t="ナレーション"]
 脚の力が完全に抜けた。壁に倒れかかったところを、娼婦が片腕で支えた。力持ちだった。事もなげに支えながら、「ほら、こっち来て」と部屋の奥へ誘導する。[p]
+; [cg f="prostitute_h4_02"]              ← 中盤CG
 [nm t="娼婦" color="#ffaacc"]
 「動けない客も珍しくないよ。大丈夫、私が全部やるから」[l]
 [nm t="ナレーション"]
 横たえられた。全ての判断と動作を娼婦に委ねることになった——というより、そうなるように誘導されていた。こちらが何もしなくていい状況で、娼婦はより本来の仕事をし始めた。[l]
 受け身でいるだけで全てが進んだ。娼婦の技術は、相手が動けない時の方がむしろ真価を発揮するのかもしれない。「特別サービス♪」と言いながら進める処置は、選択の余地なく全てを引き出していった。[p]
+; [cg f="prostitute_h4_03"]              ← クライマックスCG
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがて娼婦は離れていった。[p]
@@ -169,13 +185,17 @@
 [jump storage="chap2_explore.ks" target="*hub_4f"]
 *prostitute_h5
 [eval exp="f.scene_prostitute_h5=1"]
+; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
+; [cg f="prostitute_h5_01"]              ← 最初のCG
 [nm t="ナレーション"]
 「今夜はゆっくりしてって」娼婦が言った。それは宣言だった。[p]
+; [cg f="prostitute_h5_02"]              ← 中盤CG
 [nm t="娼婦" color="#ffaacc"]
 「珍しい客だから、ちゃんとサービスしたいの。……嫌？」[l]
 [nm t="ナレーション"]
 嫌という理由がなかった。それが娼婦の設定した状況だった。抵抗する理由を消し、留まる理由だけを残す。「全部サービスに含まれてるから」と言いながら、夜が更けても娼婦の手は止まらなかった。[l]
 一度限界を迎えるたびに「もう一回♪」と笑顔で続ける。職業的な笑顔のはずが、長い夜の後半には本物の表情が混じってきた。「……あなた、面白い人ね」最後にそう言った声は、営業ではなかった。[p]
+; [cg f="prostitute_h5_03"]              ← クライマックスCG
 [call storage="system/init.ks" target="*squeeze_event"]
 [nm t="ナレーション"]
 やがて娼婦は離れていった。[p]

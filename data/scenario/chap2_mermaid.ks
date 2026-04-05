@@ -184,14 +184,18 @@
 ;===========================================================
 *mermaid_h1
 [eval exp="f.scene_mermaid_h1=1"]
+; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
+; [cg f="mermaid_h1_01"]              ← 最初のCG
 
 [nm t="ナレーション"]
 水中に引き込まれ、人魚に抱きしめられた。水の中でも息ができる——人魚の魔法か。美しい尾が身体に絡みつき、水中をゆっくりと踊るように動く。冷たいはずの水が、不思議と温かく感じる。人魚の歌声が水中に響き、全身の感覚が鋭くなっていく。[p]
+; [cg f="mermaid_h1_02"]              ← 中盤CG
 
 [call storage="system/init.ks" target="*squeeze_event"]
 
 [nm t="ナレーション"]
 やがて人魚は満足し、静かに離れていった。[p]
+; [cg f="mermaid_h1_03"]              ← クライマックスCG
 
 [if exp="f.from_recall==1"]
 [eval exp="f.from_recall=0"]
@@ -204,14 +208,18 @@
 ;===========================================================
 *mermaid_h2
 [eval exp="f.scene_mermaid_h2=1"]
+; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
+; [cg f="mermaid_h2_01"]              ← 最初のCG
 
 [nm t="ナレーション"]
 手を引かれたまま深みへ。水圧が全身を優しく押し包む。人魚の長い銀髪が全身に絡みつき、滑らかな肌が密着する。水の中でこそ、人魚は本来の力を発揮する——全身で絡み合い、奥深くまで引き込んでいく。[p]
+; [cg f="mermaid_h2_02"]              ← 中盤CG
 
 [call storage="system/init.ks" target="*squeeze_event"]
 
 [nm t="ナレーション"]
 やがて人魚は満足し、静かに離れていった。[p]
+; [cg f="mermaid_h2_03"]              ← クライマックスCG
 
 [if exp="f.from_recall==1"]
 [eval exp="f.from_recall=0"]
@@ -224,14 +232,18 @@
 ;===========================================================
 *mermaid_h3
 [eval exp="f.scene_mermaid_h3=1"]
+; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
+; [cg f="mermaid_h3_01"]              ← 最初のCG
 
 [nm t="ナレーション"]
 人魚の歌が脳に直接響くような感覚。水中で感度が増し、人魚の動きに全身が反応してしまう。美しい歌に包まれながら、深い水の底で——意識が溶けていく。[p]
+; [cg f="mermaid_h3_02"]              ← 中盤CG
 
 [call storage="system/init.ks" target="*squeeze_event"]
 
 [nm t="ナレーション"]
 やがて人魚は満足し、静かに離れていった。[p]
+; [cg f="mermaid_h3_03"]              ← クライマックスCG
 
 [if exp="f.from_recall==1"]
 [eval exp="f.from_recall=0"]
@@ -244,14 +256,18 @@
 ;===========================================================
 *mermaid_h4
 [eval exp="f.scene_mermaid_h4=1"]
+; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
+; [cg f="mermaid_h4_01"]              ← 最初のCG
 
 [nm t="ナレーション"]
 水面から引き込まれる瞬間、人魚と目が合った。深い青の瞳。水中で見つめ合いながら、尾びれが足に絡みつく。人魚は丁寧に、慈しむように——全身を使って搾り取っていく。[p]
+; [cg f="mermaid_h4_02"]              ← 中盤CG
 
 [call storage="system/init.ks" target="*squeeze_event"]
 
 [nm t="ナレーション"]
 やがて人魚は満足し、静かに離れていった。[p]
+; [cg f="mermaid_h4_03"]              ← クライマックスCG
 
 [if exp="f.from_recall==1"]
 [eval exp="f.from_recall=0"]
@@ -264,14 +280,18 @@
 ;===========================================================
 *mermaid_h5
 [eval exp="f.scene_mermaid_h5=1"]
+; [bgm_on f="h_scene"]              ← Hシーン用BGMに切り替え
+; [cg f="mermaid_h5_01"]              ← 最初のCG
 
 [nm t="ナレーション"]
 深い水底まで引き込まれた。上を見ると、遠く水面の光が見える。人魚が歌いながら、全身で抱きしめてくる。水の中、時間を忘れた空間で、長い長い時間をかけて。[p]
+; [cg f="mermaid_h5_02"]              ← 中盤CG
 
 [call storage="system/init.ks" target="*squeeze_event"]
 
 [nm t="ナレーション"]
 やがて人魚は満足し、静かに離れていった。[p]
+; [cg f="mermaid_h5_03"]              ← クライマックスCG
 
 [if exp="f.from_recall==1"]
 [eval exp="f.from_recall=0"]

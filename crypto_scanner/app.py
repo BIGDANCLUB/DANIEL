@@ -162,6 +162,7 @@ from data_fetcher import (
 from ai_predictor import SignalPredictor
 from realtime_ws import RealtimePoller, LiquidationAggregator
 from notifier import UnifiedNotifier
+from risex_trader import RiseXClient, RiseXAutoTrader, RiseXOrder, scanner_symbol_to_risex
 
 
 # ──────────────────────────────────────────────
@@ -477,9 +478,9 @@ if auto_refresh:
 # ──────────────────────────────────────────────
 # Main content — tabs: Signals | History | Alerts
 # ──────────────────────────────────────────────
-main_tab_signals, main_tab_heatmap, main_tab_mtf, main_tab_realtime, main_tab_ai, main_tab_risk, main_tab_backtest, main_tab_history, main_tab_alerts, main_tab_notify = st.tabs(
+main_tab_signals, main_tab_heatmap, main_tab_mtf, main_tab_realtime, main_tab_ai, main_tab_risk, main_tab_backtest, main_tab_history, main_tab_alerts, main_tab_notify, main_tab_risex = st.tabs(
     ["Signals", "Heatmap", "MTF Strategy", "Real-Time", "AI Predict",
-     "Risk Calculator", "Backtest", "Signal History", "Alert Settings", "Notifications"]
+     "Risk Calculator", "Backtest", "Signal History", "Alert Settings", "Notifications", "RiseX BOT"]
 )
 
 
@@ -2364,16 +2365,286 @@ with main_tab_notify:
 
 
 # ──────────────────────────────────────────────
+# Tab: RiseX BOT (自動取引)
+# ──────────────────────────────────────────────
+with main_tab_risex:
+    st.markdown("### RiseX Auto-Trading BOT")
+    st.caption("RISEx (rise.trade) の API Wallet を使った自動取引 — スコア閾値を超えたシグナルで自動発注")
+
+    # ── RiseX client (session state) ──
+    if "risex_client" not in st.session_state:
+        st.session_state.risex_client = RiseXClient()
+    if "risex_trader" not in st.session_state:
+        st.session_state.risex_trader = None
+    if "risex_trade_log" not in st.session_state:
+        st.session_state.risex_trade_log = []
+
+    client: RiseXClient = st.session_state.risex_client
+
+    # ── Security warning ──
+    st.error(
+        "⚠️ **セキュリティ警告** — Private Key は絶対に画面共有・スクリーンショット・チャットに貼り付けないでください。"
+        " `.env` ファイルのみに保存し、`.gitignore` に追加してください。"
+    )
+
+    # ── Configuration panel ──
+    st.markdown("#### API Wallet 設定")
+    rx_col1, rx_col2 = st.columns(2)
+
+    with rx_col1:
+        risex_pk = st.text_input(
+            "Private Key (0x...)",
+            value="",
+            type="password",
+            placeholder="0x9e7369... (推奨: .envで設定)",
+            help="RiseX API Wallets ページで生成したPrivate Key",
+            key="risex_pk_input",
+        )
+        risex_addr = st.text_input(
+            "API Wallet Address (0x...)",
+            value=client.wallet_address,
+            placeholder="0xc4e3...",
+            help="API WalletのEVMアドレス",
+            key="risex_addr_input",
+        )
+
+    with rx_col2:
+        rx_min_score = st.slider("自動取引 最小スコア", 50, 100, 80, step=5, key="rx_min_score")
+        rx_usd = st.number_input("1トレードあたりUSD", min_value=1.0, max_value=1000.0, value=10.0, step=1.0, key="rx_usd")
+        rx_leverage = st.slider("レバレッジ", 1, 50, 5, key="rx_leverage")
+        rx_max_trades = st.number_input("最大同時ポジション数", min_value=1, max_value=10, value=3, key="rx_max_trades")
+
+    # Apply credentials
+    if risex_pk:
+        client.private_key = risex_pk
+    if risex_addr:
+        client.wallet_address = risex_addr
+
+    # ── Connection test ──
+    st.markdown("---")
+    rx_c1, rx_c2, rx_c3 = st.columns(3)
+
+    with rx_c1:
+        if st.button("接続テスト", key="risex_test_conn"):
+            with st.spinner("RiseX APIに接続中..."):
+                test = client.test_connection()
+            if test["markets"]:
+                st.success("マーケット取得OK")
+            else:
+                st.warning("マーケット取得失敗 (APIエンドポイントを確認)")
+
+            if test["configured"] and test["account"]:
+                st.success(f"認証OK — Equity: ${test.get('equity', '?')}")
+            elif test["configured"]:
+                st.warning("認証設定あり / アカウント情報取得失敗")
+            else:
+                st.info("Private Key未設定 (読み取り専用モード)")
+
+            if not test["eth_account"]:
+                st.error("eth-account未インストール: `pip install eth-account`")
+
+    with rx_c2:
+        auto_trade_on = st.toggle("自動取引 ON/OFF", value=False, key="risex_auto_toggle")
+
+    with rx_c3:
+        if st.button("ポジション確認", key="risex_positions"):
+            positions = client.get_positions()
+            if positions:
+                pos_df = pd.DataFrame([
+                    {
+                        "Symbol": p.symbol,
+                        "Side": p.side,
+                        "Size": p.size,
+                        "Entry": f"${p.entry_price:,.4f}",
+                        "PnL": f"${p.unrealized_pnl:,.2f}",
+                        "Lev": f"{p.leverage}x",
+                    }
+                    for p in positions
+                ])
+                st.dataframe(pos_df, use_container_width=True)
+            else:
+                st.info("オープンポジションなし")
+
+    # ── Auto-trader setup ──
+    if auto_trade_on:
+        if not client.is_configured:
+            st.warning("自動取引を有効にするにはPrivate KeyとWallet Addressを入力してください")
+        else:
+            trader = RiseXAutoTrader(
+                client=client,
+                min_score=rx_min_score,
+                usd_per_trade=rx_usd,
+                leverage=rx_leverage,
+                max_open_trades=int(rx_max_trades),
+            )
+            st.session_state.risex_trader = trader
+            st.success(f"自動取引 ACTIVE — スコア>={rx_min_score} のシグナルで発注します (${rx_usd} x {rx_leverage}x)")
+
+            # Auto-execute on last scan results
+            if st.session_state.get("results"):
+                signals = st.session_state.results
+                qualifying = [s for s in signals if s.score >= rx_min_score]
+                if qualifying:
+                    st.markdown(f"**最新スキャンから {len(qualifying)} 件が条件を満たしています:**")
+                    for sig in qualifying[:5]:
+                        tl = sig.trendline_break or {}
+                        bt = tl.get("breakout_type", "—")
+                        emoji = "🟢" if bt == "bullish" else "🔴"
+                        col_s, col_b = st.columns([3, 1])
+                        with col_s:
+                            st.markdown(
+                                f"{emoji} **{sig.symbol}** — Score: {sig.score:.0f} | "
+                                f"{bt.upper()} | ${sig.price:.6g}"
+                            )
+                        with col_b:
+                            if st.button(f"今すぐ発注", key=f"rx_trade_{sig.symbol}"):
+                                result = trader.execute_signal(sig)
+                                if result and result.success:
+                                    st.success(f"発注成功! Order ID: {result.order_id}")
+                                    st.session_state.risex_trade_log.append({
+                                        "time": datetime.now(timezone.utc).strftime("%H:%M:%S"),
+                                        "symbol": scanner_symbol_to_risex(sig.symbol),
+                                        "side": "BUY" if bt == "bullish" else "SELL",
+                                        "score": sig.score,
+                                        "status": "Success",
+                                        "order_id": result.order_id,
+                                    })
+                                elif result:
+                                    st.error(f"発注失敗: {result.error}")
+                else:
+                    st.info(f"最新スキャンにスコア>={rx_min_score}のシグナルはありません")
+            else:
+                st.info("シグナルタブでスキャンを実行してください")
+    else:
+        st.info("自動取引はOFF。手動で「今すぐ発注」ボタンから個別発注できます。")
+
+    # ── Manual order panel ──
+    st.markdown("---")
+    st.markdown("#### 手動発注")
+    mo_col1, mo_col2, mo_col3 = st.columns(3)
+
+    with mo_col1:
+        mo_symbol = st.text_input("シンボル (RISEx形式)", value="BTC-PERP", key="mo_symbol")
+        mo_side = st.radio("売買方向", ["buy (ロング)", "sell (ショート)"], key="mo_side")
+
+    with mo_col2:
+        mo_type = st.radio("注文タイプ", ["market", "limit"], key="mo_type")
+        mo_size = st.number_input("数量 (base)", min_value=0.0001, value=0.001, format="%.6f", key="mo_size")
+        mo_price = st.number_input("指値価格 (limitのみ)", min_value=0.0, value=0.0, key="mo_price")
+
+    with mo_col3:
+        mo_lev = st.slider("レバレッジ", 1, 50, 5, key="mo_leverage")
+        mo_reduce = st.checkbox("Reduce Only (決済専用)", key="mo_reduce")
+
+    if st.button("手動発注を実行", key="risex_manual_order"):
+        if not client.is_configured:
+            st.error("Private KeyとWallet Addressを入力してください")
+        else:
+            order = RiseXOrder(
+                symbol=mo_symbol,
+                side=mo_side.split(" ")[0],
+                order_type=mo_type,
+                size=mo_size,
+                price=mo_price if mo_type == "limit" and mo_price > 0 else None,
+                leverage=mo_lev,
+                reduce_only=mo_reduce,
+            )
+            with st.spinner("発注中..."):
+                result = client.place_order(order)
+            if result.success:
+                st.success(f"発注成功! Order ID: {result.order_id}")
+                st.session_state.risex_trade_log.append({
+                    "time": datetime.now(timezone.utc).strftime("%H:%M:%S"),
+                    "symbol": mo_symbol,
+                    "side": mo_side.split(" ")[0].upper(),
+                    "score": "手動",
+                    "status": "Success",
+                    "order_id": result.order_id,
+                })
+            else:
+                st.error(f"発注失敗: {result.error}")
+
+    # ── Trade log ──
+    st.markdown("---")
+    st.markdown("#### 取引ログ")
+    if st.session_state.risex_trade_log:
+        log_df = pd.DataFrame(st.session_state.risex_trade_log)
+        st.dataframe(log_df, use_container_width=True)
+        if st.button("ログをクリア", key="clear_trade_log"):
+            st.session_state.risex_trade_log = []
+            st.rerun()
+    else:
+        st.info("取引履歴なし")
+
+    # ── Setup guide ──
+    st.markdown("---")
+    with st.expander("セットアップ手順 (初回のみ)", expanded=False):
+        st.markdown("""
+        ### RiseX API Wallet セットアップ
+
+        **Step 1: 新しいAPIウォレットを生成**
+        1. [rise.trade](https://www.rise.trade) にアクセスし、ウォレット接続
+        2. メニュー → **API Wallets** → **Generate**
+        3. Name を入力 (例: `SCANNER-BOT`)
+        4. 表示された **Private Key** を `.env` ファイルに保存
+           ⚠️ このキーは **二度と表示されません**
+
+        **Step 2: .env ファイルに設定**
+        ```
+        RISEX_PRIVATE_KEY=0x...your_private_key...
+        RISEX_API_WALLET_ADDRESS=0x...your_wallet_address...
+        RISEX_MIN_SCORE=80
+        RISEX_USD_PER_TRADE=10
+        RISEX_LEVERAGE=5
+        RISEX_MAX_OPEN_TRADES=3
+        ```
+
+        **Step 3: APIウォレットを認証**
+        1. rise.trade → API Wallets
+        2. 生成したウォレットの **Authorize** ボタンを押す
+        3. メインウォレットで署名を承認
+
+        **Step 4: 依存パッケージをインストール**
+        ```
+        pip install eth-account web3
+        ```
+
+        **Step 5: アプリを再起動して接続テスト**
+
+        ---
+        **注意事項:**
+        - まず少額 ($5〜$10) でテストする
+        - レバレッジは低く設定 (5x以下推奨)
+        - 自動取引はリスクを伴います。損失は自己責任です
+        - `.env` は `.gitignore` に必ず追加してください
+        """)
+
+    with st.expander("APIエンドポイント設定 (上級者向け)", expanded=False):
+        st.markdown("""
+        RISEx が公式のAPI URLを公開した場合、`.env` で上書きできます:
+        ```
+        RISEX_API_BASE=https://api.rise.trade
+        ```
+        現在のデフォルト: `https://api.rise.trade`
+
+        認証方式: EVM Private Key による署名 (eth_account)
+        - Timestamp + Nonce + Body を署名してヘッダーに添付
+        - 署名ヘッダー: `X-API-Wallet`, `X-Timestamp`, `X-Nonce`, `X-Signature`
+        """)
+
+
+# ──────────────────────────────────────────────
 # Footer
 # ──────────────────────────────────────────────
 st.markdown("---")
 st.caption(
-    "Crypto Trendline Break Scanner v8.0 — Phase 8 | 100% Free APIs "
+    "Crypto Trendline Break Scanner v8.1 — Phase 8 + RiseX BOT | 100% Free APIs "
     "| MTF Strategy (15m/1h/4h) + Real-Time WebSocket + AI Win Prediction + Telegram/Discord Notify "
+    "| RiseX Auto-Trading BOT (on-chain perpetuals DEX) "
     "| Fibonacci + S/R Clusters + BTC Correlation + Risk Calculator + CSV Export "
     "| RSI + MACD + BB + Heatmap + Backtester "
     "| Market Dashboard + Watchlist + Signal History + Alerts "
     "| Multi-CEX (Binance + Bybit) + DEX "
-    "| CCXT + Binance FAPI + DexScreener + CryptoPanic | "
+    "| Binance FAPI + DexScreener + CryptoPanic | "
     "Not financial advice. DYOR."
 )

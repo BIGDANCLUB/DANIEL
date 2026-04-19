@@ -52,3 +52,13 @@ class Config:
 
     # Phase 8: MTF timeframes
     MTF_TIMEFRAMES: list = ["15m", "1h", "4h"]
+
+    # RISEx Auto-Trader
+    RISEX_PRIVATE_KEY: str = os.getenv("RISEX_PRIVATE_KEY", "")
+    RISEX_API_WALLET_ADDRESS: str = os.getenv("RISEX_API_WALLET_ADDRESS", "")
+    RISEX_API_BASE: str = os.getenv("RISEX_API_BASE", "https://api.rise.trade")
+    RISEX_MIN_SCORE: float = float(os.getenv("RISEX_MIN_SCORE", "80"))
+    RISEX_USD_PER_TRADE: float = float(os.getenv("RISEX_USD_PER_TRADE", "10"))
+    RISEX_LEVERAGE: int = int(os.getenv("RISEX_LEVERAGE", "5"))
+    RISEX_MAX_OPEN_TRADES: int = int(os.getenv("RISEX_MAX_OPEN_TRADES", "3"))
+    RISEX_AUTO_TRADE: bool = os.getenv("RISEX_AUTO_TRADE", "false").lower() == "true"

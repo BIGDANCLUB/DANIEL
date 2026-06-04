@@ -36,11 +36,14 @@ def emit(fig, ox, oy, flip):
         r = HEADR
         out.append(f'<circle cx="{hx:.1f}" cy="{hy:.1f}" r="{r}" {SA}/>')
         if fig.long:
-            # 女性：両サイドに長く垂れる髪（センター分け）＝「長髪」を強調
-            out.append(f'<path d="M{hx:.1f},{hy-r-1:.1f} L{hx:.1f},{hy-r+4:.1f}" {HA}/>')                                       # センター分け目
-            out.append(f'<path d="M{hx-r+1:.1f},{hy-4:.1f} Q{hx-r-5:.1f},{hy+12:.1f} {hx-r-3:.1f},{hy+26:.1f}" {HA}/>')        # 左に長く垂れる髪
-            out.append(f'<path d="M{hx+r-1:.1f},{hy-4:.1f} Q{hx+r+5:.1f},{hy+12:.1f} {hx+r+3:.1f},{hy+26:.1f}" {HA}/>')        # 右に長く垂れる髪
-            out.append(f'<path d="M{hx-r+1:.1f},{hy-4:.1f} Q{hx:.1f},{hy-r-3:.1f} {hx+r-1:.1f},{hy-4:.1f}" {HA}/>')            # 生え際
+            # 女性：ツインテール（頭頂左右から2本の束が斜め外下へ垂れる）
+            out.append(f'<path d="M{hx-r+2:.1f},{hy-4:.1f} Q{hx:.1f},{hy-r-4:.1f} {hx+r-2:.1f},{hy-4:.1f}" {HA}/>')            # 生え際弧
+            # 左テール（2本の毛束）
+            out.append(f'<path d="M{hx-5:.1f},{hy-r:.1f} Q{hx-r-8:.1f},{hy:.1f} {hx-r-6:.1f},{hy+22:.1f}" {HA}/>')             # 外束
+            out.append(f'<path d="M{hx-5:.1f},{hy-r:.1f} Q{hx-r-3:.1f},{hy+2:.1f} {hx-r-9:.1f},{hy+22:.1f}" {HA}/>')           # 内束
+            # 右テール（2本の毛束）
+            out.append(f'<path d="M{hx+5:.1f},{hy-r:.1f} Q{hx+r+8:.1f},{hy:.1f} {hx+r+6:.1f},{hy+22:.1f}" {HA}/>')             # 外束
+            out.append(f'<path d="M{hx+5:.1f},{hy-r:.1f} Q{hx+r+3:.1f},{hy+2:.1f} {hx+r+9:.1f},{hy+22:.1f}" {HA}/>')           # 内束
         else:
             # 男性：頭頂だけの短髪（クルーカット）＝サイドに髪なし
             out.append(f'<path d="M{hx-r+1:.1f},{hy-3:.1f} Q{hx:.1f},{hy-r-9:.1f} {hx+r-1:.1f},{hy-3:.1f}" {HA}/>')            # 短髪トップ（頭頂のみ盛り上げ）
@@ -205,6 +208,9 @@ def OVER(long=False, arms='straight', legs='kneel'):
     elif arms == 'elbow':
         f.S((-32, -28), (-18, -12))
         f.S((-24, -22), (-12, -10))
+    elif arms == 'wide':
+        f.S((-32, -28), (-34,  4))
+        f.S((-20, -20), (-16,  4))
     {
         'kneel': lambda: [f.S((0,0),(14,20),(28,20)), f.S((0,0),(18,18),(32,22))],
         'ext':   lambda: [f.S((0,0),(26,10),(50,14)), f.S((0,0),(26,16),(50,22))],
@@ -270,8 +276,8 @@ def build_svg(placements):
 def _pl(prim, long, args, x, y, f=1):
     return [prim, long, args, x, y, f]
 
-def mission(legs='bent', oa='straight', ol='kneel'):
-    return [_pl('SUPINE',1,[legs,'rest'],56,152), _pl('OVER',0,[oa,ol],118,128)]
+def mission(legs='bent', oa='straight', ol='kneel', ox=118, oy=128):
+    return [_pl('SUPINE',1,[legs,'rest'],56,152), _pl('OVER',0,[oa,ol],ox,oy)]
 
 def rear_af(arms='hold', lean=0):
     return [_pl('ALLFOURS',1,[],68,152), _pl('KNEEL',0,[arms,lean],130,152,-1)]
@@ -279,14 +285,14 @@ def rear_af(arms='hold', lean=0):
 def rear_stand():
     return [_pl('STANDBEND',1,['hang'],74,98), _pl('STAND',0,['stride','hold'],120,80,-1)]
 
-def cowgirl(la='hold', face=1, sl='wide'):
-    return [_pl('SUPINE',0,['bent','rest'],56,154), _pl('SIT',1,[sl,la],102,96,face)]
+def cowgirl(la='hold', face=1, sl='wide', supoy=154, sitoy=96):
+    return [_pl('SUPINE',0,['bent','rest'],56,supoy), _pl('SIT',1,[sl,la],102,sitoy,face)]
 
-def face_sit(la='cross', lb='cross'):
-    return [_pl('SIT',1,[la,'hug'],80,120), _pl('SIT',0,[lb,'hug'],122,120,-1)]
+def face_sit(la='cross', lb='cross', ox1=80, ox2=122):
+    return [_pl('SIT',1,[la,'hug'],ox1,120), _pl('SIT',0,[lb,'hug'],ox2,120,-1)]
 
-def side(kn='bent', flip2=1):
-    return [_pl('SIDELIE',1,[kn],56,152), _pl('SIDELIE',0,[kn],102,152,flip2)]
+def side(kn='bent', flip2=1, ox2=102):
+    return [_pl('SIDELIE',1,[kn],56,152), _pl('SIDELIE',0,[kn],ox2,152,flip2)]
 
 def standing(la='hug', lb='hug'):
     return [_pl('STAND',1,['together',la],84,72), _pl('STAND',0,['spread',lb],116,66,-1)]
@@ -332,33 +338,33 @@ FAM_DESC = {
 
 DATASET = [
     # ── 対面・正常位系 ──
-    ("正常位",       "ミッショナリー",       FM, mission('bent')),
-    ("屈曲位",       "ベンディング",          FM, mission('raised')),
-    ("開脚位",       "スプレッド・イーグル",  FM, mission('spread')),
-    ("伸長位",       "ストレッチ",            FM, mission('straight','elbow','ext')),
-    ("種付けプレス", "メイティング・プレス",  FM, mission('overhead')),
-    ("抱擁位",       "コイタル・アライメント",FM, mission('bent','elbow')),
-    ("M字開脚位",    "Mレッグ",               FM, mission('spread','elbow','kneel')),
-    ("深屈曲位",     "ディープ・ベンディング",FM, mission('overhead','elbow')),
-    ("バタフライ",   "蝶々",                  FM, mir(mission('raised','elbow','ext'))),
-    ("仏壇返し",     "ぶつだんがえし",        FM, mission('overhead','straight','ext')),
-    ("揚羽返し",     "あげはがえし",          FM, mir(mission('overhead','elbow','kneel'))),
-    ("だるま返し",   "だるまがえし",          FM, mission('overhead','elbow','ext')),
-    ("理非知らず",   "りひしらず",            FM, mir(mission('spread','straight','ext'))),
-    ("乱れ牡丹",     "みだれぼたん",          FM, mir(mission('spread','elbow','kneel'))),
-    ("百閉",         "ひゃくとじ",            FM, mission('straight','elbow','kneel')),
-    ("正常位（逆）", "ミラー・ミッショナリー",FM, mir(mission('bent'))),
-    ("本手",         "ほんて",                FM, mission('bent','straight','ext')),
-    ("クレイドル",   "ゆりかご位",            FM, mission('bent','straight','kneel')),
-    ("浮き橋",       "うきはし",              FM, mir(mission('raised','straight','kneel'))),
-    ("交差位",       "クロスド",              FM, mir(mission('spread','straight','kneel'))),
-    ("本駒掛け",     "ほんこまがけ",          FM, mir(mission('bent','elbow','kneel'))),
-    ("燕返し",       "つばめがえし",          FM, mission('overhead','straight','kneel')),
+    ("正常位",       "ミッショナリー",       FM, mission('bent','straight','kneel',116,126)),
+    ("屈曲位",       "ベンディング",          FM, mission('raised','straight','kneel',112,118)),
+    ("開脚位",       "スプレッド・イーグル",  FM, mission('spread','wide','ext',120,130)),
+    ("伸長位",       "ストレッチ",            FM, mission('straight','elbow','ext',122,134)),
+    ("種付けプレス", "メイティング・プレス",  FM, mission('overhead','straight','kneel',108,112)),
+    ("抱擁位",       "コイタル・アライメント",FM, mission('bent','elbow','kneel',114,122)),
+    ("M字開脚位",    "Mレッグ",               FM, mission('spread','elbow','kneel',116,126)),
+    ("深屈曲位",     "ディープ・ベンディング",FM, mission('overhead','elbow','kneel',110,116)),
+    ("バタフライ",   "蝶々",                  FM, mir(mission('raised','elbow','ext',112,120))),
+    ("仏壇返し",     "ぶつだんがえし",        FM, mission('overhead','straight','ext',118,120)),
+    ("揚羽返し",     "あげはがえし",          FM, mir(mission('overhead','elbow','kneel',114,118))),
+    ("だるま返し",   "だるまがえし",          FM, mission('overhead','wide','ext',116,122)),
+    ("理非知らず",   "りひしらず",            FM, mir(mission('spread','straight','ext',120,128))),
+    ("乱れ牡丹",     "みだれぼたん",          FM, mir(mission('spread','elbow','kneel',114,124))),
+    ("百閉",         "ひゃくとじ",            FM, mission('straight','elbow','kneel',118,130)),
+    ("正常位（逆）", "ミラー・ミッショナリー",FM, mir(mission('bent','straight','kneel',116,126))),
+    ("本手",         "ほんて",                FM, mission('bent','straight','ext',118,132)),
+    ("クレイドル",   "ゆりかご位",            FM, mission('bent','wide','kneel',116,124)),
+    ("浮き橋",       "うきはし",              FM, mir(mission('raised','straight','kneel',112,120))),
+    ("交差位",       "クロスド",              FM, mir(mission('spread','wide','kneel',118,128))),
+    ("本駒掛け",     "ほんこまがけ",          FM, mir(mission('bent','elbow','kneel',114,126))),
+    ("燕返し",       "つばめがえし",          FM, mission('overhead','wide','kneel',112,118)),
     ("松葉崩し",     "まつばくずし",          FM, matsuba(8)),
     ("松葉崩し（逆）","まつばくずし逆",       FM, mir(matsuba(8))),
-    ("ランジ",       "ザ・ランジ",            FM, mission('raised','straight','ext')),
-    ("コアラ",       "抱きつき正常位",        FM, mission('bent','elbow','kneel')),
-    ("撞木反り",     "しゅもくぞり",          FM, mir(mission('raised','elbow','kneel'))),
+    ("ランジ",       "ザ・ランジ",            FM, mission('raised','straight','ext',114,122)),
+    ("コアラ",       "抱きつき正常位",        FM, mission('bent','elbow','ext',116,124)),
+    ("撞木反り",     "しゅもくぞり",          FM, mir(mission('raised','wide','kneel',112,120))),
     ("コンパス",     "コンパス位",            FM, [_pl('SUPINE',1,['raised','rest'],56,152),
                                                     _pl('KNEEL',0,['hold',12],122,152,-1)]),
 
@@ -375,23 +381,23 @@ DATASET = [
     ("押し車",       "ウィールバロー",        RR, [_pl('OVER',1,['straight','ext'],64,152), _pl('STAND',0,['stride','hold'],128,98,-1)]),
     ("側面後背位",   "スプーン・バック",      RR, [_pl('SIDELIE',1,['straight'],58,152), _pl('SIDELIE',0,['straight'],106,152)]),
 
-    # ── 騎乗位系 ──
-    ("騎乗位",       "カウガール",            CW, cowgirl('hold',1)),
-    ("騎乗位（前傾）","リーニング・カウガール",CW, cowgirl('knee',1)),
-    ("背面騎乗位",   "リバース・カウガール",  CW, cowgirl('back',-1,'wide')),
-    ("背面騎乗位（前傾）","リバース・リーニング",CW, cowgirl('knee',-1,'forward')),
-    ("しゃがみ騎乗位","スクワット・ライド",   CW, [_pl('SUPINE',0,['bent','rest'],56,154), _pl('SIT',1,['bentknee','knee'],102,98)]),
-    ("しゃがみ騎乗位（逆）","スクワット逆",   CW, mir([_pl('SUPINE',0,['bent','rest'],56,154), _pl('SIT',1,['bentknee','knee'],102,98)])),
-    ("茶臼",         "ちゃうす",              CW, cowgirl('hold',1,'forward')),
-    ("時雨茶臼",     "しぐれちゃうす",        CW, cowgirl('back',-1,'forward')),
-    ("御所車",       "ごしょぐるま",          CW, cowgirl('hold',-1,'wide')),
-    ("月見茶臼",     "つきみちゃうす",        CW, mir(cowgirl('back',-1,'wide'))),
-    ("鵯越え",       "ひよどりごえ",          CW, mir(cowgirl('knee',1,'wide'))),
-    ("帆掛け騎乗",   "セイルライド",          CW, cowgirl('knee',1,'forward')),
-    ("含み茶臼",     "ふくみちゃうす",        CW, cowgirl('back',1,'forward')),
-    ("ワイルドライド","奔馬",                  CW, cowgirl('knee',-1,'wide')),
-    ("撞木茶臼",     "しゅもくちゃうす",      CW, mir(cowgirl('back',1,'wide'))),
-    ("唐草居茶臼",   "からくさいちゃうす",    CW, mir(cowgirl('hold',1,'forward'))),
+    # ── 騎乗位系 ──（上の人の向き・脚型・前後傾で視覚的に差別化）
+    ("騎乗位",       "カウガール",            CW, cowgirl('hold', 1,'wide', 154, 92)),
+    ("騎乗位（前傾）","リーニング・カウガール",CW, cowgirl('knee', 1,'wide', 154, 88)),
+    ("背面騎乗位",   "リバース・カウガール",  CW, cowgirl('back',-1,'wide', 154, 92)),
+    ("背面騎乗位（前傾）","リバース・リーニング",CW, cowgirl('knee',-1,'forward',154, 88)),
+    ("しゃがみ騎乗位","スクワット・ライド",   CW, [_pl('SUPINE',0,['bent','rest'],56,154), _pl('SIT',1,['bentknee','knee'],102,100)]),
+    ("しゃがみ騎乗位（逆）","スクワット逆",   CW, mir([_pl('SUPINE',0,['bent','rest'],56,154), _pl('SIT',1,['bentknee','knee'],102,100)])),
+    ("茶臼",         "ちゃうす",              CW, cowgirl('hold', 1,'forward',154, 96)),
+    ("時雨茶臼",     "しぐれちゃうす",        CW, cowgirl('back',-1,'forward',154, 96)),
+    ("御所車",       "ごしょぐるま",          CW, cowgirl('hold',-1,'wide', 154, 92)),
+    ("月見茶臼",     "つきみちゃうす",        CW, mir(cowgirl('back',-1,'wide', 154, 92))),
+    ("鵯越え",       "ひよどりごえ",          CW, mir(cowgirl('knee', 1,'wide', 154, 88))),
+    ("帆掛け騎乗",   "セイルライド",          CW, cowgirl('knee', 1,'forward',154, 84)),
+    ("含み茶臼",     "ふくみちゃうす",        CW, cowgirl('back', 1,'forward',154, 96)),
+    ("ワイルドライド","奔馬",                  CW, cowgirl('knee',-1,'wide', 154, 84)),
+    ("撞木茶臼",     "しゅもくちゃうす",      CW, mir(cowgirl('back', 1,'wide', 154, 92))),
+    ("唐草居茶臼",   "からくさいちゃうす",    CW, mir(cowgirl('hold', 1,'forward',154, 96))),
 
     # ── 座位系 ──
     ("対面座位",     "ロータス",              SI, face_sit()),
@@ -405,19 +411,19 @@ DATASET = [
     ("二つ巴",       "ふたつどもえ",          SI, mir(face_sit())),
     ("火燵隠れ",     "こたつがくれ",          SI, [_pl('SIT',1,['cross','hug'],84,122), _pl('SIT',0,['cross','hug'],120,122,-1)]),
 
-    # ── 側位系 ──
-    ("側位",         "スプーン",              SD, side('bent')),
-    ("側位（逆向き）","スプーン逆",           SD, mir(side('bent'))),
-    ("シザーズ",     "はさみ",               SD, side('straight')),
-    ("シザーズ（逆）","はさみ逆",             SD, mir(side('straight'))),
-    ("抱き合い側位", "フェイシング・スプーン",SD, side('bent', -1)),
-    ("鴛鴦",         "えんおう",              SD, side('curl')),
-    ("千鳥",         "ちどり",               SD, mir(side('curl'))),
-    ("鳴門",         "なると",               SD, [_pl('SIDELIE',1,['curl'],58,152), _pl('SIDELIE',0,['bent'],104,152,-1)]),
+    # ── 側位系 ──（ox2 と knees の組み合わせで差別化）
+    ("側位",         "スプーン",              SD, side('bent',  1, 100)),
+    ("側位（逆向き）","スプーン逆",           SD, mir(side('bent', 1, 100))),
+    ("シザーズ",     "はさみ",               SD, side('straight', 1, 96)),
+    ("シザーズ（逆）","はさみ逆",             SD, mir(side('straight', 1, 96))),
+    ("抱き合い側位", "フェイシング・スプーン",SD, side('bent', -1, 104)),
+    ("鴛鴦",         "えんおう",              SD, side('curl', 1, 100)),
+    ("千鳥",         "ちどり",               SD, mir(side('curl', 1, 100))),
+    ("鳴門",         "なると",               SD, [_pl('SIDELIE',1,['curl'],58,152), _pl('SIDELIE',0,['bent'],106,152,-1)]),
     ("椋鳥",         "むくどり",             SD, [_pl('SIDELIE',1,['curl'],58,152), _pl('SIDELIE',0,['straight'],104,152)]),
-    ("千鳥の曲",     "ちどりのきょく",        SD, mir([_pl('SIDELIE',1,['bent'],58,152), _pl('SIDELIE',0,['curl'],104,152,-1)])),
-    ("鶺鴒",         "せきれい",             SD, [_pl('SIDELIE',1,['wide'],58,152), _pl('SIDELIE',0,['bent'],106,152)]),
-    ("ランプ",       "横たわり位",           SD, [_pl('SIDELIE',1,['bent'],58,152), _pl('SIDELIE',0,['straight'],106,152,-1)]),
+    ("千鳥の曲",     "ちどりのきょく",        SD, mir([_pl('SIDELIE',1,['bent'],58,152), _pl('SIDELIE',0,['curl'],106,152,-1)])),
+    ("鶺鴒",         "せきれい",             SD, [_pl('SIDELIE',1,['wide'],58,152), _pl('SIDELIE',0,['bent'],108,152)]),
+    ("ランプ",       "横たわり位",           SD, [_pl('SIDELIE',1,['bent'],58,152), _pl('SIDELIE',0,['straight'],108,152,-1)]),
 
     # ── 立位系 ──
     ("立位",         "スタンディング",        ST, standing()),

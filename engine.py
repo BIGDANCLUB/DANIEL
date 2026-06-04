@@ -33,11 +33,17 @@ def emit(fig, ox, oy, flip):
         out.append(f'<path d="M {pts}" {SA}/>')
     if fig.head:
         hx, hy = T(fig.head)
-        out.append(f'<circle cx="{hx:.1f}" cy="{hy:.1f}" r="{HEADR}" {SA}/>')
+        r = HEADR
+        out.append(f'<circle cx="{hx:.1f}" cy="{hy:.1f}" r="{r}" {SA}/>')
         if fig.long:
-            # 長め髪：左右に垂れる曲線
-            out.append(f'<path d="M{hx-HEADR+2:.1f},{hy} Q{hx-HEADR-5:.1f},{hy+10} {hx-HEADR+2:.1f},{hy+13:.1f}" {HA}/>')
-            out.append(f'<path d="M{hx+HEADR-2:.1f},{hy} Q{hx+HEADR+5:.1f},{hy+10} {hx+HEADR-2:.1f},{hy+13:.1f}" {HA}/>')
+            # 女性：両サイドに長く垂れる髪（センター分け）＝「長髪」を強調
+            out.append(f'<path d="M{hx:.1f},{hy-r-1:.1f} L{hx:.1f},{hy-r+4:.1f}" {HA}/>')                                       # センター分け目
+            out.append(f'<path d="M{hx-r+1:.1f},{hy-4:.1f} Q{hx-r-5:.1f},{hy+12:.1f} {hx-r-3:.1f},{hy+26:.1f}" {HA}/>')        # 左に長く垂れる髪
+            out.append(f'<path d="M{hx+r-1:.1f},{hy-4:.1f} Q{hx+r+5:.1f},{hy+12:.1f} {hx+r+3:.1f},{hy+26:.1f}" {HA}/>')        # 右に長く垂れる髪
+            out.append(f'<path d="M{hx-r+1:.1f},{hy-4:.1f} Q{hx:.1f},{hy-r-3:.1f} {hx+r-1:.1f},{hy-4:.1f}" {HA}/>')            # 生え際
+        else:
+            # 男性：頭頂だけの短髪（クルーカット）＝サイドに髪なし
+            out.append(f'<path d="M{hx-r+1:.1f},{hy-3:.1f} Q{hx:.1f},{hy-r-9:.1f} {hx+r-1:.1f},{hy-3:.1f}" {HA}/>')            # 短髪トップ（頭頂のみ盛り上げ）
     return "".join(out)
 
 def mir(placements):

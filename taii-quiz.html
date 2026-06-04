@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>体位クイズ 〜棒人間で当てよう〜</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: #f4f6f9;
+    color: #222;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 560px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  header h1 {
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+  }
+  header p {
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: 4px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    padding: 20px;
+  }
+  .bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 12px;
+  }
+  .bar .score { font-weight: 700; color: #2563eb; }
+  .progress {
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .progress > div {
+    height: 100%;
+    background: #2563eb;
+    width: 0;
+    transition: width 0.3s ease;
+  }
+  .figure {
+    background: #fff;
+    border: 1px solid #eef0f3;
+    border-radius: 12px;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .figure svg { width: 90%; height: 90%; }
+  .q-text {
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .choice {
+    border: 2px solid #e5e7eb;
+    background: #fafbfc;
+    border-radius: 12px;
+    padding: 14px 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+  }
+  .choice:hover:not(:disabled) { border-color: #2563eb; background: #eff4ff; }
+  .choice:disabled { cursor: default; }
+  .choice.correct { border-color: #16a34a; background: #dcfce7; color: #15803d; }
+  .choice.wrong { border-color: #dc2626; background: #fee2e2; color: #b91c1c; }
+  .explain {
+    margin-top: 16px;
+    background: #f8fafc;
+    border-left: 4px solid #2563eb;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #444;
+    display: none;
+  }
+  .explain.show { display: block; }
+  .explain b { color: #2563eb; }
+  .next-btn, .restart-btn {
+    margin-top: 16px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+  .next-btn.show, .restart-btn { display: block; }
+  .next-btn:hover, .restart-btn:hover { background: #1d4ed8; }
+  .result {
+    text-align: center;
+  }
+  .result .big {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #2563eb;
+    margin: 8px 0;
+  }
+  .result .msg { color: #555; margin-bottom: 8px; font-size: 0.95rem; }
+  footer {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #aaa;
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>体位あてクイズ</h1>
+    <p id="subtitle">棒人間のイラストから、正しい体位の名前を当てよう</p>
+  </header>
+
+  <div class="card" id="card"></div>
+
+  <footer>
+    教育・健康知識を目的とした清楚なイラスト（棒人間）クイズです。<br>
+    成人向けの一般教養コンテンツ／露骨な描写は含みません。
+  </footer>
+</div>
+
+<script>
+/* =========================================================
+   体位データ
+   - svg: 2体の棒人間による清楚な解剖図風イラスト
+   - 長め髪 = 人物A / 短め髪 = 人物B
+   ========================================================= */
+
+// --- 棒人間パーツのヘルパー ---------------------------------
+// 全SVGは viewBox="0 0 200 200"、白背景・黒線のみ。
+
+const SVG_STYLE = 'stroke="#111" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"';
+
+// 体位一覧。svg は文字列（白背景に黒線）。
+const POSITIONS = [
+  {
+    name: "正常位",
+    aka: "ミッショナリー",
+    desc: "一方が仰向けに寝て、もう一方が向かい合って上になる、最も基本的とされる対面の体位。世界中で広く知られています。",
+    svg: `
+      <rect x="0" y="0" width="200" height="200" fill="#fff"/>
+      <!-- 仰向けの人物A（長め髪）下 -->
+      <g ${SVG_STYLE}>
+        <line x1="30" y1="150" x2="150" y2="150"/>            <!-- 背中(床) -->
+        <circle cx="32" cy="142" r="9"/>                      <!-- 頭A -->
+        <path d="M24 136 Q22 150 28 152"/>                    <!-- 長め髪 -->
+        <line x1="60" y1="150" x2="95" y2="130"/>             <!-- 腿A -->
+        <line x1="95" y1="130" x2="80" y2="160"/>             <!-- すね(膝立て)A -->
+        <line x1="60" y1="150" x2="55" y2="165"/>             <!-- 反対脚A -->
+      </g>
+      <!-- 上になる人物B（短め髪） -->
+      <g ${SVG_STYLE}>
+        <circle cx="120" cy="95" r="9"/>                      <!-- 頭B -->
+        <line x1="120" y1="104" x2="118" y2="135"/>           <!-- 胴B -->
+        <line x1="120" y1="112" x2="100" y2="128"/>           <!-- 腕B -->
+        <line x1="120" y1="112" x2="140" y2="128"/>           <!-- 腕B -->
+        <line x1="118" y1="135" x2="105" y2="150"/>           <!-- 脚B -->
+        <line x1="118" y1="135" x2="135" y2="155"/>           <!-- 脚B -->
+      </g>`
+  },
+  {
+    name: "後背位",
+    aka: "バックスタイル",
+    desc: "一方が四つん這い（ひざと手をつく）になり、もう一方が後ろから向き合う体位。動物の姿勢に似ることから世界各地で古くから知られています。",
+    svg: `
+      <rect x="0" y="0" width="200" height="200" fill="#fff"/>
+      <!-- 四つん這いの人物A（長め髪）前方 -->
+      <g ${SVG_STYLE}>
+        <circle cx="48" cy="100" r="9"/>                      <!-- 頭A -->
+        <path d="M40 94 Q37 108 44 110"/>                     <!-- 長め髪 -->
+        <line x1="56" y1="103" x2="100" y2="110"/>            <!-- 背中A(水平) -->
+        <line x1="56" y1="103" x2="52" y2="140"/>             <!-- 前脚(腕)A -->
+        <line x1="100" y1="110" x2="98" y2="145"/>            <!-- 太ももA -->
+        <line x1="98" y1="145" x2="100" y2="150"/>            <!-- すねA -->
+        <line x1="56" y1="103" x2="60" y2="140"/>             <!-- もう一方の腕A -->
+      </g>
+      <!-- 後ろに膝立ちの人物B（短め髪） -->
+      <g ${SVG_STYLE}>
+        <circle cx="135" cy="95" r="9"/>                      <!-- 頭B -->
+        <line x1="135" y1="104" x2="128" y2="135"/>           <!-- 胴B -->
+        <line x1="133" y1="113" x2="113" y2="118"/>           <!-- 腕B(前へ) -->
+        <line x1="133" y1="113" x2="150" y2="125"/>           <!-- 腕B -->
+        <line x1="128" y1="135" x2="120" y2="155"/>           <!-- 膝立て脚B -->
+        <line x1="128" y1="135" x2="140" y2="155"/>           <!-- 膝立て脚B -->
+      </g>`
+  },
+  {
+    name: "騎乗位",
+    aka: "カウガール",
+    desc: "一方が仰向けに寝て、もう一方が上に座り上体を起こす体位。乗馬のような姿勢から名づけられ、世界的に知られています。",
+    svg: `
+      <rect x="0" y="0" width="200" height="200" fill="#fff"/>
+      <!-- 仰向けの人物B（短め髪）下 -->
+      <g ${SVG_STYLE}>
+        <line x1="35" y1="155" x2="150" y2="155"/>            <!-- 背中(床)B -->
+        <circle cx="37" cy="147" r="9"/>                      <!-- 頭B -->
+        <line x1="80" y1="155" x2="95" y2="135"/>             <!-- 膝立てB -->
+        <line x1="95" y1="135" x2="78" y2="158"/>
+        <line x1="80" y1="155" x2="60" y2="160"/>
+        <line x1="50" y1="150" x2="35" y2="140"/>             <!-- 腕B -->
+      </g>
+      <!-- 上に座る人物A（長め髪）上体起こす -->
+      <g ${SVG_STYLE}>
+        <circle cx="100" cy="70" r="9"/>                      <!-- 頭A -->
+        <path d="M92 64 Q88 80 96 84"/>                       <!-- 長め髪 -->
+        <line x1="100" y1="79" x2="100" y2="120"/>            <!-- 胴(直立)A -->
+        <line x1="100" y1="90" x2="82" y2="100"/>             <!-- 腕A -->
+        <line x1="100" y1="90" x2="118" y2="100"/>            <!-- 腕A -->
+        <line x1="100" y1="120" x2="82" y2="150"/>            <!-- 折り曲げ脚A -->
+        <line x1="100" y1="120" x2="118" y2="150"/>           <!-- 折り曲げ脚A -->
+      </g>`
+  },
+  {
+    name: "側位",
+    aka: "スプーン",
+    desc: "二人とも横向きに寝て、一方が後ろからもう一方を抱える体位。スプーンを重ねた形に似ることから世界的にこう呼ばれます。",
+    svg: `
+      <rect x="0" y="0" width="200" height="200" fill="#fff"/>
+      <!-- 前の人物A（長め髪）横向き -->
+      <g ${SVG_STYLE}>
+        <circle cx="55" cy="100" r="9"/>                      <!-- 頭A -->
+        <path d="M47 94 Q44 108 51 110"/>                     <!-- 長め髪 -->
+        <line x1="63" y1="103" x2="105" y2="115"/>            <!-- 胴A(やや丸め) -->
+        <line x1="80" y1="108" x2="68" y2="130"/>             <!-- 腕A -->
+        <line x1="105" y1="115" x2="92" y2="148"/>            <!-- 太ももA(曲げ) -->
+        <line x1="92" y1="148" x2="115" y2="158"/>            <!-- すねA -->
+        <line x1="105" y1="115" x2="98" y2="150"/>            <!-- 脚A -->
+      </g>
+      <!-- 後ろの人物B（短め髪）横向き -->
+      <g ${SVG_STYLE}>
+        <circle cx="95" cy="92" r="9"/>                       <!-- 頭B -->
+        <line x1="103" y1="96" x2="140" y2="112"/>            <!-- 胴B -->
+        <line x1="118" y1="103" x2="100" y2="118"/>           <!-- 抱える腕B -->
+        <line x1="140" y1="112" x2="120" y2="145"/>           <!-- 太ももB(曲げ) -->
+        <line x1="120" y1="145" x2="140" y2="155"/>           <!-- すねB -->
+        <line x1="140" y1="112" x2="128" y2="150"/>           <!-- 脚B -->
+      </g>`
+  },
+  {
+    name: "対面座位",
+    aka: "ロータス／蓮座",
+    desc: "二人が向かい合って座り、向き合った姿勢で抱き合う体位。蓮（ロータス）の花にたとえられ、東洋・西洋を問わず知られています。",
+    svg: `
+      <rect x="0" y="0" width="200" height="200" fill="#fff"/>
+      <!-- 座る人物A（長め髪）左 -->
+      <g ${SVG_STYLE}>
+        <circle cx="78" cy="78" r="9"/>                       <!-- 頭A -->
+        <path d="M70 72 Q66 88 74 92"/>                       <!-- 長め髪 -->
+        <line x1="80" y1="87" x2="86" y2="125"/>              <!-- 胴A -->
+        <line x1="82" y1="98" x2="105" y2="105"/>             <!-- 抱える腕A -->
+        <line x1="86" y1="125" x2="110" y2="135"/>            <!-- 組む脚A -->
+        <line x1="86" y1="125" x2="70" y2="140"/>             <!-- 脚A -->
+      </g>
+      <!-- 座る人物B（短め髪）右・向かい合う -->
+      <g ${SVG_STYLE}>
+        <circle cx="122" cy="78" r="9"/>                      <!-- 頭B -->
+        <line x1="120" y1="87" x2="114" y2="125"/>            <!-- 胴B -->
+        <line x1="118" y1="98" x2="95" y2="105"/>             <!-- 抱える腕B -->
+        <line x1="114" y1="125" x2="90" y2="135"/>            <!-- 組む脚B -->
+        <line x1="114" y1="125" x2="130" y2="140"/>           <!-- 脚B -->
+      </g>`
+  },
+  {
+    name: "立位",
+    aka: "スタンディング",
+    desc: "二人とも立った姿勢で行う体位。一方が後ろや正面から立って支える形で、世界各地で知られています。",
+    svg: `
+      <rect x="0" y="0" width="200" height="200" fill="#fff"/>
+      <!-- 前に立つ人物A（長め髪） -->
+      <g ${SVG_STYLE}>
+        <circle cx="80" cy="48" r="9"/>                       <!-- 頭A -->
+        <path d="M72 42 Q68 58 76 62"/>                       <!-- 長め髪 -->
+        <line x1="80" y1="57" x2="82" y2="118"/>              <!-- 胴A(直立) -->
+        <line x1="80" y1="72" x2="62" y2="92"/>               <!-- 腕A -->
+        <line x1="80" y1="72" x2="98" y2="90"/>               <!-- 腕A -->
+        <line x1="82" y1="118" x2="74" y2="165"/>             <!-- 脚A -->
+        <line x1="82" y1="118" x2="92" y2="165"/>             <!-- 脚A -->
+      </g>
+      <!-- 後ろに立つ人物B（短め髪） -->
+      <g ${SVG_STYLE}>
+        <circle cx="118" cy="50" r="9"/>                      <!-- 頭B -->
+        <line x1="116" y1="59" x2="116" y2="120"/>            <!-- 胴B -->
+        <line x1="116" y1="74" x2="100" y2="92"/>             <!-- 支える腕B -->
+        <line x1="116" y1="74" x2="134" y2="92"/>             <!-- 腕B -->
+        <line x1="116" y1="120" x2="108" y2="165"/>           <!-- 脚B -->
+        <line x1="116" y1="120" x2="126" y2="165"/>           <!-- 脚B -->
+      </g>`
+  },
+  {
+    name: "シックスナイン",
+    aka: "69",
+    desc: "二人が互いに頭と足を逆向きにして寝そべる体位。数字の「6」と「9」を組み合わせた形に見えることから、世界的にこの名で呼ばれます。",
+    svg: `
+      <rect x="0" y="0" width="200" height="200" fill="#fff"/>
+      <!-- 上の人物A（長め髪）頭は左 -->
+      <g ${SVG_STYLE}>
+        <circle cx="45" cy="80" r="9"/>                       <!-- 頭A左 -->
+        <path d="M37 74 Q34 88 41 92"/>                       <!-- 長め髪 -->
+        <line x1="54" y1="82" x2="150" y2="78"/>              <!-- 胴A(横) -->
+        <line x1="100" y1="80" x2="95" y2="100"/>             <!-- 腕A -->
+        <line x1="150" y1="78" x2="165" y2="62"/>             <!-- 脚A -->
+        <line x1="150" y1="78" x2="168" y2="78"/>             <!-- 脚A -->
+      </g>
+      <!-- 下の人物B（短め髪）頭は右・逆向き -->
+      <g ${SVG_STYLE}>
+        <circle cx="155" cy="120" r="9"/>                     <!-- 頭B右 -->
+        <line x1="146" y1="120" x2="50" y2="124"/>            <!-- 胴B(横) -->
+        <line x1="100" y1="122" x2="105" y2="102"/>           <!-- 腕B -->
+        <line x1="50" y1="124" x2="35" y2="140"/>             <!-- 脚B -->
+        <line x1="50" y1="124" x2="32" y2="124"/>             <!-- 脚B -->
+      </g>`
+  },
+  {
+    name: "屈曲位",
+    aka: "ベンディング",
+    desc: "仰向けの一方が脚を高く引き上げ、上になるもう一方が深く折り曲げる対面の体位。正常位の応用形として知られています。",
+    svg: `
+      <rect x="0" y="0" width="200" height="200" fill="#fff"/>
+      <!-- 仰向けで脚を上げる人物A（長め髪） -->
+      <g ${SVG_STYLE}>
+        <line x1="30" y1="155" x2="110" y2="155"/>            <!-- 背中(床)A -->
+        <circle cx="32" cy="147" r="9"/>                      <!-- 頭A -->
+        <path d="M24 141 Q22 154 29 156"/>                    <!-- 長め髪 -->
+        <line x1="100" y1="155" x2="115" y2="110"/>           <!-- 高く上げた太ももA -->
+        <line x1="115" y1="110" x2="120" y2="80"/>            <!-- すね(立つ)A -->
+        <line x1="100" y1="155" x2="100" y2="115"/>           <!-- もう一方の脚A -->
+      </g>
+      <!-- 上に折り曲がる人物B（短め髪） -->
+      <g ${SVG_STYLE}>
+        <circle cx="135" cy="78" r="9"/>                      <!-- 頭B -->
+        <line x1="133" y1="87" x2="125" y2="120"/>            <!-- 胴B -->
+        <line x1="132" y1="96" x2="113" y2="105"/>            <!-- 腕B -->
+        <line x1="132" y1="96" x2="150" y2="108"/>            <!-- 腕B -->
+        <line x1="125" y1="120" x2="112" y2="150"/>           <!-- 膝立て脚B -->
+        <line x1="125" y1="120" x2="142" y2="150"/>           <!-- 膝立て脚B -->
+      </g>`
+  }
+];
+
+/* ============================ クイズ進行 ============================ */
+const TOTAL = POSITIONS.length;
+let order = [];
+let current = 0;
+let score = 0;
+let answered = false;
+
+const card = document.getElementById("card");
+
+// 配列シャッフル
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function start(){
+  order = shuffle(POSITIONS.map((_,i)=>i));
+  current = 0;
+  score = 0;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answered = false;
+  const pos = POSITIONS[order[current]];
+
+  // 選択肢：正解＋他3つ（重複なし）
+  const others = shuffle(POSITIONS.filter(p=>p.name!==pos.name)).slice(0,3);
+  const choices = shuffle([pos, ...others]);
+
+  const progressPct = (current/TOTAL)*100;
+
+  card.innerHTML = `
+    <div class="bar">
+      <span>第 ${current+1} / ${TOTAL} 問</span>
+      <span class="score">スコア ${score}</span>
+    </div>
+    <div class="progress"><div style="width:${progressPct}%"></div></div>
+    <div class="figure"><svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${pos.svg}</svg></div>
+    <div class="q-text">このイラストの体位は？</div>
+    <div class="choices">
+      ${choices.map(c=>`<button class="choice" data-name="${c.name}">${c.name}</button>`).join("")}
+    </div>
+    <div class="explain" id="explain"></div>
+    <button class="next-btn" id="nextBtn">次の問題へ ▶</button>
+  `;
+
+  card.querySelectorAll(".choice").forEach(btn=>{
+    btn.addEventListener("click", ()=>onAnswer(btn, pos));
+  });
+  document.getElementById("nextBtn").addEventListener("click", next);
+}
+
+function onAnswer(btn, pos){
+  if(answered) return;
+  answered = true;
+  const chosen = btn.dataset.name;
+  const correct = chosen === pos.name;
+  if(correct) score++;
+
+  card.querySelectorAll(".choice").forEach(b=>{
+    b.disabled = true;
+    if(b.dataset.name === pos.name) b.classList.add("correct");
+    else if(b===btn) b.classList.add("wrong");
+  });
+
+  const ex = document.getElementById("explain");
+  ex.innerHTML = `${correct?"⭕ 正解！":"❌ 不正解"} 　正解は <b>${pos.name}</b>（${pos.aka}）<br>${pos.desc}`;
+  ex.classList.add("show");
+  document.getElementById("nextBtn").classList.add("show");
+}
+
+function next(){
+  current++;
+  if(current >= TOTAL) renderResult();
+  else renderQuestion();
+}
+
+function renderResult(){
+  let msg;
+  const rate = score/TOTAL;
+  if(rate===1) msg = "全問正解！博識ですね 🎓";
+  else if(rate>=0.7) msg = "なかなかの正解率です 👏";
+  else if(rate>=0.4) msg = "もう一度挑戦してみましょう 💪";
+  else msg = "これから覚えていきましょう 📖";
+
+  card.innerHTML = `
+    <div class="result">
+      <div>結果発表</div>
+      <div class="big">${score} / ${TOTAL}</div>
+      <div class="msg">${msg}</div>
+      <button class="restart-btn" id="restart">もう一度挑戦する 🔄</button>
+    </div>
+  `;
+  document.getElementById("restart").addEventListener("click", start);
+}
+
+// 全問数をヘッダーに反映
+document.getElementById("subtitle").textContent =
+  `棒人間のイラストから、正しい体位の名前を当てよう（全${TOTAL}問）`;
+start();
+</script>
+</body>
+</html>

@@ -442,6 +442,72 @@ DATASET = [
     ("ゴールデンアーチ","アーチ位",           AC, [_pl('SUPINE',1,['overhead','up'],60,152), _pl('STAND',0,['stride','down'],130,98,-1)]),
     ("アコーディオン","折り畳み位",           AC, cowgirl('knee',-1,'forward')),
     ("スプリットレベル","段差位",             AC, mir(cowgirl('hold',-1,'forward'))),
+
+    # ── 追加分（150体位化） ──
+    # 対面・正常位系
+    ("正常位（深め）",   "ディープ・ミッショナリー", FM, mission('overhead','straight','kneel')),
+    ("足上げ抱え",       "レッグ・ホールド",     FM, mir(mission('raised','elbow','kneel'))),
+    ("水入らず",         "みずいらず",           FM, mission('bent','elbow','ext')),
+    ("時計仕掛け",       "クロックワーク",       FM, mir(mission('straight','straight','kneel'))),
+    ("抱え込み正常位",   "ニーフック",           FM, mission('raised','elbow','kneel')),
+    ("流し込み",         "ながしこみ",           FM, mir(mission('overhead','straight','kneel'))),
+    ("満月",             "フルムーン",           FM, mir(mission('spread','elbow','ext'))),
+    ("乱れ松葉",         "みだれまつば",         FM, mir(matsuba(14))),
+    ("深押し松葉",       "ディープ松葉",         FM, matsuba(16)),
+    ("抱き柏",           "だきかしわ",           FM, mission('bent','straight','kneel')),
+
+    # 後背位系
+    ("立ちバック（深）", "ディープ・リア",       RR, [_pl('STANDBEND',1,['flat'],74,98), _pl('STAND',0,['wide','hold'],120,80,-1)]),
+    ("寝バック（深）",   "プローン・ディープ",    RR, [_pl('SUPINE',1,['straight','rest'],58,154), _pl('OVER',0,['elbow','ext'],122,138)]),
+    ("後ろ抱え",         "リア・ホールド",       RR, mir([_pl('ALLFOURS',1,[],68,152), _pl('KNEEL',0,['hug',8],130,152,-1)])),
+    ("逆さ後背位",       "リバース・ドギー",      RR, [_pl('ALLFOURS',1,[],70,152), _pl('STANDBEND',0,['hang'],128,98,-1)]),
+    ("飛び込み後背位",   "ダイブ・バック",       RR, mir([_pl('OVER',1,['straight','ext'],64,152), _pl('STAND',0,['wide','hold'],128,98,-1)])),
+    ("膝つき立ちバック", "ハーフ・スタンド・リア", RR, mir(rear_af('hug', 6))),
+    ("猫のポーズ",       "キャット",             RR, rear_af('reach')),
+
+    # 騎乗位系
+    ("逆さ茶臼",         "リバース茶臼",          CW, mir(cowgirl('back',1,'forward'))),
+    ("立て膝騎乗",       "ニーリング・ライド",    CW, [_pl('SUPINE',0,['bent','rest'],56,154), _pl('SIT',1,['bentknee','back'],102,98,-1)]),
+    ("深座り騎乗",       "ディープ・スクワット",  CW, [_pl('SUPINE',0,['bent','rest'],56,154), _pl('SIT',1,['folded','knee'],102,98)]),
+    ("船遊び",           "ふなあそび",            CW, cowgirl('back',1,'wide')),
+    ("帆上げ茶臼",       "ほあげちゃうす",        CW, mir(cowgirl('knee',1,'forward'))),
+    ("鶯茶臼",           "うぐいすちゃうす",      CW, cowgirl('hold',-1,'forward')),
+    ("乱れ茶臼",         "みだれちゃうす",        CW, mir(cowgirl('knee',-1,'wide'))),
+    ("立ち茶臼",         "たちちゃうす",          CW, cowgirl('hold',1,'wide')),
+
+    # 座位系
+    ("対面抱え座位",     "ラップ・シット",        SI, [_pl('SIT',0,['cross','back'],116,128), _pl('CARRY',1,[],94,108)]),
+    ("胡座対面",         "あぐらたいめん",        SI, face_sit('cross','folded')),
+    ("膝乗せ座位",       "ニー・ラップ",          SI, [_pl('SIT',1,['bentknee','hug'],82,122), _pl('SIT',0,['folded','hug'],122,122,-1)]),
+    ("背中合わせ座位",   "バック・トゥ・バック",  SI, [_pl('SIT',1,['forward','back'],82,122), _pl('SIT',0,['forward','back'],122,122)]),
+    ("揺り椅子",         "ロッキング・チェア",    SI, mir(lotus_carry())),
+    ("蓮の戯れ",         "ロータス・プレイ",      SI, face_sit('folded','cross')),
+    ("抱き合い座位",     "エンブレース・シット",  SI, [_pl('SIT',1,['cross','hug'],84,122), _pl('SIT',0,['folded','hug'],120,122,-1)]),
+
+    # 側位系
+    ("深スプーン",       "ディープ・スプーン",    SD, [_pl('SIDELIE',1,['curl'],56,152), _pl('SIDELIE',0,['bent'],100,152)]),
+    ("抱き枕側位",       "ボルスター",            SD, side('wide')),
+    ("交差側位",         "クロス・スプーン",      SD, [_pl('SIDELIE',1,['bent'],58,152), _pl('SIDELIE',0,['wide'],104,152,-1)]),
+    ("半身側位",         "ハーフ・サイド",        SD, mir([_pl('SIDELIE',1,['straight'],58,152), _pl('SIDELIE',0,['curl'],104,152)])),
+    ("浮舟",             "うきふね",              SD, [_pl('SIDELIE',1,['wide'],58,152), _pl('SIDELIE',0,['straight'],106,152,-1)]),
+
+    # 立位系
+    ("立位（抱き上げ）", "スタンディング・リフト", ST, mir(carry_pl())),
+    ("壁立ちバック",     "ウォール・リア",        ST, [_pl('STANDBEND',1,['hang'],84,98), _pl('STAND',0,['together','hold'],116,80,-1)]),
+    ("片足立位",         "ワンレッグ・スタンド",  ST, mir([_pl('STAND',1,['oneup','hold'],84,74), _pl('STAND',0,['stride','hug'],118,70,-1)])),
+    ("抱き合い立位",     "エンブレース・スタンド", ST, standing('hug','reach')),
+    ("背面立ち抱え",     "リア・リフト",          ST, [_pl('STANDBEND',1,['flat'],84,98), _pl('STAND',0,['wide','reach'],118,80,-1)]),
+
+    # 口唇系
+    ("立ち対面口唇",     "スタンド・オーラル",    OR, [_pl('STAND',1,['together','down'],86,82), _pl('KNEEL',0,['hug'],116,152,-1)]),
+    ("膝つき口唇",       "ニール・オーラル",      OR, mir([_pl('STAND',1,['together','down'],86,82), _pl('KNEEL',0,['hug'],116,152,-1)])),
+    ("横向き69",         "サイド69",             OR, [_pl('SIDELIE',1,['straight'],56,150), _pl('SIDELIE',0,['straight'],104,150,-1)]),
+
+    # アクロバット系
+    ("立ち逆さ",         "スタンド・インバート",  AC, mir([_pl('INVERT',1,[],74,152), _pl('STAND',0,['stride','down'],124,98,-1)])),
+    ("車輪",             "ホイール",              AC, [_pl('SUPINE',1,['overhead','up'],58,152), _pl('OVER',0,['straight','ext'],122,118)]),
+    ("ねじり後背",       "ツイスト・リア",        AC, mir([_pl('SIDELIE',1,['wide'],60,152), _pl('KNEEL',0,['hold',8],118,152,-1)])),
+    ("空中ブランコ",     "トラピーズ",            AC, [_pl('STAND',0,['wide','reach'],126,74), _pl('INVERT',1,[],96,150)]),
 ]
 
 # ─── 重複チェック ─────────────────────────────────

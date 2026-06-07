@@ -24,7 +24,7 @@ class Figure:
     def S(self, *pts):
         self.segs.append(list(pts))
 
-def emit(fig, ox, oy, flip):
+def emit(fig, ox, oy, flip, cls=''):
     """ローカル座標 → SVG 文字列。flip=1 で右向き、flip=-1 で左右反転。"""
     def T(p): return (ox + flip * p[0], oy + p[1])
     out = []
@@ -47,7 +47,10 @@ def emit(fig, ox, oy, flip):
         else:
             # 男性：頭頂だけの短髪（クルーカット）＝サイドに髪なし
             out.append(f'<path d="M{hx-r+1:.1f},{hy-3:.1f} Q{hx:.1f},{hy-r-9:.1f} {hx+r-1:.1f},{hy-3:.1f}" {HA}/>')            # 短髪トップ（頭頂のみ盛り上げ）
-    return "".join(out)
+    inner = "".join(out)
+    if cls:
+        return f'<g class="{cls}">{inner}</g>'
+    return inner
 
 def mir(placements):
     """全シーンを左右反転（ox=200-ox で折り返し）。"""
@@ -259,17 +262,47 @@ PRIMS = {
     'INVERT': INVERT, 'OVER_BACK': OVER_BACK,
 }
 
+# ─── アニメーション CSS ───────────────────────────
+# 体位系ごとに動きの軸が変わる。family ごとに (ax, ay, bx, by) px を指定。
+# a = 女性側、b = 男性側。逆位相でリズムを表現。
+_ANIM_CSS = '''\
+<style>
+@keyframes figA{{0%,100%{{transform:translate({ax}px,{ay}px)}}50%{{transform:translate({ax2}px,{ay2}px)}}}}
+@keyframes figB{{0%,100%{{transform:translate({bx}px,{by}px)}}50%{{transform:translate({bx2}px,{by2}px)}}}}
+.fig-a{{animation:figA 1.1s ease-in-out infinite;}}
+.fig-b{{animation:figB 1.1s ease-in-out infinite;}}
+</style>'''
+
+# 体位系 → (Ax1,Ay1,Ax2,Ay2, Bx1,By1,Bx2,By2)
+_ANIM_PARAMS = {
+    '対面・正常位系': ( 0, 0,  0,  3,  0,-1,  0,  2),
+    '後背位系':       ( 0, 0,  3,  0,  0, 0, -3,  0),
+    '騎乗位系':       ( 0,-2,  0,  3,  0, 0,  0,  0),
+    '座位系':         ( 0, 0,  0,  2,  0, 0,  0, -2),
+    '側位系':         ( 0, 0,  2,  0,  0, 0, -2,  0),
+    '立位系':         ( 0, 0,  0,  3,  0,-1,  0,  1),
+    '口唇系':         ( 0, 0,  2,  0,  0, 0, -2,  0),
+    'アクロバット系': ( 0, 0,  0,  3,  0, 0,  0, -2),
+}
+
 # ─── シーン合成 ──────────────────────────────────
-def build_svg(placements):
+def build_svg(placements, family=None, animate=False):
     """
     placements = list of [prim_name, long(0/1), args(list), ox, oy, flip]
     → SVG の <rect>+パーツを返す（viewBox="0 0 200 200" 用）
+    animate=True かつ family 指定時はアニメーション CSS を埋め込む。
     """
     parts = ['<rect x="0" y="0" width="200" height="200" fill="#fff"/>']
+    if animate and family and family in _ANIM_PARAMS:
+        ax1,ay1,ax2,ay2,bx1,by1,bx2,by2 = _ANIM_PARAMS[family]
+        parts.append(_ANIM_CSS.format(
+            ax=ax1,ay=ay1,ax2=ax2,ay2=ay2,
+            bx=bx1,by=by1,bx2=bx2,by2=by2))
     for pl in placements:
         prim, long, args, ox, oy, flip = pl
         fig = PRIMS[prim](bool(long), *args)
-        parts.append(emit(fig, ox, oy, flip))
+        cls = ('fig-a' if long else 'fig-b') if animate else ''
+        parts.append(emit(fig, ox, oy, flip, cls))
     return "".join(parts)
 
 # ─── レシピ短縮ヘルパー ──────────────────────────
@@ -538,7 +571,7 @@ def make_sheet(items, path, cols=4):
     for i, (nm, aka, fam, pl) in enumerate(items):
         x = (i % cols) * cell
         y = (i // cols) * cell
-        body = build_svg(pl)
+        body = build_svg(pl, family=fam)
         tiles += (
             f'<g transform="translate({x},{y})"><rect width="200" height="200"'
             f' fill="#fff" stroke="#ddd"/>{body}'
@@ -559,7 +592,7 @@ def build_positions_js():
         return s.replace('\\', '\\\\').replace('`', '\\`').replace('${', '\\${')
     out = 'const POSITIONS = [\n'
     for nm, aka, fam, pl in DATASET:
-        body = build_svg(pl)
+        body = build_svg(pl, family=fam, animate=True)
         desc = FAM_DESC[fam]
         out += '  {\n'
         out += f'    name: `{esc(nm)}`,\n'

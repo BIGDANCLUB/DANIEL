@@ -1,0 +1,17 @@
+{
+  "name": "sim-channel",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "シミュレーション検証シリーズの動画生成基盤",
+  "scripts": {
+    "verify": "node tools/verify.mjs --episode 01-wealth",
+    "script": "node tools/script.mjs --episode 01-wealth",
+    "stills": "node tools/stills.mjs --episode 01-wealth",
+    "render": "node tools/capture.mjs --episode 01-wealth --out out/01-wealth.mp4",
+    "smoke": "node tools/capture.mjs --episode 01-wealth --to 300 --out out/smoke.mp4"
+  },
+  "devDependencies": {
+    "playwright": "^1.57.0"
+  }
+}

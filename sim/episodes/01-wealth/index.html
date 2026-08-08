@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>#01 全員が同じ金額から始めたら、格差は生まれるか</title>
+<style>
+  html, body { margin: 0; background: #05070f; color: #e8edf7;
+    font-family: "Noto Sans CJK JP", sans-serif; }
+  #stage { display: flex; justify-content: center; padding: 12px 0; }
+  canvas { width: min(100vw, 1600px); height: auto; box-shadow: 0 0 60px #000; }
+  #bar { display: flex; gap: 12px; align-items: center; padding: 0 24px 16px;
+    justify-content: center; font-size: 14px; }
+  button { background: #1e2a45; color: #e8edf7; border: 1px solid #2f3f63;
+    border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 14px; }
+  button:hover { background: #2a3a5e; }
+  input[type=range] { width: 620px; }
+  #t { font-variant-numeric: tabular-nums; color: #8b9ab5; min-width: 190px; }
+  /* 録画時はUIを消す */
+  body.capture #bar { display: none; }
+  body.capture { padding: 0; }
+  body.capture #stage { padding: 0; }
+  body.capture canvas { width: 1920px; box-shadow: none; }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="c" width="1920" height="1080"></canvas></div>
+<div id="bar">
+  <button id="play">▶ 再生</button>
+  <input id="scrub" type="range" min="0" value="0" step="1">
+  <span id="t">--</span>
+  <button data-jump="hook">フック</button>
+  <button data-jump="rules">ルール</button>
+  <button data-jump="run1">100人</button>
+  <button data-jump="scale">100万回</button>
+  <button data-jump="debt">借金あり</button>
+  <button data-jump="tax">再分配</button>
+  <button data-jump="outro">結論</button>
+</div>
+
+<script type="module">
+import { build, FPS } from './episode.js';
+
+const { ep, tl, runner } = build();
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d', { alpha: false });
+
+// ---- 録画インターフェース（tools/capture.mjs が呼ぶ）
+window.SIM = {
+  fps: FPS,
+  totalFrames: tl.totalFrames,
+  durationSec: tl.durationSec,
+  scenes: tl.scenes.map((s) => ({ id: s.id, title: s.title, startSec: s.startSec, dur: s.dur })),
+  renderFrame(i) { runner.renderFrame(ctx, i); },
+  png() { return canvas.toDataURL('image/png'); },
+  captureMode() { document.body.classList.add('capture'); },
+};
+window.SIM_READY = true;
+
+// ---- 以下はローカルプレビュー用（録画には使われない）
+const scrub = document.getElementById('scrub');
+const tEl = document.getElementById('t');
+const playBtn = document.getElementById('play');
+scrub.max = tl.totalFrames - 1;
+
+let frame = 0;
+let playing = false;
+
+function fmt(sec) {
+  const m = Math.floor(sec / 60);
+  const s = (sec % 60).toFixed(1).padStart(4, '0');
+  return `${m}:${s}`;
+}
+
+function show(f) {
+  frame = Math.max(0, Math.min(tl.totalFrames - 1, f));
+  runner.renderFrame(ctx, frame);
+  scrub.value = frame;
+  const sc = tl.sceneAt(frame);
+  tEl.textContent = `${fmt(frame / FPS)} / ${fmt(tl.durationSec)}  [${sc.title}]`;
+}
+
+playBtn.onclick = () => {
+  playing = !playing;
+  playBtn.textContent = playing ? '⏸ 停止' : '▶ 再生';
+  if (playing) tick();
+};
+function tick() {
+  if (!playing) return;
+  show(frame + 1);
+  if (frame >= tl.totalFrames - 1) { playing = false; playBtn.textContent = '▶ 再生'; return; }
+  requestAnimationFrame(tick);
+}
+scrub.oninput = () => { playing = false; playBtn.textContent = '▶ 再生'; show(+scrub.value); };
+for (const b of document.querySelectorAll('[data-jump]')) {
+  b.onclick = () => {
+    const sc = tl.scenes.find((s) => s.id === b.dataset.jump);
+    playing = false; playBtn.textContent = '▶ 再生';
+    show(sc.startFrame);
+  };
+}
+show(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+darwin/config.json
+darwin/episodes/*/out/
+darwin/episodes/*/images/*
+!darwin/episodes/*/images/.gitkeep
+darwin/assets/**/*.wav
+darwin/assets/**/*.mp3
+__pycache__/

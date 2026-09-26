@@ -174,10 +174,15 @@ def main():
     ap.add_argument("--audition", nargs="+", metavar="VOICE",
                     help="声の聞き比べ。指定した声で同じ1文を作り out/voice_samples/ に保存（本番の音声は変えない）")
     ap.add_argument("--sample-line", default="01_basho:1", help="聞き比べに使う文（既定 01_basho:1）")
+    ap.add_argument("--voice", help="この実行だけ声を変える（config の gemini.voice より優先）")
+    ap.add_argument("--preview", action="store_true",
+                    help="全文を out/voice_full/<声>/ に作るだけで、本番のナレーションとタイムラインは変えない")
     args = ap.parse_args()
 
     cfg = load_config()
     g = cfg["gemini"]
+    if args.voice:
+        g["voice"] = args.voice
     ep_dir, ep = load_episode(args.episode)
     key = os.environ.get("GEMINI_API_KEY")
     if not args.mock and not key:
@@ -187,9 +192,13 @@ def main():
         audition(ep, ep_dir, g, key, args.audition, args.sample_line)
         return
 
-    line_dir = out_dir(ep_dir, "tts")
-    proc_dir = out_dir(ep_dir, "tts_proc")
-    sec_dir = out_dir(ep_dir, "narration")
+    # 生音声は声ごとに保存する。一度作った声に戻すときは API を呼ばずに再利用される
+    voice = g["voice"]
+    line_dir = out_dir(ep_dir, "tts", voice)
+    proc_dir = out_dir(ep_dir, "tts_proc", voice)
+    sec_dir = out_dir(ep_dir, "voice_full", voice) if args.preview else out_dir(ep_dir, "narration")
+    print(f"声: {voice}{'（試聴用・本番は変更しない）' if args.preview else ''}")
+    full_pcm = b""
     timeline = {"sections": [], "total": 0.0}
     t = 0.0
     for sec in ep["sections"]:
@@ -224,12 +233,19 @@ def main():
         pcm += silence(g["section_tail"])
         sec_wav = sec_dir / f"{sec['id']}.wav"
         write_wav(sec_wav, pcm)
+        full_pcm += pcm
         dur = wav_duration(sec_wav)
         timeline["sections"].append({"id": sec["id"], "label": sec["label"], "start": round(t, 3),
                                      "duration": round(dur, 3), "lines": lines_tl})
         t += dur
     timeline["total"] = round(t, 3)
-    save_json(Path(ep_dir, "out", "timeline.json"), timeline)
+    timeline["voice"] = voice
+    if args.preview:
+        write_wav(sec_dir / "full.wav", full_pcm)
+        save_json(sec_dir / "timeline.json", timeline)
+    else:
+        write_wav(sec_dir / "_full.wav", full_pcm)
+        save_json(Path(ep_dir, "out", "timeline.json"), timeline)
 
     if args.lines:
         print("\n文ごとの長さ（生音声 → 調整後 / 見積）")
@@ -242,6 +258,7 @@ def main():
         est = sum(l["est"] for l in s["lines"])
         print(f"  {s['id']:<12} {s['label']:<8} {s['duration']:6.2f}秒  (見積 {est:.1f}秒)")
     print(f"  合計 {timeline['total']:.2f}秒")
+    print(f"\n通しで聞く: {sec_dir / ('full.wav' if args.preview else '_full.wav')}")
 
 
 if __name__ == "__main__":

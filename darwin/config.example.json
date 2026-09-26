@@ -22,7 +22,7 @@
     "trim_silence": true,
     "silence_db": -40,
     "max_pause": 0.45,
-    "tempo": 1.08
+    "tempo": 1.1
   },
   "comfy": {
     "ugoira_dir": "C:\\Users\\genji\\OneDrive\\デスクトップ\\ugoira",

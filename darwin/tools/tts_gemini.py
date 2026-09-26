@@ -5,6 +5,7 @@
   python tools/tts_gemini.py 01-keiba --redo 03_seitai:1   # 特定の文だけ撮り直し
 """
 import argparse
+import array
 import base64
 import io
 import json
@@ -17,7 +18,7 @@ import urllib.request
 import wave
 from pathlib import Path
 
-from common import load_config, load_episode, out_dir, save_json, wav_duration
+from common import load_config, load_episode, out_dir, run_ffmpeg, save_json, wav_duration
 
 RATE = 24000  # Gemini TTS は 24kHz / 16bit / mono の PCM を返す
 
@@ -35,6 +36,47 @@ def read_pcm(path):
         if (w.getnchannels(), w.getsampwidth(), w.getframerate()) != (1, 2, RATE):
             sys.exit(f"想定外のwav形式です（24kHz/16bit/mono以外）: {path}")
         return w.readframes(w.getnframes())
+
+
+def tighten(pcm, g):
+    """前後の無音を削り、文中の長すぎる間を max_pause 秒に詰める（API は呼ばない）。"""
+    if not g.get("trim_silence", True):
+        return pcm
+    samples = array.array("h", pcm)
+    win = RATE // 100  # 10ms
+    thr = int(32767 * 10 ** (g.get("silence_db", -40) / 20))
+    loud = [max(map(abs, samples[i:i + win]), default=0) > thr for i in range(0, len(samples), win)]
+    if not any(loud):
+        return pcm
+    first = loud.index(True)
+    last = len(loud) - 1 - loud[::-1].index(True)
+    keep_pad = 3                                   # 前後に 30ms だけ残す
+    max_gap = int(g.get("max_pause", 0.45) * 100)  # 窓の数
+    out = array.array("h")
+    run = 0
+    for w in range(max(0, first - keep_pad), min(len(loud), last + 1 + keep_pad)):
+        chunk = samples[w * win:(w + 1) * win]
+        if loud[w]:
+            run = 0
+            out.extend(chunk)
+        else:
+            run += 1
+            if run <= max_gap:
+                out.extend(chunk)
+    return out.tobytes()
+
+
+def process_line(raw_path, proc_path, g):
+    """out/tts（API の生音声）→ out/tts_proc（無音カット・速度調整済み）。"""
+    pcm = tighten(read_pcm(raw_path), g)
+    tempo = float(g.get("tempo", 1.0))
+    if abs(tempo - 1.0) < 1e-3:
+        write_wav(proc_path, pcm)
+        return
+    tmp = proc_path.with_suffix(".tmp.wav")
+    write_wav(tmp, pcm)
+    run_ffmpeg(["-i", tmp, "-af", f"atempo={tempo:.4f}", "-ar", str(RATE), "-ac", "1", "-sample_fmt", "s16", proc_path])
+    tmp.unlink()
 
 
 def silence(sec):
@@ -103,6 +145,7 @@ def main():
     ap.add_argument("episode")
     ap.add_argument("--mock", action="store_true", help="API を呼ばず est 秒の無音を作る")
     ap.add_argument("--redo", nargs="*", default=[], help="撮り直す文（例: 03_seitai:1）。all で全文")
+    ap.add_argument("--lines", action="store_true", help="文ごとの長さも表示する")
     args = ap.parse_args()
 
     cfg = load_config()
@@ -113,6 +156,7 @@ def main():
         sys.exit("環境変数 GEMINI_API_KEY が未設定です（動作確認だけなら --mock）。")
 
     line_dir = out_dir(ep_dir, "tts")
+    proc_dir = out_dir(ep_dir, "tts_proc")
     sec_dir = out_dir(ep_dir, "narration")
     timeline = {"sections": [], "total": 0.0}
     t = 0.0
@@ -133,13 +177,16 @@ def main():
                     if rate != RATE:
                         sys.exit(f"想定外のサンプルレート {rate}Hz です")
                     write_wav(wav_path, data)
-            dur = wav_duration(wav_path)
+            proc_path = proc_dir / wav_path.name
+            process_line(wav_path, proc_path, g)
+            raw_dur = wav_duration(wav_path)
+            dur = wav_duration(proc_path)
             if i > 1:
                 pcm += silence(g["line_gap"])
                 cursor += g["line_gap"]
-            pcm += read_pcm(wav_path)
+            pcm += read_pcm(proc_path)
             lines_tl.append({"index": i, "text": line["text"], "emotion": line["emotion"],
-                             "start": round(t + cursor, 3), "duration": round(dur, 3), "est": line["est"],
+                             "start": round(t + cursor, 3), "duration": round(dur, 3), "raw": round(raw_dur, 3), "est": line["est"],
                              "cues": line.get("cues", [])})
             cursor += dur
         pcm += silence(g["section_tail"])
@@ -152,7 +199,13 @@ def main():
     timeline["total"] = round(t, 3)
     save_json(Path(ep_dir, "out", "timeline.json"), timeline)
 
-    print("\n【】ごとの尺（実測）")
+    if args.lines:
+        print("\n文ごとの長さ（生音声 → 調整後 / 見積）")
+        for s in timeline["sections"]:
+            for l in s["lines"]:
+                print(f"  {s['id']}:{l['index']}  {l['raw']:5.2f} → {l['duration']:5.2f}秒 / {l['est']:.1f}  {l['text'][:24]}")
+    print(f"\n【】ごとの尺（無音カット {'あり' if g.get('trim_silence', True) else 'なし'}"
+          f"・文中の間は最大 {g.get('max_pause', 0.45)}秒・速度 {g.get('tempo', 1.0)}倍）")
     for s in timeline["sections"]:
         est = sum(l["est"] for l in s["lines"])
         print(f"  {s['id']:<12} {s['label']:<8} {s['duration']:6.2f}秒  (見積 {est:.1f}秒)")

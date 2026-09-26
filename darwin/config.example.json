@@ -18,7 +18,11 @@
     },
     "line_gap": 0.3,
     "section_head": 0.2,
-    "section_tail": 0.4
+    "section_tail": 0.4,
+    "trim_silence": true,
+    "silence_db": -40,
+    "max_pause": 0.45,
+    "tempo": 1.0
   },
   "comfy": {
     "ugoira_dir": "C:\\Users\\genji\\OneDrive\\デスクトップ\\ugoira",

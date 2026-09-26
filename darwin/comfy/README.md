@@ -22,9 +22,10 @@ API 形式 JSON のキー（`"12": {"class_type": "LoadImage", ...}` の `"12"`�
 | duration | 尺を決めるノード | `length`（フレーム数）/ `duration`（秒） |
 | seed | サンプラー等 | `seed` / `noise_seed` |
 
-- 尺がフレーム数なら `"unit": "frames"`。`frames = 秒 × fps + frame_offset` で計算します（4n+1 系なら `frame_offset: 1`）。
+- 尺がフレーム数なら `"unit": "frames"`。`frames = 秒 × fps + frame_offset` で計算します（水無瀬の `--length 192`＝8秒×24 のように割り切れる形なら `frame_offset: 0`）。
 - 尺が秒指定なら `"unit": "seconds"`。
-- ComfyUI が別PCで動いている場合は `comfy.url` を変更してください。
+- 縦長にするため `comfy.width`/`comfy.height`（既定 736×1280）を解像度ノードに流す場合は `nodes.width` / `nodes.height` を設定。
+- ComfyUI の URL は環境変数 `DARWIN_COMFY_URL`（または `UGOIRA_COMFY_URL`）で渡します。
 
 ノード ID の一覧はこれで確認できます：
 ```

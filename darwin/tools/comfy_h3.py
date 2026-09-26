@@ -12,6 +12,7 @@ import argparse
 import copy
 import json
 import math
+import os
 import random
 import sys
 import time
@@ -134,7 +135,9 @@ def main():
     if missing and not args.mock:
         sys.exit(f"画像がありません: {', '.join(missing)}\n  {ep_dir / 'images'} に <セクションID>.png を置いてください。")
 
-    base = c["url"].rstrip("/")
+    # Colab の起動セルが出す trycloudflare の URL は環境変数で渡す（水無瀬と同じ UGOIRA_COMFY_URL も読む）
+    base = (os.environ.get("DARWIN_COMFY_URL") or os.environ.get("UGOIRA_COMFY_URL") or c["url"]).rstrip("/")
+    print(f"ComfyUI: {base if 'trycloudflare' not in base else base[:12] + '…(tunnel)'}")
     if not args.mock:
         wf_path = ROOT / c["workflow"]
         if not wf_path.exists():
@@ -166,6 +169,8 @@ def main():
             dur_val = sec * c["fps"] + d.get("frame_offset", 0) if d.get("unit", "frames") == "frames" else sec
             set_input(wf, nodes, "duration", dur_val)
             set_input(wf, nodes, "seed", seed)
+            set_input(wf, nodes, "width", c["width"])
+            set_input(wf, nodes, "height", c["height"])
             print(f"  生成中 {s['id']}（{sec}秒, seed={seed}）…")
             generate(base, wf, c, c["timeout_sec"], dest)
         plan[s["id"]] = {"seconds": sec, "seed": seed, "narration": narr[s["id"]], "mock": args.mock}

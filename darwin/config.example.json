@@ -24,6 +24,8 @@
     "url": "http://127.0.0.1:8188",
     "workflow": "comfy/h3_i2v_api.json",
     "fps": 24,
+    "width": 736,
+    "height": 1280,
     "min_seconds": 4,
     "max_seconds": 15,
     "timeout_sec": 3600,
@@ -31,8 +33,10 @@
       "image":    {"node": "REPLACE_ME", "input": "image"},
       "prompt":   {"node": "REPLACE_ME", "input": "text"},
       "negative": {"node": "REPLACE_ME", "input": "text"},
-      "duration": {"node": "REPLACE_ME", "input": "length", "unit": "frames", "frame_offset": 1},
-      "seed":     {"node": "REPLACE_ME", "input": "seed"}
+      "duration": {"node": "REPLACE_ME", "input": "length", "unit": "frames", "frame_offset": 0},
+      "seed":     {"node": "REPLACE_ME", "input": "seed"},
+      "width":    {"node": "", "input": "width"},
+      "height":   {"node": "", "input": "height"}
     }
   },
   "render": {

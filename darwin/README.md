@@ -10,10 +10,15 @@
 
 **尺はナレーションの実測で決まります。** ①で実際の音声の長さを計り、②はその長さを覆う秒数（4〜15秒）で生成します。15秒を超える【】は③でスロー再生して埋めます。
 
-## Google Colab で動かす（推奨）
-[colab/darwin_colab.ipynb](colab/darwin_colab.ipynb) を Colab で開き、上から順に実行します。
-ComfyUI とパイプラインを同じ Colab ランタイムで動かし、リポジトリ・画像・生成物はすべて Google ドライブ（`MyDrive/daniel`）に置きます。
-APIキーは Colab のシークレット（🔑）に `GEMINI_API_KEY`（非公開リポジトリなら `GITHUB_TOKEN` も）を登録します。
+## GPU（Colab）との接続
+ComfyUI は水無瀬と同じ `colab_h3_drive.ipynb` の「起動」セルで立ち上げ、最後に出る `https://….trycloudflare.com` を
+PC の環境変数に入れるだけです（`DARWIN_COMFY_URL`、未設定なら水無瀬用の `UGOIRA_COMFY_URL` を使う）。
+パイプライン本体は PC で実行します。
+
+```powershell
+$env:DARWIN_COMFY_URL = "https://....trycloudflare.com"
+```
+URL を知っていれば誰でもその ComfyUI を使えるので、config.json やチャットには書かないこと。
 
 ## セットアップ（ComfyUI を動かす PC で）
 - Python 3.10 以上（外部ライブラリ不要）

@@ -2,7 +2,7 @@
   "gemini": {
     "api_base": "https://generativelanguage.googleapis.com/v1beta",
     "model": "gemini-3.8-flash-tts",
-    "voice": "Puck",
+    "voice": "Zubenelgenubi",
     "style_mode": "metadata",
     "base_style": "NHKの自然ドキュメンタリー番組の男性ナレーター。やや高めの明るく軽やかな声で、視聴者に語りかけるように親しみを込めて読む。生き物の不思議に心から感心している、好奇心たっぷりの語り口。どんなに滑稽な内容でも、真剣に、大真面目に解説する。テンポはよく、間延びさせない。",
     "emotions": {
@@ -22,7 +22,7 @@
     "trim_silence": true,
     "silence_db": -40,
     "max_pause": 0.45,
-    "tempo": 1.2
+    "tempo": 1.08
   },
   "comfy": {
     "ugoira_dir": "C:\\Users\\genji\\OneDrive\\デスクトップ\\ugoira",

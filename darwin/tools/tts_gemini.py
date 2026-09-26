@@ -41,6 +41,12 @@ def silence(sec):
     return b"\x00\x00" * int(round(sec * RATE))
 
 
+def retry_delay(detail):
+    """429 の本文から待つべき秒数を取る（RetryInfo の retryDelay か、本文の "retry in 9.6s"）。"""
+    m = re.search(r'"retryDelay":\s*"([\d.]+)s"', detail) or re.search(r"retry in ([\d.]+)s", detail)
+    return float(m.group(1)) if m else None
+
+
 def build_request(text, style, g):
     if g["style_mode"] == "metadata":
         # gemini-3.8 系：話し方の指示を speech_metadata で渡す（読み上げには含まれない）
@@ -59,7 +65,7 @@ def build_request(text, style, g):
 def synthesize(text, style, g, key):
     url = f"{g['api_base']}/models/{g['model']}:generateContent"
     body = json.dumps(build_request(text, style, g)).encode("utf-8")
-    for attempt in range(5):
+    for attempt in range(10):
         req = urllib.request.Request(url, data=body, method="POST", headers={
             "Content-Type": "application/json", "x-goog-api-key": key})
         try:
@@ -68,9 +74,15 @@ def synthesize(text, style, g, key):
             break
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8", "replace")
-            if e.code in (429, 500, 502, 503, 504) and attempt < 4:
-                time.sleep(2 ** (attempt + 1))
+            if e.code in (429, 500, 502, 503, 504) and attempt < 9:
+                wait = retry_delay(detail) if e.code == 429 else None
+                wait = (wait + 2) if wait else min(60, 2 ** (attempt + 1))
+                print(f"    {'回数制限' if e.code == 429 else f'エラー {e.code}'}のため {wait:.0f}秒待って再試行（{attempt + 1}/9）")
+                time.sleep(wait)
                 continue
+            if e.code == 429 and "PerDay" in detail:
+                sys.exit("Gemini TTS の1日あたりの無料枠を使い切りました。明日再実行するか、AI Studio で課金を有効にしてください。\n"
+                         "（生成済みの文はスキップされるので、再実行すれば続きから作ります）")
             sys.exit(f"Gemini TTS エラー {e.code}: {detail[:800]}\n"
                      "※ 400 でリクエスト形式を指摘された場合は config.json の gemini.style_mode を \"prefix\" にしてください。")
     for part in resp.get("candidates", [{}])[0].get("content", {}).get("parts", []):

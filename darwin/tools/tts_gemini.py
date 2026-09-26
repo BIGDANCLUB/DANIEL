@@ -116,6 +116,10 @@ def synthesize(text, style, g, key):
             break
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8", "replace")
+            if e.code == 402:
+                sys.exit("Gemini API の前払い残高（クレジット）が0です。\n"
+                         "  AI Studio → API キー → 使っているキーの行の ＄ アイコン（または https://ai.studio/projects ）でチャージしてください。\n"
+                         "（生成済みの文はスキップされるので、チャージ後に再実行すれば続きから作ります）")
             if e.code == 429 and "PerDay" in detail:
                 sys.exit("Gemini TTS の1日あたりの無料枠を使い切りました。明日再実行するか、AI Studio で課金を有効にしてください。\n"
                          "（生成済みの文はスキップされるので、再実行すれば続きから作ります）")

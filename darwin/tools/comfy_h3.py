@@ -32,6 +32,14 @@ def plan_seconds(narr, c):
     return max(c["min_seconds"], min(c["max_seconds"], math.ceil(narr)))
 
 
+def h3_frames(sec, c):
+    """H3 の length は (length - 5) % 17 == 0 のみ有効（ugoira の h3.valid_lengths と同じ規則）。
+    sec 秒を覆う最小の有効フレーム数を返す。例: 8秒 → 192。"""
+    base, step = c["length_base"], c["length_step"]
+    need = sec * c["fps"]
+    return base + step * max(0, math.ceil((need - base) / step))
+
+
 def http(url, data=None, headers=None, timeout=60):
     req = urllib.request.Request(url, data=data, headers=headers or {}, method="POST" if data else "GET")
     with urllib.request.urlopen(req, timeout=timeout) as r:
@@ -166,7 +174,7 @@ def main():
             set_input(wf, nodes, "prompt", s["video_prompt"])
             set_input(wf, nodes, "negative", ep.get("video_negative", ""))
             d = nodes["duration"]
-            dur_val = sec * c["fps"] + d.get("frame_offset", 0) if d.get("unit", "frames") == "frames" else sec
+            dur_val = h3_frames(sec, c) if d.get("unit", "frames") == "frames" else sec
             set_input(wf, nodes, "duration", dur_val)
             set_input(wf, nodes, "seed", seed)
             set_input(wf, nodes, "width", c["width"])

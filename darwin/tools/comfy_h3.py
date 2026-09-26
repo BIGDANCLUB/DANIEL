@@ -9,6 +9,13 @@
   python tools/comfy_h3.py 01-keiba                 # 残りを全部（生成済みはスキップ）
   python tools/comfy_h3.py 01-keiba --redo 06_ochi --seed 1234
   python tools/comfy_h3.py 01-keiba --mock          # Colab なしでダミー映像（動作確認用）
+
+H3 は 1 クリップ 12 秒以下（config の comfy.max_seconds）。ナレーションが長い【】はセクションを分け、
+後半に "start_from": "<前半のID>" を書くと、前半クリップが結合で切られる位置のコマを始点にして続きを作る
+（Codex 画像は不要。前半を作り直すと後半も自動で作り直す）。
+
+尺を決め打ちするシリーズ（vs など）：source が h3 以外のショットは対象外。長さは gen_seconds（スロー前の生成尺）、
+無ければ duration、どちらも無ければナレーションの実測。解像度は episode.json の format.h3 が config より優先。
 """
 import argparse
 import math
@@ -19,7 +26,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from common import ffmpeg_exe, find_image, load_config, load_episode, load_json, out_dir, run_ffmpeg, save_json
+from common import ffmpeg_exe, find_image, load_config, load_episode, load_json, out_dir, probe, run_ffmpeg, save_json
 
 FPS = 24  # H3 は 24fps 固定
 
@@ -80,15 +87,21 @@ def main():
 
     c = load_config()["comfy"]
     ep_dir, ep = load_episode(args.episode)
+    c = {**c, **ep.get("format", {}).get("h3", {})}
+    targets = [s for s in ep["sections"] if s.get("source", "h3") == "h3" and (not args.only or s["id"] in args.only)]
+
     tl_path = Path(ep_dir, "out", "timeline.json")
-    if not tl_path.exists():
-        sys.exit("out/timeline.json がありません。先に tools/tts_gemini.py を実行してください。")
-    narr = {s["id"]: s["duration"] for s in load_json(tl_path)["sections"]}
+    narr = {s["id"]: s["duration"] for s in load_json(tl_path)["sections"]} if tl_path.exists() else {}
+    # 生成する長さ（秒）：gen_seconds → duration → ナレーション実測
+    want = {s["id"]: s.get("gen_seconds", s.get("duration", narr.get(s["id"]))) for s in ep["sections"]}
+    lacking = [s["id"] for s in targets if want[s["id"]] is None]
+    if lacking:
+        sys.exit(f"長さが決まらないショットがあります: {', '.join(lacking)}\n"
+                 "  先に tools/tts_gemini.py を実行して out/timeline.json を作ってください。")
 
     clip_dir = out_dir(ep_dir, "clips")
     plan_path = clip_dir / "plan.json"
     plan = load_json(plan_path) if plan_path.exists() else {}
-    targets = [s for s in ep["sections"] if not args.only or s["id"] in args.only]
 
     if args.check:
         bad = []
@@ -105,29 +118,38 @@ def main():
             print(f"\n作り直し: python tools/comfy_h3.py {args.episode} --redo {' '.join(bad)}")
         return
 
-    print(f"クリップ計画（ナレーション実測 → H3 {c['width']}x{c['height']}）")
+    print(f"クリップ計画（H3 {c['width']}x{c['height']}）")
+    total = 0.0
     for s in targets:
-        n = h3_frames(narr[s["id"]], c["max_seconds"])
-        slow = narr[s["id"]] / (n / FPS)
-        note = f"  ※{slow:.2f}倍に引き伸ばし" if slow > 1.0 else ""
-        print(f"  {s['id']:<12} ナレ {narr[s['id']]:5.2f}秒 → {n:3d}フレーム（{n / FPS:5.2f}秒）{note}")
+        n = h3_frames(want[s["id"]], c["max_seconds"])
+        total += n / FPS
+        slow = want[s["id"]] / (n / FPS)
+        note = f"  ※{slow:.2f}倍に引き伸ばし" if slow > 1.01 else ""
+        if s.get("speed"):
+            note += "  （結合でスロー: " + ", ".join(f"{g['from']:g}〜{g['to']:g}秒 {g['rate']:g}倍"
+                                            for g in s["speed"] if g["rate"] != 1) + "）"
+        kind = "生成" if "gen_seconds" in s else ("尺" if "duration" in s else "ナレ")
+        print(f"  {s['id']:<12} {kind} {want[s['id']]:5.2f}秒 → {n:3d}フレーム（{n / FPS:5.2f}秒）{note}")
+    print(f"  {len(targets)}本・生成 計 {total:.1f}秒")
     if args.plan:
         return
 
-    missing = [s["id"] for s in targets if not find_image(ep_dir, s["id"])]
+    missing = [s["id"] for s in targets if not s.get("start_from") and not find_image(ep_dir, s["id"])]
     if missing and not args.mock:
         sys.exit(f"画像がありません: {', '.join(missing)}\n  {ep_dir / 'images'} に <セクションID>.png を置いてください。")
     h3 = None if args.mock else load_ugoira(c)
 
+    redone = set()  # この実行で作ったクリップ（start_from で続く後半も作り直す）
     for s in targets:
         dest = clip_dir / f"{s['id']}.mp4"
-        if dest.exists() and s["id"] not in args.redo:
+        parent = s.get("start_from")
+        if dest.exists() and s["id"] not in args.redo and parent not in redone:
             if not args.mock and is_black(dest):
                 print(f"  {s['id']} は真っ黒なので作り直します")
             else:
                 print(f"  skip {s['id']}（生成済み。撮り直すなら --redo {s['id']}）")
                 continue
-        frames = h3_frames(narr[s["id"]], c["max_seconds"])
+        frames = h3_frames(want[s["id"]], c["max_seconds"])
         seed = args.seed if args.seed is not None else random.randint(0, 2**31 - 1)
         if args.mock:
             sec = frames / FPS
@@ -137,7 +159,17 @@ def main():
         else:
             # h3.render は <作業フォルダ>/image.png を起点にする（jpg 等も png にしておく）
             work = out_dir(ep_dir, "h3", s["id"])
-            run_ffmpeg(["-i", find_image(ep_dir, s["id"]), "-frames:v", "1", work / "image.png"])
+            if parent:
+                # 前半クリップは結合でナレーションの長さに切られるので、その位置の最後のコマから続ける
+                src = clip_dir / f"{parent}.mp4"
+                if not src.exists() or is_black(src):
+                    print(f"  ✗ {s['id']}: 始点にする {parent}.mp4 が無いか真っ黒です（先に {parent} を作ってください）")
+                    continue
+                at = max(0.0, min(narr.get(parent, want[parent]), probe(src)["duration"]) - 1 / FPS)
+                run_ffmpeg(["-ss", f"{at:.3f}", "-i", src, "-frames:v", "1", work / "image.png"])
+                print(f"\n  始点: {parent}.mp4 の {at:.2f}秒のコマ")
+            else:
+                run_ffmpeg(["-i", find_image(ep_dir, s["id"]), "-frames:v", "1", work / "image.png"])
             tries = 1 + int(c.get("black_retries", 2))
             for attempt in range(tries):
                 print(f"\n=== {s['id']} {s['label']}（seed={seed}）===")
@@ -152,12 +184,13 @@ def main():
                 continue
             shutil.copy2(out, dest)
             plan[s["id"]] = {"frames": frames, "seconds": round(frames / FPS, 3), "seed": seed,
-                             "narration": narr[s["id"]], "mock": False}
+                             "narration": narr.get(s["id"]), "mock": False}
             save_json(plan_path, plan)
+            redone.add(s["id"])
             print(f"  ✓ {dest.name}")
             continue
         plan[s["id"]] = {"frames": frames, "seconds": round(frames / FPS, 3), "seed": seed,
-                         "narration": narr[s["id"]], "mock": args.mock}
+                         "narration": narr.get(s["id"]), "mock": args.mock}
         save_json(plan_path, plan)
         print(f"  ✓ {dest.name}")
 

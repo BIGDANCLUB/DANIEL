@@ -1,0 +1,1419 @@
+{
+  "id": "vs01-kangaroo-ostrich",
+  "series": "vs",
+  "title": "カンガルー vs ダチョウ 地上最強キック王決定戦",
+  "notes": [
+    "1セクション＝1ショット。duration はそのショットの再生尺（秒）。ナレーションは duration の中に収める",
+    "source: h3＝MiniMax H3 で新規生成 / opus＝Claude（Opus 5.5）が HTML/SVG アニメーションで作る図解・画面 / reuse＝既存 H3 クリップの使い回し",
+    "speed: 生成クリップ内の区間ごとの再生速度（rate 0.5＝2倍に引き伸ばし）。省略は等速。0.25倍以下はフレーム補間（RIFE）前提",
+    "audio: ambient＝H3 の音を薄く敷く / animal＝H3 の鳴き声・動物の音を主役として大きめに / mute＝消す（スロー区間は基本 mute）",
+    "overlay: H3 映像の上に Opus で重ねる文字・図。H3 側には文字を一切描かせない",
+    "体力ゲージは ⑤（r1）だけ。⑥ の戦闘中には出さない",
+    "効果音は使わない（動物の鳴き声・動作音は H3 の音を使う）。BGM は試作では付けない"
+  ],
+  "image_hint": "動物の見た目をそろえるため、まず m2（カンガルー）と m3（ダチョウ）を作り、気に入った1枚ずつを他カットの参照画像にしてください。両方が写るカット（p2・b00・b01・b04・b05・b06・b11）は両方の参照画像を渡してください。",
+  "format": {
+    "aspect": "16:9",
+    "h3": {
+      "width": 1344,
+      "height": 768
+    },
+    "render": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30
+    },
+    "bgm": false
+  },
+  "tts": {
+    "voice": "Zubenelgenubi",
+    "tempo": 1.1,
+    "base_style": "動物ドキュメンタリー番組の男性ナレーター。やや高めの明るい声。動物の生態や能力を、真剣に、敬意を込めて解説する。戦いの場面では格闘技の実況のように熱を帯びる。ときどき入るとぼけた一言は、笑わずに大真面目に読む。間を空けず、途切れなく畳みかけるように語り続ける。テンポよく、間延びさせない。",
+    "emotions": {
+      "実況": "格闘技の実況アナウンサーのように、熱く、テンポよく、畳みかけるように",
+      "アナウンス": "格闘ゲームの試合開始コールのように、短く力強く、会場に響かせるように叫ぶ"
+    },
+    "line_gap": 0.12,
+    "section_head": 0.05,
+    "section_tail": 0.1,
+    "max_pause": 0.3
+  },
+  "image_blocks": {
+    "STYLE": "Shot like a high-end wildlife documentary. Horizontal 16:9 widescreen composition. Telephoto lens, shallow depth of field, photorealistic, natural light, fine film grain, cinematic color grading. The setting is a vast dry open grassland with golden grass, patches of red earth and a few scattered thorny trees. No humans, no fences, no vehicles. No text, no letters, no subtitles, no logos, no watermarks, no on-screen graphics.",
+    "KANGAROO": "An adult male red kangaroo: large and muscular, reddish-brown fur with a pale belly, a thick powerful tail, long hind feet with a large sharp central claw, muscular forearms with dark paws, upright ears, alert dark eyes.",
+    "OSTRICH": "An adult male common ostrich: very tall with a long bare pinkish neck and small head with huge dark eyes, glossy black body plumage with bright white wing and tail plumes, long powerful bare pinkish legs, two-toed feet with one large thick claw.",
+    "NEGATIVE": "anime, illustration, cartoon, 3d render, cgi look, text, letters, logo, watermark, humans, people, fences, cages, blood, wounds, gore, extra limbs, extra heads, deformed animals, merged bodies, duplicated animals"
+  },
+  "sections": [
+    {
+      "id": "o1",
+      "part": "① オープニング",
+      "label": "草原の空撮",
+      "source": "h3",
+      "duration": 8,
+      "audio": "ambient",
+      "image_uses": [
+        "STYLE"
+      ],
+      "image_prompt": "Wide aerial view of an endless dry golden grassland at sunset, long shadows of scattered thorny trees stretching across red earth, a warm orange sky with thin clouds on the horizon. Empty, quiet and vast.",
+      "video_prompt": "Slow, smooth aerial drone shot gliding forward over the golden grassland at sunset. Grass sways in the wind, long tree shadows stretch across the ground. Movement starts immediately in the first frame.",
+      "soundscape": "Wind sweeping across open grassland and distant birds, without music.",
+      "lines": [
+        {
+          "emotion": "穏やか",
+          "text": "地球上には、決して出会うことのない動物たちがいます。"
+        },
+        {
+          "emotion": "穏やか",
+          "text": "広い海が、彼らを隔てています。"
+        }
+      ]
+    },
+    {
+      "id": "o2",
+      "part": "① オープニング",
+      "label": "世界地図",
+      "source": "opus",
+      "duration": 9,
+      "graphic": "暗い背景の世界地図。オーストラリアとアフリカが順に光り、それぞれの上にカンガルーとダチョウのシルエットが浮かぶ。2つの大陸が点線で結ばれ、中央に「？」。",
+      "lines": [
+        {
+          "emotion": "穏やか",
+          "text": "住む大陸も、暮らし方も違う。"
+        },
+        {
+          "emotion": "期待",
+          "text": "もし、そんな彼らが出会ってしまったら。"
+        },
+        {
+          "emotion": "期待",
+          "text": "どちらが強いのか。"
+        }
+      ]
+    },
+    {
+      "id": "o3",
+      "part": "① オープニング",
+      "label": "番組タイトル",
+      "source": "opus",
+      "duration": 8,
+      "graphic": "番組タイトル（シリーズ名は未定・仮）が力強く現れる。下に小さく注意書き「※AIで生成した想定映像です。実際に動物を戦わせることはありません」。",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "生態と能力を徹底的に分析し、その勝敗を本気で予想する。"
+        },
+        {
+          "emotion": "解説",
+          "text": "それが、この番組です。"
+        }
+      ]
+    },
+    {
+      "id": "m1",
+      "part": "② マッチアップ",
+      "label": "今回の対決",
+      "source": "opus",
+      "duration": 4,
+      "graphic": "o2 の世界地図からオーストラリアとアフリカにズーム。「今回の対決」の文字。",
+      "lines": [
+        {
+          "emotion": "期待",
+          "text": "さあ、今回の対決は、こちら！"
+        }
+      ]
+    },
+    {
+      "id": "m2",
+      "part": "② マッチアップ",
+      "label": "カンガルー登場",
+      "source": "h3",
+      "duration": 8,
+      "audio": "ambient",
+      "image_uses": [
+        "STYLE",
+        "KANGAROO"
+      ],
+      "image_prompt": "Heroic low-angle shot of the red kangaroo standing tall on its hind legs and tail on a small rise, chest out, forearms raised, backlit by the setting sun with a golden rim light on its fur. The kangaroo is placed in the left half of the frame, leaving the right side as open sky.",
+      "video_prompt": "Slow low-angle push-in toward the kangaroo standing tall against the sunset. It turns its head toward the camera and flexes its forearms. Wind ruffles its fur. Heroic, cinematic tone. Movement starts immediately in the first frame.",
+      "soundscape": "Wind across the grassland and a low snort from the kangaroo, without music.",
+      "overlay": "名前プレート「オーストラリア代表　アカカンガルー」",
+      "lines": [
+        {
+          "emotion": "実況",
+          "text": "オーストラリア代表。跳躍のキックボクサー、アカカンガルー！"
+        },
+        {
+          "emotion": "実況",
+          "text": "有袋類の最強戦士です。"
+        }
+      ]
+    },
+    {
+      "id": "m3",
+      "part": "② マッチアップ",
+      "label": "ダチョウ登場",
+      "source": "h3",
+      "duration": 8,
+      "audio": "ambient",
+      "image_uses": [
+        "STYLE",
+        "OSTRICH"
+      ],
+      "image_prompt": "Heroic low-angle shot of the ostrich standing tall on the grassland, neck fully raised, white wing plumes slightly spread, backlit by the setting sun with a golden rim light. The ostrich is placed in the right half of the frame, leaving the left side as open sky.",
+      "video_prompt": "Slow low-angle push-in toward the ostrich standing tall against the sunset. It swings its head down toward the camera and spreads its wings slightly. Heroic, cinematic tone. Movement starts immediately in the first frame.",
+      "soundscape": "Wind across the grassland and a short hiss from the ostrich, without music.",
+      "overlay": "名前プレート「アフリカ代表　ダチョウ」",
+      "lines": [
+        {
+          "emotion": "実況",
+          "text": "対するは、アフリカ代表。世界最大の鳥、ダチョウ！"
+        },
+        {
+          "emotion": "実況",
+          "text": "飛べない分、脚を極めました。"
+        }
+      ]
+    },
+    {
+      "id": "m4",
+      "part": "② マッチアップ",
+      "label": "VS",
+      "source": "opus",
+      "duration": 10,
+      "graphic": "左に m2、右に m3 の静止画を斜めに分割して配置。中央に大きく「VS」、上に「地上最強キック王決定戦」。",
+      "lines": [
+        {
+          "emotion": "実況",
+          "text": "どちらも最大の武器は、蹴り。跳躍の達人か、疾走の王者か。"
+        },
+        {
+          "emotion": "興奮",
+          "text": "地上最強のキック王は、果たしてどちらなのか！"
+        }
+      ]
+    },
+    {
+      "id": "k1",
+      "part": "③a カンガルー紹介",
+      "label": "全身",
+      "source": "h3",
+      "duration": 8,
+      "audio": "ambient",
+      "image_uses": [
+        "STYLE",
+        "KANGAROO"
+      ],
+      "image_prompt": "Telephoto side view of the red kangaroo standing relaxed on all fours and tail in the golden grass, its full body visible, ears turning, late afternoon light.",
+      "video_prompt": "Static telephoto shot. The kangaroo rises from a relaxed crouch to stand upright on its hind legs and tail, ears swiveling as it scans the grassland. Movement starts immediately in the first frame.",
+      "soundscape": "Soft wind in dry grass and insects, without music.",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "まずは、アカカンガルー。カンガルーの中で最も大きく、"
+        },
+        {
+          "emotion": "解説",
+          "text": "有袋類でも世界最大です。"
+        }
+      ]
+    },
+    {
+      "id": "k2",
+      "part": "③a カンガルー紹介",
+      "label": "体格比較",
+      "source": "opus",
+      "duration": 8,
+      "graphic": "人間のシルエット（身長170cm）の横に、立ち上がったカンガルーのシルエットが並ぶ。「体重 80kg超」がカウントアップ。",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "大人のオスは体重80キロ超え。立ち上がれば、人間の大人ほどの背丈になります。"
+        }
+      ]
+    },
+    {
+      "id": "k3",
+      "part": "③a カンガルー紹介",
+      "label": "跳躍",
+      "source": "h3",
+      "duration": 12,
+      "gen_seconds": 6,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 6,
+          "rate": 0.5
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "KANGAROO"
+      ],
+      "image_prompt": "Telephoto side view of the red kangaroo in mid-bound across the grassland, crouched and about to push off, hind legs coiled, tail extended behind for balance, dust at its feet.",
+      "video_prompt": "Lateral tracking shot following the kangaroo as it bounds across the grassland in long powerful leaps, hind legs pushing off together, tail swinging for balance, dust kicking up with each landing. Movement starts immediately in the first frame.",
+      "soundscape": "Rhythmic heavy thumps of landings on dry earth and wind, without music.",
+      "overlay": "テロップ「一跳び 8m以上」「時速 約60km」",
+      "lines": [
+        {
+          "emotion": "興奮",
+          "text": "一跳びで8メートル以上、時速は60キロに達すると言われます。"
+        },
+        {
+          "emotion": "解説",
+          "text": "しかも、速く跳んでも疲れにくい、省エネ走法です。"
+        }
+      ]
+    },
+    {
+      "id": "k4",
+      "part": "③a カンガルー紹介",
+      "label": "尻尾で立つ",
+      "source": "h3",
+      "duration": 12,
+      "gen_seconds": 6,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 6,
+          "rate": 0.5
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "KANGAROO"
+      ],
+      "image_prompt": "Low telephoto shot of the red kangaroo standing upright, its thick tail pressed firmly against the ground behind it, hind feet just starting to lift, muscles tense.",
+      "video_prompt": "Static low telephoto shot. The kangaroo leans back and balances its whole weight on its thick tail, lifting both hind feet off the ground together and thrusting them forward in a powerful kick at the empty air. Movement starts immediately in the first frame.",
+      "soundscape": "A heavy thud of the tail on dry earth and a sharp exhale, without music.",
+      "overlay": "尻尾に矢印「5本目の脚」",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "最大の武器は、この太い尻尾。"
+        },
+        {
+          "emotion": "興奮",
+          "text": "尻尾で体を支えて両足を浮かせ、そのまま両足で蹴り込む。尻尾はまさに、5本目の脚です。"
+        }
+      ]
+    },
+    {
+      "id": "k5",
+      "part": "③a カンガルー紹介",
+      "label": "オス同士のボクシング",
+      "source": "h3",
+      "duration": 12,
+      "gen_seconds": 6,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 3,
+          "rate": 1
+        },
+        {
+          "from": 3,
+          "to": 5,
+          "rate": 0.25
+        },
+        {
+          "from": 5,
+          "to": 6,
+          "rate": 1
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "KANGAROO"
+      ],
+      "image_prompt": "Telephoto side view of two adult male red kangaroos facing each other upright on the grassland, forearms locked around each other's shoulders, heads tilted back, both balancing on their tails. Only two kangaroos, clearly separate bodies.",
+      "video_prompt": "Static telephoto shot of two male kangaroos boxing. They grapple and push with their forearms, then one leans back on its tail and kicks forward into the other's belly with both hind feet, and the other staggers back. Movement starts immediately in the first frame.",
+      "soundscape": "Scuffling feet on dry earth, heavy breathing and low grunts, without music.",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "オス同士は、前脚でつかみ合い、蹴り合う、ボクシングで順位を決めます。"
+        },
+        {
+          "emotion": "解説",
+          "text": "勝った者だけが、群れのメスに近づけるのです。"
+        }
+      ]
+    },
+    {
+      "id": "k6",
+      "part": "③a カンガルー紹介",
+      "label": "地面を叩く",
+      "source": "h3",
+      "duration": 8,
+      "gen_seconds": 4,
+      "audio": "animal",
+      "speed": [
+        {
+          "from": 0,
+          "to": 4,
+          "rate": 0.5
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "KANGAROO"
+      ],
+      "image_prompt": "Low close telephoto shot of the kangaroo's large hind feet on red earth, one foot slightly raised, tail resting behind, the kangaroo alert with ears up in soft focus above.",
+      "video_prompt": "Low static shot. The kangaroo stamps its hind feet hard on the ground twice, raising puffs of red dust, ears pricked in alarm. Movement starts immediately in the first frame.",
+      "soundscape": "Two loud, deep thumps of feet striking hard earth, then wind, without music.",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "危険を感じると、後ろ足で地面を強く叩き、ドン、と仲間に知らせます。"
+        }
+      ]
+    },
+    {
+      "id": "k7",
+      "part": "③a カンガルー紹介",
+      "label": "爪",
+      "source": "h3",
+      "duration": 6,
+      "audio": "ambient",
+      "image_uses": [
+        "STYLE",
+        "KANGAROO"
+      ],
+      "image_prompt": "Extreme close-up of the kangaroo's hind foot resting on red earth, the long central toe ending in a large, sharp, curved dark claw, fur and dust in fine detail.",
+      "video_prompt": "Very slow push-in on the hind foot. The toes flex and the large claw scrapes a shallow line through the red dirt. Movement starts immediately in the first frame.",
+      "soundscape": "A dry scrape of claw on earth and soft wind, without music.",
+      "overlay": "爪に注釈「鋭いかぎ爪」",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "後ろ足の爪は鋭く、本気の蹴りは、大型犬さえ追い払います。"
+        }
+      ]
+    },
+    {
+      "id": "k8",
+      "part": "③a カンガルー紹介",
+      "label": "後ろに下がれない",
+      "source": "opus",
+      "duration": 9,
+      "graphic": "カンガルーのシルエット。後ろ向きの矢印に大きな✕、前向きの矢印に◯。最後に「前進あるのみ」の文字がドンと出る（真面目な図解のトーンのまま）。",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "ちなみに、カンガルーは後ろに下がるのが大の苦手。前進あるのみ。性格まで、ファイター向きです。"
+        }
+      ]
+    },
+    {
+      "id": "t1",
+      "part": "③b ダチョウ紹介",
+      "label": "全身",
+      "source": "h3",
+      "duration": 8,
+      "audio": "ambient",
+      "image_uses": [
+        "STYLE",
+        "OSTRICH"
+      ],
+      "image_prompt": "Telephoto side view of the ostrich standing on the golden grassland, its full body and long legs visible, neck raised, late afternoon light.",
+      "video_prompt": "Static telephoto shot. The ostrich slowly turns its long neck and head to scan the horizon, blinking its huge eyes, then takes two long steps. Movement starts immediately in the first frame.",
+      "soundscape": "Soft wind in dry grass and heavy footsteps, without music.",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "対するは、ダチョウ。飛ぶことを捨て、走ることを極めた、世界最大の鳥です。"
+        }
+      ]
+    },
+    {
+      "id": "t2",
+      "part": "③b ダチョウ紹介",
+      "label": "背丈比較",
+      "source": "opus",
+      "duration": 6,
+      "graphic": "人間（170cm）・カンガルー・ダチョウ（2.5m）のシルエットを横に並べた背丈比較。「体重 100kg超」。",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "身長は2.5メートル、体重は100キロを超えることも。"
+        }
+      ]
+    },
+    {
+      "id": "t3",
+      "part": "③b ダチョウ紹介",
+      "label": "疾走",
+      "source": "h3",
+      "duration": 11,
+      "gen_seconds": 5.5,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 5.5,
+          "rate": 0.5
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "OSTRICH"
+      ],
+      "image_prompt": "Telephoto side view of the ostrich sprinting across the grassland at full speed, one long leg stretched far forward, neck held forward, wings slightly open, dust trailing behind.",
+      "video_prompt": "Fast lateral tracking shot keeping pace with the ostrich as it sprints at full speed across the grassland, long legs striding powerfully, dust kicking up behind. Movement starts immediately in the first frame.",
+      "soundscape": "Rapid heavy footfalls pounding dry earth and rushing wind, without music.",
+      "overlay": "テロップ「時速 約70km」",
+      "lines": [
+        {
+          "emotion": "興奮",
+          "text": "一歩は最大5メートル。時速70キロで走り、しかもその速さを長く保てる。"
+        },
+        {
+          "emotion": "解説",
+          "text": "持久力も兼ね備えた、驚異の脚の持ち主です。"
+        }
+      ]
+    },
+    {
+      "id": "t4",
+      "part": "③b ダチョウ紹介",
+      "label": "翼で急旋回",
+      "source": "h3",
+      "duration": 10,
+      "gen_seconds": 5,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 5,
+          "rate": 0.5
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "OSTRICH"
+      ],
+      "image_prompt": "Telephoto shot of the running ostrich leaning into a sharp turn, one white-plumed wing spread wide like a rudder, body tilted, dust spraying from its feet.",
+      "video_prompt": "Tracking shot. The running ostrich spreads one wing wide and banks into a sharp turn, changing direction in a burst of dust, then straightens and keeps running. Movement starts immediately in the first frame.",
+      "soundscape": "Heavy footfalls, a scrape of dust and rushing wind, without music.",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "飛べない翼は、急な方向転換のとき、バランスを取る舵として使います。"
+        },
+        {
+          "emotion": "解説",
+          "text": "まさに、走るための翼です。"
+        }
+      ]
+    },
+    {
+      "id": "t5",
+      "part": "③b ダチョウ紹介",
+      "label": "低い鳴き声",
+      "source": "h3",
+      "duration": 6,
+      "audio": "animal",
+      "image_uses": [
+        "STYLE",
+        "OSTRICH"
+      ],
+      "image_prompt": "Medium telephoto shot of the male ostrich standing with its neck slightly inflated and throat puffed, beak closed, body lowered, wings held slightly out.",
+      "video_prompt": "Static shot. The ostrich inflates its neck and throat and lets out a deep booming call, its throat pulsing with each boom. Movement starts immediately in the first frame.",
+      "soundscape": "A deep, low booming call from the ostrich, like a distant lion's roar, then wind, without music.",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "オスは威嚇のとき、ライオンのような低い声で鳴きます。"
+        }
+      ]
+    },
+    {
+      "id": "t6",
+      "part": "③b ダチョウ紹介",
+      "label": "2本指の足",
+      "source": "h3",
+      "duration": 7,
+      "audio": "ambient",
+      "image_uses": [
+        "STYLE",
+        "OSTRICH"
+      ],
+      "image_prompt": "Extreme close-up of the ostrich's foot on red earth: only two toes, the larger inner toe ending in a thick, heavy claw, scaly pinkish skin in fine detail.",
+      "video_prompt": "Very slow push-in on the two-toed foot. The foot lifts slightly and presses back down, the thick claw digging into the dirt. Movement starts immediately in the first frame.",
+      "soundscape": "A heavy step on dry earth and soft wind, without music.",
+      "overlay": "爪に注釈「爪 約10cm」",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "足の指は、たった2本。大きい方には、10センチほどの爪があります。"
+        }
+      ]
+    },
+    {
+      "id": "t7",
+      "part": "③b ダチョウ紹介",
+      "label": "前蹴り",
+      "source": "h3",
+      "duration": 10,
+      "gen_seconds": 5.5,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 3,
+          "rate": 1
+        },
+        {
+          "from": 3,
+          "to": 4.5,
+          "rate": 0.25
+        },
+        {
+          "from": 4.5,
+          "to": 5.5,
+          "rate": 1
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "OSTRICH"
+      ],
+      "image_prompt": "Telephoto side view of the ostrich with one leg raised high and bent in front of its body, about to strike, wings slightly spread, neck pulled back.",
+      "video_prompt": "Static telephoto side shot. The ostrich stamps its raised leg forward and down in a powerful kick at a clump of dry grass, dust and grass exploding outward, then steadies itself. Movement starts immediately in the first frame.",
+      "soundscape": "A sharp whoosh and a heavy strike on dry earth, without music.",
+      "lines": [
+        {
+          "emotion": "緊張",
+          "text": "蹴りは前へ、振り下ろすように。ライオンでさえ、この蹴りを警戒すると言われます。"
+        },
+        {
+          "emotion": "緊張",
+          "text": "当たれば一撃です。"
+        }
+      ]
+    },
+    {
+      "id": "t8",
+      "part": "③b ダチョウ紹介",
+      "label": "目と脳",
+      "source": "opus",
+      "duration": 8,
+      "graphic": "ダチョウの頭部シルエット。目（直径約5cmの円）と脳の大きさを並べて比較し、「目 ＞ 脳」と表示。",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "さらに、目の直径は約5センチ。自分の脳よりも大きな目で、敵をいち早く見つけます。"
+        }
+      ]
+    },
+    {
+      "id": "t9",
+      "part": "③b ダチョウ紹介",
+      "label": "砂に頭は迷信",
+      "source": "opus",
+      "duration": 9,
+      "graphic": "「砂に頭を隠す」イラストに大きな✕（迷信）。続いて「全力で逃げる」「全力で蹴る」の2択に◯。",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "ちなみに、危険が迫ると砂に頭を隠す、というのは迷信。実際は、全力で逃げるか、全力で蹴ります。"
+        }
+      ]
+    },
+    {
+      "id": "p1",
+      "part": "④ 注目ポイント",
+      "label": "注目ポイント",
+      "source": "opus",
+      "duration": 5,
+      "graphic": "「注目ポイント」の見出しと、3つの項目枠（リーチ／間合い／つかめるか）が順に出る。",
+      "lines": [
+        {
+          "emotion": "期待",
+          "text": "この戦いの注目ポイントは、3つあります。"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "part": "④ 注目ポイント",
+      "label": "リーチ",
+      "source": "h3",
+      "duration": 10,
+      "gen_seconds": 5,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 5,
+          "rate": 0.5
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "KANGAROO",
+        "OSTRICH"
+      ],
+      "image_prompt": "Wide telephoto side view of the kangaroo on the left and the ostrich on the right, standing about ten meters apart facing each other on the grassland, clearly showing that the ostrich towers over the standing kangaroo. Exactly one kangaroo and one ostrich, not touching.",
+      "video_prompt": "Static wide shot. The kangaroo and the ostrich stand facing each other at a distance. The ostrich raises its neck even higher and the kangaroo rises up on its tail, both sizing each other up without moving closer. Movement starts immediately in the first frame.",
+      "soundscape": "Wind across the grassland, tense silence, without music.",
+      "overlay": "両者の脚が届く範囲を弧で表示（ダチョウの弧が大きい）",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "1つ目は、リーチ。背の高いダチョウの長い脚を、カンガルーはかいくぐれるのか。"
+        },
+        {
+          "emotion": "解説",
+          "text": "懐に入れるかが鍵です。"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "part": "④ 注目ポイント",
+      "label": "蹴りの間合い",
+      "source": "opus",
+      "duration": 14,
+      "graphic": "横から見た間合いの図。カンガルーの得意距離（密着・つかんでから蹴る）とダチョウの得意距離（離れた距離から前蹴り）を色分けした帯で表示。",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "2つ目は、蹴りの間合い。カンガルーはつかんでから、至近距離で蹴る。"
+        },
+        {
+          "emotion": "解説",
+          "text": "ダチョウは離れた距離から、長い脚で前へ蹴る。得意な距離が、まったく違います。"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "part": "④ 注目ポイント",
+      "label": "つかめるか",
+      "source": "reuse",
+      "duration": 11,
+      "reuse": [
+        {
+          "clip": "k5",
+          "from": 0,
+          "to": 5.5,
+          "rate": 0.5
+        }
+      ],
+      "overlay": "「得意技：つかんでからの蹴り」→ ダチョウのシルエットに「腕なし」「首ははるか頭上」",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "3つ目は、つかめるかどうか。カンガルーの得意技は、つかんでからの蹴り。"
+        },
+        {
+          "emotion": "解説",
+          "text": "相手は、腕のない鳥。そして首は、はるか頭上です。"
+        }
+      ]
+    },
+    {
+      "id": "r1",
+      "part": "⑤ 戦闘開始画面",
+      "label": "ROUND 1 FIGHT",
+      "source": "opus",
+      "duration": 15,
+      "graphic": "格闘ゲーム風の対戦画面（本家のロゴ・フォント・UI は使わないオリジナル）。0〜5秒：左右から両者の顔写真（m2・m3 の始点画像から切り出し）がスライドイン、名前・満タンの体力ゲージ・VS。5〜10秒：「ROUND 1」。10〜15秒：「FIGHT!」。",
+      "lines": [
+        {
+          "emotion": "実況",
+          "text": "さあ、両者が向かい合う。いよいよ、試合開始です！"
+        },
+        {
+          "emotion": "アナウンス",
+          "text": "ラウンド、ワン！",
+          "at": 5.2
+        },
+        {
+          "emotion": "緊張",
+          "text": "張りつめた空気。両者、動かない。",
+          "at": 6.7
+        },
+        {
+          "emotion": "アナウンス",
+          "text": "ファイト！",
+          "at": 10.2
+        },
+        {
+          "emotion": "実況",
+          "text": "火ぶたが、切られました！",
+          "at": 11.4
+        }
+      ]
+    },
+    {
+      "id": "b00",
+      "part": "⑥ 戦闘",
+      "label": "舞台",
+      "source": "h3",
+      "duration": 12,
+      "audio": "ambient",
+      "image_uses": [
+        "STYLE",
+        "KANGAROO",
+        "OSTRICH"
+      ],
+      "image_prompt": "Extreme wide telephoto shot of the grassland at late afternoon: the kangaroo small on the far left and the ostrich small on the far right, about twenty meters apart, facing each other across open ground, heat haze shimmering between them.",
+      "video_prompt": "Very slow push-in on the wide scene. Grass sways and heat haze shimmers between the kangaroo and the ostrich, who stand still, facing each other from a distance. Movement starts immediately in the first frame.",
+      "soundscape": "Wind across the grassland and tense silence, without music.",
+      "lines": [
+        {
+          "emotion": "穏やか",
+          "text": "舞台は、両者の故郷によく似た、乾いた草原。"
+        },
+        {
+          "emotion": "解説",
+          "text": "見通しが良く、隠れる場所はありません。ごまかしの効かない、真っ向勝負です。"
+        }
+      ]
+    },
+    {
+      "id": "b01",
+      "part": "⑥ 戦闘",
+      "label": "にらみ合い",
+      "source": "h3",
+      "duration": 10,
+      "audio": "ambient",
+      "image_uses": [
+        "STYLE",
+        "KANGAROO",
+        "OSTRICH"
+      ],
+      "image_prompt": "Telephoto side view of the kangaroo on the left and the ostrich on the right, about fifteen meters apart, both turned toward each other, locked in a stare, low sun behind them.",
+      "video_prompt": "Slow lateral tracking shot. The kangaroo and the ostrich slowly circle each other at a distance, stepping sideways, never taking their eyes off each other. Movement starts immediately in the first frame.",
+      "soundscape": "Slow footsteps on dry earth and wind, tense silence, without music.",
+      "lines": [
+        {
+          "emotion": "緊張",
+          "text": "両者、にらみ合い。距離は、およそ20メートル。"
+        },
+        {
+          "emotion": "緊張",
+          "text": "互いに円を描くように、間合いを測っています。"
+        }
+      ]
+    },
+    {
+      "id": "b02",
+      "part": "⑥ 戦闘",
+      "label": "ダチョウの威嚇",
+      "source": "h3",
+      "duration": 8,
+      "audio": "animal",
+      "image_uses": [
+        "STYLE",
+        "OSTRICH"
+      ],
+      "image_prompt": "Telephoto front view of the ostrich facing the camera, body lowered, neck pulled back in an S-curve, wings starting to open.",
+      "video_prompt": "Static telephoto shot. The ostrich spreads its black-and-white wings wide to look bigger, raises its tail plumes and hisses loudly with its beak open, stepping forward once. Movement starts immediately in the first frame.",
+      "soundscape": "A loud, sharp hiss from the ostrich and the rustle of feathers, without music.",
+      "lines": [
+        {
+          "emotion": "実況",
+          "text": "先に動いたのは、ダチョウ！翼を大きく広げ、シューッと鋭く威嚇します。"
+        }
+      ]
+    },
+    {
+      "id": "b03",
+      "part": "⑥ 戦闘",
+      "label": "カンガルーの威嚇",
+      "source": "h3",
+      "duration": 8,
+      "audio": "animal",
+      "image_uses": [
+        "STYLE",
+        "KANGAROO"
+      ],
+      "image_prompt": "Telephoto front view of the kangaroo facing the camera on all fours and tail, about to rise, ears pinned forward, eyes locked ahead.",
+      "video_prompt": "Static telephoto shot. The kangaroo rises high onto its tail and hind toes, puffs out its chest and spreads its forearms, stamps a hind foot and lets out a low guttural growl. Movement starts immediately in the first frame.",
+      "soundscape": "A low guttural growl from the kangaroo and a hard stamp on dry earth, without music.",
+      "lines": [
+        {
+          "emotion": "実況",
+          "text": "カンガルーも負けじと、尻尾で立ち上がる。胸を張り、低くうなって、こちらも威嚇。"
+        }
+      ]
+    },
+    {
+      "id": "b04",
+      "part": "⑥ 戦闘",
+      "label": "カンガルーが間合いを詰める",
+      "source": "h3",
+      "duration": 12,
+      "gen_seconds": 6,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 6,
+          "rate": 0.5
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "KANGAROO",
+        "OSTRICH"
+      ],
+      "image_prompt": "Telephoto side view: the kangaroo on the left crouched and about to leap forward, the ostrich on the right about eight meters away, standing tall and watching.",
+      "video_prompt": "Lateral tracking shot. The kangaroo bounds forward in two huge leaps, closing the distance to the ostrich, dust bursting at each landing. The ostrich stands its ground. Movement starts immediately in the first frame.",
+      "soundscape": "Heavy thumps of landings and dust, without music.",
+      "lines": [
+        {
+          "emotion": "実況",
+          "text": "仕掛けたのは、カンガルー！跳躍で、一気に間合いを詰めます！"
+        },
+        {
+          "emotion": "興奮",
+          "text": "20メートルの距離が、みるみる縮まる！"
+        }
+      ]
+    },
+    {
+      "id": "b05",
+      "part": "⑥ 戦闘",
+      "label": "首に届かない",
+      "source": "h3",
+      "duration": 10,
+      "audio": "ambient",
+      "image_uses": [
+        "STYLE",
+        "KANGAROO",
+        "OSTRICH"
+      ],
+      "image_prompt": "Telephoto side view at close range: the kangaroo on the left standing tall on its tail with both forearms reaching up, the ostrich on the right towering above it, its head and neck pulled back high out of reach. Clearly separate bodies, not touching.",
+      "video_prompt": "Static telephoto shot. The kangaroo swipes and grabs upward with its forearms, but the ostrich sways its long neck back and to the side, keeping its head high out of reach. Movement starts immediately in the first frame.",
+      "soundscape": "Scuffling feet, rustling feathers and a short hiss, without music.",
+      "lines": [
+        {
+          "emotion": "実況",
+          "text": "前脚で、首をつかみにいく。しかし、届かない！首が、高すぎる。"
+        },
+        {
+          "emotion": "実況",
+          "text": "ダチョウは首を振って、軽々とかわします。"
+        }
+      ]
+    },
+    {
+      "id": "b06",
+      "part": "⑥ 戦闘",
+      "label": "カンガルーの両足蹴り",
+      "source": "h3",
+      "duration": 12,
+      "gen_seconds": 6,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 2,
+          "rate": 1
+        },
+        {
+          "from": 2,
+          "to": 4,
+          "rate": 0.25
+        },
+        {
+          "from": 4,
+          "to": 6,
+          "rate": 1
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "KANGAROO",
+        "OSTRICH"
+      ],
+      "image_prompt": "Telephoto side view at close range: the kangaroo on the left leaning back on its tail with both hind feet raised and cocked, about to kick; the ostrich on the right, its feathered body just within reach. The moment just before impact, not touching yet.",
+      "video_prompt": "Static telephoto shot. The kangaroo balances on its tail and drives both hind feet forward into the ostrich's feathered body. The ostrich is pushed back a step, feathers bursting loose. Movement starts immediately in the first frame.",
+      "soundscape": "A heavy muffled impact into feathers and a startled hiss, without music.",
+      "lines": [
+        {
+          "emotion": "実況",
+          "text": "ならば、この技！尻尾で体を支えて、両足蹴り！"
+        },
+        {
+          "emotion": "興奮",
+          "text": "カンガルー、最大の武器が、ダチョウの胴体に突き刺さる！"
+        }
+      ]
+    },
+    {
+      "id": "b07",
+      "part": "⑥ 戦闘",
+      "label": "羽が舞う",
+      "source": "h3",
+      "duration": 16,
+      "gen_seconds": 8,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 8,
+          "rate": 0.5
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "OSTRICH"
+      ],
+      "image_prompt": "Telephoto shot of the ostrich staggering backward, loose black and white feathers floating in the air around it, backlit by low golden sun.",
+      "video_prompt": "Static telephoto shot. The ostrich stumbles back two steps, loose feathers drifting down through the golden backlight, then plants its feet, shakes its plumage and raises its head again, unhurt. Movement starts immediately in the first frame.",
+      "soundscape": "Rustling feathers and heavy footsteps, without music.",
+      "lines": [
+        {
+          "emotion": "興奮",
+          "text": "ダチョウの羽が舞う！これは効いたか！？"
+        },
+        {
+          "emotion": "解説",
+          "text": "ですが、分厚い羽毛がクッションとなり、決定打には至りません。"
+        },
+        {
+          "emotion": "実況",
+          "text": "さすがの巨体。ダチョウ、すぐに体勢を立て直します。"
+        }
+      ]
+    },
+    {
+      "id": "b08",
+      "part": "⑥ 戦闘",
+      "label": "ダチョウが距離を取る",
+      "source": "h3",
+      "duration": 10,
+      "audio": "ambient",
+      "image_uses": [
+        "STYLE",
+        "OSTRICH"
+      ],
+      "image_prompt": "Telephoto side view of the ostrich starting to run away across the grassland, first long stride, neck forward, dust at its feet.",
+      "video_prompt": "Tracking shot following the ostrich as it sprints away at high speed, swings around in a wide arc with one wing out, and comes to a stop facing back the way it came. Movement starts immediately in the first frame.",
+      "soundscape": "Rapid heavy footfalls, rushing wind and a skid in the dust, without music.",
+      "lines": [
+        {
+          "emotion": "実況",
+          "text": "ダチョウは走って、距離を取る。これは逃げではありません。"
+        },
+        {
+          "emotion": "解説",
+          "text": "自分の間合いを取り直す、冷静な判断です。"
+        }
+      ]
+    },
+    {
+      "id": "b09",
+      "part": "⑥ 戦闘",
+      "label": "腕をなめるカンガルー",
+      "source": "h3",
+      "duration": 10,
+      "audio": "ambient",
+      "image_uses": [
+        "STYLE",
+        "KANGAROO"
+      ],
+      "image_prompt": "Medium telephoto shot of the kangaroo standing alone in the grassland, breathing hard, one forearm raised toward its mouth, sun beating down.",
+      "video_prompt": "Static shot. The panting kangaroo calmly licks the inside of its forearms one after the other to cool down, completely absorbed, ignoring everything around it. Movement starts immediately in the first frame.",
+      "soundscape": "Heavy panting, soft licking sounds and wind, without music.",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "一方のカンガルー。前脚をなめ始めました。唾液を蒸発させて、体を冷やす行動です。"
+        },
+        {
+          "emotion": "解説",
+          "text": "……この状況で。"
+        }
+      ]
+    },
+    {
+      "id": "b10",
+      "part": "⑥ 戦闘",
+      "label": "ダチョウの突進",
+      "source": "h3",
+      "duration": 12,
+      "gen_seconds": 6,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 6,
+          "rate": 0.5
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "OSTRICH"
+      ],
+      "image_prompt": "Low telephoto front view of the ostrich charging straight toward the camera at full speed, neck forward, huge eyes locked on, dust flying behind.",
+      "video_prompt": "Low static telephoto shot. The ostrich charges straight toward the camera at full speed, growing larger in frame, dust exploding behind each stride. Movement starts immediately in the first frame.",
+      "soundscape": "Thundering footfalls growing louder and rushing wind, without music.",
+      "lines": [
+        {
+          "emotion": "実況",
+          "text": "その隙を、大きな目は見逃さない！ダチョウ、全速力の突進！"
+        },
+        {
+          "emotion": "興奮",
+          "text": "時速70キロの巨体が、一直線に迫ります！"
+        }
+      ]
+    },
+    {
+      "id": "b11",
+      "part": "⑥ 戦闘",
+      "label": "ダチョウの前蹴り（決定打）",
+      "source": "h3",
+      "duration": 14,
+      "gen_seconds": 6,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 2,
+          "rate": 1
+        },
+        {
+          "from": 2,
+          "to": 4,
+          "rate": 0.2
+        },
+        {
+          "from": 4,
+          "to": 6,
+          "rate": 1
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "KANGAROO",
+        "OSTRICH"
+      ],
+      "image_prompt": "Telephoto side view at close range: the ostrich on the right with one long leg raised high and cocked forward, about to strike; the kangaroo on the left standing upright, still turned slightly away. The moment just before impact, not touching yet.",
+      "video_prompt": "Static telephoto shot. The ostrich drives its raised leg forward and down in a powerful kick into the kangaroo's chest. The kangaroo is knocked backward off its feet. Dust bursts from the ground. Movement starts immediately in the first frame.",
+      "soundscape": "A sharp whoosh and a heavy thud of impact, then dust, without music.",
+      "lines": [
+        {
+          "emotion": "興奮",
+          "text": "そして、渾身の前蹴り！長い脚が、振り下ろすように、カンガルーの胸を捉えた！"
+        },
+        {
+          "emotion": "興奮",
+          "text": "100キロを超える体重と、突進の勢いが、この一撃に乗っています！"
+        }
+      ]
+    },
+    {
+      "id": "b12",
+      "part": "⑥ 戦闘",
+      "label": "宙に浮くカンガルー",
+      "source": "h3",
+      "duration": 16,
+      "gen_seconds": 8,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 8,
+          "rate": 0.5
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "KANGAROO"
+      ],
+      "image_prompt": "Telephoto side view of the kangaroo airborne and tilted backward from the blow, hind feet off the ground, forearms flung out, dust hanging in the air around it.",
+      "video_prompt": "Static telephoto shot. The kangaroo flies backward through the air, lands hard on its tail and hind feet in a cloud of dust, wobbles, and stays upright, dazed. Movement starts immediately in the first frame.",
+      "soundscape": "A heavy landing thud, scattering dust and ragged breathing, without music.",
+      "lines": [
+        {
+          "emotion": "興奮",
+          "text": "カンガルーの巨体が、宙に浮いた！しかし、尻尾で着地し、なんとか踏みとどまります！"
+        },
+        {
+          "emotion": "解説",
+          "text": "5本目の脚が、ここで彼を救いました。ですが、ダメージは明らかです。"
+        }
+      ]
+    },
+    {
+      "id": "c1",
+      "part": "⑦ 決着",
+      "label": "カンガルーの逃走",
+      "source": "h3",
+      "duration": 10,
+      "audio": "ambient",
+      "image_uses": [
+        "STYLE",
+        "KANGAROO"
+      ],
+      "image_prompt": "Telephoto shot of the dazed kangaroo standing in settling dust, body starting to turn away toward the open grassland, ears flattened.",
+      "video_prompt": "Static telephoto shot. The kangaroo turns its back and bounds away across the grassland in long leaps, growing smaller into the distance until it disappears into the golden haze. Movement starts immediately in the first frame.",
+      "soundscape": "Fading thumps of landings and wind, without music.",
+      "lines": [
+        {
+          "emotion": "実況",
+          "text": "カンガルーが、背を向けました。後ろに下がれない彼が選んだのは、振り返っての全力の跳躍。"
+        },
+        {
+          "emotion": "解説",
+          "text": "見事な、戦略的撤退です。"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "part": "⑦ 決着",
+      "label": "ダチョウの勝どき",
+      "source": "h3",
+      "duration": 8,
+      "audio": "animal",
+      "image_uses": [
+        "STYLE",
+        "OSTRICH"
+      ],
+      "image_prompt": "Low-angle telephoto shot of the ostrich standing tall alone against the setting sun, neck raised, wings beginning to lift.",
+      "video_prompt": "Slow low-angle push-in. The ostrich spreads its wings wide against the setting sun, inflates its neck and lets out a deep booming call of victory. Movement starts immediately in the first frame.",
+      "soundscape": "A deep, low booming call from the ostrich and evening wind, without music.",
+      "lines": [
+        {
+          "emotion": "実況",
+          "text": "ダチョウは追わない。翼を広げ、勝利の雄たけびです。"
+        },
+        {
+          "emotion": "感動",
+          "text": "深追いしない、それもまた王者の余裕。"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "part": "⑦ 決着",
+      "label": "WINNER",
+      "source": "opus",
+      "duration": 12,
+      "graphic": "格闘ゲーム風の決着画面（r1 と同じデザイン。ゲージは出さない）。「決着」→「カンガルー 逃走」→ c2 の静止画を背景に大きく「WINNER ダチョウ」。",
+      "lines": [
+        {
+          "emotion": "興奮",
+          "text": "決着！カンガルーの逃走により、勝者、ダチョウ！"
+        },
+        {
+          "emotion": "興奮",
+          "text": "地上最強のキック王の座は、アフリカの巨鳥が手にしました！"
+        }
+      ]
+    },
+    {
+      "id": "w1",
+      "part": "⑧ 勝因解説",
+      "label": "勝因3つ",
+      "source": "opus",
+      "duration": 3,
+      "graphic": "「勝因」の見出しと3つの項目枠。",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "勝因は、大きく3つ。"
+        }
+      ]
+    },
+    {
+      "id": "w2",
+      "part": "⑧ 勝因解説",
+      "label": "体格とリーチ",
+      "source": "opus",
+      "duration": 12,
+      "graphic": "体重・背丈の比較バー（カンガルー vs ダチョウ）。背景に t2 の背丈比較シルエット。",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "1つ目、体格とリーチ。体重も背丈も、ダチョウが上。"
+        },
+        {
+          "emotion": "解説",
+          "text": "カンガルーのボクシングは、同じくらいの体格の相手と戦うための技でした。"
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "part": "⑧ 勝因解説",
+      "label": "蹴りの相性",
+      "source": "reuse",
+      "duration": 12,
+      "reuse": [
+        {
+          "clip": "b06",
+          "from": 2,
+          "to": 4,
+          "rate": 0.25
+        },
+        {
+          "clip": "b11",
+          "from": 2,
+          "to": 3,
+          "rate": 0.25
+        }
+      ],
+      "overlay": "REPLAY 枠。p3 の間合いの図を小さく重ねる",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "2つ目、蹴りの相性。つかんでから蹴るカンガルーに対し、ダチョウは離れた距離から一撃を放てます。"
+        },
+        {
+          "emotion": "解説",
+          "text": "つかむ前に、蹴られてしまうのです。"
+        }
+      ]
+    },
+    {
+      "id": "w4",
+      "part": "⑧ 勝因解説",
+      "label": "スピード",
+      "source": "reuse",
+      "duration": 10,
+      "reuse": [
+        {
+          "clip": "b08",
+          "from": 0,
+          "to": 10,
+          "rate": 1
+        }
+      ],
+      "overlay": "速度比較バー「ダチョウ 約70km/h」「カンガルー 約60km/h」",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "3つ目、スピード。時速70キロの脚で、戦う距離をダチョウが自由に選べたことです。"
+        },
+        {
+          "emotion": "解説",
+          "text": "距離は、思いのままでした。"
+        }
+      ]
+    },
+    {
+      "id": "w5",
+      "part": "⑧ 勝因解説",
+      "label": "考察まとめ",
+      "source": "opus",
+      "duration": 13,
+      "graphic": "3つの勝因をまとめた図と「ダチョウ有利」。",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "体格、武器、スピード。すべてが、ダチョウに味方しました。"
+        },
+        {
+          "emotion": "解説",
+          "text": "海外の動物比較の考察でも、ダチョウ有利とする見方が多数派です。"
+        }
+      ]
+    },
+    {
+      "id": "e1",
+      "part": "⑨ まとめ",
+      "label": "カンガルーの健闘",
+      "source": "reuse",
+      "duration": 11,
+      "reuse": [
+        {
+          "clip": "b06",
+          "from": 2,
+          "to": 4.75,
+          "rate": 0.25
+        }
+      ],
+      "lines": [
+        {
+          "emotion": "感動",
+          "text": "とはいえ、カンガルーの両足蹴りも、確かにダチョウを揺らしました。あの一撃は、見事でした。"
+        },
+        {
+          "emotion": "感動",
+          "text": "間合いに入れば、勝負はわからなかったでしょう。"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "part": "⑨ まとめ",
+      "label": "あの余裕",
+      "source": "reuse",
+      "duration": 9,
+      "reuse": [
+        {
+          "clip": "b09",
+          "from": 0,
+          "to": 9,
+          "rate": 1
+        }
+      ],
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "そして、戦いの最中に腕をなめて涼む、あの余裕。……いえ、あれは余裕だったのでしょうか。"
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "part": "⑨ まとめ",
+      "label": "夕日に跳ぶカンガルー",
+      "source": "h3",
+      "duration": 12,
+      "gen_seconds": 6,
+      "audio": "mute",
+      "speed": [
+        {
+          "from": 0,
+          "to": 6,
+          "rate": 0.5
+        }
+      ],
+      "image_uses": [
+        "STYLE",
+        "KANGAROO"
+      ],
+      "image_prompt": "Telephoto shot from behind of the kangaroo mid-leap across the grassland toward a huge orange setting sun, its silhouette outlined in golden light.",
+      "video_prompt": "Tracking shot from behind as the kangaroo bounds away toward the setting sun in long, graceful leaps, its silhouette shrinking into the golden light. Movement starts immediately in the first frame.",
+      "soundscape": "Soft thumps of landings fading into evening wind, without music.",
+      "lines": [
+        {
+          "emotion": "感動",
+          "text": "後ろには下がれない。でも、逃げるときは振り返ればいい。"
+        },
+        {
+          "emotion": "感動",
+          "text": "逃げるが勝ち、です。カンガルーが教えてくれた、大切なことです。"
+        }
+      ]
+    },
+    {
+      "id": "e4",
+      "part": "⑨ まとめ",
+      "label": "次回予告",
+      "source": "opus",
+      "duration": 8,
+      "graphic": "エンドカード。「次回」と、2体のシルエットに「？？？ vs ？？？」。",
+      "lines": [
+        {
+          "emotion": "期待",
+          "text": "次回も、決して出会うはずのない、夢の対決をお届けします。お楽しみに！"
+        }
+      ]
+    }
+  ]
+}

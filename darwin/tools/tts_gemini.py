@@ -3,6 +3,10 @@
   python tools/tts_gemini.py 01-keiba            # 本番（GEMINI_API_KEY が必要）
   python tools/tts_gemini.py 01-keiba --mock     # APIを使わず無音で尺だけ再現（動作確認用）
   python tools/tts_gemini.py 01-keiba --redo 03_seitai:1   # 特定の文だけ撮り直し
+
+episode.json の "tts"（voice / tempo / base_style / emotions など）は config の gemini を上書きする（シリーズごとの語り口）。
+section に "duration" があれば、その尺まで無音で埋める（ナレーションが尺を超えたら警告）。
+line に "at" があれば、そのショットの先頭から at 秒の位置に置く（⑤のコールなど）。
 """
 import argparse
 import array
@@ -18,7 +22,7 @@ import urllib.request
 import wave
 from pathlib import Path
 
-from common import load_config, load_episode, out_dir, run_ffmpeg, save_json, wav_duration
+from common import load_config, load_episode, load_json, out_dir, run_ffmpeg, save_json, wav_duration
 
 RATE = 24000  # Gemini TTS は 24kHz / 16bit / mono の PCM を返す
 
@@ -81,6 +85,22 @@ def process_line(raw_path, proc_path, g):
 
 def silence(sec):
     return b"\x00\x00" * int(round(sec * RATE))
+
+
+def pcm_seconds(pcm):
+    return len(pcm) / 2 / RATE
+
+
+def line_est(line):
+    """見積もり秒数。est が無ければ字数から（Zubenelgenubi 1.1倍の実測 約5.5字/秒）。"""
+    return line.get("est", round(len(line["text"]) / 5.5, 1))
+
+
+def apply_episode_tts(g, ep):
+    over = ep.get("tts", {})
+    merged = {**g, **{k: v for k, v in over.items() if k != "emotions"}}
+    merged["emotions"] = {**g["emotions"], **over.get("emotions", {})}
+    return merged
 
 
 def retry_delay(detail):
@@ -180,10 +200,10 @@ def main():
     args = ap.parse_args()
 
     cfg = load_config()
-    g = cfg["gemini"]
+    ep_dir, ep = load_episode(args.episode)
+    g = apply_episode_tts(cfg["gemini"], ep)
     if args.voice:
         g["voice"] = args.voice
-    ep_dir, ep = load_episode(args.episode)
     key = os.environ.get("GEMINI_API_KEY")
     if not args.mock and not key:
         sys.exit("環境変数 GEMINI_API_KEY が未設定です（動作確認だけなら --mock）。")
@@ -207,10 +227,16 @@ def main():
         lines_tl = []
         for i, line in enumerate(sec["lines"], 1):
             wav_path = line_dir / f"{sec['id']}_{i:02d}.wav"
-            redo = "all" in args.redo or f"{sec['id']}:{i}" in args.redo
+            meta_path = wav_path.with_suffix(".json")
+            spoken = {"text": line.get("tts_text", line["text"]), "emotion": line["emotion"]}
+            # 原稿か感情ラベルが変わった文は作り直す（記録の無い古い音声はそのまま使う）
+            stale = meta_path.exists() and load_json(meta_path) != spoken
+            redo = "all" in args.redo or f"{sec['id']}:{i}" in args.redo or stale
+            if stale and not args.mock:
+                print(f"  原稿が変わったので作り直し: {sec['id']}:{i}")
             if redo or not wav_path.exists():
                 if args.mock:
-                    write_wav(wav_path, silence(line["est"]))
+                    write_wav(wav_path, silence(line_est(line)))
                 else:
                     style = f"{g['base_style']} 今回の文は「{line['emotion']}」：{g['emotions'].get(line['emotion'], line['emotion'])}。"
                     print(f"  TTS {sec['id']}:{i} ({line['emotion']}) {line['text']}")
@@ -218,25 +244,36 @@ def main():
                     if rate != RATE:
                         sys.exit(f"想定外のサンプルレート {rate}Hz です")
                     write_wav(wav_path, data)
+                    save_json(meta_path, spoken)
             proc_path = proc_dir / wav_path.name
             process_line(wav_path, proc_path, g)
             raw_dur = wav_duration(wav_path)
             dur = wav_duration(proc_path)
-            if i > 1:
+            if "at" in line:
+                gap = line["at"] - pcm_seconds(pcm)
+                if gap < 0:
+                    print(f"  ※ {sec['id']}:{i} は前の文が長く、at={line['at']}秒に置けません（{-gap:.2f}秒遅れ）")
+                pcm += silence(max(0.0, gap))
+            elif i > 1:
                 pcm += silence(g["line_gap"])
-                cursor += g["line_gap"]
+            cursor = pcm_seconds(pcm)
             pcm += read_pcm(proc_path)
             lines_tl.append({"index": i, "text": line["text"], "emotion": line["emotion"],
-                             "start": round(t + cursor, 3), "duration": round(dur, 3), "raw": round(raw_dur, 3), "est": line["est"],
-                             "cues": line.get("cues", [])})
-            cursor += dur
+                             "start": round(t + cursor, 3), "duration": round(dur, 3), "raw": round(raw_dur, 3),
+                             "est": line_est(line), "cues": line.get("cues", [])})
         pcm += silence(g["section_tail"])
+        spoken = pcm_seconds(pcm)
+        if "duration" in sec:
+            pcm += silence(max(0.0, sec["duration"] - spoken))
         sec_wav = sec_dir / f"{sec['id']}.wav"
         write_wav(sec_wav, pcm)
         full_pcm += pcm
         dur = wav_duration(sec_wav)
-        timeline["sections"].append({"id": sec["id"], "label": sec["label"], "start": round(t, 3),
-                                     "duration": round(dur, 3), "lines": lines_tl})
+        entry = {"id": sec["id"], "label": sec["label"], "start": round(t, 3), "duration": round(dur, 3),
+                 "spoken": round(spoken, 3), "lines": lines_tl}
+        if "duration" in sec:
+            entry["planned"] = sec["duration"]
+        timeline["sections"].append(entry)
         t += dur
     timeline["total"] = round(t, 3)
     timeline["voice"] = voice
@@ -254,10 +291,20 @@ def main():
                 print(f"  {s['id']}:{l['index']}  {l['raw']:5.2f} → {l['duration']:5.2f}秒 / {l['est']:.1f}  {l['text'][:24]}")
     print(f"\n【】ごとの尺（無音カット {'あり' if g.get('trim_silence', True) else 'なし'}"
           f"・文中の間は最大 {g.get('max_pause', 0.45)}秒・速度 {g.get('tempo', 1.0)}倍）")
+    over = []
     for s in timeline["sections"]:
         est = sum(l["est"] for l in s["lines"])
-        print(f"  {s['id']:<12} {s['label']:<8} {s['duration']:6.2f}秒  (見積 {est:.1f}秒)")
+        if "planned" in s:
+            flag = ""
+            if s["spoken"] > s["planned"] + 0.01:
+                flag = f"  ✗ {s['spoken'] - s['planned']:.2f}秒はみ出し"
+                over.append(s["id"])
+            print(f"  {s['id']:<12} {s['label']:<12} ナレ {s['spoken']:5.2f}秒 / 尺 {s['planned']:5.1f}秒{flag}")
+        else:
+            print(f"  {s['id']:<12} {s['label']:<8} {s['duration']:6.2f}秒  (見積 {est:.1f}秒)")
     print(f"  合計 {timeline['total']:.2f}秒")
+    if over:
+        print(f"\n尺からはみ出したショット: {' '.join(over)}（原稿を短くするか duration を伸ばしてください）")
     print(f"\n通しで聞く: {sec_dir / ('full.wav' if args.preview else '_full.wav')}")
 
 

@@ -1,0 +1,213 @@
+{
+  "id": "02-pachinko",
+  "title": "パチンコで負けても巣に帰るオジサン（オス）",
+  "image_blocks": {
+    "STYLE": "Shot like a Japanese NHK wildlife documentary. Vertical 9:16 composition. Telephoto 400mm lens, compressed perspective, shallow depth of field, subject observed from a distance as if filmed secretly. Natural or available light, slight handheld camera shake feel, fine film grain, photorealistic, cinematic color grading. All signs, screens and machine faces are rendered only as abstract colorful light and bokeh. No text, no readable letters, no subtitles, no logos, no watermarks, no on-screen graphics.",
+    "CHARACTER": "A fictional Japanese man in his late 50s, lean build with a slight stoop, sunken cheeks, grey buzz-cut hair, light grey stubble, deep-set tired eyes. Wearing a faded navy zip-up windbreaker over a plain white crew-neck undershirt, loose beige work pants, white socks and black slip-on sandals. A worn brown leather bi-fold wallet.",
+    "NEGATIVE": "anime, illustration, cartoon, 3d render, cgi, text, japanese text, readable signs, logo, brand name, anime characters on screens, watermark, distorted hands, extra fingers, celebrity likeness, crowd of identical faces"
+  },
+  "sections": [
+    {
+      "id": "01_basho",
+      "label": "場所紹介",
+      "ambience": "station_street",
+      "image_uses": [
+        "STYLE"
+      ],
+      "image_prompt": "Wide telephoto establishing shot from across a busy street in front of a Japanese train station on a weekday afternoon. A huge windowless building covered in glowing multicolored lights looms like the mouth of an enormous cave, with wide glass automatic doors at street level spilling colored light onto the pavement. Pedestrians pass as soft blurred silhouettes in the foreground. The facade lights are pure abstract colorful bokeh with no readable letters. Hazy overcast afternoon light.",
+      "video_prompt": "Slow telephoto push-in from across the street toward the glowing entrance. The glass automatic doors slide open and shut as blurred people walk in one after another, like animals disappearing into a burrow. Lights flicker across the facade. Smooth, steady nature-documentary camera movement. Movement starts immediately in the first frame.",
+      "soundscape": "Street traffic and footsteps outside a station; each time the automatic doors open, a muffled roar of metallic clattering spills out and is cut off again. No music, no intelligible words.",
+      "lines": [
+        {
+          "emotion": "穏やか",
+          "text": "ここは、平日の昼下がりの駅前。光と音があふれる、オスたちの巨大な巣穴です。",
+          "est": 6.7
+        },
+        {
+          "emotion": "穏やか",
+          "text": "今日も、次々と吸い込まれていきます。",
+          "est": 3.3
+        }
+      ]
+    },
+    {
+      "id": "02_hakken",
+      "label": "生き物を発見",
+      "ambience": "pachinko_hall",
+      "image_uses": [
+        "STYLE",
+        "CHARACTER"
+      ],
+      "image_prompt": "Telephoto shot down a long narrow aisle between two rows of glowing gaming machines inside a dim, hazy parlor, seen from the far end of the row. Blurred backs of other seated players frame the left and right edges like tall grass. In sharp focus in the upper-middle of the frame, the man sits on a stool in front of a machine, perfectly still, his face lit in shifting colors by the flashing machine, eyes wide and unblinking, mouth slightly open. Machine faces show only abstract flashing light patterns, no characters, no text.",
+      "video_prompt": "Slow telephoto push-in down the aisle toward the man. Colored lights flicker across his motionless face; he does not blink. The blurred players at the edges shift slightly. Only the man stays sharp. Movement starts immediately in the first frame.",
+      "soundscape": "A dense roar of small steel balls clattering and cascading, electronic chimes and beeps from rows of machines, with no melody and no intelligible words.",
+      "lines": [
+        {
+          "emotion": "発見",
+          "text": "おっと、いました。",
+          "est": 1.6,
+          "cues": [
+            {
+              "sfx": "discover",
+              "offset": 0.0
+            }
+          ]
+        },
+        {
+          "emotion": "発見",
+          "text": "光る台の前で、じっと動かない、一匹のニンゲンのオスです。",
+          "est": 5.1
+        }
+      ]
+    },
+    {
+      "id": "03_seitai",
+      "label": "生態の紹介①",
+      "ambience": "pachinko_hall",
+      "image_uses": [
+        "STYLE",
+        "CHARACTER"
+      ],
+      "image_prompt": "Close telephoto side shot of the man seated at his machine, framed from the chest up in the upper half of the vertical frame. His right hand grips the round firing handle at the lower right of the machine, and the plastic tray in front of him is heaped with shiny silver steel balls. He leans forward with hopeful concentration, face in profile lit by colorful flashing light. Neighboring players are blurred shapes. Machine face shows only abstract light, no text.",
+      "video_prompt": "Static telephoto side shot. The man holds the handle steady while a continuous stream of tiny silver balls flows from the tray into the machine, and the heap of balls in the tray slowly shrinks. His eyes follow the flashing lights with hopeful concentration. Movement starts immediately in the first frame.",
+      "soundscape": "Close, rapid metallic ticking of balls being fed into a machine over the roar of the parlor, electronic chimes, no melody, no intelligible words.",
+      "lines": [
+        {
+          "emotion": "解説",
+          "text": "彼らは、銀色の玉を機械に与え続けます。",
+          "est": 3.5
+        },
+        {
+          "emotion": "期待",
+          "text": "増えて戻ってくると、固く信じて。",
+          "est": 2.9
+        }
+      ]
+    },
+    {
+      "id": "03_seitai_b",
+      "label": "生態の紹介②",
+      "ambience": "pachinko_hall",
+      "start_from": "03_seitai",
+      "video_prompt": "The static side shot continues. The last few silver balls disappear into the machine and the tray is left completely empty. The man keeps gripping the handle for a moment, then slowly lets go; his shoulders sink and his face goes blank while the lights keep flashing. Movement starts immediately in the first frame.",
+      "soundscape": "The ticking of balls stops. Only the surrounding parlor roar and electronic chimes remain, no melody, no intelligible words.",
+      "lines": [
+        {
+          "emotion": "落胆",
+          "text": "ですが、あぁ。玉は一つも戻らず、すべて機械に吸い込まれてしまいました。",
+          "est": 6.4,
+          "cues": [
+            {
+              "sfx": "sting_low",
+              "offset": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "03_seitai_c",
+      "label": "生態の紹介③",
+      "ambience": "station_street",
+      "image_uses": [
+        "STYLE",
+        "CHARACTER"
+      ],
+      "image_prompt": "Telephoto shot from across the street of the man standing alone just outside the glass automatic doors of the glowing parlor, facing the camera, shoulders slumped, head hanging low, arms dangling. An empty, open brown bi-fold wallet hangs from one hand. Behind him the closed doors glow with blurred colorful light, no readable signs. Blurred pedestrians cross the foreground. Flat grey late afternoon light.",
+      "video_prompt": "Static telephoto shot from across the street. The man stands motionless with his head hanging, then slowly folds the empty wallet shut. A gust of wind flutters his windbreaker. Blurred pedestrians pass in the foreground without looking at him. Movement starts immediately in the first frame.",
+      "soundscape": "Street traffic and wind, a long heavy sigh, and the muffled clatter of the parlor behind closed glass doors. No music, no intelligible words.",
+      "lines": [
+        {
+          "emotion": "哀愁",
+          "text": "巣穴を出たオス。入口の前で、力なくうなだれます。",
+          "est": 4.4
+        },
+        {
+          "emotion": "哀愁",
+          "text": "今月のエサ代は、ここで尽きたようです。",
+          "est": 3.5
+        }
+      ]
+    },
+    {
+      "id": "04_tenkan",
+      "label": "場面転換",
+      "ambience": "station_street",
+      "start_from": "03_seitai_c",
+      "video_prompt": "The same static telephoto shot continues. The man slowly lifts his head with a sharp glint of light in his eyes, jaw set, then turns around to face the glowing glass doors behind him. The doors slide open and colored light washes over him. Serious, heroic, cinematic tone. No comedy. Movement starts immediately in the first frame.",
+      "soundscape": "A tense quiet over the street noise, then the automatic doors slide open and the roar of metallic clattering pours out. No music, no intelligible words.",
+      "lines": [
+        {
+          "emotion": "緊張",
+          "text": "と、そのとき。オスがゆっくりと顔を上げ、振り返りました。",
+          "est": 5.1,
+          "cues": [
+            {
+              "sfx": "timpani_roll",
+              "offset": 0.0
+            }
+          ]
+        },
+        {
+          "emotion": "緊張",
+          "text": "その目は、再び巣穴の奥を見つめています。",
+          "est": 3.6
+        }
+      ]
+    },
+    {
+      "id": "05_ochimae",
+      "label": "オチ前",
+      "ambience": "pachinko_hall",
+      "image_uses": [
+        "STYLE",
+        "CHARACTER"
+      ],
+      "image_prompt": "Low-angle telephoto shot from behind the man as he stands at the near end of the narrow aisle between rows of glowing gaming machines, about to walk in, seen over his shoulder at a distance. A few steps ahead, his empty stool waits in front of his old machine, lit by flashing colorful lights. Blurred backs of seated players on both sides. Heroic framing, played completely straight. Machine faces show only abstract light, no text.",
+      "video_prompt": "Tracking shot following the man from behind as he walks down the aisle with slow, determined steps. He reaches his old machine and lowers himself onto the stool. Serious, heroic, cinematic tone. Movement starts immediately in the first frame.",
+      "soundscape": "Slow, determined footsteps under the dense roar of clattering steel balls and electronic chimes, no melody, no intelligible words.",
+      "lines": [
+        {
+          "emotion": "期待",
+          "text": "なんと、再び巣穴の中へ。",
+          "est": 2.2
+        },
+        {
+          "emotion": "期待",
+          "text": "まさか、まだ軍資金が残っていたのでしょうか？",
+          "est": 4.0
+        }
+      ]
+    },
+    {
+      "id": "06_ochi",
+      "label": "オチ",
+      "ambience": "pachinko_hall",
+      "image_uses": [
+        "STYLE",
+        "CHARACTER"
+      ],
+      "image_prompt": "Frontal telephoto shot of the man seated at his old machine, his face in focus in the upper-middle of the frame, bathed in shifting colored light from the machine. Both hands rest on his knees, not touching the handle, and the plastic tray in front of him is completely empty. His expression is calm and peaceful, eyes quietly gazing at the flashing lights. The machine lights appear only as abstract bokeh in the foreground, no text.",
+      "video_prompt": "Static frontal shot. The man sits perfectly still with his hands on his knees, not playing, calmly gazing at the flashing lights with a faint, peaceful smile. Colored lights dance across his face. The empty tray stays empty. Movement starts immediately in the first frame.",
+      "soundscape": "The roar of other players' machines and electronic chimes around him, while his own machine stays silent. No melody, no intelligible words.",
+      "lines": [
+        {
+          "emotion": "落胆",
+          "text": "……いえ、座っているだけです。玉はもう、ありません。",
+          "est": 4.7
+        },
+        {
+          "emotion": "感動",
+          "text": "それでも、巣へ帰る。見事な帰巣本能が、そこにはありました。",
+          "est": 5.3,
+          "cues": [
+            {
+              "bgm": "ochi",
+              "offset": 0.0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

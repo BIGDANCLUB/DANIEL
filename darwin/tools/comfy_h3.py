@@ -15,10 +15,11 @@ import math
 import os
 import random
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
-from common import find_image, load_config, load_episode, load_json, out_dir, run_ffmpeg, save_json
+from common import ffmpeg_exe, find_image, load_config, load_episode, load_json, out_dir, run_ffmpeg, save_json
 
 FPS = 24  # H3 は 24fps 固定
 
@@ -28,6 +29,13 @@ def h3_frames(seconds, max_seconds):
     top = 5 + 17 * int((max_seconds * FPS - 5) // 17)
     need = 5 + 17 * max(0, math.ceil((seconds * FPS - 5) / 17))
     return min(need, top)
+
+
+def is_black(path):
+    """2秒おきにコマを抜き出し、全部ほぼ真っ黒なら True（H3 の計算が NaN で壊れたとき）。"""
+    raw = subprocess.run([ffmpeg_exe(), "-v", "error", "-i", str(path), "-vf", "select=not(mod(n\\,48)),scale=64:96",
+                          "-vsync", "0", "-f", "rawvideo", "-pix_fmt", "gray", "-"], capture_output=True).stdout
+    return bool(raw) and max(raw) < 3
 
 
 def load_ugoira(c):
@@ -46,6 +54,19 @@ def load_ugoira(c):
     return h3
 
 
+def render_one(h3, work, s, c, frames, seed):
+    return h3.render(
+        work, s["video_prompt"],
+        soundscape=s.get("soundscape") or "N/A",
+        music="N/A",                      # BGM は結合時に入れる
+        chest=False, expressive=False,    # ugoira（キャラクター）向けの常設指示は使わない
+        add_style=False,                  # 動きの強さ・構図固定の定型文も付けない（プロンプトで書き切る）
+        width=c["width"], height=c["height"], length=frames,
+        steps=c.get("steps"), seed=seed, lora_preset=c["lora"],
+        upscale=False, timeout=c["timeout_sec"],
+    )
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("episode")
@@ -54,6 +75,7 @@ def main():
     ap.add_argument("--seed", type=int)
     ap.add_argument("--plan", action="store_true")
     ap.add_argument("--mock", action="store_true")
+    ap.add_argument("--check", action="store_true", help="作成済みクリップのうち真っ黒なものを一覧にする（Colab 不要）")
     args = ap.parse_args()
 
     c = load_config()["comfy"]
@@ -67,6 +89,21 @@ def main():
     plan_path = clip_dir / "plan.json"
     plan = load_json(plan_path) if plan_path.exists() else {}
     targets = [s for s in ep["sections"] if not args.only or s["id"] in args.only]
+
+    if args.check:
+        bad = []
+        for s in targets:
+            clip = clip_dir / f"{s['id']}.mp4"
+            if not clip.exists():
+                print(f"  {s['id']:<12} 未作成")
+            elif is_black(clip):
+                bad.append(s["id"])
+                print(f"  {s['id']:<12} ✗ 真っ黒")
+            else:
+                print(f"  {s['id']:<12} ✓ OK")
+        if bad:
+            print(f"\n作り直し: python tools/comfy_h3.py {args.episode} --redo {' '.join(bad)}")
+        return
 
     print(f"クリップ計画（ナレーション実測 → H3 {c['width']}x{c['height']}）")
     for s in targets:
@@ -85,8 +122,11 @@ def main():
     for s in targets:
         dest = clip_dir / f"{s['id']}.mp4"
         if dest.exists() and s["id"] not in args.redo:
-            print(f"  skip {s['id']}（生成済み。撮り直すなら --redo {s['id']}）")
-            continue
+            if not args.mock and is_black(dest):
+                print(f"  {s['id']} は真っ黒なので作り直します")
+            else:
+                print(f"  skip {s['id']}（生成済み。撮り直すなら --redo {s['id']}）")
+                continue
         frames = h3_frames(narr[s["id"]], c["max_seconds"])
         seed = args.seed if args.seed is not None else random.randint(0, 2**31 - 1)
         if args.mock:
@@ -98,18 +138,24 @@ def main():
             # h3.render は <作業フォルダ>/image.png を起点にする（jpg 等も png にしておく）
             work = out_dir(ep_dir, "h3", s["id"])
             run_ffmpeg(["-i", find_image(ep_dir, s["id"]), "-frames:v", "1", work / "image.png"])
-            print(f"\n=== {s['id']} {s['label']}（seed={seed}）===")
-            out = h3.render(
-                work, s["video_prompt"],
-                soundscape=s.get("soundscape") or "N/A",
-                music="N/A",                      # BGM は結合時に入れる
-                chest=False, expressive=False,    # ugoira（キャラクター）向けの常設指示は使わない
-                add_style=False,                  # 動きの強さ・構図固定の定型文も付けない（プロンプトで書き切る）
-                width=c["width"], height=c["height"], length=frames,
-                steps=c.get("steps"), seed=seed, lora_preset=c["lora"],
-                upscale=False, timeout=c["timeout_sec"],
-            )
+            tries = 1 + int(c.get("black_retries", 2))
+            for attempt in range(tries):
+                print(f"\n=== {s['id']} {s['label']}（seed={seed}）===")
+                out = render_one(h3, work, s, c, frames, seed)
+                if not is_black(out):
+                    break
+                if attempt + 1 < tries:
+                    seed = random.randint(0, 2**31 - 1)
+                    print(f"  真っ黒だったのでシードを変えて作り直します（{attempt + 1}/{tries - 1}）")
+            else:
+                print(f"  ✗ {s['id']} は {tries} 回とも真っ黒でした。長さ（max_seconds）やステップ数の見直しが必要です")
+                continue
             shutil.copy2(out, dest)
+            plan[s["id"]] = {"frames": frames, "seconds": round(frames / FPS, 3), "seed": seed,
+                             "narration": narr[s["id"]], "mock": False}
+            save_json(plan_path, plan)
+            print(f"  ✓ {dest.name}")
+            continue
         plan[s["id"]] = {"frames": frames, "seconds": round(frames / FPS, 3), "seed": seed,
                          "narration": narr[s["id"]], "mock": args.mock}
         save_json(plan_path, plan)

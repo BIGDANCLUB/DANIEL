@@ -31,7 +31,8 @@
     "max_seconds": 15.2,
     "lora": "lightx2v",
     "steps": null,
-    "timeout_sec": 5400
+    "timeout_sec": 5400,
+    "black_retries": 2
   },
   "render": {
     "width": 1080,

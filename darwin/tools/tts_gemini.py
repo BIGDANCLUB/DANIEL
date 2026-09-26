@@ -116,15 +116,17 @@ def synthesize(text, style, g, key):
             break
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8", "replace")
-            if e.code in (429, 500, 502, 503, 504) and attempt < 9:
-                wait = retry_delay(detail) if e.code == 429 else None
-                wait = (wait + 2) if wait else min(60, 2 ** (attempt + 1))
-                print(f"    {'回数制限' if e.code == 429 else f'エラー {e.code}'}のため {wait:.0f}秒待って再試行（{attempt + 1}/9）")
-                time.sleep(wait)
-                continue
             if e.code == 429 and "PerDay" in detail:
                 sys.exit("Gemini TTS の1日あたりの無料枠を使い切りました。明日再実行するか、AI Studio で課金を有効にしてください。\n"
                          "（生成済みの文はスキップされるので、再実行すれば続きから作ります）")
+            if e.code in (429, 500, 502, 503, 504) and attempt < 9:
+                wait = retry_delay(detail) if e.code == 429 else None
+                wait = (wait + 2) if wait else min(60, 2 ** (attempt + 1))
+                m = re.search(r'"quotaId":\s*"([^"]+)"', detail)
+                why = f"回数制限（{m.group(1)}）" if m else ("回数制限" if e.code == 429 else f"エラー {e.code}")
+                print(f"    {why}のため {wait:.0f}秒待って再試行（{attempt + 1}/9）")
+                time.sleep(wait)
+                continue
             sys.exit(f"Gemini TTS エラー {e.code}: {detail[:800]}\n"
                      "※ 400 でリクエスト形式を指摘された場合は config.json の gemini.style_mode を \"prefix\" にしてください。")
     for part in resp.get("candidates", [{}])[0].get("content", {}).get("parts", []):

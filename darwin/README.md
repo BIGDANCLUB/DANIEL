@@ -27,7 +27,7 @@ URL を知っていれば誰でもその ComfyUI を使えるので、config.jso
 ```bash
 cd darwin
 python tools/image_prompts.py 01-keiba          # Codex 用プロンプト → episodes/01-keiba/out/image_prompts.md
-#   Codex で画像を作り episodes/01-keiba/images/01_basho.png … 06_ochi.png として保存
+#   Codex で画像を作り episodes/01-keiba/images/01_basho.png, 02_hakken.png, 03_seitai.png, 03_seitai_b.png, 04_tenkan.png, 05_ochimae.png, 06_ochi.png として保存
 python tools/tts_gemini.py 01-keiba       # ① ナレーション（実測の尺を表示）
 python tools/comfy_h3.py 01-keiba --plan  #    生成フレーム数の計画を確認（Colab 不要）
 python tools/comfy_h3.py 01-keiba         # ② 映像

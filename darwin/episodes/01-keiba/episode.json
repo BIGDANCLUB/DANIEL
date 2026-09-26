@@ -62,15 +62,15 @@
     },
     {
       "id": "03_seitai",
-      "label": "生態の紹介",
+      "label": "生態の紹介①",
       "ambience": "racecourse_crowd",
       "image_uses": [
         "STYLE",
         "CHARACTER"
       ],
-      "image_prompt": "Wide telephoto shot from behind and slightly to the side of the man. He stands completely motionless at the trackside railing in the left third of the vertical frame, seen from the back with his face just visible in profile. Far beyond him, a pack of racehorses thunders down the turf track at full gallop, heavily motion-blurred. Stark contrast between his total stillness and the horses' violent effort. Blurred celebrating spectators around him. Late afternoon light, long shadows on the concrete, a few discarded paper betting slips already on the ground at his feet.",
-      "video_prompt": "Static telephoto shot from behind the man. In the far background a pack of racehorses gallops past at full speed. The man in the foreground stays completely still, not moving at all, while the horses race. After the horses pass, the crowd around him erupts in celebration, but he slowly lowers his head, then sinks down into a crouch on the concrete, clutching his head with both hands. A few paper betting slips tumble across the ground in the wind.",
-      "soundscape": "Thundering hooves race past in the distance and the crowd erupts in cheers. The roar fades, leaving wind and the dry rustle of paper slips skittering across concrete.",
+      "image_prompt": "Wide telephoto shot from behind and slightly to the side of the man. He stands completely motionless at the trackside railing in the left third of the vertical frame, seen from the back with his face just visible in profile. Far beyond him, a pack of racehorses thunders down the turf track at full gallop, heavily motion-blurred. Stark contrast between his total stillness and the horses' violent effort. Blurred spectators around him. Late afternoon light, long shadows on the concrete.",
+      "video_prompt": "Static telephoto shot from behind the man. In the far background a pack of racehorses gallops past at full speed. The man in the foreground stays completely still, not moving at all, while the horses race. As the horses cross the line, the blurred crowd around him erupts, raising their arms in celebration, but he alone freezes: his raised hand stops in mid-air and slowly drops, and his shoulders sink.",
+      "soundscape": "Thundering hooves race past in the distance and the crowd erupts in loud cheers around him. The cheering continues while a single man stays silent.",
       "lines": [
         {
           "emotion": "解説",
@@ -87,7 +87,21 @@
               "offset": 0.0
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "03_seitai_b",
+      "label": "生態の紹介②",
+      "ambience": "racecourse_crowd",
+      "image_uses": [
+        "STYLE",
+        "CHARACTER"
+      ],
+      "image_prompt": "The man crouching down on the concrete near the trackside railing, both hands clutching his own head, elbows on knees, face hidden, back hunched. Discarded paper betting slips scattered on the ground around his sneakers, a few drifting in the wind. Shot from a low telephoto angle at a respectful distance, other spectators' legs blurred in the foreground. Late afternoon light, long shadows.",
+      "video_prompt": "Low telephoto shot. The man stays crouched on the concrete, clutching his head with both hands, rocking very slightly. Discarded paper betting slips tumble past his sneakers in the wind. Blurred legs of other spectators walk past in the foreground without stopping. The camera stays still, observing from a respectful distance.",
+      "soundscape": "Wind across concrete and the dry rustle of paper slips skittering past. The crowd murmur drifts away into the distance. A long, heavy sigh.",
+      "lines": [
         {
           "emotion": "哀愁",
           "text": "頭を抱えるオス。彼の1週間のエサ代が、今回も一瞬で消えました。",

@@ -9,20 +9,30 @@
   "sections": [
     {
       "id": "01_basho",
-      "label": "場所紹介",
+      "label": "場所紹介①",
       "ambience": "racecourse_crowd",
       "image_uses": [
         "STYLE"
       ],
       "image_prompt": "Extreme wide high-angle establishing shot of an enormous horse racing track on the outskirts of a Japanese city on a clear holiday afternoon. A vast oval of green turf spreads out like an African savanna plain, heat haze shimmering above the grass. In the near foreground below the camera, a dense crowd of hundreds of middle-aged Japanese men is packed shoulder to shoulder in front of the grandstand, all facing the same direction like a herd gathered at a watering hole, rolled newspapers in their hands. Distant city buildings on the horizon. Golden midday light, wide open sky.",
-      "video_prompt": "Slow descending drone shot. The camera glides down from the wide view of the vast green racetrack toward the dense crowd of men in the foreground. Heat haze shimmers over the turf, flags flutter, the crowd shifts and murmurs like a restless herd of animals. Smooth, steady nature-documentary camera movement. Movement starts immediately in the first frame.",
-      "soundscape": "A huge outdoor crowd murmurs far below, wind sweeps across open grass, and a distant public-address echo rolls over the grounds without intelligible words.",
+      "video_prompt": "Slow descending drone shot over the vast green racetrack. Heat haze shimmers over the turf and flags flutter in the wind as the huge oval of grass spreads out like a savanna. The camera begins gliding down toward the dense crowd of men in the foreground. Smooth, steady nature-documentary camera movement. Movement starts immediately in the first frame.",
+      "soundscape": "Wind sweeps across open grass, a huge outdoor crowd murmurs far below, and a distant public-address echo rolls over the grounds without intelligible words.",
       "lines": [
         {
           "emotion": "穏やか",
           "text": "ここは、休日の東京、府中。街はずれに広がる、巨大なサバンナです。",
           "est": 4.5
-        },
+        }
+      ]
+    },
+    {
+      "id": "01_basho_b",
+      "label": "場所紹介②",
+      "ambience": "racecourse_crowd",
+      "start_from": "01_basho",
+      "video_prompt": "The drone continues its slow, smooth descent toward the dense crowd of men in front of the grandstand. The men shift, murmur and jostle shoulder to shoulder like a restless herd of animals, rolled newspapers in their hands. Smooth, steady nature-documentary camera movement. Movement starts immediately in the first frame.",
+      "soundscape": "The murmur of a huge outdoor crowd grows closer and fuller, wind sweeps across open grass, and a distant public-address echo rolls over the grounds without intelligible words.",
+      "lines": [
         {
           "emotion": "穏やか",
           "text": "今日も多くのオスたちが一攫千金を求めてここに集まります。ここに今日の主役がいるそうです。",
@@ -69,14 +79,24 @@
         "CHARACTER"
       ],
       "image_prompt": "Wide telephoto shot from behind and slightly to the side of the man. He stands completely motionless at the trackside railing in the left third of the vertical frame, seen from the back with his face just visible in profile. Far beyond him, a pack of racehorses thunders down the turf track at full gallop, heavily motion-blurred. Stark contrast between his total stillness and the horses' violent effort. Blurred spectators around him. Late afternoon light, long shadows on the concrete.",
-      "video_prompt": "Static telephoto shot from behind the man. In the far background a pack of racehorses gallops past at full speed. The man in the foreground stays completely still, not moving at all, while the horses race. As the horses cross the line, the blurred crowd around him erupts, raising their arms in celebration, but he alone freezes: his raised hand stops in mid-air and slowly drops, and his shoulders sink.",
-      "soundscape": "Thundering hooves race past in the distance and the crowd erupts in loud cheers around him. The cheering continues while a single man stays silent.",
+      "video_prompt": "Static telephoto shot from behind the man. In the far background a pack of racehorses gallops past at full speed, jockeys crouched low. The man in the foreground stays completely still at the railing, not moving at all, silently watching the horses race. Movement starts immediately in the first frame.",
+      "soundscape": "Thundering hooves race past in the distance while the crowd around him roars louder and louder. The man himself stays silent.",
       "lines": [
         {
           "emotion": "解説",
           "text": "自ら努力して走ることはせず、馬に一方的な希望を託す。これが彼らの生態です。",
           "est": 6.5
-        },
+        }
+      ]
+    },
+    {
+      "id": "03_seitai_b",
+      "label": "生態の紹介②",
+      "ambience": "racecourse_crowd",
+      "start_from": "03_seitai",
+      "video_prompt": "The static telephoto shot from behind the man continues. In the far background the horses cross the finish line. The blurred crowd around him erupts, raising their arms in celebration, but he alone freezes: he slowly lowers the rolled newspaper and his shoulders sink. Movement starts immediately in the first frame.",
+      "soundscape": "The crowd erupts in loud cheers as the race ends and the hoofbeats fade into the distance. A single man stays silent.",
+      "lines": [
         {
           "emotion": "落胆",
           "text": "ですが、あぁ。彼の勝手な期待はウマに届きませんでした。",
@@ -91,8 +111,8 @@
       ]
     },
     {
-      "id": "03_seitai_b",
-      "label": "生態の紹介②",
+      "id": "03_seitai_c",
+      "label": "生態の紹介③",
       "ambience": "racecourse_crowd",
       "image_uses": [
         "STYLE",
@@ -160,15 +180,15 @@
     },
     {
       "id": "06_ochi",
-      "label": "オチ",
+      "label": "オチ①",
       "ambience": "concourse",
       "image_uses": [
         "STYLE",
         "CHARACTER"
       ],
       "image_prompt": "Close-up of the automated payout machine's slot with the crumpled paper slip half pushed back out of the return opening, untouched. Just behind it, the man's face is in focus: completely expressionless, eyes flat, no surprise at all, as if he already knew. Cold flat fluorescent light, nothing changes, no indicator lights, deadpan stillness. Behind him through the concourse opening, a huge orange setting sun burns over the empty racecourse grounds.",
-      "video_prompt": "Close-up on the payout machine slot. The crumpled slip is pushed back out of the return opening and nothing else happens. The man's face stays completely expressionless; he blinks once, slowly. He takes the slip, turns around and walks away with dropped shoulders toward the concourse opening, where a huge orange setting sun glows over the empty racecourse. As he walks into the sunset he unfolds his sports newspaper again. Slow, reverent camera.",
-      "soundscape": "The mechanical whir of the machine drawing in a paper slip and pushing it back out, then slow, dragging footsteps across an empty concourse, and evening wind from outside.",
+      "video_prompt": "Close-up on the payout machine slot. The crumpled slip is slowly pushed back out of the return opening and nothing else happens. Behind it, the man's face stays completely expressionless; he blinks once, slowly. Cold, flat fluorescent light and deadpan stillness. Movement starts immediately in the first frame.",
+      "soundscape": "The mechanical whir of the machine drawing in a paper slip and pushing it back out, then only the low hum of an indoor concourse.",
       "lines": [
         {
           "emotion": "緊張",
@@ -184,7 +204,17 @@
               "offset": 2.2
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "06_ochi_b",
+      "label": "オチ②",
+      "ambience": "concourse",
+      "start_from": "06_ochi",
+      "video_prompt": "The man takes the returned slip, turns around and walks away slowly with dropped shoulders toward the concourse opening, where a huge orange setting sun glows over the empty racecourse. As he walks into the sunset he unfolds his sports newspaper again. Slow, reverent camera. Movement starts immediately in the first frame.",
+      "soundscape": "Slow, dragging footsteps across an empty concourse and evening wind blowing in from outside.",
+      "lines": [
         {
           "emotion": "哀愁",
           "text": "なんと無駄な足掻き。肩を落とし、去っていくオス。",

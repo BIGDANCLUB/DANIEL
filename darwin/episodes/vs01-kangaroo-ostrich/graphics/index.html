@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>vs01 graphics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Dela+Gothic+One&family=Noto+Sans+JP:wght@500;700;900&display=block" rel="stylesheet">
+<style>
+:root {
+  --K: #ff7a2f;      /* カンガルー */
+  --K2: #ffb347;
+  --O: #33c4da;      /* ダチョウ */
+  --O2: #8ce8f5;
+  --G: #ffd24a;      /* 見出し・勝者 */
+  --R: #ff3b3b;      /* ✕ */
+  --W: #f6f2ea;
+  --D: #0a0d13;
+}
+html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: transparent; }
+#stage { position: absolute; inset: 0; overflow: hidden; color: var(--W);
+  font-family: 'Noto Sans JP', 'Yu Gothic', 'Meiryo', sans-serif; font-weight: 900; }
+.abs { position: absolute; }
+.disp { font-family: 'Dela Gothic One', 'Noto Sans JP', 'Yu Gothic', sans-serif; font-weight: 400; }
+.latin { font-family: 'Anton', 'Impact', sans-serif; font-weight: 400; letter-spacing: .02em; }
+.bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 38%, #1d2636 0%, #0e131c 55%, #06080c 100%); }
+.grain { position: absolute; inset: 0; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='4'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>"); }
+.vig { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%); }
+.center { left: 50%; top: 50%; transform: translate(-50%, -50%); }
+.shadow { text-shadow: 0 6px 24px rgba(0,0,0,.6), 0 2px 0 rgba(0,0,0,.5); }
+.card { background: rgba(12,16,24,.82); border: 2px solid rgba(255,255,255,.14); border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.45); }
+.tag { display: inline-block; padding: 10px 28px 12px; transform: skewX(-12deg); }
+.tag > span { display: inline-block; transform: skewX(12deg); }
+.chip { display: flex; align-items: baseline; gap: 18px; padding: 16px 34px 20px; border-left: 12px solid; }
+.chip .l { font-size: 34px; opacity: .85; }
+.chip .v { font-size: 64px; line-height: 1; }
+.num { font-family: 'Anton', 'Impact', sans-serif; font-weight: 400; }
+img.photo { position: absolute; width: 100%; height: 100%; object-fit: cover; }
+svg { overflow: visible; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+'use strict';
+const P = new URLSearchParams(location.search);
+const SCENE = P.get('scene');
+const DUR = +P.get('dur') || 10;
+const OVERLAY = P.get('overlay') === '1';
+const stage = document.getElementById('stage');
+window.onerror = (m) => { window.__error = String(m); };
+
+/* ---------- 時間とイージング ---------- */
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lin = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const back = x => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const mix = (a, b, p) => a + (b - a) * p;
+
+/* ---------- DOM ---------- */
+function el(html, parent = stage) {
+  const t = document.createElement('template');
+  t.innerHTML = html.trim();
+  const e = t.content.firstElementChild;
+  parent.appendChild(e);
+  return e;
+}
+const css = (e, o) => Object.assign(e.style, o);
+function set(e, opacity, transform) { e.style.opacity = opacity; e.style.transform = transform; }
+/* 下からふわっと */
+function rise(e, t, at, d = .45, dy = 36, base = '') {
+  const p = eo(lin(t, at, at + d));
+  set(e, p, `${base} translateY(${(1 - p) * dy}px)`);
+}
+/* 横からスライド */
+function slide(e, t, at, d = .5, dx = -80, base = '') {
+  const p = eo(lin(t, at, at + d));
+  set(e, p, `${base} translateX(${(1 - p) * dx}px)`);
+}
+/* ぽんっと出る */
+function pop(e, t, at, d = .45, base = '') {
+  const p = lin(t, at, at + d);
+  set(e, p > 0 ? Math.min(1, p * 4) : 0, `${base} scale(${p > 0 ? back(p) : 0})`);
+}
+/* 大きく叩きつける */
+function slam(e, t, at, d = .28, from = 2.4, base = 'translate(-50%,-50%)') {
+  const p = lin(t, at, at + d);
+  set(e, p > 0 ? Math.min(1, p * 2.5) : 0, `${base} scale(${mix(from, 1, eo(p))})`);
+}
+/* 最後に消す（区切り用） */
+function out(e, t, at, d = .35) {
+  if (t >= at) e.style.opacity = String((+e.style.opacity || 0) * (1 - lin(t, at, at + d)));
+}
+
+/* ---------- 画像（無ければ null を返し、シルエットで代用） ---------- */
+const waits = [];
+function photo(name, parent, style = {}) {
+  const img = document.createElement('img');
+  img.className = 'photo';
+  css(img, style);
+  const p = new Promise(res => { img.onload = () => res(true); img.onerror = () => res(false); });
+  img.src = `../images/${name}.png`;
+  parent.appendChild(img);
+  waits.push(p.then(ok => { if (!ok) img.remove(); img.ok = ok; }));
+  return img;
+}
+
+/* ---------- シルエット（単色 SVG。幅は高さから自動） ---------- */
+const SIL = {
+  kangaroo: { vb: [0, 0, 120, 150], body: c => `
+    <path fill="${c}" d="M46 86 Q22 110 3 146 L15 148 Q32 120 56 100 Z"/>
+    <ellipse fill="${c}" cx="60" cy="82" rx="21" ry="36" transform="rotate(14 60 82)"/>
+    <ellipse fill="${c}" cx="55" cy="112" rx="19" ry="21"/>
+    <path fill="${c}" d="M44 118 L55 142 L96 145 Q99 147 96 150 L50 150 L38 128 Z"/>
+    <path fill="${c}" d="M58 56 Q64 38 72 30 L84 36 Q76 48 76 62 Z"/>
+    <ellipse fill="${c}" cx="77" cy="27" rx="12" ry="9.5" transform="rotate(12 77 27)"/>
+    <ellipse fill="${c}" cx="89" cy="32" rx="9" ry="5.5" transform="rotate(22 89 32)"/>
+    <path fill="${c}" d="M69 21 L64 2 L76 17 Z"/><path fill="${c}" d="M75 19 L76 0 L82 17 Z"/>
+    <path fill="${c}" d="M72 62 Q86 66 92 76 L87 79 Q79 71 68 71 Z"/>` },
+  ostrich: { vb: [0, 0, 120, 210], body: c => `
+    <path fill="${c}" d="M24 10 L6 14 L24 17 Z"/>
+    <ellipse fill="${c}" cx="31" cy="12" rx="10" ry="7.5"/>
+    <path fill="${c}" d="M27 17 Q29 55 40 94 L52 94 Q39 55 37 15 Z"/>
+    <ellipse fill="${c}" cx="64" cy="104" rx="37" ry="24" transform="rotate(-8 64 104)"/>
+    <path fill="${c}" d="M92 90 Q114 80 118 94 Q110 106 94 110 Z"/>
+    <ellipse fill="${c}" cx="60" cy="124" rx="11" ry="13"/><ellipse fill="${c}" cx="72" cy="122" rx="10" ry="12"/>
+    <path fill="${c}" d="M54 126 L47 166 L51 202 L37 206 L37 209 L58 209 L57 166 L63 128 Z"/>
+    <path fill="${c}" d="M68 124 L75 164 L73 202 L63 206 L63 209 L83 209 L79 164 L76 124 Z"/>` },
+  ostrichSand: { vb: [0, 0, 170, 130], body: c => `
+    <ellipse fill="${c}" cx="96" cy="46" rx="38" ry="24" transform="rotate(8 96 46)"/>
+    <path fill="${c}" d="M126 36 Q148 26 154 40 Q144 50 128 52 Z"/>
+    <path fill="${c}" d="M66 50 Q44 70 40 104 L50 106 Q54 76 74 60 Z"/>
+    <path fill="${c}" d="M88 64 L84 124 L96 124 L96 66 Z"/><path fill="${c}" d="M104 64 L110 124 L122 124 L112 64 Z"/>
+    <ellipse fill="#c9a36a" cx="42" cy="118" rx="42" ry="14"/>` },
+  human: { vb: [0, 0, 56, 170], body: c => `
+    <circle fill="${c}" cx="28" cy="13" r="12"/>
+    <rect fill="${c}" x="14" y="28" width="28" height="62" rx="11"/>
+    <rect fill="${c}" x="3" y="31" width="9" height="56" rx="4.5"/><rect fill="${c}" x="44" y="31" width="9" height="56" rx="4.5"/>
+    <rect fill="${c}" x="15" y="82" width="11" height="86" rx="5"/><rect fill="${c}" x="30" y="82" width="11" height="86" rx="5"/>` },
+};
+function sil(kind, color, h, flip = false) {
+  const s = SIL[kind], [x, y, w, hh] = s.vb;
+  const width = h * w / hh;
+  let op = 1;  // 半透明は部品ごとではなく全体に掛ける（重なりが透けないように）
+  const m = color.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+  if (m) { color = `rgb(${m[1]},${m[2]},${m[3]})`; op = +m[4]; }
+  return `<svg width="${width}" height="${h}" viewBox="${x} ${y} ${w} ${hh}" style="display:block;opacity:${op}${flip ? ';transform:scaleX(-1)' : ''}">${s.body(color)}</svg>`;
+}
+
+/* ---------- 共通パーツ ---------- */
+function background() {
+  el('<div class="bg"></div>'); el('<div class="grain"></div>'); el('<div class="vig"></div>');
+}
+function header(text, color = 'var(--G)') {
+  return el(`<div class="abs tag" style="left:90px;top:70px;background:${color};color:#111;font-size:44px"><span>${text}</span></div>`);
+}
+function chip(label, value, color, style = '') {
+  return el(`<div class="abs chip card" style="border-color:${color};border-radius:0 14px 14px 0;${style}">
+    <span class="l">${label}</span><span class="v" style="color:${color}">${value}</span></div>`);
+}
+function plate(team, name, color, side) {
+  const pos = side === 'left' ? 'left:90px' : 'right:90px;text-align:right';
+  const e = el(`<div class="abs" style="${pos};top:760px">
+    <div class="tag" style="background:rgba(10,13,19,.85);font-size:36px;color:${color}"><span>${team}</span></div><br>
+    <div class="tag disp" style="background:${color};color:#111;font-size:92px;margin-top:10px;padding:12px 44px 18px"><span>${name}</span></div></div>`);
+  return e;
+}
+function mark(kind, size) {  // ◯ / ✕
+  if (kind === 'x') return `<svg width="${size}" height="${size}" viewBox="0 0 100 100"><path d="M18 18 L82 82 M82 18 L18 82" stroke="var(--R)" stroke-width="15" stroke-linecap="round"/></svg>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="none" stroke="var(--G)" stroke-width="13"/></svg>`;
+}
+function arrow(dir, color, w = 300) {
+  const d = dir === 'left' ? 'M290 40 L70 40 M110 0 L50 40 L110 80' : 'M10 40 L230 40 M190 0 L250 40 L190 80';
+  return `<svg width="${w}" height="${w * 80 / 300}" viewBox="0 0 300 80"><path d="${d}" fill="none" stroke="${color}" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+/* ---------- 世界地図（ドット） ---------- */
+const LAND = [
+  [[-17.5,14.7],[-16.5,19],[-17,21],[-13,27.5],[-9.5,30],[-5.9,35.8],[0,35.8],[10,37],[11,33.5],[20,31],[25,31.6],[32.3,31.3],[34.5,28],[37,22],[39,16],[43.3,12.6],[51.3,11.8],[49,6],[41.5,-1],[39.5,-5],[40.5,-10.5],[40.6,-15],[35.5,-24],[32.6,-26],[32.6,-28.8],[27.5,-33.5],[20,-34.8],[18.4,-34],[17.8,-30],[15,-27],[14.5,-22.5],[11.8,-17],[13.5,-11],[12,-5],[9.5,1],[9.5,4],[6,4.3],[1,6],[-4,5.2],[-7.5,4.4],[-10.5,6.5],[-13.2,9],[-15.5,11.5]],
+  [[113.5,-22],[114,-26.5],[115,-34],[118,-35],[123.5,-33.9],[129,-31.6],[134,-32.5],[137.7,-35.6],[140,-38],[146.3,-39],[150,-37.5],[153.5,-28.5],[153,-25],[149,-21],[146,-18.5],[145.4,-14.5],[142.5,-10.7],[141.5,-13],[141.6,-17],[139.5,-17.3],[136.5,-15],[137,-12],[132.5,-11.5],[130.2,-12.7],[129,-15],[126.8,-13.8],[124.5,-16.5],[122.2,-18],[121,-19.5],[117,-20.7]],
+  [[-9.5,36],[-9,43],[-1.5,43.5],[-4.5,48.5],[2,51],[8,54],[10.5,57.5],[5,62],[14,68],[25,71],[40,67],[45,68],[60,70],[70,73],[80,73],[100,77],[112,74],[130,71],[140,72],[160,70],[180,68],[180,65],[170,60],[163,56],[156,51],[155,57],[143,59],[135,54],[142,47],[135,43],[129,35],[126.5,37.5],[121,40],[117.5,38.5],[122,31],[119.5,25],[110,21],[108,17],[109,12],[105,8.5],[100.5,13],[100,7],[103.5,1.5],[98,8],[98.5,16],[94,16],[91,22.5],[86.5,20],[80,15],[77.5,8],[73,16],[72.5,21],[67,24.5],[61,25],[57,26],[51.5,24.5],[56,26.5],[50,30],[48,29.5],[51,24],[56,22.5],[59.8,22.5],[55,17],[52,15.8],[45,13],[43,13],[39.5,20],[34.9,29.5],[32.5,31],[35.5,33.5],[36,36],[30,36.5],[27,37.5],[26.5,40],[29,41],[23,40],[20,40],[18.5,42.5],[13,45.5],[12.5,44],[16,41],[18.5,40],[15.5,38],[12,41.5],[8.5,44.3],[3,43.3],[0,39],[-2,36.7],[-5.6,36]],
+  [[-168,65.5],[-162,70],[-141,69.6],[-128,70],[-115,68.8],[-95,72],[-82,73],[-62,66],[-64,60],[-56,52],[-66,45],[-70,43],[-76,39],[-75.5,35],[-81,31],[-80,25.5],[-82.5,28],[-84.5,30],[-89,30],[-94,29.5],[-97.5,26],[-97.5,21.5],[-91,18.5],[-87.5,21.5],[-88,16],[-83.5,15],[-83.5,11],[-79.5,9],[-77.5,8],[-81,7.5],[-85.7,11],[-87.5,13.2],[-92,14.5],[-96,15.7],[-105.5,20],[-106,23],[-109.5,26.5],[-112.8,31.5],[-110,24],[-114.5,30],[-117,32.5],[-121,34.5],[-124,40.5],[-124,46.5],[-123,49],[-131,54],[-138,59],[-146,61],[-152,59],[-158,57],[-165,54.5],[-157,58.5],[-162,60],[-166,61.5]],
+  [[-77.5,8],[-72,11.8],[-63,10.6],[-60,8.5],[-52,5],[-50,1],[-44,-2.5],[-35,-5.5],[-35,-9],[-39,-15],[-40,-22],[-48,-25.5],[-48.5,-28.5],[-53,-34],[-58,-34.5],[-57,-38],[-62,-39],[-65,-42],[-65,-47],[-69,-51],[-68.5,-55],[-72,-53.5],[-75,-50],[-74,-44],[-73.5,-37],[-71.5,-30],[-70.3,-18.5],[-76,-14],[-81,-6],[-80,-1],[-80,1],[-78,3]],
+  [[-73,78],[-60,82],[-30,83],[-18,79],[-20,70],[-32,68],[-43,60],[-50,64],[-54,68],[-58,76]],
+  [[44,-25],[47,-25],[50.5,-15.5],[49.2,-12],[47,-15],[44,-17]],
+  [[-5.5,50],[1.5,51],[0,53],[-3,58.5],[-6,57.5],[-4.5,54.5],[-3,53.5],[-5,51.7]],
+  [[131,-1],[141,-2.6],[150,-10.5],[141,-9],[138,-8],[132,-4]],
+  [[109,2],[113,-3],[116.5,-3.5],[119,1],[117,7],[114,4.5]],
+  [[95.5,5.5],[98.5,3.5],[106,-6],[104,-5.5],[101,-2]],
+  [[130,31.5],[132,34],[135,33.5],[140,35],[141,38],[141.5,41.5],[140,40],[139,38],[136,37],[132.5,35.5],[130,33.5]],
+  [[140,42],[141.5,45.5],[145.5,43.5],[143,42]],
+  [[172.5,-34.5],[178.5,-37.5],[175,-41.5],[171,-44.5],[166.5,-46],[170.5,-46.5],[174,-41.5],[174.5,-38]],
+];
+const AFRICA = 0, AUSTRALIA = 1;
+function inPoly(x, y, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i], [xj, yj] = poly[j];
+    if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+function worldMap() {
+  const cv = el('<canvas class="abs" width="1920" height="1080" style="left:0;top:0"></canvas>');
+  const ctx = cv.getContext('2d');
+  const K = 1800 / 350, X0 = 60, Y0 = 190;
+  const proj = (lon, lat) => [X0 + (lon + 170) * K, Y0 + (80 - lat) * K];
+  const dots = [];
+  for (let lat = 80; lat >= -56; lat -= 1.8) {
+    for (let lon = -170; lon <= 180; lon += 1.8) {
+      const i = LAND.findIndex(p => inPoly(lon, lat, p));
+      if (i >= 0) dots.push({ x: proj(lon, lat)[0], y: proj(lon, lat)[1], c: i, d: (lon + 170) / 350 });
+    }
+  }
+  return {
+    proj,
+    draw(o) {  // o: {base, aus, afr, zoom, cx, cy}
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, 1920, 1080);
+      ctx.setTransform(o.zoom, 0, 0, o.zoom, o.cx * (1 - o.zoom), o.cy * (1 - o.zoom));
+      for (const p of dots) {
+        const a = clamp(o.base * 1.6 - p.d * .6);
+        let col = `rgba(235,240,255,${.20 * a})`, r = 2.6;
+        if (p.c === AUSTRALIA && o.aus > 0) { col = `rgba(255,122,47,${mix(.2, 1, o.aus)})`; r = mix(2.6, 3.6, o.aus); }
+        if (p.c === AFRICA && o.afr > 0) { col = `rgba(51,196,218,${mix(.2, 1, o.afr)})`; r = mix(2.6, 3.6, o.afr); }
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, 6.2832); ctx.fill();
+      }
+    },
+    arc(p, color = '#ffd24a') {  // オーストラリア → アフリカの点線
+      const [ax, ay] = proj(134, -24), [bx, by] = proj(22, 0), [cx, cy] = proj(78, 42);
+      ctx.strokeStyle = color; ctx.lineWidth = 6; ctx.setLineDash([18, 16]); ctx.lineCap = 'round';
+      ctx.beginPath();
+      const n = Math.floor(80 * p);
+      for (let i = 0; i <= n; i++) {
+        const s = i / 80, x = (1 - s) ** 2 * ax + 2 * (1 - s) * s * cx + s * s * bx, y = (1 - s) ** 2 * ay + 2 * (1 - s) * s * cy + s * s * by;
+        i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      }
+      ctx.stroke(); ctx.setLineDash([]);
+      return [(ax + 2 * cx + bx) / 4, (ay + 2 * cy + by) / 4];
+    },
+  };
+}
+
+/* ================= シーン ================= */
+const S = {};
+
+/* ① 世界地図 */
+S.o2 = {
+  init() {
+    background();
+    this.map = worldMap();
+    const [ax, ay] = this.map.proj(134, -25), [fx, fy] = this.map.proj(22, 2);
+    this.kIcon = el(`<div class="abs" style="left:${ax - 60}px;top:${ay - 330}px">${sil('kangaroo', 'var(--K)', 150)}</div>`);
+    this.kLab = el(`<div class="abs disp shadow" style="left:${ax - 250}px;top:${ay + 120}px;width:500px;text-align:center;font-size:46px;white-space:nowrap;color:var(--K)">オーストラリア</div>`);
+    this.oIcon = el(`<div class="abs" style="left:${fx - 250}px;top:${fy - 360}px">${sil('ostrich', 'var(--O)', 200)}</div>`);
+    this.oLab = el(`<div class="abs disp shadow" style="left:${fx - 330}px;top:${fy + 40}px;width:260px;text-align:center;font-size:52px;color:var(--O)">アフリカ</div>`);
+    this.q = el('<div class="abs latin" style="font-size:210px;color:var(--G);text-shadow:0 0 40px rgba(255,210,74,.6)">?</div>');
+  },
+  update(t) {
+    const m = this.map;
+    m.draw({ base: lin(t, 0, 1.4), aus: eo(lin(t, 1.6, 2.4)), afr: eo(lin(t, 3.2, 4.0)), zoom: mix(1, 1.07, eio(lin(t, 0, DUR))), cx: 1100, cy: 560 });
+    const [qx, qy] = m.arc(eio(lin(t, 5.0, 6.6)));
+    rise(this.kIcon, t, 2.0); rise(this.kLab, t, 2.3);
+    rise(this.oIcon, t, 3.6); rise(this.oLab, t, 3.9);
+    css(this.q, { left: `${qx - 50}px`, top: `${qy - 170}px` });
+    pop(this.q, t, 6.8, .5);
+  },
+};
+
+/* ① タイトル */
+S.o3 = {
+  init() {
+    background();
+    this.streak = el('<div class="abs" style="left:-400px;top:380px;width:2700px;height:320px;background:linear-gradient(90deg,transparent,rgba(255,210,74,.10),transparent);transform:rotate(-8deg)"></div>');
+    this.pre = el('<div class="abs center" style="top:300px;font-size:48px;letter-spacing:.12em;color:#cfd6e4;white-space:nowrap">もしも、出会うはずのない動物が戦ったら</div>');
+    this.title = el(`<div class="abs center disp" style="top:500px;font-size:190px;white-space:nowrap;color:var(--W);
+      text-shadow:0 0 0 #000, 8px 8px 0 var(--K), -8px -8px 0 var(--O), 0 20px 60px rgba(0,0,0,.6)">ありえない野生対決</div>`);
+    this.sub = el('<div class="abs center" style="top:700px;font-size:50px;color:var(--G);white-space:nowrap">生態と能力から、勝敗を本気で予想する</div>');
+    this.note = el('<div class="abs" style="left:0;right:0;bottom:60px;text-align:center;font-size:30px;font-weight:500;color:#aab3c2">※AIで生成した想定映像です。実際に動物を戦わせることはありません</div>');
+  },
+  update(t) {
+    set(this.streak, lin(t, .6, 1.4), `rotate(-8deg) translateX(${mix(-300, 300, lin(t, 0, DUR))}px)`);
+    rise(this.pre, t, .3, .5, 30, 'translate(-50%,-50%)');
+    slam(this.title, t, 1.0, .32, 1.8);
+    rise(this.sub, t, 2.2, .5, 30, 'translate(-50%,-50%)');
+    rise(this.note, t, 2.8, .5, 10);
+  },
+};
+
+/* ② 今回の対決 */
+S.m1 = {
+  init() {
+    background();
+    this.map = worldMap();
+    this.dim = el('<div class="abs" style="inset:0;background:rgba(6,8,12,.45)"></div>');
+    this.txt = el('<div class="abs center disp shadow" style="font-size:170px;white-space:nowrap;color:var(--W)">今回の対決</div>');
+    this.bar = el('<div class="abs" style="left:560px;top:640px;height:14px;width:800px;background:var(--G);transform-origin:left"></div>');
+  },
+  update(t) {
+    this.map.draw({ base: 1, aus: 1, afr: 1, zoom: mix(1.07, 1.25, eio(lin(t, 0, DUR))), cx: 1180, cy: 620 });
+    this.map.arc(1);
+    slam(this.txt, t, .25, .3, 2.0);
+    set(this.bar, 1, `scaleX(${eo(lin(t, .6, 1.1))})`);
+  },
+};
+
+/* 対戦画面の左右パネル（m4・r1 共通） */
+function versusPanels(leftImg, rightImg) {
+  const L = el('<div class="abs" style="inset:0;clip-path:polygon(0 0,57% 0,43% 100%,0 100%);overflow:hidden;background:#3a1a0a"></div>');
+  const R = el('<div class="abs" style="inset:0;clip-path:polygon(57% 0,100% 0,100% 100%,43% 100%);overflow:hidden;background:#0a2a33"></div>');
+  const li = photo(leftImg, L, { objectPosition: '20% 50%' });
+  const ri = photo(rightImg, R, { objectPosition: '80% 50%' });
+  const lf = el(`<div class="abs" style="left:230px;top:210px">${sil('kangaroo', 'rgba(255,122,47,.9)', 620)}</div>`, L);
+  const rf = el(`<div class="abs" style="left:1290px;top:150px">${sil('ostrich', 'rgba(51,196,218,.9)', 720)}</div>`, R);
+  el('<div class="abs" style="inset:0;background:linear-gradient(90deg,rgba(255,122,47,.35),transparent 60%)"></div>', L);
+  el('<div class="abs" style="inset:0;background:linear-gradient(270deg,rgba(51,196,218,.35),transparent 60%)"></div>', R);
+  const seam = el('<div class="abs" style="left:958px;top:-100px;width:14px;height:1300px;background:var(--G);transform:rotate(14.5deg);box-shadow:0 0 40px var(--G)"></div>');
+  waits.push(Promise.resolve().then(() => Promise.all(waits.slice(0, -1))).then(() => {
+    if (li.ok) lf.remove(); if (ri.ok) rf.remove();
+  }));
+  return {
+    update(t, inAt = 0, zoom = 1.06) {
+      const p = eo(lin(t, inAt, inAt + .6)), z = mix(1, zoom, lin(t, 0, DUR));
+      set(L, 1, `translateX(${(1 - p) * -1100}px)`);
+      set(R, 1, `translateX(${(1 - p) * 1100}px)`);
+      for (const img of [li, ri]) img.style.transform = `scale(${z})`;
+      seam.style.opacity = lin(t, inAt + .5, inAt + .7);
+    },
+  };
+}
+
+/* ② VS */
+S.m4 = {
+  init() {
+    el('<div class="bg"></div>');
+    this.vs = versusPanels('m2', 'm3');
+    this.flash = el('<div class="abs" style="inset:0;background:#fff"></div>');
+    this.VS = el(`<div class="abs center latin" style="font-size:330px;color:var(--G);-webkit-text-stroke:8px #1a1000;text-shadow:0 0 60px rgba(255,210,74,.7)">VS</div>`);
+    this.top = el('<div class="abs tag disp" style="left:50%;top:60px;background:rgba(8,10,16,.88);font-size:70px;white-space:nowrap;color:var(--G);padding:14px 60px 20px"><span>地上最強キック王決定戦</span></div>');
+    this.pl = plate('オーストラリア代表', 'アカカンガルー', 'var(--K)', 'left');
+    this.pr = plate('アフリカ代表', 'ダチョウ', 'var(--O)', 'right');
+  },
+  update(t) {
+    this.vs.update(t, 0);
+    this.flash.style.opacity = 1 - lin(t, 1.0, 1.25) + (t < 1.0 ? -1 : 0);
+    slam(this.VS, t, 1.0);
+    pop(this.top, t, 2.2, .45, 'translateX(-50%) skewX(-12deg)');
+    slide(this.pl, t, 3.0, .5, -200); slide(this.pr, t, 3.2, .5, 200);
+  },
+};
+
+/* 大きさ比べの床と目盛り */
+function ruler(pxPerCm, maxCm, x = 220, ground = 930) {
+  const r = el(`<div class="abs" style="left:0;top:0;width:1920px;height:1080px"></div>`);
+  el(`<div class="abs" style="left:120px;right:120px;top:${ground}px;height:6px;background:rgba(255,255,255,.55)"></div>`, r);
+  for (let cm = 0; cm <= maxCm; cm += 50) {
+    const y = ground - cm * pxPerCm;
+    el(`<div class="abs" style="left:${x}px;right:120px;top:${y}px;height:2px;background:rgba(255,255,255,${cm ? .10 : 0})"></div>`, r);
+    if (cm) el(`<div class="abs num" style="left:${x - 110}px;top:${y - 24}px;width:95px;text-align:right;font-size:38px;color:#9aa6b8">${(cm / 100).toFixed(1)}m</div>`, r);
+  }
+  return r;
+}
+function standing(kind, color, cm, pxPerCm, cx, ground = 930, flip = false) {
+  const h = cm * pxPerCm * (kind === 'kangaroo' ? 150 / 150 : 1);
+  const e = el(`<div class="abs" style="left:0;top:0">${sil(kind, color, h, flip)}</div>`);
+  const w = e.firstElementChild.getAttribute('width');
+  css(e, { left: `${cx - w / 2}px`, top: `${ground - h}px`, transformOrigin: 'bottom center' });
+  return e;
+}
+function grow(e, t, at, d = .6) {
+  const p = eo(lin(t, at, at + d));
+  set(e, p > 0 ? 1 : 0, `scaleY(${p})`);
+}
+
+/* ③a 体格比較 */
+S.k2 = {
+  init() {
+    background();
+    const k = 2.9;
+    this.r = ruler(k, 200);
+    this.h = standing('human', '#8793a8', 170, k, 640);
+    this.k = standing('kangaroo', 'var(--K)', 180, k, 1060);
+    this.hl = el('<div class="abs" style="left:540px;top:950px;width:200px;text-align:center;font-size:36px;color:#aab3c2">人間（大人）</div>');
+    this.kl = el('<div class="abs" style="left:860px;top:950px;width:400px;text-align:center;font-size:36px;white-space:nowrap;color:var(--K)">アカカンガルー（オス）</div>');
+    this.tag = header('立ち上がると、人間の大人ほど', 'var(--K)');
+    this.wt = el(`<div class="abs card" style="left:1340px;top:330px;width:440px;padding:30px 0 36px;text-align:center">
+      <div style="font-size:44px;color:#cfd6e4">体重</div>
+      <div><span class="num" style="font-size:190px;color:var(--K);line-height:1.05">80</span><span style="font-size:64px">kg超</span></div></div>`);
+    this.n = this.wt.querySelector('.num');
+  },
+  update(t) {
+    rise(this.r, t, 0, .4, 0);
+    grow(this.h, t, .2); rise(this.hl, t, .5);
+    grow(this.k, t, .8); rise(this.kl, t, 1.1);
+    slide(this.tag, t, 1.4, .5, -120, 'skewX(-12deg)');
+    rise(this.wt, t, 2.4);
+    this.n.textContent = Math.round(80 * eo(lin(t, 2.6, 4.2)));
+  },
+};
+
+/* ③a 後ろに下がれない */
+S.k8 = {
+  init() {
+    background();
+    this.k = el(`<div class="abs" style="left:780px;top:360px">${sil('kangaroo', 'var(--K)', 460)}</div>`);
+    this.al = el(`<div class="abs" style="left:250px;top:560px">${arrow('left', '#8793a8')}</div>`);
+    this.alt = el('<div class="abs" style="left:230px;top:680px;width:340px;text-align:center;font-size:44px;color:#aab3c2">後ろに下がる</div>');
+    this.x = el(`<div class="abs" style="left:300px;top:300px">${mark('x', 220)}</div>`);
+    this.ar = el(`<div class="abs" style="left:1360px;top:560px">${arrow('right', 'var(--G)')}</div>`);
+    this.art = el('<div class="abs" style="left:1340px;top:680px;width:340px;text-align:center;font-size:44px;color:var(--G)">前に進む</div>');
+    this.o = el(`<div class="abs" style="left:1400px;top:300px">${mark('o', 220)}</div>`);
+    this.stamp = el(`<div class="abs center disp" style="top:170px;font-size:110px;color:var(--R);border:10px solid var(--R);padding:10px 50px 22px;white-space:nowrap;background:rgba(10,13,19,.7)">前進あるのみ</div>`);
+  },
+  update(t) {
+    rise(this.k, t, 0, .5, 40);
+    slide(this.al, t, 1.2, .5, 120); rise(this.alt, t, 1.4);
+    pop(this.x, t, 2.6);
+    slide(this.ar, t, 3.8, .5, -120); rise(this.art, t, 4.0);
+    pop(this.o, t, 4.7);
+    slam(this.stamp, t, 6.0, .25, 2.0, 'translate(-50%,-50%) rotate(-5deg)');
+  },
+};
+
+/* ③b 背丈比較 */
+S.t2 = {
+  init() {
+    background();
+    const k = 2.4;
+    this.r = ruler(k, 250);
+    this.h = standing('human', '#8793a8', 170, k, 560);
+    this.k = standing('kangaroo', 'rgba(255,122,47,.75)', 180, k, 860);
+    this.o = standing('ostrich', 'var(--O)', 250, k, 1170);
+    this.ol = el('<div class="abs disp shadow" style="left:1420px;top:300px;font-size:84px;color:var(--O)">約2.5m</div>');
+    this.wt = el(`<div class="abs card" style="left:1420px;top:520px;padding:24px 44px 30px">
+      <div style="font-size:40px;color:#cfd6e4">体重</div>
+      <div><span class="num" style="font-size:150px;color:var(--O);line-height:1.05">100</span><span style="font-size:56px">kg超</span></div></div>`);
+  },
+  update(t) {
+    set(this.r, 1, 'none');
+    set(this.h, .9, 'none'); set(this.k, .9, 'none');
+    grow(this.o, t, .3, .8);
+    rise(this.ol, t, 1.1);
+    rise(this.wt, t, 2.3);
+  },
+};
+
+/* ③b 目と脳 */
+S.t8 = {
+  init() {
+    background();
+    this.head = el(`<div class="abs" style="left:-120px;top:120px;opacity:.12">${sil('ostrich', '#9fd9e3', 1500)}</div>`);
+    this.tag = header('ダチョウの目', 'var(--O)');
+    this.eye = el(`<div class="abs" style="left:430px;top:330px;width:380px;height:380px;border-radius:50%;
+      background:radial-gradient(circle at 36% 32%,#fff 0 5%,#3a2a20 6% 34%,#120b07 35% 100%);box-shadow:0 0 0 14px #2a1c14,0 0 60px rgba(51,196,218,.35)"></div>`);
+    this.el = el('<div class="abs" style="left:380px;top:760px;width:480px;text-align:center;font-size:50px">目　<span style="color:var(--O)">直径 約5cm</span></div>');
+    this.brain = el(`<div class="abs" style="left:1180px;top:440px;width:250px;height:175px;border-radius:48% 52% 46% 54% / 55% 50% 50% 45%;
+      background:radial-gradient(circle at 40% 35%,#f4c1c8,#c9848f)"></div>`);
+    this.bl = el('<div class="abs" style="left:1130px;top:760px;width:350px;text-align:center;font-size:50px">脳</div>');
+    this.gt = el('<div class="abs center latin" style="left:990px;top:520px;font-size:200px;color:var(--G)">&gt;</div>');
+  },
+  update(t) {
+    slide(this.tag, t, .2, .5, -120, 'skewX(-12deg)');
+    pop(this.eye, t, 1.0, .5); rise(this.el, t, 1.4);
+    pop(this.brain, t, 2.8, .5); rise(this.bl, t, 3.1);
+    slam(this.gt, t, 4.6, .25, 2.2);
+  },
+};
+
+/* ③b 砂に頭は迷信 */
+S.t9 = {
+  init() {
+    background();
+    this.card = el(`<div class="abs card" style="left:150px;top:220px;width:740px;height:620px">
+      <div style="text-align:center;font-size:64px;margin-top:40px" class="disp">砂に頭を隠す？</div>
+      <div style="position:absolute;left:170px;top:220px">${sil('ostrichSand', '#9fd9e3', 330)}</div></div>`);
+    this.x = el(`<div class="abs" style="left:330px;top:390px">${mark('x', 380)}</div>`);
+    this.st = el('<div class="abs center disp" style="left:520px;top:900px;font-size:130px;color:var(--R);white-space:nowrap;text-shadow:0 8px 30px rgba(0,0,0,.7)">迷信</div>');
+    const c = (y, word) => el(`<div class="abs card" style="left:1000px;top:${y}px;width:770px;height:230px;display:flex;align-items:center;padding-left:200px;box-sizing:border-box;font-size:80px">全力で<span style="color:var(--O)">${word}</span></div>`);
+    this.c1 = c(250, '逃げる'); this.c2 = c(560, '蹴る');
+    this.o1 = el(`<div class="abs" style="left:1040px;top:290px">${mark('o', 150)}</div>`);
+    this.o2 = el(`<div class="abs" style="left:1040px;top:600px">${mark('o', 150)}</div>`);
+  },
+  update(t) {
+    rise(this.card, t, .1, .5, 40);
+    pop(this.x, t, 1.6);
+    slam(this.st, t, 2.1, .25, 2.2, 'translate(-50%,-50%) rotate(-6deg)');
+    rise(this.c1, t, 4.8); rise(this.c2, t, 5.6);
+    pop(this.o1, t, 5.2); pop(this.o2, t, 6.0);
+  },
+};
+/* ④ 注目ポイント */
+S.p1 = {
+  init() {
+    background();
+    this.h = el('<div class="abs center disp shadow" style="top:250px;font-size:130px;white-space:nowrap;color:var(--G)">注目ポイント</div>');
+    const items = ['リーチ', '蹴りの間合い', 'つかめるか'];
+    this.cards = items.map((s, i) => el(`<div class="abs card" style="left:${170 + i * 540}px;top:470px;width:500px;height:360px;text-align:center">
+      <div class="num" style="font-size:150px;color:var(--G);margin-top:24px;line-height:1.1">${i + 1}</div>
+      <div style="font-size:64px">${s}</div></div>`));
+  },
+  update(t) {
+    slam(this.h, t, .15, .28, 1.8);
+    this.cards.forEach((c, i) => rise(c, t, .8 + i * .35, .45, 60));
+  },
+};
+
+/* 間合いの図（p3・w3 共通） */
+function distanceDiagram(parent, scale = 1) {
+  const g = el(`<div class="abs" style="left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;transform:scale(${scale})"></div>`, parent);
+  const ground = 800, x0 = 560, x1 = 1420;   // 0m 〜 3m
+  const mx = m => x0 + (x1 - x0) * m / 3;
+  el(`<div class="abs" style="left:${x0 - 330}px;top:${ground - 360}px">${sil('kangaroo', 'var(--K)', 360)}</div>`, g);
+  el(`<div class="abs" style="left:${x1 + 10}px;top:${ground - 500}px">${sil('ostrich', 'var(--O)', 500, true)}</div>`, g);
+  el(`<div class="abs" style="left:140px;right:140px;top:${ground}px;height:6px;background:rgba(255,255,255,.5)"></div>`, g);
+  const axis = el(`<div class="abs" style="left:${x0}px;top:${ground + 70}px;width:${x1 - x0}px;height:4px;background:#8793a8"></div>`, g);
+  for (let m = 0; m <= 3; m++) el(`<div class="abs num" style="left:${mx(m) - 40}px;top:${ground + 84}px;width:80px;text-align:center;font-size:40px;color:#9aa6b8">${m}m</div>`, g);
+  const kz = el(`<div class="abs" style="left:${mx(0)}px;top:${ground - 520}px;width:${mx(.8) - mx(0)}px;height:520px;background:linear-gradient(0deg,rgba(255,122,47,.55),rgba(255,122,47,.05));transform-origin:left"></div>`, g);
+  const kt = el(`<div class="abs" style="left:${mx(0) - 20}px;top:${ground - 620}px;width:520px;font-size:40px;color:var(--K)">密着<br><span style="font-size:32px;color:#f6f2ea">つかんでから蹴る</span></div>`, g);
+  const oz = el(`<div class="abs" style="left:${mx(1)}px;top:${ground - 520}px;width:${mx(2.4) - mx(1)}px;height:520px;background:linear-gradient(0deg,rgba(51,196,218,.55),rgba(51,196,218,.05));transform-origin:right"></div>`, g);
+  const ot = el(`<div class="abs" style="left:${mx(1.2)}px;top:${ground - 620}px;width:520px;font-size:40px;color:var(--O)">離れた距離<br><span style="font-size:32px;color:#f6f2ea">長い脚で前蹴り</span></div>`, g);
+  return { g, kz, kt, oz, ot, axis };
+}
+
+/* ④ 蹴りの間合い */
+S.p3 = {
+  init() {
+    background();
+    this.tag = header('② 蹴りの間合い');
+    this.d = distanceDiagram(stage);
+    this.msg = el('<div class="abs center disp shadow" style="top:990px;font-size:64px;white-space:nowrap;color:var(--G)">得意な距離が、まったく違う</div>');
+  },
+  update(t) {
+    slide(this.tag, t, .1, .5, -120, 'skewX(-12deg)');
+    rise(this.d.g, t, .3, .5, 20);
+    set(this.d.kz, lin(t, 2.0, 2.3), `scaleX(${eo(lin(t, 2.0, 2.9))})`); rise(this.d.kt, t, 2.6);
+    set(this.d.oz, lin(t, 5.6, 5.9), `scaleX(${eo(lin(t, 5.6, 6.5))})`); rise(this.d.ot, t, 6.2);
+    rise(this.msg, t, 9.6, .5, 30, 'translate(-50%,-50%)');
+  },
+};
+
+/* ⑤ ROUND 1 FIGHT（体力ゲージはここだけ） */
+S.r1 = {
+  init() {
+    el('<div class="bg"></div>');
+    this.vs = versusPanels('m2', 'm3');
+    this.dark = el('<div class="abs" style="inset:0;background:rgba(0,0,0,.55)"></div>');
+    const bar = (side, color, name) => el(`<div class="abs" style="${side}:70px;top:48px;width:760px">
+      <div style="height:54px;border:5px solid #f6f2ea;transform:skewX(${side === 'left' ? -18 : 18}deg);background:#4a0d0d;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.6)">
+        <div class="fill" style="height:100%;background:linear-gradient(180deg,#fff27a,${color});transform-origin:${side === 'left' ? 'right' : 'left'}"></div></div>
+      <div class="disp shadow" style="font-size:50px;margin-top:10px;${side === 'right' ? 'text-align:right' : ''};color:${color}">${name}</div></div>`);
+    this.bl = bar('left', '#ff9a3c', 'アカカンガルー');
+    this.br = bar('right', '#4fd6ea', 'ダチョウ');
+    this.timer = el('<div class="abs num" style="left:900px;top:30px;width:120px;text-align:center;font-size:110px;line-height:1;color:var(--G);text-shadow:0 4px 0 #000">99</div>');
+    this.VS = el('<div class="abs center latin" style="font-size:300px;color:var(--G);-webkit-text-stroke:8px #1a1000">VS</div>');
+    this.round = el(`<div class="abs center latin" style="font-size:250px;white-space:nowrap;color:#fff;-webkit-text-stroke:6px #111;
+      text-shadow:0 0 50px rgba(255,210,74,.9),10px 10px 0 var(--K)">ROUND 1</div>`);
+    this.fight = el(`<div class="abs center latin" style="font-size:380px;white-space:nowrap;color:var(--G);-webkit-text-stroke:10px #3a0a00;
+      text-shadow:0 0 80px rgba(255,90,30,.95),14px 14px 0 #b3200a">FIGHT!</div>`);
+    this.flash = el('<div class="abs" style="inset:0;background:#fff"></div>');
+  },
+  update(t) {
+    this.vs.update(t, 0, 1.1);
+    this.dark.style.opacity = mix(0, 1, lin(t, 4.4, 5.0));
+    const hud = eo(lin(t, .8, 1.3));
+    for (const b of [this.bl, this.br]) {
+      set(b, hud, `translateY(${(1 - hud) * -120}px)`);
+      b.querySelector('.fill').style.transform = `scaleX(${eo(lin(t, 1.2, 2.2))})`;
+    }
+    set(this.timer, hud, 'none');
+    slam(this.VS, t, 1.6); out(this.VS, t, 4.4);
+    slam(this.round, t, 5.0, .3, 2.6); out(this.round, t, 8.8, .4);
+    const shake = t > 10 && t < 10.5 ? Math.sin(t * 90) * 14 * (1 - lin(t, 10, 10.5)) : 0;
+    slam(this.fight, t, 10.0, .22, 3.2, `translate(calc(-50% + ${shake}px),-50%)`);
+    if (t > 10.3) this.fight.style.transform += ` scale(${mix(1, 1.08, lin(t, 10.3, DUR))})`;
+    this.flash.style.opacity = Math.max(t >= 5 ? .8 * (1 - lin(t, 5.0, 5.3)) : 0, t >= 10 ? 1 - lin(t, 10.0, 10.4) : 0, t >= 1.6 ? .6 * (1 - lin(t, 1.6, 1.85)) : 0);
+  },
+};
+
+/* ⑦ WINNER */
+S.c3 = {
+  init() {
+    background();
+    this.bgImg = el('<div class="abs" style="inset:0;overflow:hidden"></div>');
+    this.img = photo('c2', this.bgImg, {});
+    this.fb = el(`<div class="abs" style="left:1080px;top:140px">${sil('ostrich', 'rgba(51,196,218,.55)', 820)}</div>`, this.bgImg);
+    el('<div class="abs" style="inset:0;background:linear-gradient(90deg,rgba(6,8,12,.92) 0%,rgba(6,8,12,.55) 55%,rgba(6,8,12,.2) 100%)"></div>', this.bgImg);
+    waits.push(Promise.all(waits).then(() => { if (this.img.ok) this.fb.remove(); }));
+    this.kk = el('<div class="abs center disp" style="left:960px;top:470px;font-size:280px;white-space:nowrap;color:#fff;text-shadow:12px 12px 0 var(--R),0 0 60px rgba(0,0,0,.8)">決着</div>');
+    this.how = el(`<div class="abs" style="left:150px;top:110px"><div class="tag" style="background:var(--R);font-size:40px"><span>決まり手</span></div>
+      <div class="disp" style="font-size:80px;margin-top:16px">カンガルーの逃走</div></div>`);
+    this.win = el(`<div class="abs latin" style="left:140px;top:430px;font-size:250px;line-height:1;color:var(--G);-webkit-text-stroke:6px #2a1a00;text-shadow:0 0 60px rgba(255,210,74,.7)">WINNER</div>`);
+    this.name = el('<div class="abs disp" style="left:150px;top:720px;font-size:170px;color:var(--O);text-shadow:0 10px 40px rgba(0,0,0,.7)">ダチョウ</div>');
+  },
+  update(t) {
+    const m = eo(lin(t, 1.0, 1.6));
+    set(this.bgImg, lin(t, 1.0, 1.6), `scale(${mix(1.12, 1.0, m) + .05 * lin(t, 1.6, DUR)})`);
+    slam(this.kk, t, .15, .25, 2.2); out(this.kk, t, 1.0, .3);
+    slide(this.how, t, 1.3, .5, -160);
+    slam(this.win, t, 2.9, .25, 1.9, ''); rise(this.name, t, 3.4, .5, 50);
+  },
+};
+
+/* ⑧ 勝因 */
+S.w1 = {
+  init() {
+    background();
+    this.h = el('<div class="abs center disp shadow" style="top:280px;font-size:150px;color:var(--G)">勝因</div>');
+    const items = ['体格とリーチ', '蹴りの相性', 'スピード'];
+    this.cards = items.map((s, i) => el(`<div class="abs card" style="left:${170 + i * 540}px;top:480px;width:500px;height:300px;text-align:center">
+      <div class="num" style="font-size:120px;color:var(--O);margin-top:20px;line-height:1.1">${i + 1}</div><div style="font-size:60px">${s}</div></div>`));
+  },
+  update(t) {
+    slam(this.h, t, .05, .25, 1.8);
+    this.cards.forEach((c, i) => rise(c, t, .45 + i * .25, .4, 60));
+  },
+};
+
+/* 横棒グラフ1行 */
+function barRow(parent, y, label, value, pct, color) {
+  return el(`<div class="abs" style="left:200px;top:${y}px;display:flex;align-items:center;gap:30px">
+      <div style="width:330px;font-size:46px;color:${color}">${label}</div>
+      <div class="bar" style="height:78px;width:${pct * 9}px;background:${color};transform-origin:left;border-radius:0 10px 10px 0"></div>
+      <div class="disp" style="font-size:66px;color:${color};white-space:nowrap">${value}</div></div>`, parent);
+}
+function barIn(row, t, at) {
+  rise(row, t, at, .3, 10);
+  row.querySelector('.bar').style.transform = `scaleX(${eo(lin(t, at, at + .9))})`;
+}
+
+/* ⑧ 体格とリーチ */
+S.w2 = {
+  init() {
+    background();
+    this.tag = header('① 体格とリーチ', 'var(--O)');
+    this.g1 = el('<div class="abs" style="left:200px;top:190px;font-size:54px;color:#cfd6e4">体重</div>');
+    this.a = barRow(stage, 270, 'アカカンガルー', '80kg超', 66, 'var(--K)');
+    this.b = barRow(stage, 370, 'ダチョウ', '100kg超', 100, 'var(--O)');
+    this.g2 = el('<div class="abs" style="left:200px;top:500px;font-size:54px;color:#cfd6e4">背丈</div>');
+    this.c = barRow(stage, 580, 'アカカンガルー', '約1.8m', 72, 'var(--K)');
+    this.d = barRow(stage, 680, 'ダチョウ', '約2.5m', 100, 'var(--O)');
+    this.note = el(`<div class="abs card center" style="top:900px;padding:22px 50px;font-size:46px;white-space:nowrap">
+      カンガルーのボクシングは、<span style="color:var(--K)">同じくらいの体格</span>どうしの技</div>`);
+  },
+  update(t) {
+    slide(this.tag, t, .1, .5, -120, 'skewX(-12deg)');
+    rise(this.g1, t, .6); barIn(this.a, t, .9); barIn(this.b, t, 1.3);
+    rise(this.g2, t, 2.4); barIn(this.c, t, 2.7); barIn(this.d, t, 3.1);
+    rise(this.note, t, 6.2, .5, 30, 'translate(-50%,-50%)');
+  },
+};
+/* ⑧ 考察まとめ */
+S.w5 = {
+  init() {
+    background();
+    this.tag = header('結論', 'var(--G)');
+    const rows = ['体格とリーチ', '蹴りの相性', 'スピード'];
+    this.rows = rows.map((s, i) => el(`<div class="abs" style="left:260px;top:${230 + i * 150}px;display:flex;align-items:center;gap:30px;font-size:62px">
+      <span style="color:var(--O)">✔</span><span style="width:520px">${s}</span><span style="color:#8793a8">→</span><span class="disp" style="color:var(--O)">ダチョウ</span></div>`));
+    this.big = el(`<div class="abs center disp" style="top:820px;font-size:150px;white-space:nowrap;color:var(--G);text-shadow:0 0 50px rgba(255,210,74,.45),8px 8px 0 #000">ダチョウ有利</div>`);
+    this.foot = el('<div class="abs" style="left:0;right:0;top:960px;text-align:center;font-size:34px;font-weight:500;color:#aab3c2">海外の動物比較・考察でも、多数派の見方</div>');
+  },
+  update(t) {
+    slide(this.tag, t, .1, .5, -120, 'skewX(-12deg)');
+    this.rows.forEach((r, i) => slide(r, t, .7 + i * .45, .45, -100));
+    slam(this.big, t, 3.2, .28, 2.0); rise(this.foot, t, 4.6, .5, 10);
+  },
+};
+
+/* ⑨ 次回予告 */
+S.e4 = {
+  init() {
+    background();
+    this.h = el('<div class="abs center disp shadow" style="top:200px;font-size:120px;color:var(--G)">次回</div>');
+    const q = (x, c) => el(`<div class="abs" style="left:${x}px;top:330px;width:420px;height:420px;border-radius:50%;border:10px solid ${c};
+      display:flex;align-items:center;justify-content:center;background:rgba(12,16,24,.8)"><span class="latin" style="font-size:280px;color:${c}">?</span></div>`);
+    this.a = q(300, 'var(--K)'); this.b = q(1200, 'var(--O)');
+    this.vs = el('<div class="abs center latin" style="top:540px;font-size:200px;color:var(--G)">VS</div>');
+    this.tl = el('<div class="abs center" style="top:900px;font-size:56px;white-space:nowrap">決して出会うはずのない、夢の対決</div>');
+  },
+  update(t) {
+    rise(this.h, t, .2, .5, 30, 'translate(-50%,-50%)');
+    pop(this.a, t, .8); pop(this.b, t, 1.1); slam(this.vs, t, 1.5);
+    rise(this.tl, t, 2.2, .5, 30, 'translate(-50%,-50%)');
+  },
+};
+
+/* ================= 重ね（H3 映像の上。背景透過） ================= */
+const fadeEdges = (e, t, at) => { if (t > DUR - .5) e.style.opacity = String((+e.style.opacity) * (1 - lin(t, DUR - .5, DUR))); };
+
+S.m2 = { init() { this.p = plate('オーストラリア代表', 'アカカンガルー', 'var(--K)', 'left'); },
+  update(t) { slide(this.p, t, .6, .5, -200); fadeEdges(this.p, t); } };
+S.m3 = { init() { this.p = plate('アフリカ代表', 'ダチョウ', 'var(--O)', 'right'); },
+  update(t) { slide(this.p, t, .6, .5, 200); fadeEdges(this.p, t); } };
+
+function chipsScene(color, items) {  // items: [label, value, at]
+  return {
+    init() { this.c = items.map(([l, v], i) => chip(l, v, color, `right:90px;top:${90 + i * 150}px`)); },
+    update(t) { this.c.forEach((c, i) => { slide(c, t, items[i][2], .45, 160); fadeEdges(c, t); }); },
+  };
+}
+S.k3 = chipsScene('var(--K)', [['一跳び', '8m以上', 1.0], ['時速', '約60km', 3.0]]);
+S.k4 = chipsScene('var(--K)', [['最大の武器', '尻尾', .8], ['＝', '5本目の脚', 4.2]]);
+S.k7 = chipsScene('var(--K)', [['後ろ足', '鋭いかぎ爪', .8]]);
+S.t3 = chipsScene('var(--O)', [['時速', '約70km', 1.0]]);
+S.t6 = chipsScene('var(--O)', [['足の指', '2本', .8], ['爪', '約10cm', 3.0]]);
+
+/* 右下の小窓 */
+function inset(html) {
+  return el(`<div class="abs card" style="right:80px;bottom:90px;width:620px;height:400px;overflow:hidden">${html}</div>`);
+}
+S.p2 = {
+  init() {
+    this.tag = header('① リーチ');
+    this.box = inset(`
+      <div style="position:absolute;left:70px;top:150px">${sil('kangaroo', 'var(--K)', 200)}</div>
+      <div style="position:absolute;left:380px;top:60px">${sil('ostrich', 'var(--O)', 290, true)}</div>
+      <svg style="position:absolute;left:0;top:0" width="620" height="400">
+        <path d="M200 300 A120 120 0 0 1 320 190" fill="none" stroke="#ff7a2f" stroke-width="8" stroke-dasharray="14 10"/>
+        <path d="M420 330 A230 230 0 0 0 190 110" fill="none" stroke="#33c4da" stroke-width="8" stroke-dasharray="14 10"/>
+        <line x1="20" y1="352" x2="600" y2="352" stroke="rgba(255,255,255,.5)" stroke-width="4"/></svg>
+      <div style="position:absolute;left:24px;top:14px;font-size:34px">脚が届く範囲</div>`);
+  },
+  update(t) { slide(this.tag, t, .2, .5, -120, 'skewX(-12deg)'); rise(this.box, t, 1.2); fadeEdges(this.tag, t); fadeEdges(this.box, t); },
+};
+S.p4 = {
+  init() {
+    this.tag = header('③ つかめるか');
+    this.c = chip('カンガルーの得意技', 'つかんでからの蹴り', 'var(--K)', 'right:90px;top:90px');
+    this.box = inset(`
+      <div style="position:absolute;left:340px;top:30px">${sil('ostrich', 'var(--O)', 340, true)}</div>
+      <div style="position:absolute;left:30px;top:40px;font-size:44px;line-height:1.3;color:var(--G)">首は<br>はるか頭上</div>
+      <div style="position:absolute;left:30px;top:250px;font-size:44px;color:var(--R)">腕なし</div>`);
+  },
+  update(t) {
+    slide(this.tag, t, .2, .5, -120, 'skewX(-12deg)'); slide(this.c, t, .9, .45, 160); rise(this.box, t, 4.6);
+    [this.tag, this.c, this.box].forEach(e => fadeEdges(e, t));
+  },
+};
+S.w3 = {
+  init() {
+    this.frame = el('<div class="abs" style="inset:22px;border:6px solid rgba(255,255,255,.85);border-radius:10px"></div>');
+    this.rep = el(`<div class="abs latin" style="left:70px;top:56px;font-size:72px;display:flex;align-items:center;gap:18px">
+      <span class="dot" style="width:34px;height:34px;border-radius:50%;background:var(--R)"></span>REPLAY</div>`);
+    this.tag = el(`<div class="abs tag" style="right:90px;top:70px;background:var(--O);color:#111;font-size:44px"><span>② 蹴りの相性</span></div>`);
+    this.box = inset('');
+    this.d = distanceDiagram(this.box, .32);
+    css(this.d.g, { left: '-40px', top: '40px' });
+  },
+  update(t) {
+    this.frame.style.opacity = 1; this.rep.style.opacity = 1;
+    this.rep.querySelector('.dot').style.opacity = (Math.floor(t * 2) % 2) ? .25 : 1;
+    slide(this.tag, t, .3, .5, 160, 'skewX(-12deg)'); rise(this.box, t, 1.0);
+    set(this.d.g, 1, 'scale(.32)');
+    for (const z of [this.d.kz, this.d.oz]) set(z, 1, 'none');
+    for (const z of [this.d.kt, this.d.ot]) set(z, 1, 'none');
+    [this.frame, this.rep, this.tag, this.box].forEach(e => fadeEdges(e, t));
+  },
+};
+S.w4 = {
+  init() {
+    this.tag = header('③ スピード', 'var(--O)');
+    this.box = el(`<div class="abs card" style="left:90px;right:90px;bottom:80px;height:260px"></div>`);
+    const row = (y, name, v, pct, c) => el(`<div class="abs" style="left:60px;top:${y}px;display:flex;align-items:center;gap:24px;width:1600px">
+      <div style="width:300px;font-size:44px;color:${c}">${name}</div>
+      <div class="bar" style="height:64px;width:${pct * 9}px;background:${c};transform-origin:left;border-radius:0 8px 8px 0"></div>
+      <div class="disp" style="font-size:56px;color:${c}">${v}</div></div>`, this.box);
+    this.a = row(40, 'ダチョウ', '約70km/h', 100, 'var(--O)');
+    this.b = row(140, 'カンガルー', '約60km/h', 86, 'var(--K)');
+  },
+  update(t) {
+    slide(this.tag, t, .2, .5, -120, 'skewX(-12deg)'); rise(this.box, t, .8, .4, 30);
+    this.a.querySelector('.bar').style.transform = `scaleX(${eo(lin(t, 1.0, 1.9))})`;
+    this.b.querySelector('.bar').style.transform = `scaleX(${eo(lin(t, 1.5, 2.4))})`;
+    [this.tag, this.box].forEach(e => fadeEdges(e, t));
+  },
+};
+
+/* ================= 起動 ================= */
+const scene = S[SCENE];
+window.renderAt = t => { scene.update(Math.min(t, DUR)); return true; };
+(async () => {
+  if (!scene) { window.__error = `シーンがありません: ${SCENE}`; return; }
+  if (!OVERLAY) stage.style.background = 'var(--D)';
+  scene.init();
+  await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 8000))]);
+  await Promise.all(waits);
+  await Promise.all(waits);
+  scene.update(0);
+  window.__ready = true;
+})();
+</script>
+</body>
+</html>

@@ -10,6 +10,11 @@
 
 **尺はナレーションの実測で決まります。** ①で実際の音声の長さを計り、②はその長さを覆う秒数（4〜15秒）で生成します。15秒を超える【】は③でスロー再生して埋めます。
 
+## Google Colab で動かす（推奨）
+[colab/darwin_colab.ipynb](colab/darwin_colab.ipynb) を Colab で開き、上から順に実行します。
+ComfyUI とパイプラインを同じ Colab ランタイムで動かし、リポジトリ・画像・生成物はすべて Google ドライブ（`MyDrive/daniel`）に置きます。
+APIキーは Colab のシークレット（🔑）に `GEMINI_API_KEY`（非公開リポジトリなら `GITHUB_TOKEN` も）を登録します。
+
 ## セットアップ（ComfyUI を動かす PC で）
 - Python 3.10 以上（外部ライブラリ不要）
 - ffmpeg（PATH に通す。無ければ `pip install imageio-ffmpeg` でも可）

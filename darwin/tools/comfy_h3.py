@@ -1,111 +1,49 @@
-"""② 映像生成：ローカルの ComfyUI（MiniMax H3 i2v）に【】ごとの画像とプロンプトを投げる。
+"""② 映像生成：水無瀬（ugoira）の h3.py をそのまま使い、Colab の ComfyUI（MiniMax H3）で【】ごとに1クリップ作る。
 
-ナレーションの実測尺（out/timeline.json）から各クリップの秒数を決めるので、先に tts_gemini.py を実行すること。
+ワークフロー・トンネル越しのアップロード・音声の別取り・真っ黒検知などは ugoira 側の実装に任せる。
+ナレーションの実測尺（out/timeline.json）から各クリップの長さを決めるので、先に tts_gemini.py を実行すること。
 
-  python tools/comfy_h3.py 01-keiba                 # 全クリップ生成（生成済みはスキップ）
-  python tools/comfy_h3.py 01-keiba --only 06_ochi  # 1本だけ
-  python tools/comfy_h3.py 01-keiba --redo 03_seitai --seed 1234   # 撮り直し
-  python tools/comfy_h3.py 01-keiba --plan          # 投げずに秒数の計画だけ表示
-  python tools/comfy_h3.py 01-keiba --mock          # ComfyUIなしでダミー映像を作る（動作確認用）
+  $env:UGOIRA_COMFY_URL = "https://....trycloudflare.com"   # Colab の起動セルが出す URL
+  python tools/comfy_h3.py 01-keiba --plan          # 投げずに長さの計画だけ表示
+  python tools/comfy_h3.py 01-keiba --only 02_hakken
+  python tools/comfy_h3.py 01-keiba                 # 残りを全部（生成済みはスキップ）
+  python tools/comfy_h3.py 01-keiba --redo 06_ochi --seed 1234
+  python tools/comfy_h3.py 01-keiba --mock          # Colab なしでダミー映像（動作確認用）
 """
 import argparse
-import copy
-import json
 import math
 import os
 import random
+import shutil
 import sys
-import time
-import urllib.error
-import urllib.parse
-import urllib.request
-import uuid
 from pathlib import Path
 
-from common import ROOT, find_image, load_config, load_episode, load_json, out_dir, run_ffmpeg, save_json
+from common import find_image, load_config, load_episode, load_json, out_dir, run_ffmpeg, save_json
 
-VIDEO_EXTS = (".mp4", ".webm", ".mov", ".mkv", ".gif")
-
-
-def plan_seconds(narr, c):
-    """ナレーション尺を覆う秒数（整数）。上限を超えた分は assemble でスロー再生して埋める。"""
-    return max(c["min_seconds"], min(c["max_seconds"], math.ceil(narr)))
+FPS = 24  # H3 は 24fps 固定
 
 
-def h3_frames(sec, c):
-    """H3 の length は (length - 5) % 17 == 0 のみ有効（ugoira の h3.valid_lengths と同じ規則）。
-    sec 秒を覆う最小の有効フレーム数を返す。例: 8秒 → 192。"""
-    base, step = c["length_base"], c["length_step"]
-    need = sec * c["fps"]
-    return base + step * max(0, math.ceil((need - base) / step))
+def h3_frames(seconds, max_seconds):
+    """H3 の length は (length-5) % 17 == 0 のみ。ナレーションを覆う最小値（上限 max_seconds）を返す。"""
+    top = 5 + 17 * int((max_seconds * FPS - 5) // 17)
+    need = 5 + 17 * max(0, math.ceil((seconds * FPS - 5) / 17))
+    return min(need, top)
 
 
-def http(url, data=None, headers=None, timeout=60):
-    req = urllib.request.Request(url, data=data, headers=headers or {}, method="POST" if data else "GET")
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read()
-
-
-def upload_image(base, path):
-    boundary = uuid.uuid4().hex
-    body = (f"--{boundary}\r\nContent-Disposition: form-data; name=\"image\"; filename=\"{path.name}\"\r\n"
-            f"Content-Type: application/octet-stream\r\n\r\n").encode() + path.read_bytes() + \
-           (f"\r\n--{boundary}\r\nContent-Disposition: form-data; name=\"overwrite\"\r\n\r\ntrue"
-            f"\r\n--{boundary}--\r\n").encode()
-    res = json.loads(http(f"{base}/upload/image", body, {"Content-Type": f"multipart/form-data; boundary={boundary}"}))
-    return f"{res['subfolder']}/{res['name']}" if res.get("subfolder") else res["name"]
-
-
-def set_input(wf, mapping, key, value):
-    m = mapping.get(key)
-    if not m or m.get("node") in (None, "", "REPLACE_ME"):
-        if key in ("image", "prompt", "duration"):
-            sys.exit(f"config.json の comfy.nodes.{key} にノードIDを設定してください（comfy/README.md 参照）。")
-        return
-    node = wf.get(str(m["node"]))
-    if node is None:
-        sys.exit(f"ワークフローにノード {m['node']} がありません（comfy.nodes.{key}）。API形式で保存したJSONか確認してください。")
-    node["inputs"][m["input"]] = value
-
-
-def collect_videos(outputs):
-    found = []
-    for node_out in outputs.values():
-        for items in node_out.values():
-            if isinstance(items, list):
-                for it in items:
-                    if isinstance(it, dict) and str(it.get("filename", "")).lower().endswith(VIDEO_EXTS):
-                        found.append(it)
-    return found
-
-
-def generate(base, wf, c, timeout, dest):
-    client_id = uuid.uuid4().hex
-    res = json.loads(http(f"{base}/prompt", json.dumps({"prompt": wf, "client_id": client_id}).encode(),
-                          {"Content-Type": "application/json"}))
-    if res.get("node_errors"):
-        sys.exit(f"ComfyUI がワークフローを拒否しました: {json.dumps(res['node_errors'], ensure_ascii=False)[:1500]}")
-    pid = res["prompt_id"]
-    t0 = time.time()
-    while True:
-        hist = json.loads(http(f"{base}/history/{pid}"))
-        if pid in hist:
-            entry = hist[pid]
-            status = entry.get("status", {})
-            if status.get("status_str") == "error":
-                sys.exit(f"ComfyUI 実行エラー: {json.dumps(status.get('messages', []), ensure_ascii=False)[:1500]}")
-            vids = collect_videos(entry.get("outputs", {}))
-            if vids:
-                v = vids[-1]
-                q = urllib.parse.urlencode({"filename": v["filename"], "subfolder": v.get("subfolder", ""),
-                                            "type": v.get("type", "output")})
-                dest.write_bytes(http(f"{base}/view?{q}", timeout=600))
-                return
-            if status.get("completed"):
-                sys.exit("生成は完了しましたが動画出力が見つかりません。ワークフローに動画保存ノード（VHS_VideoCombine / SaveVideo 等）があるか確認してください。")
-        if time.time() - t0 > timeout:
-            sys.exit(f"タイムアウト（{timeout}秒）: prompt_id={pid}")
-        time.sleep(3)
+def load_ugoira(c):
+    """ugoira フォルダの h3.py を読み込む。接続先 URL は ugoira の config が UGOIRA_COMFY_URL から読む。"""
+    d = Path(os.environ.get("UGOIRA_DIR") or c["ugoira_dir"]).expanduser()
+    if not (d / "h3.py").exists():
+        sys.exit(f"ugoira の h3.py が見つかりません: {d}\n"
+                 "  config.json の comfy.ugoira_dir（または環境変数 UGOIRA_DIR）を ugoira フォルダにしてください。")
+    if os.environ.get("DARWIN_COMFY_URL") and not os.environ.get("UGOIRA_COMFY_URL"):
+        os.environ["UGOIRA_COMFY_URL"] = os.environ["DARWIN_COMFY_URL"]
+    if not os.environ.get("UGOIRA_COMFY_URL"):
+        sys.exit("UGOIRA_COMFY_URL が未設定です。Colab の起動セルが出した URL を指定してください:\n"
+                 '  $env:UGOIRA_COMFY_URL = "https://xxxx.trycloudflare.com"')
+    sys.path.insert(0, str(d))
+    import h3  # noqa: E402  (ugoira 側のモジュール)
+    return h3
 
 
 def main():
@@ -118,8 +56,7 @@ def main():
     ap.add_argument("--mock", action="store_true")
     args = ap.parse_args()
 
-    cfg = load_config()
-    c = cfg["comfy"]
+    c = load_config()["comfy"]
     ep_dir, ep = load_episode(args.episode)
     tl_path = Path(ep_dir, "out", "timeline.json")
     if not tl_path.exists():
@@ -129,59 +66,52 @@ def main():
     clip_dir = out_dir(ep_dir, "clips")
     plan_path = clip_dir / "plan.json"
     plan = load_json(plan_path) if plan_path.exists() else {}
-
     targets = [s for s in ep["sections"] if not args.only or s["id"] in args.only]
-    missing = [s["id"] for s in targets if not find_image(ep_dir, s["id"])]
-    print("クリップ計画（ナレーション実測 → H3 生成秒数）")
+
+    print(f"クリップ計画（ナレーション実測 → H3 {c['width']}x{c['height']}）")
     for s in targets:
-        sec = plan_seconds(narr[s["id"]], c)
-        slow = narr[s["id"]] / sec
+        n = h3_frames(narr[s["id"]], c["max_seconds"])
+        slow = narr[s["id"]] / (n / FPS)
         note = f"  ※{slow:.2f}倍に引き伸ばし" if slow > 1.0 else ""
-        print(f"  {s['id']:<12} ナレ {narr[s['id']]:5.2f}秒 → 生成 {sec:2d}秒{note}")
+        print(f"  {s['id']:<12} ナレ {narr[s['id']]:5.2f}秒 → {n:3d}フレーム（{n / FPS:5.2f}秒）{note}")
     if args.plan:
         return
+
+    missing = [s["id"] for s in targets if not find_image(ep_dir, s["id"])]
     if missing and not args.mock:
         sys.exit(f"画像がありません: {', '.join(missing)}\n  {ep_dir / 'images'} に <セクションID>.png を置いてください。")
-
-    # Colab の起動セルが出す trycloudflare の URL は環境変数で渡す（水無瀬と同じ UGOIRA_COMFY_URL も読む）
-    base = (os.environ.get("DARWIN_COMFY_URL") or os.environ.get("UGOIRA_COMFY_URL") or c["url"]).rstrip("/")
-    print(f"ComfyUI: {base if 'trycloudflare' not in base else base[:12] + '…(tunnel)'}")
-    if not args.mock:
-        wf_path = ROOT / c["workflow"]
-        if not wf_path.exists():
-            sys.exit(f"ワークフローがありません: {wf_path}\n  ComfyUI で H3 i2v ワークフローを「API形式で保存」して置いてください。")
-        workflow = load_json(wf_path)
-        try:
-            http(f"{base}/system_stats", timeout=5)
-        except (urllib.error.URLError, OSError):
-            sys.exit(f"ComfyUI に接続できません: {base}（起動しているか確認してください）")
+    h3 = None if args.mock else load_ugoira(c)
 
     for s in targets:
         dest = clip_dir / f"{s['id']}.mp4"
         if dest.exists() and s["id"] not in args.redo:
             print(f"  skip {s['id']}（生成済み。撮り直すなら --redo {s['id']}）")
             continue
-        sec = plan_seconds(narr[s["id"]], c)
+        frames = h3_frames(narr[s["id"]], c["max_seconds"])
         seed = args.seed if args.seed is not None else random.randint(0, 2**31 - 1)
         if args.mock:
-            run_ffmpeg(["-f", "lavfi", "-i", f"testsrc2=size=720x1280:rate={c['fps']}:duration={sec}",
-                        "-f", "lavfi", "-i", f"anoisesrc=d={sec}:c=pink:a=0.05",
+            sec = frames / FPS
+            run_ffmpeg(["-f", "lavfi", "-i", f"testsrc2=size={c['width']}x{c['height']}:rate={FPS}:duration={sec:.3f}",
+                        "-f", "lavfi", "-i", f"anoisesrc=d={sec:.3f}:c=pink:a=0.05",
                         "-shortest", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", dest])
         else:
-            wf = copy.deepcopy(workflow)
-            nodes = c["nodes"]
-            set_input(wf, nodes, "image", upload_image(base, find_image(ep_dir, s["id"])))
-            set_input(wf, nodes, "prompt", s["video_prompt"])
-            set_input(wf, nodes, "negative", ep.get("video_negative", ""))
-            d = nodes["duration"]
-            dur_val = h3_frames(sec, c) if d.get("unit", "frames") == "frames" else sec
-            set_input(wf, nodes, "duration", dur_val)
-            set_input(wf, nodes, "seed", seed)
-            set_input(wf, nodes, "width", c["width"])
-            set_input(wf, nodes, "height", c["height"])
-            print(f"  生成中 {s['id']}（{sec}秒, seed={seed}）…")
-            generate(base, wf, c, c["timeout_sec"], dest)
-        plan[s["id"]] = {"seconds": sec, "seed": seed, "narration": narr[s["id"]], "mock": args.mock}
+            # h3.render は <作業フォルダ>/image.png を起点にする（jpg 等も png にしておく）
+            work = out_dir(ep_dir, "h3", s["id"])
+            run_ffmpeg(["-i", find_image(ep_dir, s["id"]), "-frames:v", "1", work / "image.png"])
+            print(f"\n=== {s['id']} {s['label']}（seed={seed}）===")
+            out = h3.render(
+                work, s["video_prompt"],
+                soundscape=s.get("soundscape") or "N/A",
+                music="N/A",                      # BGM は結合時に入れる
+                chest=False, expressive=False,    # ugoira（キャラクター）向けの常設指示は使わない
+                add_style=False,                  # 動きの強さ・構図固定の定型文も付けない（プロンプトで書き切る）
+                width=c["width"], height=c["height"], length=frames,
+                steps=c.get("steps"), seed=seed, lora_preset=c["lora"],
+                upscale=False, timeout=c["timeout_sec"],
+            )
+            shutil.copy2(out, dest)
+        plan[s["id"]] = {"frames": frames, "seconds": round(frames / FPS, 3), "seed": seed,
+                         "narration": narr[s["id"]], "mock": args.mock}
         save_json(plan_path, plan)
         print(f"  ✓ {dest.name}")
 

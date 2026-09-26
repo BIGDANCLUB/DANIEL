@@ -6,79 +6,187 @@
     "CHARACTER": "A fictional Japanese man in his early 50s, slightly overweight with a round face, thinning short black hair, light stubble, small tired eyes. Wearing a wrinkled beige short-sleeve polo shirt, a black waist pouch on his belly, grey slacks, worn sneakers. A rolled-up sports newspaper in one hand.",
     "NEGATIVE": "anime, illustration, cartoon, 3d render, cgi, text, japanese text, logo, brand name, watermark, distorted hands, extra fingers, celebrity likeness, crowd of identical faces"
   },
-  "video_negative": "text, subtitles, logo, watermark, cartoon, anime, morphing face, face changing, extra limbs, distorted hands, background music, speech, talking",
   "sections": [
     {
       "id": "01_basho",
       "label": "場所紹介",
       "ambience": "racecourse_crowd",
-      "image_uses": ["STYLE"],
+      "image_uses": [
+        "STYLE"
+      ],
       "image_prompt": "Extreme wide high-angle establishing shot of an enormous horse racing track on the outskirts of a Japanese city on a clear holiday afternoon. A vast oval of green turf spreads out like an African savanna plain, heat haze shimmering above the grass. In the near foreground below the camera, a dense crowd of hundreds of middle-aged Japanese men is packed shoulder to shoulder in front of the grandstand, all facing the same direction like a herd gathered at a watering hole, rolled newspapers in their hands. Distant city buildings on the horizon. Golden midday light, wide open sky.",
       "video_prompt": "Slow descending drone shot. The camera glides down from the wide view of the vast green racetrack toward the dense crowd of men in the foreground. Heat haze shimmers over the turf, flags flutter, the crowd shifts and murmurs like a restless herd of animals. Smooth, steady nature-documentary camera movement. Movement starts immediately in the first frame.",
+      "soundscape": "A huge outdoor crowd murmurs far below, wind sweeps across open grass, and a distant public-address echo rolls over the grounds without intelligible words.",
       "lines": [
-        {"emotion": "穏やか", "text": "ここは、休日の東京、府中。街はずれに広がる、巨大なサバンナです。", "est": 4.5},
-        {"emotion": "穏やか", "text": "今日も多くのオスたちが一攫千金を求めてここに集まります。ここに今日の主役がいるそうです。", "est": 7.0}
+        {
+          "emotion": "穏やか",
+          "text": "ここは、休日の東京、府中。街はずれに広がる、巨大なサバンナです。",
+          "est": 4.5
+        },
+        {
+          "emotion": "穏やか",
+          "text": "今日も多くのオスたちが一攫千金を求めてここに集まります。ここに今日の主役がいるそうです。",
+          "est": 7.0
+        }
       ]
     },
     {
       "id": "02_hakken",
       "label": "生き物を発見",
       "ambience": "racecourse_crowd",
-      "image_uses": ["STYLE", "CHARACTER"],
+      "image_uses": [
+        "STYLE",
+        "CHARACTER"
+      ],
       "image_prompt": "Telephoto shot of the man captured through a gap between blurred spectators, standing at the trackside railing. Out-of-focus silhouettes of other people frame the left and right edges like tall grass. He is in sharp focus, screaming at the top of his lungs toward the racetrack, mouth wide open, neck veins bulging, eyes bloodshot and locked forward, forehead sweating, one arm raised swinging the rolled newspaper above his head. Raw, unflattering, voyeuristic documentary realism.",
       "video_prompt": "Telephoto shot with slight handheld shake. The camera slowly pushes in through the gap between blurred foreground spectators. The man screams furiously toward the track, mouth wide open, swinging the rolled newspaper up and down, neck veins straining. Out-of-focus spectators move around him. Only the man stays sharp.",
+      "soundscape": "The man lets out a hoarse, wordless yell toward the track. The surrounding crowd noise swells and distant hoofbeats approach.",
       "lines": [
-        {"emotion": "発見", "text": "おっと、いました。", "est": 2.0, "cues": [{"sfx": "discover", "offset": 0.0}]},
-        {"emotion": "興奮", "text": "大声で叫ぶ、一匹のニンゲンのオスです。", "est": 3.5}
+        {
+          "emotion": "発見",
+          "text": "おっと、いました。",
+          "est": 2.0,
+          "cues": [
+            {
+              "sfx": "discover",
+              "offset": 0.0
+            }
+          ]
+        },
+        {
+          "emotion": "興奮",
+          "text": "大声で叫ぶ、一匹のニンゲンのオスです。",
+          "est": 3.5
+        }
       ]
     },
     {
       "id": "03_seitai",
       "label": "生態の紹介",
       "ambience": "racecourse_crowd",
-      "image_uses": ["STYLE", "CHARACTER"],
+      "image_uses": [
+        "STYLE",
+        "CHARACTER"
+      ],
       "image_prompt": "Wide telephoto shot from behind and slightly to the side of the man. He stands completely motionless at the trackside railing in the left third of the vertical frame, seen from the back with his face just visible in profile. Far beyond him, a pack of racehorses thunders down the turf track at full gallop, heavily motion-blurred. Stark contrast between his total stillness and the horses' violent effort. Blurred celebrating spectators around him. Late afternoon light, long shadows on the concrete, a few discarded paper betting slips already on the ground at his feet.",
       "video_prompt": "Static telephoto shot from behind the man. In the far background a pack of racehorses gallops past at full speed. The man in the foreground stays completely still, not moving at all, while the horses race. After the horses pass, the crowd around him erupts in celebration, but he slowly lowers his head, then sinks down into a crouch on the concrete, clutching his head with both hands. A few paper betting slips tumble across the ground in the wind.",
+      "soundscape": "Thundering hooves race past in the distance and the crowd erupts in cheers. The roar fades, leaving wind and the dry rustle of paper slips skittering across concrete.",
       "lines": [
-        {"emotion": "解説", "text": "自ら努力して走ることはせず、馬に一方的な希望を託す。これが彼らの生態です。", "est": 6.5},
-        {"emotion": "落胆", "text": "ですが、あぁ。彼の勝手な期待はウマに届きませんでした。", "est": 5.0, "cues": [{"sfx": "sting_low", "offset": 0.0}]},
-        {"emotion": "哀愁", "text": "頭を抱えるオス。彼の1週間のエサ代が、今回も一瞬で消えました。", "est": 6.0}
+        {
+          "emotion": "解説",
+          "text": "自ら努力して走ることはせず、馬に一方的な希望を託す。これが彼らの生態です。",
+          "est": 6.5
+        },
+        {
+          "emotion": "落胆",
+          "text": "ですが、あぁ。彼の勝手な期待はウマに届きませんでした。",
+          "est": 5.0,
+          "cues": [
+            {
+              "sfx": "sting_low",
+              "offset": 0.0
+            }
+          ]
+        },
+        {
+          "emotion": "哀愁",
+          "text": "頭を抱えるオス。彼の1週間のエサ代が、今回も一瞬で消えました。",
+          "est": 6.0
+        }
       ]
     },
     {
       "id": "04_tenkan",
       "label": "場面転換",
       "ambience": "racecourse_crowd",
-      "image_uses": ["STYLE", "CHARACTER"],
+      "image_uses": [
+        "STYLE",
+        "CHARACTER"
+      ],
       "image_prompt": "Tight telephoto profile close-up of the man walking forward with purpose, his face filling the right side of the vertical frame. A single sharp glint of light in his pupil, jaw set, brow furrowed with fierce determination. In the lower foreground, his thick sweating fist is visible crushing a crumpled blank paper betting slip, knuckles whitening. The background streaks past in horizontal motion blur as the camera tracks alongside him. Heroic framing, played completely straight.",
       "video_prompt": "Lateral tracking shot moving alongside the man as he walks forward with determination. His face stays sharp in profile, eyes fixed ahead with a glint of light, his fist tightly crushing the crumpled slip. The background streaks past in motion blur. Serious, heroic, cinematic tone. No comedy.",
+      "soundscape": "Heavy, determined footsteps on concrete. Muffled crowd noise slides past; otherwise a tense quiet.",
       "lines": [
-        {"emotion": "緊張", "text": "と、そのとき。ハズレ馬券を握りしめ、オスがどこかへ行きました。彼の目はまだ死んではいません。", "est": 8.0, "cues": [{"sfx": "timpani_roll", "offset": 0.0}]}
+        {
+          "emotion": "緊張",
+          "text": "と、そのとき。ハズレ馬券を握りしめ、オスがどこかへ行きました。彼の目はまだ死んではいません。",
+          "est": 8.0,
+          "cues": [
+            {
+              "sfx": "timpani_roll",
+              "offset": 0.0
+            }
+          ]
+        }
       ]
     },
     {
       "id": "05_ochimae",
       "label": "オチ前",
       "ambience": "concourse",
-      "image_uses": ["STYLE", "CHARACTER"],
+      "image_uses": [
+        "STYLE",
+        "CHARACTER"
+      ],
       "image_prompt": "Telephoto shot inside a racecourse concourse showing a row of automated payout machines with a neat queue of people in front of them holding slips. The man stands at the machine at the front of the queue, seen from behind over his shoulder. His hand hovers near the intake slot holding the crumpled slip, hesitating. Cool fluorescent indoor lighting contrasting with bright daylight spilling in from the entrance behind. Observational distance, everything but him falling into soft blur.",
       "video_prompt": "Slow push-in from behind the man toward the payout machine. He stands in front of it; his hand holding the crumpled slip hovers near the intake slot and hesitates. He swallows nervously. Everything else stays still and quiet.",
+      "soundscape": "The low hum of an indoor concourse, the faint buzz of fluorescent lights, and the soft whir of automated machines. A nervous swallow.",
       "lines": [
-        {"emotion": "期待", "text": "向かった先は、なんと、払戻機の列。", "est": 3.5},
-        {"emotion": "期待", "text": "まさか、当たっていたのでしょうか？", "est": 3.0}
+        {
+          "emotion": "期待",
+          "text": "向かった先は、なんと、払戻機の列。",
+          "est": 3.5
+        },
+        {
+          "emotion": "期待",
+          "text": "まさか、当たっていたのでしょうか？",
+          "est": 3.0
+        }
       ]
     },
     {
       "id": "06_ochi",
       "label": "オチ",
       "ambience": "concourse",
-      "image_uses": ["STYLE", "CHARACTER"],
+      "image_uses": [
+        "STYLE",
+        "CHARACTER"
+      ],
       "image_prompt": "Close-up of the automated payout machine's slot with the crumpled paper slip half pushed back out of the return opening, untouched. Just behind it, the man's face is in focus: completely expressionless, eyes flat, no surprise at all, as if he already knew. Cold flat fluorescent light, nothing changes, no indicator lights, deadpan stillness. Behind him through the concourse opening, a huge orange setting sun burns over the empty racecourse grounds.",
       "video_prompt": "Close-up on the payout machine slot. The crumpled slip is pushed back out of the return opening and nothing else happens. The man's face stays completely expressionless; he blinks once, slowly. He takes the slip, turns around and walks away with dropped shoulders toward the concourse opening, where a huge orange setting sun glows over the empty racecourse. As he walks into the sunset he unfolds his sports newspaper again. Slow, reverent camera.",
+      "soundscape": "The mechanical whir of the machine drawing in a paper slip and pushing it back out, then slow, dragging footsteps across an empty concourse, and evening wind from outside.",
       "lines": [
-        {"emotion": "緊張", "text": "馬券が吸い込まれ……何も起きず、そのまま返却。どうやらダメ元でハズレ馬券を入れていたようです。", "est": 8.0, "cues": [{"sfx": "machine", "offset": 0.0}, {"sfx": "error_beep", "offset": 2.2}]},
-        {"emotion": "哀愁", "text": "なんと無駄な足掻き。肩を落とし、去っていくオス。", "est": 4.5, "cues": [{"bgm": "ochi", "offset": 0.0}]},
-        {"emotion": "感動", "text": "最後まで、決して諦めない。勇敢な姿が、そこにはありました。", "est": 5.5}
+        {
+          "emotion": "緊張",
+          "text": "馬券が吸い込まれ……何も起きず、そのまま返却。どうやらダメ元でハズレ馬券を入れていたようです。",
+          "est": 8.0,
+          "cues": [
+            {
+              "sfx": "machine",
+              "offset": 0.0
+            },
+            {
+              "sfx": "error_beep",
+              "offset": 2.2
+            }
+          ]
+        },
+        {
+          "emotion": "哀愁",
+          "text": "なんと無駄な足掻き。肩を落とし、去っていくオス。",
+          "est": 4.5,
+          "cues": [
+            {
+              "bgm": "ochi",
+              "offset": 0.0
+            }
+          ]
+        },
+        {
+          "emotion": "感動",
+          "text": "最後まで、決して諦めない。勇敢な姿が、そこにはありました。",
+          "est": 5.5
+        }
       ]
     }
   ]

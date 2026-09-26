@@ -1,6 +1,6 @@
 """Codex（imagegen）に渡す画像プロンプトを【】ごとに書き出す。
 
-  python tools/prompts.py 01-keiba   # → episodes/01-keiba/out/image_prompts.md
+  python tools/image_prompts.py 01-keiba   # → episodes/01-keiba/out/image_prompts.md
 """
 import argparse
 from pathlib import Path

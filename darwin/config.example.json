@@ -21,31 +21,19 @@
     "section_tail": 0.4
   },
   "comfy": {
-    "url": "http://127.0.0.1:8188",
-    "workflow": "comfy/h3_i2v_api.json",
-    "fps": 24,
-    "length_base": 5,
-    "length_step": 17,
-    "width": 736,
-    "height": 1280,
-    "min_seconds": 4,
-    "max_seconds": 15,
-    "timeout_sec": 3600,
-    "nodes": {
-      "image":    {"node": "REPLACE_ME", "input": "image"},
-      "prompt":   {"node": "REPLACE_ME", "input": "text"},
-      "negative": {"node": "REPLACE_ME", "input": "text"},
-      "duration": {"node": "REPLACE_ME", "input": "length", "unit": "frames"},
-      "seed":     {"node": "REPLACE_ME", "input": "seed"},
-      "width":    {"node": "", "input": "width"},
-      "height":   {"node": "", "input": "height"}
-    }
+    "ugoira_dir": "C:\\Users\\genji\\OneDrive\\デスクトップ\\ugoira",
+    "width": 768,
+    "height": 1344,
+    "max_seconds": 15.2,
+    "lora": "lightx2v",
+    "steps": null,
+    "timeout_sec": 5400
   },
   "render": {
     "width": 1080,
     "height": 1920,
     "fps": 30,
-    "ambience_volume": 0.18,
+    "ambience_volume": 0.35,
     "use_clip_audio_as_ambience": true,
     "sfx_volume": 0.9,
     "bgm_volume": 0.45,

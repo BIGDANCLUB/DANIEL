@@ -1,33 +1,25 @@
-# ComfyUI（MiniMax H3 i2v）の接続設定
+# 映像生成（MiniMax H3）の仕組み
 
-`tools/comfy_h3.py` は、あなたが普段使っている H3 の i2v ワークフロー（水無瀬で使っているもの）を
-そのまま使い、**画像・プロンプト・秒数・シード**の4か所だけを書き換えて ComfyUI に投げます。
+`tools/comfy_h3.py` は、水無瀬（ugoira）の **`h3.py` をそのまま読み込んで** `h3.render()` を呼びます。
+ワークフロー、トンネル越しのアップロード（524 のときの縮小再送）、映像と音声の別取り、
+真っ黒検知、DNS の回避策などは、すべて ugoira 側の実装が使われます。ugoira を直せば darwin にも効きます。
 
-## 1. ワークフローを API 形式で保存
-1. ComfyUI で H3 の i2v ワークフローを開き、1回手動で生成が通ることを確認する
-2. メニュー → Workflow → **Export (API)**（旧UIなら設定で Dev mode を有効にして「Save (API Format)」）
-3. 保存した JSON を `darwin/comfy/h3_i2v_api.json` に置く
+## 必要なもの
+- ugoira フォルダ（既定：`C:\Users\genji\OneDrive\デスクトップ\ugoira`）
+  - 場所が違う場合は `config.json` の `comfy.ugoira_dir`、または環境変数 `UGOIRA_DIR`
+- Colab で `colab_h3_drive.ipynb` の「起動」セルを実行し、出た URL を
+  `$env:UGOIRA_COMFY_URL = "https://....trycloudflare.com"`
 
-動画の保存ノード（`VHS_VideoCombine` / `SaveVideo` など）が mp4 を出力するようにしておいてください。
-
-## 2. ノード ID を config.json に書く
-`config.example.json` を `config.json` にコピーし、`comfy.nodes` の `REPLACE_ME` を埋めます。
-API 形式 JSON のキー（`"12": {"class_type": "LoadImage", ...}` の `"12"`）がノード ID です。
-
-| キー | 対象ノード | input 名の例 |
+## darwin 向けに変えている点（h3.render に渡す引数）
+| 引数 | 値 | 理由 |
 |---|---|---|
-| image | LoadImage | `image` |
-| prompt | 正プロンプトのテキストノード | `text` |
-| negative | 負プロンプト（無ければ `"node": ""` で省略可） | `text` |
-| duration | 尺を決めるノード | `length`（フレーム数）/ `duration`（秒） |
-| seed | サンプラー等 | `seed` / `noise_seed` |
+| width × height | 768 × 1344 | 縦 9:16（h3.py の V_W / V_H と同じ） |
+| length | ナレーションを覆う最小の有効フレーム数（`(n-5)%17==0`、上限 15.2 秒 = 362） | 尺はナレーションで決まる |
+| soundscape | episode.json の各【】の `soundscape` | H3 が作る環境音。結合時に薄く敷く |
+| music | `N/A` | BGM は結合時にオチだけ入れる |
+| chest / expressive | False | ugoira のキャラクター向け常設指示なので使わない |
+| add_style | False | 定型文（Subtle motion / 構図固定）を付けず、プロンプトで書き切る |
+| upscale | False | 1080×1920 への拡大は assemble.py が行う |
+| lora / steps | `config.json` の `comfy.lora`（既定 lightx2v）/ `comfy.steps`（null＝プリセット既定） | 水無瀬と同じ |
 
-- 尺がフレーム数なら `"unit": "frames"`。H3 の有効な長さ `(length-5) % 17 == 0` のうち、秒×24 を覆う最小値を自動で選びます（8秒→192）。
-- 尺が秒指定なら `"unit": "seconds"`。
-- 縦長にするため `comfy.width`/`comfy.height`（既定 736×1280）を解像度ノードに流す場合は `nodes.width` / `nodes.height` を設定。
-- ComfyUI の URL は環境変数 `DARWIN_COMFY_URL`（または `UGOIRA_COMFY_URL`）で渡します。
-
-ノード ID の一覧はこれで確認できます：
-```
-python -c "import json;[print(k,v['class_type'],list(v['inputs'])) for k,v in json.load(open('comfy/h3_i2v_api.json',encoding='utf-8')).items()]"
-```
+H3 には negative プロンプトがありません（h3.py の冒頭の注記どおり）。

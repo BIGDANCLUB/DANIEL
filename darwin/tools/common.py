@@ -12,7 +12,8 @@ MEDIA_EXTS = (".wav", ".mp3", ".m4a", ".ogg", ".flac")
 
 
 def load_json(path):
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    # メモ帳で保存すると先頭に BOM が付くことがあるので utf-8-sig で読む
+    return json.loads(Path(path).read_text(encoding="utf-8-sig"))
 
 
 def save_json(path, data):
@@ -35,7 +36,15 @@ def load_config():
     cfg = load_json(ROOT / "config.example.json")
     local = ROOT / "config.json"
     if local.exists():
-        _merge(cfg, load_json(local))
+        text = local.read_text(encoding="utf-8-sig").strip()
+        if not text:
+            print("※ config.json が空なので無視します（不要なら削除してください）")
+            return cfg
+        try:
+            _merge(cfg, json.loads(text))
+        except json.JSONDecodeError as e:
+            sys.exit(f"config.json の書き方が正しくありません（{e.lineno}行目 {e.colno}文字目）: {e.msg}\n"
+                     "  直すか、いったん削除してください:  Remove-Item config.json")
     return cfg
 
 

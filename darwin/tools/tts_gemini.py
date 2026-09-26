@@ -140,12 +140,34 @@ def synthesize(text, style, g, key):
     sys.exit(f"音声が返ってきませんでした: {json.dumps(resp, ensure_ascii=False)[:800]}")
 
 
+def audition(ep, ep_dir, g, key, voices, sample):
+    sid, _, idx = sample.partition(":")
+    sec = next((x for x in ep["sections"] if x["id"] == sid), None)
+    if sec is None or not idx.isdigit() or not 1 <= int(idx) <= len(sec["lines"]):
+        sys.exit(f"--sample-line の指定が不正です: {sample}（例: 01_basho:1）")
+    line = sec["lines"][int(idx) - 1]
+    style = f"{g['base_style']} 今回の文は「{line['emotion']}」：{g['emotions'].get(line['emotion'], line['emotion'])}。"
+    dest = out_dir(ep_dir, "voice_samples")
+    print(f"聞き比べ：「{line['text']}」")
+    for v in voices:
+        raw = dest / f"{v}_raw.wav"
+        print(f"  {v} …")
+        data, rate = synthesize(line.get("tts_text", line["text"]), style, {**g, "voice": v}, key)
+        write_wav(raw, data, rate)
+        process_line(raw, dest / f"{v}.wav", g)
+        raw.unlink()
+    print(f"\n保存先: {dest}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("episode")
     ap.add_argument("--mock", action="store_true", help="API を呼ばず est 秒の無音を作る")
     ap.add_argument("--redo", nargs="*", default=[], help="撮り直す文（例: 03_seitai:1）。all で全文")
     ap.add_argument("--lines", action="store_true", help="文ごとの長さも表示する")
+    ap.add_argument("--audition", nargs="+", metavar="VOICE",
+                    help="声の聞き比べ。指定した声で同じ1文を作り out/voice_samples/ に保存（本番の音声は変えない）")
+    ap.add_argument("--sample-line", default="01_basho:1", help="聞き比べに使う文（既定 01_basho:1）")
     args = ap.parse_args()
 
     cfg = load_config()
@@ -154,6 +176,10 @@ def main():
     key = os.environ.get("GEMINI_API_KEY")
     if not args.mock and not key:
         sys.exit("環境変数 GEMINI_API_KEY が未設定です（動作確認だけなら --mock）。")
+
+    if args.audition:
+        audition(ep, ep_dir, g, key, args.audition, args.sample_line)
+        return
 
     line_dir = out_dir(ep_dir, "tts")
     proc_dir = out_dir(ep_dir, "tts_proc")

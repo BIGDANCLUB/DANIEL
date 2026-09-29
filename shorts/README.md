@@ -14,7 +14,7 @@
    - `prompt` … その行の画像の指示（英語推奨・画像内に文字を入れない）
    - `move` … `in` / `out` / `left` / `right` / `up` / `down`（省略時は自動で交互）
 2. `python3 make_short.py story_xxx.json out/xxx.mp4`
-   - 足りない音声（Gemini TTS）と画像（Imagen）を生成してから動画を書き出す
+   - 足りない音声（Gemini TTS）と画像（Gemini 画像モデル）を生成してから動画を書き出す
    - 生成物は `tts.voice_dir` / `image_gen.image_dir` に保存され、次回は再利用
 3. 直したいとき
    - 画像だけ作り直す: `python3 gen_images_gemini.py story_xxx.json --only 3,7`

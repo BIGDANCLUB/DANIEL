@@ -1,6 +1,6 @@
 {
   "_comment": "ST-003b を Gemini TTS＋Gemini 画像生成で作る版。text は字幕（{黄} <赤>、\\n で改行）、say は読み上げ文（省略時は text から生成）、prompt は画像の指示（英語推奨・文字を入れない）。",
-  "tempo": 1.0,
+  "tempo": 1.35,
   "gap": 0.15,
   "lead_in": 0.05,
   "tail": 1.3,
@@ -12,20 +12,20 @@
     "voice_dir": "work_st003b_ai/voice"
   },
   "image_gen": {
-    "model": "imagen-4.0-generate-001",
+    "model": "gemini-3.1-flash-image",
     "image_dir": "work_st003b_ai/images"
   },
   "lines": [
     {"hook": true, "text": "母の施設代は\n毎月<19万円>", "say": "母の施設代は、毎月19万円です。",
-     "prompt": "A worn bankbook and a stack of invoices on an old kotatsu table in a dim, aging Japanese tatami room, late afternoon light through shoji screens"},
+     "prompt": "A worn bankbook and a stack of invoices on an old kotatsu table in a dim, aging Japanese tatami room, late afternoon light through shoji screens, no people"},
     {"text": "私の年金は\n月に{11万円}だけです",
-     "prompt": "Close-up of an elderly woman's wrinkled hands holding a pension notice envelope over a kotatsu table, soft window light"},
+     "prompt": "Close-up of an elderly woman's wrinkled hands holding a plain white envelope with no writing over a kotatsu table, soft window light"},
     {"text": "足りない<8万円>は\n貯金で払います",
      "prompt": "Close-up of an open Japanese savings passbook next to an old calculator on a wooden table, shallow depth of field"},
     {"text": "私は{佐藤敬子}\n{72歳}です", "say": "私は佐藤敬子。72歳です。",
      "prompt": "An elderly Japanese woman in a cardigan seen from behind, sitting alone at a kotatsu in a small old rented house, quiet and lonely mood"},
     {"text": "貯金は残り\n<80万円>になりました",
-     "prompt": "Extreme close-up of a nearly empty coin purse and a few yen bills on a tatami mat, dim warm light"},
+     "prompt": "Extreme close-up of a nearly empty open coin purse with a few small coins on a tatami mat, dim warm light, no paper money"},
     {"text": "あと<10か月>で\n底をつきます",
      "prompt": "A paper wall calendar hanging on a cracked plaster wall of an old Japanese house, pages slightly curled, gloomy light"},
     {"text": "夜、何度も\n{通帳}を数え直しました",
@@ -45,11 +45,11 @@
     {"text": "<24万円>が\n口座に戻ってきました",
      "prompt": "Close-up of a bank ATM screen glow reflecting on an elderly woman's relieved hands holding a passbook, screen content blurred"},
     {"text": "これからは毎月\n{1万円}ほど戻ります",
-     "prompt": "Morning sunlight streaming into a tidy Japanese tatami room, a cup of green tea steaming on a low table, hopeful mood"},
+     "prompt": "Morning sunlight streaming into a tidy Japanese tatami room, a cup of green tea steaming on a low table, empty room with no people, hopeful mood"},
     {"text": "母は私の手を\nそっと握りました",
      "prompt": "Close-up of a very old woman's hand gently holding her elderly daughter's hand on a bed blanket in a care home room, warm window light"},
     {"text": "「{敬子、ありがとう}」\nと言いました", "say": "敬子、ありがとう。と言いました。",
-     "prompt": "Care home room by a window, an elderly mother in a wheelchair and her daughter seen from behind looking out at the garden, gentle backlight"},
+     "prompt": "Care home room by a window, a very old mother in a wheelchair and her gray-haired daughter in her seventies, both seen from behind looking out at the garden, gentle backlight"},
     {"text": "あなたなら\n<まず誰に相談>しますか？", "say": "あなたなら、まず誰に相談しますか。",
      "prompt": "Riverside embankment lined with cherry blossoms at sunset in Japan, an elderly woman walking away along the path, nostalgic mood"}
   ]

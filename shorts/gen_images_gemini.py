@@ -21,7 +21,7 @@ from PIL import Image
 from tts_gemini import _request
 
 DEFAULTS = {
-    "model": "imagen-4.0-generate-001",
+    "model": "gemini-3.1-flash-image",
     "style": ("Photorealistic vertical photo taken in Japan, natural light, subtle film grain, "
               "lived-in everyday atmosphere, muted colors. No text, no letters, no signs with writing, "
               "no logos, no watermark. If people appear, show them from behind or only their hands."),

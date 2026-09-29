@@ -107,15 +107,25 @@ def rich_text(text, size, max_w, base="#ffffff", stroke_ratio=0.14, line_gap=0.0
     ih = lh * len(lines) + 2 * sw
     img = Image.new("RGBA", (iw, ih), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    img.info["red"] = []    # 赤字の位置（弾ませる演出用）
+    # 弾ませる演出用：赤字を除いた下地と、赤字だけのレイヤー（周りの文字や縁を含まない）
+    rest = Image.new("RGBA", (iw, ih), (0, 0, 0, 0))
+    dr = ImageDraw.Draw(rest)
+    reds = []
     for li, l in enumerate(lines):
         x = (iw - widths[li]) / 2
         y = sw + li * lh
         for seg, col in parse_runs(l, base):
             d.text((x, y), seg, font=f, fill=col, stroke_width=sw, stroke_fill="#000000")
             if col == COLORS["<"]:
-                img.info["red"].append((int(x - sw), int(y - sw), int(x + f.getlength(seg) + sw), int(y + lh + sw)))
+                layer = Image.new("RGBA", (iw, ih), (0, 0, 0, 0))
+                ImageDraw.Draw(layer).text((x, y), seg, font=f, fill=col, stroke_width=sw, stroke_fill="#000000")
+                box = layer.getbbox()
+                reds.append((layer.crop(box), box))
+            else:
+                dr.text((x, y), seg, font=f, fill=col, stroke_width=sw, stroke_fill="#000000")
             x += f.getlength(seg)
+    img.info["red"] = reds
+    img.info["rest"] = rest
     return img
 
 
@@ -126,15 +136,14 @@ def punch(sub, dt):
     if not 0 < x < 1 or not sub.info.get("red"):
         return sub
     sc = 1 + amp * np.sin(np.pi * x)
-    out = sub.copy()
-    pad = int(max(b[3] - b[1] for b in sub.info["red"]) * amp) + 4
+    pad = int(max(p.height for p, _ in sub.info["red"]) * amp) + 4
     canvas = Image.new("RGBA", (sub.width + 2 * pad, sub.height + 2 * pad), (0, 0, 0, 0))
-    canvas.paste(out, (pad, pad))
-    for x0, y0, x1, y1 in sub.info["red"]:
-        part = sub.crop((x0, y0, x1, y1))
+    # 赤字を先に置き、残りの文字を上に重ねる（拡大した赤字が隣の字を隠さないように）
+    for part, (x0, y0, x1, y1) in sub.info["red"]:
         part = part.resize((int(part.width * sc), int(part.height * sc)), Image.BICUBIC)
         cx, cy = (x0 + x1) / 2 + pad, (y0 + y1) / 2 + pad
         canvas.alpha_composite(part, (int(cx - part.width / 2), int(cy - part.height / 2)))
+    canvas.alpha_composite(sub.info["rest"], (pad, pad))
     return canvas
 
 
@@ -207,6 +216,33 @@ def trim_silence(a, db=-45, pad=0.04):
     return a[s:e]
 
 
+def shorten_pauses(a, max_pause, db=-35):
+    """行の途中の間が max_pause 秒より長ければ、その長さまで詰める（抑揚は残して間延びだけ削る）。"""
+    win = int(0.01 * SR)
+    n = len(a) // win
+    if n == 0 or not max_pause:
+        return a
+    quiet = 20 * np.log10(np.sqrt((a[:n * win].reshape(n, win) ** 2).mean(1)) + 1e-9) < db
+    keep = np.ones(len(a), bool)
+    fade = int(0.01 * SR)
+    i = 0
+    while i < n:
+        if not quiet[i]:
+            i += 1
+            continue
+        j = i
+        while j < n and quiet[j]:
+            j += 1
+        if (j - i) * 0.01 > max_pause and i > 0 and j < n:
+            half = int(max_pause * SR / 2)
+            keep[i * win + half:j * win - half] = False
+        i = j
+    out = a[keep]
+    # 詰めた継ぎ目は無音部分なのでクリックは出ないが、念のため最初と最後を軽くフェード
+    out[:fade] *= np.linspace(0, 1, min(fade, len(out)), dtype=np.float32)
+    return out
+
+
 def line_clips(cfg, base, source):
     """各行の音声（元動画の切り出し、または TTS の WAV）を返す。"""
     src_audio = None
@@ -220,7 +256,8 @@ def line_clips(cfg, base, source):
             a, b = max(0.0, line["audio"][0]), line["audio"][1]
             clips.append(src_audio[int(a * SR):int(b * SR)].copy())
         else:
-            clips.append(trim_silence(load_audio(tts_gemini.wav_path(cfg, base, i)).copy()))
+            clip = trim_silence(load_audio(tts_gemini.wav_path(cfg, base, i)).copy())
+            clips.append(shorten_pauses(clip, cfg.get("max_pause", 0.3)))
     return clips
 
 

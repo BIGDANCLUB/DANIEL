@@ -23,9 +23,12 @@ import wave
 
 API = "https://generativelanguage.googleapis.com/v1beta"
 DEFAULTS = {
-    "model": "gemini-2.5-flash-preview-tts",
+    "model": "gemini-3.8-flash-tts",
     "voice": "Sulafat",
-    "style": "次の日本語を、70代の女性が静かに身の上を語るように、落ち着いた温かい声で、ややゆっくり読み上げてください。",
+    # 人物像・場面・演技指示。行ごとの "tone"（その一文の気持ち）が後ろに付く
+    "style": ("# AUDIO PROFILE\n72歳の日本人女性。穏やかで温かい声。\n"
+              "## THE SCENE\n自分の身に起きた出来事を、目の前の人に打ち明けるように語っている。\n"
+              "### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。数字は少し強調する。"),
     "voice_dir": "voice",
 }
 
@@ -45,8 +48,16 @@ def wav_path(cfg, base, i):
     return os.path.join(base, tts_config(cfg)["voice_dir"], f"{i + 1:02d}.wav")
 
 
-def _key(tc, text):
-    return hashlib.sha1(json.dumps([tc["model"], tc["voice"], tc["style"], text]).encode()).hexdigest()
+def _key(tc, text, tone=None):
+    return hashlib.sha1(json.dumps([tc["model"], tc["voice"], tc["style"], text, tone]).encode()).hexdigest()
+
+
+def build_prompt(tc, text, tone=None):
+    """指示（人物像・気持ち）と読み上げ文を分けて渡す。区切らないと指示まで読み上げてしまう。"""
+    if not tc["style"]:
+        return text
+    head = tc["style"] + (f"この一文の気持ち：{tone}" if tone else "")
+    return f"{head}\n指示文は読まず、TRANSCRIPT の日本語だけを読み上げること。\n#### TRANSCRIPT\n{text}"
 
 
 def _request(path, body=None):
@@ -69,9 +80,9 @@ def _request(path, body=None):
             sys.exit(f"Gemini API エラー {e.code}: {msg[:500]}")
 
 
-def synthesize(tc, text, out):
+def synthesize(tc, text, out, tone=None):
     body = {
-        "contents": [{"parts": [{"text": f"{tc['style']}\n{text}" if tc["style"] else text}]}],
+        "contents": [{"parts": [{"text": build_prompt(tc, text, tone)}]}],
         "generationConfig": {
             "responseModalities": ["AUDIO"],
             "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": tc["voice"]}}},
@@ -100,13 +111,13 @@ def ensure_voice(story_path, force=False):
             continue
         out = wav_path(cfg, base, i)
         text = spoken(line)
-        k = _key(tc, text)
+        k = _key(tc, text, line.get("tone"))
         name = os.path.basename(out)
         # 手で置いたファイル（manifest に無い）はそのまま使う
         if os.path.exists(out) and not force and manifest.get(name, k) == k:
             continue
         print(f"[{i + 1:02d}] {text}", flush=True)
-        synthesize(tc, text, out)
+        synthesize(tc, text, out, line.get("tone"))
         manifest[name] = k
         os.makedirs(os.path.dirname(manifest_path), exist_ok=True)
         json.dump(manifest, open(manifest_path, "w"), ensure_ascii=False, indent=1)

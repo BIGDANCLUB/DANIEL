@@ -7,10 +7,16 @@
   - 字幕はフレーズごとにポップイン（拡大＋フェード）
   - 冒頭1行はフック：大きめの黄色文字
 
-音声は元動画のナレーションを行ごとに切り出して並べ直す（BGMは後付け前提なので入れない）。
+素材（BGMは後付け前提なので入れない）:
+  音声 … 行に "audio":[開始,終了] があれば元動画から切り出し、無ければ Gemini TTS（tts_gemini.py）
+  画像 … 行に "shot":{"image":...} があれば共有画像を切り出し、"prompt" があれば Gemini 画像生成
+         （gen_images_gemini.py）。足りない音声・画像はレンダリング前に自動で生成する。
 
-usage: python3 make_short.py story.json source.mp4 out.mp4
+usage:
+  python3 make_short.py story.json out.mp4                     # TTS＋生成画像の台本
+  python3 make_short.py story.json out.mp4 --source src.mp4    # 元動画の声を使う台本
 """
+import argparse
 import json
 import os
 import re
@@ -20,6 +26,9 @@ import urllib.request
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+
+import gen_images_gemini
+import tts_gemini
 
 W, H, FPS = 1080, 1920, 30
 SR = 44100
@@ -108,26 +117,55 @@ def load_audio(src):
     return np.frombuffer(raw, dtype=np.float32)
 
 
-def build_audio(cfg, src_audio):
+def trim_silence(a, db=-45, pad=0.04):
+    win = int(0.01 * SR)
+    n = len(a) // win
+    if n == 0:
+        return a
+    rms = np.sqrt((a[:n * win].reshape(n, win) ** 2).mean(1) + 1e-12)
+    loud = np.where(20 * np.log10(rms) > db)[0]
+    if len(loud) == 0:
+        return a
+    s = max(0, loud[0] * win - int(pad * SR))
+    e = min(len(a), (loud[-1] + 1) * win + int(pad * SR))
+    return a[s:e]
+
+
+def line_clips(cfg, base, source):
+    """各行の音声（元動画の切り出し、または TTS の WAV）を返す。"""
+    src_audio = None
+    clips = []
+    for i, line in enumerate(cfg["lines"]):
+        if "audio" in line:
+            if src_audio is None:
+                if not source:
+                    sys.exit("audio 区間を使う行があるので --source で元動画を指定してください")
+                src_audio = load_audio(source)
+            a, b = max(0.0, line["audio"][0]), line["audio"][1]
+            clips.append(src_audio[int(a * SR):int(b * SR)].copy())
+        else:
+            clips.append(trim_silence(load_audio(tts_gemini.wav_path(cfg, base, i)).copy()))
+    return clips
+
+
+def build_audio(cfg, clips):
     """行ごとの音声を並べ、各行の開始・終了（出力時間軸）を返す。"""
-    tempo = cfg["tempo"]
-    parts = [np.zeros(int(cfg["lead_in"] * tempo * SR), np.float32)]
-    t = cfg["lead_in"] * tempo
+    tempo = cfg.get("tempo", 1.0)
+    parts = [np.zeros(int(cfg.get("lead_in", 0.05) * tempo * SR), np.float32)]
+    t = cfg.get("lead_in", 0.05) * tempo
     timings = []
     fade = int(0.012 * SR)
     ramp = np.linspace(0, 1, fade, dtype=np.float32)
-    for i, line in enumerate(cfg["lines"]):
+    for i, seg in enumerate(clips):
         if i:
-            parts.append(np.zeros(int(cfg["gap"] * SR), np.float32))
-            t += cfg["gap"]
-        a, b = max(0.0, line["audio"][0]), line["audio"][1]
-        seg = src_audio[int(a * SR):int(b * SR)].copy()
+            parts.append(np.zeros(int(cfg.get("gap", 0.15) * SR), np.float32))
+            t += cfg.get("gap", 0.15)
         seg[:fade] *= ramp
         seg[-fade:] *= ramp[::-1]
         parts.append(seg)
         timings.append((t / tempo, (t + len(seg) / SR) / tempo))
         t += len(seg) / SR
-    parts.append(np.zeros(int(cfg["tail"] * tempo * SR), np.float32))
+    parts.append(np.zeros(int(cfg.get("tail", 1.3) * tempo * SR), np.float32))
     return np.concatenate(parts), timings
 
 
@@ -179,25 +217,54 @@ class Shot:
         return self.img.transform((W, H), Image.EXTENT, (x, y, x + w, y + h), Image.BICUBIC)
 
 
-def main(story_path, src, out):
+AUTO_MOVES = ["in", "left", "out", "right", "in", "up", "out", "down"]
+
+
+def make_shots(cfg, base):
+    """行ごとのカット。shot 指定があれば共有画像の切り出し、prompt 行は生成画像を全面で。"""
+    cache = {}
+
+    def load(path):
+        if path not in cache:
+            cache[path] = Image.open(path).convert("RGB")
+        return cache[path]
+
+    shots = []
+    for i, l in enumerate(cfg["lines"]):
+        spec = dict(l.get("shot", {}))
+        if "image" in spec:
+            img = load(os.path.join(base, cfg["images"][spec["image"]]))
+        else:
+            img = load(gen_images_gemini.image_path(cfg, base, i))
+        spec.setdefault("box", [0, 0, img.width])
+        spec.setdefault("move", l.get("move", AUTO_MOVES[i % len(AUTO_MOVES)]))
+        shots.append(Shot(img, spec))
+    return shots
+
+
+def main(story_path, out, source=None):
     cfg = json.load(open(story_path, encoding="utf-8"))
     base = os.path.dirname(os.path.abspath(story_path))
     work = os.path.splitext(out)[0] + "_work"
     os.makedirs(work, exist_ok=True)
 
+    # --- 素材の自動生成（足りないものだけ） ---
+    tts_gemini.ensure_voice(story_path)
+    gen_images_gemini.ensure_images(story_path)
+
     # --- 音声 ---
-    audio, timings = build_audio(cfg, load_audio(src))
+    tempo = cfg.get("tempo", 1.0)
+    audio, timings = build_audio(cfg, line_clips(cfg, base, source))
     raw_wav = os.path.join(work, "narration_raw.f32")
     audio.astype(np.float32).tofile(raw_wav)
     wav = os.path.splitext(out)[0] + "_narration.wav"
     subprocess.run([FF, "-loglevel", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", raw_wav,
-                    "-af", f"atempo={cfg['tempo']},loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", str(SR), wav], check=True)
-    total = len(audio) / SR / cfg["tempo"]
+                    "-af", f"atempo={tempo},loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", str(SR), wav], check=True)
+    total = len(audio) / SR / tempo
     nframes = int(total * FPS)
 
     # --- カット ---
-    images = {k: Image.open(os.path.join(base, v)).convert("RGB") for k, v in cfg["images"].items()}
-    shots = [Shot(images[l["shot"]["image"]], l["shot"]) for l in cfg["lines"]]
+    shots = make_shots(cfg, base)
     cut_at = [0.0] + [st for st, _ in timings[1:]] + [total]
 
     # --- 字幕 ---
@@ -249,7 +316,14 @@ def main(story_path, src, out):
         for i, ((st, en), l) in enumerate(zip(timings, cfg["lines"])):
             fp.write(f"{i + 1}\n{ts(st)} --> {ts(en)}\n{plain(l['text'])}\n\n")
     print(f"done: {out} ({total:.2f}s)")
+    if not 45 <= total <= 55:
+        print(f"  ※ 45〜55秒から外れています。台本の tempo を {tempo * total / 52:.2f} 付近にすると約52秒になります")
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:4])
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("story")
+    ap.add_argument("out")
+    ap.add_argument("--source", help="audio 区間を使う行がある場合の元動画")
+    args = ap.parse_args()
+    main(args.story, args.out, args.source)

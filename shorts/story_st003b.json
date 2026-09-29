@@ -1,230 +1,34 @@
 {
-  "_comment": "ST-003b（母の施設代の話）を45〜55秒ショート用に再構成した台本。audio は元動画ナレーションの切り出し区間（秒）。",
+  "_comment": "ST-003b（母の施設代の話）を参考フォーマット（全面画像＋中央字幕＋1行ごとのカット切替）で52秒に再構成。audio は元動画ナレーションの切り出し区間（秒）、src_line は元動画の字幕行番号。shot.box は [x, y, 幅]（高さは9:16から自動）、move は in/out/left/right/up/down。",
   "source_video": "ST-003b_v2.mp4",
   "tempo": 1.1,
   "gap": 0.15,
-  "scene_gap": 0.35,
-  "lead_in": 0.1,
+  "lead_in": 0.05,
   "tail": 1.3,
-  "title": [
-    {
-      "text": "年金{11万円}・72歳の私",
-      "size": 66
-    },
-    {
-      "text": "母の施設代 月<19万円>",
-      "size": 88
-    },
-    {
-      "text": "市役所で言われた“まさかの一言”",
-      "size": 54,
-      "band": "#d7263d"
-    }
-  ],
   "disclaimer": "※この物語はフィクションです",
-  "scenes": [
-    {
-      "frame_t": 30.0,
-      "crop": [
-        0,
-        1060,
-        1080,
-        860
-      ],
-      "chapter": "① 限界の日々"
-    },
-    {
-      "frame_t": 80.0,
-      "crop": [
-        0,
-        1060,
-        1080,
-        860
-      ],
-      "chapter": "② 市役所へ"
-    },
-    {
-      "frame_t": 118.0,
-      "crop": [
-        0,
-        1060,
-        1080,
-        860
-      ],
-      "chapter": "③ その後"
-    }
-  ],
+  "images": {
+    "room": "assets/st003b/room.png",
+    "hall": "assets/st003b/hall.png",
+    "veranda": "assets/st003b/veranda.png"
+  },
   "lines": [
-    {
-      "scene": 0,
-      "audio": [
-        -0.02,
-        3.49
-      ],
-      "text": "母の施設代は\n毎月{19万円}です",
-      "src_line": 0
-    },
-    {
-      "scene": 0,
-      "audio": [
-        3.68,
-        7.12
-      ],
-      "text": "私の年金は\n月に{11万円}だけです",
-      "src_line": 1
-    },
-    {
-      "scene": 0,
-      "audio": [
-        7.28,
-        10.23
-      ],
-      "text": "足りない<8万円>は\n貯金で払います",
-      "src_line": 2
-    },
-    {
-      "scene": 0,
-      "audio": [
-        10.42,
-        13.72
-      ],
-      "text": "私は佐藤敬子\n72歳です",
-      "src_line": 3
-    },
-    {
-      "scene": 0,
-      "audio": [
-        43.79,
-        46.89
-      ],
-      "text": "貯金は残り\n<80万円>になりました",
-      "badge": {
-        "text": "貯金残高 80万円",
-        "color": "#d7263d"
-      },
-      "src_line": 13
-    },
-    {
-      "scene": 0,
-      "audio": [
-        47.07,
-        49.37
-      ],
-      "text": "あと<10か月>で\n底をつきます",
-      "src_line": 14
-    },
-    {
-      "scene": 0,
-      "audio": [
-        55.78,
-        58.92
-      ],
-      "text": "夜、何度も\n通帳を数え直しました",
-      "src_line": 17
-    },
-    {
-      "scene": 1,
-      "audio": [
-        64.46,
-        67.2
-      ],
-      "text": "ある日\n市役所へ相談に行きました",
-      "src_line": 20
-    },
-    {
-      "scene": 1,
-      "audio": [
-        70.89,
-        73.53
-      ],
-      "text": "「これは{戻せますよ}」\nと言われました",
-      "src_line": 22
-    },
-    {
-      "scene": 1,
-      "audio": [
-        73.71,
-        76.7
-      ],
-      "text": "{高額介護サービス費}\nという制度です",
-      "src_line": 23
-    },
-    {
-      "scene": 1,
-      "audio": [
-        76.84,
-        80.19
-      ],
-      "text": "介護サービスの自己負担には\n{上限}があります",
-      "src_line": 24
-    },
-    {
-      "scene": 1,
-      "audio": [
-        90.17,
-        93.05
-      ],
-      "text": "超えた分は\n{申請すれば戻る}そうです",
-      "src_line": 28
-    },
-    {
-      "scene": 1,
-      "audio": [
-        95.62,
-        98.18
-      ],
-      "text": "{2年分}をまとめて\n申請できました",
-      "src_line": 30
-    },
-    {
-      "scene": 1,
-      "audio": [
-        100.73,
-        103.6
-      ],
-      "text": "{24万円}が\n口座に戻ってきました",
-      "badge": {
-        "text": "+24万円 戻った！",
-        "color": "#1f9d55"
-      },
-      "src_line": 32
-    },
-    {
-      "scene": 1,
-      "audio": [
-        103.78,
-        107.06
-      ],
-      "text": "これからは毎月\n{1万円}ほど戻ります",
-      "src_line": 33
-    },
-    {
-      "scene": 2,
-      "audio": [
-        113.31,
-        116.19
-      ],
-      "text": "母は私の手を\nそっと握りました",
-      "src_line": 36
-    },
-    {
-      "scene": 2,
-      "audio": [
-        116.37,
-        118.77
-      ],
-      "text": "「敬子、ありがとう」\nと言いました",
-      "src_line": 37
-    },
-    {
-      "scene": 2,
-      "audio": [
-        125.47,
-        128.27
-      ],
-      "text": "あなたなら\nまず誰に相談しますか？",
-      "cta": "コメントで教えてください",
-      "src_line": 40
-    }
+    {"src_line": 0, "audio": [0.0, 3.49], "hook": true, "text": "母の施設代は\n毎月<19万円>", "shot": {"image": "room", "box": [120, 440, 826], "move": "in"}},
+    {"src_line": 1, "audio": [3.68, 7.12], "text": "私の年金は\n月に{11万円}だけです", "shot": {"image": "room", "box": [300, 996, 520], "move": "in"}},
+    {"src_line": 2, "audio": [7.28, 10.23], "text": "足りない<8万円>は\n貯金で払います", "shot": {"image": "room", "box": [480, 853, 600], "move": "left"}},
+    {"src_line": 3, "audio": [10.42, 13.72], "text": "私は{佐藤敬子}\n{72歳}です", "shot": {"image": "room", "box": [0, 420, 760], "move": "out"}},
+    {"src_line": 13, "audio": [43.79, 46.89], "text": "貯金は残り\n<80万円>になりました", "shot": {"image": "room", "box": [360, 1031, 500], "move": "in"}},
+    {"src_line": 14, "audio": [47.07, 49.37], "text": "あと<10か月>で\n底をつきます", "shot": {"image": "room", "box": [480, 440, 600], "move": "up"}},
+    {"src_line": 17, "audio": [55.78, 58.92], "text": "夜、何度も\n{通帳}を数え直しました", "shot": {"image": "room", "box": [140, 498, 800], "move": "in"}},
+    {"src_line": 20, "audio": [64.46, 67.2], "text": "ある日\n{市役所}へ相談に行きました", "shot": {"image": "hall", "box": [130, 440, 826], "move": "in"}},
+    {"src_line": 22, "audio": [70.89, 73.53], "text": "「これは{戻せますよ}」\nと言われました", "shot": {"image": "hall", "box": [380, 560, 700], "move": "left"}},
+    {"src_line": 23, "audio": [73.71, 76.7], "text": "<高額介護サービス費>\nという制度です", "shot": {"image": "hall", "box": [360, 924, 560], "move": "in"}},
+    {"src_line": 24, "audio": [76.84, 80.19], "text": "介護サービスの自己負担には\n{上限}があります", "shot": {"image": "hall", "box": [420, 440, 640], "move": "right"}},
+    {"src_line": 28, "audio": [90.17, 93.05], "text": "超えた分は\n{申請すれば戻る}そうです", "shot": {"image": "hall", "box": [0, 960, 540], "move": "up"}},
+    {"src_line": 30, "audio": [95.62, 98.18], "text": "{2年分}をまとめて\n申請できました", "shot": {"image": "hall", "box": [180, 640, 720], "move": "out"}},
+    {"src_line": 32, "audio": [100.73, 103.6], "text": "<24万円>が\n口座に戻ってきました", "shot": {"image": "hall", "box": [500, 1120, 440], "move": "in"}},
+    {"src_line": 33, "audio": [103.78, 107.06], "text": "これからは毎月\n{1万円}ほど戻ります", "shot": {"image": "hall", "box": [0, 440, 826], "move": "out"}},
+    {"src_line": 36, "audio": [113.31, 116.19], "text": "母は私の手を\nそっと握りました", "shot": {"image": "veranda", "box": [220, 900, 560], "move": "in"}},
+    {"src_line": 37, "audio": [116.37, 118.77], "text": "「{敬子、ありがとう}」\nと言いました", "shot": {"image": "veranda", "box": [0, 440, 640], "move": "out"}},
+    {"src_line": 40, "audio": [125.47, 128.27], "text": "あなたなら\n<まず誰に相談>しますか？", "shot": {"image": "veranda", "box": [130, 440, 826], "move": "in"}}
   ]
 }

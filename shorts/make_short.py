@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """縦型ショート（1080x1920）を台本JSONから組み立てる。
 
-レイアウト:
-  上段  … フック用タイトル（3行・強調色つき）
-  中段  … シーン画像（ゆっくりズーム＋クロスフェード）、章チップ、残高バッジ
-  字幕  … 画像下部に大きな縁取り字幕。{黄} <赤> [緑] で強調
-  背景  … シーン画像のぼかし
+参考フォーマット:
+  - 画像は全面（帯なし）。1行ごとにカットを切り替え、ゆっくりズーム／パン
+  - 字幕は画面中央。白文字＋太い黒縁、キーワードは {黄} <赤>
+  - 字幕はフレーズごとにポップイン（拡大＋フェード）
+  - 冒頭1行はフック：大きめの黄色文字
 
 音声は元動画のナレーションを行ごとに切り出して並べ直す（BGMは後付け前提なので入れない）。
 
@@ -19,22 +19,22 @@ import sys
 import urllib.request
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageDraw, ImageFont
 
 W, H, FPS = 1080, 1920, 30
 SR = 44100
 HERE = os.path.dirname(os.path.abspath(__file__))
 FONT_DIR = os.path.join(HERE, "fonts")
 FONTS = {
-    "heavy": ("DelaGothicOne-Regular.ttf", "ofl/delagothicone/DelaGothicOne-Regular.ttf"),
     "sans": ("NotoSansJP[wght].ttf", "ofl/notosansjp/NotoSansJP%5Bwght%5D.ttf"),
 }
-COLORS = {"{": "#ffe14d", "<": "#ff5a5a", "[": "#5fe08a"}
-CLOSE = {"{": "}", "<": ">", "[": "]"}
+COLORS = {"{": "#ffe600", "<": "#ff2020"}
 
-IMG_Y, IMG_H = 600, 860          # シーン画像の表示位置
-SUB_CY = 1300                    # 字幕の中心Y
-FADE = 0.4                       # シーン切り替えのクロスフェード秒
+SUB_CY = 975          # 字幕の中心Y（参考動画はほぼ画面中央）
+SUB_SIZE = 96
+HOOK_SIZE = 136
+SUB_MAX_W = 1040
+POP = 0.22            # ポップイン秒
 
 
 def ffmpeg_bin():
@@ -55,33 +55,32 @@ def font(kind, size):
         os.makedirs(FONT_DIR, exist_ok=True)
         urllib.request.urlretrieve("https://raw.githubusercontent.com/google/fonts/main/" + path, local)
     f = ImageFont.truetype(local, size)
-    if kind == "sans":
-        f.set_variation_by_name("Black")
+    f.set_variation_by_name("Black")
     return f
 
 
-def parse_runs(text):
-    """'月に{11万円}だけ' -> [('月に', white), ('11万円', yellow), ('だけ', white)]"""
+def parse_runs(text, base):
+    """'月に{11万円}だけ' -> [('月に', base), ('11万円', yellow), ('だけ', base)]"""
     runs, i = [], 0
-    for m in re.finditer(r"\{[^}]*\}|<[^>]*>|\[[^\]]*\]", text):
+    for m in re.finditer(r"\{[^}]*\}|<[^>]*>", text):
         if m.start() > i:
-            runs.append((text[i:m.start()], "#ffffff"))
+            runs.append((text[i:m.start()], base))
         runs.append((m.group()[1:-1], COLORS[m.group()[0]]))
         i = m.end()
     if i < len(text):
-        runs.append((text[i:], "#ffffff"))
+        runs.append((text[i:], base))
     return runs
 
 
 def plain(text):
-    return re.sub(r"[{}<>\[\]]", "", text)
+    return re.sub(r"[{}<>]", "", text)
 
 
-def rich_text(text, kind, size, max_w, stroke_ratio=0.13, line_gap=0.18):
-    """複数行・色分け・縁取りのテキストをRGBA画像で返す。幅に収まるよう自動縮小。"""
+def rich_text(text, size, max_w, base="#ffffff", stroke_ratio=0.14, line_gap=0.02):
+    """複数行・色分け・黒縁のテキストをRGBA画像で返す。幅に収まるよう自動縮小。"""
     lines = text.split("\n")
     while True:
-        f = font(kind, size)
+        f = font("sans", size)
         sw = max(2, int(size * stroke_ratio))
         widths = [f.getlength(plain(l)) for l in lines]
         if max(widths) + 2 * sw <= max_w or size <= 30:
@@ -96,29 +95,10 @@ def rich_text(text, kind, size, max_w, stroke_ratio=0.13, line_gap=0.18):
     for li, l in enumerate(lines):
         x = (iw - widths[li]) / 2
         y = sw + li * lh
-        for seg, col in parse_runs(l):
+        for seg, col in parse_runs(l, base):
             d.text((x, y), seg, font=f, fill=col, stroke_width=sw, stroke_fill="#000000")
             x += f.getlength(seg)
     return img
-
-
-def chip(text, bg, size=40, pad=(22, 10), radius=14, fg="#ffffff"):
-    f = font("sans", size)
-    tw = f.getlength(text)
-    asc, desc = f.getmetrics()
-    img = Image.new("RGBA", (int(tw + 2 * pad[0]), asc + desc + 2 * pad[1]), (0, 0, 0, 0))
-    d = ImageDraw.Draw(img)
-    d.rounded_rectangle([0, 0, img.width - 1, img.height - 1], radius, fill=bg)
-    d.text((pad[0], pad[1]), text, font=f, fill=fg)
-    return img
-
-
-def grab_frame(src, t):
-    raw = subprocess.run(
-        [FF, "-loglevel", "error", "-ss", str(t), "-i", src, "-frames:v", "1",
-         "-vf", f"scale={W}:{H}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
-        check=True, capture_output=True).stdout
-    return Image.frombytes("RGB", (W, H), raw)
 
 
 def load_audio(src):
@@ -138,9 +118,8 @@ def build_audio(cfg, src_audio):
     ramp = np.linspace(0, 1, fade, dtype=np.float32)
     for i, line in enumerate(cfg["lines"]):
         if i:
-            g = cfg["scene_gap"] if line["scene"] != cfg["lines"][i - 1]["scene"] else cfg["gap"]
-            parts.append(np.zeros(int(g * SR), np.float32))
-            t += g
+            parts.append(np.zeros(int(cfg["gap"] * SR), np.float32))
+            t += cfg["gap"]
         a, b = max(0.0, line["audio"][0]), line["audio"][1]
         seg = src_audio[int(a * SR):int(b * SR)].copy()
         seg[:fade] *= ramp
@@ -152,13 +131,57 @@ def build_audio(cfg, src_audio):
     return np.concatenate(parts), timings
 
 
-def ease(x):
+def ease_out(x):
     x = min(max(x, 0.0), 1.0)
     return 1 - (1 - x) ** 3
 
 
+def ease_back(x, k=1.9):
+    x = min(max(x, 0.0), 1.0) - 1
+    return 1 + (k + 1) * x ** 3 + k * x ** 2
+
+
+class Shot:
+    """画像の一部（9:16の枠）を、start→end の枠へ補間しながら全面に映す。"""
+
+    def __init__(self, img, spec):
+        self.img = img
+        self.a = self._box(spec["box"])
+        motion = spec.get("move", "in")
+        x, y, w, h = self.a
+        if motion == "in":
+            k = 0.88
+            self.b = (x + w * (1 - k) / 2, y + h * (1 - k) / 2, w * k, h * k)
+        elif motion == "out":
+            self.b, k = self.a, 0.88
+            self.a = (x + w * (1 - k) / 2, y + h * (1 - k) / 2, w * k, h * k)
+        elif motion in ("left", "right", "up", "down"):
+            k = 0.9
+            w2, h2 = w * k, h * k
+            dx = {"left": (w - w2, 0), "right": (0, w - w2)}.get(motion, ((w - w2) / 2,) * 2)
+            dy = {"up": (h - h2, 0), "down": (0, h - h2)}.get(motion, ((h - h2) / 2,) * 2)
+            self.a = (x + dx[0], y + dy[0], w2, h2)
+            self.b = (x + dx[1], y + dy[1], w2, h2)
+        else:
+            self.b = self.a
+
+    def _box(self, box):
+        x, y, w = box[:3]
+        h = w * H / W
+        iw, ih = self.img.size
+        x = min(max(0, x), iw - w)
+        y = min(max(0, y), ih - h)
+        return (x, y, w, h)
+
+    def render(self, p):
+        p = p * p * (3 - 2 * p) * 0.5 + p * 0.5      # 少しだけイーズ
+        x, y, w, h = (a + (b - a) * p for a, b in zip(self.a, self.b))
+        return self.img.transform((W, H), Image.EXTENT, (x, y, x + w, y + h), Image.BICUBIC)
+
+
 def main(story_path, src, out):
     cfg = json.load(open(story_path, encoding="utf-8"))
+    base = os.path.dirname(os.path.abspath(story_path))
     work = os.path.splitext(out)[0] + "_work"
     os.makedirs(work, exist_ok=True)
 
@@ -172,75 +195,22 @@ def main(story_path, src, out):
     total = len(audio) / SR / cfg["tempo"]
     nframes = int(total * FPS)
 
-    # --- シーン素材 ---
-    scenes = []
-    for s in cfg["scenes"]:
-        fr = grab_frame(src, s["frame_t"])
-        x, y, w, h = s["crop"]
-        img = fr.crop((x, y, x + w, y + h))
-        bg = img.resize((int(H * w / h), H), Image.LANCZOS)
-        bg = bg.crop(((bg.width - W) // 2, 0, (bg.width - W) // 2 + W, H))
-        bg = bg.filter(ImageFilter.GaussianBlur(28))
-        bg = Image.blend(bg, Image.new("RGB", (W, H), "#000000"), 0.62)
-        scenes.append({"img": img.resize((int(W * 1.12), int(IMG_H * 1.12)), Image.LANCZOS), "bg": bg,
-                       "chapter": chip(s["chapter"], (0, 0, 0, 190), size=38)})
-    scene_start = {}
-    for (st, _), line in zip(timings, cfg["lines"]):
-        scene_start.setdefault(line["scene"], st)
-    scene_start[0] = 0.0
-    scene_end = {}
-    ids = sorted(scene_start)
-    for i, sid in enumerate(ids):
-        scene_end[sid] = scene_start[ids[i + 1]] if i + 1 < len(ids) else total
+    # --- カット ---
+    images = {k: Image.open(os.path.join(base, v)).convert("RGB") for k, v in cfg["images"].items()}
+    shots = [Shot(images[l["shot"]["image"]], l["shot"]) for l in cfg["lines"]]
+    cut_at = [0.0] + [st for st, _ in timings[1:]] + [total]
 
-    # --- 固定レイヤー（タイトル） ---
-    title = Image.new("RGBA", (W, IMG_Y), (0, 0, 0, 0))
-    y = 150
-    for t in cfg["title"]:
-        if t.get("band"):
-            txt = rich_text(t["text"], "heavy", t["size"], W - 120, stroke_ratio=0.0)
-            band = Image.new("RGBA", (txt.width + 50, txt.height + 18), t["band"])
-            band.alpha_composite(txt, (25, 9))
-            title.alpha_composite(band, ((W - band.width) // 2, y + 6))
-            y += band.height + 14
+    # --- 字幕 ---
+    subs = []
+    for i, l in enumerate(cfg["lines"]):
+        if l.get("hook"):
+            subs.append(rich_text(l["text"], HOOK_SIZE, SUB_MAX_W, base="#ffe600", line_gap=0.0))
         else:
-            txt = rich_text(t["text"], "heavy", t["size"], W - 80)
-            title.alpha_composite(txt, ((W - txt.width) // 2, y))
-            y += txt.height - 6
+            subs.append(rich_text(l["text"], SUB_SIZE, SUB_MAX_W))
+    note = None
     if cfg.get("disclaimer"):
-        f = font("sans", 26)
-        ImageDraw.Draw(title).text((W - 30, IMG_Y - 12), cfg["disclaimer"], font=f,
-                                   fill=(255, 255, 255, 170), anchor="rb")
-
-    # 画像下部のグラデ（字幕を読みやすく）
-    grad = Image.new("RGBA", (W, IMG_H), (0, 0, 0, 0))
-    ga = np.zeros((IMG_H, W), np.uint8)
-    ramp = np.clip((np.arange(IMG_H) - IMG_H * 0.45) / (IMG_H * 0.55), 0, 1) ** 1.4 * 200
-    ga[:] = ramp[:, None].astype(np.uint8)
-    grad.putalpha(Image.fromarray(ga))
-
-    subs = [rich_text(l["text"], "heavy", 78, 960) for l in cfg["lines"]]
-    badges = []
-    cur = None
-    for (st, _), l in zip(timings, cfg["lines"]):
-        if "badge" in l:
-            cur = (st, chip(l["badge"]["text"], l["badge"]["color"], size=40))
-        badges.append(cur)
-    ctas = [(st, chip(l["cta"], "#ffffff", size=44, fg="#111111")) if l.get("cta") else None
-            for (st, _), l in zip(timings, cfg["lines"])]
-
-    def scene_layer(sid, t):
-        sc = scenes[sid]
-        p = (t - scene_start[sid]) / max(0.1, scene_end[sid] - scene_start[sid])
-        z = 1.0 + 0.10 * p                     # ゆっくりズームイン
-        big = sc["img"]
-        cw, ch = int(W * 1.12 / z), int(IMG_H * 1.12 / z)
-        dx = (big.width - cw) * (0.5 + (0.12 if sid % 2 else -0.12) * (p - 0.5))
-        dy = (big.height - ch) * 0.5
-        crop = big.crop((int(dx), int(dy), int(dx) + cw, int(dy) + ch)).resize((W, IMG_H), Image.BILINEAR)
-        frame = sc["bg"].copy()
-        frame.paste(crop, (0, IMG_Y))
-        return frame
+        note = rich_text(cfg["disclaimer"], 28, 600, stroke_ratio=0.12)
+        note.putalpha(note.getchannel("A").point(lambda v: int(v * 0.75)))
 
     enc = subprocess.Popen(
         [FF, "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS),
@@ -250,50 +220,24 @@ def main(story_path, src, out):
 
     for n in range(nframes):
         t = n / FPS
-        sid = max(s for s in ids if scene_start[s] <= t)
-        frame = scene_layer(sid, t)
-        # 次シーンへのクロスフェード
-        nxt = [s for s in ids if 0 <= scene_start[s] - t < FADE and s != sid]
-        if nxt:
-            k = 1 - (scene_start[nxt[0]] - t) / FADE
-            frame = Image.blend(frame, scene_layer(nxt[0], scene_start[nxt[0]]), k)
-        frame = frame.convert("RGBA")
-        frame.alpha_composite(grad, (0, IMG_Y))
-        frame.alpha_composite(title)
-        # 章チップ
-        frame.alpha_composite(scenes[sid]["chapter"], (28, IMG_Y + 24))
+        li = max(i for i in range(len(shots)) if cut_at[i] <= t)
+        p = (t - cut_at[li]) / (cut_at[li + 1] - cut_at[li])
+        frame = shots[li].render(min(1.0, p)).convert("RGBA")
 
-        # 現在の字幕行（次の行が始まるまで表示し続ける）
-        li = None
-        for i, (st, _) in enumerate(timings):
-            if t >= st - 0.05:
-                li = i
-        if li is not None:
-            st = timings[li][0]
-            a = ease((t - st + 0.05) / 0.14)
-            sub = subs[li]
-            sc = 0.86 + 0.14 * a
-            s_img = sub.resize((max(1, int(sub.width * sc)), max(1, int(sub.height * sc))), Image.BILINEAR)
-            if a < 1:
-                s_img.putalpha(s_img.getchannel("A").point(lambda v: int(v * a)))
-            frame.alpha_composite(s_img, ((W - s_img.width) // 2, SUB_CY - s_img.height // 2))
-
-            b = badges[li]
-            if b:
-                ba = ease((t - b[0]) / 0.18)
-                bi = b[1]
-                bs = 0.7 + 0.3 * ba if ba < 1 else 1 + 0.06 * max(0, 1 - (t - b[0] - 0.18) / 0.25)
-                bimg = bi.resize((int(bi.width * bs), int(bi.height * bs)), Image.BILINEAR)
-                frame.alpha_composite(bimg, (W - 28 - bimg.width, IMG_Y + 24))
-            c = ctas[li]
-            if c and t >= c[0] + 0.6:
-                ca = ease((t - c[0] - 0.6) / 0.25)
-                cimg = c[1].copy()
-                cimg.putalpha(cimg.getchannel("A").point(lambda v: int(v * ca)))
-                frame.alpha_composite(cimg, ((W - cimg.width) // 2, IMG_Y + IMG_H + 40 - int(20 * (1 - ca))))
+        st = timings[li][0] if li else 0.0
+        a = (t - st) / POP
+        sub = subs[li]
+        if a < 1:
+            sc = 0.55 + 0.45 * ease_back(a)
+            sub = sub.resize((max(1, int(sub.width * sc)), max(1, int(sub.height * sc))), Image.BILINEAR)
+            alpha = ease_out(a * 1.6)
+            sub.putalpha(sub.getchannel("A").point(lambda v: int(v * alpha)))
+        frame.alpha_composite(sub, ((W - sub.width) // 2, SUB_CY - sub.height // 2))
+        if note:
+            frame.alpha_composite(note, (24, 150))
 
         enc.stdin.write(frame.convert("RGB").tobytes())
-        if n % 150 == 0:
+        if n % 300 == 0:
             print(f"frame {n}/{nframes}", flush=True)
     enc.stdin.close()
     enc.wait()

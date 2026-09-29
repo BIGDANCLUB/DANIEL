@@ -1,0 +1,218 @@
+{
+ "st003b_ai_01": {
+  "file": "st003b_ai_01.jpg",
+  "key": "9be0f912defa3e46919db961c132eb338fbd6b35",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A worn bankbook and a stack of invoices on an old kotatsu table in a dim, aging Japanese tatami room, late afternoon light through shoji screens, no people"
+ },
+ "st003b_ai_02": {
+  "file": "st003b_ai_02.jpg",
+  "key": "4168ccf6cec7d8c586cb9211dbe898791cf786fd",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Close-up of an elderly woman's wrinkled hands holding a plain white envelope with no writing over a kotatsu table, soft window light"
+ },
+ "st003b_ai_03": {
+  "file": "st003b_ai_03.jpg",
+  "key": "b20ec7d698359c9608f54bb371d96dd022087d81",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Close-up of an open Japanese savings passbook next to an old calculator on a wooden table, shallow depth of field"
+ },
+ "st003b_ai_04": {
+  "file": "st003b_ai_04.jpg",
+  "key": "3023cde39374404b00d7c1632042c11470385718",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "An elderly Japanese woman in a cardigan seen from behind, sitting alone at a kotatsu in a small old rented house, quiet and lonely mood"
+ },
+ "st003b_ai_05": {
+  "file": "st003b_ai_05.jpg",
+  "key": "e23ffd421203c742cbde48337a145eb6db2dca00",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Extreme close-up of a nearly empty open coin purse with a few small coins on a tatami mat, dim warm light, no paper money"
+ },
+ "st003b_ai_06": {
+  "file": "st003b_ai_06.jpg",
+  "key": "c1813e232503ba43b7f8fe097c134d4884f41d5c",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A paper wall calendar hanging on a cracked plaster wall of an old Japanese house, pages slightly curled, gloomy light"
+ },
+ "st003b_ai_07": {
+  "file": "st003b_ai_07.jpg",
+  "key": "fd94b979157e67b954df093a1c625d344a7db1f5",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Night scene, a single desk lamp illuminating a bankbook and reading glasses on a kotatsu table in a dark Japanese room"
+ },
+ "st003b_ai_08": {
+  "file": "st003b_ai_08.jpg",
+  "key": "56800c73ae147bc47e9267c8f292f865bb1bf6af",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Exterior of a modest Japanese municipal office building on a clear morning, elderly woman walking toward the entrance seen from behind"
+ },
+ "st003b_ai_09": {
+  "file": "st003b_ai_09.jpg",
+  "key": "ace109c9517682dc8df15b77d014f2b36f6bf23b",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Inside a Japanese city hall welfare counter, a staff member's hands pointing at a document on the counter, bright fluorescent office light"
+ },
+ "st003b_ai_10": {
+  "file": "st003b_ai_10.jpg",
+  "key": "855e426936dd0693a46cea3b5c6b29835a5fc70c",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Rack of colorful welfare pamphlets on a table in a Japanese public office waiting area, blurred background, no readable text"
+ },
+ "st003b_ai_11": {
+  "file": "st003b_ai_11.jpg",
+  "key": "77fd6ea0c68c72c47778d49a1c1634f6364b6815",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Close-up of hands filling out an application form with a ballpoint pen at a public office counter, form text blurred and unreadable"
+ },
+ "st003b_ai_12": {
+  "file": "st003b_ai_12.jpg",
+  "key": "f241abca69c922d8f6d83fa395c28beb00956ee4",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "An elderly woman's hands holding a stack of care facility invoices, sitting on a bench in a bright public office"
+ },
+ "st003b_ai_13": {
+  "file": "st003b_ai_13.jpg",
+  "key": "4584cc18a0a00ef206f81acb2b9e763c307e6c06",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A neat stack of paperwork and a Japanese personal name seal (hanko) on a counter, soft daylight"
+ },
+ "st003b_ai_14": {
+  "file": "st003b_ai_14.jpg",
+  "key": "107e47aee0e7e42a175e5c11c116fbbd19254917",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Close-up of a bank ATM screen glow reflecting on an elderly woman's relieved hands holding a passbook, screen content blurred"
+ },
+ "st003b_ai_15": {
+  "file": "st003b_ai_15.jpg",
+  "key": "92c7ba3c27a104a28c83631968b0ed64831945de",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Morning sunlight streaming into a tidy Japanese tatami room, a cup of green tea steaming on a low table, empty room with no people, hopeful mood"
+ },
+ "st003b_ai_16": {
+  "file": "st003b_ai_16.jpg",
+  "key": "63bdf88a6210e6e102687947ab1df7625a9836cd",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Close-up of a very old woman's hand gently holding her elderly daughter's hand on a bed blanket in a care home room, warm window light"
+ },
+ "st003b_ai_17": {
+  "file": "st003b_ai_17.jpg",
+  "key": "4bc4a26e82b48e371f84d7461688bdfc800f1a94",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Care home room by a window, a very old mother in a wheelchair and her gray-haired daughter in her seventies, both seen from behind looking out at the garden, gentle backlight"
+ },
+ "st003b_ai_18": {
+  "file": "st003b_ai_18.jpg",
+  "key": "86eaa828d8283d613514b370734cec06003fadf7",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Riverside embankment lined with cherry blossoms at sunset in Japan, an elderly woman walking away along the path, nostalgic mood"
+ },
+ "st004_ai_01": {
+  "file": "st004_ai_01.jpg",
+  "key": "1aede9c8ffb23f7a6373ee4692cd567396b80089",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A hospital invoice and a cashier tray on a hospital payment counter, an elderly man's hand resting next to it, cold fluorescent light, no people's faces"
+ },
+ "st004_ai_02": {
+  "file": "st004_ai_02.jpg",
+  "key": "80b6c57ce203f1218a96fbb68eec9f0ac710f074",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A Japanese man in his sixties in a gray cardigan seen from behind, standing on the veranda of a modest suburban Japanese house, morning light"
+ },
+ "st004_ai_03": {
+  "file": "st004_ai_03.jpg",
+  "key": "7e984bc9e6b125a3d821e17c3aa8f548d1f9ff02",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Close-up of an elderly man's hands holding a plain white envelope with no writing at a low wooden table, soft window light"
+ },
+ "st004_ai_04": {
+  "file": "st004_ai_04.jpg",
+  "key": "63aa553a03eaead174f6e200bfe2864608beb19a",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A plain dark blue booklet with a blank cover and reading glasses on a neat wooden desk, warm afternoon light, shallow depth of field"
+ },
+ "st004_ai_05": {
+  "file": "st004_ai_05.jpg",
+  "key": "0905d5e04e1160cc007c55dc88c245cec7e39c13",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Dim early morning in a Japanese bedroom, a futon slightly disturbed, a man's hand gripping the blanket, dramatic shadows"
+ },
+ "st004_ai_06": {
+  "file": "st004_ai_06.jpg",
+  "key": "7cf54b180c004bdd20edd174e35254957b5ae9d0",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A quiet Japanese hospital room with a single bed by the window, IV stand, late afternoon light through blinds, empty, no people"
+ },
+ "st004_ai_07": {
+  "file": "st004_ai_07.jpg",
+  "key": "04be31c8be1a0413aa8a3a14dc19e280084bc778",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A hospital accounts counter in Japan seen over an elderly man's shoulder from behind, staff hands pushing a document across the counter"
+ },
+ "st004_ai_08": {
+  "file": "st004_ai_08.jpg",
+  "key": "046aa96da60dc394041311c7a80aadb2a569c5f4",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "An empty hospital waiting room bench in Japan, a man's jacket and a paper bag left on it, gloomy blue light"
+ },
+ "st004_ai_09": {
+  "file": "st004_ai_09.jpg",
+  "key": "8c56435ccb97cdd3ec3c6cd678395296b44e5b93",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Close-up of an elderly woman's hands tightly holding a plain blank-covered booklet on her lap in a hospital lobby, soft light"
+ },
+ "st004_ai_10": {
+  "file": "st004_ai_10.jpg",
+  "key": "3ca93035dc799eae46bd752dae97c892c19d9d6f",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A hospital accounts clerk's hands gently gesturing over a counter with brochures, warm soft light, faces not shown"
+ },
+ "st004_ai_11": {
+  "file": "st004_ai_11.jpg",
+  "key": "9c9d82ca4fc5a1e50c3f16d2345b3f69c975d0d4",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A rack of health insurance pamphlets at a Japanese hospital counter, blurred background, no readable text"
+ },
+ "st004_ai_12": {
+  "file": "st004_ai_12.jpg",
+  "key": "9efd34d92c161cddee2b5d277ae644e698355d97",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Close-up of a pen pointing at a simple bar chart on a paper document on a counter, numbers and text blurred and unreadable"
+ },
+ "st004_ai_13": {
+  "file": "st004_ai_13.jpg",
+  "key": "adf6d9b58fccc8613daba3826e4a59622df75b58",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Close-up of an elderly man's hands holding a sheet of paper, text blurred, hospital lobby background softly blurred, no faces"
+ },
+ "st004_ai_14": {
+  "file": "st004_ai_14.jpg",
+  "key": "8c61432f0093325341ffe17698b8958527616902",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A hand placing a plain blank plastic ID card on a small card reader at a Japanese hospital reception counter, card has no text"
+ },
+ "st004_ai_15": {
+  "file": "st004_ai_15.jpg",
+  "key": "fd720912f679b0cab830da2be536df0aba5b9cce",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Close-up of an elderly man's relieved hands holding a folded receipt and a wallet at a hospital counter, warm light"
+ },
+ "st004_ai_16": {
+  "file": "st004_ai_16.jpg",
+  "key": "dfe5cd4eb95c09e43acfef7994012b10428ee0bd",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "Beautiful wide view of a Japanese town at dawn with Mount Fuji in the distance, calm and proud mood, no text"
+ },
+ "st004_ai_17": {
+  "file": "st004_ai_17.jpg",
+  "key": "e1b255db0fcd60a555d9ab0cbcde69127cc546bb",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "An elderly Japanese couple seen from behind walking out of a hospital entrance into bright sunshine, the wife holding his arm"
+ },
+ "st004_ai_18": {
+  "file": "st004_ai_18.jpg",
+  "key": "c4b96caa81cb47252d5e874573a3242c70b338d7",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "An elderly Japanese man seen from behind sitting on a riverside bench at sunset, looking at the calm water, reflective mood"
+ }
+}

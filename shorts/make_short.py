@@ -347,6 +347,13 @@ def make_shots(cfg, base):
         spec = dict(l.get("shot", {}))
         if "image" in spec:
             img = load(os.path.join(base, cfg["images"][spec["image"]]))
+        elif "scene" in l:
+            # 場面画像の一部を切り出す。crop = [中心x, 中心y, 拡大率]（x,y は 0〜1、拡大率1で全体）
+            img = load(gen_images_gemini.scene_path(cfg, base, l["scene"]))
+            cx, cy, zoom = l.get("crop", [0.5, 0.5, 1.0])
+            w = img.width / zoom
+            h = w * H / W
+            spec.setdefault("box", [cx * img.width - w / 2, cy * img.height - h / 2, w])
         else:
             img = load(gen_images_gemini.image_path(cfg, base, i))
         spec.setdefault("box", [0, 0, img.width])

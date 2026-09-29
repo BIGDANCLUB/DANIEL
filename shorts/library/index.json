@@ -328,5 +328,65 @@
   "key": "5468f0f2fe8974bd4db4ea143b0f4e270bc9f88e",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "A middle-aged Japanese son and his elderly father walking slowly side by side on a quiet residential street, seen from behind, warm evening light"
+ },
+ "st008_ai_applause": {
+  "file": "st008_ai_applause.jpg",
+  "key": "c3cec4815a8a1e059eb369f96bb1231ff8a65878",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of several customers' hands clapping above a ramen shop counter with steaming bowls, only hands and forearms visible, warm cheerful light"
+ },
+ "st008_ai_apron": {
+  "file": "st008_ai_apron.jpg",
+  "key": "92d851d7cac1c60fd6e7337d6fc104db6d65fcea",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "View from the kitchen side: the back of a ramen shop owner in a white apron and white headband, standing calmly behind the counter facing the seated customers, only his back visible, customers blurred in background, warm light"
+ },
+ "st008_ai_counter": {
+  "file": "st008_ai_counter.jpg",
+  "key": "d86366b75b838a03b2b6a8eef3a794ee0ad35c99",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Interior of a small Japanese ramen shop, wooden counter with seated customers seen from behind, steam, warm light, menus with no readable text"
+ },
+ "st008_ai_door": {
+  "file": "st008_ai_door.jpg",
+  "key": "20ce8db18a5ae97994b18c606018fe715dba7663",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A man in a dark jacket seen from behind walking out through the sliding wooden door of a small ramen shop, head down, noren curtain with no readable text"
+ },
+ "st008_ai_fist": {
+  "file": "st008_ai_fist.jpg",
+  "key": "30ca30e39069e5c15332417fe48aea2510f09a74",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of a man's clenched fist slamming down on a wooden ramen shop counter, bowls and chopsticks jumping, tense dramatic light, only fist and forearm visible"
+ },
+ "st008_ai_kitchen": {
+  "file": "st008_ai_kitchen.jpg",
+  "key": "68da5d433623f5f95eb90d4ccd39f7cfab24ac2e",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of a ramen chef's hands placing toppings into a bowl of ramen in a small shop kitchen, rising steam, warm light, only hands and forearms visible"
+ },
+ "st008_ai_line": {
+  "file": "st008_ai_line.jpg",
+  "key": "c9932db35569314aa48b8319ce1df1ed0ab6f3be",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A line of customers waiting outside a small Japanese ramen shop at lunchtime, seen from behind, one man in a dark jacket pushing in at the front of the line, tense mood, noren curtain with no readable text"
+ },
+ "st008_ai_night": {
+  "file": "st008_ai_night.jpg",
+  "key": "acf42becfbe5c81e60fad557ad83abe91666dbc6",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A small Japanese ramen shop at night with warm lantern light glowing on a quiet street, calm peaceful mood, no readable text"
+ },
+ "st008_ai_shop_ext": {
+  "file": "st008_ai_shop_ext.jpg",
+  "key": "c781b4c68b1ccbbf54432b45fa0d51d23bfb8dcd",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Exterior of a small traditional Japanese ramen shop at noon with a short line of people waiting outside, seen from behind, noren curtain and signs with no readable text"
+ },
+ "st008_ai_tablet": {
+  "file": "st008_ai_tablet.jpg",
+  "key": "5d6714a9aca24655ef367e2e01a047d599c2f8ba",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of a hand holding a tablet over a ramen shop counter, the screen showing a blurry grayscale security camera still, screen content unreadable"
  }
 }

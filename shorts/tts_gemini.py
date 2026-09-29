@@ -12,6 +12,7 @@ usage:
 """
 import base64
 import hashlib
+import io
 import json
 import os
 import re
@@ -90,14 +91,23 @@ def synthesize(tc, text, out, tone=None):
     }
     res = _request(f"models/{tc['model']}:generateContent", body)
     part = res["candidates"][0]["content"]["parts"][0]["inlineData"]
-    pcm = base64.b64decode(part["data"])
-    rate = int(re.search(r"rate=(\d+)", part.get("mimeType", "")).group(1)) if "rate=" in part.get("mimeType", "") else 24000
+    pcm, ch, width, rate = decode_audio(base64.b64decode(part["data"]), part.get("mimeType", ""))
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with wave.open(out, "wb") as w:
-        w.setnchannels(1)
-        w.setsampwidth(2)
+        w.setnchannels(ch)
+        w.setsampwidth(width)
         w.setframerate(rate)
         w.writeframes(pcm)
+
+
+def decode_audio(data, mime=""):
+    """API の音声を (PCM, ch, 幅, rate) に。2.5 系は生PCM（audio/L16）、3.x 系は WAV ファイル丸ごと。
+    WAV を生PCMとして扱うと、ヘッダが頭の「プチッ」、末尾のメタデータが「ザッ」というノイズになる。"""
+    if data[:4] == b"RIFF":
+        with wave.open(io.BytesIO(data)) as src:
+            return src.readframes(src.getnframes()), src.getnchannels(), src.getsampwidth(), src.getframerate()
+    m = re.search(r"rate=(\d+)", mime)
+    return data, 1, 2, int(m.group(1)) if m else 24000
 
 
 def ensure_voice(story_path, force=False):

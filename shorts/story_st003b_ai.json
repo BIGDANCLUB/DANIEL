@@ -1,6 +1,6 @@
 {
   "_comment": "ST-003b を Gemini TTS＋Gemini 画像生成で作る版。text は字幕（{黄} <赤>、\\n で改行）、say は読み上げ文（省略時は text から生成）、prompt は画像の指示（英語推奨・文字を入れない）。",
-  "tempo": 1.34,
+  "tempo": 1.21,
   "gap": 0.12,
   "max_pause": 0.2,
   "lead_in": 0.05,

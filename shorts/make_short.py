@@ -417,9 +417,10 @@ def main(story_path, out, source=None):
         a = (t - st) / POP
         sub = subs[li]
         if a < 1:
-            sc = 0.55 + 0.45 * ease_back(a)
+            # 1行目はフィードで最初に目に入るので、0フレーム目から文字を見せる（拡大だけで弾ませる）
+            sc = (0.8 + 0.2 * ease_back(a)) if li == 0 else (0.55 + 0.45 * ease_back(a))
             sub = sub.resize((max(1, int(sub.width * sc)), max(1, int(sub.height * sc))), Image.BILINEAR)
-            alpha = ease_out(a * 1.6)
+            alpha = 1.0 if li == 0 else ease_out(a * 1.6)
             sub.putalpha(sub.getchannel("A").point(lambda v: int(v * alpha)))
         else:
             sub = punch(sub, t - st)

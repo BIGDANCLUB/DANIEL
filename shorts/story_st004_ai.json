@@ -1,57 +1,115 @@
 {
-  "_comment": "ST-004 高額療養費制度（50代以上の男性向け）。構成は ST-003b_ai と同じ：お金の危機 → 制度で解決 → 日本の仕組みへの誇り → 問いかけ。制度の数字は70歳未満・年収約370万円以下（区分エ）の自己負担上限 月57,600円。",
-  "tempo": 1.25,
-  "gap": 0.12,
-  "max_pause": 0.2,
-  "lead_in": 0.05,
-  "tail": 1.3,
-  "banner": "知らないと損する\n{手術代90万円が5万円台に}",
-  "tts": {
-    "model": "gemini-3.8-flash-tts",
-    "voice": "Algenib",
-    "style": "# AUDIO PROFILE\n66歳の日本人男性。落ち着いた低めの声で、誠実な人柄。\n## THE SCENE\n自分の身に起きた出来事を、同世代の男性に打ち明けるように語っている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。数字は少し強調する。間延びさせず、テンポよく語る。",
-    "voice_dir": "work_st004_ai/voice"
+ "_comment": "ST-004 高額療養費制度（50代以上の男性向け）v2。冒頭2行で「結果の数字」と「解決の中身を伏せたフック」を見せる。制度の数字は70歳未満・年収約370万円以下（区分エ）の自己負担上限 月57,600円。",
+ "tempo": 1.22,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "知らないと大損する\n{入院・手術の支払い}",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n66歳の日本人男性。落ち着いた低めの声で、誠実な人柄。\n## THE SCENE\n自分の身に起きた出来事を、同世代の男性に打ち明けるように語っている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。数字は少し強調する。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st004_ai/voice"
+ },
+ "image_gen": {
+  "model": "gemini-3.1-flash-image",
+  "image_dir": "work_st004_ai/images"
+ },
+ "lines": [
+  {
+   "text": "手術代<90万円>が\n{5万7600円}に",
+   "tone": "信じられない結果を打ち明ける。驚きをこめて、力強く",
+   "say": "手術代90万円が、5万7600円になりました。",
+   "hook": true,
+   "se": "don",
+   "prompt": "A hospital invoice and a cashier tray on a hospital payment counter, an elderly man's hand resting next to it, cold fluorescent light, no people's faces"
   },
-  "image_gen": {
-    "model": "gemini-3.1-flash-image",
-    "image_dir": "work_st004_ai/images"
+  {
+   "text": "病院の窓口で聞いた\n<たった一言>で",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "病院の窓口で聞いた、たった一言で。",
+   "prompt": "A hospital accounts clerk's hands gently gesturing over a counter with brochures, warm soft light, faces not shown"
   },
-  "lines": [
-    {"hook": true, "se": "don", "text": "手術代の請求は\n<90万円>", "tone": "重い現実を打ち明ける。声を落として、苦く", "say": "手術代の請求は、90万円でした。",
-     "prompt": "A hospital invoice and a cashier tray on a hospital payment counter, an elderly man's hand resting next to it, cold fluorescent light, no people's faces"},
-    {"text": "私は{田中和夫}\n{66歳}です", "tone": "静かに自己紹介する。落ち着いて", "say": "私は田中和夫。66歳です。",
-     "prompt": "A Japanese man in his sixties in a gray cardigan seen from behind, standing on the veranda of a modest suburban Japanese house, morning light"},
-    {"text": "定年して\n年金は月{15万円}", "tone": "淡々と、少し寂しく", "say": "定年して、年金は月15万円です。",
-     "prompt": "Close-up of an elderly man's hands holding a plain white envelope with no writing at a low wooden table, soft window light"},
-    {"text": "貯金は\n{老後のため}に守ってきました", "tone": "ささやかな誇りをこめて",
-     "prompt": "A plain dark blue booklet with a blank cover and reading glasses on a neat wooden desk, warm afternoon light, shallow depth of field"},
-    {"text": "ある朝\n胸に<激痛>が走りました", "tone": "緊迫して、息を詰めるように",
-     "prompt": "Dim early morning in a Japanese bedroom, a futon slightly disturbed, a man's hand gripping the blanket, dramatic shadows"},
-    {"text": "心臓の{バイパス手術}で\n<3週間>入院しました", "tone": "重く、ゆっくり",
-     "prompt": "A quiet Japanese hospital room with a single bed by the window, IV stand, late afternoon light through blinds, empty, no people"},
-    {"text": "退院の日\n窓口で<90万円>と言われました", "tone": "呆然として。信じられない気持ち", "say": "退院の日、窓口で90万円と言われました。",
-     "prompt": "A hospital accounts counter in Japan seen over an elderly man's shoulder from behind, staff hands pushing a document across the counter"},
-    {"text": "老後の貯金が\n<一気に消える>額です", "tone": "絶望がにじむ。声が沈む",
-     "prompt": "An empty hospital waiting room bench in Japan, a man's jacket and a paper bag left on it, gloomy blue light"},
-    {"text": "妻は黙って\n{通帳}を握りしめていました", "tone": "胸が痛む。しみじみと",
-     "prompt": "Close-up of an elderly woman's hands tightly holding a plain blank-covered booklet on her lap in a hospital lobby, soft light"},
-    {"text": "その時\n係の人が言いました", "tone": "空気が変わる。少し間を置いて",
-     "prompt": "A hospital accounts clerk's hands gently gesturing over a counter with brochures, warm soft light, faces not shown"},
-    {"text": "「{高額療養費制度}を\nご存じですか」", "tone": "職員の言葉を、やさしく明るく再現する", "say": "高額療養費制度を、ご存じですか。",
-     "prompt": "A rack of health insurance pamphlets at a Japanese hospital counter, blurred background, no readable text"},
-    {"text": "ひと月の医療費には\n{自己負担の上限}がある", "tone": "はっきりと、聞き手に教えるように", "say": "ひと月の医療費には、自己負担の上限があるんです。",
-     "prompt": "Close-up of a pen pointing at a simple bar chart on a paper document on a counter, numbers and text blurred and unreadable"},
-    {"text": "私の所得なら\n上限は{月5万7600円}", "tone": "驚きを隠せない。半信半疑で", "say": "私の所得なら、上限は月5万7600円。",
-     "prompt": "Close-up of an elderly man's hands holding a sheet of paper, text blurred, hospital lobby background softly blurred, no faces"},
-    {"text": "{マイナ保険証}なら\n窓口は{上限額だけ}", "tone": "説明するように、わかりやすく", "say": "マイナ保険証なら、窓口は上限額だけの支払いで済みます。",
-     "prompt": "A hand placing a plain blank plastic ID card on a small card reader at a Japanese hospital reception counter, card has no text"},
-    {"se": "coin", "text": "医療費の支払いは\n<5万7600円>でした", "tone": "驚きと安堵。声がふっと明るくなる", "say": "医療費の支払いは、5万7600円でした。",
-     "prompt": "Close-up of an elderly man's relieved hands holding a folded receipt and a wallet at a hospital counter, warm light"},
-    {"text": "{国民皆保険}は\n世界に誇る日本の仕組みです", "tone": "誇らしく、力強く",
-     "prompt": "Beautiful wide view of a Japanese town at dawn with Mount Fuji in the distance, calm and proud mood, no text"},
-    {"text": "妻は「日本に生まれて\n{よかったね}」と笑いました", "tone": "胸がいっぱいで、やさしく、ゆっくり", "say": "妻は、日本に生まれてよかったね、と笑いました。",
-     "prompt": "An elderly Japanese couple seen from behind walking out of a hospital entrance into bright sunshine, the wife holding his arm"},
-    {"text": "あなたの家族は\n<この制度>を知っていますか？", "tone": "同世代に語りかける。まっすぐ問いかけるように", "say": "あなたの家族は、この制度を知っていますか。",
-     "prompt": "An elderly Japanese man seen from behind sitting on a riverside bench at sunset, looking at the calm water, reflective mood"}
-  ]
+  {
+   "text": "年金暮らしの{66歳}\n収入は月{15万円}",
+   "tone": "淡々と、少し寂しく",
+   "say": "年金暮らしの66歳。収入は月15万円です。",
+   "prompt": "A Japanese man in his sixties in a gray cardigan seen from behind, standing on the veranda of a modest suburban Japanese house, morning light"
+  },
+  {
+   "text": "ある朝\n胸に<激痛>が走りました",
+   "tone": "緊迫して、息を詰めるように",
+   "prompt": "Dim early morning in a Japanese bedroom, a futon slightly disturbed, a man's hand gripping the blanket, dramatic shadows"
+  },
+  {
+   "text": "心臓の{バイパス手術}で\n<3週間>入院しました",
+   "tone": "重く、ゆっくり",
+   "prompt": "A quiet Japanese hospital room with a single bed by the window, IV stand, late afternoon light through blinds, empty, no people"
+  },
+  {
+   "text": "退院の日\n窓口で<90万円>と言われました",
+   "tone": "呆然として。信じられない気持ち",
+   "say": "退院の日、窓口で90万円と言われました。",
+   "prompt": "A hospital accounts counter in Japan seen over an elderly man's shoulder from behind, staff hands pushing a document across the counter"
+  },
+  {
+   "text": "老後の貯金が\n<一気に消える>額です",
+   "tone": "絶望がにじむ。声が沈む",
+   "prompt": "An empty hospital waiting room bench in Japan, a man's jacket and a paper bag left on it, gloomy blue light"
+  },
+  {
+   "text": "妻は黙って\n{通帳}を握りしめていました",
+   "tone": "胸が痛む。しみじみと",
+   "prompt": "Close-up of an elderly woman's hands tightly holding a plain blank-covered booklet on her lap in a hospital lobby, soft light"
+  },
+  {
+   "text": "「{高額療養費制度}を\nご存じですか」",
+   "tone": "職員の言葉を、やさしく明るく再現する",
+   "say": "その時、係の人が言いました。高額療養費制度を、ご存じですか。",
+   "prompt": "A rack of health insurance pamphlets at a Japanese hospital counter, blurred background, no readable text"
+  },
+  {
+   "text": "ひと月の医療費には\n{自己負担の上限}がある",
+   "tone": "はっきりと、聞き手に教えるように",
+   "say": "ひと月の医療費には、自己負担の上限があるんです。",
+   "prompt": "Close-up of a pen pointing at a simple bar chart on a paper document on a counter, numbers and text blurred and unreadable"
+  },
+  {
+   "text": "私の所得なら\n上限は{月5万7600円}",
+   "tone": "驚きを隠せない。半信半疑で",
+   "say": "私の所得なら、上限は月5万7600円。",
+   "prompt": "Close-up of an elderly man's hands holding a sheet of paper, text blurred, hospital lobby background softly blurred, no faces"
+  },
+  {
+   "text": "{マイナ保険証}なら\n窓口は{上限額だけ}",
+   "tone": "説明するように、わかりやすく",
+   "say": "マイナ保険証なら、窓口は上限額だけの支払いで済みます。",
+   "prompt": "A hand placing a plain blank plastic ID card on a small card reader at a Japanese hospital reception counter, card has no text"
+  },
+  {
+   "text": "医療費の支払いは\n<5万7600円>でした",
+   "tone": "驚きと安堵。声がふっと明るくなる",
+   "say": "医療費の支払いは、5万7600円でした。",
+   "se": "coin",
+   "prompt": "Close-up of an elderly man's relieved hands holding a folded receipt and a wallet at a hospital counter, warm light"
+  },
+  {
+   "text": "{国民皆保険}は\n世界に誇る日本の仕組みです",
+   "tone": "誇らしく、力強く",
+   "prompt": "Beautiful wide view of a Japanese town at dawn with Mount Fuji in the distance, calm and proud mood, no text"
+  },
+  {
+   "text": "妻は「日本に生まれて\n{よかったね}」と笑いました",
+   "tone": "胸がいっぱいで、やさしく、ゆっくり",
+   "say": "妻は、日本に生まれてよかったね、と笑いました。",
+   "prompt": "An elderly Japanese couple seen from behind walking out of a hospital entrance into bright sunshine, the wife holding his arm"
+  },
+  {
+   "text": "あなたの家族は\n<この制度>を知っていますか？",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "あなたの家族は、この制度を知っていますか。",
+   "prompt": "An elderly Japanese man seen from behind sitting on a riverside bench at sunset, looking at the calm water, reflective mood"
+  }
+ ]
 }

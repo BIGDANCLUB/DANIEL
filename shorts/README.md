@@ -5,7 +5,7 @@
 
 ## 準備
 - 環境変数 `GEMINI_API_KEY` に Gemini API キーを登録（音声・画像の自動生成に使用）
-- `pip install pillow numpy imageio-ffmpeg opencv-python-headless`
+- `pip install -r shorts/requirements.txt`
 
 ## 流れ
 1. 台本 `story_xxx.json` を書く（`story_st003b_ai.json` が見本）

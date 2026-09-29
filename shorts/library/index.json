@@ -214,5 +214,119 @@
   "key": "c4b96caa81cb47252d5e874573a3242c70b338d7",
   "model": "gemini-3.1-flash-image",
   "prompt": "An elderly Japanese man seen from behind sitting on a riverside bench at sunset, looking at the calm water, reflective mood"
+ },
+ "st005_ai_center": {
+  "file": "st005_ai_center.jpg",
+  "key": "cd2246400fd849dfc0a22650a96b81e68df2fd3a",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Exterior of a small community care support center in a quiet Japanese neighborhood, a middle-aged man in a coat walking in, seen from behind, clear morning, no readable signs"
+ },
+ "st005_ai_dayservice": {
+  "file": "st005_ai_dayservice.jpg",
+  "key": "391879982cd484112f130dd83bbd76e746febb29",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A bright Japanese day care room for the elderly, elderly people doing light seated exercise with a caregiver, seen from behind, warm cheerful light"
+ },
+ "st005_ai_father_hand": {
+  "file": "st005_ai_father_hand.jpg",
+  "key": "00a533ea3611bc1fdf42d85460a8d2f37839fce8",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of a middle-aged man's hand gently holding his elderly father's frail hand on a hospital bed blanket, soft window light, no faces"
+ },
+ "st005_ai_house": {
+  "file": "st005_ai_house.jpg",
+  "key": "c6bc70f71a5946fd11a2647257a736185e27882f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "The entrance hall of an old Japanese house, a pair of worn men's slippers on the wooden step, empty and quiet, late afternoon light"
+ },
+ "st005_ai_hr": {
+  "file": "st005_ai_hr.jpg",
+  "key": "3fe4380caba94fecfe9b0266c1c091496fd2d9de",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Top-down close-up of a meeting table in a Japanese office: two pairs of hands across the table with documents, one hand gesturing reassuringly, only hands and forearms visible, text blurred"
+ },
+ "st005_ai_letter": {
+  "file": "st005_ai_letter.jpg",
+  "key": "ac7629b11c3099c367e68e1707ab01268d9e9ef6",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A man's hands placing a plain white envelope with no writing on an office desk, serious mood, soft light, no faces"
+ },
+ "st005_ai_office": {
+  "file": "st005_ai_office.jpg",
+  "key": "bce0b69dca381dd97d5172b31bbd131a2de5a106",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese office worker in his fifties seen from behind at his desk in a modest office in the evening, most colleagues gone, quiet mood"
+ },
+ "st005_ai_return": {
+  "file": "st005_ai_return.jpg",
+  "key": "177b1c2284bc083749018d3cf16b815e489a7790",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese man in his fifties in a suit walking into an office building entrance in morning sunlight, seen from behind, hopeful mood"
+ },
+ "st005_ai_veranda": {
+  "file": "st005_ai_veranda.jpg",
+  "key": "50ff2eb355a715947eaed8e3f737a8520cc528d6",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese father and his middle-aged son sitting side by side on the veranda of an old house, seen from behind, gentle evening light"
+ },
+ "st006_ai_diner": {
+  "file": "st006_ai_diner.jpg",
+  "key": "20348a350b075dd99cb8d0b2edd7b5c0b738e603",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Interior of a small old Japanese diner (shokudo) after closing, empty wooden counter and stools, warm dim light, no readable text or signs"
+ },
+ "st006_ai_dinner": {
+  "file": "st006_ai_dinner.jpg",
+  "key": "5c8625ee98fc7d8933eefc9929118d99cc056928",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese couple seen from behind sitting at a small restaurant table by a window, warm evening light, relaxed happy mood"
+ },
+ "st006_ai_hands_counter": {
+  "file": "st006_ai_hands_counter.jpg",
+  "key": "a0ea2495da8fb7754dfc798aeac427fafc4a5f51",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Top-down close-up of an elderly man's weathered hands wiping a worn wooden counter with a cloth in a small Japanese diner, only hands and forearms visible, warm light"
+ },
+ "st006_ai_office_ext": {
+  "file": "st006_ai_office_ext.jpg",
+  "key": "d62b3f3e1644cb4ecbde674935ad366ee2d9b229",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Exterior of a plain Japanese public pension office building on a clear morning, an elderly couple walking toward the entrance seen from behind, no readable signs"
+ },
+ "st006_ai_walk": {
+  "file": "st006_ai_walk.jpg",
+  "key": "a42e181b8ab1799fb62572865b427d5ef81fdcc6",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese man walking along a quiet riverside path at dusk, seen from behind, calm hopeful mood"
+ },
+ "st007_ai_bath": {
+  "file": "st007_ai_bath.jpg",
+  "key": "94086197b84d47ac30739ec4254d2b2505be80ad",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An old Japanese tiled bathroom with a high step at the entrance and no handrail, dim light, empty, slightly worn"
+ },
+ "st007_ai_bath_rail": {
+  "file": "st007_ai_bath_rail.jpg",
+  "key": "10676d5c723938ec16985a634108918470aaf763",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A newly installed wooden handrail along the wall of a clean Japanese bathroom, bright soft light, empty, safe and warm mood"
+ },
+ "st007_ai_father": {
+  "file": "st007_ai_father.jpg",
+  "key": "54e794cfa6be198f96f7eb0d489a2322d2de8f96",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese man in his eighties seen from behind sitting alone on the veranda of an old wooden house, cardigan, quiet afternoon"
+ },
+ "st007_ai_house": {
+  "file": "st007_ai_house.jpg",
+  "key": "60ca5e32fdb3485fc075ed7c0b8cbd83b4edb119",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Exterior of an old one-story Japanese house in a quiet residential neighborhood, afternoon light, potted plants by the door, no readable signs"
+ },
+ "st007_ai_walk": {
+  "file": "st007_ai_walk.jpg",
+  "key": "5468f0f2fe8974bd4db4ea143b0f4e270bc9f88e",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A middle-aged Japanese son and his elderly father walking slowly side by side on a quiet residential street, seen from behind, warm evening light"
  }
 }

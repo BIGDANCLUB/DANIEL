@@ -20,7 +20,7 @@
    "prompt": "Interior of a small old Japanese diner (shokudo) after closing, empty wooden counter and stools, warm dim light, no readable text or signs"
   },
   "hands_counter": {
-   "prompt": "Close-up of an elderly man's weathered hands wiping a worn wooden counter in a small Japanese diner, warm light"
+   "prompt": "Top-down close-up of an elderly man's weathered hands wiping a worn wooden counter with a cloth in a small Japanese diner, only hands and forearms visible, warm light"
   },
   "booklet": {
    "library": "st004_ai_04"
@@ -95,9 +95,9 @@
    "say": "若い頃は苦しくて、年金を払えない時期もありました。",
    "scene": "hands_counter",
    "crop": [
-    0.5,
-    0.5,
-    1.0
+    0.45,
+    0.62,
+    1.4
    ]
   },
   {

@@ -2,3 +2,4 @@ fonts/
 out/
 *.mp4
 assets/
+__pycache__/

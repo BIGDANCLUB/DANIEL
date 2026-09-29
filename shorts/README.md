@@ -13,6 +13,9 @@
    - `say` … 読み上げ文（省略時は `text` から自動）。読み間違いの修正にも使う
    - `prompt` … その行の画像の指示（英語推奨・画像内に文字を入れない）
    - `move` … `in` / `out` / `left` / `right` / `up` / `down`（省略時は自動で交互）
+   - `se` … その行の頭に効果音（`don` 重い一打 / `coin` チャリン。合成音なので素材不要）
+   - 台本トップの `banner` … 画面上部に出し続ける概要帯（`\n` で2行、`{…}` 黄）
+   - 赤字 `<…>` は表示直後にもう一度ポンと弾む
 2. `python3 make_short.py story_xxx.json out/xxx.mp4`
    - 足りない音声（Gemini TTS）と画像（Gemini 画像モデル）を生成してから動画を書き出す
    - 生成物は `tts.voice_dir` / `image_gen.image_dir` に保存され、次回は再利用

@@ -4,6 +4,7 @@
   "gap": 0.15,
   "lead_in": 0.05,
   "tail": 1.3,
+  "banner": "知らないと損する\n{介護費24万円が戻った}",
   "tts": {
     "model": "gemini-2.5-flash-preview-tts",
     "voice": "Sulafat",
@@ -15,7 +16,7 @@
     "image_dir": "work_st003b_ai/images"
   },
   "lines": [
-    {"hook": true, "text": "母の施設代は\n毎月<19万円>", "say": "母の施設代は、毎月19万円です。",
+    {"hook": true, "se": "don", "text": "母の施設代は\n毎月<19万円>", "say": "母の施設代は、毎月19万円です。",
      "prompt": "A worn bankbook and a stack of invoices on an old kotatsu table in a dim, aging Japanese tatami room, late afternoon light through shoji screens, no people"},
     {"text": "私の年金は\n月に{11万円}だけです",
      "prompt": "Close-up of an elderly woman's wrinkled hands holding a plain white envelope with no writing over a kotatsu table, soft window light"},
@@ -41,7 +42,7 @@
      "prompt": "An elderly woman's hands holding a stack of care facility invoices, sitting on a bench in a bright public office"},
     {"text": "{2年分}をまとめて\n申請できました",
      "prompt": "A neat stack of paperwork and a Japanese personal name seal (hanko) on a counter, soft daylight"},
-    {"text": "<24万円>が\n口座に戻ってきました",
+    {"se": "coin", "text": "<24万円>が\n口座に戻ってきました",
      "prompt": "Close-up of a bank ATM screen glow reflecting on an elderly woman's relieved hands holding a passbook, screen content blurred"},
     {"text": "これからは毎月\n{1万円}ほど戻ります",
      "prompt": "Morning sunlight streaming into a tidy Japanese tatami room, a cup of green tea steaming on a low table, empty room with no people, hopeful mood"},

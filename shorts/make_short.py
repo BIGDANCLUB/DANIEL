@@ -6,6 +6,9 @@
   - 字幕は画面中央。白文字＋太い黒縁、キーワードは {黄} <赤>
   - 字幕はフレーズごとにポップイン（拡大＋フェード）
   - 冒頭1行はフック：大きめの黄色文字
+  - "banner" があれば画面上部に動画概要の帯を出し続ける
+  - 赤字（<…>）は表示直後にもう一度ポンと弾ませる
+  - 行に "se": "don" / "coin" があれば、その行の頭に効果音を重ねる
 
 素材（BGMは後付け前提なので入れない）:
   音声 … 行に "audio":[開始,終了] があれば元動画から切り出し、無ければ Gemini TTS（tts_gemini.py）
@@ -44,6 +47,9 @@ SUB_SIZE = 96
 HOOK_SIZE = 136
 SUB_MAX_W = 1040
 POP = 0.22            # ポップイン秒
+PUNCH = (0.28, 0.30, 0.15)   # 赤字の弾み：開始秒・長さ・最大拡大率
+BANNER_H = 330
+BANNER_SIZE = 112
 
 
 def ffmpeg_bin():
@@ -101,13 +107,83 @@ def rich_text(text, size, max_w, base="#ffffff", stroke_ratio=0.14, line_gap=0.0
     ih = lh * len(lines) + 2 * sw
     img = Image.new("RGBA", (iw, ih), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
+    img.info["red"] = []    # 赤字の位置（弾ませる演出用）
     for li, l in enumerate(lines):
         x = (iw - widths[li]) / 2
         y = sw + li * lh
         for seg, col in parse_runs(l, base):
             d.text((x, y), seg, font=f, fill=col, stroke_width=sw, stroke_fill="#000000")
+            if col == COLORS["<"]:
+                img.info["red"].append((int(x - sw), int(y - sw), int(x + f.getlength(seg) + sw), int(y + lh + sw)))
             x += f.getlength(seg)
     return img
+
+
+def punch(sub, dt):
+    """表示から dt 秒の字幕に、赤字だけ一瞬拡大したものを重ねる。"""
+    start, dur, amp = PUNCH
+    x = (dt - start) / dur
+    if not 0 < x < 1 or not sub.info.get("red"):
+        return sub
+    sc = 1 + amp * np.sin(np.pi * x)
+    out = sub.copy()
+    pad = int(max(b[3] - b[1] for b in sub.info["red"]) * amp) + 4
+    canvas = Image.new("RGBA", (sub.width + 2 * pad, sub.height + 2 * pad), (0, 0, 0, 0))
+    canvas.paste(out, (pad, pad))
+    for x0, y0, x1, y1 in sub.info["red"]:
+        part = sub.crop((x0, y0, x1, y1))
+        part = part.resize((int(part.width * sc), int(part.height * sc)), Image.BICUBIC)
+        cx, cy = (x0 + x1) / 2 + pad, (y0 + y1) / 2 + pad
+        canvas.alpha_composite(part, (int(cx - part.width / 2), int(cy - part.height / 2)))
+    return canvas
+
+
+def make_banner(text):
+    """画面上部の概要帯（黒地に白・黄の2行）。"""
+    band = Image.new("RGBA", (W, BANNER_H), (8, 8, 8, 255))
+    t = rich_text(text, BANNER_SIZE, W - 60, stroke_ratio=0.06, line_gap=0.0)
+    band.alpha_composite(t, ((W - t.width) // 2, BANNER_H - t.height - 18))
+    return band
+
+
+def sound_effect(kind):
+    """効果音を合成して返す（素材ファイル不要）。don: 重い一打 / coin: チャリン。"""
+    if kind == "don":
+        n = int(0.9 * SR)
+        t = np.arange(n) / SR
+        f = 48 + 60 * np.exp(-t * 18)                     # 下がっていく低音
+        body = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 4.5)
+        click = np.random.default_rng(0).standard_normal(n) * np.exp(-t * 90) * 0.35
+        se = body + click
+        return (se / np.abs(se).max() * 0.6).astype(np.float32)
+    if kind == "coin":
+        n = int(0.9 * SR)
+        t = np.arange(n) / SR
+        out = np.zeros(n, np.float32)
+        for delay in (0.0, 0.09):
+            tt = np.clip(t - delay, 0, None)
+            on = (t >= delay)
+            for fr, g in ((2637, 0.5), (3951, 0.35), (5274, 0.2)):
+                out += on * g * np.sin(2 * np.pi * fr * tt) * np.exp(-tt * 7)
+        return (out / np.abs(out).max() * 0.4).astype(np.float32)
+    sys.exit(f"未知の効果音: {kind}（don / coin）")
+
+
+def mix_effects(wav, cfg, timings):
+    """ナレーションWAVに行ごとの効果音を重ねて上書きする。"""
+    marks = [(timings[i][0] if i else 0.0, l["se"]) for i, l in enumerate(cfg["lines"]) if l.get("se")]
+    if not marks:
+        return
+    a = load_audio(wav).copy()
+    for at, kind in marks:
+        se = sound_effect(kind)
+        s = int(at * SR)
+        e = min(len(a), s + len(se))
+        a[s:e] += se[:e - s]
+    np.clip(a, -1, 1).astype(np.float32).tofile(wav + ".f32")
+    subprocess.run([FF, "-loglevel", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1",
+                    "-i", wav + ".f32", wav], check=True)
+    os.remove(wav + ".f32")
 
 
 def load_audio(src):
@@ -260,6 +336,7 @@ def main(story_path, out, source=None):
     wav = os.path.splitext(out)[0] + "_narration.wav"
     subprocess.run([FF, "-loglevel", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", raw_wav,
                     "-af", f"atempo={tempo},loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", str(SR), wav], check=True)
+    mix_effects(wav, cfg, timings)
     total = len(audio) / SR / tempo
     nframes = int(total * FPS)
 
@@ -274,6 +351,7 @@ def main(story_path, out, source=None):
             subs.append(rich_text(l["text"], HOOK_SIZE, SUB_MAX_W, base="#ffe600", line_gap=0.0))
         else:
             subs.append(rich_text(l["text"], SUB_SIZE, SUB_MAX_W))
+    banner = make_banner(cfg["banner"]) if cfg.get("banner") else None
     note = None
     if cfg.get("disclaimer"):
         note = rich_text(cfg["disclaimer"], 28, 600, stroke_ratio=0.12)
@@ -299,9 +377,13 @@ def main(story_path, out, source=None):
             sub = sub.resize((max(1, int(sub.width * sc)), max(1, int(sub.height * sc))), Image.BILINEAR)
             alpha = ease_out(a * 1.6)
             sub.putalpha(sub.getchannel("A").point(lambda v: int(v * alpha)))
+        else:
+            sub = punch(sub, t - st)
         frame.alpha_composite(sub, ((W - sub.width) // 2, SUB_CY - sub.height // 2))
+        if banner:
+            frame.alpha_composite(banner, (0, 0))
         if note:
-            frame.alpha_composite(note, (24, 150))
+            frame.alpha_composite(note, (24, BANNER_H + 20 if banner else 150))
 
         enc.stdin.write(frame.convert("RGB").tobytes())
         if n % 300 == 0:

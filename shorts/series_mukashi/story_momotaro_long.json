@@ -10,7 +10,9 @@
   "model": "gemini-3.8-flash-tts",
   "voice": "Algenib",
   "style": "# AUDIO PROFILE\n70代の日本人男性の語り部。囲炉裏端で子どもにむかしばなしを聞かせる、少ししわがれた温かい声。ただし中身は、現代の知識で何でも解説したがる物知り。\n## THE SCENE\n昔話を語っているつもりが、解説になると我慢できずに早口で熱くなってしまう。長い話なので、聞き手を飽きさせないよう緩急をつける。\n### DIRECTOR'S NOTES\n「むかしむかし」や物語の場面はゆったり昔話調。数字や解説が出たら急にテンポを上げ、得意げに強調する。オチの一文は真顔でぼそっと言う。棒読みにせず、間延びさせない。",
-  "voice_dir": "work_momotaro_long/voice"
+  "voice_dir": "work_momotaro_long/voice",
+  "batch": 7,
+  "check": true
  },
  "image_gen": {
   "style": "Horizontal 16:9 wide illustration in the style of a traditional Japanese folktale picture book: soft watercolor and sumi ink on textured washi paper, warm muted earthy colors, gentle brush outlines, simple rounded character designs, rural old Japan. Wide, detailed composition with several points of interest spread across the frame, so that parts of it can be cropped as separate shots. Expressive comedic faces are fine. No text, no letters, no numbers, no symbols, no logos, no watermark.",

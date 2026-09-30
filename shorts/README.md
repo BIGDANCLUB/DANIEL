@@ -31,6 +31,7 @@
 2. `python3 make_short.py story_xxx.json out/xxx.mp4`
    - 足りない音声（Gemini TTS）と画像（Gemini 画像モデル）を生成してから動画を書き出す
    - 生成物は `tts.voice_dir` / `image_gen.image_dir` に保存され、次回は再利用
+   - 長い台本は台本の tts に `"batch": 7` を書くと、7行ずつまとめて読ませて切り分ける（TTS の1日の回数上限対策）。`"check": true` で台本どおりに読んだかを自動で照合し、アドリブや読み飛ばしがあれば作り直す
 3. 直したいとき
    - 画像だけ作り直す: `python3 gen_images_gemini.py story_xxx.json --only 3,7`
    - 声を全部作り直す: `python3 tts_gemini.py story_xxx.json --force`

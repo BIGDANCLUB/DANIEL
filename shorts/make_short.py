@@ -9,6 +9,7 @@
   - "banner" があれば画面上部に動画概要の帯を出し続ける
   - 赤字（<…>）は表示直後にもう一度ポンと弾ませる
   - 行に "se": "don" / "coin" があれば、その行の頭に効果音を重ねる
+  - BGM は bgm/ の曲からランダムに1曲（台本の "bgm" で指定も可）。声の間は自動で下げる
 
 素材（BGMは後付け前提なので入れない）:
   音声 … 行に "audio":[開始,終了] があれば元動画から切り出し、無ければ Gemini TTS（tts_gemini.py）
@@ -22,6 +23,7 @@ usage:
 import argparse
 import json
 import os
+import random
 import re
 import subprocess
 import sys
@@ -176,6 +178,58 @@ def sound_effect(kind):
                 out += on * g * np.sin(2 * np.pi * fr * tt) * np.exp(-tt * 7)
         return (out / np.abs(out).max() * 0.4).astype(np.float32)
     sys.exit(f"未知の効果音: {kind}（don / coin）")
+
+
+BGM_DIR = os.path.join(HERE, "bgm")
+BGM_EXT = (".mp3", ".wav", ".m4a", ".aac", ".ogg", ".flac")
+
+
+def pick_bgm(cfg, work):
+    """使う BGM のパスを返す。
+    "bgm" 省略 or "random" … bgm/ 直下とサブフォルダ全部からランダム
+    "random:スカッと"      … bgm/スカッと/ の中からランダム
+    "曲名.mp3"             … bgm/ からの相対パスで指定
+    "none"                 … BGM なし
+    ランダムで選んだ曲は work に記録し、作り直しても同じ曲を使う。"""
+    spec = cfg.get("bgm", "random")
+    if not spec or spec == "none":
+        return None
+    if not spec.startswith("random"):
+        path = os.path.join(BGM_DIR, spec)
+        if not os.path.exists(path):
+            sys.exit(f"BGM が見つかりません: {path}")
+        return path
+    memo = os.path.join(work, "bgm_choice.txt")
+    if os.path.exists(memo):
+        prev = open(memo, encoding="utf-8").read().strip()
+        if os.path.exists(os.path.join(BGM_DIR, prev)) and prev.startswith(spec[7:]):
+            return os.path.join(BGM_DIR, prev)
+    root = os.path.join(BGM_DIR, spec[7:]) if spec.startswith("random:") else BGM_DIR
+    songs = sorted(os.path.relpath(os.path.join(d, f), BGM_DIR)
+                   for d, _, fs in os.walk(root) for f in fs if f.lower().endswith(BGM_EXT))
+    if not songs:
+        print(f"  ※ {root} に BGM が無いので BGM なしで書き出します")
+        return None
+    choice = random.choice(songs)
+    open(memo, "w", encoding="utf-8").write(choice)
+    return os.path.join(BGM_DIR, choice)
+
+
+def mix_bgm(wav, bgm, total, volume_db):
+    """ナレーション（効果音込み）に BGM を重ねて上書きする。
+    曲は音量をそろえてから volume_db 下げ、声が出ている間はさらに自動で下げる（ダッキング）。
+    曲が短ければ繰り返し、最後はフェードアウト。"""
+    tmp = wav + ".bgm.wav"
+    fade = min(2.0, total / 4)
+    graph = (f"[1:a]aformat=sample_rates={SR}:channel_layouts=mono,loudnorm=I=-16:TP=-2,"
+             f"volume={volume_db}dB,atrim=0:{total:.3f},afade=t=in:d=0.8,"
+             f"afade=t=out:st={total - fade:.3f}:d={fade:.3f}[b];"
+             "[0:a]asplit[v][key];"
+             "[b][key]sidechaincompress=threshold=0.02:ratio=4:attack=30:release=500[bd];"
+             "[v][bd]amix=inputs=2:normalize=0:duration=first,alimiter=limit=0.9[out]")
+    subprocess.run([FF, "-loglevel", "error", "-y", "-i", wav, "-stream_loop", "-1", "-i", bgm,
+                    "-filter_complex", graph, "-map", "[out]", "-ar", str(SR), "-ac", "1", tmp], check=True)
+    os.replace(tmp, wav)
 
 
 def mix_effects(wav, cfg, timings):
@@ -382,6 +436,10 @@ def main(story_path, out, source=None):
                     "-af", f"atempo={tempo},loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", str(SR), wav], check=True)
     mix_effects(wav, cfg, timings)
     total = len(audio) / SR / tempo
+    bgm = pick_bgm(cfg, work)
+    if bgm:
+        print(f"  BGM: {os.path.relpath(bgm, BGM_DIR)}")
+        mix_bgm(wav, bgm, total, cfg.get("bgm_volume", -18))
     nframes = int(total * FPS)
 
     # --- カット ---

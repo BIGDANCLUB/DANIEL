@@ -264,6 +264,8 @@ def mix_effects(wav, cfg, timings):
     a = load_audio(wav).copy()
     for at, kind in marks:
         se = sound_effect(kind)
+        if at == 0.0 and kind == intro:
+            se = se * 10 ** (cfg.get("intro_se_volume", -3) / 20)   # 冒頭SEの音量（dB）
         s = int(at * SR)
         e = min(len(a), s + len(se))
         a[s:e] += se[:e - s]

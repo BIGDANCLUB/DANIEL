@@ -157,16 +157,33 @@ def make_banner(text):
     return band
 
 
+SE_DIR = os.path.join(HERE, "se")
+
+
 def sound_effect(kind):
-    """効果音を合成して返す（素材ファイル不要）。don: 重い一打 / coin: チャリン。"""
+    """効果音を返す。se/ に同名の音声ファイル（例 se/jan.mp3 → "jan"）があればそれを使い、
+    無ければ合成する（don: 冒頭の重い一打 / coin: チャリン）。"""
+    for ext in (".wav", ".mp3", ".m4a", ".ogg", ".flac"):
+        path = os.path.join(SE_DIR, kind + ext)
+        if os.path.exists(path):
+            se = load_audio(path).copy()
+            return (se / max(1e-6, np.abs(se).max()) * 0.7).astype(np.float32)
+    rng = np.random.default_rng(0)
     if kind == "don":
-        n = int(0.9 * SR)
+        # スマホのスピーカーは低音が鳴らないので、低音だけでなく中音の胴鳴りとアタックも入れる
+        n = int(1.1 * SR)
         t = np.arange(n) / SR
-        f = 48 + 60 * np.exp(-t * 18)                     # 下がっていく低音
-        body = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 4.5)
-        click = np.random.default_rng(0).standard_normal(n) * np.exp(-t * 90) * 0.35
-        se = body + click
-        return (se / np.abs(se).max() * 0.6).astype(np.float32)
+        f = 55 + 90 * np.exp(-t * 14)                     # 胸に響く低音（下降）
+        sub = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 4)
+        f2 = 200 + 180 * np.exp(-t * 20)                  # スマホでも鳴る中低音の「ドン」
+        body = np.sin(2 * np.pi * np.cumsum(f2) / SR) * np.exp(-t * 7)
+        body += 0.5 * np.sin(2 * np.pi * np.cumsum(f2 * 2.01) / SR) * np.exp(-t * 11)
+        noise = rng.standard_normal(n)
+        k = np.ones(4) / 4                                 # 軽くこもらせたノイズ＝アタックの「パン」
+        crack = np.convolve(noise, k, "same") * np.exp(-t * 45)
+        tail = np.convolve(noise, np.ones(40) / 40, "same") * np.exp(-t * 5) * 0.6   # 余韻
+        se = 0.7 * sub + 1.0 * body + 1.4 * crack + tail
+        return (np.tanh(se / np.abs(se).max() * 1.6) * 0.75).astype(np.float32)
     if kind == "coin":
         n = int(0.9 * SR)
         t = np.arange(n) / SR
@@ -177,7 +194,7 @@ def sound_effect(kind):
             for fr, g in ((2637, 0.5), (3951, 0.35), (5274, 0.2)):
                 out += on * g * np.sin(2 * np.pi * fr * tt) * np.exp(-tt * 7)
         return (out / np.abs(out).max() * 0.4).astype(np.float32)
-    sys.exit(f"未知の効果音: {kind}（don / coin）")
+    sys.exit(f"未知の効果音: {kind}（don / coin、または se/ に置いたファイル名）")
 
 
 BGM_DIR = os.path.join(HERE, "bgm")

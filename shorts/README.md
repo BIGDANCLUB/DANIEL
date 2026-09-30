@@ -44,6 +44,10 @@
 - `python3 gen_images_gemini.py story_xxx.json --seed-library` … 生成済みの画像をまとめて登録
 - 画像モデルの既定は `gemini-3.1-flash-lite-image`（通常版と画像トークン数は同じで、画質もほぼ同等）
 
+## サムネイル
+- `python3 make_thumb.py story_xxx.json out/xxx_thumb.jpg` … 1080x1920 のサムネイル（API不要）
+- 背景は1行目の画像、見出しは台本トップの `thumb`（`\n` で改行、`{黄}` `<赤>`）。タグは `thumb_tag`（省略時は banner の1行目）
+
 ## その他
 - `python3 tts_gemini.py --list-models` … 使える TTS モデル名の確認（モデル名が変わったとき用）
 - `story_st003b.json` … 元動画の声と背景を再利用する版（`--source 元動画.mp4` が必要。背景は `extract_plates.py` で作成）

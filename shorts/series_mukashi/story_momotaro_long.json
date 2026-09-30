@@ -14,7 +14,7 @@
  },
  "image_gen": {
   "style": "Horizontal 16:9 wide illustration in the style of a traditional Japanese folktale picture book: soft watercolor and sumi ink on textured washi paper, warm muted earthy colors, gentle brush outlines, simple rounded character designs, rural old Japan. Wide, detailed composition with several points of interest spread across the frame, so that parts of it can be cropped as separate shots. Expressive comedic faces are fine. No text, no letters, no numbers, no symbols, no logos, no watermark.",
-  "image_dir": "work_momotaro_long/images"
+  "image_dir": "illust_momotaro"
  },
  "scenes": {
   "river": {

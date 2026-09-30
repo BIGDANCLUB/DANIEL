@@ -1,4 +1,40 @@
 {
+ "momotaro_long_feast": {
+  "file": "momotaro_long_feast.jpg",
+  "key": "513a1ffdec663423565aa4cbe3672f77e38711d2",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Great hall of an ogre fortress at night, lit by lanterns. A large red ogre with a flushed drunk face and a large blue ogre panting heavily sit at a feast with big sake jars. Huge iron clubs with studs lean against the wall. In the background, a heavy wooden gate. The ogres are drawn twice the height of a human. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+ },
+ "momotaro_long_home": {
+  "file": "momotaro_long_home.jpg",
+  "key": "14389c3ec217b9061190c8ccd179414813c60007",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A village by the river at sunset. Villagers happily receiving back shining gold treasures. The old couple welcoming Momotaro and the animals. In the garden, a canal dug from the river holds leftover giant peach pieces, and in the far background a couple of ogres peeking over the hill, sniffing the air. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+ },
+ "momotaro_long_house": {
+  "file": "momotaro_long_house.jpg",
+  "key": "8582646b450c307b39183c717c49d3861b41124f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Interior of a thatched farmhouse with a sunken hearth. A gigantic peach split open in the middle of the wooden floor, revealing its huge wrinkled stone and a cheerful baby boy sitting in the hollow. The old grandmother and grandfather fall backward in surprise on either side. A kitchen knife lies on the floor, a small sack of millet dumplings on a shelf. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+ },
+ "momotaro_long_road": {
+  "file": "momotaro_long_road.jpg",
+  "key": "5330e7030aa5f02ff7f3bd3f65bed9be4f9e4f20",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A country road through rice paddies and hills. Momotaro in the center with a pouch of millet dumplings at his waist, striding forward. A dog trotting beside him, a monkey on a stone wall, a green pheasant walking (not flying) on the road. In one corner, a bored cat sitting on a fence ignoring a dumpling. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+ },
+ "momotaro_long_sea": {
+  "file": "momotaro_long_sea.jpg",
+  "key": "795749edd78754633d9d17a19bd17ed908862b23",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A small wooden boat crossing a wavy sea. The dog lying limp and seasick over the side of the boat, the monkey calmly sitting at the bow washing a sweet potato in the seawater, the pheasant clinging to the mast, Momotaro rowing. On the horizon, a craggy dark island with an ogre fortress. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+ },
+ "momotaro_long_treasure": {
+  "file": "momotaro_long_treasure.jpg",
+  "key": "f2a6b0848faa63842339fa3f30a12853ba99e5cf",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A rocky shore of the ogre island in daylight. Defeated ogres bowing low. A mountain of gold coins, gold bars and treasures, and a small wooden boat sitting very low in the water, overloaded with gold. A big ogre standing waist-deep in the sea holding the boat's tow rope. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+ },
  "st003b_ai_01": {
   "file": "st003b_ai_01.jpg",
   "key": "9be0f912defa3e46919db961c132eb338fbd6b35",

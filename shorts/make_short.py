@@ -225,7 +225,7 @@ def mix_bgm(wav, bgm, total, volume_db):
              f"volume={volume_db}dB,atrim=0:{total:.3f},afade=t=in:d=0.8,"
              f"afade=t=out:st={total - fade:.3f}:d={fade:.3f}[b];"
              "[0:a]asplit[v][key];"
-             "[b][key]sidechaincompress=threshold=0.02:ratio=4:attack=30:release=500[bd];"
+             "[b][key]sidechaincompress=threshold=0.03:ratio=2.5:attack=30:release=500[bd];"
              "[v][bd]amix=inputs=2:normalize=0:duration=first,alimiter=limit=0.9[out]")
     subprocess.run([FF, "-loglevel", "error", "-y", "-i", wav, "-stream_loop", "-1", "-i", bgm,
                     "-filter_complex", graph, "-map", "[out]", "-ar", str(SR), "-ac", "1", tmp], check=True)
@@ -439,7 +439,7 @@ def main(story_path, out, source=None):
     bgm = pick_bgm(cfg, work)
     if bgm:
         print(f"  BGM: {os.path.relpath(bgm, BGM_DIR)}")
-        mix_bgm(wav, bgm, total, cfg.get("bgm_volume", -18))
+        mix_bgm(wav, bgm, total, cfg.get("bgm_volume", -10))
     nframes = int(total * FPS)
 
     # --- カット ---

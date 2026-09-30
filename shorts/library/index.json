@@ -388,5 +388,59 @@
   "key": "5d6714a9aca24655ef367e2e01a047d599c2f8ba",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "Close-up of a hand holding a tablet over a ramen shop counter, the screen showing a blurry grayscale security camera still, screen content unreadable"
+ },
+ "st009_ai_guard": {
+  "file": "st009_ai_guard.jpg",
+  "key": "ececbff0e3f58db769d851b7e410d3655491e342",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese security guard in his sixties in a navy uniform and cap seen from behind, standing at the entrance of an office building at dusk, face not visible"
+ },
+ "st009_ai_hellowork": {
+  "file": "st009_ai_hellowork.jpg",
+  "key": "882739e1660a2f3d0db90a833e2692fee33be873",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Interior of a Japanese public employment office with counters and waiting chairs, a few older people seated seen from behind, bright fluorescent light, no readable text or signs"
+ },
+ "st009_ai_onsen": {
+  "file": "st009_ai_onsen.jpg",
+  "key": "68661c70fce6dbaf0b8263b689e2011109b7c4b3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese couple in yukata seen from behind sitting on the veranda of a hot spring inn, looking at an autumn mountain view, relaxed happy mood"
+ },
+ "st009_ai_uniform": {
+  "file": "st009_ai_uniform.jpg",
+  "key": "7585d00816fb2ad5e3604ebde0a55e683e1094f6",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of an older man's hands folding a navy security guard uniform jacket on a bench in a small locker room, only hands and forearms visible, soft light"
+ },
+ "st010_ai_receipts": {
+  "file": "st010_ai_receipts.jpg",
+  "key": "2dffdc4262f08232d25c2e2afcbec1a70c298a35",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A pile of hospital receipts and a calculator on a low wooden table in a Japanese living room, text on receipts blurred and unreadable, warm lamp light"
+ },
+ "st010_ai_taxhall": {
+  "file": "st010_ai_taxhall.jpg",
+  "key": "964c44804ed1d30923d749fa5038601f1a6d3f9a",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese tax return consultation venue with rows of tables and staff helping older people, everyone seen from behind, bright light, no readable signs"
+ },
+ "st010_ai_wife_bed": {
+  "file": "st010_ai_wife_bed.jpg",
+  "key": "d9b85091a27fe13479d88cacc136d20f064aa9b1",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "View from the foot of a Japanese hospital bed: an elderly woman's legs under a blanket with one leg in a white cast, her upper body out of frame, soft window light, no face visible"
+ },
+ "st011_ai_altar": {
+  "file": "st011_ai_altar.jpg",
+  "key": "a57332e250ba2f6c4d0f573f1190e10629fd3509",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese Buddhist funeral altar decorated with rows of white chrysanthemums, candles and rising incense smoke, no photograph, no portrait, no people, no readable text"
+ },
+ "st011_ai_prayer": {
+  "file": "st011_ai_prayer.jpg",
+  "key": "2f0c4b0b6a7407700b18931f6cf5f8642104eeb1",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of an elderly woman's hands pressed together in prayer holding prayer beads in front of a small Japanese home Buddhist altar with a candle and incense, no photograph, no portrait, only hands visible, soft evening light"
  }
 }

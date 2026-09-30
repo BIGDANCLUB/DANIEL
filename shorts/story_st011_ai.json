@@ -1,0 +1,175 @@
+{
+ "_comment": "ST-011 葬祭費と未支給年金。後期高齢者医療（や国民健康保険）の加入者が亡くなると、葬儀を行った人に葬祭費（自治体により異なる、例: 5万円）。申請期限は葬儀の翌日から2年。年金は後払いで亡くなった月の分まで支給され、生計を同じくしていた遺族（ここでは妻＝母）が未支給年金を請求できる（期限5年）。父の年金月15万円・2か月分≒30万円の想定。",
+ "tempo": 1.22,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "知らないと大損する\n{親を見送ったあと}",
+ "thumb_top": "父の葬儀のあと\n35万円が戻ってきた",
+ "thumb_teaser": "申請しないともらえない",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n58歳の日本人男性。落ち着いた低めの声で、誠実な人柄。\n## THE SCENE\n自分の身に起きた出来事を、同世代の男性に打ち明けるように語っている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。数字は少し強調する。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st011_ai/voice"
+ },
+ "image_gen": {
+  "image_dir": "work_st011_ai/images"
+ },
+ "scenes": {
+  "altar": {
+   "prompt": "A Japanese Buddhist funeral altar decorated with rows of white chrysanthemums, candles and rising incense smoke, no photograph, no portrait, no people, no readable text"
+  },
+  "prayer": {
+   "prompt": "Close-up of an elderly woman's hands pressed together in prayer holding prayer beads in front of a small Japanese home Buddhist altar with a candle and incense, no photograph, no portrait, only hands visible, soft evening light"
+  },
+  "estimate": {
+   "library": "st003b_ai_13"
+  },
+  "mother": {
+   "library": "st003b_ai_04"
+  },
+  "office_ext": {
+   "library": "st003b_ai_08"
+  },
+  "counter": {
+   "library": "st003b_ai_09"
+  },
+  "pension_ext": {
+   "library": "st006_ai_office_ext"
+  },
+  "form": {
+   "library": "st003b_ai_11"
+  },
+  "chart": {
+   "library": "st004_ai_12"
+  },
+  "receipt": {
+   "library": "st004_ai_15"
+  },
+  "river": {
+   "library": "st003b_ai_18"
+  }
+ },
+ "lines": [
+  {
+   "text": "父の葬儀のあと\n{35万円}が\n戻ってきた",
+   "tone": "信じられない結果を打ち明ける。驚きをこめて、力強く",
+   "say": "父の葬儀のあと、35万円が戻ってきました。",
+   "hook": true,
+   "scene": "altar"
+  },
+  {
+   "text": "申請しないと\n<もらえないお金>\nでした",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "申請しないと、もらえないお金でした。",
+   "scene": "form"
+  },
+  {
+   "text": "{58歳}の私\n父は{86歳}で\n亡くなりました",
+   "tone": "静かに、しみじみと",
+   "say": "58歳の私。父は86歳で亡くなりました。",
+   "scene": "altar",
+   "crop": [
+    0.5,
+    0.55,
+    1.5
+   ]
+  },
+  {
+   "text": "葬儀代は\n<約150万円>",
+   "tone": "重く、ため息まじりに",
+   "say": "葬儀代は、約150万円。",
+   "scene": "estimate"
+  },
+  {
+   "text": "母の年金だけでは\n<これからが不安>です",
+   "tone": "不安で声が沈む",
+   "say": "母の年金だけでは、これからが不安でした。",
+   "scene": "mother"
+  },
+  {
+   "text": "役所で\n{死亡後の手続き}を\nしていた時のこと",
+   "tone": "淡々と、落ち着いて",
+   "say": "役所で、死亡後の手続きをしていた時のことです。",
+   "scene": "office_ext"
+  },
+  {
+   "text": "「{葬祭費}の申請は\nお済みですか」",
+   "tone": "職員の言葉を、やさしく明るく再現する",
+   "say": "窓口の人が言いました。葬祭費の申請は、お済みですか。",
+   "scene": "counter"
+  },
+  {
+   "text": "葬儀をした人に\n{5万円}が出ます",
+   "tone": "はっきりと、聞き手に教えるように",
+   "say": "葬儀をした人に、5万円が支給されるんです。",
+   "scene": "counter",
+   "crop": [
+    0.5,
+    0.55,
+    1.6
+   ]
+  },
+  {
+   "text": "さらに年金事務所で\n{未支給年金}の\n手続きを",
+   "tone": "前を向いて、少し明るく",
+   "say": "さらに年金事務所で、未支給年金の手続きをしました。",
+   "scene": "pension_ext"
+  },
+  {
+   "text": "年金は<後払い>\n亡くなった月の分まで\nもらえます",
+   "tone": "説明するように、わかりやすく",
+   "say": "年金は後払い。亡くなった月の分まで、もらえるんです。",
+   "scene": "chart"
+  },
+  {
+   "text": "父の年金2か月分\n{約30万円}を\n母が受け取れました",
+   "tone": "驚きをこめて",
+   "say": "父の年金2か月分、約30万円を、母が受け取れました。",
+   "scene": "form"
+  },
+  {
+   "text": "合わせて\n<約35万円>",
+   "tone": "驚きと安堵。声がふっと明るくなる",
+   "say": "合わせて、約35万円です。",
+   "se": "coin",
+   "scene": "receipt"
+  },
+  {
+   "text": "ただし葬祭費は\n<2年>を過ぎると\n申請できません",
+   "tone": "警告するように、はっきりと",
+   "say": "ただし葬祭費は、2年を過ぎると申請できません。",
+   "scene": "form",
+   "crop": [
+    0.5,
+    0.5,
+    1.6
+   ]
+  },
+  {
+   "text": "最後まで家族を支える\n{日本の仕組み}です",
+   "tone": "誇らしく、しみじみと",
+   "say": "最後まで家族を支えてくれる、日本の仕組みです。",
+   "scene": "river"
+  },
+  {
+   "text": "母は父の写真に\n「{ありがとう}」\nと言いました",
+   "tone": "胸がいっぱいで、やさしく、ゆっくり",
+   "say": "母は父の写真に、ありがとう、と言いました。",
+   "scene": "prayer"
+  },
+  {
+   "text": "親を見送った人\n<この申請>は\n済んでいますか？",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "親を見送った人、この申請は済んでいますか。",
+   "scene": "river",
+   "crop": [
+    0.5,
+    0.55,
+    1.4
+   ]
+  }
+ ]
+}

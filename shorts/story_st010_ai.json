@@ -1,0 +1,182 @@
+{
+ "_comment": "ST-010 医療費控除。1年の医療費（家族分を合算可）から10万円（総所得200万円未満は所得の5%）を引いた額を所得から控除。還付申告は5年前までさかのぼれる。公的年金400万円以下で確定申告不要の人も、還付を受けるために申告できる。例: 医療費40万円→控除30万円、所得税率5%で約1.5万円還付＋住民税10%で約3万円減＝約4.5万円（税率は人により異なる）。",
+ "tempo": 1.22,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "知らないと大損する\n{年金暮らしの確定申告}",
+ "thumb_top": "妻の入院費40万円\n税金が4万5千円戻った",
+ "thumb_teaser": "年金暮らしでも申告を",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n67歳の日本人男性。落ち着いた低めの声で、誠実な人柄。\n## THE SCENE\n自分の身に起きた出来事を、同世代の男性に打ち明けるように語っている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。数字は少し強調する。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st010_ai/voice"
+ },
+ "image_gen": {
+  "image_dir": "work_st010_ai/images"
+ },
+ "scenes": {
+  "wife_bed": {
+   "prompt": "View from the foot of a Japanese hospital bed: an elderly woman's legs under a blanket with one leg in a white cast, her upper body out of frame, soft window light, no face visible"
+  },
+  "receipts": {
+   "prompt": "A pile of hospital receipts and a calculator on a low wooden table in a Japanese living room, text on receipts blurred and unreadable, warm lamp light"
+  },
+  "taxhall": {
+   "prompt": "A Japanese tax return consultation venue with rows of tables and staff helping older people, everyone seen from behind, bright light, no readable signs"
+  },
+  "hospital": {
+   "library": "st004_ai_06"
+  },
+  "envelope": {
+   "library": "st004_ai_03"
+  },
+  "night": {
+   "library": "st003b_ai_07"
+  },
+  "counter": {
+   "library": "st004_ai_10"
+  },
+  "form": {
+   "library": "st003b_ai_11"
+  },
+  "chart": {
+   "library": "st004_ai_12"
+  },
+  "receipt": {
+   "library": "st004_ai_15"
+  },
+  "dinner": {
+   "library": "st006_ai_dinner"
+  },
+  "walk": {
+   "library": "st006_ai_walk"
+  }
+ },
+ "lines": [
+  {
+   "text": "妻の入院費で\n{税金が}\n{戻ってきた}",
+   "tone": "信じられない結果を打ち明ける。驚きをこめて、力強く",
+   "say": "妻の入院費で、税金が戻ってきました。",
+   "hook": true,
+   "scene": "receipts"
+  },
+  {
+   "text": "年金暮らしの私が\n知らなかった\n<ある申告>で",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "年金暮らしの私が知らなかった、ある申告のおかげです。",
+   "scene": "taxhall"
+  },
+  {
+   "text": "{67歳}の私\n妻と二人の\n年金暮らし",
+   "tone": "淡々と、落ち着いて",
+   "say": "67歳の私。妻と二人の年金暮らしです。",
+   "scene": "envelope"
+  },
+  {
+   "text": "去年 妻が<骨折>して\n2か月入院しました",
+   "tone": "重く、ゆっくり",
+   "say": "去年、妻が骨折して、2か月入院しました。",
+   "scene": "wife_bed"
+  },
+  {
+   "text": "1年の医療費は\n<約40万円>に",
+   "tone": "ため息まじりに",
+   "say": "1年の医療費は、約40万円になりました。",
+   "scene": "receipts",
+   "crop": [
+    0.5,
+    0.5,
+    1.5
+   ]
+  },
+  {
+   "text": "年金だけでは\n<ぎりぎり>の暮らしです",
+   "tone": "不安で声が沈む",
+   "scene": "night"
+  },
+  {
+   "text": "年金暮らしに\n{確定申告}なんて\n<関係ない>と思っていた",
+   "tone": "苦笑いまじりに",
+   "say": "年金暮らしに確定申告なんて関係ない。そう思っていました。",
+   "scene": "night",
+   "crop": [
+    0.5,
+    0.6,
+    1.6
+   ]
+  },
+  {
+   "text": "息子に言われて\n{申告の相談会}へ",
+   "tone": "気が進まないまま、淡々と",
+   "say": "息子に言われて、確定申告の相談会へ行きました。",
+   "scene": "taxhall",
+   "crop": [
+    0.5,
+    0.55,
+    1.5
+   ]
+  },
+  {
+   "text": "「{医療費控除}は\n申告しましたか」",
+   "tone": "係の人の言葉を、やさしく明るく再現する",
+   "say": "係の人が言いました。医療費控除は、申告しましたか。",
+   "scene": "counter"
+  },
+  {
+   "text": "医療費が1年で\n{10万円}を超えたら\n税金が安くなる",
+   "tone": "はっきりと、聞き手に教えるように",
+   "say": "1年の医療費が10万円を超えたら、その分、税金が安くなるんです。",
+   "scene": "chart"
+  },
+  {
+   "text": "{家族の分}も\nまとめて申告できます",
+   "tone": "説明するように、わかりやすく",
+   "say": "家族の分も、まとめて申告できます。",
+   "scene": "form"
+  },
+  {
+   "text": "所得税が戻り\n住民税も安くなって\n<約4万5千円>",
+   "tone": "驚きと安堵。声がふっと明るくなる",
+   "say": "所得税が戻って、住民税も安くなり、合わせて約4万5千円。",
+   "se": "coin",
+   "scene": "receipt"
+  },
+  {
+   "text": "しかも<5年前>まで\nさかのぼれます",
+   "tone": "驚きをこめて",
+   "say": "しかも、5年前の分まで、さかのぼって申告できるんです。",
+   "scene": "form",
+   "crop": [
+    0.5,
+    0.5,
+    1.6
+   ]
+  },
+  {
+   "text": "{払いすぎた税金}は\n申告すれば\n戻ってきます",
+   "tone": "誇らしく、力強く",
+   "say": "払いすぎた税金は、申告すれば、きちんと戻ってくる。",
+   "scene": "receipt",
+   "crop": [
+    0.5,
+    0.45,
+    1.5
+   ]
+  },
+  {
+   "text": "妻は\n「{言ってみるもんね}」\nと笑いました",
+   "tone": "しみじみと、やさしく",
+   "say": "妻は、言ってみるもんね、と笑いました。",
+   "scene": "dinner"
+  },
+  {
+   "text": "去年の医療費\n<10万円>を\n超えていませんか？",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "去年の医療費、10万円を超えていませんか。",
+   "scene": "walk"
+  }
+ ]
+}

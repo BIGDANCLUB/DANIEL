@@ -48,7 +48,7 @@
    "prompt": "A quiet Japanese hospital room with a single bed by the window, IV stand, late afternoon light through blinds, empty, no people"
   },
   {
-   "text": "退院の日\n窓口で<90万円>と言われました",
+   "text": "退院の日 窓口で\n<90万円>と\n言われました",
    "tone": "呆然として。信じられない気持ち",
    "say": "退院の日、窓口で90万円と言われました。",
    "prompt": "A hospital accounts counter in Japan seen over an elderly man's shoulder from behind, staff hands pushing a document across the counter"
@@ -59,7 +59,7 @@
    "prompt": "An empty hospital waiting room bench in Japan, a man's jacket and a paper bag left on it, gloomy blue light"
   },
   {
-   "text": "妻は黙って\n{通帳}を握りしめていました",
+   "text": "妻は黙って\n{通帳}を\n握りしめていました",
    "tone": "胸が痛む。しみじみと",
    "prompt": "Close-up of an elderly woman's hands tightly holding a plain blank-covered booklet on her lap in a hospital lobby, soft light"
   },
@@ -95,18 +95,18 @@
    "prompt": "Close-up of an elderly man's relieved hands holding a folded receipt and a wallet at a hospital counter, warm light"
   },
   {
-   "text": "{国民皆保険}は\n世界に誇る日本の仕組みです",
+   "text": "{国民皆保険}は\n世界に誇る\n日本の仕組みです",
    "tone": "誇らしく、力強く",
    "prompt": "Beautiful wide view of a Japanese town at dawn with Mount Fuji in the distance, calm and proud mood, no text"
   },
   {
-   "text": "妻は「日本に生まれて\n{よかったね}」と笑いました",
+   "text": "妻は「日本に\n生まれて{よかったね}」\nと笑いました",
    "tone": "胸がいっぱいで、やさしく、ゆっくり",
    "say": "妻は、日本に生まれてよかったね、と笑いました。",
    "prompt": "An elderly Japanese couple seen from behind walking out of a hospital entrance into bright sunshine, the wife holding his arm"
   },
   {
-   "text": "あなたの家族は\n<この制度>を知っていますか？",
+   "text": "あなたの家族は\n<この制度>を\n知っていますか？",
    "tone": "同世代に語りかける。まっすぐ問いかけるように",
    "say": "あなたの家族は、この制度を知っていますか。",
    "prompt": "An elderly Japanese man seen from behind sitting on a riverside bench at sunset, looking at the calm water, reflective mood"

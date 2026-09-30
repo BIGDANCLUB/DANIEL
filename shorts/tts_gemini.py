@@ -73,6 +73,10 @@ def _request(path, body=None):
                 return json.load(r)
         except urllib.error.HTTPError as e:
             msg = e.read().decode(errors="replace")
+            if e.code == 429 and "per_day" in msg:
+                # 1日の上限はしばらく空かないので、やり直さずに止める（失敗も回数に数えられるため）
+                sys.exit("Gemini API の1日の上限に達しました（" + (re.search(r"model: ([\w.-]+)", msg) or [None, "?"])[1]
+                         + "）。上限が空いてから再実行してください")
             if e.code in (429, 500, 503) and attempt < 5:
                 wait = 2 ** attempt * 5
                 print(f"  {e.code} → {wait}s 待って再試行", flush=True)

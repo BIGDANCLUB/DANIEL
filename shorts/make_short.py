@@ -210,7 +210,8 @@ def pick_bgm(cfg, work):
     "random:スカッと"      … bgm/スカッと/ の中からランダム
     "曲名.mp3"             … bgm/ からの相対パスで指定
     "none"                 … BGM なし
-    ランダムで選んだ曲は work に記録し、作り直しても同じ曲を使う。"""
+    ランダムで選んだ曲は work に記録し、作り直しても同じ曲を使う。
+    他の動画で使った回数が少ない曲を優先するので、曲が偏らない。"""
     spec = cfg.get("bgm", "random")
     if not spec or spec == "none":
         return None
@@ -230,7 +231,15 @@ def pick_bgm(cfg, work):
     if not songs:
         print(f"  ※ {root} に BGM が無いので BGM なしで書き出します")
         return None
-    choice = random.choice(songs)
+    # 他の動画でまだ使っていない（使用回数が少ない）曲を優先してランダムに選ぶ
+    used = {}
+    for d in os.listdir(os.path.dirname(work) or "."):
+        m = os.path.join(os.path.dirname(work) or ".", d, "bgm_choice.txt")
+        if d.endswith("_work") and os.path.join(os.path.dirname(work) or ".", d) != work and os.path.exists(m):
+            k = open(m, encoding="utf-8").read().strip()
+            used[k] = used.get(k, 0) + 1
+    least = min(used.get(x, 0) for x in songs)
+    choice = random.choice([x for x in songs if used.get(x, 0) == least])
     open(memo, "w", encoding="utf-8").write(choice)
     return os.path.join(BGM_DIR, choice)
 
@@ -336,7 +345,7 @@ def line_clips(cfg, base, source):
             a, b = max(0.0, line["audio"][0]), line["audio"][1]
             clips.append(src_audio[int(a * SR):int(b * SR)].copy())
         else:
-            clip = trim_silence(load_audio(tts_gemini.wav_path(cfg, base, i)).copy())
+            clip = trim_silence(load_audio(tts_gemini.wav_path(cfg, base, line.get("_idx", i))).copy())
             clips.append(shorten_pauses(clip, cfg.get("max_pause", 0.3)))
     return clips
 
@@ -435,7 +444,7 @@ def make_shots(cfg, base):
             h = w * H / W
             spec.setdefault("box", [cx * img.width - w / 2, cy * img.height - h / 2, w])
         else:
-            img = load(gen_images_gemini.image_path(cfg, base, i))
+            img = load(gen_images_gemini.image_path(cfg, base, l.get("_idx", i)))
         spec.setdefault("box", [0, 0, img.width])
         spec.setdefault("move", l.get("move", AUTO_MOVES[i % len(AUTO_MOVES)]))
         shots.append(Shot(img, spec))
@@ -451,6 +460,10 @@ def main(story_path, out, source=None):
     # --- 素材の自動生成（足りないものだけ） ---
     tts_gemini.ensure_voice(story_path)
     gen_images_gemini.ensure_images(story_path)
+    # "skip": true の行は動画から外す（音声・画像の番号は元の行番号のまま使う）
+    for i, l in enumerate(cfg["lines"]):
+        l["_idx"] = i
+    cfg["lines"] = [l for l in cfg["lines"] if not l.get("skip")]
 
     # --- 音声 ---
     tempo = cfg.get("tempo", 1.0)

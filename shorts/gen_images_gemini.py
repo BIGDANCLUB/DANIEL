@@ -40,7 +40,14 @@ LIB_INDEX = os.path.join(LIB_DIR, "index.json")
 
 
 def image_config(cfg):
-    return {**DEFAULTS, **cfg.get("image_gen", {})}
+    ic = {**DEFAULTS, **cfg.get("image_gen", {})}
+    # 横動画（"format": "landscape"）は 16:9 で生成する
+    ic.setdefault("aspect", "16:9" if cfg.get("format") == "landscape" else "9:16")
+    return ic
+
+
+def _size(ic):
+    return (1920, 1080) if ic["aspect"] == "16:9" else (W, H)
 
 
 def image_path(cfg, base, i):
@@ -48,7 +55,10 @@ def image_path(cfg, base, i):
 
 
 def _key(ic, prompt):
-    return hashlib.sha1(json.dumps([ic["model"], ic["style"], prompt]).encode()).hexdigest()
+    parts = [ic["model"], ic["style"], prompt]
+    if ic.get("aspect", "9:16") != "9:16":   # 縦の既存画像のキーは変えない
+        parts.append(ic["aspect"])
+    return hashlib.sha1(json.dumps(parts).encode()).hexdigest()
 
 
 def scene_path(cfg, base, name):
@@ -110,27 +120,28 @@ def generate(ic, prompt):
     if ic["model"].startswith("imagen"):
         res = _request(f"models/{ic['model']}:predict", {
             "instances": [{"prompt": full}],
-            "parameters": {"sampleCount": 1, "aspectRatio": "9:16"},
+            "parameters": {"sampleCount": 1, "aspectRatio": ic["aspect"]},
         })
         data = res["predictions"][0]["bytesBase64Encoded"]
     else:
         res = _request(f"models/{ic['model']}:generateContent", {
             "contents": [{"parts": [{"text": full}]}],
-            "generationConfig": {"responseModalities": ["IMAGE"], "imageConfig": {"aspectRatio": "9:16"}},
+            "generationConfig": {"responseModalities": ["IMAGE"], "imageConfig": {"aspectRatio": ic["aspect"]}},
         })
         parts = res["candidates"][0]["content"]["parts"]
         data = next(p["inlineData"]["data"] for p in parts if "inlineData" in p)
     img = Image.open(io.BytesIO(base64.b64decode(data))).convert("RGB")
-    # 9:16 に合わせて中央を切り出し、1080x1920 以上に揃える
+    # 画面の縦横比（9:16 / 16:9）に合わせて中央を切り出し、画面サイズ以上に揃える
+    w, h = _size(ic)
     iw, ih = img.size
-    if iw / ih > W / H:
-        nw = int(ih * W / H)
+    if iw / ih > w / h:
+        nw = int(ih * w / h)
         img = img.crop(((iw - nw) // 2, 0, (iw - nw) // 2 + nw, ih))
     else:
-        nh = int(iw * H / W)
+        nh = int(iw * h / w)
         img = img.crop((0, (ih - nh) // 2, iw, (ih - nh) // 2 + nh))
-    if img.width < W:
-        img = img.resize((W, H), Image.LANCZOS)
+    if img.width < w:
+        img = img.resize((w, h), Image.LANCZOS)
     return img
 
 

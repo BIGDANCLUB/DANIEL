@@ -162,10 +162,10 @@ Vertical illustration in the style of a traditional Japanese folktale picture bo
 - 配色はイラストに合わせた和紙・墨・朱・藍。フォントは Zen Maru Gothic（初回に `shorts/fonts/` へ取得）
 - 画面の下230pxは字幕用に空けてある
 
-### 横動画にするために必要なコードの変更（未着手）
-- `make_short.py` の `W, H = 1080, 1920` → 1920x1080、字幕を画面下部に移し、1行20字前後まで、`SUB_MAX_W` を広げる、45〜55秒の警告を外す
-- `gen_images_gemini.py` の `aspectRatio: "9:16"` と切り出し処理を 16:9 に
-- 台本トップの `"format": "landscape"` を見て切り替える想定（今はまだ読んでいない）
+### 横動画での書き出し
+- `make_short.py` は台本の `"format": "landscape"` を見て 1920x1080 で書き出す（字幕は画面下、フックは中央）。画像生成も 16:9 になる
+- `python3 ../make_short.py story_momotaro_long.json ../out/momotaro_long.mp4` で書き出せる（初回は声147本・イラスト8枚を Gemini で生成する）
+- 仮の声・仮のイラストで一部の行を書き出して、字幕の位置と図解の見え方は確認済み
 
 ### 追加した科学ネタの根拠
 | ネタ | 根拠 |

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """縦型ショート（1080x1920）を台本JSONから組み立てる。
+台本トップに "format": "landscape" があれば、横動画（1920x1080・字幕は画面下）で書き出す。
 
 参考フォーマット:
   - 画像は全面（帯なし）。1行ごとにカットを切り替え、ゆっくりズーム／パン
@@ -53,6 +54,20 @@ POP = 0.22            # ポップイン秒
 PUNCH = (0.28, 0.30, 0.15)   # 赤字の弾み：開始秒・長さ・最大拡大率
 BANNER_H = 330
 BANNER_SIZE = 112
+HOOK_CY = SUB_CY      # フックの中心Y
+LANDSCAPE = False
+
+# 横動画（"format": "landscape"）の寸法。字幕は画面下、フックは画面中央に大きく
+LANDSCAPE_LAYOUT = {"W": 1920, "H": 1080, "SUB_CY": 948, "SUB_SIZE": 64, "HOOK_SIZE": 104,
+                    "SUB_MAX_W": 1760, "HOOK_CY": 540, "BANNER_H": 150, "BANNER_SIZE": 56}
+
+
+def apply_format(cfg):
+    """台本の format に合わせて画面寸法と字幕の配置を切り替える。"""
+    global LANDSCAPE
+    if cfg.get("format") == "landscape":
+        LANDSCAPE = True
+        globals().update(LANDSCAPE_LAYOUT)
 
 
 def ffmpeg_bin():
@@ -373,7 +388,7 @@ def ease_back(x, k=1.9):
 
 
 class Shot:
-    """画像の一部（9:16の枠）を、start→end の枠へ補間しながら全面に映す。"""
+    """画像の一部（画面と同じ縦横比の枠）を、start→end の枠へ補間しながら全面に映す。"""
 
     def __init__(self, img, spec):
         self.img = img
@@ -444,6 +459,7 @@ def make_shots(cfg, base):
 
 def main(story_path, out, source=None):
     cfg = json.load(open(story_path, encoding="utf-8"))
+    apply_format(cfg)
     base = os.path.dirname(os.path.abspath(story_path))
     work = os.path.splitext(out)[0] + "_work"
     os.makedirs(work, exist_ok=True)
@@ -508,7 +524,8 @@ def main(story_path, out, source=None):
             sub.putalpha(sub.getchannel("A").point(lambda v: int(v * alpha)))
         else:
             sub = punch(sub, t - st)
-        frame.alpha_composite(sub, ((W - sub.width) // 2, SUB_CY - sub.height // 2))
+        cy = HOOK_CY if cfg["lines"][li].get("hook") else SUB_CY
+        frame.alpha_composite(sub, ((W - sub.width) // 2, cy - sub.height // 2))
         if banner:
             frame.alpha_composite(banner, (0, 0))
         if note:
@@ -526,8 +543,8 @@ def main(story_path, out, source=None):
     with open(os.path.splitext(out)[0] + ".srt", "w", encoding="utf-8") as fp:
         for i, ((st, en), l) in enumerate(zip(timings, cfg["lines"])):
             fp.write(f"{i + 1}\n{ts(st)} --> {ts(en)}\n{plain(l['text'])}\n\n")
-    print(f"done: {out} ({total:.2f}s)")
-    if not 45 <= total <= 55:
+    print(f"done: {out} ({int(total // 60)}分{total % 60:04.1f}秒)")
+    if not LANDSCAPE and not 45 <= total <= 55:
         print(f"  ※ 45〜55秒から外れています。台本の tempo を {tempo * total / 52:.2f} 付近にすると約52秒になります")
 
 

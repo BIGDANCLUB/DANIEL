@@ -263,13 +263,13 @@ Z["alcohol"] = ("顔が赤くなるしくみ", "アルコールの分解", svg(
 ))
 
 Z["kanabo"] = ("金棒の重さ", "中まで鉄の場合", svg(
-    f'<rect x="100" y="160" width="1100" height="110" rx="20" fill="#5a5f66" stroke="{INK}" stroke-width="6"/>'
-    + "".join(f'<circle cx="{220 + 110 * i}" cy="{215 + (22 if i % 2 else -22)}" r="15" fill="#8b9097" stroke="{INK}" stroke-width="3"/>' for i in range(9))
-    + f'<line x1="100" y1="330" x2="1200" y2="330" stroke="{INK}" stroke-width="3"/>' + t(650, 380, "長さ 1.5m", 44, weight=900)
-    + f'<line x1="1250" y1="160" x2="1250" y2="270" stroke="{INK}" stroke-width="3"/>' + t(1275, 230, "直径 8cm", 44, "start", weight=900)
-    + t(650, 480, "体積 約7,540cm³ × 鉄 7.87g/cm³", 46, weight=900)
-    + t(650, 580, "＝ 約60kg", 80, fill=SHU, weight=900)
-    + box(1320, 400, 380, 200, "#fffaf0") + t(1510, 480, "お米の30kg袋", 36) + t(1510, 550, "2袋ぶん", 56, weight=900)
+    f'<rect x="100" y="140" width="1100" height="160" rx="26" fill="#5a5f66" stroke="{INK}" stroke-width="6"/>'
+    + "".join(f'<circle cx="{220 + 110 * i}" cy="{220 + (34 if i % 2 else -34)}" r="18" fill="#8b9097" stroke="{INK}" stroke-width="3"/>' for i in range(9))
+    + f'<line x1="100" y1="350" x2="1200" y2="350" stroke="{INK}" stroke-width="3"/>' + t(650, 400, "長さ 1.5m", 44, weight=900)
+    + f'<line x1="1250" y1="140" x2="1250" y2="300" stroke="{INK}" stroke-width="3"/>' + t(1275, 235, "直径 12cm", 44, "start", weight=900)
+    + t(650, 490, "体積 約17,000cm³ × 鉄 7.87g/cm³", 46, weight=900)
+    + t(650, 590, "＝ 約130kg", 80, fill=SHU, weight=900)
+    + box(1320, 400, 380, 200, "#fffaf0") + t(1510, 480, "お米の30kg袋", 36) + t(1510, 550, "4袋以上", 56, weight=900)
 ))
 
 Z["oni_hikaku"] = ("人と鬼（背たけ2倍）", "二乗三乗の法則の回収", svg(
@@ -344,6 +344,66 @@ Z["hakko"] = ("発酵のしくみ", "桃の糖 → お酒", svg(
     + t(870, 600, "C₆H₁₂O₆ → 2C₂H₅OH ＋ 2CO₂", 46, weight=900)
 ))
 
+
+Z["kiru"] = ("桃太郎の安全地帯", "包丁は真ん中を通る", svg(
+    f'<circle cx="480" cy="330" r="300" fill="{MOMO}" stroke="{INK}" stroke-width="6"/>'
+    + f'<circle cx="480" cy="330" r="270" fill="#fbe3c4"/>'
+    + f'<line x1="480" y1="0" x2="480" y2="660" stroke="{SHU}" stroke-width="8" stroke-dasharray="26 16"/>'
+    + t(505, 40, "包丁の通り道", 34, "start", fill=SHU, weight=900)
+    + baby(480, 330, 1.0, dash=True) + t(505, 540, "× 真ん中は危険", 36, "start", fill=SHU, weight=900)
+    + baby(265, 300, 0.85) + t(265, 400, "○ 端っこ", 36, fill=KOKE, weight=900)
+    + box(1000, 40, 720, 560, "#fffaf0")
+    + t(1360, 130, "包丁の刃渡り", 42, weight=900) + t(1360, 210, "ふつう 20cm前後", 56, fill=AI, weight=900)
+    + t(1360, 310, "桃の直径", 42, weight=900) + t(1360, 390, "80cm", 56, weight=900)
+    + f'<line x1="1040" y1="440" x2="1680" y2="440" stroke="{INK}" stroke-width="3"/>'
+    + t(1360, 520, "何度も刃を入れるあいだ", 40) + t(1360, 575, "端っこで耐えるしかない", 40, fill=SHU, weight=900)
+))
+
+Z["hozon"] = ("きびだんごを長持ちさせる", "硬くなる原因は「でんぷんの老化」", svg(
+    "".join(box(40 + i * 420, 40, 380, 300, c, INK, 16, 4) + t(230 + i * 420, 120, a, 44, weight=900)
+            + t(230 + i * 420, 210, b, 40, fill=fc, weight=900) + t(230 + i * 420, 280, m, 30)
+            for i, (a, b, m, c, fc) in enumerate([("冷蔵庫", "いちばん硬くなる", "0〜5℃あたりで老化が速い", "#fdecea", SHU),
+                                                  ("常温", "少しずつ硬くなる", "カビにも注意", "#fff", INK),
+                                                  ("冷凍", "ほぼ止まる", "作りたてをすぐ凍らせる", "#e6f0f6", AI),
+                                                  ("持ち歩き", "真空パック", "＋脱酸素剤でカビ対策", "#fdf1d6", "#8a5a00")]))
+    + t(870, 470, "作りたてを冷凍 → 真空パック＋脱酸素剤で持ち歩き", 46, weight=900)
+    + t(870, 560, "冷蔵庫には入れないのがコツ", 42, fill=SHU, weight=900)
+))
+
+Z["rodo"] = ("人を雇うときのルール", "もし家来が人間だったら", svg(
+    box(40, 20, 1660, 460, "#fffaf0")
+    + "".join(t(90, 110 + 115 * i, a, 44, "start", weight=900) + t(900, 110 + 115 * i, b, 34, "start")
+              + t(1640, 114 + 115 * i, "×", 70, "end", fill=SHU, weight=900)
+              + (f'<line x1="80" y1="{145 + 115 * i}" x2="1660" y2="{145 + 115 * i}" stroke="{INK}" stroke-width="2" opacity=".3"/>' if i < 3 else "")
+              for i, (a, b) in enumerate([("賃金はお金で払う", "労働基準法（通貨払いの原則）"), ("最低賃金以上", "最低賃金法"),
+                                          ("働く条件をはっきり示す", "労働基準法（労働条件の明示）"), ("だんご1個で命がけ", "ぜんぶアウト")]))
+    + t(870, 580, "ただし犬は、法律上は「人」ではなく「物」のあつかい", 44, weight=900)
+))
+
+Z["kosoku"] = ("舟の速さの壁", "水をかき分けて進む舟の場合", svg(
+    f'<rect x="0" y="330" width="820" height="330" fill="#9cc3d8" opacity=".75"/>'
+    + f'<path d="M120,250 L620,250 L560,380 L180,380 Z" fill="#b98a5e" stroke="{INK}" stroke-width="6"/>'
+    + f'<path d="M40,330 q80,-70 160,0 M540,330 q80,-70 160,0" stroke="{AI}" stroke-width="7" fill="none"/>'
+    + t(410, 210, "排水量型：水をかき分ける", 38, weight=900) + t(410, 460, "長さ4mなら 時速9km前後が目安", 40, fill=SHU, weight=900)
+    + t(410, 520, "それ以上は波の抵抗が急に増える", 32)
+    + f'<rect x="900" y="330" width="840" height="330" fill="#9cc3d8" opacity=".75"/>'
+    + f'<path d="M1020,300 L1520,300 L1470,345 L1070,345 Z" fill="#b98a5e" stroke="{INK}" stroke-width="6" transform="rotate(-6 1270 320)"/>'
+    + f'<rect x="1500" y="270" width="40" height="90" fill="#5a5f66" stroke="{INK}" stroke-width="4"/>'
+    + t(1320, 210, "滑走型：水の上を滑る", 38, weight=900) + t(1320, 460, "速さの壁をこえられる", 40, fill=AI, weight=900)
+    + t(1320, 520, "パワーのある船外機が必要", 32)
+    + t(1320, 600, "燃料はガソリン（だんごでは動かない）", 30)
+))
+
+Z["security"] = ("鬼ヶ島の最新セキュリティ", "いちばんの弱点は…", svg(
+    box(40, 20, 1660, 480, "#fffaf0")
+    + t(470, 90, "鬼ヶ島の守り", 44, weight=900) + t(1250, 90, "桃太郎たちの手口", 44, weight=900)
+    + f'<line x1="80" y1="120" x2="1660" y2="120" stroke="{INK}" stroke-width="3"/>'
+    + "".join(t(470, 200 + 120 * i, a, 42, weight=900) + t(1250, 200 + 120 * i, b, 40) + t(1640, 204 + 120 * i, c, 64, "end", fill=SHU if c == "×" else KOKE, weight=900)
+              for i, (a, b, c) in enumerate([("顔認証スマートロック", "鬼のお面をかぶる", "×"),
+                                              ("（お面・写真を見破る）", "→ あっさり失敗", ""),
+                                              ("インターホン", "「お届けものでーす」", "○")]))
+    + t(870, 590, "機械より先に、人（鬼）がだまされる", 50, fill=SHU, weight=900)
+))
 
 def chrome():
     if os.environ.get("CHROME"):

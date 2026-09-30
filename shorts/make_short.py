@@ -9,6 +9,7 @@
   - "banner" があれば画面上部に動画概要の帯を出し続ける
   - 赤字（<…>）は表示直後にもう一度ポンと弾ませる
   - 行に "se": "don" / "coin" があれば、その行の頭に効果音を重ねる
+  - 冒頭には se/ の固定SE（既定「チリン」）を鳴らす
   - BGM は bgm/ の曲からランダムに1曲（台本の "bgm" で指定も可）。声の間は自動で下げる
 
 素材（BGMは後付け前提なので入れない）:
@@ -158,12 +159,14 @@ def make_banner(text):
 
 
 SE_DIR = os.path.join(HERE, "se")
+SE_EXT = (".wav", ".mp3", ".m4a", ".ogg", ".flac")
+INTRO_SE = "チリン"      # 全動画の冒頭に鳴らす効果音（se/チリン.mp3）。台本の "intro_se" で変更、"none" で無し
 
 
 def sound_effect(kind):
     """効果音を返す。se/ に同名の音声ファイル（例 se/jan.mp3 → "jan"）があればそれを使い、
     無ければ合成する（don: 冒頭の重い一打 / coin: チャリン）。"""
-    for ext in (".wav", ".mp3", ".m4a", ".ogg", ".flac"):
+    for ext in SE_EXT:
         path = os.path.join(SE_DIR, kind + ext)
         if os.path.exists(path):
             se = load_audio(path).copy()
@@ -252,6 +255,10 @@ def mix_bgm(wav, bgm, total, volume_db):
 def mix_effects(wav, cfg, timings):
     """ナレーションWAVに行ごとの効果音を重ねて上書きする。"""
     marks = [(timings[i][0] if i else 0.0, l["se"]) for i, l in enumerate(cfg["lines"]) if l.get("se")]
+    # 冒頭の固定SE（se/ に置いた手持ちの音）。あれば1行目の効果音と入れ替える
+    intro = cfg.get("intro_se", INTRO_SE)
+    if intro and intro != "none" and any(os.path.exists(os.path.join(SE_DIR, intro + e)) for e in SE_EXT):
+        marks = [(at, k) for at, k in marks if at > 0] + [(0.0, intro)]
     if not marks:
         return
     a = load_audio(wav).copy()

@@ -64,7 +64,7 @@ def build_prompt(tc, text, tone=None):
     """指示（人物像・気持ち）と読み上げ文を分けて渡す。区切らないと指示まで読み上げてしまう。"""
     if not tc["style"]:
         return text
-    head = tc["style"] + (f"この一文の気持ち：{tone}" if tone else "")
+    head = "# RULES\nこれは決まった台本の朗読。TRANSCRIPT の文字どおりに読む。最初に発する言葉は TRANSCRIPT の最初の言葉。あいさつ・前置き・「昔々」などの語り出し・補足・感想は一切言わない。\n" + tc["style"] + (f"この一文の気持ち：{tone}" if tone else "")
     return f"{head}\n指示文は読まず、TRANSCRIPT の日本語だけを読み上げること。TRANSCRIPT に無い言葉を足さない。前置き・言い換え・繰り返しをしない。\n#### TRANSCRIPT\n{text}"
 
 
@@ -175,7 +175,7 @@ BATCH_MAX_CHARS = 220      # 1回に読ませる文字数の上限（長すぎ�
 
 def build_batch_prompt(tc, texts, tones):
     notes = "\n".join(f"{n + 1}行目：{t}" for n, t in enumerate(tones) if t)
-    head = tc["style"] + ("\n### 行ごとの気持ち\n" + notes if notes else "")
+    head = "# RULES\nこれは決まった台本の朗読。TRANSCRIPT の文字どおりに読む。最初に発する言葉は TRANSCRIPT の最初の言葉。あいさつ・前置き・「昔々」などの語り出し・補足・感想は一切言わない。\n" + tc["style"] + ("\n### 行ごとの気持ち\n" + notes if notes else "")
     return (f"{head}\n### 読み方\nTRANSCRIPT の各行を上から順に1行ずつ読む。行と行のあいだは、必ず1秒ほどはっきり間をあける。"
             "行の途中では長い間をあけない。\n指示文は読まず、TRANSCRIPT の日本語だけを読み上げること。TRANSCRIPT に無い言葉を足さない。前置き・言い換え・繰り返しをしない。\n#### TRANSCRIPT\n"
             + "\n".join(texts))

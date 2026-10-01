@@ -16,41 +16,29 @@
   "image_dir": "work_st007_ai/images"
  },
  "scenes": {
-  "bath": {
-   "prompt": "An old Japanese tiled bathroom with a high step at the entrance and no handrail, dim light, empty, slightly worn"
+  "v2_house_tools": {
+   "prompt": "Exterior of an old one-story Japanese house with a contractor's toolbox and a new wooden handrail board leaning by the entrance, afternoon light, no readable signs"
   },
-  "bath_rail": {
-   "prompt": "A newly installed wooden handrail along the wall of a clean Japanese bathroom, bright soft light, empty, safe and warm mood"
+  "v2_father_veranda": {
+   "prompt": "A Japanese man in his eighties seen from behind sitting on the wooden veranda of an old house, cardigan, quiet afternoon"
   },
-  "house": {
-   "prompt": "Exterior of an old one-story Japanese house in a quiet residential neighborhood, afternoon light, potted plants by the door, no readable signs"
+  "v2_old_bath": {
+   "prompt": "An old Japanese tiled bathroom with a high step at the entrance and no handrail, a fallen plastic stool on the wet floor, dim light, no people"
   },
-  "father": {
-   "prompt": "A Japanese man in his eighties seen from behind sitting alone on the veranda of an old wooden house, cardigan, quiet afternoon"
+  "v2_estimate_night": {
+   "prompt": "A contractor's estimate sheet with blurred numbers and a calculator on a kotatsu table at night, an older man's hand resting on it"
   },
-  "estimate": {
-   "library": "st003b_ai_13"
+  "v2_center_counter": {
+   "prompt": "A community care support center counter with colorful pamphlets, a staff member's hands handing one to a middle-aged man, only hands visible, text blurred"
   },
-  "night": {
-   "library": "st003b_ai_07"
+  "v2_plan_form": {
+   "prompt": "An application form beside a simple hand-drawn floor plan of a bathroom with a pen and a personal seal, top-down view, text blurred"
   },
-  "center": {
-   "prompt": "Exterior of a small community care support center in a quiet Japanese neighborhood, a middle-aged man in a coat walking in, seen from behind, clear morning, no readable signs"
+  "v2_new_rail": {
+   "prompt": "A bright clean Japanese bathroom with a newly installed wooden handrail along the wall and a low step removed, warm safe mood, no people"
   },
-  "pamphlet": {
-   "library": "st003b_ai_10"
-  },
-  "form": {
-   "library": "st003b_ai_11"
-  },
-  "receipt": {
-   "library": "st004_ai_15"
-  },
-  "tea": {
-   "library": "st003b_ai_15"
-  },
-  "walk": {
-   "prompt": "A middle-aged Japanese son and his elderly father walking slowly side by side on a quiet residential street, seen from behind, warm evening light"
+  "v2_son_father_street": {
+   "prompt": "A middle-aged Japanese son and his elderly father with a cane walking slowly side by side on a quiet residential street at dusk, seen from behind"
   }
  },
  "lines": [
@@ -60,7 +48,7 @@
    "say": "実家の工事費20万円が、2万円になりました。",
    "hook": true,
    "se": "don",
-   "scene": "bath_rail",
+   "scene": "v2_house_tools",
    "crop": [
     0.5,
     0.5,
@@ -71,18 +59,18 @@
    "text": "ただし<工事の前>に\nある手続きが必要です",
    "tone": "秘密を明かす前のように、少し声を落として引きつける",
    "say": "ただし、工事の前に、ある手続きが必要です。",
-   "scene": "house",
+   "scene": "v2_house_tools",
    "crop": [
     0.5,
-    0.5,
-    1.0
+    0.56,
+    1.5
    ]
   },
   {
    "text": "{58歳}の私\n父は{85歳}で一人暮らし",
    "tone": "淡々と、落ち着いて",
    "say": "58歳の私。父は85歳で、一人暮らしです。",
-   "scene": "father",
+   "scene": "v2_father_veranda",
    "crop": [
     0.5,
     0.5,
@@ -93,7 +81,7 @@
    "text": "ある日\n父が<風呂場で転倒>",
    "tone": "緊迫して、息を詰めるように",
    "say": "ある日、父が風呂場で転倒しました。",
-   "scene": "bath",
+   "scene": "v2_old_bath",
    "crop": [
     0.5,
     0.5,
@@ -104,39 +92,39 @@
    "text": "骨折はなかったものの\n<また転ぶ>のが怖い",
    "tone": "不安で声が沈む",
    "say": "幸い骨折はありませんでしたが、また転ぶのが怖い。",
-   "scene": "bath",
+   "scene": "v2_old_bath",
    "crop": [
     0.5,
-    0.6,
-    1.7
+    0.56,
+    1.5
    ]
   },
   {
    "text": "手すりと段差の工事は\n見積もり<20万円>",
    "tone": "重く、ため息まじりに",
    "say": "手すりと段差の工事は、見積もり20万円。",
-   "scene": "estimate",
+   "scene": "v2_estimate_night",
    "crop": [
-    0.5,
-    0.5,
-    1.0
+    0.6,
+    0.62,
+    1.4
    ]
   },
   {
    "text": "父の年金では\n<とても払えません>",
    "tone": "困り果てて",
-   "scene": "night",
+   "scene": "v2_estimate_night",
    "crop": [
-    0.5,
-    0.5,
-    1.0
+    0.63,
+    0.68,
+    1.7
    ]
   },
   {
    "text": "{地域包括支援センター}に\n相談しました",
    "tone": "気を取り直して、少し前を向いた声で",
    "say": "地域包括支援センターに、相談しました。",
-   "scene": "center",
+   "scene": "v2_center_counter",
    "crop": [
     0.5,
     0.5,
@@ -147,18 +135,18 @@
    "text": "「{介護保険}で\n住宅改修ができますよ」",
    "tone": "職員の言葉を、やさしく明るく再現する",
    "say": "窓口の人が言いました。介護保険で、住宅改修ができますよ。",
-   "scene": "pamphlet",
+   "scene": "v2_center_counter",
    "crop": [
     0.5,
-    0.5,
-    1.0
+    0.56,
+    1.5
    ]
   },
   {
    "text": "要介護認定を\n受けていれば\n{上限20万円}まで",
    "tone": "はっきりと、聞き手に教えるように",
    "say": "要介護認定を受けていれば、上限20万円まで。",
-   "scene": "form",
+   "scene": "v2_plan_form",
    "crop": [
     0.5,
     0.5,
@@ -169,33 +157,33 @@
    "text": "工事費の{9割}が\n介護保険から出ます",
    "tone": "驚きをこめて",
    "say": "工事費の9割が、介護保険から出ます。",
-   "scene": "form",
+   "scene": "v2_plan_form",
    "crop": [
     0.5,
-    0.55,
-    1.6
+    0.56,
+    1.5
    ]
   },
   {
    "text": "ただし必ず\n<工事の前>に申請",
    "tone": "強調して、念を押すように",
    "say": "ただし必ず、工事の前に申請が必要です。",
-   "scene": "estimate",
+   "scene": "v2_plan_form",
    "crop": [
-    0.5,
-    0.5,
-    1.6
+    0.44,
+    0.46,
+    1.7
    ]
   },
   {
    "text": "先に工事をすると\n<対象外>になります",
    "tone": "警告するように、はっきりと",
    "say": "先に工事をすると、対象外になってしまうんです。",
-   "scene": "house",
+   "scene": "v2_plan_form",
    "crop": [
-    0.5,
-    0.55,
-    1.6
+    0.56,
+    0.6,
+    1.4
    ]
   },
   {
@@ -203,7 +191,7 @@
    "tone": "驚きと安堵。声がふっと明るくなる",
    "say": "父の負担は、2万円で済みました。",
    "se": "coin",
-   "scene": "receipt",
+   "scene": "v2_new_rail",
    "crop": [
     0.5,
     0.5,
@@ -214,18 +202,18 @@
    "text": "手すりをつかんで\n父は{毎日風呂}に入れます",
    "tone": "ほっとして、やさしく",
    "say": "手すりをつかんで、父は毎日、安心して風呂に入れます。",
-   "scene": "bath_rail",
+   "scene": "v2_new_rail",
    "crop": [
     0.5,
-    0.55,
-    1.6
+    0.56,
+    1.5
    ]
   },
   {
    "text": "{介護保険}は\n40歳から皆で\n支える仕組みです",
    "tone": "誇らしく、力強く",
    "say": "介護保険は、40歳から皆で支える仕組みです。",
-   "scene": "tea",
+   "scene": "v2_son_father_street",
    "crop": [
     0.5,
     0.5,
@@ -236,11 +224,11 @@
    "text": "親の家の工事\n<申請の前>に\n始めていませんか？",
    "tone": "同世代に語りかける。まっすぐ問いかけるように",
    "say": "親の家の工事、申請の前に始めていませんか。",
-   "scene": "walk",
+   "scene": "v2_son_father_street",
    "crop": [
     0.5,
-    0.5,
-    1.0
+    0.56,
+    1.5
    ]
   }
  ],

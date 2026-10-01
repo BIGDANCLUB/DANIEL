@@ -23,96 +23,202 @@
    "say": "手術代90万円が、5万7600円になりました。",
    "hook": true,
    "se": "don",
-   "prompt": "A hospital invoice and a cashier tray on a hospital payment counter, an elderly man's hand resting next to it, cold fluorescent light, no people's faces"
+   "scene": "v2_counter",
+   "crop": [
+    0.42,
+    0.6,
+    1.35
+   ]
   },
   {
    "text": "病院の窓口で聞いた\n<たった一言>で",
    "tone": "秘密を明かす前のように、少し声を落として引きつける",
    "say": "病院の窓口で聞いた、たった一言で。",
-   "prompt": "A hospital accounts clerk's hands gently gesturing over a counter with brochures, warm soft light, faces not shown"
+   "scene": "v2_counter",
+   "crop": [
+    0.4,
+    0.66,
+    1.6
+   ]
   },
   {
    "text": "年金暮らしの{66歳}\n収入は月{15万円}",
    "tone": "淡々と、少し寂しく",
    "say": "年金暮らしの66歳。収入は月15万円です。",
-   "prompt": "A Japanese man in his sixties in a gray cardigan seen from behind, standing on the veranda of a modest suburban Japanese house, morning light"
+   "scene": "v2_dawn_room",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "ある朝\n胸に<激痛>が走りました",
    "tone": "緊迫して、息を詰めるように",
-   "prompt": "Dim early morning in a Japanese bedroom, a futon slightly disturbed, a man's hand gripping the blanket, dramatic shadows"
+   "scene": "v2_dawn_room",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "心臓の{バイパス手術}で\n<3週間>入院しました",
    "tone": "重く、ゆっくり",
-   "prompt": "A quiet Japanese hospital room with a single bed by the window, IV stand, late afternoon light through blinds, empty, no people"
+   "scene": "v2_ward",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "退院の日 窓口で\n<90万円>と\n言われました",
    "tone": "呆然として。信じられない気持ち",
    "say": "退院の日、窓口で90万円と言われました。",
-   "prompt": "A hospital accounts counter in Japan seen over an elderly man's shoulder from behind, staff hands pushing a document across the counter"
+   "scene": "v2_ward",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "老後の貯金が\n<一気に消える>額です",
    "tone": "絶望がにじむ。声が沈む",
-   "prompt": "An empty hospital waiting room bench in Japan, a man's jacket and a paper bag left on it, gloomy blue light"
+   "scene": "v2_bench",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "妻は黙って\n{通帳}を\n握りしめていました",
    "tone": "胸が痛む。しみじみと",
-   "prompt": "Close-up of an elderly woman's hands tightly holding a plain blank-covered booklet on her lap in a hospital lobby, soft light"
+   "scene": "v2_bench",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "「{高額療養費制度}を\nご存じですか」",
    "tone": "職員の言葉を、やさしく明るく再現する",
    "say": "その時、係の人が言いました。高額療養費制度を、ご存じですか。",
-   "prompt": "A rack of health insurance pamphlets at a Japanese hospital counter, blurred background, no readable text"
+   "scene": "v2_brochure",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "ひと月の医療費には\n{自己負担の上限}がある",
    "tone": "はっきりと、聞き手に教えるように",
    "say": "ひと月の医療費には、自己負担の上限があるんです。",
-   "prompt": "Close-up of a pen pointing at a simple bar chart on a paper document on a counter, numbers and text blurred and unreadable"
+   "scene": "v2_brochure",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "私の所得なら\n上限は{月5万7600円}",
    "tone": "驚きを隠せない。半信半疑で",
    "say": "私の所得なら、上限は月5万7600円。",
-   "prompt": "Close-up of an elderly man's hands holding a sheet of paper, text blurred, hospital lobby background softly blurred, no faces"
+   "scene": "v2_brochure",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
   },
   {
    "text": "{マイナ保険証}なら\n窓口は{上限額だけ}",
    "tone": "説明するように、わかりやすく",
    "say": "マイナ保険証なら、窓口は上限額だけの支払いで済みます。",
-   "prompt": "A hand placing a plain blank plastic ID card on a small card reader at a Japanese hospital reception counter, card has no text"
+   "scene": "v2_card_reader",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "医療費の支払いは\n<5万7600円>でした",
    "tone": "驚きと安堵。声がふっと明るくなる",
    "say": "医療費の支払いは、5万7600円でした。",
    "se": "coin",
-   "prompt": "Close-up of an elderly man's relieved hands holding a folded receipt and a wallet at a hospital counter, warm light"
+   "scene": "v2_card_reader",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "{国民皆保険}は\n世界に誇る\n日本の仕組みです",
    "tone": "誇らしく、力強く",
-   "prompt": "Beautiful wide view of a Japanese town at dawn with Mount Fuji in the distance, calm and proud mood, no text"
+   "scene": "v2_fuji_town",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "妻は「日本に\n生まれて{よかったね}」\nと笑いました",
    "tone": "胸がいっぱいで、やさしく、ゆっくり",
    "say": "妻は、日本に生まれてよかったね、と笑いました。",
-   "prompt": "An elderly Japanese couple seen from behind walking out of a hospital entrance into bright sunshine, the wife holding his arm"
+   "scene": "v2_exit_sun",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "あなたの家族は\n<この制度>を\n知っていますか？",
    "tone": "同世代に語りかける。まっすぐ問いかけるように",
    "say": "あなたの家族は、この制度を知っていますか。",
-   "prompt": "An elderly Japanese man seen from behind sitting on a riverside bench at sunset, looking at the calm water, reflective mood"
+   "scene": "v2_exit_sun",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   }
  ],
  "thumb": "手術代\n<90万円>が\n{5万円台}に",
  "thumb_top": "手術代の請求 90万円\n5万円台で済んだ",
- "thumb_teaser": "窓口のたった一言で"
+ "thumb_teaser": "窓口のたった一言で",
+ "scenes": {
+  "v2_counter": {
+   "prompt": "A Japanese hospital cashier counter with an itemized bill on a small tray, an elderly man's hand resting beside it and a clerk's hands behind the counter, fluorescent light, faces not shown, text blurred"
+  },
+  "v2_dawn_room": {
+   "prompt": "A dim Japanese bedroom at dawn, an older man's hand pressed to his chest above a futon, a plain envelope on a low table nearby, faces not shown"
+  },
+  "v2_ward": {
+   "prompt": "A quiet hospital ward by a window with an empty bed and an itemized bill lying on the bedside table, late afternoon light, text blurred, no people"
+  },
+  "v2_bench": {
+   "prompt": "A hospital waiting room bench, an elderly woman's hands tightly gripping a plain bank booklet in her lap, a man's coat folded beside her, faces not shown"
+  },
+  "v2_brochure": {
+   "prompt": "At a hospital accounts counter, a staff member's hands showing a brochure and a simple bar chart to an elderly man's hands, only hands visible, text blurred"
+  },
+  "v2_card_reader": {
+   "prompt": "A hand placing a plain blank card on a small card reader at a hospital reception, a receipt printing next to it, text blurred"
+  },
+  "v2_fuji_town": {
+   "prompt": "A Japanese small town at dawn with Mount Fuji glowing pink in the distance, peaceful and proud mood, no people"
+  },
+  "v2_exit_sun": {
+   "prompt": "An elderly Japanese couple seen from behind walking out of a hospital's glass doors into bright sunshine, the wife holding his arm"
+  }
+ }
 }

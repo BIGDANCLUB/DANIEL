@@ -16,41 +16,29 @@
   "image_dir": "work_st006_ai/images"
  },
  "scenes": {
-  "diner": {
-   "prompt": "Interior of a small old Japanese diner (shokudo) after closing, empty wooden counter and stools, warm dim light, no readable text or signs"
+  "v2_pension_counter": {
+   "prompt": "A Japanese public pension office counter with a plain blue booklet on it, a staff member's hands pointing at a document, elderly man's hands in the foreground, text blurred"
   },
-  "hands_counter": {
-   "prompt": "Top-down close-up of an elderly man's weathered hands wiping a worn wooden counter with a cloth in a small Japanese diner, only hands and forearms visible, warm light"
+  "v2_diner_counter": {
+   "prompt": "Interior of a small old Japanese diner after closing, an older man's weathered hands wiping the wooden counter in the foreground, warm light, face not visible"
   },
-  "booklet": {
-   "library": "st004_ai_04"
+  "v2_booklet_night": {
+   "prompt": "A plain blue booklet open on a kotatsu table at night under a desk lamp, an older man's hands resting beside it, faces not shown, text blurred"
   },
-  "passbook": {
-   "library": "st003b_ai_03"
+  "v2_passbook_diner": {
+   "prompt": "A bank passbook and an old calculator on a diner counter after closing with a folded apron beside them, text blurred"
   },
-  "night": {
-   "library": "st003b_ai_07"
+  "v2_office_couple": {
+   "prompt": "Inside a Japanese pension office, an elderly couple seated at a counter seen from behind while a staff member shows them a document, text blurred"
   },
-  "office_ext": {
-   "prompt": "Exterior of a plain Japanese public pension office building on a clear morning, an elderly couple walking toward the entrance seen from behind, no readable signs"
+  "v2_deposit": {
+   "prompt": "An elderly man's hands holding an open bank passbook with a new blurred entry, relieved mood, warm light"
   },
-  "counter": {
-   "library": "st003b_ai_09"
+  "v2_restaurant": {
+   "prompt": "An elderly Japanese couple seen from behind at a small family restaurant table by a window in the evening, warm light, relaxed happy mood"
   },
-  "chart": {
-   "library": "st004_ai_12"
-  },
-  "receipt": {
-   "library": "st004_ai_15"
-  },
-  "fuji": {
-   "library": "st004_ai_16"
-  },
-  "dinner": {
-   "prompt": "An elderly Japanese couple seen from behind sitting at a small restaurant table by a window, warm evening light, relaxed happy mood"
-  },
-  "walk": {
-   "prompt": "An elderly Japanese man walking along a quiet riverside path at dusk, seen from behind, calm hopeful mood"
+  "v2_river_walk2": {
+   "prompt": "An elderly Japanese man walking along a quiet river embankment at dusk, seen from behind, hopeful mood"
   }
  },
  "lines": [
@@ -60,29 +48,29 @@
    "say": "もらえないと思っていた年金が、年31万円もらえました。",
    "hook": true,
    "se": "don",
-   "scene": "booklet",
+   "scene": "v2_pension_counter",
    "crop": [
-    0.5,
-    0.5,
-    1.0
+    0.62,
+    0.55,
+    1.4
    ]
   },
   {
    "text": "年金事務所で知った\n<ある法改正>で",
    "tone": "秘密を明かす前のように、少し声を落として引きつける",
    "say": "年金事務所で知った、ある法改正のおかげです。",
-   "scene": "counter",
+   "scene": "v2_pension_counter",
    "crop": [
-    0.5,
-    0.5,
-    1.0
+    0.66,
+    0.62,
+    1.7
    ]
   },
   {
    "text": "{66歳}の私は\n小さな食堂を\nやってきました",
    "tone": "懐かしむように、穏やかに",
    "say": "66歳の私は、小さな食堂をやってきました。",
-   "scene": "diner",
+   "scene": "v2_diner_counter",
    "crop": [
     0.5,
     0.5,
@@ -93,28 +81,17 @@
    "text": "若い頃は苦しくて\n年金を<払えない>時期も",
    "tone": "悔やむように、少し苦く",
    "say": "若い頃は苦しくて、年金を払えない時期もありました。",
-   "scene": "hands_counter",
+   "scene": "v2_diner_counter",
    "crop": [
-    0.45,
-    0.62,
-    1.4
+    0.5,
+    0.56,
+    1.5
    ]
   },
   {
    "text": "払ったのは\n合計{15年}だけ",
    "tone": "自嘲ぎみに",
-   "scene": "booklet",
-   "crop": [
-    0.45,
-    0.55,
-    1.6
-   ]
-  },
-  {
-   "text": "<25年>払わないと\n年金はもらえないと\n思っていました",
-   "tone": "諦めた声で、沈んで",
-   "say": "年金は、25年払わないともらえないと思っていました。",
-   "scene": "night",
+   "scene": "v2_booklet_night",
    "crop": [
     0.5,
     0.5,
@@ -122,13 +99,24 @@
    ]
   },
   {
+   "text": "<25年>払わないと\n年金はもらえないと\n思っていました",
+   "tone": "諦めた声で、沈んで",
+   "say": "年金は、25年払わないともらえないと思っていました。",
+   "scene": "v2_booklet_night",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
    "text": "だから65歳になっても\n<請求すらしていません>",
    "tone": "苦笑いまじりに",
    "say": "だから65歳になっても、請求すらしていませんでした。",
-   "scene": "night",
+   "scene": "v2_booklet_night",
    "crop": [
-    0.5,
-    0.6,
+    0.44,
+    0.46,
     1.7
    ]
   },
@@ -136,7 +124,7 @@
    "text": "貯金を<取り崩す>毎日\n店を畳むか迷いました",
    "tone": "不安で声が沈む",
    "say": "貯金を取り崩す毎日。店を畳むか迷いました。",
-   "scene": "passbook",
+   "scene": "v2_passbook_diner",
    "crop": [
     0.5,
     0.5,
@@ -146,7 +134,7 @@
   {
    "text": "妻に言われて\n{年金事務所}へ行きました",
    "tone": "気が進まないまま、淡々と",
-   "scene": "office_ext",
+   "scene": "v2_office_couple",
    "crop": [
     0.5,
     0.5,
@@ -157,22 +145,22 @@
    "text": "「{10年}払っていれば\nもらえますよ」",
    "tone": "職員の言葉を、やさしく明るく再現する",
    "say": "窓口の人が言いました。10年払っていれば、もらえますよ。",
-   "scene": "counter",
+   "scene": "v2_office_couple",
    "crop": [
     0.5,
-    0.55,
-    1.6
+    0.56,
+    1.5
    ]
   },
   {
    "text": "2017年から\n受給資格は{10年}に短縮",
    "tone": "はっきりと、聞き手に教えるように",
    "say": "2017年から、受給資格は10年に短縮されていたんです。",
-   "scene": "chart",
+   "scene": "v2_office_couple",
    "crop": [
-    0.5,
-    0.5,
-    1.0
+    0.44,
+    0.46,
+    1.7
    ]
   },
   {
@@ -180,7 +168,7 @@
    "tone": "驚きと安堵。声がふっと明るくなる",
    "say": "私の場合、年に約31万円です。",
    "se": "coin",
-   "scene": "receipt",
+   "scene": "v2_deposit",
    "crop": [
     0.5,
     0.5,
@@ -191,18 +179,18 @@
    "text": "さかのぼって\n{1年分}も受け取れました",
    "tone": "うれしさがこみ上げる",
    "say": "さかのぼって、1年分も受け取れました。",
-   "scene": "receipt",
+   "scene": "v2_deposit",
    "crop": [
     0.5,
-    0.45,
-    1.6
+    0.56,
+    1.5
    ]
   },
   {
    "text": "{国民年金}は\n一生もらえる仕組みです",
    "tone": "誇らしく、力強く",
    "say": "国民年金は、一生もらえる仕組みです。",
-   "scene": "fuji",
+   "scene": "v2_restaurant",
    "crop": [
     0.5,
     0.5,
@@ -212,18 +200,18 @@
   {
    "text": "妻と{久しぶりに}\n外で食事をしました",
    "tone": "しみじみと、やさしく",
-   "scene": "dinner",
+   "scene": "v2_restaurant",
    "crop": [
     0.5,
-    0.5,
-    1.0
+    0.56,
+    1.5
    ]
   },
   {
    "text": "払った期間が<短い>人こそ\n{一度確認}してください",
    "tone": "同世代に語りかける。まっすぐに",
    "say": "払った期間が短い人こそ、一度確認してください。",
-   "scene": "walk",
+   "scene": "v2_river_walk2",
    "crop": [
     0.5,
     0.5,

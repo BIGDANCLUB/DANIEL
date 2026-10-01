@@ -215,6 +215,54 @@
   "model": "gemini-3.1-flash-image",
   "prompt": "An elderly Japanese man seen from behind sitting on a riverside bench at sunset, looking at the calm water, reflective mood"
  },
+ "st004_ai_v2_bench": {
+  "file": "st004_ai_v2_bench.jpg",
+  "key": "496412bc1c9173f63ef24e82191e22023e62f742",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A hospital waiting room bench, an elderly woman's hands tightly gripping a plain bank booklet in her lap, a man's coat folded beside her, faces not shown"
+ },
+ "st004_ai_v2_brochure": {
+  "file": "st004_ai_v2_brochure.jpg",
+  "key": "e29082904f3fc6333e6d7a5aea20980dc7e502ff",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "At a hospital accounts counter, a staff member's hands showing a brochure and a simple bar chart to an elderly man's hands, only hands visible, text blurred"
+ },
+ "st004_ai_v2_card_reader": {
+  "file": "st004_ai_v2_card_reader.jpg",
+  "key": "0eed1421c3eba4eec9426e959de66ff4372a25fe",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A hand placing a plain blank card on a small card reader at a hospital reception, a receipt printing next to it, text blurred"
+ },
+ "st004_ai_v2_counter": {
+  "file": "st004_ai_v2_counter.jpg",
+  "key": "2dc6341afe9802bcce1ac345b1c1a36aea256314",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A Japanese hospital cashier counter with an itemized bill on a small tray, an elderly man's hand resting beside it and a clerk's hands behind the counter, fluorescent light, faces not shown, text blurred"
+ },
+ "st004_ai_v2_dawn_room": {
+  "file": "st004_ai_v2_dawn_room.jpg",
+  "key": "34aecdbade5a7e53a76b25de814f5f789942e703",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A dim Japanese bedroom at dawn, an older man's hand pressed to his chest above a futon, a plain envelope on a low table nearby, faces not shown"
+ },
+ "st004_ai_v2_exit_sun": {
+  "file": "st004_ai_v2_exit_sun.jpg",
+  "key": "7b217acd8213b69b993deb129357f96e3679c40b",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "An elderly Japanese couple seen from behind walking out of a hospital's glass doors into bright sunshine, the wife holding his arm"
+ },
+ "st004_ai_v2_fuji_town": {
+  "file": "st004_ai_v2_fuji_town.jpg",
+  "key": "932d5b1a57c3b9b024ec210ad392b165695750a1",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A Japanese small town at dawn with Mount Fuji glowing pink in the distance, peaceful and proud mood, no people"
+ },
+ "st004_ai_v2_ward": {
+  "file": "st004_ai_v2_ward.jpg",
+  "key": "68db6c472f554013c3f07eeac04859b0a7473089",
+  "model": "gemini-3.1-flash-image",
+  "prompt": "A quiet hospital ward by a window with an empty bed and an itemized bill lying on the bedside table, late afternoon light, text blurred, no people"
+ },
  "st005_ai_center": {
   "file": "st005_ai_center.jpg",
   "key": "cd2246400fd849dfc0a22650a96b81e68df2fd3a",
@@ -263,6 +311,54 @@
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "A Japanese man in his fifties in a suit walking into an office building entrance in morning sunlight, seen from behind, hopeful mood"
  },
+ "st005_ai_v2_bed_hands": {
+  "file": "st005_ai_v2_bed_hands.jpg",
+  "key": "bef74b34e13459746a3e11cae8c6d31e70211ddc",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A hospital bed with an elderly man's frail hand on the blanket held by a middle-aged man's hand, window light, faces not shown"
+ },
+ "st005_ai_v2_care_center": {
+  "file": "st005_ai_v2_care_center.jpg",
+  "key": "6012b161fade6cf60e9e891e09ea01647416d246",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A bright Japanese day care center, a caregiver helping an elderly man with light seated exercise, both seen from behind, warm cheerful light"
+ },
+ "st005_ai_v2_form_wallet": {
+  "file": "st005_ai_v2_form_wallet.jpg",
+  "key": "016a92db42fe4d7ea6755b44167242dcc4247818",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of an application form and a pen beside a leather wallet on a desk, a man's hands filling in the form, text blurred"
+ },
+ "st005_ai_v2_kitchen_night": {
+  "file": "st005_ai_v2_kitchen_night.jpg",
+  "key": "227a94042baf1e7f0edf0f895e1c629a797c75fd",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A middle-aged man's hands clasped over papers and a calculator on a kitchen table late at night under a single lamp, faces not shown, text blurred"
+ },
+ "st005_ai_v2_meeting": {
+  "file": "st005_ai_v2_meeting.jpg",
+  "key": "5120860a4e26d700dc15f64632aa3c5fb14fc58d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A small office meeting room table with a plain white envelope between two people's hands, one hand gently pushing it back, only hands visible"
+ },
+ "st005_ai_v2_office_night": {
+  "file": "st005_ai_v2_office_night.jpg",
+  "key": "20667822e700682d64e64123ba0346f077e890e3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese office at night, a man in his fifties seen from behind working alone at his desk, city lights through the window, a small framed photo on the desk blurred"
+ },
+ "st005_ai_v2_riverside_sun": {
+  "file": "st005_ai_v2_riverside_sun.jpg",
+  "key": "9b7fd2dbff7e252d755e8a6652bb66cb2182c997",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A middle-aged man in a coat walking along a riverside path at sunset, seen from behind, calm mood"
+ },
+ "st005_ai_v2_veranda_morning": {
+  "file": "st005_ai_v2_veranda_morning.jpg",
+  "key": "60b8d54422d3bbe190959c1900ef69a3fd2b7e1b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A middle-aged son in a suit and his elderly father sitting together on the veranda of an old house in the morning, seen from behind"
+ },
  "st005_ai_veranda": {
   "file": "st005_ai_veranda.jpg",
   "key": "50ff2eb355a715947eaed8e3f737a8520cc528d6",
@@ -293,6 +389,54 @@
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "Exterior of a plain Japanese public pension office building on a clear morning, an elderly couple walking toward the entrance seen from behind, no readable signs"
  },
+ "st006_ai_v2_booklet_night": {
+  "file": "st006_ai_v2_booklet_night.jpg",
+  "key": "7337cf21cc1e3f3029c28afb477db52e8aebb4a9",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A plain blue booklet open on a kotatsu table at night under a desk lamp, an older man's hands resting beside it, faces not shown, text blurred"
+ },
+ "st006_ai_v2_deposit": {
+  "file": "st006_ai_v2_deposit.jpg",
+  "key": "c358d9a8379ded546620388ca4a00cefac0d055c",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly man's hands holding an open bank passbook with a new blurred entry, relieved mood, warm light"
+ },
+ "st006_ai_v2_diner_counter": {
+  "file": "st006_ai_v2_diner_counter.jpg",
+  "key": "c8de92f6f112f5e893a3c51d59db2e6b18d50992",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Interior of a small old Japanese diner after closing, an older man's weathered hands wiping the wooden counter in the foreground, warm light, face not visible"
+ },
+ "st006_ai_v2_office_couple": {
+  "file": "st006_ai_v2_office_couple.jpg",
+  "key": "83d0409bfff298f0cb07a8e1bf54b16f6ab21760",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Inside a Japanese pension office, an elderly couple seated at a counter seen from behind while a staff member shows them a document, text blurred"
+ },
+ "st006_ai_v2_passbook_diner": {
+  "file": "st006_ai_v2_passbook_diner.jpg",
+  "key": "a2463685c8f20353f26fbc91a0044e6229c5f719",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A bank passbook and an old calculator on a diner counter after closing with a folded apron beside them, text blurred"
+ },
+ "st006_ai_v2_pension_counter": {
+  "file": "st006_ai_v2_pension_counter.jpg",
+  "key": "4a4641c710eb72173c9fe104db81133614d6ce01",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese public pension office counter with a plain blue booklet on it, a staff member's hands pointing at a document, elderly man's hands in the foreground, text blurred"
+ },
+ "st006_ai_v2_restaurant": {
+  "file": "st006_ai_v2_restaurant.jpg",
+  "key": "1d351ff69c66e94542a194a6f611647608bd4f63",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese couple seen from behind at a small family restaurant table by a window in the evening, warm light, relaxed happy mood"
+ },
+ "st006_ai_v2_river_walk2": {
+  "file": "st006_ai_v2_river_walk2.jpg",
+  "key": "b8a32e1c16e3faaa80c2b2fc482843a12a496c19",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese man walking along a quiet river embankment at dusk, seen from behind, hopeful mood"
+ },
  "st006_ai_walk": {
   "file": "st006_ai_walk.jpg",
   "key": "a42e181b8ab1799fb62572865b427d5ef81fdcc6",
@@ -322,6 +466,54 @@
   "key": "60ca5e32fdb3485fc075ed7c0b8cbd83b4edb119",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "Exterior of an old one-story Japanese house in a quiet residential neighborhood, afternoon light, potted plants by the door, no readable signs"
+ },
+ "st007_ai_v2_center_counter": {
+  "file": "st007_ai_v2_center_counter.jpg",
+  "key": "7779ffbf9c52b082e61b6d0f4c039012d5e319b4",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A community care support center counter with colorful pamphlets, a staff member's hands handing one to a middle-aged man, only hands visible, text blurred"
+ },
+ "st007_ai_v2_estimate_night": {
+  "file": "st007_ai_v2_estimate_night.jpg",
+  "key": "a522df8bf7649f9e915540f4ed14da10ab38d25c",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A contractor's estimate sheet with blurred numbers and a calculator on a kotatsu table at night, an older man's hand resting on it"
+ },
+ "st007_ai_v2_father_veranda": {
+  "file": "st007_ai_v2_father_veranda.jpg",
+  "key": "96d999b9706d85dd538eecf8342ee7d9d7de1645",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese man in his eighties seen from behind sitting on the wooden veranda of an old house, cardigan, quiet afternoon"
+ },
+ "st007_ai_v2_house_tools": {
+  "file": "st007_ai_v2_house_tools.jpg",
+  "key": "e99463148a40a75889b914a4f7db638a4649268f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Exterior of an old one-story Japanese house with a contractor's toolbox and a new wooden handrail board leaning by the entrance, afternoon light, no readable signs"
+ },
+ "st007_ai_v2_new_rail": {
+  "file": "st007_ai_v2_new_rail.jpg",
+  "key": "8641f95aefbe6f46efd9d9e35b681b4856dc8570",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A bright clean Japanese bathroom with a newly installed wooden handrail along the wall and a low step removed, warm safe mood, no people"
+ },
+ "st007_ai_v2_old_bath": {
+  "file": "st007_ai_v2_old_bath.jpg",
+  "key": "10cbfe6aa7ff033e9d26f710aa35775b5903df2e",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An old Japanese tiled bathroom with a high step at the entrance and no handrail, a fallen plastic stool on the wet floor, dim light, no people"
+ },
+ "st007_ai_v2_plan_form": {
+  "file": "st007_ai_v2_plan_form.jpg",
+  "key": "1b4df55595a26520de39240a35da8027f2eb4dee",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An application form beside a simple hand-drawn floor plan of a bathroom with a pen and a personal seal, top-down view, text blurred"
+ },
+ "st007_ai_v2_son_father_street": {
+  "file": "st007_ai_v2_son_father_street.jpg",
+  "key": "2587847afe54afdb253df324c0b4ee5341364a67",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A middle-aged Japanese son and his elderly father with a cane walking slowly side by side on a quiet residential street at dusk, seen from behind"
  },
  "st007_ai_walk": {
   "file": "st007_ai_walk.jpg",
@@ -412,6 +604,54 @@
   "key": "7585d00816fb2ad5e3604ebde0a55e683e1094f6",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "Close-up of an older man's hands folding a navy security guard uniform jacket on a bench in a small locker room, only hands and forearms visible, soft light"
+ },
+ "st009_ai_v2_benefit_doc": {
+  "file": "st009_ai_v2_benefit_doc.jpg",
+  "key": "5fc60c390790caa4c860d398896f965400deab28",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of a printed benefit pamphlet with a simple chart and a blue pension booklet beside it, a pen on top, text blurred"
+ },
+ "st009_ai_v2_calendar_pass": {
+  "file": "st009_ai_v2_calendar_pass.jpg",
+  "key": "b9d450dc291d8142d16d8d2e55a409704bf52a8f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older man's hands holding an open bank passbook in front of a wall calendar with a date circled, text blurred, warm light"
+ },
+ "st009_ai_v2_hw_counter": {
+  "file": "st009_ai_v2_hw_counter.jpg",
+  "key": "cd3d79b8aed9667c3c8115c0fd587b50d65d585d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese public employment office counter, an older man's hands holding a document while a staff member's hands point at it, only hands visible, text blurred, bright fluorescent light"
+ },
+ "st009_ai_v2_hw_waiting": {
+  "file": "st009_ai_v2_hw_waiting.jpg",
+  "key": "f605fef9cbfadf7c9cd1e23db3381615425f78c0",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Inside a Japanese public employment office, an older man seen from behind sitting on a waiting bench holding a number ticket, counters ahead, no readable signs"
+ },
+ "st009_ai_v2_kotatsu_passbook": {
+  "file": "st009_ai_v2_kotatsu_passbook.jpg",
+  "key": "0580c1f67798a08ebcf31631e0b1792b461f4778",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A bank passbook and reading glasses on a kotatsu table at night, an older man's hands resting beside them, dim lamp, text blurred"
+ },
+ "st009_ai_v2_locker": {
+  "file": "st009_ai_v2_locker.jpg",
+  "key": "603ccdec50e45f92eb73e01f889d2127ac1c0811",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A navy security guard uniform and cap hanging in a small locker room, an older man's hand taking the jacket off the hook, face not visible"
+ },
+ "st009_ai_v2_office_walk": {
+  "file": "st009_ai_v2_office_walk.jpg",
+  "key": "2a11f562cedb2ce29575f1bc4ee56922dac6a636",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older man in a jacket walking toward the entrance of a plain public office building on a clear morning, seen from behind, no readable signs"
+ },
+ "st009_ai_v2_onsen2": {
+  "file": "st009_ai_v2_onsen2.jpg",
+  "key": "c3929f4e41da59e56f52499cf1d340d374a9fbb0",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese couple in yukata seen from behind on the balcony of a hot spring inn overlooking a river valley in autumn"
  },
  "st010_ai_calc": {
   "file": "st010_ai_calc.jpg",

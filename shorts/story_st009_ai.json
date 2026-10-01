@@ -18,41 +18,29 @@
   "image_dir": "work_st009_ai/images"
  },
  "scenes": {
-  "guard": {
-   "prompt": "A Japanese security guard in his sixties in a navy uniform and cap seen from behind, standing at the entrance of an office building at dusk, face not visible"
+  "v2_hw_counter": {
+   "prompt": "A Japanese public employment office counter, an older man's hands holding a document while a staff member's hands point at it, only hands visible, text blurred, bright fluorescent light"
   },
-  "uniform": {
-   "prompt": "Close-up of an older man's hands folding a navy security guard uniform jacket on a bench in a small locker room, only hands and forearms visible, soft light"
+  "v2_locker": {
+   "prompt": "A navy security guard uniform and cap hanging in a small locker room, an older man's hand taking the jacket off the hook, face not visible"
   },
-  "hellowork": {
-   "prompt": "Interior of a Japanese public employment office with counters and waiting chairs, a few older people seated seen from behind, bright fluorescent light, no readable text or signs"
+  "v2_kotatsu_passbook": {
+   "prompt": "A bank passbook and reading glasses on a kotatsu table at night, an older man's hands resting beside them, dim lamp, text blurred"
   },
-  "onsen": {
-   "prompt": "An elderly Japanese couple in yukata seen from behind sitting on the veranda of a hot spring inn, looking at an autumn mountain view, relaxed happy mood"
+  "v2_hw_waiting": {
+   "prompt": "Inside a Japanese public employment office, an older man seen from behind sitting on a waiting bench holding a number ticket, counters ahead, no readable signs"
   },
-  "counter": {
-   "library": "st003b_ai_09"
+  "v2_benefit_doc": {
+   "prompt": "Close-up of a printed benefit pamphlet with a simple chart and a blue pension booklet beside it, a pen on top, text blurred"
   },
-  "form": {
-   "library": "st003b_ai_11"
+  "v2_calendar_pass": {
+   "prompt": "An older man's hands holding an open bank passbook in front of a wall calendar with a date circled, text blurred, warm light"
   },
-  "chart": {
-   "library": "st004_ai_12"
+  "v2_onsen2": {
+   "prompt": "An elderly Japanese couple in yukata seen from behind on the balcony of a hot spring inn overlooking a river valley in autumn"
   },
-  "receipt": {
-   "library": "st004_ai_15"
-  },
-  "passbook": {
-   "library": "st003b_ai_03"
-  },
-  "night": {
-   "library": "st003b_ai_07"
-  },
-  "couple": {
-   "library": "st004_ai_17"
-  },
-  "walk": {
-   "library": "st006_ai_walk"
+  "v2_office_walk": {
+   "prompt": "An older man in a jacket walking toward the entrance of a plain public office building on a clear morning, seen from behind, no readable signs"
   }
  },
  "lines": [
@@ -61,65 +49,100 @@
    "tone": "信じられない結果を打ち明ける。驚きをこめて、力強く",
    "say": "66歳で仕事を辞めて、25万円もらえました。",
    "hook": true,
-   "scene": "receipt"
+   "scene": "v2_hw_counter",
+   "crop": [
+    0.6,
+    0.62,
+    1.4
+   ]
   },
   {
    "text": "ハローワークで知った\n<ある一時金>で",
    "tone": "秘密を明かす前のように、少し声を落として引きつける",
    "say": "ハローワークで知った、ある一時金のおかげです。",
-   "scene": "hellowork"
+   "scene": "v2_hw_counter",
+   "crop": [
+    0.63,
+    0.68,
+    1.7
+   ]
   },
   {
    "text": "定年後も{5年}\n警備の仕事を\n続けました",
    "tone": "淡々と、少し誇らしく",
    "say": "定年後も5年、警備の仕事を続けてきました。",
-   "scene": "guard"
+   "scene": "v2_locker",
+   "crop": [
+    0.36,
+    0.55,
+    1.4
+   ]
   },
   {
    "text": "66歳で契約が<終了>\n収入は年金だけに",
    "tone": "寂しさがにじむ",
    "say": "66歳で契約が終わり、収入は年金だけになりました。",
-   "scene": "uniform"
+   "scene": "v2_locker",
+   "crop": [
+    0.33,
+    0.6,
+    1.7
+   ]
   },
   {
    "text": "失業手当は{65歳まで}\nそう思い込んで\nいました",
    "tone": "諦めた声で、沈んで",
    "say": "失業手当は65歳までしか出ない。そう思い込んでいました。",
-   "scene": "night"
+   "scene": "v2_kotatsu_passbook",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "貯金を<切り崩す>\n日々が始まりました",
    "tone": "不安で声が沈む",
    "say": "貯金を切り崩す日々が始まりました。",
-   "scene": "passbook",
-   "skip": true
+   "scene": "v2_kotatsu_passbook",
+   "skip": true,
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "妻に言われて\n{ハローワーク}へ",
    "tone": "気が進まないまま、淡々と",
    "say": "妻に言われて、ハローワークへ行きました。",
-   "scene": "hellowork",
+   "scene": "v2_hw_waiting",
    "crop": [
     0.5,
-    0.55,
-    1.5
+    0.5,
+    1.0
    ]
   },
   {
    "text": "「{高年齢求職者給付金}\nをご存じですか」",
    "tone": "職員の言葉を、やさしく明るく再現する",
    "say": "窓口の人が言いました。高年齢求職者給付金を、ご存じですか。",
-   "scene": "counter"
+   "scene": "v2_hw_waiting",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "65歳以上で辞めた人に\n{一時金}が出る制度です",
    "tone": "はっきりと、聞き手に教えるように",
    "say": "65歳以上で仕事を辞めた人に、一時金が出る制度です。",
-   "scene": "counter",
+   "scene": "v2_benefit_doc",
    "crop": [
     0.5,
-    0.55,
-    1.6
+    0.5,
+    1.0
    ],
    "skip": true
   },
@@ -127,23 +150,33 @@
    "text": "雇用保険に\n{1年以上}入っていれば\n{50日分}",
    "tone": "説明するように、わかりやすく",
    "say": "雇用保険に1年以上入っていれば、基本手当の50日分がまとめて出ます。",
-   "scene": "chart"
+   "scene": "v2_benefit_doc",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "しかも\n<年金と一緒に>\n受け取れます",
    "tone": "驚きをこめて",
    "say": "しかも、年金と一緒に受け取れるんです。",
-   "scene": "form"
+   "scene": "v2_benefit_doc",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
   },
   {
    "text": "私の場合\n<約25万円>でした",
    "tone": "驚きと安堵。声がふっと明るくなる",
    "say": "私の場合、約25万円でした。",
    "se": "coin",
-   "scene": "receipt",
+   "scene": "v2_calendar_pass",
    "crop": [
-    0.5,
-    0.45,
+    0.35,
+    0.6,
     1.5
    ]
   },
@@ -151,30 +184,45 @@
    "text": "ただし<辞めて1年>を\n過ぎると\n受け取れません",
    "tone": "警告するように、はっきりと",
    "say": "ただし、辞めてから1年を過ぎると、受け取れません。",
-   "scene": "form",
+   "scene": "v2_calendar_pass",
    "crop": [
-    0.5,
-    0.5,
-    1.6
+    0.32,
+    0.66,
+    1.8
    ]
   },
   {
    "text": "{雇用保険}は\n長く働いた人を\n支える仕組みです",
    "tone": "誇らしく、力強く",
    "say": "雇用保険は、長く働いてきた人を、最後まで支えてくれる仕組みです。",
-   "scene": "couple"
+   "scene": "v2_onsen2",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "妻と{温泉旅行}に\n行ってきました",
    "tone": "しみじみと、うれしそうに",
    "say": "妻と、久しぶりに温泉旅行に行ってきました。",
-   "scene": "onsen"
+   "scene": "v2_onsen2",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "65歳を過ぎて辞めた人\n<ハローワーク>に\n行きましたか？",
    "tone": "同世代に語りかける。まっすぐ問いかけるように",
    "say": "65歳を過ぎて仕事を辞めた人、ハローワークに行きましたか。",
-   "scene": "walk"
+   "scene": "v2_office_walk",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   }
  ]
 }

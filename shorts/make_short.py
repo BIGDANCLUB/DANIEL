@@ -464,11 +464,13 @@ def main(story_path, out, source=None):
     for i, l in enumerate(cfg["lines"]):
         l["_idx"] = i
     cfg["lines"] = [l for l in cfg["lines"] if not l.get("skip")]
-    # 画像の使い回し禁止: 同じ場面画像を2行以上で使わない
+    # 作品をまたいだ画像の使い回しは gen_images_gemini 側で禁止。1本の中では続く行で同じ場面を
+    # 切り出しを変えて使ってよいが、離れた行での再登場は単調に見えるので止める
     used = [l["scene"] for l in cfg["lines"] if "scene" in l]
-    dup = sorted({x for x in used if used.count(x) > 1})
-    if dup and not cfg.get("allow_scene_reuse"):
-        sys.exit(f"同じ場面画像を複数の行で使っています: {dup}（1行に1枚、新しい画像にしてください）")
+    for x in set(used):
+        idx = [i for i, u in enumerate(used) if u == x]
+        if idx[-1] - idx[0] + 1 != len(idx):
+            sys.exit(f"場面 {x} が離れた行で再登場しています（同じ画像は続く行だけで使う）")
     loop = cfg.get("loop")
     if loop:
         cfg.setdefault("intro_se", "none")      # ループ型はチリン無し

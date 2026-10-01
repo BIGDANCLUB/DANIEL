@@ -16,47 +16,29 @@
   "image_dir": "work_st005_ai/images"
  },
  "scenes": {
-  "office": {
-   "prompt": "A Japanese office worker in his fifties seen from behind at his desk in a modest office in the evening, most colleagues gone, quiet mood"
+  "v2_office_night": {
+   "prompt": "A Japanese office at night, a man in his fifties seen from behind working alone at his desk, city lights through the window, a small framed photo on the desk blurred"
   },
-  "father_hand": {
-   "prompt": "Close-up of a middle-aged man's hand gently holding his elderly father's frail hand on a hospital bed blanket, soft window light, no faces"
+  "v2_bed_hands": {
+   "prompt": "A hospital bed with an elderly man's frail hand on the blanket held by a middle-aged man's hand, window light, faces not shown"
   },
-  "hospital": {
-   "library": "st004_ai_06"
+  "v2_kitchen_night": {
+   "prompt": "A middle-aged man's hands clasped over papers and a calculator on a kitchen table late at night under a single lamp, faces not shown, text blurred"
   },
-  "house": {
-   "prompt": "The entrance hall of an old Japanese house, a pair of worn men's slippers on the wooden step, empty and quiet, late afternoon light"
+  "v2_meeting": {
+   "prompt": "A small office meeting room table with a plain white envelope between two people's hands, one hand gently pushing it back, only hands visible"
   },
-  "night": {
-   "library": "st003b_ai_07"
+  "v2_form_wallet": {
+   "prompt": "Close-up of an application form and a pen beside a leather wallet on a desk, a man's hands filling in the form, text blurred"
   },
-  "letter": {
-   "prompt": "A man's hands placing a plain white envelope with no writing on an office desk, serious mood, soft light, no faces"
+  "v2_care_center": {
+   "prompt": "A bright Japanese day care center, a caregiver helping an elderly man with light seated exercise, both seen from behind, warm cheerful light"
   },
-  "hr": {
-   "prompt": "Top-down close-up of a meeting table in a Japanese office: two pairs of hands across the table with documents, one hand gesturing reassuringly, only hands and forearms visible, text blurred"
+  "v2_veranda_morning": {
+   "prompt": "A middle-aged son in a suit and his elderly father sitting together on the veranda of an old house in the morning, seen from behind"
   },
-  "form": {
-   "library": "st003b_ai_11"
-  },
-  "receipt": {
-   "library": "st004_ai_15"
-  },
-  "center": {
-   "prompt": "Exterior of a small community care support center in a quiet Japanese neighborhood, a middle-aged man in a coat walking in, seen from behind, clear morning, no readable signs"
-  },
-  "dayservice": {
-   "prompt": "A bright Japanese day care room for the elderly, elderly people doing light seated exercise with a caregiver, seen from behind, warm cheerful light"
-  },
-  "return": {
-   "prompt": "A Japanese man in his fifties in a suit walking into an office building entrance in morning sunlight, seen from behind, hopeful mood"
-  },
-  "veranda": {
-   "prompt": "An elderly Japanese father and his middle-aged son sitting side by side on the veranda of an old house, seen from behind, gentle evening light"
-  },
-  "river": {
-   "library": "st004_ai_18"
+  "v2_riverside_sun": {
+   "prompt": "A middle-aged man in a coat walking along a riverside path at sunset, seen from behind, calm mood"
   }
  },
  "lines": [
@@ -66,7 +48,7 @@
    "say": "会社を休んで、月27万円もらえました。",
    "hook": true,
    "se": "don",
-   "scene": "office",
+   "scene": "v2_office_night",
    "crop": [
     0.5,
     0.5,
@@ -77,28 +59,28 @@
    "text": "介護で<辞める寸前>の私を\n救った{制度}とは",
    "tone": "秘密を明かす前のように、少し声を落として引きつける",
    "say": "介護で辞める寸前だった私を、救った制度とは。",
-   "scene": "father_hand",
+   "scene": "v2_office_night",
    "crop": [
     0.5,
-    0.5,
-    1.0
+    0.56,
+    1.5
    ]
   },
   {
    "text": "{55歳}の会社員\n月給は{40万円}",
    "tone": "淡々と、落ち着いて",
    "say": "55歳の会社員。月給は40万円です。",
-   "scene": "office",
+   "scene": "v2_office_night",
    "crop": [
-    0.45,
-    0.45,
-    1.6
+    0.44,
+    0.46,
+    1.7
    ]
   },
   {
    "text": "80歳の父が\n<脳梗塞>で倒れました",
    "tone": "緊迫して、声を詰まらせるように",
-   "scene": "hospital",
+   "scene": "v2_bed_hands",
    "crop": [
     0.5,
     0.5,
@@ -109,17 +91,17 @@
    "text": "右半身にまひが残り\n{一人暮らし}は無理に",
    "tone": "重く、ゆっくり",
    "say": "右半身にまひが残り、一人暮らしは無理になりました。",
-   "scene": "house",
+   "scene": "v2_bed_hands",
    "crop": [
     0.5,
-    0.5,
-    1.0
+    0.56,
+    1.5
    ]
   },
   {
    "text": "仕事か介護か\n<どちらか>を選ぶしかない",
    "tone": "追い詰められて、苦しそうに",
-   "scene": "night",
+   "scene": "v2_kitchen_night",
    "crop": [
     0.5,
     0.5,
@@ -129,17 +111,17 @@
   {
    "text": "辞めたら\n<収入はゼロ>です",
    "tone": "絶望がにじむ。声が沈む",
-   "scene": "night",
+   "scene": "v2_kitchen_night",
    "crop": [
     0.5,
-    0.6,
-    1.7
+    0.56,
+    1.5
    ]
   },
   {
    "text": "退職届を持って\n{人事}に行きました",
    "tone": "覚悟を決めて、静かに",
-   "scene": "letter",
+   "scene": "v2_meeting",
    "crop": [
     0.5,
     0.5,
@@ -150,29 +132,29 @@
    "text": "「辞める前に\n{介護休業}を\n使いませんか」",
    "tone": "人事の言葉を、やさしく落ち着いて再現する",
    "say": "その時、人事の人が言いました。辞める前に、介護休業を使いませんか。",
-   "scene": "hr",
+   "scene": "v2_meeting",
    "crop": [
     0.5,
-    0.5,
-    1.0
+    0.56,
+    1.5
    ]
   },
   {
    "text": "家族1人につき\n通算{93日}休めます",
    "tone": "はっきりと、聞き手に教えるように",
    "say": "家族1人につき、通算93日休めます。",
-   "scene": "hr",
+   "scene": "v2_meeting",
    "crop": [
-    0.5,
-    0.55,
-    1.6
+    0.44,
+    0.46,
+    1.7
    ]
   },
   {
    "text": "しかも雇用保険から\n賃金の{67%}が出ます",
    "tone": "驚きをこめて",
    "say": "しかも雇用保険から、賃金の67パーセントが出ます。",
-   "scene": "form",
+   "scene": "v2_form_wallet",
    "crop": [
     0.5,
     0.5,
@@ -184,18 +166,18 @@
    "tone": "驚きと安堵。声がふっと明るくなる",
    "say": "私の場合、月約27万円でした。",
    "se": "coin",
-   "scene": "receipt",
+   "scene": "v2_form_wallet",
    "crop": [
     0.5,
-    0.5,
-    1.0
+    0.56,
+    1.5
    ]
   },
   {
    "text": "休みの間に\n{地域包括支援センター}へ",
    "tone": "前を向いて、少し明るく",
    "say": "休みの間に、地域包括支援センターへ相談しました。",
-   "scene": "center",
+   "scene": "v2_care_center",
    "crop": [
     0.5,
     0.5,
@@ -205,17 +187,17 @@
   {
    "text": "デイサービスと\nヘルパーで\n{介護の形}が整いました",
    "tone": "ほっとして、前向きに",
-   "scene": "dayservice",
+   "scene": "v2_care_center",
    "crop": [
     0.5,
-    0.5,
-    1.0
+    0.56,
+    1.5
    ]
   },
   {
    "text": "私は{辞めずに}\n会社へ戻れました",
    "tone": "穏やかな安堵",
-   "scene": "return",
+   "scene": "v2_veranda_morning",
    "crop": [
     0.5,
     0.5,
@@ -226,18 +208,18 @@
    "text": "父は「{すまんな}」と\n笑いました",
    "tone": "胸がいっぱいで、しみじみと",
    "say": "父は、すまんな、と笑いました。",
-   "scene": "veranda",
+   "scene": "v2_veranda_morning",
    "crop": [
     0.5,
-    0.5,
-    1.0
+    0.56,
+    1.5
    ]
   },
   {
    "text": "辞める前に\n<この制度>を\n知っていますか？",
    "tone": "同世代に語りかける。まっすぐ問いかけるように",
    "say": "辞める前に、この制度を知っていますか。",
-   "scene": "river",
+   "scene": "v2_riverside_sun",
    "crop": [
     0.5,
     0.5,

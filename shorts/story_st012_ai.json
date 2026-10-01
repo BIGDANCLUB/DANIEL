@@ -6,7 +6,7 @@
  "lead_in": 0.05,
  "loop": 1.0,
  "banner": "メジャーの舞台で\n{ゴミを拾う選手とは}",
- "thumb_top": "メジャーの試合中に\nゴミを拾う理由",
+ "thumb_top": "メジャーの試合中に\nゴミを拾う選手とは",
  "thumb_teaser": "高校1年の1枚の紙",
  "tts": {
   "model": "gemini-3.8-flash-tts",

@@ -4,3 +4,4 @@ out/
 assets/
 __pycache__/
 work_*/
+_preview_*.json

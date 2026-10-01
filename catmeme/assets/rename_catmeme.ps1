@@ -63,9 +63,11 @@ $log = @()
 foreach ($line in $map -split "`r?`n") {
   if (-not $line.Trim()) { continue }
   $old, $new = $line -split '\|', 2
-  $src = Join-Path $dir $old
-  if (Test-Path -LiteralPath $src) {
-    Rename-Item -LiteralPath $src -NewName $new
+  # 濁点が分かれた名前（バ＝ハ＋゛）でも見つかるよう、正規化して比べる
+  $want = $old.Normalize([Text.NormalizationForm]::FormC)
+  $file = Get-ChildItem -LiteralPath $dir -File | Where-Object { $_.Name.Normalize([Text.NormalizationForm]::FormC) -eq $want } | Select-Object -First 1
+  if ($file) {
+    Rename-Item -LiteralPath $file.FullName -NewName $new
     $log += [pscustomobject]@{old = $old; new = $new}
   } else {
     Write-Host "見つからない: $old" -ForegroundColor Yellow

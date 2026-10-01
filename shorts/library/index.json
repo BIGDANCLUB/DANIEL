@@ -1012,5 +1012,149 @@
   "key": "cca38f03a984d67a507a767cde4f56dd6250aca0",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "A huge ballpark at dawn with golden light flooding the field, a lone small figure far away seen from behind, epic and moving. No face visible, no team logos, no readable text."
+ },
+ "st014_ai_bar_chart": {
+  "file": "st014_ai_bar_chart.jpg",
+  "key": "a15e451e24085dc6ad92dee38198e62c2e71c18d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A printed pamphlet with a simple bar chart showing an added amount on top of a base bar, a pen resting on it, top-down view No faces visible, no readable text."
+ },
+ "st014_ai_bench_river": {
+  "file": "st014_ai_bench_river.jpg",
+  "key": "50c74edb969ef080d95d71fda789f7839e8cab9f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older man sitting on a bench by a river at sunset, seen from behind, calm reflective mood No faces visible, no readable text."
+ },
+ "st014_ai_booklet_tea": {
+  "file": "st014_ai_booklet_tea.jpg",
+  "key": "a96e5342622bfdb5e7f2f0bc880b4381c09fd470",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A plain blue pension booklet beside two cups of green tea on a low wooden table in a Japanese living room, warm morning light No faces visible, no readable text."
+ },
+ "st014_ai_couple_kotatsu": {
+  "file": "st014_ai_couple_kotatsu.jpg",
+  "key": "c2fc2277d7e136802f14a75384668450f27d90f5",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older Japanese couple seen from behind sitting at a kotatsu in the evening looking over household papers and a calculator No faces visible, no readable text."
+ },
+ "st014_ai_park_couple": {
+  "file": "st014_ai_park_couple.jpg",
+  "key": "3afba5fea88259b3bbf1bd70aa3aad7e02a35748",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older Japanese couple walking side by side through a park lined with autumn ginkgo trees, seen from behind, warm afternoon light No faces visible, no readable text."
+ },
+ "st014_ai_passbook_up": {
+  "file": "st014_ai_passbook_up.jpg",
+  "key": "ee57eacb89441bc419c61d5ab64899a95bb27348",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older man's hands holding an open bank passbook showing a new deposit entry, relieved mood, warm light No faces visible, no readable text."
+ },
+ "st014_ai_pension_desk": {
+  "file": "st014_ai_pension_desk.jpg",
+  "key": "5a27dedc973404c4d1f0065e6d7df1f408605e6f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese pension office counter where a staff member's hands point at a form in front of an older man's hands, bright fluorescent light No faces visible, no readable text."
+ },
+ "st014_ai_retire": {
+  "file": "st014_ai_retire.jpg",
+  "key": "5d3fe18073ee21a36a572e1cfb3d18694c3eb33e",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older man's hands holding a small bouquet of flowers and a rolled certificate tied with a ribbon at an office farewell, soft light No faces visible, no readable text."
+ },
+ "st015_ai_back_to_work": {
+  "file": "st015_ai_back_to_work.jpg",
+  "key": "0e4f4db649b1596a4e69ae70e3c0aa64b5d5a516",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A middle-aged man in a suit walking into an office lobby in the morning, seen from behind, hopeful bright light No faces visible, no readable text."
+ },
+ "st015_ai_checkup": {
+  "file": "st015_ai_checkup.jpg",
+  "key": "e8e3d9d90e59e6a5f161e0c804943fb9b6264d7d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A health checkup result envelope and a doctor's referral letter on a kitchen table, an older man's hands resting beside them, text blurred No faces visible, no readable text."
+ },
+ "st015_ai_deposit_salary": {
+  "file": "st015_ai_deposit_salary.jpg",
+  "key": "a30b04689440e02087e1b984f86b827f7d922e43",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older man's hands holding an open bank passbook with a new blurred entry, sitting on a hospital bed blanket, relieved mood No faces visible, no readable text."
+ },
+ "st015_ai_hospital_window": {
+  "file": "st015_ai_hospital_window.jpg",
+  "key": "e5aba103c041105a05b149a3c7604fae368bc0b3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A hospital room window with a single bed and an IV stand, afternoon light, quiet and worried mood, no people No faces visible, no readable text."
+ },
+ "st015_ai_hr_form": {
+  "file": "st015_ai_hr_form.jpg",
+  "key": "eeafef98d370393ccc5b1ecdda089303275b5eb2",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A company HR office desk where a staff member's hands slide an application form toward an older man's hands, text blurred No faces visible, no readable text."
+ },
+ "st015_ai_loan_papers": {
+  "file": "st015_ai_loan_papers.jpg",
+  "key": "da3d1571889e23de8701658bb6d42d33f269411a",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Housing loan documents and a calculator on a dining table at night, an older man's hands clasped above them, text blurred No faces visible, no readable text."
+ },
+ "st015_ai_office_empty_desk": {
+  "file": "st015_ai_office_empty_desk.jpg",
+  "key": "25029af9b7cb68dfee3409f31a16b0c65f044b65",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An empty office desk with a neatly pushed-in chair and a closed laptop, a get-well card on it, soft morning light No faces visible, no readable text."
+ },
+ "st015_ai_station_evening": {
+  "file": "st015_ai_station_evening.jpg",
+  "key": "f7d621f131af23fa332aa4f4d1e243c9bdac3870",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A busy Japanese train station platform at dusk with commuters seen from behind, warm light No faces visible, no readable text."
+ },
+ "st016_ai_calendar_tea": {
+  "file": "st016_ai_calendar_tea.jpg",
+  "key": "7a7abd96e6f89ffe040f365b6a5da04bfb805911",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A wall calendar and a cup of green tea on a table by a window, an older man's hand turning a calendar page, soft light No faces visible, no readable text."
+ },
+ "st016_ai_crossroads": {
+  "file": "st016_ai_crossroads.jpg",
+  "key": "5280c39099b2175fd480d86b07f48dbadede21e2",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A quiet country road splitting into two paths at sunset, rice fields on both sides, no people No faces visible, no readable text."
+ },
+ "st016_ai_factory": {
+  "file": "st016_ai_factory.jpg",
+  "key": "a0dfc2fad535e6dfcb7c6a3f3d4d1879d04645d8",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older Japanese man in work clothes seen from behind working at a small factory workbench, afternoon light No faces visible, no readable text."
+ },
+ "st016_ai_growth_chart": {
+  "file": "st016_ai_growth_chart.jpg",
+  "key": "83588e9291655af4447ef92b7b25129d8d6220cf",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A printed chart on a wooden desk showing a bar growing taller step by step, reading glasses beside it, warm light, numbers blurred No faces visible, no readable text."
+ },
+ "st016_ai_morning_walk": {
+  "file": "st016_ai_morning_walk.jpg",
+  "key": "c83d1b0f9278413c5822d7f4a9ce31bf4d4cd4ce",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older Japanese man walking briskly along a seaside promenade at sunrise, seen from behind, energetic hopeful mood No faces visible, no readable text."
+ },
+ "st016_ai_pension_desk2": {
+  "file": "st016_ai_pension_desk2.jpg",
+  "key": "de73095d641f88f8638272cd787c66497bd8b7f0",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese pension office consultation booth with a staff member's hands showing a document to an older man's hands, bright light, text blurred No faces visible, no readable text."
+ },
+ "st016_ai_steps": {
+  "file": "st016_ai_steps.jpg",
+  "key": "de34f262c88da5a97fde977556184dc0e6b5aa2f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A simple printed diagram of ascending steps on a pamphlet with a pen pointing at the top step, top-down view, text blurred No faces visible, no readable text."
+ },
+ "st016_ai_wallet_pass": {
+  "file": "st016_ai_wallet_pass.jpg",
+  "key": "2d73298f1c681fa390403c7e861a30ac1261e627",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older man's hands holding an open bank passbook and a leather wallet at a kitchen table, relieved mood, warm light No faces visible, no readable text."
  }
 }

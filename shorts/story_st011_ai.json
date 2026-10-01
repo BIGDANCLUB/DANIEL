@@ -21,38 +21,17 @@
   "altar": {
    "prompt": "A Japanese Buddhist funeral altar decorated with rows of white chrysanthemums, candles and rising incense smoke, no photograph, no portrait, no people, no readable text"
   },
-  "prayer": {
-   "prompt": "Close-up of an elderly woman's hands pressed together in prayer holding prayer beads in front of a small Japanese home Buddhist altar with a candle and incense, no photograph, no portrait, only hands visible, soft evening light"
-  },
-  "envelope_stack": {
-   "prompt": "A neat stack of plain official envelopes and forms on a low table in a Japanese home, text blurred, soft light"
-  },
-  "incense": {
-   "prompt": "Close-up of incense sticks smoking in a bowl at a Japanese funeral, white chrysanthemums blurred behind, no people"
-  },
   "funeral_bill": {
    "prompt": "An itemized invoice with blurred text and a fountain pen on a dark wooden table, somber light"
   },
   "mother_window": {
    "prompt": "An elderly Japanese woman seen from behind sitting by a window in a quiet tatami room, looking out at a small garden, melancholy"
   },
-  "cityhall_ext": {
-   "prompt": "Exterior of a Japanese city hall building on a cloudy morning, a middle-aged man in a dark coat walking toward the entrance seen from behind, no readable signs"
-  },
   "window_staff": {
    "prompt": "A city hall service counter where a staff member's hands slide a form toward a visitor, only hands visible, text blurred"
   },
-  "hanko_envelope": {
-   "prompt": "A small plain envelope on a counter next to a personal name seal and red ink pad, soft light"
-  },
   "pension_office": {
    "prompt": "Exterior of a plain Japanese public office on a clear afternoon, a middle-aged man and his elderly mother walking in together seen from behind, no readable signs"
-  },
-  "calendar_months": {
-   "prompt": "A paper wall calendar with two days circled in red, no readable text, hanging in a Japanese home, soft light"
-  },
-  "mother_letter": {
-   "prompt": "An elderly woman's hands holding an opened official letter with blurred text at a kotatsu, relieved mood"
   },
   "passbook_entry": {
    "prompt": "Close-up of an elderly woman's hands holding an open bank passbook with a new blurred entry, warm light"
@@ -60,11 +39,8 @@
   "hourglass": {
    "prompt": "An hourglass on a desk next to official documents with blurred text, symbolic of a deadline, dramatic light"
   },
-  "terraces": {
-   "prompt": "Sunrise over misty rice terraces in rural Japan, peaceful and hopeful, no people"
-  },
-  "son_mother_walk": {
-   "prompt": "A middle-aged Japanese man and his elderly mother walking slowly along a riverside path at sunset, seen from behind, warm light"
+  "prayer": {
+   "prompt": "Close-up of an elderly woman's hands pressed together in prayer holding prayer beads in front of a small Japanese home Buddhist altar with a candle and incense, no photograph, no portrait, only hands visible, soft evening light"
   }
  },
  "lines": [
@@ -73,98 +49,178 @@
    "tone": "信じられない結果を打ち明ける。驚きをこめて、力強く",
    "say": "父の葬儀のあと、35万円が戻ってきました。",
    "hook": true,
-   "scene": "altar"
+   "scene": "altar",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "申請しないと\n<もらえないお金>\nでした",
    "tone": "秘密を明かす前のように、少し声を落として引きつける",
    "say": "申請しないと、もらえないお金でした。",
-   "scene": "envelope_stack"
+   "scene": "altar",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "{58歳}の私\n父は{86歳}で\n亡くなりました",
    "tone": "静かに、しみじみと",
    "say": "58歳の私。父は86歳で亡くなりました。",
-   "scene": "incense"
+   "scene": "altar",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
   },
   {
    "text": "葬儀代は\n<約150万円>",
    "tone": "重く、ため息まじりに",
    "say": "葬儀代は、約150万円。",
-   "scene": "funeral_bill"
+   "scene": "funeral_bill",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "母の年金だけでは\n<これからが不安>です",
    "tone": "不安で声が沈む",
    "say": "母の年金だけでは、これからが不安でした。",
-   "scene": "mother_window"
+   "scene": "mother_window",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "役所で\n{死亡後の手続き}を\nしていた時のこと",
    "tone": "淡々と、落ち着いて",
    "say": "役所で、死亡後の手続きをしていた時のことです。",
-   "scene": "cityhall_ext"
+   "scene": "window_staff",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "「{葬祭費}の申請は\nお済みですか」",
    "tone": "職員の言葉を、やさしく明るく再現する",
    "say": "窓口の人が言いました。葬祭費の申請は、お済みですか。",
-   "scene": "window_staff"
+   "scene": "window_staff",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "葬儀をした人に\n{5万円}が出ます",
    "tone": "はっきりと、聞き手に教えるように",
    "say": "葬儀をした人に、5万円が支給されるんです。",
-   "scene": "hanko_envelope"
+   "scene": "window_staff",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
   },
   {
    "text": "さらに年金事務所で\n{未支給年金}の\n手続きを",
    "tone": "前を向いて、少し明るく",
    "say": "さらに年金事務所で、未支給年金の手続きをしました。",
-   "scene": "pension_office"
+   "scene": "pension_office",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "年金は<後払い>\n亡くなった月の分まで\nもらえます",
    "tone": "説明するように、わかりやすく",
    "say": "年金は後払い。亡くなった月の分まで、もらえるんです。",
-   "scene": "calendar_months"
+   "scene": "pension_office",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "父の年金2か月分\n{約30万円}を\n母が受け取れました",
    "tone": "驚きをこめて",
    "say": "父の年金2か月分、約30万円を、母が受け取れました。",
-   "scene": "mother_letter"
+   "scene": "passbook_entry",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "合わせて\n<約35万円>",
    "tone": "驚きと安堵。声がふっと明るくなる",
    "say": "合わせて、約35万円です。",
    "se": "coin",
-   "scene": "passbook_entry"
+   "scene": "passbook_entry",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "ただし葬祭費は\n<2年>を過ぎると\n申請できません",
    "tone": "警告するように、はっきりと",
    "say": "ただし葬祭費は、2年を過ぎると申請できません。",
-   "scene": "hourglass"
+   "scene": "hourglass",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "最後まで家族を支える\n{日本の仕組み}です",
    "tone": "誇らしく、しみじみと",
    "say": "最後まで家族を支えてくれる、日本の仕組みです。",
-   "scene": "terraces"
+   "scene": "hourglass",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   },
   {
    "text": "母は父の写真に\n「{ありがとう}」\nと言いました",
    "tone": "胸がいっぱいで、やさしく、ゆっくり",
    "say": "母は父の写真に、ありがとう、と言いました。",
-   "scene": "prayer"
+   "scene": "prayer",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
   },
   {
    "text": "親を見送った人\n<この申請>は\n済んでいますか？",
    "tone": "同世代に語りかける。まっすぐ問いかけるように",
    "say": "親を見送った人、この申請は済んでいますか。",
-   "scene": "son_mother_walk"
+   "scene": "prayer",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
   }
  ]
 }

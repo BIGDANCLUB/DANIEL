@@ -464,6 +464,15 @@ def main(story_path, out, source=None):
     for i, l in enumerate(cfg["lines"]):
         l["_idx"] = i
     cfg["lines"] = [l for l in cfg["lines"] if not l.get("skip")]
+    # 画像の使い回し禁止: 同じ場面画像を2行以上で使わない
+    used = [l["scene"] for l in cfg["lines"] if "scene" in l]
+    dup = sorted({x for x in used if used.count(x) > 1})
+    if dup and not cfg.get("allow_scene_reuse"):
+        sys.exit(f"同じ場面画像を複数の行で使っています: {dup}（1行に1枚、新しい画像にしてください）")
+    loop = cfg.get("loop")
+    if loop:
+        cfg.setdefault("intro_se", "none")      # ループ型はチリン無し
+        cfg.setdefault("tail", 0.15)            # 冒頭に回る部分に無音を残さない
 
     # --- 音声 ---
     tempo = cfg.get("tempo", 1.0)
@@ -475,6 +484,16 @@ def main(story_path, out, source=None):
                     "-af", f"atempo={tempo},loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", str(SR), wav], check=True)
     mix_effects(wav, cfg, timings)
     total = len(audio) / SR / tempo
+    # ループ型: 最後の行の表示から loop 秒後で切り、その後ろを先頭に回す（最後まで見ると冒頭へ自然につながる）
+    shift = 0.0
+    if loop:
+        shift = timings[-1][0] + (loop if isinstance(loop, (int, float)) and loop is not True else 1.0)
+        a = load_audio(wav)
+        k = int(shift * SR)
+        np.concatenate([a[k:], a[:k]]).astype(np.float32).tofile(wav + ".f32")
+        subprocess.run([FF, "-loglevel", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1",
+                        "-i", wav + ".f32", wav], check=True)
+        os.remove(wav + ".f32")
     bgm = pick_bgm(cfg, work)
     if bgm:
         print(f"  BGM: {os.path.relpath(bgm, BGM_DIR)}")
@@ -505,7 +524,7 @@ def main(story_path, out, source=None):
         stdin=subprocess.PIPE)
 
     for n in range(nframes):
-        t = n / FPS
+        t = (n / FPS + shift) % total if shift else n / FPS
         li = max(i for i in range(len(shots)) if cut_at[i] <= t)
         p = (t - cut_at[li]) / (cut_at[li + 1] - cut_at[li])
         frame = shots[li].render(min(1.0, p)).convert("RGBA")
@@ -536,9 +555,15 @@ def main(story_path, out, source=None):
     # 字幕ファイル（編集ソフト用）
     def ts(x):
         return f"{int(x // 3600):02d}:{int(x % 3600 // 60):02d}:{int(x % 60):02d},{int(x * 1000 % 1000):03d}"
+    cues = [(st, en, plain(l["text"])) for (st, en), l in zip(timings, cfg["lines"])]
+    if shift:
+        st, en, txt = cues[-1]
+        cues = [(total - shift + a, total - shift + b, x) for a, b, x in cues[:-1]] + \
+               [(0.0, max(0.0, en - shift), txt), (total - shift + st, total, txt)]
+        cues.sort()
     with open(os.path.splitext(out)[0] + ".srt", "w", encoding="utf-8") as fp:
-        for i, ((st, en), l) in enumerate(zip(timings, cfg["lines"])):
-            fp.write(f"{i + 1}\n{ts(st)} --> {ts(en)}\n{plain(l['text'])}\n\n")
+        for i, (st, en, txt) in enumerate(cues):
+            fp.write(f"{i + 1}\n{ts(st)} --> {ts(en)}\n{txt}\n\n")
     print(f"done: {out} ({total:.2f}s)")
     if not 45 <= total <= 55:
         print(f"  ※ 45〜55秒から外れています。台本の tempo を {tempo * total / 52:.2f} 付近にすると約52秒になります")

@@ -95,10 +95,8 @@ def list_library(word=None):
 
 
 def _make(ic, prompt, out, key, lib_name, forced):
-    """ライブラリに同じ画像があればコピー、無ければ生成してライブラリに登録。"""
-    if not forced and from_library(out, key=key):
-        print(f"  ライブラリから再利用: {os.path.basename(out)}", flush=True)
-        return
+    """毎回新しく生成する（YouTube に量産と判定されないよう、作品をまたいだ画像の使い回しはしない）。
+    生成した画像は記録用にライブラリへ登録するが、再利用はしない。"""
     print(f"[{lib_name}] {prompt[:70]}", flush=True)
     os.makedirs(os.path.dirname(out), exist_ok=True)
     generate(ic, prompt).save(out)
@@ -153,10 +151,8 @@ def ensure_images(story_path, only=None):
         name = os.path.basename(out)
         if only is not None and not forced:
             continue
-        if lib_name:            # ライブラリの画像をそのまま使う（生成しない）
-            if not os.path.exists(out) or manifest.get(name) != "lib:" + lib_name:
-                from_library(out, name=lib_name)
-                manifest[name] = "lib:" + lib_name
+        if lib_name:
+            sys.exit(f"画像の使い回しは禁止です（scenes の library: {lib_name}）。prompt で新しく作ってください")
         else:
             k = _key(ic, prompt)
             # 手で置いた画像（manifest に無い）はそのまま使う

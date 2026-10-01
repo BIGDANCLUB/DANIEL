@@ -1,0 +1,152 @@
+{
+ "_comment": "ST-013 大谷翔平と父の野球ノート。父が元社会人野球選手で少年野球の指導者、親子で野球ノートを交わしたことは広く報道。3つの教えの文言・指導の立場・ノートの期間は要確認（父の著書などで確認）。本人・家族に似た人物の画像は使わない。",
+ "tempo": 1.2,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "banner": "世界一の選手を育てた\n{1冊のノート}",
+ "thumb_top": "世界一の選手を育てた\n父と息子の1冊のノート",
+ "thumb_teaser": "3つの教えとは",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、温かく語りかける。\n## THE SCENE\nある野球選手の若い頃の物語を、同世代の視聴者に静かに語って聞かせている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。最後の一文は胸を打つように力強く。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st013_ai/voice"
+ },
+ "image_gen": {
+  "image_dir": "work_st013_ai/images"
+ },
+ "scenes": {
+  "s01": {
+   "prompt": "A worn spiral notebook lying on a low wooden table in a Japanese living room, evening lamp light, nostalgic. No face visible, no team logos, no readable text."
+  },
+  "s02": {
+   "prompt": "An old leather baseball glove and a wooden bat resting in the corner of a Japanese house entrance, soft light. No face visible, no team logos, no readable text."
+  },
+  "s03": {
+   "prompt": "A man in a cap seen from behind standing at the edge of a small-town Japanese youth baseball field, children playing far away as small figures, afternoon. No face visible, no team logos, no readable text."
+  },
+  "s04": {
+   "prompt": "Close-up of an adult's hand gripping a fungo bat on a dirt field, dust in the air, serious mood. No face visible, no team logos, no readable text."
+  },
+  "s05": {
+   "prompt": "Top-down close-up of a child's small hand gripping a pencil and writing in a notebook on a kitchen table at night, only the hand and notebook visible, writing blurred. No face visible, no readable text."
+  },
+  "s06": {
+   "prompt": "An adult's hand writing with a red pen in the margin of a child's notebook, text blurred, warm lamp light. No face visible, no team logos, no readable text."
+  },
+  "s07": {
+   "prompt": "An open notebook with three short handwritten lines circled, text blurred and unreadable, top-down view. No face visible, no team logos, no readable text."
+  },
+  "s08": {
+   "prompt": "Youth baseball players in a small dirt field at sunset seen from behind, one boy with hands cupped around his mouth shouting. No face visible, no team logos, no readable text."
+  },
+  "s09": {
+   "prompt": "A father and a young son seen from behind playing catch on a riverside field at dusk, ball in the air. No face visible, no team logos, no readable text."
+  },
+  "s10": {
+   "prompt": "Low-angle close-up of a child's cleats kicking up dirt while sprinting on a baseball base path. No face visible, no team logos, no readable text."
+  },
+  "s11": {
+   "prompt": "A small worn youth baseball glove on a shelf next to a stack of old notebooks, soft morning light. No face visible, no team logos, no readable text."
+  },
+  "s12": {
+   "prompt": "A tall stack of worn notebooks tied with string on a wooden desk, nostalgic warm light. No face visible, no team logos, no readable text."
+  },
+  "s13": {
+   "prompt": "A large hand-drawn grid sheet pinned on a dormitory wall, all writing blurred, morning light from a window. No face visible, no team logos, no readable text."
+  },
+  "s14": {
+   "prompt": "A huge ballpark at dawn with golden light flooding the field, a lone small figure far away seen from behind, epic and moving. No face visible, no team logos, no readable text."
+  }
+ },
+ "lines": [
+  {
+   "text": "ある父と息子は\n{1冊のノート}を\nやり取りした",
+   "tone": "静かに語り始める",
+   "say": "ある父と息子は、1冊のノートをやり取りしていた。",
+   "scene": "s01",
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "父は元\n{社会人野球}の選手",
+   "tone": "淡々と",
+   "say": "父は、元社会人野球の選手。",
+   "scene": "s02"
+  },
+  {
+   "text": "息子の少年野球で\n{コーチ}をしていた",
+   "tone": "懐かしむように",
+   "say": "息子の少年野球チームで、コーチをしていた。",
+   "scene": "s03"
+  },
+  {
+   "text": "グラウンドでは\n<特別扱いしない>\n厳しい父",
+   "tone": "引きしまった声で",
+   "say": "グラウンドでは、わが子を特別扱いしない、厳しい父だった。",
+   "scene": "s04"
+  },
+  {
+   "text": "試合のあと\n息子はノートに\n{その日のこと}を書いた",
+   "tone": "やさしく",
+   "say": "試合のあと、息子はノートに、その日のことを書いた。",
+   "scene": "s05"
+  },
+  {
+   "text": "父は\n{アドバイス}を\n書いて返した",
+   "tone": "温かく",
+   "say": "父はそれを読んで、アドバイスを書いて返した。",
+   "scene": "s06"
+  },
+  {
+   "text": "くり返し伝えたのは\n{3つの教え}",
+   "tone": "少し間をおいて、大切そうに",
+   "say": "くり返し伝えたのは、3つの教え。",
+   "scene": "s07"
+  },
+  {
+   "text": "{大きな声}で\n元気よくプレー",
+   "tone": "明るく",
+   "say": "大きな声を出して、元気よくプレーすること。",
+   "scene": "s08"
+  },
+  {
+   "text": "{キャッチボール}を\n一生懸命",
+   "tone": "はっきりと",
+   "say": "キャッチボールを、一生懸命練習すること。",
+   "scene": "s09"
+  },
+  {
+   "text": "{全力で走る}",
+   "tone": "力をこめて",
+   "say": "そして、全力で走ること。",
+   "scene": "s10"
+  },
+  {
+   "text": "当たり前のことを\n<当たり前に続ける>",
+   "tone": "噛みしめるように",
+   "say": "当たり前のことを、当たり前に続ける。",
+   "scene": "s11"
+  },
+  {
+   "text": "書いて 考えて\n{直す}習慣",
+   "tone": "淡々と、確信をこめて",
+   "say": "書いて、考えて、直す。その習慣が身についた。",
+   "scene": "s12"
+  },
+  {
+   "text": "それはのちの\n{目標達成シート}に\nつながっていく",
+   "tone": "期待をこめて",
+   "say": "それはのちに、あの目標達成シートにつながっていく。",
+   "scene": "s13"
+  },
+  {
+   "text": "父のノートが\n<世界一の選手>を\n育てた",
+   "tone": "胸を打つように、力強く",
+   "say": "父のノートが、世界一の選手を育てた。",
+   "scene": "s14"
+  }
+ ],
+ "tail": 1.3
+}

@@ -413,17 +413,95 @@
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "Close-up of an older man's hands folding a navy security guard uniform jacket on a bench in a small locker room, only hands and forearms visible, soft light"
  },
+ "st010_ai_calc": {
+  "file": "st010_ai_calc.jpg",
+  "key": "4313013f084a4f4b7231fe2a3c407799c7c3fd4c",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of an old calculator next to a stack of hospital bills on a kotatsu table, numbers blurred, warm lamp light"
+ },
+ "st010_ai_couple_tea": {
+  "file": "st010_ai_couple_tea.jpg",
+  "key": "661f2dc0e31ec134e5a7603626a34e91471bc4ea",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese couple seen from behind sitting on a wooden veranda sharing tea, autumn afternoon, warm happy mood"
+ },
+ "st010_ai_evening_street": {
+  "file": "st010_ai_evening_street.jpg",
+  "key": "9b7c95d90f9429e7ebef1fffe48665793c866044",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese man walking home along a quiet old shopping street at dusk, seen from behind, warm shop lights, no readable signs"
+ },
+ "st010_ai_family_receipts": {
+  "file": "st010_ai_family_receipts.jpg",
+  "key": "4d2373c8528775f268e057dd87098fdaf65910b0",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Several plain envelopes with receipts sorted on a table, neat and organized, labels blurred, soft daylight"
+ },
+ "st010_ai_fridge": {
+  "file": "st010_ai_fridge.jpg",
+  "key": "050617f2b9d2912c2865f2054f0fc4c8408484d3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A modest Japanese kitchen at night with a half-empty refrigerator door open, no people, quiet mood"
+ },
+ "st010_ai_graph_doc": {
+  "file": "st010_ai_graph_doc.jpg",
+  "key": "9cc5a88677108902da84bf598e274346e17fa8ab",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of a simple hand-drawn line chart on a notepad with a pen, numbers blurred, bright desk light"
+ },
+ "st010_ai_old_boxes": {
+  "file": "st010_ai_old_boxes.jpg",
+  "key": "5c596e5955c797f503e642f55ed91aed305749c3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Old cardboard boxes full of paper receipts from past years on a closet shelf in a Japanese house, nostalgic warm light"
+ },
+ "st010_ai_pension": {
+  "file": "st010_ai_pension.jpg",
+  "key": "d227fd066b30f0acfe3e171eb89b7f538a59306e",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese man's hands holding a plain envelope at a kitchen table while another pair of hands pours green tea nearby, no faces, morning light"
+ },
  "st010_ai_receipts": {
   "file": "st010_ai_receipts.jpg",
   "key": "2dffdc4262f08232d25c2e2afcbec1a70c298a35",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "A pile of hospital receipts and a calculator on a low wooden table in a Japanese living room, text on receipts blurred and unreadable, warm lamp light"
  },
+ "st010_ai_refund_passbook": {
+  "file": "st010_ai_refund_passbook.jpg",
+  "key": "526a600e1d95d5ee0c82dd146a394b53ddf47d5b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly man's hands opening a bank passbook with blurred entries at an ATM corner, relieved mood, warm light"
+ },
+ "st010_ai_son_phone": {
+  "file": "st010_ai_son_phone.jpg",
+  "key": "667e928017787733668fa434e655a5685eeaac1d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Top-down close-up of a younger man's hand holding a smartphone with a blurred screen toward an older man's wrinkled hand on a dining table, only hands visible, no faces"
+ },
+ "st010_ai_staff_desk": {
+  "file": "st010_ai_staff_desk.jpg",
+  "key": "dcd1f6e565b4856e87f290d5eb8b24b14a323159",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "At a tax consultation desk, a staff member's hands point to a document in front of an elderly man's hands, only hands visible, text blurred"
+ },
+ "st010_ai_tax_form_done": {
+  "file": "st010_ai_tax_form_done.jpg",
+  "key": "f921174044993b8e9c5114e9b132d63b75703230",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Hands handing a completed form in an envelope across a counter, only hands visible, text blurred, bright light"
+ },
  "st010_ai_taxhall": {
   "file": "st010_ai_taxhall.jpg",
   "key": "964c44804ed1d30923d749fa5038601f1a6d3f9a",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "A Japanese tax return consultation venue with rows of tables and staff helping older people, everyone seen from behind, bright light, no readable signs"
+ },
+ "st010_ai_tv_evening": {
+  "file": "st010_ai_tv_evening.jpg",
+  "key": "55b3fe0ac5692c406c35034cca058c62a0afc1bd",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese man seen from behind sitting alone on a floor cushion in front of a small TV in a dim living room at night"
  },
  "st010_ai_wife_bed": {
   "file": "st010_ai_wife_bed.jpg",
@@ -437,10 +515,262 @@
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "A Japanese Buddhist funeral altar decorated with rows of white chrysanthemums, candles and rising incense smoke, no photograph, no portrait, no people, no readable text"
  },
+ "st011_ai_calendar_months": {
+  "file": "st011_ai_calendar_months.jpg",
+  "key": "31e7d1b9b65fc7fb2396d668b9450ea52f894228",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A paper wall calendar with two days circled in red, no readable text, hanging in a Japanese home, soft light"
+ },
+ "st011_ai_cityhall_ext": {
+  "file": "st011_ai_cityhall_ext.jpg",
+  "key": "3e4dbda20963eda5f012936f0b80aff64a783825",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Exterior of a Japanese city hall building on a cloudy morning, a middle-aged man in a dark coat walking toward the entrance seen from behind, no readable signs"
+ },
+ "st011_ai_envelope_stack": {
+  "file": "st011_ai_envelope_stack.jpg",
+  "key": "36d56f2907b55d50381d38904000f8259ec10933",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A neat stack of plain official envelopes and forms on a low table in a Japanese home, text blurred, soft light"
+ },
+ "st011_ai_funeral_bill": {
+  "file": "st011_ai_funeral_bill.jpg",
+  "key": "998476841888dfa0910afc9def0c529045534979",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An itemized invoice with blurred text and a fountain pen on a dark wooden table, somber light"
+ },
+ "st011_ai_hanko_envelope": {
+  "file": "st011_ai_hanko_envelope.jpg",
+  "key": "125ad05df5517f0087feb5999b447c67e0e5cde7",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A small plain envelope on a counter next to a personal name seal and red ink pad, soft light"
+ },
+ "st011_ai_hourglass": {
+  "file": "st011_ai_hourglass.jpg",
+  "key": "88caf40c58423ac8979bcf6a0d2887e39645cc7d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An hourglass on a desk next to official documents with blurred text, symbolic of a deadline, dramatic light"
+ },
+ "st011_ai_incense": {
+  "file": "st011_ai_incense.jpg",
+  "key": "a80461b7a33dc420e53eee430de51064c1e83eb3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of incense sticks smoking in a bowl at a Japanese funeral, white chrysanthemums blurred behind, no people"
+ },
+ "st011_ai_mother_letter": {
+  "file": "st011_ai_mother_letter.jpg",
+  "key": "4f76c64345e40064ce14888c5d8ec75be76cada3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly woman's hands holding an opened official letter with blurred text at a kotatsu, relieved mood"
+ },
+ "st011_ai_mother_window": {
+  "file": "st011_ai_mother_window.jpg",
+  "key": "a2ca9fb5b016585badaa041341b61f9bf2c90ddc",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese woman seen from behind sitting by a window in a quiet tatami room, looking out at a small garden, melancholy"
+ },
+ "st011_ai_passbook_entry": {
+  "file": "st011_ai_passbook_entry.jpg",
+  "key": "b3ac7a88d2ce2fb0b004366aaf6c51e3fb0a6dd9",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of an elderly woman's hands holding an open bank passbook with a new blurred entry, warm light"
+ },
+ "st011_ai_pension_office": {
+  "file": "st011_ai_pension_office.jpg",
+  "key": "43aac527b3b4b8838c292e9796171ac2f3a274cf",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Exterior of a plain Japanese public office on a clear afternoon, a middle-aged man and his elderly mother walking in together seen from behind, no readable signs"
+ },
  "st011_ai_prayer": {
   "file": "st011_ai_prayer.jpg",
   "key": "2f0c4b0b6a7407700b18931f6cf5f8642104eeb1",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "Close-up of an elderly woman's hands pressed together in prayer holding prayer beads in front of a small Japanese home Buddhist altar with a candle and incense, no photograph, no portrait, only hands visible, soft evening light"
+ },
+ "st011_ai_son_mother_walk": {
+  "file": "st011_ai_son_mother_walk.jpg",
+  "key": "b7e7f524b0356dc68e3664cf37b303254f47c5fc",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A middle-aged Japanese man and his elderly mother walking slowly along a riverside path at sunset, seen from behind, warm light"
+ },
+ "st011_ai_terraces": {
+  "file": "st011_ai_terraces.jpg",
+  "key": "9257a449801e88bdb7bdc754fd584517e8bff87a",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Sunrise over misty rice terraces in rural Japan, peaceful and hopeful, no people"
+ },
+ "st011_ai_window_staff": {
+  "file": "st011_ai_window_staff.jpg",
+  "key": "082714f6a7e836d26b5ad4d12f4b9ae72287da5e",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A city hall service counter where a staff member's hands slide a form toward a visitor, only hands visible, text blurred"
+ },
+ "st012_ai_s01": {
+  "file": "st012_ai_s01.jpg",
+  "key": "00415e89f2eaf78e4acd8383c0f82607f4cd8dd9",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A baseball player's hand in a plain gray uniform sleeve picking up a small piece of paper trash from the grass of a huge ballpark at night under stadium lights. No face visible, no team logos, no readable text."
+ },
+ "st012_ai_s02": {
+  "file": "st012_ai_s02.jpg",
+  "key": "19d6cfac1c066b62cff7406bb77610bec86a31c8",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Wide aerial view of a packed major league ballpark at night, bright lights, crowd as tiny dots. No face visible, no team logos, no readable text."
+ },
+ "st012_ai_s03": {
+  "file": "st012_ai_s03.jpg",
+  "key": "42627293cbba841d6e0473c18914cfa2287995c7",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A rural Japanese high school baseball field in spring with cherry blossoms along the fence, empty, morning light. No face visible, no team logos, no readable text."
+ },
+ "st012_ai_s04": {
+  "file": "st012_ai_s04.jpg",
+  "key": "484ec23821ae9cd33411a1af2208a241f03d6549",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A teenage boy's hand writing with a pencil on a large grid sheet of paper on a classroom desk, writing blurred and unreadable. No face visible, no team logos, no readable text."
+ },
+ "st012_ai_s05": {
+  "file": "st012_ai_s05.jpg",
+  "key": "d7cd012699d7146b0c2c9bf1c4538f27ecb420fd",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Extreme close-up of the center square of a hand-drawn 9x9 grid on paper, pencil marks blurred, dramatic light. No face visible, no team logos, no readable text."
+ },
+ "st012_ai_s06": {
+  "file": "st012_ai_s06.jpg",
+  "key": "3a2883e7798aa43ae00dad4860f459daeeef9046",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of a pencil tip circling one square on a hand-drawn grid sheet, everything blurred except the pencil, warm desk lamp. No face visible, no team logos, no readable text."
+ },
+ "st012_ai_s07": {
+  "file": "st012_ai_s07.jpg",
+  "key": "b9eb03f1c6a058ac8e718ed71b85b981faca86a2",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A high school student's hands in a practice uniform picking up litter near the dugout of a dirt baseball field, late afternoon. No face visible, no team logos, no readable text."
+ },
+ "st012_ai_s08": {
+  "file": "st012_ai_s08.jpg",
+  "key": "9e5c5d88cdcad9653a2fcc8e8a39ee775a91552f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A well-oiled leather baseball glove being carefully wiped with a cloth on a wooden bench in a dormitory room. No face visible, no team logos, no readable text."
+ },
+ "st012_ai_s09": {
+  "file": "st012_ai_s09.jpg",
+  "key": "b29385841868cc092225dc41400043db5cba0403",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An empty dirt baseball field at dusk with a single rake leaning on the fence, long shadows, quiet mood. No face visible, no team logos, no readable text."
+ },
+ "st012_ai_s10": {
+  "file": "st012_ai_s10.jpg",
+  "key": "0055defd7db5aac5d03d55bce4de01210e3add45",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A giant modern ballpark lit up against a deep blue evening sky, viewed from outside the gates, crowds walking in seen from behind. No face visible, no team logos, no readable text."
+ },
+ "st012_ai_s11": {
+  "file": "st012_ai_s11.jpg",
+  "key": "a67db61f4f0c5a3de85b9a770e2a045019776af4",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Macro close-up of a crumpled paper cup lying on bright green ballpark grass, shallow depth of field. No face visible, no team logos, no readable text."
+ },
+ "st012_ai_s12": {
+  "file": "st012_ai_s12.jpg",
+  "key": "82195b375b13220415890d6797df199b06bd3e0b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of a hand placing a piece of trash into a pocket of a plain baseball uniform, stadium lights glowing behind. No face visible, no team logos, no readable text."
+ },
+ "st012_ai_s13": {
+  "file": "st012_ai_s13.jpg",
+  "key": "e1d67cda90e143fecfe2de0dff12bb844455d505",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Morning sunlight streaming across an empty major league infield, dew on the grass, hopeful mood. No face visible, no team logos, no readable text."
+ },
+ "st012_ai_s14": {
+  "file": "st012_ai_s14.jpg",
+  "key": "09ae0e92703aa6db684b977e1fa88861cfcd3875",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A silhouette of a baseball player seen from far behind walking onto a huge field at dawn, golden backlight, epic and moving. No face visible, no team logos, no readable text."
+ },
+ "st013_ai_s01": {
+  "file": "st013_ai_s01.jpg",
+  "key": "b4b5f600e067c1a1aa935483e6a5cb174e1022e8",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A worn spiral notebook lying on a low wooden table in a Japanese living room, evening lamp light, nostalgic. No face visible, no team logos, no readable text."
+ },
+ "st013_ai_s02": {
+  "file": "st013_ai_s02.jpg",
+  "key": "3623e87845d223f25b466f50be4f0e21df46b70c",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An old leather baseball glove and a wooden bat resting in the corner of a Japanese house entrance, soft light. No face visible, no team logos, no readable text."
+ },
+ "st013_ai_s03": {
+  "file": "st013_ai_s03.jpg",
+  "key": "fa47ab611371ff898b65d51af4c87ec422d158bc",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A man in a cap seen from behind standing at the edge of a small-town Japanese youth baseball field, children playing far away as small figures, afternoon. No face visible, no team logos, no readable text."
+ },
+ "st013_ai_s04": {
+  "file": "st013_ai_s04.jpg",
+  "key": "fd4d18ae65ef13d8ad3874d2d73bdcc31c109b9b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of an adult's hand gripping a fungo bat on a dirt field, dust in the air, serious mood. No face visible, no team logos, no readable text."
+ },
+ "st013_ai_s05": {
+  "file": "st013_ai_s05.jpg",
+  "key": "f57bb468355f0dbe2ba0e23b9b26355e182866e4",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Top-down close-up of a child's small hand gripping a pencil and writing in a notebook on a kitchen table at night, only the hand and notebook visible, writing blurred. No face visible, no readable text."
+ },
+ "st013_ai_s06": {
+  "file": "st013_ai_s06.jpg",
+  "key": "b26eb0792d9801817cf0ed23522122f4b1a9b5ee",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An adult's hand writing with a red pen in the margin of a child's notebook, text blurred, warm lamp light. No face visible, no team logos, no readable text."
+ },
+ "st013_ai_s07": {
+  "file": "st013_ai_s07.jpg",
+  "key": "d416f003188b2b77455f66303948dfa3538e39da",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An open notebook with three short handwritten lines circled, text blurred and unreadable, top-down view. No face visible, no team logos, no readable text."
+ },
+ "st013_ai_s08": {
+  "file": "st013_ai_s08.jpg",
+  "key": "8d3c885700c74716f58606c58a1aa2ddc2a8d0d0",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Youth baseball players in a small dirt field at sunset seen from behind, one boy with hands cupped around his mouth shouting. No face visible, no team logos, no readable text."
+ },
+ "st013_ai_s09": {
+  "file": "st013_ai_s09.jpg",
+  "key": "af1bf0792b77818911664ba404e32857249912ac",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A father and a young son seen from behind playing catch on a riverside field at dusk, ball in the air. No face visible, no team logos, no readable text."
+ },
+ "st013_ai_s10": {
+  "file": "st013_ai_s10.jpg",
+  "key": "55bd94bcd3a5bea63595b9d24c9583da6baadd53",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Low-angle close-up of a child's cleats kicking up dirt while sprinting on a baseball base path. No face visible, no team logos, no readable text."
+ },
+ "st013_ai_s11": {
+  "file": "st013_ai_s11.jpg",
+  "key": "4ac86ecbbb44624d8d9ab65418017124f7db6d22",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A small worn youth baseball glove on a shelf next to a stack of old notebooks, soft morning light. No face visible, no team logos, no readable text."
+ },
+ "st013_ai_s12": {
+  "file": "st013_ai_s12.jpg",
+  "key": "7b58791c9d07afd748dbc40e086044748d3cf90a",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A tall stack of worn notebooks tied with string on a wooden desk, nostalgic warm light. No face visible, no team logos, no readable text."
+ },
+ "st013_ai_s13": {
+  "file": "st013_ai_s13.jpg",
+  "key": "11e72a029dbaaf421c201abd04e64db937519fc5",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A large hand-drawn grid sheet pinned on a dormitory wall, all writing blurred, morning light from a window. No face visible, no team logos, no readable text."
+ },
+ "st013_ai_s14": {
+  "file": "st013_ai_s14.jpg",
+  "key": "cca38f03a984d67a507a767cde4f56dd6250aca0",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A huge ballpark at dawn with golden light flooding the field, a lone small figure far away seen from behind, epic and moving. No face visible, no team logos, no readable text."
  }
 }

@@ -18,41 +18,53 @@
   "image_dir": "work_st010_ai/images"
  },
  "scenes": {
-  "wife_bed": {
-   "prompt": "View from the foot of a Japanese hospital bed: an elderly woman's legs under a blanket with one leg in a white cast, her upper body out of frame, soft window light, no face visible"
-  },
   "receipts": {
    "prompt": "A pile of hospital receipts and a calculator on a low wooden table in a Japanese living room, text on receipts blurred and unreadable, warm lamp light"
   },
   "taxhall": {
    "prompt": "A Japanese tax return consultation venue with rows of tables and staff helping older people, everyone seen from behind, bright light, no readable signs"
   },
-  "hospital": {
-   "library": "st004_ai_06"
+  "wife_bed": {
+   "prompt": "View from the foot of a Japanese hospital bed: an elderly woman's legs under a blanket with one leg in a white cast, her upper body out of frame, soft window light, no face visible"
   },
-  "envelope": {
-   "library": "st004_ai_03"
+  "pension": {
+   "prompt": "An elderly Japanese man's hands holding a plain envelope at a kitchen table while another pair of hands pours green tea nearby, no faces, morning light"
   },
-  "night": {
-   "library": "st003b_ai_07"
+  "calc": {
+   "prompt": "Close-up of an old calculator next to a stack of hospital bills on a kotatsu table, numbers blurred, warm lamp light"
   },
-  "counter": {
-   "library": "st004_ai_10"
+  "fridge": {
+   "prompt": "A modest Japanese kitchen at night with a half-empty refrigerator door open, no people, quiet mood"
   },
-  "form": {
-   "library": "st003b_ai_11"
+  "tv_evening": {
+   "prompt": "An elderly Japanese man seen from behind sitting alone on a floor cushion in front of a small TV in a dim living room at night"
   },
-  "chart": {
-   "library": "st004_ai_12"
+  "son_phone": {
+   "prompt": "Top-down close-up of a younger man's hand holding a smartphone with a blurred screen toward an older man's wrinkled hand on a dining table, only hands visible, no faces"
   },
-  "receipt": {
-   "library": "st004_ai_15"
+  "staff_desk": {
+   "prompt": "At a tax consultation desk, a staff member's hands point to a document in front of an elderly man's hands, only hands visible, text blurred"
   },
-  "dinner": {
-   "library": "st006_ai_dinner"
+  "graph_doc": {
+   "prompt": "Close-up of a simple hand-drawn line chart on a notepad with a pen, numbers blurred, bright desk light"
   },
-  "walk": {
-   "library": "st006_ai_walk"
+  "family_receipts": {
+   "prompt": "Several plain envelopes with receipts sorted on a table, neat and organized, labels blurred, soft daylight"
+  },
+  "refund_passbook": {
+   "prompt": "An elderly man's hands opening a bank passbook with blurred entries at an ATM corner, relieved mood, warm light"
+  },
+  "old_boxes": {
+   "prompt": "Old cardboard boxes full of paper receipts from past years on a closet shelf in a Japanese house, nostalgic warm light"
+  },
+  "tax_form_done": {
+   "prompt": "Hands handing a completed form in an envelope across a counter, only hands visible, text blurred, bright light"
+  },
+  "couple_tea": {
+   "prompt": "An elderly Japanese couple seen from behind sitting on a wooden veranda sharing tea, autumn afternoon, warm happy mood"
+  },
+  "evening_street": {
+   "prompt": "An elderly Japanese man walking home along a quiet old shopping street at dusk, seen from behind, warm shop lights, no readable signs"
   }
  },
  "lines": [
@@ -73,7 +85,7 @@
    "text": "{67歳}の私\n妻と二人の\n年金暮らし",
    "tone": "淡々と、落ち着いて",
    "say": "67歳の私。妻と二人の年金暮らしです。",
-   "scene": "envelope"
+   "scene": "pension"
   },
   {
    "text": "去年 妻が<骨折>して\n2か月入院しました",
@@ -85,98 +97,78 @@
    "text": "1年の医療費は\n<約40万円>に",
    "tone": "ため息まじりに",
    "say": "1年の医療費は、約40万円になりました。",
-   "scene": "receipts",
-   "crop": [
-    0.5,
-    0.5,
-    1.5
-   ]
+   "scene": "calc"
   },
   {
    "text": "年金だけでは\n<ぎりぎり>の暮らしです",
    "tone": "不安で声が沈む",
-   "scene": "night"
+   "scene": "fridge"
   },
   {
    "text": "年金暮らしに\n{確定申告}なんて\n<関係ない>と思っていた",
    "tone": "苦笑いまじりに",
    "say": "年金暮らしに確定申告なんて関係ない。そう思っていました。",
-   "scene": "night",
-   "crop": [
-    0.5,
-    0.6,
-    1.6
-   ]
+   "scene": "tv_evening"
   },
   {
    "text": "息子に言われて\n{申告の相談会}へ",
    "tone": "気が進まないまま、淡々と",
    "say": "息子に言われて、確定申告の相談会へ行きました。",
-   "scene": "taxhall",
+   "scene": "son_phone",
    "crop": [
-    0.5,
-    0.55,
-    1.5
+    0.4,
+    0.62,
+    1.35
    ]
   },
   {
    "text": "「{医療費控除}は\n申告しましたか」",
    "tone": "係の人の言葉を、やさしく明るく再現する",
    "say": "係の人が言いました。医療費控除は、申告しましたか。",
-   "scene": "counter"
+   "scene": "staff_desk"
   },
   {
    "text": "医療費が1年で\n{10万円}を超えたら\n税金が安くなる",
    "tone": "はっきりと、聞き手に教えるように",
    "say": "1年の医療費が10万円を超えたら、その分、税金が安くなるんです。",
-   "scene": "chart"
+   "scene": "graph_doc"
   },
   {
    "text": "{家族の分}も\nまとめて申告できます",
    "tone": "説明するように、わかりやすく",
    "say": "家族の分も、まとめて申告できます。",
-   "scene": "form"
+   "scene": "family_receipts"
   },
   {
    "text": "所得税が戻り\n住民税も安くなって\n<約4万5千円>",
    "tone": "驚きと安堵。声がふっと明るくなる",
    "say": "所得税が戻って、住民税も安くなり、合わせて約4万5千円。",
    "se": "coin",
-   "scene": "receipt"
+   "scene": "refund_passbook"
   },
   {
    "text": "しかも<5年前>まで\nさかのぼれます",
    "tone": "驚きをこめて",
    "say": "しかも、5年前の分まで、さかのぼって申告できるんです。",
-   "scene": "form",
-   "crop": [
-    0.5,
-    0.5,
-    1.6
-   ]
+   "scene": "old_boxes"
   },
   {
    "text": "{払いすぎた税金}は\n申告すれば\n戻ってきます",
    "tone": "誇らしく、力強く",
    "say": "払いすぎた税金は、申告すれば、きちんと戻ってくる。",
-   "scene": "receipt",
-   "crop": [
-    0.5,
-    0.45,
-    1.5
-   ]
+   "scene": "tax_form_done"
   },
   {
    "text": "妻は\n「{言ってみるもんね}」\nと笑いました",
    "tone": "しみじみと、やさしく",
    "say": "妻は、言ってみるもんね、と笑いました。",
-   "scene": "dinner"
+   "scene": "couple_tea"
   },
   {
    "text": "去年の医療費\n<10万円>を\n超えていませんか？",
    "tone": "同世代に語りかける。まっすぐ問いかけるように",
    "say": "去年の医療費、10万円を超えていませんか。",
-   "scene": "walk"
+   "scene": "evening_street"
   }
  ]
 }

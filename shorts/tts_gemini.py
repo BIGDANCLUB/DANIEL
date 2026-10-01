@@ -174,6 +174,10 @@ BATCH_MAX_CHARS = 220      # 1回に読ませる文字数の上限（長すぎ�
 
 
 def build_batch_prompt(tc, texts, tones):
+    # 行ごとの気持ちを一覧で渡すと、モデルが語り手として話を作り始めることがある（gemini-3.8-flash-tts で確認）。
+    # 既定では渡さず、人物設定と全体の演技指示だけで読ませる（"batch_tones": true で渡す）
+    if not tc.get("batch_tones"):
+        tones = [None] * len(texts)
     notes = "\n".join(f"{n + 1}行目：{t}" for n, t in enumerate(tones) if t)
     head = "# RULES\nこれは決まった台本の朗読。TRANSCRIPT の文字どおりに読む。最初に発する言葉は TRANSCRIPT の最初の言葉。あいさつ・前置き・「昔々」などの語り出し・補足・感想は一切言わない。\n" + tc["style"] + ("\n### 行ごとの気持ち\n" + notes if notes else "")
     return (f"{head}\n### 読み方\nTRANSCRIPT の各行を上から順に1行ずつ読む。行と行のあいだは、必ず1秒ほどはっきり間をあける。"

@@ -195,6 +195,12 @@ def split_by_pauses(pcm, rate, texts):
     return parts
 
 
+def plausible(pcm, rate, text):
+    """文字数に対して長すぎる音声（指示文や別の文まで読んだもの）を弾く。普通の読みは1文字0.2秒前後。"""
+    chars = len(re.sub(r"[、。！？!?「」<>{}\s]", "", text))
+    return len(pcm) / 2 / rate <= chars * 0.4 + 2.0
+
+
 def decode_audio(data, mime=""):
     """API の音声を (PCM, ch, 幅, rate) に。2.5 系は生PCM（audio/L16）、3.x 系は WAV ファイル丸ごと。
     WAV を生PCMとして扱うと、ヘッダが頭の「プチッ」、末尾のメタデータが「ザッ」というノイズになる。"""
@@ -249,6 +255,9 @@ def ensure_voice(story_path, force=False):
             print(f"[{grp[0][0] + 1:02d}-{grp[-1][0] + 1:02d}] まとめて生成（{len(grp)}行）", flush=True)
             pcm, rate = _tts(tc, build_batch_prompt(tc, [(t, l.get("tone")) for t, (_, l, _, _) in zip(texts, grp)]))
             parts = split_by_pauses(pcm, rate, texts)
+            if parts and not all(plausible(p, rate, t) for p, t in zip(parts, texts)):
+                print("  文字数に対して長すぎる行あり", flush=True)
+                parts = None
             if parts:
                 for (i, l, out, k), p in zip(grp, parts):
                     save(i, out, k, p, rate)
@@ -256,7 +265,11 @@ def ensure_voice(story_path, force=False):
             print("  切り分けに失敗 → 1行ずつ作り直します", flush=True)
         for (i, l, out, k), t in zip(grp, texts):
             print(f"[{i + 1:02d}] {t}", flush=True)
-            pcm, rate = _tts(tc, build_prompt(tc, t, l.get("tone")))
+            for _ in range(3):
+                pcm, rate = _tts(tc, build_prompt(tc, t, l.get("tone")))
+                if plausible(pcm, rate, t):
+                    break
+                print("  長すぎるので作り直します", flush=True)
             save(i, out, k, pcm, rate)
 
 

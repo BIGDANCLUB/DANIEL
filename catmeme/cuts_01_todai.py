@@ -119,7 +119,7 @@ def cuts_trial():
         dict(bg=bg("bg06_spotlight"), sub="そして選ばれたのは——", dur=2.4, se="drum"),
         dict(bg=bg("bg06_spotlight"), card=pt("e05c_reveal"), dur=3.4, se="don",
              cats=[{"a": "sleepy_old_memories_cat", "x": 960, "h": 300, "bottom": 1000, "float": True, "still": True}],
-             sting={"file": os.path.join(BGM, "神の怒り.mp3"), "len": 7.0, "gain": -12}),
+             sting={"file": os.path.join(BGM, "神の怒り.mp3"), "len": 7.0, "gain": -24}),
         news("weird_meowing_cat", "えええええ！？", dur=1.8, flip=True),
         news("excited_hodomoe_city_cat", "2位の人\nきたーーー！？", dur=2.2, h=500),
         news("tense_two_cats_face_off", "マジかよ\n逆転じゃん", dur=2.4),
@@ -130,6 +130,10 @@ if __name__ == "__main__":
     out = os.path.join(HERE, "out", "01_todai_trial.mp4")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     cuts = cuts_trial()
+    if sys.argv[1:] == ["--audio"]:   # 音だけ作り直す
+        R.remux_audio(cuts, out, out.replace(".mp4", "_a.mp4"))
+        os.replace(out.replace(".mp4", "_a.mp4"), out)
+        sys.exit()
     if len(sys.argv) > 1:   # 例: python3 cuts_01_todai.py 0:5 → 先頭5カットだけ
         a, b = (int(x) if x else None for x in sys.argv[1].split(":"))
         cuts = cuts[a:b]

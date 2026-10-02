@@ -31,6 +31,7 @@ SR = 44100
 W, H = P.W, P.H
 STYLE = "meme"      # "meme" … 参考動画ふう（大きな縁取り文字・役名札・白飛び転換） / "box" … 字幕帯＋吹き出し
 WHITE_DIP = 0.25    # 場所が変わる時の白飛び（片側の秒数）
+BGM_GAIN = -16      # BGM 全体をさらに下げる量（dB）。「かすかに聞こえる程度」
 
 
 def music_assets():
@@ -378,7 +379,7 @@ def build_audio(cuts, starts, durs, total):
             continue
         last = k + 1 == len(events)
         t1 = total if last else events[k + 1][0]
-        a = load_audio(spec["file"])[int(spec.get("from", 0) * SR):] * db(spec.get("gain", -6))
+        a = load_audio(spec["file"])[int(spec.get("from", 0) * SR):] * db(spec.get("gain", -6) + BGM_GAIN)
         fade = spec.get("fade", 1.0)
         out_f = 2.0 if last else (events[k + 1][1].get("fade", 1.0))
         ln = int((t1 - t0 + (0 if last else out_f)) * SR)
@@ -487,3 +488,19 @@ def render(cuts, out_path, preview_dir=None):
     proc.wait()
     print(f"\n-> {out_path}  ({total:.1f}s)")
     return starts, durs
+
+
+def remux_audio(cuts, video_in, out_path):
+    """映像はそのまま、音だけ作り直して差し替える（音量調整だけの時に速い）。"""
+    starts, durs, t = [], [], 0.0
+    for c in cuts:
+        d = c.get("dur") or auto_dur(c)
+        starts.append(t)
+        durs.append(d)
+        t += d
+    wav = out_path + ".audio.f32"
+    build_audio(cuts, starts, durs, t).tofile(wav)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", video_in, "-f", "f32le", "-ar", str(SR), "-ac", "2", "-i", wav,
+                    "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest",
+                    "-movflags", "+faststart", out_path], check=True)
+    os.remove(wav)

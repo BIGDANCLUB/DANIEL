@@ -126,8 +126,8 @@ def check_reading(tc, audio, texts):
                          "starts は台本の行と同じ数・同じ順にする。\n#### 台本\n" + script}]}],
             "generationConfig": {"responseMimeType": "application/json"},
         })
-    except SystemExit as e:
-        print(f"  ※ 照合できず（{str(e)[:60]}）→ 照合なしで進める", flush=True)
+    except (SystemExit, TimeoutError, OSError) as e:   # 照合の失敗でまとめ読みを無駄にしない
+        print(f"  ※ 照合できず（{str(e)[:60] or type(e).__name__}）→ 照合なしで進める", flush=True)
         return True, "", None
     try:
         r = json.loads(res["candidates"][0]["content"]["parts"][0]["text"])

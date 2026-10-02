@@ -30,6 +30,13 @@ def news(a, say, **kw):
     return dict(bg=bg("bg02_room"), cats=[cat], say=say, say_name="ニュース猫", **kw)
 
 
+def friend(a, say, **kw):
+    """物知り猫（リビング・右側）のセリフ。ニュース猫に説明する役。"""
+    cat = {"a": a, "x": kw.pop("x", 1420), "h": kw.pop("h", 740), "bottom": 1010, "flip": kw.pop("flip", False),
+           "sound": kw.pop("sound", False), "anchor": kw.pop("anchor", False)}
+    return dict(bg=bg("bg02_room"), cats=[cat], say=say, say_name="物知り猫", plate_xy=(1080, 900), **kw)
+
+
 def card(c, sub, cat=None, b="bg03_blackboard", **kw):
     """解説カード＋右下の小さい猫＋字幕。"""
     cats = [{"a": cat, "x": 1752, "h": 330, "bottom": 830, "float": True, "small": True,
@@ -77,29 +84,39 @@ def cuts_trial():
              cats=[{"a": "wave_waving_cat", "x": 300, "h": 420, "bottom": 1040, "float": True}]),
         narr("bg01_campus", "2026年9月28日\n東大の次の「総長」が\n決まった", "work_typing_cat"),
         news("slack_nail_filing_cat", "ほーん、\n東大のボス\n決まったんだ"),
+        friend("taunt_cat_and_scared_dog", "いやいや\nそれがさ\nちょっと事件なのよ"),
         narr("bg01_campus", "選ばれたのは\n投票で2位だった人", "peek_what_happen_cat", se="don"),
         news("blank_black_cat_zoning_out", "……は？", dur=1.3),
         news("huh_huh_cat", "いやいやいや\n待って待って"),
         news("confused_i_dont_know_cat", "2位？\n1位じゃなくて？\nなんで？？"),
         narr("bg01_campus", "しかも\n東大150年の歴史で\n初めての女性の総長", "call_customer_service_cat", se="don"),
         news("despair_dramatic_kitten", "ちょ、\n情報量\nバグってんだけど"),
+        friend("leave_cat_leaves_home", "落ち着いて\n順番に\n説明するから", dur=1.8),
+        news("drive_monkey_golf_cart", "たのむわ", dur=1.3),
         # ---- 2. 総長ってだれ？ ----
         news("weird_meowing_cat", "てか総長って\nなに？\n暴走族のアタマ？"),
+        friend("fight_cat_fight", "ちがうちがう", dur=1.3),
         card("e02_soucho", "総長＝大学のいちばん上の人（ふつうは「学長」）", "work_typing_cat", dur=2.4),
         news("glare_disgusted_cat", "呼び方つっよ", dur=1.4, anchor=True),
         card("e02_soucho", "次の総長の任期は　2027年4月から6年間", "sulk_hungry_cat", dur=2.2),
         news("surprise_big_pupils_cat", "6年！？\nなっが", dur=1.5, se="don"),
+        friend("wakeup_dog_hits_bowl", "けっこう長いよね\nだから\n選び方が大事なの"),
         # ---- 3. 候補者は5人 ----
         dict(bg=bg("bg01_campus"), sub="候補者は5人", cats=cand_cats, layers=cand_tags, dur=2.2, se="pop"),
         news("showoff_gojo_cosplay_cat", "うわ、\n全員つよそう", dur=1.6),
+        friend("eat_crunchy_cat_luna", "副学長とか理事とか\n東大の中の\nえらい人たちだよ"),
+        news("cocky_dj_cat", "で、どうやって\n選ぶの？", se="pop"),
         # ---- 4. 先生たちの投票 ----
         dict(bg=bg("bg04_voting"), sub="学内の先生たちが投票\n「意向投票」", cats=TEACHERS, dur=2.2),
         dict(bg=bg("bg04_voting"), cats=TEACHERS, say="どれにしよ〜\nまあこの人っしょ", say_name="先生たち",
              plate_xy=(60, 900), dur=2.0),
+        news("dance_maxwell_cat", "結果\nはよ", dur=1.3, se="pop"),
         narr("bg06_spotlight", "2回目の投票の\n結果は……", "dance_koto_nai_cat", se="drum", dur=2.2),
         card("e05_votes", "染谷さんが過半数でダントツ1位", "happy_chipi_chapa_cat", dur=2.6, se="don", sound=True),
         news("realize_wet_cat_stare", "え、1位の人、\n半分以上\n取ってんじゃん"),
         news("joy_happy_happy_happy_cat", "2位の倍よ倍！\nはい優勝！\n解散！", sound=True),
+        friend("mock_swinging_cat", "それがね……\n解散しないのよ", dur=1.8),
+        news("glare_disgusted_cat", "は？", dur=1.2, anchor=True),
         # ---- 5. 最後に決めるのは会議 ----
         narr("bg05_meeting", "ところが\n最後に決めるのは\n投票じゃない", "sleepy_sleepy_cat", se="don",
              ),
@@ -111,6 +128,8 @@ def cuts_trial():
         card("e04_flow", "投票は「参考にする材料の一つ」　書類や面接も合わせて決める", "slack_nail_filing_cat",
              b="bg05_meeting", dur=2.8),
         news("huh_goat_talks_to_huh_cat", "え、投票って\nただのアンケート\n的なやつ？"),
+        friend("itchy_kitten_butt", "まあ\n「参考」って\n決まってるからね"),
+        news("sulk_hungry_cat", "ふーん……", dur=1.3),
         dict(bg=bg("bg05_meeting"), cats=MEETING, say="うーん……", say_name="会議の猫たち", plate_xy=(60, 900),
              dur=1.6, bgm={"file": None, "fade": 0.8}),
         news("sleep_sleeping_cat", "なげーよ", dur=1.3),
@@ -164,9 +183,11 @@ def cuts_rest():
              b="bg08_study", dur=2.8),
         card("e06_profile", "2021年から5年間　東大の副学長も務めた", "eat_crunchy_cat_luna", b="bg08_study", dur=2.4),
         news("showoff_gojo_cosplay_cat", "あー、中の人ってことね\nガチ勢じゃん"),
+        friend("calm_black_face_sheep", "大学の運営も\nよく知ってる人\nってことだね"),
         # ---- 7. 会議の言い分 ----
         card("e07_reasons", "会議が挙げた　選んだ理由", "angry_aiming_cat", b="bg05_meeting", dur=3.4),
         news("glare_disgusted_cat", "なんか、\nふわっとしてない？", anchor=True),
+        friend("ride_kitten_bike", "まあ\n総長に求める力\nって感じだね"),
         person("bg07_press", CHAIR, sub="会見で　議長は", dur=1.6),
         person("bg07_press", CHAIR, "いろんな資料とか\n面接とかをもとに\n何回もマジメに\n話し合ったんですよ",
                "議長（再現）", dur=3.2),
@@ -182,6 +203,8 @@ def cuts_rest():
         person("bg07_press", FUJI, "でも学問への\n信頼が落ちてる所は\nまねしちゃダメ\nだと思ってて",
                "藤垣さん（再現）", dur=3.0),
         person("bg07_press", FUJI, "今の総長の改革は\nちゃんと引き継いで\n広げていきます", "藤垣さん（再現）", dur=2.8),
+        news("dance_trending_cat", "女性初は\nたしかに\nデカいよな", dur=1.6, se="pop"),
+        news("angry_aiming_cat", "信頼の話も\nわかる", dur=1.4),
         news("wave_waving_cat", "お、\nふつうに\nしっかりしてるやん"),
         # ---- 9. 世の中の反応 ----
         narr("bg09_sns", "このニュースに\nネットでは\nさまざまな声が", "slack_nail_filing_cat"),
@@ -190,6 +213,7 @@ def cuts_rest():
         net("angry_cat_hits_cat", "過半数とった1位\n落とすなら\n投票いらなくね？", "投票の意味を問う声"),
         net("peek_what_happen_cat", "これ\n総長選の女子枠\nってこと？", "投票の意味を問う声"),
         news("spit_not_my_taste_cat", "うわー\nそれ言うやつ\n絶対いると思った"),
+        friend("drive_driving_cat", "いろんな意見が\n出てるってことね"),
         net("rage_talking_cat", "藤垣さん選んだ\n理由はわかったよ？", "説明が足りないという声"),
         net("huh_huh_cat", "で、染谷さんじゃ\nダメな理由は？\nどこ？\n書いてなくね？", "説明が足りないという声"),
         narr("bg03_blackboard", "選んだ人の\n良いところだけでは\n比べたかどうか\nわからない",
@@ -201,6 +225,7 @@ def cuts_rest():
         narr("bg10_kyoto", "実は\n投票の順位どおりに\nならなかった例は\nほかにもある", "eat_pop_cat"),
         card("e10_kyoto", "教職員の投票で6人中3位だった立川康人さんが学長に", "eat_pop_cat", b="bg10_kyoto", dur=2.8),
         news("weird_meowing_cat", "3位！？\n下剋上レベル\n上がってんだけど"),
+        friend("rage_talking_cat", "京大では\n投票の結果が覆ったのは\n初めてらしい"),
         card("e10_kyoto", "選考会議は「国際卓越研究大学」をめざす体制づくりなどをふまえたと説明", "confused_i_dont_know_cat",
              b="bg10_kyoto", dur=3.0),
         card("e10_kyoto", "教職員の組合は「教職員の意思を反映していない」と批判", "confused_i_dont_know_cat",
@@ -209,6 +234,7 @@ def cuts_rest():
              dur=3.0),
         card("e10b_tsukuba", "同時に　学長の任期の上限と　教職員の投票をなくした", "ride_kitten_bike", b="bg11_tsukuba",
              dur=2.6),
+        news("spin_spinning_cat", "え、\nなにそれ", dur=1.3, se="pop"),
         news("angry_shooting_cat", "投票ごと\n消したの！？\n強すぎん！？",
              sting={"file": os.path.join(BGM, "神の怒り.mp3"), "len": 3.0, "gain": -18}),
         card("e10c_policy", "2014年ごろから　国が「学長は会議が主体的に選ぶように」と見直した", "calm_black_face_sheep",
@@ -219,6 +245,8 @@ def cuts_rest():
              cats=[{"a": "despair_dramatic_kitten", "x": 1700, "h": 380, "bottom": 1060, "float": True, "small": True}],
              bgm={"file": MIRAI, "gain": -7, "fade": 0.8}),
         news("think_bike_front_seat_cat", "ルール違反じゃないけど、\nモヤるのは\nしゃーないってことね"),
+        friend("eat_pop_cat", "決めるのは会議\nでも説明は\nちゃんとしてほしいね"),
+        news("excited_hodomoe_city_cat", "それな", dur=1.3, se="pop"),
         dict(bg=bg("bg03_blackboard"), card=pt("e12_ending"), dur=3.0, se="chime",
              cats=[{"a": "wave_waving_cat", "x": 300, "h": 420, "bottom": 1040, "float": True}]),
     ]

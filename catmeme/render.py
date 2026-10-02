@@ -31,7 +31,8 @@ SR = 44100
 W, H = P.W, P.H
 STYLE = "meme"      # "meme" … 参考動画ふう（大きな縁取り文字・役名札・白飛び転換） / "box" … 字幕帯＋吹き出し
 WHITE_DIP = 0.25    # 場所が変わる時の白飛び（片側の秒数）
-BGM_GAIN = -10      # BGM 全体をさらに下げる量（dB）。「かすかに聞こえる程度」
+BGM_GAIN = -10
+TEMPO = 1.15        # 全カットの長さにかける倍率（大きいほどゆっくり）      # BGM 全体をさらに下げる量（dB）。「かすかに聞こえる程度」
 
 
 def music_assets():
@@ -199,6 +200,10 @@ def ease_out(x):
     return 1 - (1 - x) ** 3
 
 
+def cut_dur(cut):
+    return (cut.get("dur") or auto_dur(cut)) * TEMPO
+
+
 def auto_dur(cut):
     text = (cut.get("sub") or "") + (cut.get("say") or "")
     n = len(text.replace("　", "").replace(" ", ""))
@@ -208,7 +213,7 @@ def auto_dur(cut):
 class CutRenderer:
     def __init__(self, cut):
         self.cut = cut
-        self.dur = cut.get("dur") or auto_dur(cut)
+        self.dur = cut_dur(cut)
         if cut.get("bg"):
             bg = cv2.imread(cut["bg"], cv2.IMREAD_COLOR)
             self.bg = cv2.resize(bg, (W, H)).astype(np.float32) / 255.0
@@ -438,7 +443,7 @@ def render(cuts, out_path, preview_dir=None):
     starts, t = [], 0.0
     durs = []
     for c in cuts:
-        d = c.get("dur") or auto_dur(c)
+        d = cut_dur(c)
         starts.append(t)
         durs.append(d)
         t += d
@@ -494,7 +499,7 @@ def remux_audio(cuts, video_in, out_path):
     """映像はそのまま、音だけ作り直して差し替える（音量調整だけの時に速い）。"""
     starts, durs, t = [], [], 0.0
     for c in cuts:
-        d = c.get("dur") or auto_dur(c)
+        d = cut_dur(c)
         starts.append(t)
         durs.append(d)
         t += d

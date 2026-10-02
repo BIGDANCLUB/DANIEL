@@ -200,8 +200,57 @@ def ease_out(x):
     return 1 - (1 - x) ** 3
 
 
+_DUR_CACHE = {}
+
+
 def cut_dur(cut):
-    return (cut.get("dur") or auto_dur(cut)) * TEMPO
+    """カットの長さ。猫ミームの音が鳴るカットは、音が途中で切れないよう、近くの「音の切れ目」まで伸び縮みさせる。"""
+    base = (cut.get("dur") or auto_dur(cut)) * TEMPO
+    if cut.get("fixed"):
+        return base
+    for k in cut.get("cats", []):
+        if k.get("still") or k.get("mute") or (k["a"] in MUSIC and not k.get("sound")):
+            continue
+        key = (k["a"], round(k.get("ss", 0.0), 2), round(base, 3))
+        if key not in _DUR_CACHE:
+            _DUR_CACHE[key] = natural_end(k["a"], k.get("ss", 0.0), base)
+        return _DUR_CACHE[key]
+    return base
+
+
+def natural_end(name, ss, target, lo=0.85, hi=1.5, extra=1.5):
+    """target 秒の近くで、素材の音が静かになる所（ひと区切り）を探して、その秒数を返す。
+    見つからなければ target のまま（その場合は終わりを長めにフェードする）。"""
+    a = cat_audio(name)
+    if a is None:
+        return target
+    st = int(ss * SR) % max(len(a), 1)
+    need = int((target * hi + extra) * SR)
+    buf = np.concatenate([a[st:], np.tile(a, (need // max(len(a), 1) + 1, 1))])[:need].mean(1)
+    hop = int(0.02 * SR)
+    n = len(buf) // hop
+    env = 20 * np.log10(np.sqrt((buf[: n * hop].reshape(n, hop) ** 2).mean(1)) + 1e-6)
+    loud = np.percentile(env, 95)
+    quiet = env < max(loud - 26, -55)
+    # 素材の音が target より前に自然に終わっている → そのままでよい
+    if quiet[int(target / 0.02) - 1:].all() if int(target / 0.02) - 1 < n else True:
+        return target
+    # 60ms 以上続く静かな所の始まりを候補にする
+    cands = [i * 0.02 for i in range(1, n - 3) if quiet[i] and quiet[i + 1] and quiet[i + 2] and not quiet[i - 1]]
+    lo_t, hi_t = max(1.0, target * lo), min(target * hi, target + extra)
+    inside = [t for t in cands if lo_t <= t <= hi_t]
+    if inside:
+        return min(inside, key=lambda t: abs(t - target) * (1.0 if t >= target else 1.4)) + 0.06
+    # 静かな所が無い（ずっと鳴っている）素材は、音がいちばん深く落ち込む所（言葉や拍の切れ目）で切る
+    sm = np.convolve(env, np.ones(5) / 5, "same")
+    best, best_score = target, -1e9
+    for i in range(int(lo_t / 0.02), min(int(hi_t / 0.02), n - 15)):
+        if sm[i] <= sm[i - 1] and sm[i] <= sm[i + 1]:
+            depth = min(sm[max(0, i - 15):i].max(), sm[i + 1:i + 16].max()) - sm[i]
+            score = depth - 3.0 * abs(i * 0.02 - target)
+            if depth >= 4 and score > best_score:
+                best, best_score = i * 0.02 + 0.02, score
+    return best
 
 
 def auto_dur(cut):
@@ -419,10 +468,10 @@ def build_audio(cuts, starts, durs, total):
             ln = int(durs[i] * SR)
             st = int(k.get("ss", 0.0) * SR) % max(len(a), 1)
             a = np.concatenate([a[st:], np.tile(a, (ln // max(len(a), 1) + 1, 1))])[:ln].copy()
-            f = min(int(0.03 * SR), len(a) // 2)
+            f, fo = min(int(0.02 * SR), len(a) // 2), min(int(0.2 * SR), len(a) // 2)
             if f:
                 a[:f] *= np.linspace(0, 1, f)[:, None]
-                a[-f:] *= np.linspace(1, 0, f)[:, None]
+                a[-fo:] *= np.linspace(1, 0, fo)[:, None]
             g = k.get("gain", -6 if k.get("small") else -3)
             mix[i0:i0 + len(a)] += a[: n - i0] * db(g)
             has_cat_sound = True

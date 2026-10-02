@@ -202,7 +202,7 @@ def ease_out(x):
 def auto_dur(cut):
     text = (cut.get("sub") or "") + (cut.get("say") or "")
     n = len(text.replace("　", "").replace(" ", ""))
-    return max(cut.get("min", 2.0), 1.0 + n * 0.12)
+    return max(cut.get("min", 1.5), 0.6 + n * 0.09)
 
 
 class CutRenderer:
@@ -406,7 +406,7 @@ def build_audio(cuts, starts, durs, total):
                 mix[i0:i0 + len(s)] += np.stack([s, s], 1)[: n - i0]
         has_cat_sound = False
         for k in c.get("cats", []):
-            if k.get("still") or k.get("mute") or k["a"] in MUSIC:
+            if k.get("still") or k.get("mute") or (k["a"] in MUSIC and not k.get("sound")):
                 continue
             a = cat_audio(k["a"])
             if a is None:
@@ -418,7 +418,7 @@ def build_audio(cuts, starts, durs, total):
             if f:
                 a[:f] *= np.linspace(0, 1, f)[:, None]
                 a[-f:] *= np.linspace(1, 0, f)[:, None]
-            g = k.get("gain", -10 if k.get("small") else -3)
+            g = k.get("gain", -6 if k.get("small") else -3)
             mix[i0:i0 + len(a)] += a[: n - i0] * db(g)
             has_cat_sound = True
         if c.get("say") and not c.get("no_pop") and not has_cat_sound:

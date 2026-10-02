@@ -1156,5 +1156,485 @@
   "key": "2d73298f1c681fa390403c7e861a30ac1261e627",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "An older man's hands holding an open bank passbook and a leather wallet at a kitchen table, relieved mood, warm light No faces visible, no readable text."
+ },
+ "st017_ai_couple_room": {
+  "file": "st017_ai_couple_room.jpg",
+  "key": "6c3f4586a99aa294b8bf44cfda526f6bdb11c396",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese couple seen from behind sitting at a small low table in a modest old apartment room, late afternoon light No faces visible, no readable text, no logos."
+ },
+ "st017_ai_daughter_hands": {
+  "file": "st017_ai_daughter_hands.jpg",
+  "key": "838570573b943204fc99b505452c94567fba2559",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A middle-aged woman's hands opening a plain envelope and unfolding a form on a kitchen table, an elderly man's hands nearby No faces visible, no readable text, no logos."
+ },
+ "st017_ai_envelope_shelf": {
+  "file": "st017_ai_envelope_shelf.jpg",
+  "key": "5853abff3562fbae79c8df0bcab8f593754faeb2",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An unopened plain envelope leaning against a small shelf next to a wall calendar in a Japanese home, dusty and forgotten No faces visible, no readable text, no logos."
+ },
+ "st017_ai_mailbox": {
+  "file": "st017_ai_mailbox.jpg",
+  "key": "a63f81d6f7b939b4348badacfb80922f9e0fb216",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A row of metal apartment mailboxes in an old Japanese apartment building entrance, one plain envelope sticking out, evening light No faces visible, no readable text, no logos."
+ },
+ "st017_ai_passbook": {
+  "file": "st017_ai_passbook.jpg",
+  "key": "83ba25e157f210933fd5f35870d381e9fb5dcb52",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly man's hands holding an open bank passbook with blurred entries at a wooden table, soft light No faces visible, no readable text, no logos."
+ },
+ "st017_ai_post_box": {
+  "file": "st017_ai_post_box.jpg",
+  "key": "857908db76e226494e826242971924d03fc52998",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A hand dropping a postcard into a red Japanese street post box on a quiet residential street No faces visible, no readable text, no logos."
+ },
+ "st017_ai_postcard_table": {
+  "file": "st017_ai_postcard_table.jpg",
+  "key": "317b63dce270fbb2772dfbad66efd08601cb21bc",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A plain postcard-sized form and a pen on a low wooden table in a Japanese living room, a cup of green tea beside it, warm morning light No faces visible, no readable text, no logos."
+ },
+ "st017_ai_veranda_couple": {
+  "file": "st017_ai_veranda_couple.jpg",
+  "key": "fa7b5d84802eae5899975506c214acbaea645c94",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly Japanese couple seen from behind sitting on a wooden engawa veranda looking at a small garden, gentle sunset No faces visible, no readable text, no logos."
+ },
+ "st018_ai_bills": {
+  "file": "st018_ai_bills.jpg",
+  "key": "690c2fd847f6b94c76ec428cf84ff1ebb74918ce",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A monthly invoice from a care facility and a bank passbook on a dining table at night, a man's tired hand resting on them No faces visible, no readable text, no logos."
+ },
+ "st018_ai_care_bed": {
+  "file": "st018_ai_care_bed.jpg",
+  "key": "a7c28f7b0299442a06d4d057da40e10a39e14df6",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A quiet Japanese care facility room with a neatly made care bed by a window, a folded cardigan on a chair, soft afternoon light, no people No faces visible, no readable text, no logos."
+ },
+ "st018_ai_certificate": {
+  "file": "st018_ai_certificate.jpg",
+  "key": "7ad5f641b075c45941c1eab5bff0e33469f10530",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A plain official certificate with a red seal on a wooden desk next to a tax form, details blurred No faces visible, no readable text, no logos."
+ },
+ "st018_ai_city_hall": {
+  "file": "st018_ai_city_hall.jpg",
+  "key": "ead8367ff74bdf6939e3f6292867a53f5e38e17f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese city hall service counter with numbered ticket machine and waiting chairs, a man's hands receiving a document, text blurred No faces visible, no readable text, no logos."
+ },
+ "st018_ai_facility_hall": {
+  "file": "st018_ai_facility_hall.jpg",
+  "key": "33062a31044ab7154645927c3ff5e19f77f6ad50",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A bright corridor of a Japanese nursing home with handrails, a middle-aged man in a suit seen from behind walking away No faces visible, no readable text, no logos."
+ },
+ "st018_ai_mother_hand": {
+  "file": "st018_ai_mother_hand.jpg",
+  "key": "5672e7bdf1ebcd5ab87fa9b64da8448f7d8d58eb",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A middle-aged man's hand gently holding an elderly woman's wrinkled hand on a white blanket, soft window light No faces visible, no readable text, no logos."
+ },
+ "st018_ai_staff_hands": {
+  "file": "st018_ai_staff_hands.jpg",
+  "key": "23f1839d6a225fdcc5297363d0b28ec4d67b16f0",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "At a nursing home consultation table, a staff member's hands pointing to a pamphlet while a middle-aged man's hands hold a pen No faces visible, no readable text, no logos."
+ },
+ "st018_ai_tax_desk": {
+  "file": "st018_ai_tax_desk.jpg",
+  "key": "53d88b3fa30a489206057ea68ef4168070440f84",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A year-end tax adjustment form, a calculator and reading glasses on an office desk, a man's hand holding a pen, warm lamp light No faces visible, no readable text, no logos."
+ },
+ "st019_ai_city_counter": {
+  "file": "st019_ai_city_counter.jpg",
+  "key": "542c122959c0fd6c83e16f49900b8efe075f1920",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese city hall counter where a staff member's hands point to a document held by a middle-aged man's hands, text blurred No faces visible, no readable text, no logos."
+ },
+ "st019_ai_code_paper": {
+  "file": "st019_ai_code_paper.jpg",
+  "key": "24b480a775841d07b9133c005db76b8cb9626c2d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A close-up of an unemployment insurance document with a finger pointing to a small box, numbers blurred, desk lamp light No faces visible, no readable text, no logos."
+ },
+ "st019_ai_empty_office": {
+  "file": "st019_ai_empty_office.jpg",
+  "key": "8c1433a464d7d74beb0cd99283d40e9fb337388f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An empty Japanese office floor with cleared desks and stacked cardboard boxes, late evening light through blinds, no people No faces visible, no readable text, no logos."
+ },
+ "st019_ai_hellowork": {
+  "file": "st019_ai_hellowork.jpg",
+  "key": "6b149615fe4b582893e0b69b89d4c9a0529bbf0c",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese public employment office waiting area with rows of chairs and job posting boards, a middle-aged man seen from behind, text blurred No faces visible, no readable text, no logos."
+ },
+ "st019_ai_morning_walk": {
+  "file": "st019_ai_morning_walk.jpg",
+  "key": "04ac254bb7841f41744e37966df7c2c22de449cb",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A middle-aged man in a jacket seen from behind walking toward a train station in the morning, hopeful light No faces visible, no readable text, no logos."
+ },
+ "st019_ai_notice": {
+  "file": "st019_ai_notice.jpg",
+  "key": "78c6eb1baba90dde967d655305b7edb59b820984",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A health insurance premium notice envelope and a calculator on a kitchen table at night, a man's hand pressed to his forehead at the edge, text blurred No faces visible, no readable text, no logos."
+ },
+ "st019_ai_premium_bill": {
+  "file": "st019_ai_premium_bill.jpg",
+  "key": "3a92d949c7482c09a0af153e62c41a36a4b332c2",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An insurance premium bill with large blurred numbers on a low table, an older man's hands holding it, dim room No faces visible, no readable text, no logos."
+ },
+ "st019_ai_relief_table": {
+  "file": "st019_ai_relief_table.jpg",
+  "key": "33c62a5c85f81f501a4fb1de48e1ecf95be7bc39",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A middle-aged Japanese couple seen from behind at a dining table, the wife's hand on her husband's shoulder, warm light No faces visible, no readable text, no logos."
+ },
+ "st020_ai_chart": {
+  "file": "st020_ai_chart.jpg",
+  "key": "ad6d2d6b2453d13ee27e43824fbb2609d2e2247d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A simple printed bar chart comparing two stacked blocks with a horizontal limit line, on a wooden desk with a pen, numbers blurred No faces visible, no readable text, no logos."
+ },
+ "st020_ai_counter": {
+  "file": "st020_ai_counter.jpg",
+  "key": "f5c895907681e9b009ee6ae67a0381af2efbcff1",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese city hall welfare counter where a staff member's hands slide a form toward an elderly man's hands, text blurred No faces visible, no readable text, no logos."
+ },
+ "st020_ai_couple_hands": {
+  "file": "st020_ai_couple_hands.jpg",
+  "key": "c6b38873396229850eaf25103195cad9d44472c8",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly woman's hand holding an elderly man's hand on the armrest of a wheelchair, warm sunset light No faces visible, no readable text, no logos."
+ },
+ "st020_ai_letter": {
+  "file": "st020_ai_letter.jpg",
+  "key": "23eeb0339785980e8643644a5bd059ae9a2e7104",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly man's hands holding an official notice letter from a city office beside a teacup, text blurred No faces visible, no readable text, no logos."
+ },
+ "st020_ai_receipts": {
+  "file": "st020_ai_receipts.jpg",
+  "key": "878432ede060a0d400d15843593bca87a5d0de4a",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A pile of medical and care service receipts with a calculator on a wooden table in a Japanese home, reading glasses on top, text blurred No faces visible, no readable text, no logos."
+ },
+ "st020_ai_ward": {
+  "file": "st020_ai_ward.jpg",
+  "key": "0a45d588dfc315b60acb2f360a77f04e95d71318",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A quiet hospital room with an empty bed and a cardiac monitor turned off, late afternoon light, no people No faces visible, no readable text, no logos."
+ },
+ "st020_ai_wheelchair": {
+  "file": "st020_ai_wheelchair.jpg",
+  "key": "2f7f962f024b2cbb2d9c0dd9b772794f5687f621",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A wheelchair by a sunny window in a modest Japanese home, a folded blanket on its seat, no people No faces visible, no readable text, no logos."
+ },
+ "st020_ai_worry_hands": {
+  "file": "st020_ai_worry_hands.jpg",
+  "key": "a2ec4c94fe2c7df8e5c40f67c6080ef125d64974",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly man's hands clasped over a notebook of household expenses on a low table, dim evening light No faces visible, no readable text, no logos."
+ },
+ "st021_ai_calendar": {
+  "file": "st021_ai_calendar.jpg",
+  "key": "bb60096c0b4bd0059e060c9bc02121414b77996f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A wall calendar with August circled in red pen beside a window in a Japanese home, a cup of tea on the sill No faces visible, no readable text, no logos."
+ },
+ "st021_ai_certificate": {
+  "file": "st021_ai_certificate.jpg",
+  "key": "7762260267d76cc0ff2008395255edea13710f6b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A small official certificate card with a seal placed on a nursing home reception counter, details blurred No faces visible, no readable text, no logos."
+ },
+ "st021_ai_consult": {
+  "file": "st021_ai_consult.jpg",
+  "key": "0ab17e5efc60985fd33e04e6d1e2b71330a5ea41",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A nursing home consultation room where a staff member's hands show a pamphlet to a man's hands across a small table, text blurred No faces visible, no readable text, no logos."
+ },
+ "st021_ai_invoice": {
+  "file": "st021_ai_invoice.jpg",
+  "key": "5982095b26f1490e997f1cf259190b8597ec0d57",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A nursing home monthly invoice and a bank passbook on a wooden table, an older man's hand holding a pen, text blurred, warm lamp light No faces visible, no readable text, no logos."
+ },
+ "st021_ai_mother_hand": {
+  "file": "st021_ai_mother_hand.jpg",
+  "key": "19264e6d3449b58c94e334ea54c0d905a62d783d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older man's hand holding his elderly mother's wrinkled hand on a nursing home bed blanket, gentle sunlight No faces visible, no readable text, no logos."
+ },
+ "st021_ai_nursing_home": {
+  "file": "st021_ai_nursing_home.jpg",
+  "key": "93a19dcefd2f4ee7ee167613926944d1278c204a",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "The entrance of a modern Japanese special nursing home with automatic glass doors and potted plants, morning light, no people No faces visible, no readable text, no logos."
+ },
+ "st021_ai_private_room": {
+  "file": "st021_ai_private_room.jpg",
+  "key": "7fbc207d38d7e00d72db47d6713b0641fbcb8b12",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A tidy private room in a Japanese nursing home with a care bed, a small family photo frame turned away, soft window light, no people No faces visible, no readable text, no logos."
+ },
+ "st021_ai_savings": {
+  "file": "st021_ai_savings.jpg",
+  "key": "9ba08aba77d7f5d7f5933f95887692958d947833",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older man's hands holding an open bank passbook showing a shrinking balance, blurred numbers, dim evening light No faces visible, no readable text, no logos."
+ },
+ "st022_ai_coach_back": {
+  "file": "st022_ai_coach_back.jpg",
+  "key": "e013642dea6e8e5f5fdb3ef5377be36369fece8a",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A baseball coach in a plain cap seen from behind standing alone in an empty stadium hallway, dim light No faces visible, no readable text, no logos."
+ },
+ "st022_ai_dugout_back": {
+  "file": "st022_ai_dugout_back.jpg",
+  "key": "b2d6dde8826ee30cabc77608279fc454847d7c33",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A high school baseball pitcher in a plain uniform seen from behind sitting alone on a dugout bench, glove on his lap, summer haze No faces visible, no readable text, no logos."
+ },
+ "st022_ai_mlb_mound": {
+  "file": "st022_ai_mlb_mound.jpg",
+  "key": "8099558ae5c2d0413012d03319c9649f3e0249c3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A pitcher seen from behind walking to the mound in a huge American major league stadium at sunset, crowd blurred No faces visible, no readable text, no logos."
+ },
+ "st022_ai_mound_dusk": {
+  "file": "st022_ai_mound_dusk.jpg",
+  "key": "213309fbdfb98cb6294361d84adeba44b7916dfe",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An empty high school baseball mound in a rural Japanese stadium at dusk, a single baseball resting on the rubber No faces visible, no readable text, no logos."
+ },
+ "st022_ai_night_stadium": {
+  "file": "st022_ai_night_stadium.jpg",
+  "key": "56337c2bd41f4abca92b2e4d56f777c20dcbea2f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A professional Japanese baseball stadium at night under bright lights, a pitcher seen from far behind on the mound, crowd blurred No faces visible, no readable text, no logos."
+ },
+ "st022_ai_scoreboard_dusk": {
+  "file": "st022_ai_scoreboard_dusk.jpg",
+  "key": "761724928fa84d683bb12ae0d4306d9ca7eb3723",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An old manual baseball scoreboard of a rural stadium at dusk with blurred numbers, empty bleachers No faces visible, no readable text, no logos."
+ },
+ "st022_ai_summer_stadium": {
+  "file": "st022_ai_summer_stadium.jpg",
+  "key": "c29dbe8b5ed1a0384be8b69b883fa4344734d577",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A packed rural Japanese baseball stadium in midsummer heat, players far away and tiny, shimmering air No faces visible, no readable text, no logos."
+ },
+ "st022_ai_worn_ball": {
+  "file": "st022_ai_worn_ball.jpg",
+  "key": "c694fe22c1015a2fb8602a72d88d8da620bed7e3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A worn baseball and a scuffed pitcher's glove on a dugout bench, sweat-darkened leather, harsh summer light No faces visible, no readable text, no logos."
+ },
+ "st023_ai_boots_bench": {
+  "file": "st023_ai_boots_bench.jpg",
+  "key": "7be046919742e973f3fbb0a84fc8359f42f6ae9d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A pair of worn football boots on a wooden bench in a youth academy locker room, morning light No faces visible, no readable text, no logos."
+ },
+ "st023_ai_campus": {
+  "file": "st023_ai_campus.jpg",
+  "key": "87dba1d35370b81e7606748be2068f34e9512e45",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese university campus path lined with trees in spring, a young man with a sports bag seen from behind No faces visible, no readable text, no logos."
+ },
+ "st023_ai_crossroads": {
+  "file": "st023_ai_crossroads.jpg",
+  "key": "b66122091ba44b768429a890e300ad52117eed04",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A young man in a training jacket seen from behind standing at a fork in a path between a stadium and a university building No faces visible, no readable text, no logos."
+ },
+ "st023_ai_goal_line": {
+  "file": "st023_ai_goal_line.jpg",
+  "key": "1770f6f67ac87e773d55d1cb16ead3268c0ca832",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Extreme close-up of a football exactly on the white goal line on wet grass, stadium lights bokeh No faces visible, no readable text, no logos."
+ },
+ "st023_ai_head_camera": {
+  "file": "st023_ai_head_camera.jpg",
+  "key": "00c5cee7b956fd9e72d4a515ede15a71bf6b9e41",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A small action camera on a head strap lying on a football next to a laptop showing a blurred video frame, university lab desk No faces visible, no readable text, no logos."
+ },
+ "st023_ai_premier": {
+  "file": "st023_ai_premier.jpg",
+  "key": "dacc9dcfd73b245cca25ecdbb85944e2ec210728",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A huge English football stadium under floodlights at night, a player seen from far behind dribbling, crowd blurred No faces visible, no readable text, no logos."
+ },
+ "st023_ai_thesis": {
+  "file": "st023_ai_thesis.jpg",
+  "key": "c2d12f843257769c430905fb6dd4d20e1031b23e",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A thick bound university thesis and printed diagrams of player movement arrows on a desk, a hand flipping pages, text blurred No faces visible, no readable text, no logos."
+ },
+ "st023_ai_youth_pitch": {
+  "file": "st023_ai_youth_pitch.jpg",
+  "key": "0512359c2ef86d290a6b18a0a4b76d56e52f5f92",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A green football training pitch of a youth academy at dusk, cones and balls scattered, a young player seen from far behind No faces visible, no readable text, no logos."
+ },
+ "st024_ai_data_pages": {
+  "file": "st024_ai_data_pages.jpg",
+  "key": "a7c58c750c5626e091f18ff7c9de47a58de7f297",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Open pages of a report with blurred bar charts and graphs, a hand turning a page, warm light No faces visible, no readable text, no logos."
+ },
+ "st024_ai_jp_stadium": {
+  "file": "st024_ai_jp_stadium.jpg",
+  "key": "28620a927ecbfd68d64f6e3f3b93cb3e7f31704b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese professional baseball stadium at night, a player seen from far behind walking onto the field, crowd blurred No faces visible, no readable text, no logos."
+ },
+ "st024_ai_meeting": {
+  "file": "st024_ai_meeting.jpg",
+  "key": "b37a6d0ce000a24ddba1341dcd6dc5bcad16cda5",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A negotiation meeting in a Japanese hotel room, several men in suits seen from behind at a table, a document open, faces not visible No faces visible, no readable text, no logos."
+ },
+ "st024_ai_mlb_sunset": {
+  "file": "st024_ai_mlb_sunset.jpg",
+  "key": "45859ac45fead57dfad83895ff1ba3fd48f97480",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A huge American major league stadium at golden sunset, a player seen from far behind walking across the outfield, crowd blurred No faces visible, no readable text, no logos."
+ },
+ "st024_ai_press_mics": {
+  "file": "st024_ai_press_mics.jpg",
+  "key": "37423551a6dc385d85208e6b2c40505576db7658",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A row of microphones on a table at a press conference room, empty chair, camera flashes in the background, no people visible No faces visible, no readable text, no logos."
+ },
+ "st024_ai_school_ground": {
+  "file": "st024_ai_school_ground.jpg",
+  "key": "b0b94108bb21616ed1b25602dabee020165f653c",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A rural Japanese high school baseball field in autumn with mountains behind, a tall young player seen from far behind No faces visible, no readable text, no logos."
+ },
+ "st024_ai_thick_binder": {
+  "file": "st024_ai_thick_binder.jpg",
+  "key": "ce05261babb45adec48b9775383ae33e03688896",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A thick bound presentation document on a polished meeting table in a Japanese hotel room, a pair of hands resting on the cover, cover text blurred No faces visible, no readable text, no logos."
+ },
+ "st024_ai_two_gloves": {
+  "file": "st024_ai_two_gloves.jpg",
+  "key": "ae0896c68754b37e5f8a4561da72804918e8e7e5",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A pitcher's glove and a baseball bat lying side by side on a dugout bench, dramatic light No faces visible, no readable text, no logos."
+ },
+ "st025_ai_dawn_training": {
+  "file": "st025_ai_dawn_training.jpg",
+  "key": "5e2e8c3f0ccd94a823683290c0cd27a827b65734",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A lone athlete seen from far behind throwing a training javelin on an empty field at dawn, mist No faces visible, no readable text, no logos."
+ },
+ "st025_ai_empty_gym": {
+  "file": "st025_ai_empty_gym.jpg",
+  "key": "d84cd81afe166208721b170d5763a3228ab4919a",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An empty weight room with heavy barbells on racks, untouched, dim light, no people No faces visible, no readable text, no logos."
+ },
+ "st025_ai_javelin": {
+  "file": "st025_ai_javelin.jpg",
+  "key": "a1af0876f51ef50cd6ffe2ffd8d7b65641a01f3d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A small foam training javelin lying on green grass next to a baseball, early morning dew No faces visible, no readable text, no logos."
+ },
+ "st025_ai_mound_small": {
+  "file": "st025_ai_mound_small.jpg",
+  "key": "acdb86a4749310e40d7085588cfc94a851e9ce46",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A pitcher of average build seen from behind standing on a huge professional mound, stadium lights, crowd blurred No faces visible, no readable text, no logos."
+ },
+ "st025_ai_rural_field": {
+  "file": "st025_ai_rural_field.jpg",
+  "key": "0ce618bc42214f816dd82c2247310f34f3102005",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A rural high school baseball field in southern Japan with palm trees and mountains, a young pitcher seen from far behind No faces visible, no readable text, no logos."
+ },
+ "st025_ai_stretch": {
+  "file": "st025_ai_stretch.jpg",
+  "key": "2280b80f613b21ec9afa3f3f71e0d5f890fa4976",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An athlete seen from behind doing a deep stretching bridge on a mat in a quiet training room, soft window light No faces visible, no readable text, no logos."
+ },
+ "st025_ai_trophy": {
+  "file": "st025_ai_trophy.jpg",
+  "key": "e897ddd1fb7f502c30e692fc736964bd7d2ff4b5",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A gleaming trophy on a table in a dim room with stadium lights blurred in the window, no people No faces visible, no readable text, no logos."
+ },
+ "st025_ai_ws_night": {
+  "file": "st025_ai_ws_night.jpg",
+  "key": "c02b25a14c5d9ab121b9f6f3dbb6d8e0873fe050",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A huge American baseball stadium at night with fireworks and confetti, players far away celebrating, crowd blurred No faces visible, no readable text, no logos."
+ },
+ "st026_ai_arena": {
+  "file": "st026_ai_arena.jpg",
+  "key": "c264ca3d140bea0613a48a9bc5ff56efdd8ef6b5",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A large judo competition arena with bright lights on a blue tatami, athletes far away and tiny, crowd blurred No faces visible, no readable text, no logos."
+ },
+ "st026_ai_corridor": {
+  "file": "st026_ai_corridor.jpg",
+  "key": "afc026ae90b3dde428ff0c6b94ab85b5971a0315",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Two judo athletes in white gi seen from behind walking side by side down a long arena corridor toward bright light No faces visible, no readable text, no logos."
+ },
+ "st026_ai_dojo_kids": {
+  "file": "st026_ai_dojo_kids.jpg",
+  "key": "0752d848ac7aef6aa82f5f78752373ee351b1347",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A small neighborhood judo dojo in Japan with two children in white judo gi seen from behind bowing, warm evening light No faces visible, no readable text, no logos."
+ },
+ "st026_ai_medals": {
+  "file": "st026_ai_medals.jpg",
+  "key": "9ae6e4109c55c2c996c1a3bcd5c1aeb8f872b844",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Two gold medals with ribbons lying side by side on a tatami mat, dramatic light No faces visible, no readable text, no logos."
+ },
+ "st026_ai_paris_arena": {
+  "file": "st026_ai_paris_arena.jpg",
+  "key": "bca8e03efc704b03f590485075b9a6b3d8bd92f0",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A grand judo arena with an elegant historic roof and bright lights, athletes tiny on the tatami, crowd blurred No faces visible, no readable text, no logos."
+ },
+ "st026_ai_small_gi": {
+  "file": "st026_ai_small_gi.jpg",
+  "key": "274311dc2f3d6edd07428ae6f278284f4cf0d13e",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A small child's white judo gi folded next to a larger one on a wooden shelf in a dojo No faces visible, no readable text, no logos."
+ },
+ "st026_ai_tears_towel": {
+  "file": "st026_ai_tears_towel.jpg",
+  "key": "4a08325eb04bac59595b5427a9c4faf562863df3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A white towel draped over the edge of a tatami mat beside a fallen judo belt, dim light, no people No faces visible, no readable text, no logos."
+ },
+ "st026_ai_two_belts": {
+  "file": "st026_ai_two_belts.jpg",
+  "key": "50849104875abc976b2bc88e0ba3fb7d2dfd2f14",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Two black judo belts lying side by side on a tatami mat in a quiet dojo, soft light No faces visible, no readable text, no logos."
  }
 }

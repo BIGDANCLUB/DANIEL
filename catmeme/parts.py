@@ -144,21 +144,22 @@ def bubble(text="", name="", cat_x=960, top=90, color=ACCENT):
     return img
 
 
-def name_tag(name, sub="", x=None, y=700, color=NAVY):
+def name_tag(name, sub="", x=None, y=700, color=NAVY, size=54):
     """人物の名前テロップ（猫の足元あたりに出す）。x は中心X。"""
     img = canvas()
     d = ImageDraw.Draw(img)
-    nf, sf = font("round", 54), font("round_b", 34)
-    w = max(text_w(d, name, nf), text_w(d, sub, sf) if sub else 0) + 80
-    h = 92 + (50 if sub else 0)
+    k = size / 54
+    nf, sf = font("round", size), font("round_b", int(34 * k))
+    w = max(text_w(d, name, nf), text_w(d, sub, sf) if sub else 0) + 80 * k
+    h = 92 * k + (50 * k if sub else 0)
     cx = W / 2 if x is None else x
-    box = (int(cx - w / 2), y, int(cx + w / 2), y + h)
+    box = (int(cx - w / 2), y, int(cx + w / 2), int(y + h))
     shadow(img, box, 20, offset=6)
     d.rounded_rectangle(box, 20, fill=WHITE, outline=color, width=6)
     d.rounded_rectangle((box[0], box[1], box[2], box[1] + 14), 6, fill=color)
-    d.text((cx - text_w(d, name, nf) / 2, y + 22), name, font=nf, fill=INK)
+    d.text((cx - text_w(d, name, nf) / 2, y + 22 * k), name, font=nf, fill=INK)
     if sub:
-        d.text((cx - text_w(d, sub, sf) / 2, y + 96), sub, font=sf, fill=MUTED)
+        d.text((cx - text_w(d, sub, sf) / 2, y + 96 * k), sub, font=sf, fill=MUTED)
     return img
 
 

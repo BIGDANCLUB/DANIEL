@@ -1,0 +1,227 @@
+{
+ "_comment": "ST-018 要介護認定と障害者控除。65歳以上で要介護認定を受けた人は、市区町村の「障害者控除対象者認定書」があれば障害者手帳がなくても障害者控除（27万円）・特別障害者控除（40万円、同居なら75万円）の対象になりうる（認定基準は自治体ごと）。例: 母を扶養し施設入所、特別障害者控除40万円・所得税率10%で所得税約4万円＋住民税（30万円×10%）約3万円＝約7万円。過去分は5年以内なら更正の請求・申告で戻る場合あり。",
+ "tempo": 1.22,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "知らないと大損する\n{親の介護と税金}",
+ "thumb_top": "親の介護で\n税金が年7万円安くなった",
+ "thumb_teaser": "役所でもらえる1枚の書類",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n56歳の日本人男性。落ち着いた低めの声で、誠実な人柄。\n## THE SCENE\n自分の身に起きた出来事を、同世代の男性に打ち明けるように語っている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。数字は少し強調する。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st018_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st018_ai/images"
+ },
+ "lines": [
+  {
+   "text": "親の介護で\n税金が{年7万円}安くなった",
+   "tone": "信じられない結果を打ち明ける。驚きをこめて、力強く",
+   "say": "親の介護で、税金が年7万円安くなりました。",
+   "hook": true,
+   "se": "don",
+   "scene": "tax_desk",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "役所でもらえる\n<1枚の書類>で",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "役所でもらえる、1枚の書類で。",
+   "scene": "tax_desk",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{56歳}の会社員\n母は{84歳}です",
+   "tone": "淡々と",
+   "say": "56歳の会社員。母は84歳です。",
+   "scene": "care_bed",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "2年前に倒れ\n今は<寝たきり>です",
+   "tone": "重く、ゆっくり",
+   "say": "2年前に倒れ、今は寝たきりです。",
+   "scene": "care_bed",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "母は施設に入り\n私が{費用}を支えています",
+   "tone": "疲れのにじむ声で",
+   "say": "母は施設に入り私が費用を支えています。",
+   "scene": "facility_hall",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "施設代は\n月{15万円}",
+   "tone": "ため息まじりに",
+   "say": "施設代は、月15万円。",
+   "scene": "facility_hall",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "「{障害者手帳}がないから\n控除は関係ない」",
+   "tone": "あきらめたように",
+   "say": "障害者手帳がないから、控除は関係ない。",
+   "scene": "bills",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "ずっと\nそう<思い込んで>いました",
+   "tone": "少し悔しそうに",
+   "say": "ずっと、そう思い込んでいました。",
+   "scene": "bills",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "施設の相談員さんが\n教えてくれました",
+   "tone": "思い出すように",
+   "say": "施設の相談員さんが教えてくれました。",
+   "scene": "staff_hands",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "要介護の人は\n{障害者控除}を受けられることがある",
+   "tone": "はっきりと、聞き手に教えるように",
+   "say": "要介護の人は、障害者控除を受けられることがあるんです。",
+   "scene": "staff_hands",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "役所で{認定書}を\nもらえばいいんです",
+   "tone": "説明するように、わかりやすく",
+   "say": "役所で認定書をもらえばいいんです。",
+   "scene": "city_hall",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "母は{特別障害者}に\n認定されました",
+   "tone": "驚きを隠せない",
+   "say": "母は特別障害者に認定されました。",
+   "scene": "city_hall",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "年末調整に出すと\n税金が{約7万円}安く",
+   "tone": "驚きと安堵。声がふっと明るくなる",
+   "say": "年末調整に出すと、税金が約7万円安くなりました。",
+   "scene": "certificate",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "過去の分も\n{申告し直せる}ことがあります",
+   "tone": "念を押すように",
+   "say": "過去の分も、申告し直せることがあります。",
+   "scene": "certificate",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "母に話すと\n「{役に立てたね}」と笑いました",
+   "tone": "胸がいっぱいで、やさしく、ゆっくり",
+   "say": "母に話すと、役に立てたね、と笑いました。",
+   "scene": "mother_hand",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "要介護の親がいる人\n<この書類>を知っていますか？",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "要介護の親がいる人。この書類を、知っていますか。",
+   "scene": "mother_hand",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  }
+ ],
+ "scenes": {
+  "tax_desk": {
+   "prompt": "A year-end tax adjustment form, a calculator and reading glasses on an office desk, a man's hand holding a pen, warm lamp light No faces visible, no readable text, no logos."
+  },
+  "care_bed": {
+   "prompt": "A quiet Japanese care facility room with a neatly made care bed by a window, a folded cardigan on a chair, soft afternoon light, no people No faces visible, no readable text, no logos."
+  },
+  "facility_hall": {
+   "prompt": "A bright corridor of a Japanese nursing home with handrails, a middle-aged man in a suit seen from behind walking away No faces visible, no readable text, no logos."
+  },
+  "bills": {
+   "prompt": "A monthly invoice from a care facility and a bank passbook on a dining table at night, a man's tired hand resting on them No faces visible, no readable text, no logos."
+  },
+  "staff_hands": {
+   "prompt": "At a nursing home consultation table, a staff member's hands pointing to a pamphlet while a middle-aged man's hands hold a pen No faces visible, no readable text, no logos."
+  },
+  "city_hall": {
+   "prompt": "A Japanese city hall service counter with numbered ticket machine and waiting chairs, a man's hands receiving a document, text blurred No faces visible, no readable text, no logos."
+  },
+  "certificate": {
+   "prompt": "A plain official certificate with a red seal on a wooden desk next to a tax form, details blurred No faces visible, no readable text, no logos."
+  },
+  "mother_hand": {
+   "prompt": "A middle-aged man's hand gently holding an elderly woman's wrinkled hand on a white blanket, soft window light No faces visible, no readable text, no logos."
+  }
+ }
+}

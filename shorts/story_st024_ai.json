@@ -1,0 +1,205 @@
+{
+ "_comment": "ST-024 大谷翔平と「夢への道しるべ」。2012年秋、花巻東の大谷はメジャー挑戦を表明したが、日本ハムがドラフト1位で指名。交渉で資料「大谷翔平君 夢への道しるべ 〜日本スポーツにおける若年期海外進出の考察〜」を提示し、若くして海外に渡った選手のデータ等を分析。栗山監督は投手と打者の両立（二刀流）を提案。同年12月に入団表明。2017年オフにエンゼルスへ。本人・似た人物の画像は使わない。",
+ "tempo": 1.15,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "18歳の夢を変えた\n{1冊の資料}",
+ "thumb_top": "メジャー直行を宣言した18歳\n心を動かした1冊の資料",
+ "thumb_teaser": "題名は「夢への道しるべ」",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、温かく語りかける。\n## THE SCENE\nあるスポーツ選手の物語を、同世代の視聴者に静かに語って聞かせている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。最後の一文は胸を打つように力強く。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st024_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st024_ai/images"
+ },
+ "lines": [
+  {
+   "text": "18歳の{夢}を変えた\n<1冊の資料>がある",
+   "tone": "静かに語り始める",
+   "say": "18歳の夢を変えた、1冊の資料がある。",
+   "hook": true,
+   "se": "don",
+   "scene": "school_ground",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "2012年 秋\n1人の高校生が{宣言}した",
+   "tone": "淡々と",
+   "say": "2012年、秋。1人の高校生が宣言した。",
+   "scene": "school_ground",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "「日本のプロには行かず\n{メジャー}に挑戦します」",
+   "tone": "本人の決意を、まっすぐ再現する",
+   "say": "日本のプロには行かず、メジャーに挑戦します。",
+   "scene": "press_mics",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "それでも\n{1つの球団}が1位で指名した",
+   "tone": "驚きをこめて",
+   "say": "それでも、1つの球団が、1位で指名した。",
+   "scene": "press_mics",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "交渉の席で\n<分厚い資料>が渡された",
+   "tone": "引きつけるように、声を落として",
+   "say": "交渉の席で、分厚い資料が渡された。",
+   "scene": "meeting",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "題名は\n「{夢への道しるべ}」",
+   "tone": "印象的に、ゆっくり",
+   "say": "題名は、夢への道しるべ。",
+   "scene": "thick_binder",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "若くして海を渡った\n選手たちを{分析}していた",
+   "tone": "説明するように",
+   "say": "若くして海を渡った選手たちを分析していた。",
+   "scene": "data_pages",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "日本で力をつけてからの方が\n<夢に近づける>",
+   "tone": "静かに、説得するように",
+   "say": "日本で力をつけてからの方が、夢に近づける。",
+   "scene": "data_pages",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "さらに監督は\n{投手と打者}の両方を提案",
+   "tone": "力をこめて",
+   "say": "さらに監督は、投手と打者の両方を提案した。",
+   "scene": "two_gloves",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "誰もが無理だと言った\n<二刀流>",
+   "tone": "重く",
+   "say": "誰もが無理だと言った二刀流。",
+   "scene": "two_gloves",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "18歳は\n{日本ハム}入団を決めた",
+   "tone": "決意をこめて",
+   "say": "18歳は、日本ハム入団を決めた。",
+   "scene": "jp_stadium",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "5年後\n{メジャー}へ",
+   "tone": "テンポよく",
+   "say": "5年後、メジャーへ。",
+   "scene": "mlb_sunset",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "投げて 打って\n{世界一}の選手に",
+   "tone": "興奮をこめて",
+   "say": "投げて、打って。世界一の選手に。",
+   "scene": "mlb_sunset",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "1冊の資料が\n{大谷翔平}の道をつくった",
+   "tone": "胸を打つように、力強く",
+   "say": "1冊の資料が、大谷翔平の道をつくった。",
+   "scene": "mlb_sunset",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  }
+ ],
+ "scenes": {
+  "thick_binder": {
+   "prompt": "A thick bound presentation document on a polished meeting table in a Japanese hotel room, a pair of hands resting on the cover, cover text blurred No faces visible, no readable text, no logos."
+  },
+  "school_ground": {
+   "prompt": "A rural Japanese high school baseball field in autumn with mountains behind, a tall young player seen from far behind No faces visible, no readable text, no logos."
+  },
+  "press_mics": {
+   "prompt": "A row of microphones on a table at a press conference room, empty chair, camera flashes in the background, no people visible No faces visible, no readable text, no logos."
+  },
+  "meeting": {
+   "prompt": "A negotiation meeting in a Japanese hotel room, several men in suits seen from behind at a table, a document open, faces not visible No faces visible, no readable text, no logos."
+  },
+  "data_pages": {
+   "prompt": "Open pages of a report with blurred bar charts and graphs, a hand turning a page, warm light No faces visible, no readable text, no logos."
+  },
+  "two_gloves": {
+   "prompt": "A pitcher's glove and a baseball bat lying side by side on a dugout bench, dramatic light No faces visible, no readable text, no logos."
+  },
+  "jp_stadium": {
+   "prompt": "A Japanese professional baseball stadium at night, a player seen from far behind walking onto the field, crowd blurred No faces visible, no readable text, no logos."
+  },
+  "mlb_sunset": {
+   "prompt": "A huge American major league stadium at golden sunset, a player seen from far behind walking across the outfield, crowd blurred No faces visible, no readable text, no logos."
+  }
+ }
+}

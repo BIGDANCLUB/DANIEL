@@ -1,0 +1,204 @@
+{
+ "_comment": "ST-023 三笘薫。川崎フロンターレU-18からトップ昇格の打診を受けたが、まだプロで通用する自信がないとして断り筑波大学へ（2016年入学）。大学では頭部にカメラを付けて自分の視点を撮影するなどしてドリブルを研究し、卒業論文は1対1の攻撃側の情報処理に関する研究。2020年川崎入団、2021年ブライトンへ（ベルギーのサン・ジロワーズへ期限付き）、2022年からブライトンでプレミアリーグ。2022年W杯スペイン戦で「三笘の1ミリ」。ループ型。",
+ "tempo": 1.1,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "loop": 1.0,
+ "banner": "プロを断った18歳\n{選んだ道とは}",
+ "thumb_top": "プロの誘いを断った18歳\n選んだのはなぜ大学",
+ "thumb_teaser": "卒業論文のテーマ",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、温かく語りかける。\n## THE SCENE\nあるスポーツ選手の物語を、同世代の視聴者に静かに語って聞かせている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。最後の一文は胸を打つように力強く。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st023_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st023_ai/images"
+ },
+ "lines": [
+  {
+   "text": "プロからの誘いを\n<断った>18歳がいる",
+   "tone": "静かに語り始める",
+   "say": "プロからの誘いを、断った18歳がいる。",
+   "hook": true,
+   "scene": "crossroads",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "選んだのは\n{大学}だった",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "選んだのは、大学だった。",
+   "scene": "crossroads",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "プロのクラブの\n{ユース}で育った",
+   "tone": "淡々と",
+   "say": "プロのクラブの、ユースで育った。",
+   "scene": "youth_pitch",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "高校3年\n{トップ昇格}の話が来た",
+   "tone": "期待をこめて",
+   "say": "高校3年。トップチーム昇格の話が来た。",
+   "scene": "youth_pitch",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "でも彼は\n<まだ通用しない>と考えた",
+   "tone": "静かに、まっすぐ",
+   "say": "でも彼は、まだプロでは通用しないと考えた。",
+   "scene": "boots_bench",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "進んだのは\n{筑波大学}",
+   "tone": "淡々と",
+   "say": "進んだのは、筑波大学。",
+   "scene": "campus",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "頭に{カメラ}を付けて\n自分の目線を撮った",
+   "tone": "興味をひくように",
+   "say": "頭にカメラを付けて自分の目線を撮った。",
+   "scene": "head_camera",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "卒業論文のテーマは\n{1対1のドリブル}",
+   "tone": "力をこめて",
+   "say": "卒業論文のテーマは、1対1のドリブル。",
+   "scene": "thesis",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "相手を<どう抜くか>\n{研究}で突きつめた",
+   "tone": "熱をこめて",
+   "say": "相手をどう抜くか。研究で突きつめた。",
+   "scene": "thesis",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "卒業して{プロ}へ\nそして{海外}へ",
+   "tone": "テンポよく",
+   "say": "卒業してプロへ。そして海外へ。",
+   "scene": "premier",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "イングランドの\n{プレミアリーグ}で活躍",
+   "tone": "誇らしく",
+   "say": "イングランドの、プレミアリーグで活躍。",
+   "scene": "premier",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "W杯では\nゴールラインぎりぎり{1ミリ}の折り返し",
+   "tone": "興奮をこめて",
+   "say": "ワールドカップでは、ゴールラインぎりぎり、1ミリの折り返し。",
+   "scene": "goal_line",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "遠回りに見えた\n<4年間>が生きた",
+   "tone": "しみじみと",
+   "say": "遠回りに見えた4年間が生きた。",
+   "scene": "goal_line",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "プロを断った18歳は\n{三笘薫}",
+   "tone": "胸を打つように、力強く",
+   "say": "プロを断った18歳は、三笘薫。",
+   "scene": "goal_line",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  }
+ ],
+ "scenes": {
+  "boots_bench": {
+   "prompt": "A pair of worn football boots on a wooden bench in a youth academy locker room, morning light No faces visible, no readable text, no logos."
+  },
+  "campus": {
+   "prompt": "A Japanese university campus path lined with trees in spring, a young man with a sports bag seen from behind No faces visible, no readable text, no logos."
+  },
+  "youth_pitch": {
+   "prompt": "A green football training pitch of a youth academy at dusk, cones and balls scattered, a young player seen from far behind No faces visible, no readable text, no logos."
+  },
+  "crossroads": {
+   "prompt": "A young man in a training jacket seen from behind standing at a fork in a path between a stadium and a university building No faces visible, no readable text, no logos."
+  },
+  "head_camera": {
+   "prompt": "A small action camera on a head strap lying on a football next to a laptop showing a blurred video frame, university lab desk No faces visible, no readable text, no logos."
+  },
+  "thesis": {
+   "prompt": "A thick bound university thesis and printed diagrams of player movement arrows on a desk, a hand flipping pages, text blurred No faces visible, no readable text, no logos."
+  },
+  "premier": {
+   "prompt": "A huge English football stadium under floodlights at night, a player seen from far behind dribbling, crowd blurred No faces visible, no readable text, no logos."
+  },
+  "goal_line": {
+   "prompt": "Extreme close-up of a football exactly on the white goal line on wet grass, stadium lights bokeh No faces visible, no readable text, no logos."
+  }
+ }
+}

@@ -1,0 +1,205 @@
+{
+ "_comment": "ST-025 山本由伸。身長178cm（公称）。宮崎・都城高から2016年ドラフト4位でオリックス。プロ入り後、重いウエイトトレーニングに頼らず、やり投げの練習器具（ジャベリックスロー）やブリッジ、柔軟性を重視した独自トレーニング（トレーナー矢田修氏）を続けた。2021〜2023年に3年連続で投手4冠・沢村賞。2024年ドジャース。2025年ワールドシリーズでMVP（要確認）。",
+ "tempo": 1.15,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "体が小さくても\n{世界一の投手に}",
+ "thumb_top": "身長178センチが\n世界一の投手になった",
+ "thumb_teaser": "やり投げの練習器具",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、温かく語りかける。\n## THE SCENE\nあるスポーツ選手の物語を、同世代の視聴者に静かに語って聞かせている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。最後の一文は胸を打つように力強く。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st025_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st025_ai/images"
+ },
+ "lines": [
+  {
+   "text": "身長{178センチ}が\n<世界一>の投手になった",
+   "tone": "静かに、しかし力強く語り始める",
+   "say": "身長178センチが、世界一の投手になった。",
+   "hook": true,
+   "se": "don",
+   "scene": "mound_small",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "重い<ウエイト>に\n頼らずに",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "重いウエイトに、頼らずに。",
+   "scene": "mound_small",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "宮崎の高校から\n{ドラフト4位}でプロへ",
+   "tone": "淡々と",
+   "say": "宮崎の高校から、ドラフト4位でプロへ。",
+   "scene": "rural_field",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "プロで出会ったのは\n{独自の練習}",
+   "tone": "興味をひくように",
+   "say": "プロで出会ったのは独自の練習。",
+   "scene": "empty_gym",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "手にしたのは\n<やり投げ>の練習器具",
+   "tone": "驚きをこめて",
+   "say": "手にしたのは、やり投げの練習器具。",
+   "scene": "javelin",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "体全体を\n{しなやかに}使って投げる",
+   "tone": "説明するように",
+   "say": "体全体をしなやかに使って投げる。",
+   "scene": "stretch",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "周りからは\n<変わっている>と言われた",
+   "tone": "少し寂しく",
+   "say": "周りからは変わっていると言われた。",
+   "scene": "dawn_training",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "それでも\n{毎日}続けた",
+   "tone": "決意をこめて",
+   "say": "それでも、毎日続けた。",
+   "scene": "dawn_training",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{3年連続}で\n{沢村賞}",
+   "tone": "誇らしく",
+   "say": "3年連続で、沢村賞。",
+   "scene": "trophy",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "そして\n{メジャー}へ",
+   "tone": "テンポよく",
+   "say": "そして、メジャーへ。",
+   "scene": "trophy",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "2025年\n{ワールドシリーズ}",
+   "tone": "高まる緊張感で",
+   "say": "2025年、ワールドシリーズ。",
+   "scene": "ws_night",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "チームを世界一に導き\n{MVP}に",
+   "tone": "興奮をこめて",
+   "say": "チームを世界一に導き、MVPに。",
+   "scene": "ws_night",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "大切なのは体の大きさより\n<使い方>だった",
+   "tone": "しみじみと",
+   "say": "大切なのは体の大きさより使い方だった。",
+   "scene": "ws_night",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "その投手は\n{山本由伸}",
+   "tone": "胸を打つように、力強く",
+   "say": "その投手は、山本由伸。",
+   "scene": "ws_night",
+   "crop": [
+    0.56,
+    0.6,
+    1.35
+   ]
+  }
+ ],
+ "scenes": {
+  "mound_small": {
+   "prompt": "A pitcher of average build seen from behind standing on a huge professional mound, stadium lights, crowd blurred No faces visible, no readable text, no logos."
+  },
+  "empty_gym": {
+   "prompt": "An empty weight room with heavy barbells on racks, untouched, dim light, no people No faces visible, no readable text, no logos."
+  },
+  "rural_field": {
+   "prompt": "A rural high school baseball field in southern Japan with palm trees and mountains, a young pitcher seen from far behind No faces visible, no readable text, no logos."
+  },
+  "javelin": {
+   "prompt": "A small foam training javelin lying on green grass next to a baseball, early morning dew No faces visible, no readable text, no logos."
+  },
+  "stretch": {
+   "prompt": "An athlete seen from behind doing a deep stretching bridge on a mat in a quiet training room, soft window light No faces visible, no readable text, no logos."
+  },
+  "dawn_training": {
+   "prompt": "A lone athlete seen from far behind throwing a training javelin on an empty field at dawn, mist No faces visible, no readable text, no logos."
+  },
+  "trophy": {
+   "prompt": "A gleaming trophy on a table in a dim room with stadium lights blurred in the window, no people No faces visible, no readable text, no logos."
+  },
+  "ws_night": {
+   "prompt": "A huge American baseball stadium at night with fireworks and confetti, players far away celebrating, crowd blurred No faces visible, no readable text, no logos."
+  }
+ }
+}

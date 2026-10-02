@@ -1,0 +1,204 @@
+{
+ "_comment": "ST-022 佐々木朗希。2019年夏の岩手大会決勝（対花巻東）で大船渡の國保陽平監督が登板を回避させ、2-12で敗退。4回戦（対盛岡四、延長12回）で194球、準決勝（対一関工）で129球を投げていた。監督は故障を防ぐためと説明し、賛否が殺到。高校3年春のU18合宿で最速163キロ。2022年4月10日、20歳で完全試合（13者連続三振・19奪三振）。2025年からドジャース。ループ型（最後に名前を明かして冒頭へ）。",
+ "tempo": 1.1,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "loop": 1.0,
+ "banner": "甲子園まであと1勝\n{エースが投げなかった}",
+ "thumb_top": "甲子園まであと1勝\nエースはなぜ投げなかった",
+ "thumb_teaser": "監督の決断",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、温かく語りかける。\n## THE SCENE\nあるスポーツ選手の物語を、同世代の視聴者に静かに語って聞かせている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。最後の一文は胸を打つように力強く。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st022_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st022_ai/images"
+ },
+ "lines": [
+  {
+   "text": "甲子園まで\n{あと1勝}",
+   "tone": "静かに、緊張感をこめて語り始める",
+   "say": "甲子園まで、あと1勝。",
+   "hook": true,
+   "scene": "mound_dusk",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "エースは\n<投げなかった>",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "エースは、投げなかった。",
+   "scene": "mound_dusk",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "2019年 夏\n岩手大会の{決勝}",
+   "tone": "淡々と",
+   "say": "2019年、夏。岩手大会の決勝。",
+   "scene": "summer_stadium",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "マウンドにいたのは\n<別の投手>だった",
+   "tone": "驚きをこめて",
+   "say": "マウンドにいたのは別の投手だった。",
+   "scene": "dugout_back",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "エースは\n最速{163キロ}の高校3年生",
+   "tone": "誇らしく",
+   "say": "エースは、最速163キロの高校3年生。",
+   "scene": "worn_ball",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "4回戦では\n延長12回{194球}を投げていた",
+   "tone": "重く",
+   "say": "4回戦では、延長12回、194球を投げていた。",
+   "scene": "worn_ball",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "決勝は<大敗>\n夏が終わった",
+   "tone": "悔しさをにじませて",
+   "say": "決勝は大敗。夏が終わった。",
+   "scene": "scoreboard_dusk",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "監督には\n{批判}が殺到した",
+   "tone": "重く、ゆっくり",
+   "say": "監督には批判が殺到した。",
+   "scene": "coach_back",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "監督は語った\n「<故障を防ぐため>」",
+   "tone": "監督の言葉を、静かに、きっぱりと",
+   "say": "監督は語った。故障を防ぐためだと。",
+   "scene": "coach_back",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "その3年後\n{20歳}の春",
+   "tone": "場面が変わる。明るく",
+   "say": "その3年後。20歳の春。",
+   "scene": "night_stadium",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "プロ野球で\n{完全試合}を達成",
+   "tone": "力強く",
+   "say": "プロ野球で完全試合を達成。",
+   "scene": "night_stadium",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{13者連続三振}\n{19奪三振}",
+   "tone": "興奮をこめて",
+   "say": "13者連続三振。19奪三振。",
+   "scene": "night_stadium",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "そして海を渡り\n{メジャー}のマウンドへ",
+   "tone": "希望をこめて",
+   "say": "そして海を渡りメジャーのマウンドへ。",
+   "scene": "mlb_mound",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "あの夏 投げなかった投手は\n{佐々木朗希}",
+   "tone": "胸を打つように、力強く",
+   "say": "あの夏、投げなかった投手は、佐々木朗希。",
+   "scene": "mlb_mound",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  }
+ ],
+ "scenes": {
+  "mound_dusk": {
+   "prompt": "An empty high school baseball mound in a rural Japanese stadium at dusk, a single baseball resting on the rubber No faces visible, no readable text, no logos."
+  },
+  "dugout_back": {
+   "prompt": "A high school baseball pitcher in a plain uniform seen from behind sitting alone on a dugout bench, glove on his lap, summer haze No faces visible, no readable text, no logos."
+  },
+  "summer_stadium": {
+   "prompt": "A packed rural Japanese baseball stadium in midsummer heat, players far away and tiny, shimmering air No faces visible, no readable text, no logos."
+  },
+  "worn_ball": {
+   "prompt": "A worn baseball and a scuffed pitcher's glove on a dugout bench, sweat-darkened leather, harsh summer light No faces visible, no readable text, no logos."
+  },
+  "scoreboard_dusk": {
+   "prompt": "An old manual baseball scoreboard of a rural stadium at dusk with blurred numbers, empty bleachers No faces visible, no readable text, no logos."
+  },
+  "coach_back": {
+   "prompt": "A baseball coach in a plain cap seen from behind standing alone in an empty stadium hallway, dim light No faces visible, no readable text, no logos."
+  },
+  "night_stadium": {
+   "prompt": "A professional Japanese baseball stadium at night under bright lights, a pitcher seen from far behind on the mound, crowd blurred No faces visible, no readable text, no logos."
+  },
+  "mlb_mound": {
+   "prompt": "A pitcher seen from behind walking to the mound in a huge American major league stadium at sunset, crowd blurred No faces visible, no readable text, no logos."
+  }
+ }
+}

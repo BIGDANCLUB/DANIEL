@@ -1,0 +1,205 @@
+{
+ "_comment": "ST-026 阿部一二三・阿部詩。神戸出身の兄妹。詩は兄の影響で5歳から柔道を始めた。2021年7月25日、東京五輪で兄（男子66kg級）と妹（女子52kg級）が同じ日に金メダル（日本の五輪で兄妹同日金は初）。2024年パリ五輪、詩は2回戦で敗れ号泣、同じ日に一二三は2連覇。本人・似た人物の画像は使わない。",
+ "tempo": 1.15,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "兄と妹が同じ日に\n{金メダル}",
+ "thumb_top": "兄と妹が同じ日に金メダル\n3年後 妹は泣き崩れた",
+ "thumb_teaser": "喜びと悔しさ",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、温かく語りかける。\n## THE SCENE\nあるスポーツ選手の物語を、同世代の視聴者に静かに語って聞かせている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。最後の一文は胸を打つように力強く。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st026_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st026_ai/images"
+ },
+ "lines": [
+  {
+   "text": "兄と妹が\n{同じ日}に金メダル",
+   "tone": "静かに、しかし誇らしく語り始める",
+   "say": "兄と妹が、同じ日に金メダル。",
+   "hook": true,
+   "se": "don",
+   "scene": "medals",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "その3年後\n<妹は泣き崩れた>",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "その3年後、妹は泣き崩れた。",
+   "scene": "medals",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "神戸に生まれた\n{兄と妹}",
+   "tone": "淡々と",
+   "say": "神戸に生まれた、兄と妹。",
+   "scene": "dojo_kids",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "妹は{5歳}のとき\n兄を追って柔道を始めた",
+   "tone": "やさしく",
+   "say": "妹は5歳のとき、兄を追って柔道を始めた。",
+   "scene": "small_gi",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "兄は{66キロ級}\n妹は{52キロ級}",
+   "tone": "淡々と",
+   "say": "兄は66キロ級。妹は52キロ級。",
+   "scene": "two_belts",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "2021年\n{東京}オリンピック",
+   "tone": "高まる緊張感で",
+   "say": "2021年、東京オリンピック。",
+   "scene": "arena",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "同じ日に\n{2人そろって金}",
+   "tone": "興奮をこめて",
+   "say": "同じ日に、2人そろって金メダル。",
+   "scene": "arena",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "日本で{初めて}の\n兄妹そろっての快挙",
+   "tone": "誇らしく",
+   "say": "日本で初めての、兄妹そろっての快挙だった。",
+   "scene": "arena",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "2024年\n{パリ}オリンピック",
+   "tone": "場面が変わる。緊張感をこめて",
+   "say": "2024年、パリオリンピック。",
+   "scene": "paris_arena",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "妹は\n<2回戦>で敗れた",
+   "tone": "重く、沈んだ声で",
+   "say": "妹は、2回戦で敗れた。",
+   "scene": "paris_arena",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "会場に響いた\n<泣き声>",
+   "tone": "胸が痛む。しみじみと",
+   "say": "会場に響いた泣き声。",
+   "scene": "tears_towel",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "その日 兄は\n{2連覇}を果たした",
+   "tone": "静かに、力強く",
+   "say": "その日、兄は2連覇を果たした。",
+   "scene": "corridor",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "喜びと悔しさを\n<同じ日>に分け合った",
+   "tone": "しみじみと、ゆっくり",
+   "say": "喜びと悔しさを同じ日に分け合った。",
+   "scene": "corridor",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "2人の名は\n{阿部一二三}と{阿部詩}",
+   "tone": "胸を打つように、力強く",
+   "say": "2人の名は、阿部一二三と阿部詩。",
+   "scene": "corridor",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  }
+ ],
+ "scenes": {
+  "two_belts": {
+   "prompt": "Two black judo belts lying side by side on a tatami mat in a quiet dojo, soft light No faces visible, no readable text, no logos."
+  },
+  "dojo_kids": {
+   "prompt": "A small neighborhood judo dojo in Japan with two children in white judo gi seen from behind bowing, warm evening light No faces visible, no readable text, no logos."
+  },
+  "small_gi": {
+   "prompt": "A small child's white judo gi folded next to a larger one on a wooden shelf in a dojo No faces visible, no readable text, no logos."
+  },
+  "arena": {
+   "prompt": "A large judo competition arena with bright lights on a blue tatami, athletes far away and tiny, crowd blurred No faces visible, no readable text, no logos."
+  },
+  "medals": {
+   "prompt": "Two gold medals with ribbons lying side by side on a tatami mat, dramatic light No faces visible, no readable text, no logos."
+  },
+  "paris_arena": {
+   "prompt": "A grand judo arena with an elegant historic roof and bright lights, athletes tiny on the tatami, crowd blurred No faces visible, no readable text, no logos."
+  },
+  "tears_towel": {
+   "prompt": "A white towel draped over the edge of a tatami mat beside a fallen judo belt, dim light, no people No faces visible, no readable text, no logos."
+  },
+  "corridor": {
+   "prompt": "Two judo athletes in white gi seen from behind walking side by side down a long arena corridor toward bright light No faces visible, no readable text, no logos."
+  }
+ }
+}

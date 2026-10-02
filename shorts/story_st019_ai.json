@@ -1,0 +1,227 @@
+{
+ "_comment": "ST-019 非自発的失業者の国民健康保険料の軽減。倒産・解雇・雇止め等で離職し、離職時65歳未満、雇用保険の特定受給資格者（離職理由コード11,12,21,22,31,32）または特定理由離職者（23,33,34）が対象。前年の給与所得を30/100として保険料を計算。期間は離職日の翌日の属する月から翌年度末まで。市区町村への届出が必要。保険料の額は自治体・世帯で大きく異なる（例: 年55万円→約20万円）。",
+ "tempo": 1.22,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "知らないと大損する\n{会社を辞めたあとの保険料}",
+ "thumb_top": "会社が倒産\n国保料が年35万円安くなった",
+ "thumb_teaser": "離職票のある番号",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n58歳の日本人男性。落ち着いた低めの声で、誠実な人柄。\n## THE SCENE\n自分の身に起きた出来事を、同世代の男性に打ち明けるように語っている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。数字は少し強調する。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st019_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st019_ai/images"
+ },
+ "lines": [
+  {
+   "text": "国保の保険料が\n{年35万円}安くなった",
+   "tone": "信じられない結果を打ち明ける。驚きをこめて、力強く",
+   "say": "国保の保険料が、年35万円安くなりました。",
+   "hook": true,
+   "se": "don",
+   "scene": "notice",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "失業の書類にある\n<ある番号>のおかげで",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "失業の書類にある、ある番号のおかげで。",
+   "scene": "notice",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{58歳}の私\n会社が<倒産>しました",
+   "tone": "重く、悔しさをこらえて",
+   "say": "58歳の私。会社が倒産しました。",
+   "scene": "empty_office",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "{30年}勤めた\n会社でした",
+   "tone": "寂しく、ゆっくり",
+   "say": "30年勤めた会社でした。",
+   "scene": "empty_office",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "ハローワークで\n{失業手当}の手続き",
+   "tone": "淡々と",
+   "say": "ハローワークで失業手当の手続き。",
+   "scene": "hellowork",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "次は\n{国民健康保険}へ切り替え",
+   "tone": "淡々と",
+   "say": "次は、国民健康保険へ切り替えです。",
+   "scene": "hellowork",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "届いた保険料は\n年{55万円}",
+   "tone": "呆然として。信じられない気持ち",
+   "say": "届いた保険料は、年55万円。",
+   "scene": "premium_bill",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "収入がないのに\n<とても払えない>",
+   "tone": "絶望がにじむ。声が沈む",
+   "say": "収入がないのにとても払えない。",
+   "scene": "premium_bill",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "役所の窓口で\n言われました",
+   "tone": "思い出すように",
+   "say": "役所の窓口で言われました。",
+   "scene": "city_counter",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「{離職理由}の番号を\n見せてください」",
+   "tone": "職員の言葉を、やさしく明るく再現する",
+   "say": "離職理由の番号を、見せてください。",
+   "scene": "city_counter",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "倒産や解雇で辞めた人は\n保険料が{軽く}なるんです",
+   "tone": "はっきりと、聞き手に教えるように",
+   "say": "倒産や解雇で辞めた人は保険料が軽くなるんです。",
+   "scene": "code_paper",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "前の年の給料を\n{3割}として計算",
+   "tone": "説明するように、わかりやすく",
+   "say": "前の年の給料を、3割として計算するんです。",
+   "scene": "code_paper",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "保険料は\n年{約20万円}に",
+   "tone": "驚きと安堵。声がふっと明るくなる",
+   "say": "保険料は、年約20万円になりました。",
+   "scene": "relief_table",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "ただし<自分で届け出>ないと\n安くなりません",
+   "tone": "念を押すように、強く",
+   "say": "ただし自分で届け出ないと安くなりません。",
+   "scene": "relief_table",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "妻は「これで{次の仕事}を\n探せるね」",
+   "tone": "胸がいっぱいで、やさしく",
+   "say": "妻は、これで次の仕事を探せるね、と言いました。",
+   "scene": "morning_walk",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "会社を辞めることになったら\n<この番号>を確かめてください",
+   "tone": "同世代に語りかける。まっすぐに",
+   "say": "会社を辞めることになったら、この番号を確かめてください。",
+   "scene": "morning_walk",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  }
+ ],
+ "scenes": {
+  "notice": {
+   "prompt": "A health insurance premium notice envelope and a calculator on a kitchen table at night, a man's hand pressed to his forehead at the edge, text blurred No faces visible, no readable text, no logos."
+  },
+  "empty_office": {
+   "prompt": "An empty Japanese office floor with cleared desks and stacked cardboard boxes, late evening light through blinds, no people No faces visible, no readable text, no logos."
+  },
+  "hellowork": {
+   "prompt": "A Japanese public employment office waiting area with rows of chairs and job posting boards, a middle-aged man seen from behind, text blurred No faces visible, no readable text, no logos."
+  },
+  "premium_bill": {
+   "prompt": "An insurance premium bill with large blurred numbers on a low table, an older man's hands holding it, dim room No faces visible, no readable text, no logos."
+  },
+  "city_counter": {
+   "prompt": "A Japanese city hall counter where a staff member's hands point to a document held by a middle-aged man's hands, text blurred No faces visible, no readable text, no logos."
+  },
+  "code_paper": {
+   "prompt": "A close-up of an unemployment insurance document with a finger pointing to a small box, numbers blurred, desk lamp light No faces visible, no readable text, no logos."
+  },
+  "relief_table": {
+   "prompt": "A middle-aged Japanese couple seen from behind at a dining table, the wife's hand on her husband's shoulder, warm light No faces visible, no readable text, no logos."
+  },
+  "morning_walk": {
+   "prompt": "A middle-aged man in a jacket seen from behind walking toward a train station in the morning, hopeful light No faces visible, no readable text, no logos."
+  }
+ }
+}

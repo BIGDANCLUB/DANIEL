@@ -80,6 +80,8 @@ def _request(path, body=None, retry_400=False):
                 return json.load(r)
         except urllib.error.HTTPError as e:
             msg = e.read().decode(errors="replace")
+            if e.code == 429 and "per_day" in msg:   # 1日の上限：待っても戻らないので、再試行せずに止める
+                sys.exit(f"Gemini API の1日の上限に達しました: {msg[:400]}")
             # TTS はまれに同じ指示でも 400 を返す（音声ではなく文章を返そうとしたとき）。数回までやり直す
             if (e.code in (429, 500, 503) or (retry_400 and e.code == 400 and attempt < 3)) and attempt < 5:
                 wait = 2 ** attempt * 5
@@ -170,7 +172,7 @@ def decode_audio(data, mime=""):
 
 
 # --- まとめ読み（batch） ---
-BATCH_MAX_CHARS = 220      # 1回に読ませる文字数の上限（長すぎると読み飛ばしや声の揺れが出やすい）
+BATCH_MAX_CHARS = 220      # 1回に読ませる文字数の上限の既定（tts の "batch_chars" で変更。長すぎると読み飛ばしや声の揺れが出やすい）
 
 
 def build_batch_prompt(tc, texts, tones):
@@ -371,26 +373,47 @@ def ensure_voice(story_path, force=False):
     groups, cur = [], []
     for job in todo:
         if cur and (len(cur) >= size or job[0] != cur[-1][0] + 1
-                    or sum(len(j[2]) for j in cur) + len(job[2]) > BATCH_MAX_CHARS):
+                    or sum(len(j[2]) for j in cur) + len(job[2]) > int(tc.get("batch_chars", BATCH_MAX_CHARS))):
             groups.append(cur)
             cur = []
         cur.append(job)
     if cur:
         groups.append(cur)
     print(f"まとめ読み: {len(todo)} 行を {len(groups)} 回で生成", flush=True)
-    for g in groups:
-        nums = f"{g[0][0] + 1:02d}〜{g[-1][0] + 1:02d}" if len(g) > 1 else f"{g[0][0] + 1:02d}"
+
+    def run(g):
+        """組をまとめて読ませる。だめだった部分は半分に分けてまとめ直し、3行未満になったら1行ずつ。"""
+        if len(g) < 3:
+            for job in g:
+                one(*job)
+            return
+        nums = f"{g[0][0] + 1:02d}〜{g[-1][0] + 1:02d}"
         print(f"[{nums}] {len(g)}行まとめて", flush=True)
-        oks = [False] * len(g)
-        if len(g) > 1:
-            oks = synthesize_batch(tc, [j[2] for j in g], [j[3] for j in g], [j[1] for j in g])
+        oks = synthesize_batch(tc, [j[2] for j in g], [j[3] for j in g], [j[1] for j in g])
         for job, ok in zip(g, oks):
             if ok:
                 manifest[os.path.basename(job[1])] = job[4]
         save_manifest()
-        for job, ok in zip(g, oks):
-            if not ok:
-                one(*job)
+        if all(oks):
+            return
+        if not any(oks):          # 組ごと使えなかった → 半分に分けてまとめ直す
+            half = len(g) // 2
+            run(g[:half])
+            run(g[half:])
+            return
+        k = 0                     # 一部だけ NG → NG の続いている部分ごとにまとめ直す
+        while k < len(g):
+            if oks[k]:
+                k += 1
+                continue
+            e = k
+            while e < len(g) and not oks[e]:
+                e += 1
+            run(g[k:e])
+            k = e
+
+    for g in groups:
+        run(g)
 
 
 def list_models():

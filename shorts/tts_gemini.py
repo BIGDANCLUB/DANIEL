@@ -292,8 +292,8 @@ def split_and_check(tc, audio, texts, outs):
         return [False] * n
     ok, why, starts = check_reading(tc, audio, texts)
     if not ok:
-        print(f"  台本とずれている（{why}）", flush=True)
-        return [False] * n
+        # 長くまとめるほど、どこか1か所はずれやすい。組ごと捨てずに切り分けて、1行ずつの照合で合格した行は使う
+        print(f"  一部が台本とずれている（{why}）→ 1行ずつ照合して使える行は残す", flush=True)
     a = np.frombuffer(pcm, dtype="<i2").astype(np.float32) / 32768
     lengths = [max(1, len(re.sub(r"[、。？！・…「」\s〜]", "", t))) for t in texts]
     split = split_batch(a, rate, lengths, starts)

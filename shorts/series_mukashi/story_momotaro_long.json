@@ -11,9 +11,9 @@
   "voice": "Puck",
   "style": "# AUDIO PROFILE\n30代の日本人男性。若手お笑い芸人のような、明るく張りのある声。\n## THE SCENE\n昔話をネタにしたトークを、客席を笑わせながらテンポよく進めている。\n### DIRECTOR'S NOTES\n全体を速めのテンポで、サクサク読む。文と文の間は短く。説明は自信満々に勢いよく、数字は歯切れよく強調する。ツッコミどころは軽く笑いを含ませる。オチの一文は一拍おいて、真顔で言い切る。",
   "voice_dir": "work_momotaro_long/voice",
-  "batch": 20,
+  "batch": 200,
   "check": true,
-  "batch_chars": 560
+  "batch_chars": 6000
  },
  "image_gen": {
   "style": "Horizontal 16:9 wide illustration in the style of a traditional Japanese folktale picture book: soft watercolor and sumi ink on textured washi paper, warm muted earthy colors, gentle brush outlines, simple rounded character designs, rural old Japan. Wide, detailed composition with several points of interest spread across the frame, so that parts of it can be cropped as separate shots. Expressive comedic faces are fine. No text, no letters, no numbers, no symbols, no logos, no watermark.",

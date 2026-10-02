@@ -298,6 +298,18 @@ def split_and_check(tc, audio, texts, outs):
         print(f"  一部が台本とずれている（{why}）→ 1行ずつ照合して使える行は残す", flush=True)
     a = np.frombuffer(pcm, dtype="<i2").astype(np.float32) / 32768
     lengths = [max(1, len(re.sub(r"[、。？！・…「」\s〜]", "", t))) for t in texts]
+    # 冒頭に台本にない前置き（アドリブ）があれば、1行目の読み始めの直前の無音から後ろだけを使う
+    try:
+        s0 = float(starts[0]) if starts else 0.0
+    except (TypeError, ValueError):
+        s0 = 0.0
+    if s0 > 1.0:
+        gaps0, _, _ = _gaps(a, rate)
+        before = [g for g in gaps0 if g[1] <= s0 + 0.6]
+        cut = (before[-1][0] + before[-1][1]) / 2 if before else max(0.0, s0 - 0.3)
+        print(f"  冒頭の前置き {cut:.1f} 秒を切り捨て", flush=True)
+        a = a[int(cut * rate):]
+        starts = [float(x) - cut for x in starts]
     split = split_batch(a, rate, lengths, starts)
     if split is None:
         print("  切り分けに失敗", flush=True)

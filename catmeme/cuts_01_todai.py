@@ -252,8 +252,60 @@ def cuts_rest():
     ]
 
 
+# 効果音（catmeme/se/）。セリフ・字幕・カード画像の一部が一致したカットに付ける（上から順に最初の一致）
+SE_MAP = [
+    ("e01_title", "chirin"), ("半分以上\n取ってたよね", "crack"), ("2026年9月28日", "quiz_question_01"), ("いやそれがさ", "quiz_den"),
+    ("選ばれたのは\n投票で2位", "doon_heavy"), ("……は？", "question_hatena_maou"), ("いやいやいや", "tsukkomi_bishi"),
+    ("2位？\n1位じゃなくて", "kote"), ("しかも\n東大150年", "jan"), ("ちょ、\n情報量", "explosion_chudoon"),
+    ("まあ落ち着けって", "taiko_kaka"), ("たのむわ", "papa"),
+    ("てか総長って", "pikon"), ("ちげーよ", "tsukkomi_bashi"), ("総長＝大学の", "page_turn_01"),
+    ("呼び方つっよ", "punch"), ("次の総長の任期", "card_place"), ("6年！？", "taiko_dodon_01"),
+    ("候補者は5人", "game_smash_challenger"), ("全員つよそう", "aura_02"), ("副学長とか理事とか", "shine_kira_01"),
+    ("どうやって\n選ぶん", "cursor_move_01"),
+    ("学内の先生たちが投票", "button_13"), ("どれにしよ", {"f": "thinking_time", "gain": -8}), ("結果\nはよ", "spo"),
+    ("2回目の投票の", "drumroll"), ("染谷さんが過半数", "fanfare_pararappara"), ("え、1位の人", "kon"),
+    ("解散しねーのよ", "deflate_hyororo"), ("e05_votes", None),
+    ("ところが\n最後に", "doon_movie"), ("最後は「総長選考", "page_turn_02"), ("……ん？", "pi"),
+    ("じゃ会議はじめまーす", "gong_match_start"), ("投票は「参考に", "card_flip"), ("え、投票って", "boing_fail"),
+    ("ルールで「参考」", "hyoshigi_01"), ("ふーん……", "silly"), ("うーん……", {"f": "mokugyo_pokupoku", "gain": -6}),
+    ("なげーよ", "tsukkomi_bashi"), ("そして選ばれたのは", "drumroll"), ("e05c_reveal", "taiko_dodon_02"),
+    ("えええええ！？", "voice_uuwaa"), ("きたーーー！？", "tv_gakitsuka_dedeen"), ("ちょ待って\n1位の人は", "car_brake"),
+    ("投票の意味\nとは", "shock_piano"), ("オレの予想", "tear_drop"),
+    ("マジかよ\n逆転", "glass_break_01"),
+    ("藤垣裕子さん　1962年", "xylophone_transition"), ("専門は「科学技術", "page_turn_01"),
+    ("かがくぎじゅつ", "question_hatena_maou"), ("ざっくり言うと", "idea_newtype_01"), ("2021年から5年間", "card_place"),
+    ("中の人ってことね", "shine_kiraan_maou"),
+    ("会議が挙げた", "pinpoon_note"), ("ふわっとしてない", "puni"), ("会見で　議長は", "cymbal_light_maou"),
+    ("言い切ったーーー", "game_aceattorney_desk_slam"), ("ルール上は\nそうなんだろう", "kote"),
+    ("翌29日", {"f": "chime_announce", "gain": -8}), ("女性初は", "bell_ring"),
+    ("しっかりしてるやん", {"f": "cheer_applause", "gain": -8}),
+    ("このニュースに", "button_26"), ("歴史\nうごいた", "game_dq_level_up"), ("過半数とった1位", "buzzer_wrong"),
+    ("総長選の女子枠", "kon"), ("それ言うやつ", "fall_hyuu"), ("藤垣さん選んだ", "cursor_move_02"),
+    ("で、染谷さんじゃ", "anime_shinchan_taraan"), ("良いところだけでは", "pinpon_notice"),
+    ("ブラックボックス", "pc_warning"),
+    ("てかこういうの", "spring_byoin"), ("投票の順位どおりに", "quiz_den"), ("6人中3位だった", "hyoshigi_02"),
+    ("下剋上レベル", "explosion_dokaan"), ("「国際卓越研究大学」", "page_turn_02"), ("教職員の組合", "pi"),
+    ("対立候補が上回った", "whoosh_shu"), ("同時に　学長の任期", "doon_heavy"), ("え、\nなにそれ", "boing_02"),
+    ("2014年ごろから", "card_flip"), ("だから最近", "pikoon_retro"),
+    ("e11_matome", "chiin_01"), ("ちゃんとしろって話", "taiko_kaka"), ("それな", "tsukkomi_bishi"),
+    ("e12_ending", "chirin"),
+]
+
+
+def apply_se(cuts):
+    for c in cuts:
+        key = " ".join(str(c.get(k) or "") for k in ("say", "sub", "card"))
+        for snip, se in SE_MAP:
+            if snip in key:
+                if se is None:
+                    break
+                c["se"] = se
+                break
+    return cuts
+
+
 def cuts_full():
-    return cuts_trial() + cuts_rest()
+    return apply_se(cuts_trial() + cuts_rest())
 
 
 

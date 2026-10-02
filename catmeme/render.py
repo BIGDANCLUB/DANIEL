@@ -47,7 +47,8 @@ def music_assets():
 
 MUSIC = music_assets()
 PLAY_MUSIC_ASSETS = True   # 曲つき素材の音も鳴らす（鳴っている間は BGM を下げる）
-MUSIC_DUCK = -14           # 曲つき素材が鳴っている間の BGM の下げ幅（dB）
+MUSIC_DUCK = -14
+SE_GAIN = -4               # 効果音の基本の音量（dB、ピーク0.6にそろえた後）           # 曲つき素材が鳴っている間の BGM の下げ幅（dB）
 
 
 def sounding(k):
@@ -489,9 +490,17 @@ def build_audio(cuts, starts, durs, total):
             mix[i0:i0 + len(a)] += a[: n - i0]
         ses = c.get("se")
         if ses:
-            for kind in ([ses] if isinstance(ses, str) else ses):
-                s = synth(kind).astype(np.float32)
-                mix[i0:i0 + len(s)] += np.stack([s, s], 1)[: n - i0]
+            for sp in ([ses] if isinstance(ses, (str, dict)) else ses):
+                sp = {"f": sp} if isinstance(sp, str) else sp
+                s = synth(sp["f"]).astype(np.float32) * db(sp.get("gain", SE_GAIN))
+                # 長いSEはカットの終わり（＋少し）で切ってフェード
+                ln = int(min(len(s) / SR, sp.get("len", durs[i] + 0.4)) * SR)
+                if ln < len(s):
+                    s = s[:ln].copy()
+                    fo = min(int(0.25 * SR), ln // 2)
+                    s[-fo:] *= np.linspace(1, 0, fo)
+                j = i0 + int(sp.get("at", 0.0) * SR)
+                mix[j:j + len(s)] += np.stack([s, s], 1)[: max(0, n - j)]
         has_cat_sound = False
         for k in c.get("cats", []):
             if not sounding(k):

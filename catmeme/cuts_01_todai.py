@@ -44,7 +44,7 @@ def card(c, sub, cat=None, b="bg03_blackboard", **kw):
     return dict(bg=bg(b), card=pt(c), cats=cats, sub=sub, **kw)
 
 
-CANDS = [("大越慎一さん", "call_customer_service_cat"), ("菅野暁さん", "dance_wop_cat"),
+CANDS = [("大越慎一さん", "ride_kitten_bike"), ("菅野暁さん", "dance_wop_cat"),
          ("染谷隆夫さん", "spit_not_my_taste_cat"), ("藤垣裕子さん", "sleepy_old_memories_cat"),
          ("山本隆司さん", "sleepy_sleepy_cat")]
 CAND_X = [250, 605, 960, 1315, 1670]
@@ -179,9 +179,9 @@ def cuts_rest():
              bgm={"file": PURPLE, "gain": -7, "from": 40}),
         card("e06_profile", "専門は「科学技術社会論」", "think_bike_front_seat_cat", b="bg08_study", dur=2.0),
         news("huh_goat_talks_to_huh_cat", "かがくぎじゅつ\nしゃかいろん……？\nえ、呪文？"),
-        card("e06_profile", "ざっくり言うと「科学と社会がどう付き合っていくか」の研究", "eat_crunchy_cat_luna",
+        card("e06_profile", "ざっくり言うと「科学と社会がどう付き合っていくか」の研究", "leave_cat_leaves_home",
              b="bg08_study", dur=2.8),
-        card("e06_profile", "2021年から5年間　東大の副学長も務めた", "eat_crunchy_cat_luna", b="bg08_study", dur=2.4),
+        card("e06_profile", "2021年から5年間　東大の副学長も務めた", "leave_cat_leaves_home", b="bg08_study", dur=2.4),
         news("showoff_gojo_cosplay_cat", "あー、中の人ってことね\nガチ勢じゃん"),
         friend("calm_black_face_sheep", "大学の運営も\nよく知ってる人\nってことだね"),
         # ---- 7. 会議の言い分 ----
@@ -198,11 +198,11 @@ def cuts_rest():
         person("bg07_press", FUJI, sub="翌29日　藤垣さんが会見", dur=1.8),
         person("bg07_press", FUJI, "ようやく初の女性\nこれはかなり\nメッセージ性\nあると思うんです",
                "藤垣さん（再現）", dur=3.2),
-        person("bg07_press", FUJI, "研究者を目指す\n女の人が\nもっと増えたら\nうれしいなって", "藤垣さん（再現）", dur=2.8),
-        person("bg07_press", FUJI, "アメリカの大学の\nお金の集め方は\n参考にしたいんです", "藤垣さん（再現）", dur=2.6),
-        person("bg07_press", FUJI, "でも学問への\n信頼が落ちてる所は\nまねしちゃダメ\nだと思ってて",
+        person("bg07_press", "eat_crunchy_cat_luna", "研究者を目指す\n女の人が\nもっと増えたら\nうれしいなって", "藤垣さん（再現）", dur=2.8),
+        person("bg07_press", "call_customer_service_cat", "アメリカの大学の\nお金の集め方は\n参考にしたいんです", "藤垣さん（再現）", dur=2.6),
+        person("bg07_press", "realize_wet_cat_stare", "でも学問への\n信頼が落ちてる所は\nまねしちゃダメ\nだと思ってて",
                "藤垣さん（再現）", dur=3.0),
-        person("bg07_press", FUJI, "今の総長の改革は\nちゃんと引き継いで\n広げていきます", "藤垣さん（再現）", dur=2.8),
+        person("bg07_press", "showoff_gojo_cosplay_cat", "今の総長の改革は\nちゃんと引き継いで\n広げていきます", "藤垣さん（再現）", dur=2.8),
         news("dance_trending_cat", "女性初は\nたしかに\nデカいよな", dur=1.6, se="pop"),
         news("angry_aiming_cat", "信頼の話も\nわかる", dur=1.4),
         news("wave_waving_cat", "お、\nふつうに\nしっかりしてるやん"),

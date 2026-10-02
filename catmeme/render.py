@@ -46,6 +46,15 @@ def music_assets():
 
 
 MUSIC = music_assets()
+PLAY_MUSIC_ASSETS = True   # 曲つき素材の音も鳴らす（鳴っている間は BGM を下げる）
+MUSIC_DUCK = -14           # 曲つき素材が鳴っている間の BGM の下げ幅（dB）
+
+
+def sounding(k):
+    """このカットの猫 k の元の音を鳴らすか。"""
+    if k.get("still") or k.get("mute"):
+        return False
+    return PLAY_MUSIC_ASSETS or k["a"] not in MUSIC or k.get("sound")
 
 # 素材ごとの切り取り（左, 上, 右, 下 のピクセル）。端の黒い帯・線を落とす
 CROP = {
@@ -209,7 +218,7 @@ def cut_dur(cut):
     if cut.get("fixed"):
         return base
     for k in cut.get("cats", []):
-        if k.get("still") or k.get("mute") or (k["a"] in MUSIC and not k.get("sound")):
+        if not sounding(k):
             continue
         key = (k["a"], round(k.get("ss", 0.0), 2), round(base, 3))
         if key not in _DUR_CACHE:
@@ -427,6 +436,20 @@ def build_audio(cuts, starts, durs, total):
     n = int(total * SR) + SR
     mix = np.zeros((n, 2), np.float32)
     # BGM：カットで切り替え。切り替え時は前の曲を fade 秒で下げ、次の曲を上げる
+    # 曲つき素材が鳴るカットの間は BGM を下げる
+    duck = np.ones(n, np.float32)
+    ramp = int(0.25 * SR)
+    for i, c in enumerate(cuts):
+        if any(sounding(k) and k["a"] in MUSIC for k in c.get("cats", [])):
+            a0, a1 = int(starts[i] * SR), int((starts[i] + durs[i]) * SR)
+            g = db(MUSIC_DUCK)
+            duck[a0:a1] = np.minimum(duck[a0:a1], g)
+            r0 = np.linspace(1, g, ramp)
+            seg = duck[max(0, a0 - ramp):a0]
+            duck[max(0, a0 - ramp):a0] = np.minimum(seg, r0[-len(seg):] if len(seg) else seg)
+            seg = duck[a1:a1 + ramp]
+            duck[a1:a1 + ramp] = np.minimum(seg, r0[::-1][:len(seg)])
+    bgm_mix = np.zeros((n, 2), np.float32)
     events = [(starts[i], c["bgm"]) for i, c in enumerate(cuts) if "bgm" in c]
     for k, (t0, spec) in enumerate(events):
         if not spec.get("file"):
@@ -444,7 +467,8 @@ def build_audio(cuts, starts, durs, total):
         env[-fo:] *= np.linspace(1, 0, fo)
         i0 = int(t0 * SR)
         seg = (a * env[:, None])[: n - i0]
-        mix[i0:i0 + len(seg)] += seg
+        bgm_mix[i0:i0 + len(seg)] += seg
+    mix += bgm_mix * duck[:, None]
     for i, c in enumerate(cuts):
         i0 = int(starts[i] * SR)
         if c.get("sting"):
@@ -460,7 +484,7 @@ def build_audio(cuts, starts, durs, total):
                 mix[i0:i0 + len(s)] += np.stack([s, s], 1)[: n - i0]
         has_cat_sound = False
         for k in c.get("cats", []):
-            if k.get("still") or k.get("mute") or (k["a"] in MUSIC and not k.get("sound")):
+            if not sounding(k):
                 continue
             a = cat_audio(k["a"])
             if a is None:

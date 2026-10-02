@@ -15,7 +15,7 @@
 | huh_huh_cat.mp4 | はぁ？ | はぁ？　Huh Cat Meme Green Screen 猫ミーム素材 cat meme.mp4 | |
 | calm_black_face_sheep.mp4 | ほのぼの（ヒツジ） | ほのぼの　ヤギ　Green Screen black face sheep (ovelha ) 猫ミーム素材.mp4 | |
 | huh_goat_talks_to_huh_cat.mp4 | わけのわからない話・はぁ？（ヤギと猫） | わけわからないことを言うヤギ　はぁ？　Green Screen Goat Talking to Clueless Huh Cat Meme 猫ミーム素材.mp4 | |
-| happy_girlfriend_dance_cat_01.mp4 | ウキウキ | ウキウキ　Cat Dances to Girlfriend 猫ミーム素材 .mp4 | ⚠ |
+| happy_girlfriend_dance_cat.mp4 | ウキウキ | ウキウキ　Cat Dances to Girlfriend 猫ミーム素材 .mp4 | ⚠ |
 | happy_chipi_chapa_cat.mp4 | ウキウキ（チピチピチャパチャパ） | ウキウキ　downloads_Chipi Chipi Chapa Chapa Cat green screen 猫ミーム素材 .mp4 | ⚠ |
 | dance_koto_nai_cat.mp4 | ウキウキ・踊る | ウキウキ　踊る　Green Screen Beat the Koto Nai Cat Meme 猫ミーム素材.mp4 | ⚠ |
 | slack_nail_filing_cat.mp4 | サボる・ぼーっとする | サボる　ぼーっとする　Cat files nails green screen猫ミーム素材.mp4 | |
@@ -34,13 +34,11 @@
 | angry_shooting_cat.mp4 | 怒る・暴れる | 怒る　暴れる　Shooting Cat (Greenscreen) 猫ミーム素材 cat meme .mp4 | |
 | angry_aiming_cat.mp4 | 怒る・狙う・逃がさない | 怒る　狙う　逃がさないAngry cat green screen 猫ミーム素材 .mp4 | |
 | angry_cat_hits_cat.mp4 | 怒る・相手を叩く | 怒る　相手を叩く　Green Screen Cat Hits Another Cat Meme 猫ミーム素材.mp4 | |
-| scold_talking_cats_01.mp4 | 怒る猫と怒られる猫 | 怒る猫　怒られる猫downloads_Green Screen Talking Cats Meme _ 猫ミーム素材 cat meme I.mp4 | |
-| scold_talking_cats_02.mp4 | 怒る猫と怒られる猫（別バージョン） | 怒る猫　怒られる猫downloads_Green Screen Talking Cats Meme _ 猫ミーム素材 cat meme I (2).mp4 | |
+| scold_talking_cats.mp4 | 怒る猫と怒られる猫 | 怒る猫　怒られる猫downloads_Green Screen Talking Cats Meme _ 猫ミーム素材 cat meme I.mp4 | |
 | taunt_cat_and_scared_dog.mp4 | 挑発する猫と怖がる犬 | 恐れる犬と挑発するネコ　Green Screen Cat and Dog Meme 猫ミーム素材.mp4 | |
 | realize_wet_cat_stare.mp4 | 悟る・総括する（まとめ向き） | 悟る　総括する　wet cat staring at the camera meme 猫ミーム素材 cat meme .mp4 | |
 | sad_banana_cat_cry.mp4 | 悲しい・泣く | 悲しい　泣く　downloads_【素材】バナナ猫泣く_X.mp4 | |
 | confused_i_dont_know_cat.mp4 | 戸惑う・困惑・焦る | 戸惑う　困惑　焦る　I don't know anything 猫ミーム素材 cat meme .mp4 | |
-| happy_girlfriend_dance_cat_02.mp4 | 楽しい・ウキウキ | 楽しい　ウキウキCat Dances to Girlfriend 猫ミーム素材 .mp4 | ⚠ |
 | peek_what_happen_cat.mp4 | 気になる・のぞく | 気になる　除く　What happen cat green screen 猫ミーム素材 cat meme.mp4 | |
 | dance_wild_dog.mp4 | 激しく踊る（犬） | 激しく踊る犬　dancing dog green screen 猫ミーム素材 .mp4 | ⚠ |
 | rage_talking_cat.mp4 | 相手に怒る・キレる | 相手に怒る　キレる　Green Screen Talking Cat Meme_猫ミーム素材 cat meme .mp4 | |
@@ -65,4 +63,10 @@
 | surprise_big_pupils_cat.mp4 | 驚く（目がまんまる） | 驚く　Cute Cat With Big Dilated Pupils Meme Green Screen Chroma Key Template 猫ミーム素材.mp4 | |
 
 - ⚠ は曲名がついている、または曲で有名なミーム。届いたら実際に聞いて確認し、表を更新する
-- `happy_girlfriend_dance_cat_01` と `_02` は同じ動画の可能性あり（届いたら確認）
+
+## 届いた素材の確認メモ（2026-10-02）
+- 56本。ほぼ 1280x720、長さ5〜49秒、すべて音あり
+- 同じ中身だった2組（Girlfriend ダンス、怒る猫と怒られる猫）は1本ずつにまとめた
+- 背景が濃い緑で、抜くときに色の調整がいるもの: wakeup_dog_hits_bowl, work_typing_cat
+- 端に黒い帯・線があり、切り取りがいるもの: itchy_kitten_butt（左右）, excited_hodomoe_city_cat（左）, listen_dancing_dog（下）, sad_banana_cat_cry（下）
+- 解像度が低め（640x360 前後）: wave_waving_cat, mock_swinging_cat, excited_hodomoe_city_cat, itchy_kitten_butt。画面の小さめの位置で使う

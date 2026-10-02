@@ -1,0 +1,249 @@
+{
+ "_comment": "ST-027 ニュース: 中野ブロードウェイ高級腕時計窃盗事件と再逮捕。2026年8月25日、中野ブロードウェイの時計店でショーケースをハンマーで割りスイス製高級腕時計4本（約2億円相当）を約10秒で盗み、1人は電動キックボードで逃走。8月27日に大阪の民泊で逮捕。9月28日ごろ、事件3日前に大田区の住宅に侵入し腕時計など約790万円相当を盗んだ疑いで再逮捕。供述「日本は刑罰が緩いと母国で聞き、日本の高級住宅街を狙った」、欧州でも窃盗を繰り返していた（時事・日テレ・ANN・TBS報道）。窃盗罪は10年以下の拘禁刑または50万円以下の罰金（刑法235条）。容疑者は有罪確定前なので「疑い」「〜という」で伝え、実名・顔は出さない。国籍は報道事実として1回だけ言い、見出しやサムネには入れない。",
+ "tempo": 1.15,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "2億円の腕時計窃盗\n{犯人が語った理由}",
+ "thumb_top": "2億円の腕時計を10秒で\n「日本は刑罰が緩い」",
+ "thumb_teaser": "あなたはどう思う？",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、報道番組のように重みをもって語る。\n## THE SCENE\n実際に起きた事件を、同世代の視聴者に伝えている。\n### DIRECTOR'S NOTES\n煽りすぎず、事実を淡々と、しかし緊張感をもって伝える。最後の問いかけは視聴者にまっすぐ語りかける。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st027_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st027_ai/images"
+ },
+ "lines": [
+  {
+   "text": "2億円の腕時計が\n<わずか10秒>で盗まれた",
+   "tone": "衝撃的な事実を、低く力強く告げる",
+   "say": "2億円の腕時計が、わずか10秒で盗まれた。",
+   "scene": "watches",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "犯人は\n<日本を狙った理由>を語った",
+   "tone": "秘密を明かす前のように、声を落として引きつける",
+   "say": "犯人は、日本を狙った理由を語った。",
+   "scene": "watches",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "2026年8月\n東京・{中野ブロードウェイ}",
+   "tone": "淡々と、ニュースを伝えるように",
+   "say": "2026年8月。東京、中野ブロードウェイ。",
+   "scene": "arcade",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "男2人が\n{ハンマー}でショーケースを破壊",
+   "tone": "緊迫して",
+   "say": "男2人が、ハンマーでショーケースを破壊。",
+   "scene": "broken_glass",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "スイス製の{高級腕時計4本}\n被害は{約2億円}",
+   "tone": "重く",
+   "say": "スイス製の高級腕時計4本。被害は約2億円。",
+   "scene": "broken_glass",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "1人は<電動キックボード>で\n逃げた",
+   "tone": "緊迫して、テンポよく",
+   "say": "1人は、電動キックボードで逃げた。",
+   "scene": "scooter",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "2日後 {大阪}の民泊で\n2人は逮捕された",
+   "tone": "淡々と",
+   "say": "2日後、大阪の民泊で、2人は逮捕された。",
+   "scene": "police",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "{チリ国籍}の\n男2人だった",
+   "tone": "淡々と、事実だけを伝える",
+   "say": "チリ国籍の男2人だった。",
+   "scene": "police",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "そして9月\n2人は<再逮捕>された",
+   "tone": "引きつけるように",
+   "say": "そして9月。2人は再逮捕された。",
+   "scene": "residential",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "中野の事件の3日前\n{大田区}の住宅に侵入した疑い",
+   "tone": "淡々と",
+   "say": "中野の事件の3日前、大田区の住宅に侵入した疑い。",
+   "scene": "residential",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "腕時計など\n{約790万円}相当を盗んだ疑い",
+   "tone": "重く",
+   "say": "腕時計など、約790万円相当を盗んだ疑いだ。",
+   "scene": "residential",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "取り調べで\n男はこう話したという",
+   "tone": "静かに、引きつけるように",
+   "say": "取り調べで、男はこう話したという。",
+   "scene": "interrogation",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「日本は{刑罰が緩い}と\n<母国で聞いた>」",
+   "tone": "供述を、冷たく淡々と再現する",
+   "say": "日本は刑罰が緩いと、母国で聞いた。",
+   "scene": "interrogation",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "だから日本の\n{高級住宅街}を狙ったと",
+   "tone": "重く、怒りを抑えて",
+   "say": "だから、日本の高級住宅街を狙ったと。",
+   "scene": "interrogation",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "ヨーロッパでも\n<窃盗を繰り返していた>と\n話しているという",
+   "tone": "淡々と",
+   "say": "ヨーロッパでも、窃盗を繰り返していたと話しているという。",
+   "scene": "interrogation",
+   "crop": [
+    0.56,
+    0.6,
+    1.35
+   ]
+  },
+  {
+   "text": "日本の刑罰は\n<本当に緩い>のか",
+   "tone": "問いかけるように、ゆっくり",
+   "say": "日本の刑罰は、本当に緩いのか。",
+   "scene": "law",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "窃盗罪は最大で\n{拘禁刑10年}",
+   "tone": "はっきりと",
+   "say": "窃盗罪は、最大で拘禁刑10年。",
+   "scene": "law",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "あなたは\n<どう思いますか？>",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "あなたは、どう思いますか。",
+   "scene": "law",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  }
+ ],
+ "scenes": {
+  "watches": {
+   "prompt": "Several luxury wristwatches displayed on velvet stands in a dark glass showcase under spotlights, dramatic shadows No faces visible, no readable text, no logos, no brand names."
+  },
+  "arcade": {
+   "prompt": "A long, old multi-story Japanese shopping arcade corridor lined with small shops at night, shutters half down, empty, cinematic No faces visible, no readable text, no logos, no brand names."
+  },
+  "broken_glass": {
+   "prompt": "A shattered glass display case with empty watch stands and glass shards scattered on the counter, harsh light No faces visible, no readable text, no logos, no brand names."
+  },
+  "scooter": {
+   "prompt": "An electric kick scooter speeding away on a dim city street at night, motion blur, rider seen from behind only as a dark silhouette No faces visible, no readable text, no logos, no brand names."
+  },
+  "police": {
+   "prompt": "Red police lights flashing on a quiet Japanese city street at night, reflections on wet asphalt, no people No faces visible, no readable text, no logos, no brand names."
+  },
+  "residential": {
+   "prompt": "A quiet upscale Japanese residential street with large houses and walls at dusk, street lamps on, no people No faces visible, no readable text, no logos, no brand names."
+  },
+  "interrogation": {
+   "prompt": "An empty interrogation room with a plain table, two chairs and a desk lamp, cold light, no people No faces visible, no readable text, no logos, no brand names."
+  },
+  "law": {
+   "prompt": "A thick Japanese law book open on a wooden desk beside a judge's gavel, dim dramatic light, text blurred No faces visible, no readable text, no logos, no brand names."
+  }
+ }
+}

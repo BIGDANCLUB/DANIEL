@@ -324,14 +324,19 @@ def placeholder_cat(img, box, label="猫"):
 # ---------- 猫ミーム風（参考動画に合わせた）字幕 ----------
 
 BREAK_AFTER = "、。！？!?…」）　 "
+BREAK_BEFORE = "（「"
 
 
 def wrap_nice(d, text, f, max_w):
     """句読点・記号・空白の後ろで優先的に折り返す。それでも長い塊は1文字ずつ。"""
     chunks, cur = [], ""
-    for ch in text:
+    for i, ch in enumerate(text):
+        if ch in BREAK_BEFORE and cur:
+            chunks.append(cur)
+            cur = ""
         cur += ch
-        if ch in BREAK_AFTER:
+        nxt = text[i + 1] if i + 1 < len(text) else ""
+        if ch in BREAK_AFTER and nxt not in NO_HEAD:
             chunks.append(cur)
             cur = ""
     if cur:
@@ -366,7 +371,8 @@ def big_text(text, box, max_size=150, min_size=64, max_lines=3, gap=1.18):
         lines = []
         for para in text.split("\n"):
             lines += wrap_nice(d, para, f, x1 - x0)
-        if (len(lines) <= max_lines and size * gap * len(lines) <= y1 - y0) or size <= min_size:
+        fits_w = max(text_w(d, ln, f) for ln in lines) <= x1 - x0
+        if (len(lines) <= max_lines and fits_w and size * gap * len(lines) <= y1 - y0) or size <= min_size:
             break
         size -= 6
     sw = max(6, int(size * 0.11))

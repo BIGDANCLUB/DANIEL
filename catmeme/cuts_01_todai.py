@@ -121,8 +121,8 @@ def cuts_trial():
              cats=[{"a": "sleepy_old_memories_cat", "x": 960, "h": 300, "bottom": 1000, "float": True, "still": True}],
              sting={"file": os.path.join(BGM, "神の怒り.mp3"), "len": 7.0, "gain": -12}),
         news("weird_meowing_cat", "えええええ！？", dur=1.8, flip=True),
-        news("excited_hodomoe_city_cat", "2位の人きたーーー！？", dur=2.2, h=500),
-        news("tense_two_cats_face_off", "マジかよ逆転じゃん", dur=2.4),
+        news("excited_hodomoe_city_cat", "2位の人\nきたーーー！？", dur=2.2, h=500),
+        news("tense_two_cats_face_off", "マジかよ\n逆転じゃん", dur=2.4),
     ]
 
 

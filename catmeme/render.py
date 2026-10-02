@@ -390,7 +390,17 @@ def cat_audio(name):
     return _CAT_AUDIO[name]
 
 
+SE_DIR = os.path.join(HERE, "se")
+
+
 def synth(kind):
+    """効果音。se/ に同じ名前のファイル（例 se/don.mp3）があればそれを使い、無ければ合成する。"""
+    for ext in (".mp3", ".wav", ".m4a", ""):
+        path = os.path.join(SE_DIR, kind + ext)
+        if ext != "" or os.path.splitext(kind)[1]:
+            if os.path.isfile(path):
+                a = load_audio(path).mean(1)
+                return a / max(np.abs(a).max(), 1e-6) * 0.6
     rng = np.random.default_rng(0)
     if kind == "pop":
         n = int(0.09 * SR)

@@ -84,7 +84,7 @@ def cuts_trial():
         news("surprise_big_pupils_cat", "6年！？ なっが", dur=2.0),
         # ---- 3. 候補者は5人 ----
         dict(bg=bg("bg01_campus"), sub="まず候補者が5人にしぼられた", cats=cand_cats, layers=cand_tags, dur=3.6),
-        dict(bg=bg("bg01_campus"), sub="大越慎一さん／菅野暁さん／染谷隆夫さん／藤垣裕子さん／山本隆司さん",
+        dict(bg=bg("bg01_campus"), sub="この5人の中から　次の総長を選ぶ",
              cats=cand_cats, layers=cand_tags, dur=4.0),
         news("showoff_gojo_cosplay_cat", "うわ、全員つよそう", dur=2.2),
         # ---- 4. 先生たちの投票 ----

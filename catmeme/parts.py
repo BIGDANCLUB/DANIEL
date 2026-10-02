@@ -110,7 +110,15 @@ def subtitle(text=""):
     d.rounded_rectangle(SUB_BOX, 28, fill=NAVY + (232,))
     d.rounded_rectangle((x0, y0, x0 + 18, y1), 9, fill=YELLOW + (255,))
     if text:
-        f, lines = fit(d, text, "round", 64, x1 - x0 - 120, 2)
+        max_w = x1 - x0 - 120
+        if "\n" not in text and text_w(d, text, font("round", 64)) > max_w:
+            # 2行に分けるときは、全角スペース・句読点・括弧の前など切れ目のよい所で、なるべく半分に
+            cands = [i for i, ch in enumerate(text) if ch in "　、。／（「" and 0 < i < len(text) - 1]
+            if cands:
+                f64 = font("round", 64)
+                i = min(cands, key=lambda i: max(text_w(d, text[:i], f64), text_w(d, text[i:], f64)))
+                text = text[:i].rstrip("　") + "\n" + text[i:].lstrip("　")
+        f, lines = fit(d, text, "round", 64, max_w, 2)
         draw_lines(d, lines, f, (x0 + x1) / 2 + 9, (y0 + y1) / 2, WHITE)
     return img
 

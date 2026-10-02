@@ -209,8 +209,10 @@ class CutRenderer:
             self.cats.append((clip, scale, c.get("x", 960), bottom))
         # 部品（カード → 名前など → 吹き出し → 字幕 の順に重ねる）
         layers = []
-        if cut.get("card"):
-            layers.append(Image.open(cut["card"]))
+        if cut.get("card"):   # カードは猫の下に敷く（右下の小さい猫がカードに隠れないように）
+            self.card, self.card_a = to_np(Image.open(cut["card"]))
+        else:
+            self.card = None
         for ly in cut.get("layers", []):
             layers.append(Image.open(ly) if isinstance(ly, str) else ly)
         if cut.get("say"):
@@ -234,6 +236,9 @@ class CutRenderer:
             out = big[oy:oy + H, ox:ox + W].copy()
         else:
             out = self.bg.copy()
+        k = ease_out(t / 0.15)
+        if self.card is not None:
+            over(out, self.card, self.card_a * k, 0, 0)
         for clip, scale, cx, bottom in self.cats:
             fr, a = clip.frame(t)
             pop = 0.88 + 0.12 * ease_out(t / 0.18)
@@ -242,7 +247,6 @@ class CutRenderer:
             img = cv2.resize(fr, (w, h), interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
             al = cv2.resize(a, (w, h), interpolation=cv2.INTER_AREA)
             over(out, img, al, int(cx - w / 2), int(bottom - h))
-        k = ease_out(t / 0.15)
         over(out, self.ov, self.ov_a * k, 0, 0)
         return out
 

@@ -50,7 +50,7 @@ def candidates():
     return cats, tags
 
 
-TEACHERS = [{"a": "sleepy_old_memories_cat", "x": 560, "h": 420, "bottom": 840, "float": True},
+TEACHERS = [{"a": "think_bike_front_seat_cat", "x": 560, "h": 420, "bottom": 840, "float": True},
             {"a": "work_typing_cat", "x": 960, "h": 470, "bottom": 850, "float": True},
             {"a": "blank_black_cat_zoning_out", "x": 1380, "h": 430, "bottom": 850, "flip": True}]
 MEETING = [{"a": "scold_talking_cats", "x": 700, "h": 520, "bottom": 900},
@@ -117,8 +117,13 @@ def cuts_trial():
         dict(bg=bg("bg06_spotlight"), card=pt("e05c_reveal"), dur=2.8, se="don",
              cats=[{"a": "sleepy_old_memories_cat", "x": 960, "h": 300, "bottom": 1000, "float": True, "still": True}],
              sting={"file": os.path.join(BGM, "神の怒り.mp3"), "len": 6.0, "gain": -18}),
-        news("weird_meowing_cat", "えええええ！？", dur=1.3, flip=True),
-        news("laugh_laughing_dog", "2位の人\nきたーーー！？", dur=1.6),
+        # 発表後のリアクション（驚き → 戸惑い → 絶望）
+        news("surprise_big_pupils_cat", "えええええ！？", dur=1.3),
+        news("weird_meowing_cat", "2位の人\nきたーーー！？", dur=1.5, flip=True),
+        news("confused_i_dont_know_cat", "ちょ待って\n1位の人は？\nどこいったの？", flip=True),
+        news("huh_huh_cat", "……は？\n半分以上\n取ってたよね？"),
+        news("despair_dramatic_kitten", "投票の意味\nとは……", dur=1.6),
+        news("sad_banana_cat_cry", "オレの予想\n外れたんだけど", dur=1.6),
         news("tense_two_cats_face_off", "マジかよ\n逆転じゃん", dur=1.8),
     ]
 

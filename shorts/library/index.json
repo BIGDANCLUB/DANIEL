@@ -1543,9 +1543,9 @@
  },
  "st025_ai_dawn_training": {
   "file": "st025_ai_dawn_training.jpg",
-  "key": "5e2e8c3f0ccd94a823683290c0cd27a827b65734",
+  "key": "9573ff714dfae530adf936aba4d8888ddd3e4c99",
   "model": "gemini-3.1-flash-lite-image",
-  "prompt": "A lone athlete seen from far behind throwing a training javelin on an empty field at dawn, mist No faces visible, no readable text, no logos."
+  "prompt": "A young Japanese male baseball pitcher with short hair seen from far behind throwing a training javelin on an empty field at dawn, mist. No faces visible, no readable text, no logos."
  },
  "st025_ai_empty_gym": {
   "file": "st025_ai_empty_gym.jpg",
@@ -1573,9 +1573,9 @@
  },
  "st025_ai_stretch": {
   "file": "st025_ai_stretch.jpg",
-  "key": "2280b80f613b21ec9afa3f3f71e0d5f890fa4976",
+  "key": "5410eb9e1396a448d55c9591c1d6e20e1ddd1aa4",
   "model": "gemini-3.1-flash-lite-image",
-  "prompt": "An athlete seen from behind doing a deep stretching bridge on a mat in a quiet training room, soft window light No faces visible, no readable text, no logos."
+  "prompt": "A young Japanese male baseball pitcher in a plain T-shirt seen from behind doing a deep stretching bridge on a mat in a quiet training room, soft window light. No faces visible, no readable text, no logos."
  },
  "st025_ai_trophy": {
   "file": "st025_ai_trophy.jpg",

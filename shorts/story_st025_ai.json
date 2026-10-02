@@ -187,7 +187,7 @@
    ]
   },
   {
-   "text": "大切なのは体の大きさより\n<使い方>だった",
+   "text": "大切なのは\n体の大きさより\n<使い方>だった",
    "tone": "しみじみと",
    "say": "大切なのは体の大きさより使い方だった。",
    "scene": "ws_night",
@@ -223,10 +223,10 @@
    "prompt": "A small foam training javelin lying on green grass next to a baseball, early morning dew No faces visible, no readable text, no logos."
   },
   "stretch": {
-   "prompt": "An athlete seen from behind doing a deep stretching bridge on a mat in a quiet training room, soft window light No faces visible, no readable text, no logos."
+   "prompt": "A young Japanese male baseball pitcher in a plain T-shirt seen from behind doing a deep stretching bridge on a mat in a quiet training room, soft window light. No faces visible, no readable text, no logos."
   },
   "dawn_training": {
-   "prompt": "A lone athlete seen from far behind throwing a training javelin on an empty field at dawn, mist No faces visible, no readable text, no logos."
+   "prompt": "A young Japanese male baseball pitcher with short hair seen from far behind throwing a training javelin on an empty field at dawn, mist. No faces visible, no readable text, no logos."
   },
   "trophy": {
    "prompt": "A gleaming trophy on a table in a dim room with stadium lights blurred in the window, no people No faces visible, no readable text, no logos."

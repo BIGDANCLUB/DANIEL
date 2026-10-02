@@ -267,7 +267,7 @@ class CutRenderer:
             if self.card is not None:
                 out.append(P.big_text(cut["sub"], (80, 812, 1840, 1062), max_size=80, min_size=48, max_lines=2))
             elif len(self.cats) > 1:
-                box = (140, 40, 1780, 360)
+                out.append(P.big_text(cut["sub"], cut.get("text_box") or (140, 40, 1780, 360), max_size=130))
             elif self.cats:
                 box = (900, 140, 1860, 900) if cat_x < 960 else (60, 140, 1020, 900)
                 out.append(P.big_text(cut["sub"], cut.get("text_box") or box, max_size=130))

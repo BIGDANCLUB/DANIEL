@@ -29,6 +29,21 @@ ASSETS = os.path.join(HERE, "assets")
 FPS = 30
 SR = 44100
 W, H = P.W, P.H
+STYLE = "meme"      # "meme" … 参考動画ふう（大きな縁取り文字・役名札・白飛び転換） / "box" … 字幕帯＋吹き出し
+WHITE_DIP = 0.25    # 場所が変わる時の白飛び（片側の秒数）
+
+
+def music_assets():
+    """CATALOG.md で ⚠（曲つき）の素材。元の音は鳴らさない。"""
+    path = os.path.join(HERE, "assets", "CATALOG.md")
+    out = set()
+    for ln in open(path, encoding="utf-8"):
+        if ln.startswith("| ") and ".mp4" in ln and "⚠" in ln:
+            out.add(ln.split("|")[1].strip()[:-4])
+    return out
+
+
+MUSIC = music_assets()
 
 # 素材ごとの切り取り（左, 上, 右, 下 のピクセル）。端の黒い帯・線を落とす
 CROP = {
@@ -215,20 +230,53 @@ class CutRenderer:
             self.card = None
         for ly in cut.get("layers", []):
             layers.append(Image.open(ly) if isinstance(ly, str) else ly)
-        if cut.get("say"):
-            cx = cut.get("say_x") or (self.cats[0][2] if self.cats else 960)
-            layers.append(P.bubble(cut["say"], name=cut.get("say_name", ""), cat_x=cx,
-                                   top=cut.get("say_top", 110), color=cut.get("say_color", P.ACCENT)))
-        if cut.get("sub"):
-            layers.append(P.subtitle(cut["sub"]))
+        self.style = cut.get("style", STYLE)
+        if self.style == "meme":
+            layers += self._meme_layers(cut)
+        else:
+            if cut.get("say"):
+                cx = cut.get("say_x") or (self.cats[0][2] if self.cats else 960)
+                layers.append(P.bubble(cut["say"], name=cut.get("say_name", ""), cat_x=cx,
+                                       top=cut.get("say_top", 110), color=cut.get("say_color", P.ACCENT)))
+            if cut.get("sub"):
+                layers.append(P.subtitle(cut["sub"]))
         comp = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         for ly in layers:
             comp.alpha_composite(ly.convert("RGBA"))
         self.ov, self.ov_a = to_np(comp)
 
+    def _meme_layers(self, cut):
+        """参考動画ふう：猫の反対側に大きな縁取り文字、猫の足元近くに白い役名札。"""
+        out = []
+        cat_x = self.cats[0][2] if self.cats else 960
+        if cut.get("say"):
+            if cut.get("text_box"):
+                box = cut["text_box"]
+            elif len(self.cats) > 1 or cut.get("text_top"):
+                box = (140, 50, 1780, 430)
+            elif cat_x < 960:
+                box = (900, 140, 1860, 900)
+            else:
+                box = (60, 140, 1020, 900)
+            out.append(P.big_text(cut["say"], box))
+            if cut.get("say_name"):
+                px, py = cut.get("plate_xy") or (max(40, int(cat_x - 330)), 770)
+                out.append(P.name_plate(cut["say_name"], px, py))
+        if cut.get("sub"):
+            if self.card is not None:
+                out.append(P.big_text(cut["sub"], (80, 812, 1840, 1062), max_size=80, min_size=48, max_lines=2))
+            elif len(self.cats) > 1:
+                box = (140, 40, 1780, 360)
+            elif self.cats:
+                box = (900, 140, 1860, 900) if cat_x < 960 else (60, 140, 1020, 900)
+                out.append(P.big_text(cut["sub"], cut.get("text_box") or box, max_size=130))
+            else:
+                out.append(P.big_text(cut["sub"], cut.get("text_box") or (160, 180, 1760, 900), max_size=140))
+        return out
+
     def frame(self, t):
-        # 背景はゆっくり寄る
-        z = 1.0 + 0.03 * (t / self.dur)
+        # 背景はゆっくり寄る（参考動画ふうの時は止める）
+        z = 1.0 + (0.03 * (t / self.dur) if self.style != "meme" else 0)
         if z > 1.001:
             bw, bh = int(W * z), int(H * z)
             big = cv2.resize(self.bg, (bw, bh), interpolation=cv2.INTER_LINEAR)
@@ -236,12 +284,12 @@ class CutRenderer:
             out = big[oy:oy + H, ox:ox + W].copy()
         else:
             out = self.bg.copy()
-        k = ease_out(t / 0.15)
+        k = 1.0 if self.style == "meme" else ease_out(t / 0.15)
         if self.card is not None:
             over(out, self.card, self.card_a * k, 0, 0)
         for clip, scale, cx, bottom in self.cats:
             fr, a = clip.frame(t)
-            pop = 0.88 + 0.12 * ease_out(t / 0.18)
+            pop = 1.0 if self.style == "meme" else 0.88 + 0.12 * ease_out(t / 0.18)
             s = scale * pop
             w, h = max(1, int(fr.shape[1] * s)), max(1, int(fr.shape[0] * s))
             img = cv2.resize(fr, (w, h), interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
@@ -261,6 +309,21 @@ def load_audio(path):
     raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-ac", "2", "-ar", str(SR), "-f", "f32le", "-"],
                          capture_output=True, check=True).stdout
     return np.frombuffer(raw, np.float32).reshape(-1, 2).copy()
+
+
+_CAT_AUDIO = {}
+
+
+def cat_audio(name):
+    """猫ミーム素材の元の音（ピークを 0.6 にそろえる）。音が無い素材は None。"""
+    if name not in _CAT_AUDIO:
+        try:
+            a = load_audio(os.path.join(ASSETS, name + ".mp4"))
+            pk = np.abs(a).max()
+            _CAT_AUDIO[name] = a / pk * 0.6 if pk > 1e-4 else None
+        except subprocess.CalledProcessError:
+            _CAT_AUDIO[name] = None
+    return _CAT_AUDIO[name]
 
 
 def synth(kind):
@@ -305,7 +368,7 @@ def db(x):
     return 10 ** (x / 20)
 
 
-def build_audio(cuts, starts, total):
+def build_audio(cuts, starts, durs, total):
     n = int(total * SR) + SR
     mix = np.zeros((n, 2), np.float32)
     # BGM：カットで切り替え。切り替え時は前の曲を fade 秒で下げ、次の曲を上げる
@@ -340,7 +403,24 @@ def build_audio(cuts, starts, total):
             for kind in ([ses] if isinstance(ses, str) else ses):
                 s = synth(kind).astype(np.float32)
                 mix[i0:i0 + len(s)] += np.stack([s, s], 1)[: n - i0]
-        if c.get("say") and not c.get("no_pop"):
+        has_cat_sound = False
+        for k in c.get("cats", []):
+            if k.get("still") or k.get("mute") or k["a"] in MUSIC:
+                continue
+            a = cat_audio(k["a"])
+            if a is None:
+                continue
+            ln = int(durs[i] * SR)
+            st = int(k.get("ss", 0.0) * SR) % max(len(a), 1)
+            a = np.concatenate([a[st:], np.tile(a, (ln // max(len(a), 1) + 1, 1))])[:ln].copy()
+            f = min(int(0.03 * SR), len(a) // 2)
+            if f:
+                a[:f] *= np.linspace(0, 1, f)[:, None]
+                a[-f:] *= np.linspace(1, 0, f)[:, None]
+            g = k.get("gain", -10 if k.get("small") else -3)
+            mix[i0:i0 + len(a)] += a[: n - i0] * db(g)
+            has_cat_sound = True
+        if c.get("say") and not c.get("no_pop") and not has_cat_sound:
             s = synth("pop").astype(np.float32) * 0.7
             j = i0 + int(0.03 * SR)
             mix[j:j + len(s)] += np.stack([s, s], 1)[: n - j]
@@ -365,7 +445,7 @@ def render(cuts, out_path, preview_dir=None):
     work = out_path + ".work"
     os.makedirs(work, exist_ok=True)
     wav = os.path.join(work, "audio.f32")
-    build_audio(cuts, starts, total).tofile(wav)
+    build_audio(cuts, starts, durs, total).tofile(wav)
 
     proc = subprocess.Popen(
         ["ffmpeg", "-v", "error", "-y",
@@ -375,13 +455,23 @@ def render(cuts, out_path, preview_dir=None):
          "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", out_path],
         stdin=subprocess.PIPE)
     frame_no = 0
+    bgs = [c.get("bg") for c in cuts]
     for i, c in enumerate(cuts):
         r = CutRenderer(c)
+        dip_in = i > 0 and bgs[i] != bgs[i - 1] and c.get("dip", True)
+        dip_out = i + 1 < len(cuts) and bgs[i + 1] != bgs[i] and cuts[i + 1].get("dip", True)
         end = int(round((starts[i] + durs[i]) * FPS))
         first = True
         while frame_no < end:
             tt = frame_no / FPS - starts[i]
             img = r.frame(tt)
+            w = 0.0
+            if dip_in and tt < WHITE_DIP:
+                w = 1 - tt / WHITE_DIP
+            if dip_out and tt > durs[i] - WHITE_DIP:
+                w = max(w, (tt - (durs[i] - WHITE_DIP)) / WHITE_DIP)
+            if w > 0:
+                img = img * (1 - w) + w
             u8 = (np.clip(img, 0, 1) * 255).astype(np.uint8)
             proc.stdin.write(u8.tobytes())
             if preview_dir and first:

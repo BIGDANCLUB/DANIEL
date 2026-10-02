@@ -14,7 +14,9 @@ FONT_DIR = os.path.join(HERE, "fonts")
 FONTS = {
     "round": ("MPLUSRounded1c-ExtraBold.ttf", "ofl/mplusrounded1c/MPLUSRounded1c-ExtraBold.ttf"),
     "round_b": ("MPLUSRounded1c-Bold.ttf", "ofl/mplusrounded1c/MPLUSRounded1c-Bold.ttf"),
+    "black": ("NotoSansJP[wght].ttf", "ofl/notosansjp/NotoSansJP%5Bwght%5D.ttf"),
 }
+_FONT_CACHE = {}
 
 # 色
 NAVY = (31, 42, 68)
@@ -35,12 +37,18 @@ CAT_SLOT = (1600, 470, 1900, 830)      # 解説カード中に猫を置く場所
 
 
 def font(kind, size):
+    if (kind, size) in _FONT_CACHE:
+        return _FONT_CACHE[kind, size]
     name, path = FONTS[kind]
     local = os.path.join(FONT_DIR, name)
     if not os.path.exists(local):
         os.makedirs(FONT_DIR, exist_ok=True)
         urllib.request.urlretrieve("https://raw.githubusercontent.com/google/fonts/main/" + path, local)
-    return ImageFont.truetype(local, size)
+    f = ImageFont.truetype(local, size)
+    if kind == "black":
+        f.set_variation_by_name("Black")
+    _FONT_CACHE[kind, size] = f
+    return f
 
 
 def canvas():
@@ -311,3 +319,73 @@ def placeholder_cat(img, box, label="猫"):
     f = font("round", 44)
     cx, cy = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
     d.text((cx - text_w(d, label, f) / 2, cy - 30), label, font=f, fill=WHITE)
+
+
+# ---------- 猫ミーム風（参考動画に合わせた）字幕 ----------
+
+BREAK_AFTER = "、。！？!?…」）　 "
+
+
+def wrap_nice(d, text, f, max_w):
+    """句読点・記号・空白の後ろで優先的に折り返す。それでも長い塊は1文字ずつ。"""
+    chunks, cur = [], ""
+    for ch in text:
+        cur += ch
+        if ch in BREAK_AFTER:
+            chunks.append(cur)
+            cur = ""
+    if cur:
+        chunks.append(cur)
+    lines, line = [], ""
+    for c in chunks:
+        if text_w(d, (line + c).rstrip("　 "), f) <= max_w:
+            line += c
+            continue
+        if line:
+            lines.append(line.rstrip("　 "))
+            line = ""
+        if text_w(d, c.rstrip("　 "), f) <= max_w:
+            line = c
+        else:
+            for ln in wrap(d, c, f, max_w):
+                lines.append(ln)
+            line = lines.pop()
+    if line.strip():
+        lines.append(line.rstrip("　 "))
+    return [ln.lstrip("　 ") for ln in lines]
+
+
+def big_text(text, box, max_size=150, min_size=64, max_lines=3, gap=1.18):
+    """白い太字＋黒い太い縁取り。box=(x0,y0,x1,y1) の中に、大きく・中央揃えで収める。"""
+    img = canvas()
+    d = ImageDraw.Draw(img)
+    x0, y0, x1, y1 = box
+    size = max_size
+    while True:
+        f = font("black", size)
+        lines = []
+        for para in text.split("\n"):
+            lines += wrap_nice(d, para, f, x1 - x0)
+        if (len(lines) <= max_lines and size * gap * len(lines) <= y1 - y0) or size <= min_size:
+            break
+        size -= 6
+    sw = max(6, int(size * 0.11))
+    lh = size * gap
+    y = (y0 + y1) / 2 - lh * len(lines) / 2
+    for ln in lines:
+        x = (x0 + x1) / 2 - text_w(d, ln, f) / 2
+        d.text((x, y - size * 0.12), ln, font=f, fill=WHITE, stroke_width=sw, stroke_fill=(0, 0, 0))
+        y += lh
+    return img
+
+
+def name_plate(text, x, y, size=72):
+    """白い四角に黒い太字の役名（左上が (x, y)）。"""
+    img = canvas()
+    d = ImageDraw.Draw(img)
+    f = font("black", size)
+    w = text_w(d, text, f)
+    px, py = size * 0.32, size * 0.2
+    d.rectangle((x, y, x + w + px * 2, y + size * 1.25 + py * 2 - size * 0.25), fill=WHITE)
+    d.text((x + px, y + py - size * 0.14), text, font=f, fill=(0, 0, 0))
+    return img

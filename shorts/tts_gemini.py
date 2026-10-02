@@ -68,7 +68,7 @@ def build_prompt(tc, text, tone=None):
     return f"{head}\n指示文は読まず、TRANSCRIPT の日本語だけを読み上げること。TRANSCRIPT に無い言葉を足さない。前置き・言い換え・繰り返しをしない。\n#### TRANSCRIPT\n{text}"
 
 
-def _request(path, body=None, retry_400=False):
+def _request(path, body=None, retry_400=False, timeout=120):
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
         sys.exit("GEMINI_API_KEY が設定されていません（環境変数に登録してください）")
@@ -76,7 +76,7 @@ def _request(path, body=None, retry_400=False):
                                  headers={"x-goog-api-key": key, "Content-Type": "application/json"})
     for attempt in range(6):
         try:
-            with urllib.request.urlopen(req, timeout=120) as r:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.load(r)
         except urllib.error.HTTPError as e:
             msg = e.read().decode(errors="replace")
@@ -147,7 +147,9 @@ def request_audio(tc, prompt):
             "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": tc["voice"]}}},
         },
     }
-    res = _request(f"models/{tc['model']}:generateContent", body, retry_400=True)
+    # 長いまとめ読みは生成に数分かかる（1文字あたり約0.2秒の音声。余裕をみて最大15分待つ）
+    wait = min(900, 120 + len(prompt) * 0.3)
+    res = _request(f"models/{tc['model']}:generateContent", body, retry_400=True, timeout=wait)
     part = res["candidates"][0]["content"]["parts"][0]["inlineData"]
     return decode_audio(base64.b64decode(part["data"]), part.get("mimeType", ""))
 
@@ -389,7 +391,11 @@ def ensure_voice(story_path, force=False):
             return
         nums = f"{g[0][0] + 1:02d}〜{g[-1][0] + 1:02d}"
         print(f"[{nums}] {len(g)}行まとめて", flush=True)
-        oks = synthesize_batch(tc, [j[2] for j in g], [j[3] for j in g], [j[1] for j in g])
+        try:
+            oks = synthesize_batch(tc, [j[2] for j in g], [j[3] for j in g], [j[1] for j in g])
+        except (TimeoutError, OSError, KeyError) as e:   # 長すぎて時間切れ・応答が途切れた → 半分に分ける
+            print(f"  まとめ読みに失敗（{type(e).__name__}）→ 半分に分けて読み直す", flush=True)
+            oks = [False] * len(g)
         for job, ok in zip(g, oks):
             if ok:
                 manifest[os.path.basename(job[1])] = job[4]

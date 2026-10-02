@@ -365,6 +365,7 @@ def big_text(text, box, max_size=150, min_size=64, max_lines=3, gap=1.18):
     img = canvas()
     d = ImageDraw.Draw(img)
     x0, y0, x1, y1 = box
+    max_lines = max(max_lines, text.count("\n") + 1)
     size = max_size
     while True:
         f = font("black", size)

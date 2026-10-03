@@ -295,7 +295,7 @@ SE_MAP = [
 
 
 # 猫ミーム素材を途中で切らずに最後まで流すカット
-FULL = ["2位？\n1位じゃなくて", "情報量\nバグってんだけど", "結果\nはよ", "染谷さんが過半数", "2位の倍よ倍"]
+FULL = ["ただのアンケート", "2位？\n1位じゃなくて", "情報量\nバグってんだけど", "結果\nはよ", "染谷さんが過半数", "2位の倍よ倍"]
 
 
 def apply_se(cuts):
@@ -305,7 +305,8 @@ def apply_se(cuts):
             c["cats"][0]["full"] = True
             until = {"joy_happy_happy_happy_cat": 7.0,   # ハッピー猫は最初のひと回し（7秒）まで
                      "dance_maxwell_cat": 6.0,           # マックスウェル猫も最初のひと回し（6秒）まで
-                     "happy_chipi_chapa_cat": 6.0}       # チピチピ猫も最初のひと回し（6秒）まで
+                     "happy_chipi_chapa_cat": 6.0,       # チピチピ猫も最初のひと回し（6秒）まで
+                     "huh_goat_talks_to_huh_cat": 3.0}   # ヤギと猫は「はぁ？」を言い切る3秒まで
             if c["cats"][0]["a"] in until:
                 c["cats"][0]["until"] = until[c["cats"][0]["a"]]
     for c in cuts:

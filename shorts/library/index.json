@@ -2099,6 +2099,12 @@
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "Red police lights reflecting on the wet road in front of a small Japanese police station at night, no people No faces visible, no readable text, no logos."
  },
+ "st037_ai_town_night": {
+  "file": "st037_ai_town_night.jpg",
+  "key": "07765eaae39896198e7138d6f5b778e289c62430",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An aerial view of a Japanese suburban town at night with scattered lit windows and quiet streets. No faces visible, no readable text, no logos."
+ },
  "st037_ai_work": {
   "file": "st037_ai_work.jpg",
   "key": "5633f7a6d7b23a47552c5d28c7dffae0207f30c2",

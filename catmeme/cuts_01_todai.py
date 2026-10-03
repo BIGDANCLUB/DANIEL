@@ -8,6 +8,8 @@ import sys
 import parts as P
 import render as R
 
+R.AUTO_PLAY = False   # この動画は FULL で指定したカットだけ最後まで流す（他のカットは今の長さのまま）
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 BG = os.path.join(HERE, "backgrounds", "01_todai")
 PT = os.path.join(HERE, "parts", "01_todai")
@@ -125,7 +127,8 @@ def cuts_trial():
         news("blank_black_cat_zoning_out", "……ん？", dur=1.2, flip=True),
         dict(bg=bg("bg05_meeting"), cats=[dict(MEETING[0], full=True), MEETING[1]],
              say="はーい、\nじゃ会議はじめまーす", say_name="会議の猫たち",
-             pops=[{"t": t, "text": "はい", "box": (790, 600, 1050, 780), "size": 130} for t in (3.08, 8.88, 10.83)],
+             pops=[{"t": t, "text": "はい", "box": (790, 600, 1050, 780), "size": 130}
+                   for t in R.ASSET_PLAY["scold_talking_cats"]["hai"]],
              plate_xy=(60, 900)),
         card("e04_flow", "投票は「参考にする材料の一つ」　書類や面接も合わせて決める", "slack_nail_filing_cat",
              b="bg05_meeting", dur=2.8),
@@ -313,12 +316,9 @@ def apply_se(cuts):
         k = " ".join(str(c.get(x) or "") for x in ("say", "sub"))
         if any(f in k for f in FULL) and c.get("cats"):
             c["cats"][0]["full"] = True
-            until = {"joy_happy_happy_happy_cat": 7.0,   # ハッピー猫は最初のひと回し（7秒）まで
-                     "dance_maxwell_cat": 6.0,           # マックスウェル猫も最初のひと回し（6秒）まで
-                     "happy_chipi_chapa_cat": 6.0,       # チピチピ猫も最初のひと回し（6秒）まで
-                     "huh_goat_talks_to_huh_cat": 3.0}   # ヤギと猫は「はぁ？」を言い切る3秒まで
-            if c["cats"][0]["a"] in until:
-                c["cats"][0]["until"] = until[c["cats"][0]["a"]]
+            cfg = R.ASSET_PLAY.get(c["cats"][0]["a"], {})   # 切る秒は assets/play.json（全動画共通）
+            if cfg.get("until"):
+                c["cats"][0]["until"] = cfg["until"]
     for c in cuts:
         key = " ".join(str(c.get(k) or "") for k in ("say", "sub", "card", "layers"))
         for snip, se in SE_MAP:

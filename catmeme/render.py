@@ -46,6 +46,19 @@ def music_assets():
 
 
 MUSIC = music_assets()
+
+
+def load_play():
+    """assets/play.json … 素材ごとの流し方（最後まで流す／何秒で切る）。どの動画でも共通。"""
+    import json
+    path = os.path.join(HERE, "assets", "play.json")
+    if not os.path.exists(path):
+        return {}
+    return {k: v for k, v in json.load(open(path, encoding="utf-8")).items() if not k.startswith("_")}
+
+
+ASSET_PLAY = load_play()
+AUTO_PLAY = True   # True なら play.json の設定を、その素材を使う全カットに自動で当てる
 PLAY_MUSIC_ASSETS = True   # 曲つき素材の音も鳴らす（鳴っている間は BGM を下げる）
 MUSIC_DUCK = -14
 SE_GAIN = -4               # 効果音の基本の音量（dB、ピーク0.6にそろえた後）           # 曲つき素材が鳴っている間の BGM の下げ幅（dB）
@@ -215,6 +228,12 @@ _DUR_CACHE = {}
 
 def cut_dur(cut):
     """カットの長さ。猫ミームの音が鳴るカットは、音が途中で切れないよう、近くの「音の切れ目」まで伸び縮みさせる。"""
+    for k in cut.get("cats", []):
+        cfg = ASSET_PLAY.get(k["a"])
+        if AUTO_PLAY and cfg and not k.get("still") and not k.get("small") and "full" not in k:
+            k["full"] = True
+            if cfg.get("until") and "until" not in k:
+                k["until"] = cfg["until"]
     full = [k for k in cut.get("cats", []) if k.get("full")]
     if full:   # 素材を最後まで流す
         lens = [len(cat_audio(k["a"])) / SR - k.get("ss", 0.0) if cat_audio(k["a"]) is not None

@@ -21,7 +21,7 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>
 @font-face{font-family:Noto;font-weight:100 900;src:url("file://FONTDIR/NotoSansJP[wght].ttf")}
 @font-face{font-family:Maru;font-weight:900;src:url("file://FONTDIR/ZenMaruGothic-Black.ttf")}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:1280px;height:720px;overflow:hidden;background:#000}
+html,body{width:1280px;height:720px;overflow:hidden;background:#000}body{position:relative}
 .bg{position:absolute;inset:0;background:url("file://IMG") POS/ZOOM no-repeat}
 .shade{position:absolute;inset:0;background:SHADE}
 .t{position:absolute;font-family:Noto,sans-serif;font-weight:900;line-height:1.02;letter-spacing:-.02em;
@@ -45,7 +45,7 @@ T = {
               tag="桃太郎を現代風に解説",
               body='<div class="t w" style="--sw:20px;left:40px;top:200px;font-size:96px">桃太郎の桃</div>'
                    '<div class="t y" style="--sw:26px;left:30px;top:295px;font-size:190px">250kg</div>'
-                   '<div class="t w" style="--sw:16px;left:44px;top:540px;font-size:64px">おばあさん、持てません</div>'),
+                   '<div class="t r" style="--sw:20px;left:36px;top:518px;font-size:118px">持てるわけないｗｗｗ</div>'),
     "c": dict(img="scene_road.png", pos="30% 5%", zoom="160%",
               shade="linear-gradient(270deg,rgba(0,0,0,.72) 0%,rgba(0,0,0,.3) 45%,rgba(0,0,0,0) 65%)",
               tag="桃太郎を現代風に解説",
@@ -64,9 +64,12 @@ def render(key):
         f.write(html)
     out = os.path.join(OUT_DIR, f"thumb_{key}.png")
     subprocess.run([chrome(), "--headless=new", "--no-sandbox", "--disable-gpu", "--hide-scrollbars",
-                    "--force-device-scale-factor=1", "--window-size=1280,720", "--virtual-time-budget=3000",
+                    "--force-device-scale-factor=1", "--window-size=1280,900", "--virtual-time-budget=3000",
                     f"--screenshot={out}", "file://" + f.name], check=True, capture_output=True)
     os.unlink(f.name)
+    # 小さい窓だと表示領域が指定より狭くなり、下に黒い帯が残る。大きめの窓で描いて 1280x720 に切り抜く
+    from PIL import Image
+    Image.open(out).convert("RGB").crop((0, 0, 1280, 720)).save(out)
     print("wrote", os.path.relpath(out, HERE))
 
 

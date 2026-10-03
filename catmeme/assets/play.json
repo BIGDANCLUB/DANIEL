@@ -1,10 +1,36 @@
 {
   "_説明": "素材ごとの流し方。どの動画でも、この素材を使うカットは自動でこの長さになる（full=最後まで / until=その秒まで）。hai は右の猫が鳴く秒（「はい」などの字幕を合わせる用）",
-  "joy_happy_happy_happy_cat": {"until": 7.0, "memo": "ハッピー猫：最初のひと回し"},
-  "dance_maxwell_cat": {"until": 6.0, "memo": "マックスウェル猫：最初のひと回し"},
-  "happy_chipi_chapa_cat": {"until": 6.0, "memo": "チピチピ猫：最初のひと回し"},
-  "huh_goat_talks_to_huh_cat": {"until": 3.0, "memo": "ヤギと猫：「はぁ？」を言い切る所まで"},
-  "confused_i_dont_know_cat": {"full": true, "memo": "困惑する猫：最後まで"},
-  "despair_dramatic_kitten": {"full": true, "memo": "絶望する子猫：最後まで"},
-  "scold_talking_cats": {"full": true, "hai": [3.08, 8.88, 10.83], "memo": "怒る猫と怒られる猫：最後まで。右の猫が鳴く秒"}
+  "joy_happy_happy_happy_cat": {
+    "until": 7.0,
+    "memo": "ハッピー猫：最初のひと回し"
+  },
+  "dance_maxwell_cat": {
+    "until": 6.0,
+    "memo": "マックスウェル猫：最初のひと回し"
+  },
+  "happy_chipi_chapa_cat": {
+    "until": 6.0,
+    "memo": "チピチピ猫：最初のひと回し"
+  },
+  "huh_goat_talks_to_huh_cat": {
+    "until": 3.0,
+    "memo": "ヤギと猫：「はぁ？」を言い切る所まで"
+  },
+  "confused_i_dont_know_cat": {
+    "until": 5.27,
+    "memo": "困惑する猫：最後の2秒は使わない"
+  },
+  "despair_dramatic_kitten": {
+    "full": true,
+    "memo": "絶望する子猫：最後まで"
+  },
+  "scold_talking_cats": {
+    "full": true,
+    "hai": [
+      3.08,
+      8.88,
+      10.83
+    ],
+    "memo": "怒る猫と怒られる猫：最後まで。右の猫が鳴く秒"
+  }
 }

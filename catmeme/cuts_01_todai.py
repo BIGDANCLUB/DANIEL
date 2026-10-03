@@ -134,7 +134,7 @@ def cuts_trial():
         news("huh_goat_talks_to_huh_cat", "え、投票って\nただのアンケート\n的なやつ？"),
         friend("itchy_kitten_butt", "いや\nルールで「参考」って\n決まってんのよ"),
         news("sulk_hungry_cat", "ふーん……", dur=1.3),
-        dict(bg=bg("bg05_meeting"), cats=MEETING, say="うーん……", say_name="会議の猫たち", plate_xy=(60, 900),
+        dict(bg=bg("bg05_meeting"), cats=[dict(MEETING[0], full=True, until=3.45), MEETING[1]], say="うーん……", say_name="会議の猫たち", plate_xy=(60, 900),
              dur=1.6, bgm={"file": None, "fade": 0.8}),
         news("sleep_sleeping_cat", "なげーよ", dur=1.3),
         dict(bg=bg("bg06_spotlight"), sub="そして選ばれたのは——", dur=2.0, se="drum"),

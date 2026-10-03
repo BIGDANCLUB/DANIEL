@@ -304,7 +304,8 @@ def apply_se(cuts):
         if any(f in k for f in FULL) and c.get("cats"):
             c["cats"][0]["full"] = True
             until = {"joy_happy_happy_happy_cat": 7.0,   # ハッピー猫は最初のひと回し（7秒）まで
-                     "dance_maxwell_cat": 6.0}           # マックスウェル猫も最初のひと回し（6秒）まで
+                     "dance_maxwell_cat": 6.0,           # マックスウェル猫も最初のひと回し（6秒）まで
+                     "happy_chipi_chapa_cat": 6.0}       # チピチピ猫も最初のひと回し（6秒）まで
             if c["cats"][0]["a"] in until:
                 c["cats"][0]["until"] = until[c["cats"][0]["a"]]
     for c in cuts:

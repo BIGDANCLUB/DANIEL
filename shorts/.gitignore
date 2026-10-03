@@ -1,0 +1,7 @@
+fonts/
+out/
+*.mp4
+assets/
+__pycache__/
+work_*/
+_preview_*.json

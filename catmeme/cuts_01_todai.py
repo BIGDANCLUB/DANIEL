@@ -292,7 +292,15 @@ SE_MAP = [
 ]
 
 
+# 猫ミーム素材を途中で切らずに最後まで流すカット
+FULL = ["2位？\n1位じゃなくて", "情報量\nバグってんだけど", "結果\nはよ", "染谷さんが過半数", "2位の倍よ倍"]
+
+
 def apply_se(cuts):
+    for c in cuts:
+        k = " ".join(str(c.get(x) or "") for x in ("say", "sub"))
+        if any(f in k for f in FULL) and c.get("cats"):
+            c["cats"][0]["full"] = True
     for c in cuts:
         key = " ".join(str(c.get(k) or "") for k in ("say", "sub", "card", "layers"))
         for snip, se in SE_MAP:

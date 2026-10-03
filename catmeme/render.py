@@ -215,6 +215,11 @@ _DUR_CACHE = {}
 
 def cut_dur(cut):
     """カットの長さ。猫ミームの音が鳴るカットは、音が途中で切れないよう、近くの「音の切れ目」まで伸び縮みさせる。"""
+    full = [k for k in cut.get("cats", []) if k.get("full")]
+    if full:   # 素材を最後まで流す
+        lens = [len(cat_audio(k["a"])) / SR - k.get("ss", 0.0) if cat_audio(k["a"]) is not None
+                else Clip(k["a"]).n / Clip(k["a"]).fps - k.get("ss", 0.0) for k in full]
+        return max(lens)
     base = (cut.get("dur") or auto_dur(cut)) * TEMPO
     if cut.get("fixed"):
         return base

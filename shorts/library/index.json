@@ -2056,5 +2056,53 @@
   "key": "67141e28d0aafe6ed51257abfeeb3ea231fa6fea",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "A skater seen from behind in mid-air over a rail in a large outdoor venue, motion blur, crowd blurred No faces visible, no readable text, no logos."
+ },
+ "st037_ai_cash": {
+  "file": "st037_ai_cash.jpg",
+  "key": "a719db4aab780cd73d05f095ce30893a85d8b11d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Hands passing a plain white envelope with banknotes across a low table, close-up, money partially visible, dim light No faces visible, no readable text, no logos."
+ },
+ "st037_ai_genkan": {
+  "file": "st037_ai_genkan.jpg",
+  "key": "c2b90547e08f1bb022e56addce466bf9c6e1d535",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "The entrance of an old Japanese house with many pairs of worn shoes crowded on the concrete floor, dim light No faces visible, no readable text, no logos."
+ },
+ "st037_ai_house_day": {
+  "file": "st037_ai_house_day.jpg",
+  "key": "6e6a84227e246dc84e6a2dfdb68b3ead168a4f6e",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An aged wooden Japanese detached house with faded walls and rusty gutters in a quiet residential area, overcast day, no people No faces visible, no readable text, no logos."
+ },
+ "st037_ai_landlord": {
+  "file": "st037_ai_landlord.jpg",
+  "key": "e0f16171705e1689ff2dfc636adac5cbf002693a",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older Japanese man's hands holding a ring of house keys over a rental contract on a wooden table, text blurred No faces visible, no readable text, no logos."
+ },
+ "st037_ai_night_house": {
+  "file": "st037_ai_night_house.jpg",
+  "key": "a28b97481790ce7f4c09874defdb39f0e636da3b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An old two-story Japanese detached house at night in a quiet rural town, one window faintly lit behind curtains, overgrown garden No faces visible, no readable text, no logos."
+ },
+ "st037_ai_phone_notes": {
+  "file": "st037_ai_phone_notes.jpg",
+  "key": "ab996ba9ac9606560dcf4445702f3e2480f192f7",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A smartphone and a small notebook with many handwritten lines of contacts on a cluttered table, writing blurred, dim lamp light No faces visible, no readable text, no logos."
+ },
+ "st037_ai_police": {
+  "file": "st037_ai_police.jpg",
+  "key": "f436ed1fc9e35069ec1bc241b78368d30fa5845a",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Red police lights reflecting on the wet road in front of a small Japanese police station at night, no people No faces visible, no readable text, no logos."
+ },
+ "st037_ai_work": {
+  "file": "st037_ai_work.jpg",
+  "key": "5633f7a6d7b23a47552c5d28c7dffae0207f30c2",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Workers in plain work clothes seen from far behind walking into a farm field at dawn, mist No faces visible, no readable text, no logos."
  }
 }

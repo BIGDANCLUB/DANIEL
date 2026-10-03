@@ -79,8 +79,8 @@ def cuts_trial():
     cand_cats, cand_tags = candidates()
     return [
         # ---- 1. つかみ ----
-        dict(card=None, layers=[pt("e00_notice")], dur=1.8, bgm={"file": PURPLE, "gain": -7}),
-        dict(bg=bg("bg01_campus"), card=pt("e01_title"), dur=2.4, se="chime",
+        dict(card=None, layers=[pt("e00_notice")], dur=2.6),
+        dict(bg=bg("bg01_campus"), card=pt("e01_title"), dur=2.4, se="chime", bgm={"file": PURPLE, "gain": -7},
              cats=[{"a": "wave_waving_cat", "x": 300, "h": 420, "bottom": 1040, "float": True}]),
         narr("bg01_campus", "2026年9月28日\n東大の次の「総長」が\n決まった", "work_typing_cat"),
         news("slack_nail_filing_cat", "ほーん、\n東大のボス\n決まったんだ"),
@@ -254,7 +254,7 @@ def cuts_rest():
 
 # 効果音（catmeme/se/）。セリフ・字幕・カード画像の一部が一致したカットに付ける（上から順に最初の一致）
 SE_MAP = [
-    ("e01_title", "chirin"), ("半分以上\n取ってたよね", "crack"), ("2026年9月28日", "quiz_question_01"), ("いやそれがさ", "quiz_den"),
+    ("e00_notice", {"f": "chime_announce", "len": 3.0, "gain": -2}), ("e01_title", "chirin"), ("半分以上\n取ってたよね", "crack"), ("2026年9月28日", "quiz_question_01"), ("いやそれがさ", "quiz_den"),
     ("選ばれたのは\n投票で2位", "doon_heavy"), ("……は？", "question_hatena_maou"), ("いやいやいや", "tsukkomi_bishi"),
     ("2位？\n1位じゃなくて", "kote"), ("しかも\n東大150年", "jan"), ("ちょ、\n情報量", "explosion_chudoon"),
     ("まあ落ち着けって", "taiko_kaka"), ("たのむわ", "papa"),
@@ -277,7 +277,7 @@ SE_MAP = [
     ("中の人ってことね", "shine_kiraan_maou"),
     ("会議が挙げた", "pinpoon_note"), ("ふわっとしてない", "puni"), ("会見で　議長は", "cymbal_light_maou"),
     ("言い切ったーーー", "game_aceattorney_desk_slam"), ("ルール上は\nそうなんだろう", "kote"),
-    ("翌29日", {"f": "chime_announce", "gain": -8}), ("女性初は", "bell_ring"),
+    ("翌29日", "button_39"), ("女性初は", "bell_ring"),
     ("しっかりしてるやん", {"f": "cheer_applause", "gain": -8}),
     ("このニュースに", "button_26"), ("歴史\nうごいた", "game_dq_level_up"), ("過半数とった1位", "buzzer_wrong"),
     ("総長選の女子枠", "kon"), ("それ言うやつ", "fall_hyuu"), ("藤垣さん選んだ", "cursor_move_02"),
@@ -294,7 +294,7 @@ SE_MAP = [
 
 def apply_se(cuts):
     for c in cuts:
-        key = " ".join(str(c.get(k) or "") for k in ("say", "sub", "card"))
+        key = " ".join(str(c.get(k) or "") for k in ("say", "sub", "card", "layers"))
         for snip, se in SE_MAP:
             if snip in key:
                 if se is None:

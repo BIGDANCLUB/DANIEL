@@ -1636,5 +1636,53 @@
   "key": "50849104875abc976b2bc88e0ba3fb7d2dfd2f14",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "Two black judo belts lying side by side on a tatami mat in a quiet dojo, soft light No faces visible, no readable text, no logos."
+ },
+ "st027_ai_arcade": {
+  "file": "st027_ai_arcade.jpg",
+  "key": "41310a6a9c43dabaf760bb336954947d971abd8c",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A long, old multi-story Japanese shopping arcade corridor lined with small shops at night, shutters half down, empty, cinematic No faces visible, no readable text, no logos, no brand names."
+ },
+ "st027_ai_broken_glass": {
+  "file": "st027_ai_broken_glass.jpg",
+  "key": "95b569858318403b581bdaca3d4cce1b1e1f2b4c",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A shattered glass display case with empty watch stands and glass shards scattered on the counter, harsh light No faces visible, no readable text, no logos, no brand names."
+ },
+ "st027_ai_interrogation": {
+  "file": "st027_ai_interrogation.jpg",
+  "key": "164e755745368ebd0c62416fad2944d74b0f992d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An empty interrogation room with a plain table, two chairs and a desk lamp, cold light, no people No faces visible, no readable text, no logos, no brand names."
+ },
+ "st027_ai_law": {
+  "file": "st027_ai_law.jpg",
+  "key": "39fe2db819fb1d42b156657f080e72c0c402fa58",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A thick Japanese law book open on a wooden desk beside a judge's gavel, dim dramatic light, text blurred No faces visible, no readable text, no logos, no brand names."
+ },
+ "st027_ai_police": {
+  "file": "st027_ai_police.jpg",
+  "key": "f36b5a2e29e9b496c0f4e64161cea37131971fe3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Red police lights flashing on a quiet Japanese city street at night, reflections on wet asphalt, no people No faces visible, no readable text, no logos, no brand names."
+ },
+ "st027_ai_residential": {
+  "file": "st027_ai_residential.jpg",
+  "key": "5bd55c5f5031a12b17c121a3462227269f30529b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A quiet upscale Japanese residential street with large houses and walls at dusk, street lamps on, no people No faces visible, no readable text, no logos, no brand names."
+ },
+ "st027_ai_scooter": {
+  "file": "st027_ai_scooter.jpg",
+  "key": "671fc7789b43aa371e4f6205bdf1646b0ca44487",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An electric kick scooter speeding away on a dim city street at night, motion blur, rider seen from behind only as a dark silhouette No faces visible, no readable text, no logos, no brand names."
+ },
+ "st027_ai_watches": {
+  "file": "st027_ai_watches.jpg",
+  "key": "8059afb843a70daf0249372aad499321af642ecd",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Several luxury wristwatches displayed on velvet stands in a dark glass showcase under spotlights, dramatic shadows No faces visible, no readable text, no logos, no brand names."
  }
 }

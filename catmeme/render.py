@@ -219,6 +219,7 @@ def cut_dur(cut):
     if full:   # 素材を最後まで流す
         lens = [len(cat_audio(k["a"])) / SR - k.get("ss", 0.0) if cat_audio(k["a"]) is not None
                 else Clip(k["a"]).n / Clip(k["a"]).fps - k.get("ss", 0.0) for k in full]
+        lens = [min(l, k["until"] - k.get("ss", 0.0)) if k.get("until") else l for l, k in zip(lens, full)]
         return max(lens)
     base = (cut.get("dur") or auto_dur(cut)) * TEMPO
     if cut.get("fixed"):

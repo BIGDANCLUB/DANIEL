@@ -303,6 +303,8 @@ def apply_se(cuts):
         k = " ".join(str(c.get(x) or "") for x in ("say", "sub"))
         if any(f in k for f in FULL) and c.get("cats"):
             c["cats"][0]["full"] = True
+            if c["cats"][0]["a"] == "joy_happy_happy_happy_cat":
+                c["cats"][0]["until"] = 7.0   # ハッピー猫は最初のひと回し（7秒）まで
     for c in cuts:
         key = " ".join(str(c.get(k) or "") for k in ("say", "sub", "card", "layers"))
         for snip, se in SE_MAP:

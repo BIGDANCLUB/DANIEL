@@ -1,0 +1,216 @@
+{
+ "_comment": "ST-033 井上尚弥。神奈川県座間市出身。元アマチュアボクサーの父・真吾氏の影響で小学1年（6歳）からボクシングを始め、父がトレーナーを務め続けている。高校時代にアマで7冠。2012年プロデビュー。2022年バンタム級で日本人初の主要4団体統一、2023年スーパーバンタム級でも4団体統一（2階級での4団体統一は史上2人目）。本人・家族に似た人物の画像は使わない。",
+ "tempo": 1.05,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "世界一の拳を育てた\n{父と子の二人三脚}",
+ "thumb_top": "6歳から父と二人三脚\n世界に4本のベルト",
+ "thumb_teaser": "父がトレーナー",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、温かく語りかける。\n## THE SCENE\nあるスポーツ選手の物語を、同世代の視聴者に静かに語って聞かせている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。最後の一文は胸を打つように力強く。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st033_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st033_ai/images"
+ },
+ "lines": [
+  {
+   "text": "{6歳}から\n父と<二人三脚>",
+   "tone": "静かに語り始める",
+   "say": "6歳から、父と二人三脚。",
+   "scene": "small_gloves",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "その少年は\n<世界の頂点>に立った",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "その少年は、世界の頂点に立った。",
+   "scene": "small_gloves",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "父は\n元{アマチュアボクサー}",
+   "tone": "淡々と",
+   "say": "父は、元アマチュアボクサー。",
+   "scene": "old_gym",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "息子は{小学1年}で\nグローブをはめた",
+   "tone": "やさしく",
+   "say": "息子は小学1年で、グローブをはめた。",
+   "scene": "old_gym",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "仕事を終えた父と\n<毎晩>練習した",
+   "tone": "しみじみと",
+   "say": "仕事を終えた父と、毎晩練習した。",
+   "scene": "night_run",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "走って\nミットを打って",
+   "tone": "テンポよく",
+   "say": "走って、ミットを打って。",
+   "scene": "night_run",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "父が教えたのは\n{基本}だった",
+   "tone": "力をこめて",
+   "say": "父が教えたのは、基本だった。",
+   "scene": "mitts",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "高校生で\nアマチュア{7冠}",
+   "tone": "誇らしく",
+   "say": "高校生で、アマチュア7冠。",
+   "scene": "mitts",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "プロになっても\nトレーナーは<父のまま>",
+   "tone": "しみじみと",
+   "say": "プロになっても、トレーナーは父のまま。",
+   "scene": "corner",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "2022年\n日本人初の{4団体統一}",
+   "tone": "興奮をこめて",
+   "say": "2022年。日本人初の、4団体統一。",
+   "scene": "arena",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "翌年 階級を上げても\n<また4本>のベルト",
+   "tone": "興奮をこめて",
+   "say": "翌年、階級を上げても、また4本のベルト。",
+   "scene": "arena",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "2つの階級で4団体統一は\n{史上2人目}",
+   "tone": "誇らしく",
+   "say": "2つの階級で4団体統一は、史上2人目。",
+   "scene": "arena",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "リングの隅には\nいつも{父}がいた",
+   "tone": "胸がいっぱいで",
+   "say": "リングの隅には、いつも父がいた。",
+   "scene": "corner2",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "6歳から続けた練習は\n<世界一>になった",
+   "tone": "しみじみと、ゆっくり",
+   "say": "6歳から続けた練習は、世界一になった。",
+   "scene": "belts",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "その名は\n{井上尚弥}",
+   "tone": "胸を打つように、力強く",
+   "say": "その名は、井上尚弥。",
+   "scene": "belts",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  }
+ ],
+ "scenes": {
+  "small_gloves": {
+   "prompt": "A pair of tiny child's boxing gloves hanging next to large adult gloves on a hook in a small gym, warm light No faces visible, no readable text, no logos."
+  },
+  "old_gym": {
+   "prompt": "A small old Japanese boxing gym with a worn ring and hanging heavy bags, evening light through windows, no people No faces visible, no readable text, no logos."
+  },
+  "night_run": {
+   "prompt": "A man and a young boy in tracksuits seen from behind running together along a dark riverside road under street lamps No faces visible, no readable text, no logos."
+  },
+  "mitts": {
+   "prompt": "Close-up of focus mitts being hit by a boxing glove in a gym, sweat droplets in the air, faces not visible No faces visible, no readable text, no logos."
+  },
+  "corner": {
+   "prompt": "A boxing ring corner with a stool, towel and water bottle, an older man's hands holding a towel, dramatic light No faces visible, no readable text, no logos."
+  },
+  "arena": {
+   "prompt": "A huge boxing arena with a brightly lit ring in the center and a dark crowd around it, fighters tiny and seen from far away No faces visible, no readable text, no logos."
+  },
+  "corner2": {
+   "prompt": "An older trainer seen from behind standing at the corner of a lit boxing ring, the crowd blurred in darkness No faces visible, no readable text, no logos."
+  },
+  "belts": {
+   "prompt": "Four shining championship belts laid side by side on a dark table, dramatic spotlight, no logos No faces visible, no readable text, no logos."
+  }
+ }
+}

@@ -1,0 +1,215 @@
+{
+ "_comment": "ST-032 久保建英。2011年、10歳でFCバルセロナの下部組織（ラ・マシア）に入団。2015年、クラブが18歳未満の外国籍選手の登録規定違反でFIFAから処分を受け、公式戦に出られなくなり帰国。FC東京の下部組織に入り、15歳でトップチーム登録、2019年18歳でレアル・マドリードへ。2022年からレアル・ソシエダ。ループ型。",
+ "tempo": 1.05,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "loop": 1.0,
+ "banner": "13歳で突然\n{夢の場所を追われた}",
+ "thumb_top": "10歳で名門へ\n13歳で突然 日本へ",
+ "thumb_teaser": "それでも戻った少年",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、温かく語りかける。\n## THE SCENE\nあるスポーツ選手の物語を、同世代の視聴者に静かに語って聞かせている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。最後の一文は胸を打つように力強く。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st032_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st032_ai/images"
+ },
+ "lines": [
+  {
+   "text": "13歳で\n<夢の場所>を追われた少年がいる",
+   "tone": "静かに語り始める",
+   "say": "13歳で、夢の場所を追われた少年がいる。",
+   "scene": "empty_pitch",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true
+  },
+  {
+   "text": "<彼は何も>\n悪くなかった",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "彼は、何も悪くなかった。",
+   "scene": "empty_pitch",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{10歳}で\nスペインの名門クラブへ",
+   "tone": "希望をこめて",
+   "say": "10歳で、スペインの名門クラブへ。",
+   "scene": "barca_street",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "世界中から集まった\n{天才}たちの中で",
+   "tone": "淡々と",
+   "say": "世界中から集まった、天才たちの中で。",
+   "scene": "academy",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "得点を重ね\n<一番の評価>を受けた",
+   "tone": "誇らしく",
+   "say": "得点を重ね、一番の評価を受けた。",
+   "scene": "academy",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "ところが\nクラブが<規則違反>で処分を受けた",
+   "tone": "暗転するように、重く",
+   "say": "ところが、クラブが規則違反で処分を受けた。",
+   "scene": "rain_gate",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "外国の少年は\n<試合に出られない>",
+   "tone": "重く、ゆっくり",
+   "say": "外国の少年は、試合に出られない。",
+   "scene": "rain_gate",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "彼は\n日本へ{帰る}しかなかった",
+   "tone": "悔しさをにじませて",
+   "say": "彼は、日本へ帰るしかなかった。",
+   "scene": "airport",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "それでも\n<下を向かなかった>",
+   "tone": "静かに、力強く",
+   "say": "それでも、下を向かなかった。",
+   "scene": "airport",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "東京のクラブで\n{15歳}でプロの舞台へ",
+   "tone": "テンポよく",
+   "say": "東京のクラブで、15歳でプロの舞台へ。",
+   "scene": "jleague",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "{18歳}\n世界一の名門から声がかかった",
+   "tone": "高まる期待で",
+   "say": "18歳。世界一の名門から、声がかかった。",
+   "scene": "jleague",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "そして再び\n{スペイン}へ",
+   "tone": "胸が熱くなるように",
+   "say": "そして再び、スペインへ。",
+   "scene": "spain_stadium",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "今は{スペイン1部}の\n<主力>として戦っている",
+   "tone": "誇らしく",
+   "say": "今は、スペイン1部の主力として戦っている。",
+   "scene": "spain_stadium",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "追い出された国に\n<戻ってきた>",
+   "tone": "しみじみと",
+   "say": "追い出された国に、戻ってきた。",
+   "scene": "spain_stadium",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "13歳で夢の場所を追われた少年は\n{久保建英}",
+   "tone": "胸を打つように、力強く",
+   "say": "13歳で夢の場所を追われた少年は、久保建英。",
+   "scene": "boots",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  }
+ ],
+ "scenes": {
+  "empty_pitch": {
+   "prompt": "An empty youth football pitch at dusk with a single ball left near the goal, melancholy mood No faces visible, no readable text, no logos."
+  },
+  "barca_street": {
+   "prompt": "A narrow sunny street in Barcelona with old buildings, a small boy with a sports bag seen from behind walking with an adult No faces visible, no readable text, no logos."
+  },
+  "academy": {
+   "prompt": "A youth football training session on a bright green pitch in Spain, small players seen from far behind in a line, coaches blurred No faces visible, no readable text, no logos."
+  },
+  "rain_gate": {
+   "prompt": "A closed metal gate of a football training ground in the rain, puddles, no people No faces visible, no readable text, no logos."
+  },
+  "airport": {
+   "prompt": "A boy with a backpack seen from behind sitting alone by a large airport window watching planes, evening light No faces visible, no readable text, no logos."
+  },
+  "jleague": {
+   "prompt": "A Japanese professional football stadium at night under floodlights, a young player seen from far behind walking onto the pitch, crowd blurred No faces visible, no readable text, no logos."
+  },
+  "spain_stadium": {
+   "prompt": "A large Spanish football stadium at sunset, a player seen from far behind dribbling, crowd blurred No faces visible, no readable text, no logos."
+  },
+  "boots": {
+   "prompt": "A pair of worn football boots and a ball on a wooden bench in a locker room, warm light No faces visible, no readable text, no logos."
+  }
+ }
+}

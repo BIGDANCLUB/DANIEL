@@ -1,0 +1,227 @@
+{
+ "_comment": "ST-028 障害年金（障害厚生年金）。初診日に厚生年金に加入していれば、がん・心疾患・糖尿病・精神疾患なども対象。原則、初診日から1年6か月後の障害認定日の状態で判定（ペースメーカー・人工弁の装着は装着日が認定日、原則3級）。3級は障害厚生年金のみ（報酬比例、最低保障 年約62万円）。働きながらでも受給できる場合がある。例: 平均月収40万円・加入30年なら報酬比例は年約80万円。",
+ "tempo": 1.12,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "知らないと大損する\n{病気でもらえる年金}",
+ "thumb_top": "心臓の病気で\n年金が年80万円出た",
+ "thumb_teaser": "65歳前でももらえる",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n55歳の日本人男性。落ち着いた声で、誠実な人柄。\n## THE SCENE\n自分の身に起きた出来事を、同世代に打ち明けるように語っている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。数字は少し強調する。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st028_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st028_ai/images"
+ },
+ "lines": [
+  {
+   "text": "心臓の病気で\n年金が{年80万円}出た",
+   "tone": "信じられない結果を打ち明ける。驚きをこめて、力強く",
+   "say": "心臓の病気で、年金が年80万円出ました。",
+   "scene": "doc_desk",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "<65歳前>でも\nもらえる年金でした",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "65歳前でも、もらえる年金でした。",
+   "scene": "doc_desk",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{55歳}の会社員\n営業一筋でした",
+   "tone": "淡々と",
+   "say": "55歳の会社員。営業一筋でした。",
+   "scene": "office_window",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "去年 心臓の病気で\n<ペースメーカー>を入れました",
+   "tone": "重く、ゆっくり",
+   "say": "去年、心臓の病気で、ペースメーカーを入れました。",
+   "scene": "hospital_bed",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "仕事は続けられても\n<前のようには>働けない",
+   "tone": "沈んだ声で",
+   "say": "仕事は続けられても、前のようには働けない。",
+   "scene": "hospital_bed",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "収入は{減り}\n住宅ローンは<まだ残っている>",
+   "tone": "不安がにじむ",
+   "say": "収入は減り、住宅ローンはまだ残っている。",
+   "scene": "loan_papers",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「年金は65歳から」\nそう思っていました",
+   "tone": "あきらめたように",
+   "say": "年金は65歳から。そう思っていました。",
+   "scene": "loan_papers",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "病院の相談室で\n言われました",
+   "tone": "思い出すように",
+   "say": "病院の相談室で、言われました。",
+   "scene": "consult_room",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「{障害年金}を\n申請してみませんか」",
+   "tone": "相談員の言葉を、やさしく明るく再現する",
+   "say": "障害年金を、申請してみませんか。",
+   "scene": "consult_room",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "障害年金は\n{がんや心臓の病気}も対象",
+   "tone": "はっきりと、聞き手に教えるように",
+   "say": "障害年金は、がんや心臓の病気も対象なんです。",
+   "scene": "pamphlet",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "ペースメーカーは\n原則{3級}にあたります",
+   "tone": "説明するように",
+   "say": "ペースメーカーは、原則3級にあたります。",
+   "scene": "pamphlet",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "しかも\n{働きながら}でも受け取れる",
+   "tone": "驚きを隠せない",
+   "say": "しかも、働きながらでも受け取れるんです。",
+   "scene": "pamphlet",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "私の場合\n年{約80万円}",
+   "tone": "驚きと安堵。声がふっと明るくなる",
+   "say": "私の場合、年約80万円。",
+   "scene": "passbook",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "ただし<自分で申請>しないと\nもらえません",
+   "tone": "念を押すように、強く",
+   "say": "ただし、自分で申請しないともらえません。",
+   "scene": "passbook",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "妻は「{病気でも}\n支えてもらえるのね」",
+   "tone": "胸がいっぱいで、やさしく",
+   "say": "妻は、病気でも支えてもらえるのね、と言いました。",
+   "scene": "couple_walk",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "病気で働き方が変わった人\n<この年金>を知っていますか？",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "病気で働き方が変わった人。この年金を、知っていますか。",
+   "scene": "couple_walk",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  }
+ ],
+ "scenes": {
+  "doc_desk": {
+   "prompt": "An application form for a pension and a stethoscope on a wooden desk at home, reading glasses beside it, warm lamp light, text blurred No faces visible, no readable text, no logos."
+  },
+  "office_window": {
+   "prompt": "A middle-aged man in a suit seen from behind standing by an office window looking out over a Japanese city at dusk No faces visible, no readable text, no logos."
+  },
+  "hospital_bed": {
+   "prompt": "A quiet hospital room with a bed, a heart monitor and a small bag of belongings on a chair, soft afternoon light, no people No faces visible, no readable text, no logos."
+  },
+  "loan_papers": {
+   "prompt": "Housing loan documents and a calculator on a dining table at night, a man's hand resting on them, text blurred No faces visible, no readable text, no logos."
+  },
+  "consult_room": {
+   "prompt": "A hospital consultation room where a staff member's hands point to a pamphlet in front of a middle-aged man's hands, text blurred No faces visible, no readable text, no logos."
+  },
+  "pamphlet": {
+   "prompt": "A pension pamphlet with a simple diagram open on a table next to a cup of tea, a finger pointing at it, text blurred No faces visible, no readable text, no logos."
+  },
+  "passbook": {
+   "prompt": "A middle-aged man's hands holding an open bank passbook with blurred entries at a kitchen table, morning light No faces visible, no readable text, no logos."
+  },
+  "couple_walk": {
+   "prompt": "A middle-aged Japanese couple seen from behind walking slowly along a riverside path at sunset No faces visible, no readable text, no logos."
+  }
+ }
+}

@@ -1,0 +1,230 @@
+{
+ "_comment": "ST-031 教育訓練給付金（特定一般教育訓練）。雇用保険の加入期間が原則3年以上（初めては1年以上）の在職者、または離職後1年以内の人が、厚生労働大臣指定の講座を修了すると受講費用の40%（上限20万円）を支給。資格取得し就職等した場合はさらに10%追加（2024年10月以降、合計最大50%）。大型自動車免許などの講座が指定されている（教習所による）。受講開始1か月前までにハローワークで手続きが必要。例: 費用40万円→16万円支給（就職でさらに4万円）。",
+ "tempo": 1.12,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "知らないと大損する\n{50代からの資格取り}",
+ "thumb_top": "58歳で大型免許\n費用の4割が戻ってきた",
+ "thumb_teaser": "受講前の手続き",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n58歳の日本人男性。落ち着いた声で、誠実な人柄。\n## THE SCENE\n自分の身に起きた出来事を、同世代に打ち明けるように語っている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。数字は少し強調する。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st031_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st031_ai/images"
+ },
+ "lines": [
+  {
+   "text": "58歳で取った資格\n費用の{4割}が戻ってきた",
+   "tone": "信じられない結果を打ち明ける。驚きをこめて、力強く",
+   "say": "58歳で取った資格。費用の4割が戻ってきました。",
+   "scene": "license",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "始める<前の手続き>が\nカギでした",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "始める前の手続きが、カギでした。",
+   "scene": "license",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{58歳}の私\n会社の<早期退職>に応じました",
+   "tone": "淡々と",
+   "say": "58歳の私。会社の早期退職に応じました。",
+   "scene": "office_box",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "次の仕事に\n{トラックの運転手}を選びました",
+   "tone": "決意をこめて",
+   "say": "次の仕事に、トラックの運転手を選びました。",
+   "scene": "truck_yard",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "必要なのは\n{大型免許}",
+   "tone": "淡々と",
+   "say": "必要なのは、大型免許。",
+   "scene": "truck_yard",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "教習所の費用は\n約{40万円}",
+   "tone": "ため息まじりに",
+   "say": "教習所の費用は、約40万円。",
+   "scene": "receipt",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "退職金を\n<崩すしかない>",
+   "tone": "不安で声が沈む",
+   "say": "退職金を、崩すしかない。",
+   "scene": "receipt",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "ハローワークで\n言われました",
+   "tone": "思い出すように",
+   "say": "ハローワークで、言われました。",
+   "scene": "hellowork",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「{教育訓練給付金}を\n使えますよ」",
+   "tone": "職員の言葉を、やさしく明るく再現する",
+   "say": "教育訓練給付金を、使えますよ。",
+   "scene": "hellowork",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "指定の講座なら\n費用の{4割}が戻る",
+   "tone": "はっきりと、聞き手に教えるように",
+   "say": "指定の講座なら、費用の4割が戻るんです。",
+   "scene": "pamphlet",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "雇用保険に入っていた人や\n辞めて{1年以内}の人が対象",
+   "tone": "説明するように、わかりやすく",
+   "say": "雇用保険に入っていた人や、辞めて1年以内の人が対象です。",
+   "scene": "pamphlet",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "戻ってきたのは\n{約16万円}",
+   "tone": "驚きと安堵。声がふっと明るくなる",
+   "say": "戻ってきたのは、約16万円。",
+   "scene": "passbook",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "資格を生かして就職すると\nさらに{1割}上乗せ",
+   "tone": "うれしそうに",
+   "say": "資格を生かして就職すると、さらに1割上乗せ。",
+   "scene": "passbook",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "ただし<受講の前>に\n手続きが必要です",
+   "tone": "念を押すように、強く",
+   "say": "ただし、受講の前に、手続きが必要です。",
+   "scene": "calendar",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "今は 大型トラックで\n{全国}を走っています",
+   "tone": "誇らしく、明るく",
+   "say": "今は大型トラックで、全国を走っています。",
+   "scene": "highway",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "新しい仕事に挑むあなた\n<この給付金>を知っていますか？",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "新しい仕事に挑むあなた。この給付金を、知っていますか。",
+   "scene": "highway",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  }
+ ],
+ "scenes": {
+  "license": {
+   "prompt": "A Japanese-style driver's license card shape with blurred details placed on top of a driving school textbook, sunlight, text blurred No faces visible, no readable text, no logos."
+  },
+  "office_box": {
+   "prompt": "A cardboard box with a few personal office items and a folded tie on an empty desk, late evening office light, no people No faces visible, no readable text, no logos."
+  },
+  "truck_yard": {
+   "prompt": "A row of large trucks parked in a logistics yard at dawn, a middle-aged man seen from far behind looking at them No faces visible, no readable text, no logos."
+  },
+  "receipt": {
+   "prompt": "A driving school fee receipt and a calculator on a kitchen table, a man's hand resting near them, text blurred No faces visible, no readable text, no logos."
+  },
+  "hellowork": {
+   "prompt": "A Japanese public employment office counter where a staff member's hands show a pamphlet to a middle-aged man's hands, text blurred No faces visible, no readable text, no logos."
+  },
+  "pamphlet": {
+   "prompt": "A government pamphlet with a simple pie chart showing 40 percent on a desk with a pen, numbers blurred No faces visible, no readable text, no logos."
+  },
+  "passbook": {
+   "prompt": "A middle-aged man's hands holding an open bank passbook with blurred entries at a table, morning light No faces visible, no readable text, no logos."
+  },
+  "calendar": {
+   "prompt": "A wall calendar with a date circled in red and a note pinned beside it, next to a window, soft light No faces visible, no readable text, no logos."
+  },
+  "highway": {
+   "prompt": "A large truck driving on a Japanese expressway at sunrise toward mountains, seen from behind No faces visible, no readable text, no logos."
+  }
+ }
+}

@@ -1,0 +1,213 @@
+{
+ "_comment": "ST-035 堀米雄斗。東京都江東区出身。スケートボード好きの父の影響で6歳から始め、高校卒業後に単身渡米。東京2020でスケートボード男子ストリートの初代金メダル。その後不振で、パリ五輪代表争いでは最後の予選大会で逆転出場を決めた。パリ2024決勝でも最後の1本（ラストトリック）で逆転し、2大会連続金メダル。本人に似た人物の画像は使わない。",
+ "tempo": 1.05,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "最後の1本で\n{逆転の金メダル}",
+ "thumb_top": "崖っぷちから\n最後の1本で逆転金",
+ "thumb_teaser": "あきらめなかった男",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、温かく語りかける。\n## THE SCENE\nあるスポーツ選手の物語を、同世代の視聴者に静かに語って聞かせている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。最後の一文は胸を打つように力強く。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st035_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st035_ai/images"
+ },
+ "lines": [
+  {
+   "text": "最後の<1本>で\n{逆転}の金メダル",
+   "tone": "静かに、しかし力強く語り始める",
+   "say": "最後の1本で、逆転の金メダル。",
+   "scene": "board_sunset",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "その1年前\n<オリンピックに出られないかもしれなかった>",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "その1年前、オリンピックに出られないかもしれなかった。",
+   "scene": "board_sunset",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "東京の下町で\n父の影響で{6歳}から",
+   "tone": "やさしく",
+   "say": "東京の下町で、父の影響で6歳から。",
+   "scene": "park_kid",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "毎日{日が暮れるまで}\n滑り続けた",
+   "tone": "しみじみと",
+   "say": "毎日、日が暮れるまで滑り続けた。",
+   "scene": "park_kid",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "高校を出ると\n<一人で>アメリカへ",
+   "tone": "決意をこめて",
+   "say": "高校を出ると、一人でアメリカへ。",
+   "scene": "la_street",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "2021年 東京五輪\n{初代}金メダル",
+   "tone": "誇らしく",
+   "say": "2021年、東京五輪。初代金メダル。",
+   "scene": "tokyo_park",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "ところが その後\n<勝てなくなった>",
+   "tone": "暗転するように、重く",
+   "say": "ところが、その後、勝てなくなった。",
+   "scene": "fall",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "パリの代表争いでは\n<崖っぷち>",
+   "tone": "重く",
+   "say": "パリの代表争いでは、崖っぷち。",
+   "scene": "fall",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "最後の予選で\n{逆転}で出場を決めた",
+   "tone": "力をこめて",
+   "say": "最後の予選で、逆転で出場を決めた。",
+   "scene": "fall",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "2024年 パリ\n{決勝}",
+   "tone": "高まる緊張感で",
+   "say": "2024年、パリ。決勝。",
+   "scene": "paris",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "残りは\n<最後の1本>",
+   "tone": "息を詰めるように",
+   "say": "残りは、最後の1本。",
+   "scene": "paris",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "決めれば金\n<失敗すれば>終わり",
+   "tone": "緊迫して",
+   "say": "決めれば金。失敗すれば終わり。",
+   "scene": "paris",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "決めた\n{逆転}の2連覇",
+   "tone": "興奮をこめて",
+   "say": "決めた。逆転の、2連覇。",
+   "scene": "trick",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "あきらめなかった\n<1年間>が生んだ1本",
+   "tone": "しみじみと",
+   "say": "あきらめなかった1年間が、生んだ1本。",
+   "scene": "trick",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "その名は\n{堀米雄斗}",
+   "tone": "胸を打つように、力強く",
+   "say": "その名は、堀米雄斗。",
+   "scene": "trick",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  }
+ ],
+ "scenes": {
+  "board_sunset": {
+   "prompt": "A worn skateboard lying on a concrete ledge at sunset, scuffed grip tape, warm golden light No faces visible, no readable text, no logos."
+  },
+  "park_kid": {
+   "prompt": "A small boy on a skateboard seen from behind in a Tokyo neighborhood park at dusk, an adult watching from a bench No faces visible, no readable text, no logos."
+  },
+  "la_street": {
+   "prompt": "A young man with a skateboard seen from behind walking along a sunny Los Angeles street lined with palm trees No faces visible, no readable text, no logos."
+  },
+  "tokyo_park": {
+   "prompt": "A modern outdoor skateboard competition course in Tokyo under bright summer sky, a skater tiny in the distance No faces visible, no readable text, no logos."
+  },
+  "fall": {
+   "prompt": "A skateboard upside down on the ground next to a scraped concrete rail, a skater's hand on the ground, overcast light No faces visible, no readable text, no logos."
+  },
+  "paris": {
+   "prompt": "An outdoor skateboard competition venue in Paris with historic buildings in the background, crowd blurred, golden hour No faces visible, no readable text, no logos."
+  },
+  "trick": {
+   "prompt": "A skater seen from behind in mid-air over a rail in a large outdoor venue, motion blur, crowd blurred No faces visible, no readable text, no logos."
+  }
+ }
+}

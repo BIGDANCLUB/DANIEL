@@ -496,8 +496,12 @@ def main(story_path, out, source=None):
         else:
             subs.append(rich_text(l["text"], SUB_SIZE, SUB_MAX_W))
     # 行ごとの注記（"note"）。その行のあいだ、画面右上に小さく出す（例：※免許取得済み）
-    notes = [rich_text(l["note"], 44 if LANDSCAPE else 36, W * 0.6, stroke_ratio=0.12) if l.get("note") else None
-             for l in cfg["lines"]]
+    def note_box(text):
+        t = rich_text(text, 44 if LANDSCAPE else 36, W * 0.6, stroke_ratio=0.12)
+        box = Image.new("RGBA", (t.width + 36, t.height + 20), (0, 0, 0, 150))   # 下の絵や図の文字と重なっても読めるように
+        box.alpha_composite(t, (18, 10))
+        return box
+    notes = [note_box(l["note"]) if l.get("note") else None for l in cfg["lines"]]
     banner = make_banner(cfg["banner"]) if cfg.get("banner") else None
     note = None
     if cfg.get("disclaimer"):
@@ -530,7 +534,7 @@ def main(story_path, out, source=None):
         cy = HOOK_CY if cfg["lines"][li].get("hook") else SUB_CY
         frame.alpha_composite(sub, ((W - sub.width) // 2, cy - sub.height // 2))
         if notes[li] is not None:
-            frame.alpha_composite(notes[li], (W - notes[li].width - 36, (BANNER_H + 16) if banner else 28))
+            frame.alpha_composite(notes[li], (W - notes[li].width - 24, (BANNER_H + 12) if banner else 16))
         if banner:
             frame.alpha_composite(banner, (0, 0))
         if note:

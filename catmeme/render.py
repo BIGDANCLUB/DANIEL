@@ -573,8 +573,8 @@ def build_audio(cuts, starts, durs, total):
     mix += bgm_mix * np.minimum(env, duck)[:, None]
     mix = mix[: int(total * SR)]
     peak = np.abs(mix).max()
-    if peak > 0.93:
-        mix *= 0.93 / peak
+    if peak > 0.85:
+        mix *= 0.85 / peak
     return mix
 
 

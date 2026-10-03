@@ -310,6 +310,11 @@ class CutRenderer:
                                        top=cut.get("say_top", 110), color=cut.get("say_color", P.ACCENT)))
             if cut.get("sub"):
                 layers.append(P.subtitle(cut["sub"]))
+        # 決まった時間だけ出す短いセリフ（例：猫が鳴いた瞬間の「はい」）
+        self.pops = []
+        for pp in cut.get("pops", []):
+            img, a = to_np(P.big_text(pp["text"], pp["box"], max_size=pp.get("size", 110), max_lines=1))
+            self.pops.append((pp["t"], pp["t"] + pp.get("dur", 0.9), img, a))
         comp = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         for ly in layers:
             comp.alpha_composite(ly.convert("RGBA"))
@@ -366,6 +371,9 @@ class CutRenderer:
             al = cv2.resize(a, (w, h), interpolation=cv2.INTER_AREA)
             over(out, img, al, int(cx - w / 2), int(bottom - h))
         over(out, self.ov, self.ov_a * k, 0, 0)
+        for t0, t1, img, a in self.pops:
+            if t0 <= t < t1:
+                over(out, img, a, 0, 0)
         return out
 
     def close(self):

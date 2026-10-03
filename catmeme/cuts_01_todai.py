@@ -8,7 +8,6 @@ import sys
 import parts as P
 import render as R
 
-R.AUTO_PLAY = False   # この動画は FULL で指定したカットだけ最後まで流す（他のカットは今の長さのまま）
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BG = os.path.join(HERE, "backgrounds", "01_todai")

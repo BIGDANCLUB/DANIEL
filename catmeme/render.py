@@ -61,6 +61,8 @@ ASSET_PLAY = load_play()
 AUTO_PLAY = True   # True なら play.json の設定を、その素材を使う全カットに自動で当てる
 PLAY_MUSIC_ASSETS = True   # 曲つき素材の音も鳴らす（鳴っている間は BGM を下げる）
 MUSIC_DUCK = -14
+FG_DUCK = -20              # 猫の音・SEが鳴っている間の全体BGMの下げ幅（dB）
+FG_THRESHOLD = -45         # これより大きい音（dBFS）が鳴っていたら「鳴っている」とみなす
 SE_GAIN = -4               # 効果音の基本の音量（dB、ピーク0.6にそろえた後）           # 曲つき素材が鳴っている間の BGM の下げ幅（dB）
 
 
@@ -512,7 +514,7 @@ def build_audio(cuts, starts, durs, total):
         i0 = int(t0 * SR)
         seg = (a * env[:, None])[: n - i0]
         bgm_mix[i0:i0 + len(seg)] += seg
-    mix += bgm_mix * duck[:, None]
+    # BGM は最後に混ぜる（猫の音・SEが鳴っている所で下げるため）
     for i, c in enumerate(cuts):
         i0 = int(starts[i] * SR)
         if c.get("sting"):
@@ -555,10 +557,24 @@ def build_audio(cuts, starts, durs, total):
             s = synth("pop").astype(np.float32) * 0.7
             j = i0 + int(0.03 * SR)
             mix[j:j + len(s)] += np.stack([s, s], 1)[: n - j]
+    # 猫ミームの音・SE・短い曲が鳴っている間は、全体BGMを大きく下げる（ダッキング）
+    hop = int(0.02 * SR)
+    m = n // hop
+    lvl = 20 * np.log10(np.sqrt((mix[: m * hop].mean(1).reshape(m, hop) ** 2).mean(1)) + 1e-9)
+    target = np.where(lvl > FG_THRESHOLD, db(FG_DUCK), 1.0).astype(np.float32)
+    g = np.empty_like(target)
+    cur = 1.0
+    a_att, a_rel = 1 - np.exp(-1 / (0.04 / 0.02)), 1 - np.exp(-1 / (0.5 / 0.02))   # 下げるのは速く、戻すのはゆっくり
+    for i in range(m):
+        cur += (target[i] - cur) * (a_att if target[i] < cur else a_rel)
+        g[i] = cur
+    env = np.repeat(g, hop)
+    env = np.concatenate([env, np.full(n - len(env), env[-1] if len(env) else 1.0)])
+    mix += bgm_mix * np.minimum(env, duck)[:, None]
     mix = mix[: int(total * SR)]
     peak = np.abs(mix).max()
-    if peak > 0.98:
-        mix *= 0.98 / peak
+    if peak > 0.93:
+        mix *= 0.93 / peak
     return mix
 
 

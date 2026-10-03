@@ -279,7 +279,7 @@ SE_MAP = [
     ("中の人ってことね", "shine_kiraan_maou"),
     ("会議が挙げた", "pinpoon_note"), ("ふわっとしてない", "puni"), ("会見で　議長は", "cymbal_light_maou"),
     ("言い切ったーーー", "game_aceattorney_desk_slam"), ("ルール上は\nそうなんだろう", "kote"),
-    ("翌29日", "button_39"), ("女性初は", "bell_ring"),
+    ("翌29日", "button_39"), ("女性初は", "boing_01"),
     ("説得力あるか", "question_hatena_maou"),
     ("このニュースに", "button_26"), ("歴史\nうごいた", "game_dq_level_up"), ("過半数とった1位", "buzzer_wrong"),
     ("総長選の女子枠", "kon"), ("それ言うやつ", "fall_hyuu"), ("藤垣さん選んだ", "cursor_move_02"),

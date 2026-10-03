@@ -7,7 +7,7 @@
  "loop": 1.0,
  "banner": "プロを断った18歳\n{選んだ道とは}",
  "thumb_top": "プロの誘いを断った18歳\n選んだのはなぜ大学",
- "thumb_teaser": "卒業論文のテーマ",
+ "thumb_teaser": "世界で活躍する\nサッカー選手",
  "tts": {
   "model": "gemini-3.8-flash-tts",
   "voice": "Algenib",

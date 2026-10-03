@@ -14,6 +14,7 @@ usage:
   python3 tts_gemini.py --list-models         # 使える TTS モデル名を確認
 """
 import base64
+import difflib
 import hashlib
 import io
 import json
@@ -201,6 +202,69 @@ def plausible(pcm, rate, text):
     return len(pcm) / 2 / rate <= chars * 0.4 + 2.0
 
 
+ASR_MODEL = "gemini-3.8-flash"
+
+
+def _norm(s):
+    s = s.replace("パーセント", "%").replace("ヶ", "か").replace("ケ月", "か月")
+    s = re.sub(r"(?<=\d)(km|kg|キロ)", "キロ", s)
+    return re.sub(r"[、。！？!?「」『』<>{}\[\]\s・,.　]", "", s)
+
+
+def heard_ok(pcm, rate, text, tones=()):
+    """読み上げた音声を書き起こして台本と比べる。指示文の読み上げ・別の文の混入・読み落としを弾く。
+    漢字の聞き違いは許すため、主に文字数の差で判定する。書き起こしに失敗したときは通す。"""
+    buf = io.BytesIO()
+    with wave.open(buf, "wb") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(rate); w.writeframes(pcm)
+    try:
+        r = _request(f"models/{ASR_MODEL}:generateContent", {"contents": [{"parts": [
+            {"inlineData": {"mimeType": "audio/wav", "data": base64.b64encode(buf.getvalue()).decode()}},
+            {"text": "この日本語音声を一字一句そのまま書き起こしてください。書き起こしだけを出力。"}]}]})
+        heard = r["candidates"][0]["content"]["parts"][0]["text"]
+    except (Exception, SystemExit):
+        return True
+    heard_ok.last = heard
+    a, b = _norm(text), _norm(heard)
+    ok = abs(len(a) - len(b)) <= max(3, len(a) // 5) and difflib.SequenceMatcher(None, a, b).ratio() >= 0.45
+    # 指示（気持ち）の言葉を読み上げていないか
+    for tone in tones:
+        for frag in re.split(r"[、。,\s]", tone or ""):
+            f = _norm(frag)
+            if len(f) >= 4 and f in b and f not in a:
+                ok = False
+    if not ok:
+        print(f"  台本と違う読み: {heard.strip()[:60]}", flush=True)
+    return ok
+
+
+def keep_tail(pcm, rate, text, tones=()):
+    """指示文などを先に読んでから本文を読んだ音声から、末尾の本文だけを切り出す。
+    無音の切れ目のうち、残りの長さが文字数から予想される長さに近いものから順に試し、書き起こしで確かめる。"""
+    a = np.frombuffer(pcm, np.int16).astype(np.float32) / 32768
+    win = int(0.01 * rate)
+    fr = len(a) // win
+    db = 20 * np.log10(np.sqrt((a[:fr * win].reshape(fr, win) ** 2).mean(1)) + 1e-9)
+    quiet = db < -40
+    cuts, i = [], 0
+    while i < fr:
+        if quiet[i]:
+            j = i
+            while j < fr and quiet[j]:
+                j += 1
+            if j - i >= 25 and j < fr:
+                cuts.append(j - 5)
+            i = j
+        else:
+            i += 1
+    expect = len(_norm(text)) * 0.2
+    for c in sorted(cuts, key=lambda c: abs((fr - c) * 0.01 - expect))[:3]:
+        tail = pcm[c * win * 2:]
+        if heard_ok(tail, rate, text, tones):
+            return tail
+    return None
+
+
 def decode_audio(data, mime=""):
     """API の音声を (PCM, ch, 幅, rate) に。2.5 系は生PCM（audio/L16）、3.x 系は WAV ファイル丸ごと。
     WAV を生PCMとして扱うと、ヘッダが頭の「プチッ」、末尾のメタデータが「ザッ」というノイズになる。"""
@@ -258,18 +322,34 @@ def ensure_voice(story_path, force=False):
             if parts and not all(plausible(p, rate, t) for p, t in zip(parts, texts)):
                 print("  文字数に対して長すぎる行あり", flush=True)
                 parts = None
-            if parts:
-                for (i, l, out, k), p in zip(grp, parts):
+            if not parts:
+                print("  切り分けに失敗 → 1行ずつ作り直します", flush=True)
+                parts = [None] * len(grp)
+            redo = []
+            for (i, l, out, k), p, t in zip(grp, parts, texts):
+                if p is not None and heard_ok(p, rate, t, [x.get("tone") for _, x, _, _ in grp]):
                     save(i, out, k, p, rate)
-                continue
-            print("  切り分けに失敗 → 1行ずつ作り直します", flush=True)
-        for (i, l, out, k), t in zip(grp, texts):
+                else:
+                    redo.append(((i, l, out, k), t))
+        else:
+            redo = list(zip(grp, texts))
+        for (i, l, out, k), t in redo:
             print(f"[{i + 1:02d}] {t}", flush=True)
-            for _ in range(3):
-                pcm, rate = _tts(tc, build_prompt(tc, t, l.get("tone")))
-                if plausible(pcm, rate, t):
+            for n in range(4):
+                # 2回失敗したら、人物像の指示を外した短い指示で読ませる（文が人物像と似ていると指示ごと読むため）
+                prompt = build_prompt(tc, t, l.get("tone")) if n < 2 else \
+                    f"次の日本語の文だけを、{l.get('tone') or '自然に'}読み上げてください。ほかの言葉は一切読まないこと。\n{t}"
+                pcm, rate = _tts(tc, prompt)
+                if plausible(pcm, rate, t) and heard_ok(pcm, rate, t, [l.get("tone")]):
                     break
-                print("  長すぎるので作り直します", flush=True)
+                # 本文が最後に読まれていれば、前の余計な部分を切り落とす
+                if _norm(getattr(heard_ok, "last", "")).endswith(_norm(t)[-6:]):
+                    tail = keep_tail(pcm, rate, t, [l.get("tone")])
+                    if tail:
+                        pcm = tail
+                        print("  余計な読み上げを切り落としました", flush=True)
+                        break
+                print("  作り直します", flush=True)
             save(i, out, k, pcm, rate)
 
 

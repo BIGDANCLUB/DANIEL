@@ -4,7 +4,7 @@
  "gap": 0.12,
  "max_pause": 0.2,
  "lead_in": 0.05,
- "tail": 1.3,
+ "loop": 1.0,
  "banner": "体が小さくても\n{世界一の投手に}",
  "thumb_top": "身長178センチが\n世界一の投手になった",
  "thumb_teaser": "やり投げの練習器具",
@@ -24,7 +24,6 @@
    "tone": "静かに、しかし力強く語り始める",
    "say": "身長178センチが、世界一の投手になった。",
    "hook": true,
-   "se": "don",
    "scene": "mound_small",
    "crop": [
     0.5,

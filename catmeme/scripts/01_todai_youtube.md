@@ -34,22 +34,6 @@
 ・内容は2026年10月4日時点の報道・公式発表にもとづいています
 ・背景イラストの一部はAIで生成しています
 
-▼ 参考にした情報
-東京大学「次期総長予定者の決定について」
-https://www.u-tokyo.ac.jp/content/400297157.pdf
-東京大学「次期総長予定者の藤垣裕子教授が会見」
-https://www.u-tokyo.ac.jp/focus/ja/articles/z1304_00196.html
-東京大学新聞「意向投票で染谷隆夫候補が過半数獲得」
-https://www.todaishimbun.org/president2026vote_20260928/
-東京大学新聞「藤垣裕子教授の次期総長選出で会見」
-https://www.todaishimbun.org/fujigakikaiken_20260929/
-日本経済新聞「選出理由は『分断越えるため』」
-https://www.nikkei.com/article/DGXZQOUD28B0P0Y6A920C2000000/
-京都新聞「京都大学『異例の総長選出』」
-https://www.kyoto-np.co.jp/articles/-/1733927
-日本経済新聞「学長の任期制限撤廃 筑波大」
-https://www.nikkei.com/article/DGKKZO65293190R21C20A0CR8000/
-
 ▼ BGM
 Purple / RYU ITO（RYU ITO MUSIC）
 未来を創る君たちへ / 〔作曲者〕（DOVA-SYNDROME）

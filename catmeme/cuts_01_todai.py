@@ -32,10 +32,10 @@ def news(a, say, **kw):
 
 
 def friend(a, say, **kw):
-    """物知り猫（リビング・右側）のセリフ。ニュース猫に説明する役。"""
+    """博識な猫（リビング・右側）のセリフ。ニュース猫に説明する役。"""
     cat = {"a": a, "x": kw.pop("x", 1420), "h": kw.pop("h", 740), "bottom": 1010, "flip": kw.pop("flip", False),
            "sound": kw.pop("sound", False), "anchor": kw.pop("anchor", False)}
-    return dict(bg=bg("bg02_room"), cats=[cat], say=say, say_name="物知り猫", plate_xy=(1080, 900), **kw)
+    return dict(bg=bg("bg02_room"), cats=[cat], say=say, say_name="博識な猫", plate_xy=(1080, 900), **kw)
 
 
 def card(c, sub, cat=None, b="bg03_blackboard", **kw):

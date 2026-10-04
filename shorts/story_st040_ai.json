@@ -1,0 +1,230 @@
+{
+ "_comment": "ST-040 ニュース: 太陽光発電所の銅線ケーブル窃盗。2026年9月2日、静岡県警がラオス国籍の自称日雇い作業員の男(31)を逮捕。2024年10月中旬、浜松市浜名区の太陽光発電所で男6人と共謀し銅線ケーブル約540万円相当を盗んだ疑い。男は「(仲間は)知っているがその日はいなかった」と否認。共謀したとされるタイ・ラオス国籍の6人は2025年6月に逮捕済みで、2023年12月〜2024年10月に静岡・千葉・茨城など10県の太陽光発電所で番線カッターなどでケーブルを切断し盗んだとして計78件・被害約1億1000万円で送致（SBS・テレビ静岡・ANN報道）。金属盗は近年急増（警察庁統計で2023年の認知件数は約1万6千件と2020年の約3倍）。容疑段階。実名・顔は出さない。国籍は1回だけ。",
+ "tempo": 1.15,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "太陽光発電所から\n{1億円の銅線が消えた}",
+ "thumb_top": "太陽光発電所から\n1億円の銅線が消えた",
+ "thumb_teaser": "人のいない夜を狙う",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、報道番組のように重みをもって語る。\n## THE SCENE\n実際に起きた事件を、同世代の視聴者に伝えている。\n### DIRECTOR'S NOTES\n煽りすぎず、事実を淡々と、しかし緊張感をもって伝える。最後の問いかけは視聴者にまっすぐ語りかける。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st040_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st040_ai/images"
+ },
+ "lines": [
+  {
+   "text": "太陽光発電所から\n<1億円>の銅線が消えた",
+   "tone": "衝撃的な事実を、低く力強く告げる",
+   "say": "太陽光発電所から、1億円の銅線が消えた。",
+   "scene": "solar_night",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "夜の発電所で\n<何が>起きていたのか",
+   "tone": "秘密を明かす前のように、声を落として引きつける",
+   "say": "夜の発電所で、何が起きていたのか。",
+   "scene": "solar_night",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "2026年9月2日\n{静岡県警}が男を逮捕",
+   "tone": "淡々と、ニュースを伝えるように",
+   "say": "2026年9月2日、静岡県警が男を逮捕した。",
+   "scene": "police",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "{31歳}の\n自称日雇い作業員",
+   "tone": "淡々と",
+   "say": "31歳の、自称日雇い作業員。",
+   "scene": "police",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{ラオス国籍}の\n男だ",
+   "tone": "淡々と、事実だけを伝える",
+   "say": "ラオス国籍の男だ。",
+   "scene": "police",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "浜松市の太陽光発電所で\n{銅線ケーブル}を\n盗んだ疑い",
+   "tone": "淡々と、ニュースを伝えるように",
+   "say": "浜松市の太陽光発電所で、銅線ケーブルを盗んだ疑い。",
+   "scene": "cut_cable",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "被害は\n約{540万円}相当",
+   "tone": "重く",
+   "say": "被害は、約540万円相当。",
+   "scene": "cut_cable",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "男は「<その日はいなかった>」と\n容疑を否認している",
+   "tone": "淡々と",
+   "say": "男は、その日は現場にいなかったと、容疑を否認している。",
+   "scene": "fence",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "仲間とみられる{6人}は\n<去年すでに>逮捕された",
+   "tone": "淡々と",
+   "say": "仲間とみられる6人は、去年すでに逮捕された。",
+   "scene": "fence",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "手口は\n{番線カッター}で切断",
+   "tone": "重く",
+   "say": "手口は、番線カッターで切断。",
+   "scene": "cutter",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "被害は{10県}で\n{78件}",
+   "tone": "重く",
+   "say": "被害は、10県で78件。",
+   "scene": "map_pins",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "総額は\n約{1億1000万円}",
+   "tone": "強調して",
+   "say": "総額は、約1億1000万円。",
+   "scene": "map_pins",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "狙われるのは\n<人のいない>発電所",
+   "tone": "静かに、警告するように",
+   "say": "狙われるのは、人のいない発電所。",
+   "scene": "solar_day",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "金属の盗難は\n<この数年で急増>している",
+   "tone": "重く",
+   "say": "金属の盗難は、この数年で急増している。",
+   "scene": "scrap",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "ケーブルを切られた発電所は\n<発電が止まる>",
+   "tone": "重く",
+   "say": "ケーブルを切られた発電所は、発電が止まる。",
+   "scene": "solar_day2",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "あなたは\n<どう思いますか？>",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "あなたは、どう思いますか。",
+   "scene": "solar_day2",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  }
+ ],
+ "scenes": {
+  "solar_night": {
+   "prompt": "A large solar farm in the Japanese countryside at night under a dark sky, rows of panels faintly lit by moonlight, no people No faces visible, no readable text, no logos."
+  },
+  "police": {
+   "prompt": "Red police lights reflecting on wet asphalt in front of a Japanese prefectural police building at night, no people No faces visible, no readable text, no logos."
+  },
+  "cut_cable": {
+   "prompt": "Cleanly cut thick copper power cables sticking out of a trench beside solar panels, close-up, harsh flashlight beam No faces visible, no readable text, no logos."
+  },
+  "fence": {
+   "prompt": "A cut chain-link fence around a solar power plant at dawn, a hole large enough to pass through, no people No faces visible, no readable text, no logos."
+  },
+  "cutter": {
+   "prompt": "A large heavy-duty bolt cutter lying on gravel next to cut cable ends, dim light No faces visible, no readable text, no logos."
+  },
+  "map_pins": {
+   "prompt": "A paper map of central Japan pinned to a board with many red pins scattered across prefectures, text blurred No faces visible, no readable text, no logos."
+  },
+  "solar_day": {
+   "prompt": "A remote unmanned solar farm surrounded by mountains on a quiet afternoon, no people No faces visible, no readable text, no logos."
+  },
+  "scrap": {
+   "prompt": "A pile of stripped copper wire and scrap metal at a scrapyard, orange copper glinting in sunlight, no people No faces visible, no readable text, no logos."
+  },
+  "solar_day2": {
+   "prompt": "Rows of solar panels with a dark inverter box and dangling cut cables, cloudy sky, abandoned feeling No faces visible, no readable text, no logos."
+  }
+ }
+}

@@ -2110,5 +2110,155 @@
   "key": "5633f7a6d7b23a47552c5d28c7dffae0207f30c2",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "Workers in plain work clothes seen from far behind walking into a farm field at dawn, mist No faces visible, no readable text, no logos."
+ },
+ "st038_ai_container": {
+  "file": "st038_ai_container.jpg",
+  "key": "0b7b7410c8191aca2b78e33545b25da30df1671e",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A shipping container half loaded with car engines and parts, door open, harsh work light, no people No faces visible, no readable text, no logos."
+ },
+ "st038_ai_law": {
+  "file": "st038_ai_law.jpg",
+  "key": "83f2bcebd204c957d74bb9dee83ae34c93f3c0f1",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A thick Japanese law book open on a wooden desk beside a judge's gavel, dim dramatic light, text blurred No faces visible, no readable text, no logos."
+ },
+ "st038_ai_lock": {
+  "file": "st038_ai_lock.jpg",
+  "key": "873cf97a0ef5233785962d722d2b13e71b8a850d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A bright yellow steering wheel lock attached to a car steering wheel, close-up, soft daylight No faces visible, no readable text, no logos."
+ },
+ "st038_ai_night_drive": {
+  "file": "st038_ai_night_drive.jpg",
+  "key": "c2f825a001ee519693a6cb13852624fcc438aad3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Red tail lights of a white van driving away on an empty country road at night, motion blur No faces visible, no readable text, no logos."
+ },
+ "st038_ai_parking": {
+  "file": "st038_ai_parking.jpg",
+  "key": "4675929324231c585226096c421d9409218ddd56",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A white commercial van parked alone in a dim residential parking lot at night under a single street lamp, no people No faces visible, no readable text, no logos."
+ },
+ "st038_ai_parts": {
+  "file": "st038_ai_parts.jpg",
+  "key": "0933cbe5357c9dd8ffebe96165ef641ebd915504",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Piles of dismantled car parts, engines and doors stacked inside a dim warehouse, no people No faces visible, no readable text, no logos."
+ },
+ "st038_ai_police": {
+  "file": "st038_ai_police.jpg",
+  "key": "828dd31641ee7fc1911680a366f140edbdeaa62e",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Red police lights flashing in front of a Japanese police headquarters building at night, wet pavement, no people No faces visible, no readable text, no logos."
+ },
+ "st038_ai_port": {
+  "file": "st038_ai_port.jpg",
+  "key": "c52939716a3f71a386b6e9d7beb151e7641d5d21",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Stacked shipping containers at a Japanese port at dusk with a large cargo ship, cranes, no people No faces visible, no readable text, no logos."
+ },
+ "st038_ai_yard": {
+  "file": "st038_ai_yard.jpg",
+  "key": "45a43cbcd06563ab21848d610c3a7e6d2ebe14ce",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A walled vehicle dismantling yard behind tall corrugated metal fences in the Japanese countryside, overcast, no people No faces visible, no readable text, no logos."
+ },
+ "st039_ai_dark_house": {
+  "file": "st039_ai_dark_house.jpg",
+  "key": "391cfb0e2ea135ed9bf104b11e67f95bc3bd453f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A dark Japanese detached house at night with all windows unlit and a gate slightly open, quiet residential street No faces visible, no readable text, no logos."
+ },
+ "st039_ai_highway": {
+  "file": "st039_ai_highway.jpg",
+  "key": "f747bf32b5e948644bf02a0adbdd68a2396b158f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A plain compact car driving on a Japanese expressway at night, tail lights streaking, long exposure No faces visible, no readable text, no logos."
+ },
+ "st039_ai_mailbox": {
+  "file": "st039_ai_mailbox.jpg",
+  "key": "44f5b441ea3e056578307522d3e87e17ae7c371b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An overflowing mailbox with newspapers and envelopes at the gate of a Japanese house, dusk, no people No faces visible, no readable text, no logos."
+ },
+ "st039_ai_map": {
+  "file": "st039_ai_map.jpg",
+  "key": "5dd1bdae03625d45946c9e37bea302196f3abdec",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A road map of Japan spread on a car dashboard with a pen and coins, night, interior dome light, text blurred No faces visible, no readable text, no logos."
+ },
+ "st039_ai_pachinko": {
+  "file": "st039_ai_pachinko.jpg",
+  "key": "d0821aa670f4e678aad1b75dfdae01bb2b709c8b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "The bright neon-lit exterior of a Japanese pachinko parlor at night in a rural town, blurred lights, no readable text, no people No faces visible, no readable text, no logos."
+ },
+ "st039_ai_police": {
+  "file": "st039_ai_police.jpg",
+  "key": "ca17967d020c3e891d0c157c230032dc049f2f9b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "The entrance of the Tokyo Metropolitan Police style headquarters building at night with flashing red lights in the foreground, no people No faces visible, no readable text, no logos."
+ },
+ "st039_ai_station": {
+  "file": "st039_ai_station.jpg",
+  "key": "e1dcc76955a285254a988af357653443a478c389",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An empty Japanese regional train station platform at dawn with a single suitcase left near a bench, no people No faces visible, no readable text, no logos."
+ },
+ "st040_ai_cut_cable": {
+  "file": "st040_ai_cut_cable.jpg",
+  "key": "313b2777b632e0c51ce93030c6366ed72cb6c310",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Cleanly cut thick copper power cables sticking out of a trench beside solar panels, close-up, harsh flashlight beam No faces visible, no readable text, no logos."
+ },
+ "st040_ai_cutter": {
+  "file": "st040_ai_cutter.jpg",
+  "key": "67e5e77bcd7d45a3cea49ca87b76515b9d890bf6",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A large heavy-duty bolt cutter lying on gravel next to cut cable ends, dim light No faces visible, no readable text, no logos."
+ },
+ "st040_ai_fence": {
+  "file": "st040_ai_fence.jpg",
+  "key": "616c20d254bb2bb99e594720809bbf79da7e1418",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A cut chain-link fence around a solar power plant at dawn, a hole large enough to pass through, no people No faces visible, no readable text, no logos."
+ },
+ "st040_ai_map_pins": {
+  "file": "st040_ai_map_pins.jpg",
+  "key": "4d9e3ec328e553979a9978de3d276a5874f93932",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A paper map of central Japan pinned to a board with many red pins scattered across prefectures, text blurred No faces visible, no readable text, no logos."
+ },
+ "st040_ai_police": {
+  "file": "st040_ai_police.jpg",
+  "key": "ab92aca2f380a819a6e970504c54a80e73822803",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Red police lights reflecting on wet asphalt in front of a Japanese prefectural police building at night, no people No faces visible, no readable text, no logos."
+ },
+ "st040_ai_scrap": {
+  "file": "st040_ai_scrap.jpg",
+  "key": "3c6551d80646df26849e60a452c5f10a39780855",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A pile of stripped copper wire and scrap metal at a scrapyard, orange copper glinting in sunlight, no people No faces visible, no readable text, no logos."
+ },
+ "st040_ai_solar_day": {
+  "file": "st040_ai_solar_day.jpg",
+  "key": "f021ed34ada422be48f2a7ac2ec1b884e935c6d0",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A remote unmanned solar farm surrounded by mountains on a quiet afternoon, no people No faces visible, no readable text, no logos."
+ },
+ "st040_ai_solar_day2": {
+  "file": "st040_ai_solar_day2.jpg",
+  "key": "20e6661a57c61dfeb0d8bfd187fe38716346ddc8",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Rows of solar panels with a dark inverter box and dangling cut cables, cloudy sky, abandoned feeling No faces visible, no readable text, no logos."
+ },
+ "st040_ai_solar_night": {
+  "file": "st040_ai_solar_night.jpg",
+  "key": "caf877dcd9982d53e7667e8c2ddb7cee94c96028",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A large solar farm in the Japanese countryside at night under a dark sky, rows of panels faintly lit by moonlight, no people No faces visible, no readable text, no logos."
  }
 }

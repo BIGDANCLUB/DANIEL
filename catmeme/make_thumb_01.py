@@ -50,8 +50,8 @@ def text(d, xy, s, size, fill, stroke, stroke_fill, anchor="la"):
 RED = (230, 20, 20)
 
 
-def main(badge_parts=(("553", 1), (" ＞ ", 0), ("1107", 0)), out=OUT, cat=("surprise_big_pupils_cat", 0.6, False),
-         band="東大の新総長", line1="投票2位が", line2="総長に!?", ray_cols=((255, 40, 40), (255, 210, 0)),
+def main(badge_parts=(("553", 1), (" ＞ ", 0), ("1107", 0)), out=OUT, cat=("huh_huh_cat", 1.0, False),
+         band="東大の総長選", line1="1位なのに", line2="落選!?", ray_cols=((255, 40, 40), (255, 210, 0)),
          line2_color=(255, 40, 40), band_color=(255, 220, 0), cat_left=False):
     bg = Image.open(os.path.join(HERE, "backgrounds", "01_todai", "bg06_spotlight.png")).convert("RGB").resize((W, H))
     img = bg.convert("RGBA")

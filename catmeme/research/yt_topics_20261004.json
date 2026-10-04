@@ -1,28 +1,31 @@
 {
  "source": "yt_trends_20261004.json",
- "note": "タイトルを読んで手で付けたラベル。news = 同じ出来事・報道を扱った動画のまとまり / theme = 特定のニュースではないが同じ話題 / それ以外はチャンネルのジャンルで分類",
- "news": [
-  {"name": "中日・井上監督の退任と戦力外通告", "ids": ["pB99espCVg8", "sCSWIxY57j4", "MVH24VM9Qv8", "R7cf8qtctrg", "NPRt_SCLp6w", "5EbmuKzfrcE"]},
-  {"name": "中国・英雄烈士への追悼（王成龙）", "ids": ["YxgWNfEBJuU"]},
-  {"name": "ホルムズ海峡を避けるサウジの迂回パイプライン", "ids": ["ZdF4YYETKn8"]},
-  {"name": "米サンディスクの日本への5兆円超の投資", "ids": ["DHJw3rdfmjM"]},
-  {"name": "プロ野球・先週の珍事件（監督の続投など）", "ids": ["w6ecbxWTczk"]},
-  {"name": "堀大輔の成績発言と不倫説", "ids": ["1nnukBRxodY", "NFND4BpqcJU", "XA64ILTZ6Ck"]},
-  {"name": "ドラマ『ダウンタイム』のかなぶん役", "ids": ["1knMY7icHm4", "cETeTX-fwgQ", "swSpMJMtmmg"]},
-  {"name": "池田エライザとNaokimanの熱愛報道", "ids": ["XZJEFRfAF38"]},
-  {"name": "ドラマ『VIVANT』の考察", "ids": ["RdL5y46wrCE"]}
- ],
- "themes": [
-  {"name": "お金・税金・社会保険料（手取り・NISA・通勤手当）", "ids": ["2xmD_SlD0VI", "50euBvwpQXY", "1dYm4BwYAac", "3f13u4iQmi8", "_dFnWrF0UiU", "uczdzuG-O2I"]},
-  {"name": "会社員のあるある（給料・働き方・休憩）", "ids": ["qnPP5UtzpTo", "ioOH14jufRM", "90gaS7m4tmQ", "bqYVK7uYALs"]},
-  {"name": "日本すごい・海外との比較", "ids": ["mL-080cUJ-E", "GETUyT4eGBw", "9BtXL2yee-E", "EzJK2fGKP5Q", "LA6sICdD8Xo"]}
+ "note": "タイトルを読んで手で付けたラベル。kind: ニュース = 同じ出来事・報道 / 話題 = 特定のニュースではないが同じテーマ（お金・会社員あるある など）。どこにも入らない動画はチャンネルのジャンルで集計",
+ "topics": [
+  {"kind": "ニュース", "name": "中日・井上監督の退任と戦力外通告", "ids": ["pB99espCVg8", "sCSWIxY57j4", "MVH24VM9Qv8", "R7cf8qtctrg", "NPRt_SCLp6w", "5EbmuKzfrcE"]},
+  {"kind": "ニュース", "name": "中国・英雄烈士への追悼（王成龙）", "ids": ["YxgWNfEBJuU"]},
+  {"kind": "ニュース", "name": "ホルムズ海峡を避けるサウジの迂回パイプライン", "ids": ["ZdF4YYETKn8"]},
+  {"kind": "ニュース", "name": "米サンディスクの日本への5兆円超の投資", "ids": ["DHJw3rdfmjM"]},
+  {"kind": "ニュース", "name": "プロ野球・先週の珍事件（監督の続投など）", "ids": ["w6ecbxWTczk"]},
+  {"kind": "ニュース", "name": "堀大輔の成績発言と不倫説", "ids": ["1nnukBRxodY", "NFND4BpqcJU", "XA64ILTZ6Ck"]},
+  {"kind": "ニュース", "name": "ドラマ『ダウンタイム』のかなぶん役", "ids": ["1knMY7icHm4", "cETeTX-fwgQ", "swSpMJMtmmg"]},
+  {"kind": "ニュース", "name": "池田エライザとNaokimanの熱愛報道", "ids": ["XZJEFRfAF38"]},
+  {"kind": "ニュース", "name": "ドラマ『VIVANT』の考察", "ids": ["RdL5y46wrCE"]},
+
+  {"kind": "話題", "name": "会社員あるある（給料・働き方・休憩）", "ids": ["qnPP5UtzpTo", "ioOH14jufRM", "90gaS7m4tmQ", "bqYVK7uYALs"]},
+  {"kind": "話題", "name": "お金・税金・社会保険料（手取り・NISA・通勤手当・控除）", "ids": ["2xmD_SlD0VI", "50euBvwpQXY", "1dYm4BwYAac", "3f13u4iQmi8", "_dFnWrF0UiU", "uczdzuG-O2I", "4H7dGbln1Y4", "8HgFv6o_wD4"]},
+  {"kind": "話題", "name": "日本すごい・海外との比較", "ids": ["mL-080cUJ-E", "GETUyT4eGBw", "9BtXL2yee-E", "EzJK2fGKP5Q", "LA6sICdD8Xo"]},
+  {"kind": "話題", "name": "チェーン店グルメ（山岡家・さわやか・はま寿司）", "ids": ["vdR44G64gqg", "BdxmtE9s3P4", "sKbwi77q_uY", "-5EIG20r7Tk"]},
+  {"kind": "話題", "name": "体・健康（カフェイン・気圧・食べ合わせ・転落）", "ids": ["clc7p6PtpDI", "FdQQrXCxmBc", "ht1EJzuRs-Q", "L_PsopWOYTA"]},
+  {"kind": "話題", "name": "社会風刺（平等・自己責任・建前）", "ids": ["-x5ieGnfGEU", "LyeZh0k31dc", "5YqD8MpYYCA", "_kkKCyC9ZRw", "U0aNNlTClss", "QCsqg-cyRV0", "d5vQMjlrp3E", "1beklS8t8IY", "uTlU1mCzLCo", "QgQC9_p2G9k", "psiFEivpLoM", "0soDPYSyUxg", "K7_XE1E6eLY", "-s2K0gzQkyQ"]},
+  {"kind": "話題", "name": "暮らしの雑学（制度・モノの由来）", "ids": ["LvGO_dEFjwk", "3Z1ej8oHduw", "dxWOomPYUG8", "c8flm8mBZ4k", "IjI1PDwpdJ4", "JUK13FvYwG4", "bKwu8qKyNyg", "PM3F_ARlyYg", "fozT0ZismNM", "y5BB-KAIcME"]},
+  {"kind": "話題", "name": "スカッと話", "ids": ["Zz4g66-DFMc", "o9fmHNmWNV8", "um3fvRVm_NI"]},
+  {"kind": "話題", "name": "YouTuberあるある・動画づくり", "ids": ["FW5OXuqk1Go", "_oLXtI1nqsA", "RYu7ksDiDpc"]},
+  {"kind": "話題", "name": "企業の逆転劇（ポカリ・Apple・ソニーなど）", "ids": ["A-wupvWlOX8", "rvruRXmvnyg", "xamfUV_baWo", "TBU4aG4tYKs", "Un5cHNXJO5A", "T7wbtZvLnQM", "yMozZMWAnRE", "2wfy9E7iArw", "ePE6_PWoJOI", "Z4eytvi9ZD4"]},
+  {"kind": "話題", "name": "歴史・偉人（幕末明治の外国人・僧侶・将軍）", "ids": ["duQyjg-8Pjg", "i-oNr8eMFKA", "mQpafyeWeMw", "W0byecrmqIA", "ukyWu1FLA7k", "u2XlVYdjdeY", "EOIkzZ_uWdE", "Ej3EPYHtXy0", "pTa76xmiBv4", "0LSmZPqWy38", "AKzYBSaLF-s", "qLWiMyjK5-Q", "KL_nUMSyvLs", "UsMaUN3_4Kw", "LUyH3WnansI", "d-JGTMOVkEU", "OAxSwQWslIM"]}
  ],
  "channel_genres": {
   "中国語の猫meme（ネタ・小劇場）": ["哈基米德", "可乐的猫", "meme猫", "猫meme生成器", "猫meme练习生", "猫meme大侠"],
-  "歴史・企業の逆転劇": ["ニャーストリーチャンネル", "にゃんこリサーチ局", "オメガのつぶやき", "ミーム諸子百家"],
-  "雑学": ["にゃんだかんだにゃ!"],
-  "社会風刺・あるある": ["ねこ世界線", "ちゅーるミーム", "俺ミーム", "くいなの記録【猫ミーム】", "猫ミーム依存症", "ぽっぷ　ミーム解説", "ほのぼの猫ミーム", "【ゆる猫】ゆるっと猫ミーム"],
-  "グルメ・体験談": ["ゴブリン係長"],
   "ゆっくり茶番": ["ゆっくりblue1(目標登録者1万人越え)"]
  }
 }

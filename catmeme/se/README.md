@@ -79,7 +79,7 @@
 | snare_maou.mp3 | スネア（魔王魂） |  | スネア　単発魔王魂  ドラム2-スネア.mp3 | 魔王魂 |
 | spo.mp3 | スポッ |  | スポッ.mp3 |  |
 | game_smash_x_just_guard.wav | スマブラXのジャストガード | ⚠ゲーム | スマブラX　ジャスガ.wav |  |
-| game_smash_gameset.wav | スマブラのGAMESET | ⚠ゲーム | スマブラ　GAMESET.wav |  |
+| game_smash_gameset.wav | スマブラのGAMESET | ⚠ゲーム・**あまり使わない**（好みに合わない） | スマブラ　GAMESET.wav |  |
 | game_smash_ready_go.wav | スマブラのReady Go | ⚠ゲーム | スマブラ　Ready Go.wav |  |
 | game_smash_finish.wav | スマブラのとどめ演出 | ⚠ゲーム | スマブラ　とどめ演出.wav |  |
 | game_smash_just_guard.wav | スマブラのジャストガード | ⚠ゲーム | スマブラ　ジャスガ.wav |  |
@@ -98,7 +98,7 @@
 | anime_doraemon_gadget.wav | ドラえもんの秘密道具 | ⚠テレビ・アニメ | ドラえもん秘密道具.wav |  |
 | game_dq_level_up.mp3 | ドラクエのレベルアップ | ⚠ゲーム | ドラクエ　レベルアップ.mp3 |  |
 | game_dq_attack_ally.wav | ドラクエの味方攻撃 | ⚠ゲーム | ドラクエ　味方攻撃.wav |  |
-| game_dq_inn.wav | ドラクエの宿屋 | ⚠ゲーム | ドラクエ　宿屋.wav |  |
+| game_dq_inn.wav | ドラクエの宿屋 | ⚠ゲーム・**あまり使わない**（好みに合わない） | ドラクエ　宿屋.wav |  |
 | game_dq_miss.wav | ドラクエの攻撃ミス | ⚠ゲーム | ドラクエ　攻撃ミス.wav |  |
 | game_dq_attack_enemy.wav | ドラクエの敵攻撃 | ⚠ゲーム | ドラクエ　敵攻撃.wav |  |
 | anime_dbz_punch.wav | ドラゴンボールの打撃音 | ⚠テレビ・アニメ | ドラゴンボール 打撃音.wav |  |

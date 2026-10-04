@@ -50,7 +50,9 @@ def text(d, xy, s, size, fill, stroke, stroke_fill, anchor="la"):
 RED = (230, 20, 20)
 
 
-def main(badge_parts=(("553", 1), (" ＞ ", 0), ("1107", 0)), out=OUT):
+def main(badge_parts=(("553", 1), (" ＞ ", 0), ("1107", 0)), out=OUT, cat=("surprise_big_pupils_cat", 0.6, False),
+         band="東大の新総長", line1="投票2位が", line2="総長に!?", ray_cols=((255, 40, 40), (255, 210, 0)),
+         line2_color=(255, 40, 40), band_color=(255, 220, 0), cat_left=False):
     bg = Image.open(os.path.join(HERE, "backgrounds", "01_todai", "bg06_spotlight.png")).convert("RGB").resize((W, H))
     img = bg.convert("RGBA")
     # 集中線（赤と黄色の放射）
@@ -61,7 +63,7 @@ def main(badge_parts=(("553", 1), (" ＞ ", 0), ("1107", 0)), out=OUT):
         a0 = np.deg2rad(i * 10)
         a1 = np.deg2rad(i * 10 + 5)
         r = 1600
-        col = (255, 40, 40, 150) if i % 2 else (255, 210, 0, 120)
+        col = (*ray_cols[0], 150) if i % 2 else (*ray_cols[1], 120)
         rd.polygon([(cx, cy), (cx + r * np.cos(a0), cy + r * np.sin(a0)), (cx + r * np.cos(a1), cy + r * np.sin(a1))], fill=col)
     img.alpha_composite(rays)
     # 右側を暗くして文字を読みやすく
@@ -72,16 +74,16 @@ def main(badge_parts=(("553", 1), (" ＞ ", 0), ("1107", 0)), out=OUT):
     img.alpha_composite(shade)
 
     # 猫（驚く猫を大きく）
-    cat = outline(cat_img("surprise_big_pupils_cat", 0.6, 640), 8, (255, 255, 255, 255))
-    img.alpha_composite(cat, (max(0, 330 - cat.width // 2), H - cat.height + 20))
+    cat = outline(cat_img(cat[0], cat[1], 640, cat[2]), 8, (255, 255, 255, 255))
+    img.alpha_composite(cat, (0 if cat_left else max(0, 330 - cat.width // 2), H - cat.height + (0 if cat_left else 20)))
 
     d = ImageDraw.Draw(img)
     # 上の黄色い帯
-    d.polygon([(470, 30), (1250, 30), (1230, 130), (450, 130)], fill=(255, 220, 0))
-    text(d, (850, 80), "東大の新総長", 76, (20, 20, 20), 0, None, anchor="mm")
+    d.polygon([(470, 30), (1250, 30), (1230, 130), (450, 130)], fill=band_color)
+    text(d, (850, 80), band, 76 if len(band) <= 9 else int(76 * 9 / len(band)), (20, 20, 20), 0, None, anchor="mm")
     # メインの文字
-    text(d, (870, 222), "投票2位が", 128, (255, 255, 255), 12, (0, 0, 0), anchor="mm")
-    text(d, (870, 380), "総長に!?", 172, (255, 40, 40), 14, (255, 255, 255), anchor="mm")
+    text(d, (870, 222), line1, 128 if len(line1) <= 5 else int(128 * 5 / len(line1)), (255, 255, 255), 12, (0, 0, 0), anchor="mm")
+    text(d, (870, 380), line2, min(172, int(172 * 740 / d.textlength(line2, font=P.font("black", 172)))), line2_color, 14, (255, 255, 255), anchor="mm")
     # 下の札（赤い部分と黒い部分を並べる。"\n" で2行）
     lines = [[]]
     for t, col in badge_parts:
@@ -113,16 +115,20 @@ def main(badge_parts=(("553", 1), (" ＞ ", 0), ("1107", 0)), out=OUT):
     print("->", out)
 
 
-# 札の文言の別案（1 = 赤くする部分）
+# 札は 553 ＞ 1107 のまま、ほかを変えた案
 VARIANTS = {
-    "a": (("過半数", 1), ("の1位が", 0), ("\n", 0), ("まさかの落選", 1)),
-    "b": (("ダブルスコア負け", 1), ("\n", 0), ("からの逆転", 0)),
-    "c": (("1位の", 0), ("半分", 1), ("の票で", 0), ("\n", 0), ("当選", 1)),
-    "d": (("投票の意味", 0), ("とは……", 1)),
-    "e": (("1107票", 0), ("でも", 0), ("落選", 1)),
+    "f": dict(cat=("huh_huh_cat", 1.0, False), band="東大の総長選", line1="1位なのに", line2="落選!?"),
+    "g": dict(cat=("confused_i_dont_know_cat", 1.5, True), cat_left=True, band="意向投票の結果", line1="東大が選んだ", line2="まさかの2位",
+              ray_cols=((40, 120, 255), (255, 210, 0)), line2_color=(255, 220, 0)),
+    "h": dict(cat=("despair_dramatic_kitten", 1.0, False), band="過半数1107票", line1="投票の", line2="意味とは",
+              ray_cols=((120, 40, 200), (255, 60, 120))),
+    "i": dict(cat=("peek_what_happen_cat", 1.0, False), band="東大150年で初の女性総長", line1="でも投票は", line2="2位!?",
+              ray_cols=((255, 120, 0), (255, 230, 0))),
+    "j": dict(cat=("angry_shooting_cat", 1.0, False), band="東大の新総長", line1="ダブルスコア", line2="逆転!?",
+              ray_cols=((255, 0, 0), (20, 20, 20)), band_color=(255, 255, 255)),
 }
 
 if __name__ == "__main__":
     main()
     for k, v in VARIANTS.items():
-        main(v, OUT.replace(".png", f"_{k}.png"))
+        main(out=OUT.replace(".png", f"_{k}.png"), **v)

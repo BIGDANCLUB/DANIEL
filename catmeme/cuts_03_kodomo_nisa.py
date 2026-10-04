@@ -198,6 +198,14 @@ def cuts_all():
 
 # 効果音（catmeme/se/）。セリフ・字幕・カード画像の一部が一致したカットに付ける（上から順に最初の一致）
 SE_MAP = [
+    # ゲーム・テレビ番組の音（⚠ 権利は各社。収益化で申し立てを受けることがある）
+    ("今日の本題", "game_monhun_quest_start"), ("e01b_theme", "game_smash_ready_go"), ("タダになる箱", "anime_doraemon_gadget"),
+    ("6分の1", "game_dq_miss"), ("反抗期", "game_mgs_alert"), ("前借り", "game_aceattorney_desk_slam"),
+    ("上乗せ", "game_mario_1up"), ("約286万円", "game_dq_level_up"), ("70万も", "game_zelda_item_get"),
+    ("うまくいけば", "game_smash_zannen"), ("前は　18歳まで", "game_dq_attack_enemy"), ("無期限", "game_airride_checker"),
+    ("じいじが", "game_dq_inn"), ("親ガチャ", "tv_gakitsuka_dedeen"), ("溶かされたら", "game_undertale_encounter"),
+    ("限って", "anime_shinchan_taraan"), ("打ち切り", "game_smash_gameset"), ("パッチ", "game_minecraft_anvil"),
+    ("スカスカ", "tv_dokkiri_tettere"), ("家庭しだい", "tv_professional_poon"),
     ("そもそも\nなんだっけ", "pikon"), ("タダになる箱", "idea_newtype_01"), ("個別の株", "buzzer_wrong"),
     ("投資信託だけね", "tsukkomi_bishi"), ("始めないと損", "question_hatena_maou"), ("時間を\n味方", "shine_kira_01"),
     ("じいじが", "pinpon_notice"), ("どっちが先", "pi"), ("親が先って", "hyoshigi_01"), ("使う人が\n少なかった", "fall_hyuu"),

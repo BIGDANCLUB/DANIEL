@@ -2,6 +2,7 @@
 
 必要: 環境変数 YOUTUBE_API_KEY（YouTube Data API v3 のキー。値は表示しない）
 python3 catmeme/tools/yt_trends.py → catmeme/research/yt_trends_<日付>.md / .json
+python3 catmeme/tools/yt_trends.py --md 20261004 → 保存済み json から md だけ作り直す（API 不要）
 
 しくみ
 1. 検索ワードで「猫ミーム × ニュース・時事」の動画とチャンネルを集める（直近30日）
@@ -26,6 +27,7 @@ QUERIES = ["猫ミーム ニュース", "猫ミーム 時事", "猫ミーム 解
            "猫ミーム 政治", "猫ミーム 経済", "猫ミームで解説", "猫ミーム 速報", "猫マニ ニュース"]
 CAT_WORDS = ("猫ミーム", "猫マニ", "#猫ミーム", "猫meme", "ねこミーム")
 N_CHANNELS = 30
+TOP_VIDEOS = 15
 
 
 def get(path, **params):
@@ -120,21 +122,32 @@ def main():
                           "catmeme_views_30d": ch_views[c],
                           "url": "https://www.youtube.com/channel/" + c} for c in top],
             "videos_7d": recent}
-    with open(os.path.join(OUT, f"yt_trends_{day}.json"), "w") as f:
+    with open(os.path.join(OUT, f"yt_trends_{day}.json"), "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
-    lines = [f"# 猫ミーム×時事チャンネル調査（{now:%Y-%m-%d}）", "", f"## 上位{len(top)}チャンネル", "",
-             "| # | チャンネル | 登録者 | 猫ミーム動画の再生数（直近30日） |", "|---|---|---|---|"]
-    for i, c in enumerate(data["channels"], 1):
-        lines.append(f"| {i} | [{c['name']}]({c['url']}) | {c['subscribers']:,} | {c['catmeme_views_30d']:,} |")
-    lines += ["", "## 直近7日に投稿された動画（再生数順）", "",
-              "| # | 再生数 | タイトル | チャンネル | 投稿日 |", "|---|---|---|---|---|"]
-    for i, r in enumerate(recent, 1):
-        t = re.sub(r"\|", "／", r["title"])
-        lines.append(f"| {i} | {r['views']:,} | [{t}]({r['url']}) | {r['channel']} | {r['published']} |")
-    with open(os.path.join(OUT, f"yt_trends_{day}.md"), "w") as f:
-        f.write("\n".join(lines) + "\n")
+    write_md(data, day)
     print(f"{len(top)} channels, {len(recent)} videos -> {OUT}")
 
 
+def write_md(data, day):
+    """表は動画 TOP_VIDEOS 本まで（全件は json に残る）"""
+    recent = data["videos_7d"]
+    lines = [f"# 猫ミーム×時事チャンネル調査（{day[:4]}-{day[4:6]}-{day[6:]}）", "",
+             f"## 上位{len(data['channels'])}チャンネル", "",
+             "| # | チャンネル | 登録者 | 猫ミーム動画の再生数（直近30日） |", "|---|---|---|---|"]
+    for i, c in enumerate(data["channels"], 1):
+        lines.append(f"| {i} | [{c['name']}]({c['url']}) | {c['subscribers']:,} | {c['catmeme_views_30d']:,} |")
+    lines += ["", f"## 直近7日に投稿された動画 TOP{TOP_VIDEOS}（再生数順・全{len(recent)}本は json）", "",
+              "| # | 再生数 | タイトル | チャンネル | 投稿日 |", "|---|---|---|---|---|"]
+    for i, r in enumerate(recent[:TOP_VIDEOS], 1):
+        t = re.sub(r"\|", "／", r["title"])
+        lines.append(f"| {i} | {r['views']:,} | [{t}]({r['url']}) | {r['channel']} | {r['published']} |")
+    with open(os.path.join(OUT, f"yt_trends_{day}.md"), "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+
+
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 2 and sys.argv[1] == "--md":   # API を呼ばずに保存済み json から表だけ作り直す
+        with open(os.path.join(OUT, f"yt_trends_{sys.argv[2]}.json"), encoding="utf-8") as f:
+            write_md(json.load(f), sys.argv[2])
+    else:
+        main()

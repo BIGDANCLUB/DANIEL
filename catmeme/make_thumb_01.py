@@ -47,7 +47,10 @@ def text(d, xy, s, size, fill, stroke, stroke_fill, anchor="la"):
     d.text(xy, s, font=P.font("black", size), fill=fill, stroke_width=stroke, stroke_fill=stroke_fill, anchor=anchor)
 
 
-def main():
+RED = (230, 20, 20)
+
+
+def main(badge_parts=(("553", 1), (" ＞ ", 0), ("1107", 0)), out=OUT):
     bg = Image.open(os.path.join(HERE, "backgrounds", "01_todai", "bg06_spotlight.png")).convert("RGB").resize((W, H))
     img = bg.convert("RGBA")
     # 集中線（赤と黄色の放射）
@@ -77,24 +80,49 @@ def main():
     d.polygon([(470, 30), (1250, 30), (1230, 130), (450, 130)], fill=(255, 220, 0))
     text(d, (850, 80), "東大の新総長", 76, (20, 20, 20), 0, None, anchor="mm")
     # メインの文字
-    text(d, (870, 245), "投票2位が", 132, (255, 255, 255), 12, (0, 0, 0), anchor="mm")
-    text(d, (870, 420), "総長に!?", 190, (255, 40, 40), 14, (255, 255, 255), anchor="mm")
-    # 下の札（553＞1107）
-    badge = Image.new("RGBA", (600, 140), (0, 0, 0, 0))
+    text(d, (870, 222), "投票2位が", 128, (255, 255, 255), 12, (0, 0, 0), anchor="mm")
+    text(d, (870, 380), "総長に!?", 172, (255, 40, 40), 14, (255, 255, 255), anchor="mm")
+    # 下の札（赤い部分と黒い部分を並べる。"\n" で2行）
+    lines = [[]]
+    for t, col in badge_parts:
+        if t == "\n":
+            lines.append([])
+        else:
+            lines[-1].append((t, col))
+    size = 84 if len(lines) == 1 else 62
+    f = P.font("black", size)
+    tws = [sum(d.textlength(t, font=f) for t, _ in ln) for ln in lines]
+    if max(tws) > 620:
+        f = P.font("black", int(size * 620 / max(tws)))
+        tws = [sum(d.textlength(t, font=f) for t, _ in ln) for ln in lines]
+    lh = f.size * 1.15
+    bw, bh = int(max(tws) + 70), int(lh * len(lines) + 46)
+    badge = Image.new("RGBA", (bw, bh), (0, 0, 0, 0))
     bd = ImageDraw.Draw(badge)
-    bd.rounded_rectangle((0, 0, 599, 139), 24, fill=(255, 255, 255), outline=(0, 0, 0), width=8)
-    f = P.font("black", 86)
-    parts = [("553", (230, 20, 20)), (" ＞ ", (20, 20, 20)), ("1107", (20, 20, 20))]
-    x = 300 - sum(bd.textlength(t, font=f) for t, _ in parts) / 2
-    for t, col in parts:
-        bd.text((x, 72), t, font=f, fill=col, anchor="lm")
-        x += bd.textlength(t, font=f)
+    bd.rounded_rectangle((0, 0, bw - 1, bh - 1), 24, fill=(255, 255, 255), outline=(0, 0, 0), width=8)
+    for i, (ln, tw) in enumerate(zip(lines, tws)):
+        x, y = bw / 2 - tw / 2, 23 + lh * (i + 0.5)
+        for t, col in ln:
+            bd.text((x, y), t, font=f, fill=RED if col else (20, 20, 20), anchor="lm")
+            x += bd.textlength(t, font=f)
     badge = badge.rotate(-4, expand=True, resample=Image.BICUBIC)
-    img.alpha_composite(badge, (590, 552))
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    img.convert("RGB").save(OUT)
-    print("->", OUT)
+    bx = min(int(870 - badge.width / 2), W - badge.width - 8)
+    img.alpha_composite(badge, (bx, H - badge.height - 6))
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    img.convert("RGB").save(out)
+    print("->", out)
 
+
+# 札の文言の別案（1 = 赤くする部分）
+VARIANTS = {
+    "a": (("過半数", 1), ("の1位が", 0), ("\n", 0), ("まさかの落選", 1)),
+    "b": (("ダブルスコア負け", 1), ("\n", 0), ("からの逆転", 0)),
+    "c": (("1位の", 0), ("半分", 1), ("の票で", 0), ("\n", 0), ("当選", 1)),
+    "d": (("投票の意味", 0), ("とは……", 1)),
+    "e": (("1107票", 0), ("でも", 0), ("落選", 1)),
+}
 
 if __name__ == "__main__":
     main()
+    for k, v in VARIANTS.items():
+        main(v, OUT.replace(".png", f"_{k}.png"))

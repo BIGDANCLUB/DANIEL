@@ -210,8 +210,11 @@ def bullets(title, items, tag="", size=58):
     for it in items:
         cy = y + step / 2
         d.ellipse((bx0, cy - 14, bx0 + 28, cy + 14), fill=ACCENT)
-        lines = wrap(d, it, f, bx1 - bx0 - 70)
-        draw_lines(d, lines[:1], f, 0, cy, INK, align="left", x0=bx0 + 56)
+        fi = f
+        while text_w(d, it, fi) > bx1 - bx0 - 70 and fi.size > 30:   # 1行に収まるまで少しずつ小さく
+            fi = font("round", fi.size - 2)
+        lines = wrap(d, it, fi, bx1 - bx0 - 70)
+        draw_lines(d, lines[:1], fi, 0, cy, INK, align="left", x0=bx0 + 56)
         y += step
     return img
 
@@ -251,13 +254,13 @@ def bars(title, rows, tag="", note="", unit="票"):
     return img
 
 
-def flow(title, steps, tag=""):
+def flow(title, steps, tag="", hsize=46, ssize=38):
     """①→②→③ の流れ図。steps = [(見出し, 説明)]。"""
     img, d, (bx0, by0, bx1, by1) = card(title, tag)
     n = len(steps)
     gap = 70
     bw = (bx1 - bx0 - gap * (n - 1)) / n
-    hf, sf, nf = font("round", 46), font("round_b", 38), font("round", 40)
+    hf, sf, nf = font("round", hsize), font("round_b", ssize), font("round", 40)
     for i, (head, sub) in enumerate(steps):
         x0 = bx0 + i * (bw + gap)
         last = i == n - 1
@@ -267,9 +270,12 @@ def flow(title, steps, tag=""):
         d.ellipse((cx - 38, box[1] + 36, cx + 38, box[1] + 112), fill=ACCENT if last else BAR)
         d.text((cx - text_w(d, str(i + 1), nf) / 2, box[1] + 74 - nf.size * 0.62), str(i + 1), font=nf, fill=WHITE)
         hl = wrap(d, head, hf, bw - 50)
-        draw_lines(d, hl, hf, cx, box[1] + 200, INK)
-        sl = wrap(d, sub, sf, bw - 50)
-        draw_lines(d, sl, sf, cx, box[1] + 330, MUTED, gap=1.35)
+        hh = len(hl) * hsize * 1.25
+        top = box[1] + 130
+        draw_lines(d, hl, hf, cx, top + hh / 2, INK)
+        sl = wrap(d, sub, sf, bw - 40)
+        sh = len(sl) * ssize * 1.3
+        draw_lines(d, sl, sf, cx, top + hh + 24 + sh / 2, MUTED, gap=1.3)
         if not last:
             ax = x0 + bw + 12
             ay = (box[1] + box[3]) / 2

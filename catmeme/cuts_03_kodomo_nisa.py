@@ -48,12 +48,13 @@ def pt(n):
 
 
 def cat(a, role, x, h=640, bottom=1010, **kw):
-    return dict(a=a, x=x, h=h, bottom=bottom, label=role, label_color=ROLE[role], **kw)
+    return dict(a=a, x=x, h=h, bottom=bottom, label=role, label_color=ROLE[role], label_size=kw.pop("label_size", 66), **kw)
 
 
 def duo(b, left, right, say, **kw):
     """2匹並べての掛け合い。left/right = (素材, 役名)。セリフは画面の上。"""
-    cats = [cat(left[0], left[1], 520, flip=kw.pop("lflip", False)), cat(right[0], right[1], 1420, flip=kw.pop("rflip", False))]
+    cats = [cat(left[0], left[1], 500, h=760, bottom=1040, flip=kw.pop("lflip", False)),
+            cat(right[0], right[1], 1430, h=760, bottom=1040, flip=kw.pop("rflip", False))]
     return dict(bg=bg(b), cats=cats, say=say, text_top=True, **kw)
 
 
@@ -136,9 +137,9 @@ def cuts_all():
             "投資で増えた分の税金が\nタダになる箱な", se="anime_doraemon_gadget"),
         dict(bg=bg("bg06_spotlight"), say="今日のテーマ", text_top=True, dur=3.4, se=["jan"] + pop_se(0.7, 1.4, 2.1),
              cats=[cat("showoff_gojo_cosplay_cat", "博識な猫", 960, h=520, float=True)],
-             pops=pops((0.7, "① ふつうのNISAとの違い", (80, 300, 960, 420)),
-                       (1.4, "② お得なところ", (960, 430, 1860, 550)),
-                       (2.1, "③ イマイチなところ", (80, 560, 960, 680), "red"))),
+             pops=pops((0.7, "① ふつうのNISAとの違い", (80, 220, 1100, 360)),
+                       (1.4, "② お得なところ", (900, 390, 1860, 530)),
+                       (2.1, "③ イマイチなところ", (80, 560, 1100, 700), "red"))),
         # ---- 2. こどもNISAってなに？ ----
         chap("まずは　きほんから", dur=1.4),
         place("bg19_kids_room", "とある家の子ども部屋"),

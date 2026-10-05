@@ -717,8 +717,8 @@ def render(cuts, out_path, preview_dir=None):
     bgs = [c.get("bg") for c in cuts]
     for i, c in enumerate(cuts):
         r = CutRenderer(c)
-        dip_in = i > 0 and bgs[i] != bgs[i - 1] and c.get("dip", True)
-        dip_out = i + 1 < len(cuts) and bgs[i + 1] != bgs[i] and cuts[i + 1].get("dip", True)
+        dip_in = WHITE_DIP > 0 and i > 0 and bgs[i] != bgs[i - 1] and c.get("dip", True)
+        dip_out = WHITE_DIP > 0 and i + 1 < len(cuts) and bgs[i + 1] != bgs[i] and cuts[i + 1].get("dip", True)
         end = int(round((starts[i] + durs[i]) * FPS))
         first = True
         while frame_no < end:

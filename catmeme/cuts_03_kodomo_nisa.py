@@ -123,7 +123,6 @@ def cuts_all():
         dict(bg=bg("bg19_kids_room"), card=pt("e01_title"), dur=2.4, bgm={"file": PURPLE, "gain": -2}, se="jan",
              cats=[{"a": "wave_waving_cat", "x": 300, "h": 420, "bottom": 1040, "float": True}]),
         chap("話は2026年10月1日…"),
-        place("bg20_counter", "とある証券会社の窓口"),
         dict(bg=bg("bg20_counter"), sub="「こどもNISA」の\n口座の受付が\nスタート", say_style="red", fx=["lines"],
              cats=[cat("work_typing_cat", "博識な猫", 470, h=640)], se="doon_movie"),
         duo("bg20_counter", ("peek_what_happen_cat", "ニュース猫"), ("itchy_kitten_butt", "博識な猫"),
@@ -143,7 +142,6 @@ def cuts_all():
                        (2.1, "③ イマイチなところ", (80, 710, 1300, 850), "red"))),
         # ---- 2. こどもNISAってなに？ ----
         chap("まずは　きほんから", dur=1.4, bgm={"file": NORA, "gain": -2}),
-        place("bg19_kids_room", "とある家の子ども部屋"),
         dia("e02_basic", "0〜17歳の子どもの名前で作る　NISAの口座", "bg19_kids_room",
             left=("eat_crunchy_cat_luna", "ニュース猫"), right=("ride_kitten_bike", "博識な猫"), se="page_turn_01"),
         dia("e02_basic", "1年に60万円まで　合計600万円まで", "bg19_kids_room",
@@ -177,7 +175,6 @@ def cuts_all():
             pops=pops((1.2, "？？？", (60, 380, 600, 520))), ),
         close("bg20_counter", "realize_wet_cat_stare", "ニュース猫", "引き出せないの\nキツくね！？",
               se=["doon_heavy"]),
-        place("bg21_school_gate", "12歳＝中学生になるころ"),
         dia("e03b_withdraw", "12歳未満は　原則引き出せない（大きな災害などだけ例外）", "bg21_school_gate",
             left=("slack_nail_filing_cat", "ニュース猫"), right=("taunt_cat_and_scared_dog", "博識な猫"), se="doon_heavy"),
         dia("e03b_withdraw", "12歳からは　子どものための出費なら引き出せる", "bg21_school_gate",

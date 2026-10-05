@@ -21,7 +21,7 @@ import sys
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter
 
 import gen_images_gemini
-from make_short import H, W, font, rich_text
+from make_short import H, W, font, parse_runs, plain, rich_text
 
 CHANNEL = "日本で生きるということ"
 TITLE_SIZE = 190
@@ -78,7 +78,7 @@ def make_thumb(story_path, out):
     teaser = cfg.get("thumb_teaser")
     if teaser:
         board = teaser_board(teaser, cfg.get("thumb_teaser_style", "yellow"))
-        img.alpha_composite(board, ((W - board.width) // 2, int(H * 0.70 - board.height / 2)))
+        img.alpha_composite(board, (0, int(H * 0.70 - board.height / 2)))
     save(img, out)
 
 
@@ -89,22 +89,51 @@ TEASER_STYLES = {
 }
 
 
+TRACK = -0.06    # あおり文の字間（文字の幅に対する割合。少し詰めて大きく見せる）
+
+
+def tracked(f, s):
+    """字間を詰めたときの文字列の幅。"""
+    return sum(f.getlength(ch) * (1 + TRACK) for ch in s) - f.getlength(s[-1:]) * TRACK if s else 0
+
+
 def teaser_board(text, style="yellow"):
-    """ニュースのテロップのような座布団（色の板）に、あおり文を大きく載せる。"""
+    """ニュースのテロップのような帯（画面の端から端までの色の板）に、あおり文を大きく載せる。
+    文字は二重の縁取り（内側 白・外側 黒）、帯の上下は黒と白の太い線で締める。"""
     fill, color, edge, (o, c) = TEASER_STYLES[style]
     text = text.translate(str.maketrans("{}<>", o + c + o + c))
-    # 見出し向きの太いゴシック。縁を付けると字がつぶれるので、板の上では縁なしで描く
-    t = rich_text(text, 150, W - 140, base=color, line_gap=0.08, kind="thumb", stroke=False)
-    px, py, bw, sh = 44, 30, 10, 14
-    bwid, bhei = max(t.width + px * 2, W - 160), t.height + py * 2
-    canvas = Image.new("RGBA", (bwid + sh + bw * 2, bhei + sh + bw * 2), (0, 0, 0, 0))
+    lines = text.split("\n")
+    bw, sh = 18, 18                       # 上下の枠の太さ・影の高さ
+    size = 200
+    while True:
+        f = font("thumb", size)
+        s_out, s_in = int(size * 0.12), int(size * 0.065)   # 外側（黒）・内側（白）の縁
+        widths = [tracked(f, plain(l)) for l in lines]
+        if max(widths) + 2 * s_out + 24 <= W or size <= 60:
+            break
+        size -= 4
+    asc, desc = f.getmetrics()
+    lh = int((asc + desc) * 1.0)
+    py = 18
+    bhei = lh * len(lines) + 2 * s_out + py * 2
+    canvas = Image.new("RGBA", (W, bhei + 2 * bw + sh), (0, 0, 0, 0))
     d = ImageDraw.Draw(canvas)
-    x0, y0 = bw, bw
-    # 影 → 縁 → 板 → 文字
-    d.rectangle([x0 + sh, y0 + sh, x0 + bwid + sh, y0 + bhei + sh], fill=(0, 0, 0, 170))
-    d.rectangle([x0 - bw, y0 - bw, x0 + bwid + bw, y0 + bhei + bw], fill=edge)
-    d.rectangle([x0, y0, x0 + bwid, y0 + bhei], fill=fill)
-    canvas.alpha_composite(t, (x0 + (bwid - t.width) // 2, y0 + py))
+    y0 = bw
+    # 影 → 枠（黒の外側・白の内側）→ 板
+    d.rectangle([0, sh, W, bhei + 2 * bw + sh], fill=(0, 0, 0, 170))
+    d.rectangle([0, 0, W, bhei + 2 * bw], fill="#000000")
+    d.rectangle([0, bw // 2, W, bhei + bw + bw // 2], fill=edge)
+    d.rectangle([0, y0, W, y0 + bhei], fill=fill)
+    # 文字：外側の黒縁 → 内側の白縁 → 文字色の順に、1字ずつ詰めて重ねる
+    for stroke, stroke_col in ((s_out, "#000000"), (s_in, "#ffffff"), (0, None)):
+        for li, l in enumerate(lines):
+            x = (W - widths[li]) / 2
+            y = y0 + py + s_out + li * lh
+            for seg, col in parse_runs(l, color):
+                for ch in seg:
+                    fc = col if stroke_col is None else stroke_col
+                    d.text((x, y), ch, font=f, fill=fc, stroke_width=stroke, stroke_fill=stroke_col or fc)
+                    x += f.getlength(ch) * (1 + TRACK)
     return canvas
 
 

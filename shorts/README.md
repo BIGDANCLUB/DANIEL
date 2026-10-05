@@ -60,7 +60,7 @@
 ## サムネイル
 - `python3 make_thumb.py story_xxx.json out/xxx_thumb.jpg` … 1080x1920 のサムネイル（API不要）
 - 背景は1行目の画像、見出しは台本トップの `thumb`（`\n` で改行、`{黄}` `<赤>`）。タグは `thumb_tag`（省略時は banner の1行目）
-- `thumb_top`（2行）がある台本は、上の黒帯に見出し、写真の上に `thumb_teaser` をニュースのテロップのような色の板（座布団）に載せる。文字は Zen Kaku Gothic New Black
+- `thumb_top`（2行）がある台本は、上の黒帯に見出し、写真の上に `thumb_teaser` を画面の端から端までの色の帯に大きく載せる。文字は Zen Kaku Gothic New Black に二重の縁取り（白・黒）
   - `thumb_teaser` は2行にすると大きく出る。強調は `{…}`（板の色と重ならない色に自動でそろえる）
   - `thumb_teaser_style` … `"yellow"`（既定・黄色の板に黒文字）/ `"red"`（赤い板に白文字）
 

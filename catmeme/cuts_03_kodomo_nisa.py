@@ -31,6 +31,7 @@ COCOA = os.path.join(BGM, "星降る夜のホットココア.mp3")
 MIRAI = os.path.join(BGM, "未来を創る君たちへ.mp3")
 KAMI = os.path.join(BGM, "神の怒り.mp3")
 
+NORA = os.path.join(BGM, "野良猫は宇宙を目指した.mp3")
 NEWS, SAGE, PAPA, NET = (215, 35, 35), (40, 90, 200), (35, 140, 65), (120, 50, 170)
 ROLE = {"ニュース猫": NEWS, "博識な猫": SAGE, "パパ猫": PAPA, "ネットの声": NET}
 
@@ -79,7 +80,7 @@ def dia(c, sub, b="bg03_blackboard", left=None, right=None, **kw):
     if right:
         cats.append(cat(right[0], right[1], 1710, h=470, bottom=1000, float=True))
     return dict(bg=bg(b), inset={"card": pt(c), "box": (370, 40, 1550, 790)}, cats=cats, sub=sub,
-                sub_box=(80, 815, 1840, 1065), sub_size=74, **kw)
+                sub_box=(400, 805, 1520, 1070), sub_size=66, **kw)
 
 
 def expl(b, cats, say, text, **kw):
@@ -136,12 +137,12 @@ def cuts_all():
         duo("bg20_counter", ("leave_cat_leaves_home", "ニュース猫"), ("think_bike_front_seat_cat", "博識な猫"),
             "投資で増えた分の税金が\nタダになる箱な", se="anime_doraemon_gadget"),
         dict(bg=bg("bg06_spotlight"), say="今日のテーマ", text_top=True, dur=3.4, se=["jan"] + pop_se(0.7, 1.4, 2.1),
-             cats=[cat("showoff_gojo_cosplay_cat", "博識な猫", 960, h=520, float=True)],
-             pops=pops((0.7, "① ふつうのNISAとの違い", (80, 220, 1100, 360)),
-                       (1.4, "② お得なところ", (900, 390, 1860, 530)),
-                       (2.1, "③ イマイチなところ", (80, 560, 1100, 700), "red"))),
+             cats=[cat("showoff_gojo_cosplay_cat", "博識な猫", 1640, h=560, float=True)],
+             pops=pops((0.7, "① ふつうのNISAとの違い", (80, 330, 1300, 470)),
+                       (1.4, "② お得なところ", (80, 520, 1300, 660)),
+                       (2.1, "③ イマイチなところ", (80, 710, 1300, 850), "red"))),
         # ---- 2. こどもNISAってなに？ ----
-        chap("まずは　きほんから", dur=1.4),
+        chap("まずは　きほんから", dur=1.4, bgm={"file": NORA, "gain": -2}),
         place("bg19_kids_room", "とある家の子ども部屋"),
         dia("e02_basic", "0〜17歳の子どもの名前で作る　NISAの口座", "bg19_kids_room",
             left=("eat_crunchy_cat_luna", "ニュース猫"), right=("ride_kitten_bike", "博識な猫"), se="page_turn_01"),

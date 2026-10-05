@@ -2,7 +2,8 @@
 """ショートのサムネイル（1080x1920）を台本から作る。API は使わない。
 
 台本に "thumb_top"（"1行目\\n2行目"）があれば参考フォーマット:
-  上の黒帯に2行の大見出し（1行目 黄・2行目 赤）、下に写真、写真の上に "thumb_teaser"（黄）
+  上の黒帯に2行の大見出し（1行目 黄・2行目 赤）、下に写真、写真の上に "thumb_teaser" を色の板（座布団）に載せて
+  "thumb_teaser_style": "yellow"（既定）/ "red"、"thumb_label" で板の左上に小さなタグ（例「供述」）
 無ければ従来の形:
 
 - 背景: 1行目の画像（場面画像なら crop の位置）を少し暗くして全面に
@@ -76,9 +77,44 @@ def make_thumb(story_path, out):
     img.alpha_composite(band, (0, 0))
     teaser = cfg.get("thumb_teaser")
     if teaser:
-        t = rich_text(teaser, 110, W - 120, base="#ffe600", stroke_ratio=0.16)
-        img.alpha_composite(t, ((W - t.width) // 2, int(H * 0.70 - t.height / 2)))
+        board = teaser_board(teaser, cfg.get("thumb_label"), cfg.get("thumb_teaser_style", "yellow"))
+        img.alpha_composite(board, ((W - board.width) // 2, int(H * 0.70 - board.height / 2)))
     save(img, out)
+
+
+TEASER_STYLES = {
+    # 板の色, 文字の色, 縁の色, 強調の記号（{…} 黄 / <…> 赤。板と同じ色にならない方へそろえる）
+    "red": ((206, 18, 24), "#ffffff", "#000000", "{}"),
+    "yellow": ((255, 222, 0), "#111111", "#ffffff", "<>"),
+}
+
+
+def teaser_board(text, label=None, style="yellow"):
+    """ニュースのテロップのような座布団（色の板）に、あおり文を大きく載せる。
+    label があれば板の左上に黒いタグ（例「供述」「防犯」）を重ねる。"""
+    fill, color, edge, (o, c) = TEASER_STYLES[style]
+    text = text.translate(str.maketrans("{}<>", o + c + o + c))
+    t = rich_text(text, 150, W - 140, base=color, stroke_ratio=0.0, line_gap=0.04)
+    px, py, bw, sh = 44, 26, 10, 14
+    bwid, bhei = max(t.width + px * 2, W - 160), t.height + py * 2
+    tag = None
+    if label:
+        tag = rich_text(label, 64, W - 200, base="#ffffff", stroke_ratio=0.0)
+    top = tag.height // 2 + 6 if tag else 0
+    canvas = Image.new("RGBA", (bwid + sh + bw * 2, bhei + top + sh + bw * 2), (0, 0, 0, 0))
+    d = ImageDraw.Draw(canvas)
+    x0, y0 = bw, top + bw
+    # 影 → 縁 → 板 → 文字
+    d.rectangle([x0 + sh, y0 + sh, x0 + bwid + sh, y0 + bhei + sh], fill=(0, 0, 0, 170))
+    d.rectangle([x0 - bw, y0 - bw, x0 + bwid + bw, y0 + bhei + bw], fill=edge)
+    d.rectangle([x0, y0, x0 + bwid, y0 + bhei], fill=fill)
+    canvas.alpha_composite(t, (x0 + (bwid - t.width) // 2, y0 + py))
+    if tag:
+        tp = 22
+        box = Image.new("RGBA", (tag.width + tp * 2, tag.height + 8), (0, 0, 0, 255))
+        box.alpha_composite(tag, (tp, 4))
+        canvas.alpha_composite(box, (x0 + 30, 0))
+    return canvas
 
 
 def save(img, out):

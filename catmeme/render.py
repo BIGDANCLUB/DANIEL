@@ -14,6 +14,16 @@
   se       効果音 "pop" / "don" / "drum" / "chime"（カットの頭で鳴る）
   bgm      {"file": 曲, "gain": dB, "fade": 秒} … このカットから曲を切り替え。{"file": None} で止める
   sting    {"file": 曲, "len": 秒, "gain": dB} … このカットの頭で短く鳴らす曲（BGMとは別）
+
+参考動画（ニャースインフォ）ふうの追加オプション（03_kodomo_nisa から）:
+  cats の各猫に label（足元の役名札）、label_color（札の色。None は白地に黒字）
+  say_style "red"   … セリフを赤い文字＋白い縁取りに（強調）
+  fx       ["lines"] 集中線、["shake"] 頭で画面を揺らす、["zoom"] ゆっくり寄る
+  pop_in   True で文字がポンと飛び出す（既定は NYAS_STYLE）
+  inset    {"card": 解説カードPNG, "box": (x0,y0,x1,y1)} … 図だけ切り出して画面の中ほどに置く
+  place    画面左上の小さな地名・場所の字幕
+  explain  説明モード：画面を灰色の小窓に縮め、黒地の下に説明文を出す
+  chapter  黒い画面の中央に小さな文字（「本題に入るその前に…」など）
 """
 import os
 import subprocess
@@ -32,6 +42,7 @@ W, H = P.W, P.H
 STYLE = "meme"      # "meme" … 参考動画ふう（大きな縁取り文字・役名札・白飛び転換） / "box" … 字幕帯＋吹き出し
 WHITE_DIP = 0.25    # 場所が変わる時の白飛び（片側の秒数）
 BGM_GAIN = -10
+NYAS_STYLE = False  # True で文字の飛び出しなど参考動画ふうの動きを既定にする（動画ごとのスクリプトで切り替え）
 TEMPO = 1.15        # 全カットの長さにかける倍率（大きいほどゆっくり）      # BGM 全体をさらに下げる量（dB）。「かすかに聞こえる程度」
 
 
@@ -314,6 +325,27 @@ class CutRenderer:
             scale = c.get("h", 560) * (1.15 if anchored else 1.0) / (by1 - by0)
             bottom = H if anchored else c.get("bottom", 850)
             self.cats.append((clip, scale, c.get("x", 960), bottom))
+        # 足元の役名札
+        self.labels = []
+        for (clip, scale, cx, bottom), c in zip(self.cats, cut.get("cats", [])):
+            if c.get("label"):
+                tag = P.label_tag(c["label"], c.get("label_color"), size=c.get("label_size", 58))
+                y = min(bottom, H) - tag.height - c.get("label_up", 40)
+                self.labels.append((to_np(tag), int(cx - tag.width / 2), int(y)))
+        # 集中線（数枚を切り替えてチラつかせる）
+        fx = cut.get("fx", [])
+        self.lines = [to_np(P.speed_lines(cut.get("lines_c", (960, 540)), cut.get("lines_color", (255, 255, 255)), seed=k))
+                      for k in range(3)] if "lines" in fx else []
+        self.fx = fx
+        # 図の差し込み（解説カードから図の部分だけ切り出す）
+        self.inset = None
+        if cut.get("inset"):
+            im = Image.open(cut["inset"]["card"]).convert("RGBA")
+            im = im.crop(im.getbbox())
+            x0, y0, x1, y1 = cut["inset"]["box"]
+            k = min((x1 - x0) / im.width, (y1 - y0) / im.height)
+            im = im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
+            self.inset = (to_np(im), int((x0 + x1 - im.width) / 2), int((y0 + y1 - im.height) / 2))
         # 部品（カード → 名前など → 吹き出し → 字幕 の順に重ねる）
         layers = []
         if cut.get("card"):   # カードは猫の下に敷く（右下の小さい猫がカードに隠れないように）
@@ -323,8 +355,9 @@ class CutRenderer:
         for ly in cut.get("layers", []):
             layers.append(Image.open(ly) if isinstance(ly, str) else ly)
         self.style = cut.get("style", STYLE)
+        txt = []
         if self.style == "meme":
-            layers += self._meme_layers(cut)
+            txt += self._meme_layers(cut)
         else:
             if cut.get("say"):
                 cx = cut.get("say_x") or (self.cats[0][2] if self.cats else 960)
@@ -333,14 +366,56 @@ class CutRenderer:
             if cut.get("sub"):
                 layers.append(P.subtitle(cut["sub"]))
         # 決まった時間だけ出す短いセリフ（例：猫が鳴いた瞬間の「はい」）
+        self.pop_in = cut.get("pop_in", NYAS_STYLE)
         self.pops = []
         for pp in cut.get("pops", []):
-            img, a = to_np(P.big_text(pp["text"], pp["box"], max_size=pp.get("size", 110), max_lines=1))
-            self.pops.append((pp["t"], pp["t"] + pp.get("dur", 0.9), img, a))
+            red = pp.get("style") == "red"
+            im = P.big_text(pp["text"], pp["box"], max_size=pp.get("size", 110), max_lines=pp.get("lines", 1),
+                            fill=P.RED_TEXT if red else P.WHITE, stroke=P.WHITE if red else (0, 0, 0))
+            self.pops.append((pp["t"], pp["t"] + pp.get("dur", 0.9), self._crop(im)))
+        if cut.get("place"):
+            pl = P.canvas()
+            from PIL import ImageDraw
+            ImageDraw.Draw(pl).text((44, 30), cut["place"], font=P.font("black", 46), fill=P.WHITE,
+                                    stroke_width=5, stroke_fill=(0, 0, 0))
+            layers.append(pl)
+        if cut.get("chapter"):
+            txt.append(P.plain_text(cut["chapter"], (160, 400, 1760, 680), size=cut.get("chapter_size", 64)))
         comp = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         for ly in layers:
             comp.alpha_composite(ly.convert("RGBA"))
         self.ov, self.ov_a = to_np(comp)
+        tc = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        for ly in txt:
+            tc.alpha_composite(ly.convert("RGBA"))
+        self.txt = self._crop(tc)
+        self.explain = None
+        if cut.get("explain"):
+            self.explain = to_np(P.plain_text(cut["explain"], (120, 700, 1800, 1050), size=cut.get("explain_size", 62)))
+
+    @staticmethod
+    def _crop(im):
+        """透過画像を中身の部分だけに切り出す（飛び出し表示で拡大縮小するため）。"""
+        bb = im.getbbox()
+        if not bb:
+            return None
+        return to_np(im.crop(bb)) + (bb[0], bb[1])
+
+    def _pop(self, out, item, t, start=0.0):
+        """文字を重ねる。pop_in の時は頭の0.2秒で小さい所からポンと大きくなる。"""
+        if item is None:
+            return
+        img, a, x, y = item
+        dt = t - start
+        if self.pop_in and dt < 0.2:
+            s = 0.55 + 0.6 * ease_out(dt / 0.12) if dt < 0.12 else 1.15 - 0.15 * ease_out((dt - 0.12) / 0.08)
+            h, w = img.shape[:2]
+            nw, nh = max(1, int(w * s)), max(1, int(h * s))
+            img2 = cv2.resize(img, (nw, nh), interpolation=cv2.INTER_LINEAR)
+            a2 = cv2.resize(a, (nw, nh), interpolation=cv2.INTER_LINEAR)
+            over(out, img2, a2, int(x + w / 2 - nw / 2), int(y + h / 2 - nh / 2))
+        else:
+            over(out, img, a, x, y)
 
     def _meme_layers(self, cut):
         """参考動画ふう：猫の反対側に大きな縁取り文字、猫の足元近くに白い役名札。"""
@@ -355,12 +430,18 @@ class CutRenderer:
                 box = (900, 140, 1860, 900)
             else:
                 box = (60, 140, 1020, 900)
-            out.append(P.big_text(cut["say"], box))
-            if cut.get("say_name"):
+            red = cut.get("say_style") == "red"
+            out.append(P.big_text(cut["say"], box, max_size=cut.get("say_size", 150),
+                                  fill=P.RED_TEXT if red else P.WHITE, stroke=P.WHITE if red else (0, 0, 0)))
+            if cut.get("say_name") and not any(c.get("label") for c in cut.get("cats", [])):
                 px, py = cut.get("plate_xy") or (max(40, int(cat_x - 330)), 770)
                 out.append(P.name_plate(cut["say_name"], px, py))
         if cut.get("sub"):
-            if self.card is not None:
+            if cut.get("sub_box"):
+                red = cut.get("say_style") == "red"
+                out.append(P.big_text(cut["sub"], cut["sub_box"], max_size=cut.get("sub_size", 90), min_size=44,
+                                      max_lines=3, fill=P.RED_TEXT if red else P.WHITE, stroke=P.WHITE if red else (0, 0, 0)))
+            elif self.card is not None:
                 out.append(P.big_text(cut["sub"], (80, 812, 1840, 1062), max_size=80, min_size=48, max_lines=2))
             elif len(self.cats) > 1:
                 out.append(P.big_text(cut["sub"], cut.get("text_box") or (140, 40, 1780, 360), max_size=130))
@@ -382,8 +463,14 @@ class CutRenderer:
         else:
             out = self.bg.copy()
         k = 1.0 if self.style == "meme" else ease_out(t / 0.15)
+        if self.lines:
+            ln, la = self.lines[int(t * FPS / 3) % len(self.lines)]
+            over(out, ln, la, 0, 0)
         if self.card is not None:
             over(out, self.card, self.card_a * k, 0, 0)
+        if self.inset is not None:
+            (im, ia), x, y = self.inset
+            self._pop(out, (im, ia, x, y), t)
         for clip, scale, cx, bottom in self.cats:
             fr, a = clip.frame(t)
             pop = 1.0 if self.style == "meme" else 0.88 + 0.12 * ease_out(t / 0.18)
@@ -392,10 +479,35 @@ class CutRenderer:
             img = cv2.resize(fr, (w, h), interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
             al = cv2.resize(a, (w, h), interpolation=cv2.INTER_AREA)
             over(out, img, al, int(cx - w / 2), int(bottom - h))
+        for (im, ia), x, y in self.labels:
+            over(out, im, ia, x, y)
         over(out, self.ov, self.ov_a * k, 0, 0)
-        for t0, t1, img, a in self.pops:
+        self._pop(out, self.txt, t)
+        for t0, t1, item in self.pops:
             if t0 <= t < t1:
-                over(out, img, a, 0, 0)
+                self._pop(out, item, t, t0)
+        if "zoom" in self.fx:   # ゆっくり寄る
+            z = 1.0 + 0.06 * (t / self.dur)
+            bw, bh = int(W * z), int(H * z)
+            big = cv2.resize(out, (bw, bh), interpolation=cv2.INTER_LINEAR)
+            ox, oy = (bw - W) // 2, (bh - H) // 2
+            out = big[oy:oy + H, ox:ox + W].copy()
+        if "shake" in self.fx and t < 0.35:   # 頭で小刻みに揺らす
+            amp = 18 * (1 - t / 0.35)
+            dx, dy = amp * np.sin(t * 90), amp * np.cos(t * 70)
+            out = cv2.warpAffine(out, np.float32([[1, 0, dx], [0, 1, dy]]), (W, H), borderMode=cv2.BORDER_REPLICATE)
+        if self.explain is not None:   # 説明モード：灰色の小窓＋黒地に説明文
+            g = cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
+            g = np.repeat(g[..., None], 3, 2)
+            sc = 0.55 if t >= 0.18 else 1.0 - 0.45 * ease_out(t / 0.18)
+            sw, sh = int(W * sc), int(H * sc)
+            small = cv2.resize(g, (sw, sh), interpolation=cv2.INTER_AREA)
+            out = np.zeros((H, W, 3), np.float32)
+            y0 = int(40 * (1 - sc) / 0.45) if sc < 1 else 0
+            out[y0:y0 + sh, (W - sw) // 2:(W - sw) // 2 + sw] = small
+            if t >= 0.18:
+                ei, ea = self.explain
+                over(out, ei, ea, 0, 0)
         return out
 
     def close(self):

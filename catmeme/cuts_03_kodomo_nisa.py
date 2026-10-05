@@ -1,5 +1,13 @@
 """03_kodomo_nisa（こどもNISA）のカット割り。原稿 scripts/03_kodomo_nisa.md。
 
+v2: 参考動画（ニャースインフォ）ふうの作り
+  - 猫は2匹ずつ並べて掛け合い。足元に色つきの役名札（ニュース猫=赤、博識な猫=青、パパ猫=緑、ネットの声=紫）
+  - セリフは画面上に白い縁取り文字。強調は赤い文字＋集中線＋画面の揺れ
+  - 図は画面の真ん中に差し込み、両側に猫。下に説明の字幕
+  - 事実の説明は「説明モード」（画面を灰色の小窓に縮めて、黒地に説明文）
+  - 場面の区切りは黒い画面に小さな文字（「本題に入るその前に…」など）
+  - 場面転換は白飛びなしのパッと切り替え＋シュッという音。BGMは前より大きめ
+
 python3 catmeme/cuts_03_kodomo_nisa.py          → out/03_kodomo_nisa_full.mp4
 python3 catmeme/cuts_03_kodomo_nisa.py --audio  → 音だけ作り直す
 python3 catmeme/cuts_03_kodomo_nisa.py 0:10     → 先頭10カットだけ
@@ -9,6 +17,9 @@ import sys
 
 import render as R
 
+R.NYAS_STYLE = True     # 文字がポンと飛び出す
+R.WHITE_DIP = 0.0       # 白飛びの転換はしない（パッと切り替え）
+R.FG_DUCK = -9          # 猫の音・SEが鳴っている間のBGMの下げ幅（前は -20。参考動画はBGMが大きめ）
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BGS = [os.path.join(HERE, "backgrounds", d) for d in ("03_kodomo_nisa", "02_october", "01_todai")]   # 前の動画の背景も使い回す
@@ -19,6 +30,9 @@ PURPLE = os.path.join(BGM, "著作権フリー BGM ジャズ 「Purple」（ピ�
 COCOA = os.path.join(BGM, "星降る夜のホットココア.mp3")
 MIRAI = os.path.join(BGM, "未来を創る君たちへ.mp3")
 KAMI = os.path.join(BGM, "神の怒り.mp3")
+
+NEWS, SAGE, PAPA, NET = (215, 35, 35), (40, 90, 200), (35, 140, 65), (120, 50, 170)
+ROLE = {"ニュース猫": NEWS, "博識な猫": SAGE, "パパ猫": PAPA, "ネットの声": NET}
 
 
 def bg(n):
@@ -33,216 +47,257 @@ def pt(n):
     return os.path.join(PT, n + ".png")
 
 
-def news(a, say, b="bg02_room", **kw):
-    """ニュース猫（左）のセリフ。"""
-    cat = {"a": a, "x": kw.pop("x", 500), "h": kw.pop("h", 760), "bottom": 1010, "flip": kw.pop("flip", False),
-           "ss": kw.pop("ss", 0.0), "anchor": kw.pop("anchor", False), "sound": kw.pop("sound", False)}
-    return dict(bg=bg(b), cats=[cat], say=say, say_name="ニュース猫", **kw)
+def cat(a, role, x, h=640, bottom=1010, **kw):
+    return dict(a=a, x=x, h=h, bottom=bottom, label=role, label_color=ROLE[role], **kw)
 
 
-def sage(a, say, b="bg02_room", **kw):
-    """博識な猫（右）のセリフ。"""
-    cat = {"a": a, "x": kw.pop("x", 1420), "h": kw.pop("h", 740), "bottom": 1010, "flip": kw.pop("flip", False),
-           "sound": kw.pop("sound", False), "anchor": kw.pop("anchor", False)}
-    return dict(bg=bg(b), cats=[cat], say=say, say_name="博識な猫", plate_xy=(1080, 900), **kw)
+def duo(b, left, right, say, **kw):
+    """2匹並べての掛け合い。left/right = (素材, 役名)。セリフは画面の上。"""
+    cats = [cat(left[0], left[1], 520, flip=kw.pop("lflip", False)), cat(right[0], right[1], 1420, flip=kw.pop("rflip", False))]
+    return dict(bg=bg(b), cats=cats, say=say, text_top=True, **kw)
 
 
-def papa(a, say, b="bg14_home_night", **kw):
-    """パパ猫（右・子育て中の親）。"""
-    cat = {"a": a, "x": kw.pop("x", 1420), "h": kw.pop("h", 740), "bottom": 1010, "flip": kw.pop("flip", False),
-           "sound": kw.pop("sound", False)}
-    return dict(bg=bg(b), cats=[cat], say=say, say_name="パパ猫", plate_xy=(1080, 900), **kw)
+def solo(b, a, role, say, side="L", **kw):
+    """1匹だけ。セリフは猫の反対側。"""
+    x = 500 if side == "L" else 1420
+    return dict(bg=bg(b), cats=[cat(a, role, x, h=kw.pop("h", 720), flip=kw.pop("flip", False))], say=say, **kw)
 
 
-def narr(b, sub, a, **kw):
-    """ナレーション（左に猫、右に大きな文字）。"""
-    cat = {"a": a, "x": kw.pop("x", 470), "h": kw.pop("h", 640), "bottom": 990, "flip": kw.pop("flip", False),
-           "sound": kw.pop("sound", False)}
-    return dict(bg=bg(b), cats=[cat], sub=sub, **kw)
+def close(b, a, role, say, red=True, **kw):
+    """驚きのアップ。赤い文字＋集中線＋揺れ。"""
+    c = cat(a, role, kw.pop("x", 960), h=kw.pop("h", 760), bottom=1060, float=True, flip=kw.pop("flip", False))
+    return dict(bg=bg(b), cats=[c], say=say, text_top=True, say_style="red" if red else None,
+                fx=["lines", "shake"], **kw)
 
 
-def card(c, sub, cat=None, b="bg03_blackboard", **kw):
-    """解説カード＋右下の小さい猫＋字幕。"""
-    cats = [{"a": cat, "x": 1752, "h": 330, "bottom": 830, "float": True, "small": True,
-             "sound": kw.pop("sound", False)}] if cat else []
-    return dict(bg=bg(b), card=pt(c), cats=cats, sub=sub, **kw)
+def dia(c, sub, b="bg03_blackboard", left=None, right=None, **kw):
+    """図を真ん中に差し込み、両側に小さめの猫、下に説明の字幕。"""
+    cats = []
+    if left:
+        cats.append(cat(left[0], left[1], 210, h=470, bottom=1000, float=True))
+    if right:
+        cats.append(cat(right[0], right[1], 1710, h=470, bottom=1000, float=True))
+    return dict(bg=bg(b), inset={"card": pt(c), "box": (370, 40, 1550, 790)}, cats=cats, sub=sub,
+                sub_box=(80, 815, 1840, 1065), sub_size=74, **kw)
 
 
-def net(a, say, tag, **kw):
-    """ネットの声（スマホ背景・左に猫）。"""
-    cat = {"a": a, "x": kw.pop("x", 500), "h": kw.pop("h", 720), "bottom": 1010, "flip": kw.pop("flip", False),
-           "sound": kw.pop("sound", False)}
-    return dict(bg=bg("bg09_sns"), cats=[cat], say=say, say_name=tag, **kw)
+def expl(b, cats, say, text, **kw):
+    """説明モード：直前の場面を灰色の小窓にして、黒地に説明文。"""
+    return dict(bg=bg(b), cats=cats, say=say, text_top=True, explain=text, no_pop=True, **kw)
 
 
+def chap(text, **kw):
+    return dict(bg=None, chapter=text, dur=kw.pop("dur", 1.6), se=kw.pop("se", "whoosh_shu"), **kw)
+
+
+def place(b, text, **kw):
+    return dict(bg=bg(b), place=text, dur=kw.pop("dur", 1.4), fx=["zoom"], **kw)
+
+
+def net(a, say, tag="ネットの声", **kw):
+    c = cat(a, "ネットの声", 500, h=700)
+    c["label"] = tag
+    return dict(bg=bg("bg09_sns"), cats=[c], say=say, **kw)
+
+
+def pops(*items):
+    """時間差で出る文字。items = (秒, 文字, (x0,y0,x1,y1)[, "red"])。それぞれポンの音つき。"""
+    out = []
+    for it in items:
+        out.append({"t": it[0], "text": it[1], "box": it[2], "dur": 9, "size": 100, "style": it[3] if len(it) > 3 else None})
+    return out
+
+
+def pop_se(*ts, f="pop"):
+    return [{"f": f, "at": t, "gain": -6} for t in ts]
+
+
+# 掛け合いの組み合わせ（同じ素材が続けて出すぎないよう、場面ごとに猫を変える）
 def cuts_all():
     return [
         # ---- 0. 注意書き ----
-        dict(card=None, layers=[pt("e00_notice")], dur=3.4),
+        dict(card=None, layers=[pt("e00_notice")], dur=3.4, se={"f": "chime_announce", "len": 3.0, "gain": -2}),
         # ---- 1. つかみ ----
-        dict(bg=bg("bg19_kids_room"), card=pt("e01_title"), dur=2.4, bgm={"file": PURPLE, "gain": -7},
+        dict(bg=bg("bg19_kids_room"), card=pt("e01_title"), dur=2.4, bgm={"file": PURPLE, "gain": -2}, se="jan",
              cats=[{"a": "wave_waving_cat", "x": 300, "h": 420, "bottom": 1040, "float": True}]),
-        narr("bg20_counter", "2026年10月1日\n「こどもNISA」の\n口座の受付が\nスタート", "work_typing_cat"),
-        narr("bg20_counter", "始まるのは\n2027年1月から", "call_customer_service_cat", dur=1.8),
-        news("peek_what_happen_cat", "こどもNISA？\n子どもが\n投資すんの？"),
-        sage("itchy_kitten_butt", "いや、実際に\n動かすのは\n親な", dur=1.8),
-        news("confused_i_dont_know_cat", "え、じゃあ\n親のNISAと\nなにが違うのよ", flip=True),
-        sage("showoff_gojo_cosplay_cat", "そこが\n今日の本題", dur=1.6),
-        news("leave_cat_leaves_home", "てか、NISAって\nそもそも\nなんだっけ"),
-        sage("think_bike_front_seat_cat", "投資で増えた分の\n税金が\nタダになる箱な", b="bg20_counter"),
-        dict(bg=bg("bg06_spotlight"), card=pt("e01b_theme"), dur=3.0,
-             cats=[{"a": "dance_koto_nai_cat", "x": 1752, "h": 330, "bottom": 830, "float": True, "small": True}]),
+        chap("話は2026年10月1日…"),
+        place("bg20_counter", "とある証券会社の窓口"),
+        dict(bg=bg("bg20_counter"), sub="「こどもNISA」の\n口座の受付が\nスタート", say_style="red", fx=["lines"],
+             cats=[cat("work_typing_cat", "博識な猫", 470, h=640)], se="doon_movie"),
+        duo("bg20_counter", ("peek_what_happen_cat", "ニュース猫"), ("itchy_kitten_butt", "博識な猫"),
+            "こどもNISA？\n子どもが投資すんの？", se="question_hatena_maou"),
+        duo("bg20_counter", ("peek_what_happen_cat", "ニュース猫"), ("itchy_kitten_butt", "博識な猫"),
+            "いや、実際に動かすのは親な", se="tsukkomi_bishi"),
+        close("bg20_counter", "confused_i_dont_know_cat", "ニュース猫",
+              "え、じゃあ\n親のNISAと何が違うのよ", red=False, flip=True, se="boing_fail"),
+        duo("bg20_counter", ("leave_cat_leaves_home", "ニュース猫"), ("think_bike_front_seat_cat", "博識な猫"),
+            "てか、NISAって\nそもそもなんだっけ", se="pikon"),
+        duo("bg20_counter", ("leave_cat_leaves_home", "ニュース猫"), ("think_bike_front_seat_cat", "博識な猫"),
+            "投資で増えた分の税金が\nタダになる箱な", se="anime_doraemon_gadget"),
+        dict(bg=bg("bg06_spotlight"), say="今日のテーマ", text_top=True, dur=3.4, se=["jan"] + pop_se(0.7, 1.4, 2.1),
+             cats=[cat("showoff_gojo_cosplay_cat", "博識な猫", 960, h=520, float=True)],
+             pops=pops((0.7, "① ふつうのNISAとの違い", (80, 300, 960, 420)),
+                       (1.4, "② お得なところ", (960, 430, 1860, 550)),
+                       (2.1, "③ イマイチなところ", (80, 560, 960, 680), "red"))),
         # ---- 2. こどもNISAってなに？ ----
-        card("e02_basic", "0〜17歳の子どもの名前で作る　NISAの口座", "eat_crunchy_cat_luna", b="bg19_kids_room", dur=2.6),
-        card("e02_basic", "1年に60万円まで　合計600万円まで　投資できる", "eat_crunchy_cat_luna", b="bg19_kids_room",
-             dur=2.6),
-        card("e02_basic", "増えた分に　税金がかからない（ふつうは約20％かかる）", "eat_crunchy_cat_luna",
-             b="bg19_kids_room", dur=2.8),
-        news("think_bike_front_seat_cat", "60万って\n月5万か", dur=1.6),
-        sage("drive_driving_cat", "そう。\n毎月5万なら\n10年で600万に\n届く"),
-        news("sulk_hungry_cat", "いや\n月5万は\nムリだって", b="bg16_food_aisle"),
-        card("e02_basic", "買えるのは　国が選んだ「積立向けの投資信託」だけ", "ride_kitten_bike", b="bg19_kids_room",
-             dur=2.6),
-        card("e02_basic", "お金を出して運用するのは　親など（親権者）", "ride_kitten_bike", b="bg19_kids_room", dur=2.4),
-        news("blank_black_cat_zoning_out", "子どもの名前で\n親が運用……\nややこしいな", dur=1.9),
+        chap("まずは　きほんから", dur=1.4),
+        place("bg19_kids_room", "とある家の子ども部屋"),
+        dia("e02_basic", "0〜17歳の子どもの名前で作る　NISAの口座", "bg19_kids_room",
+            left=("eat_crunchy_cat_luna", "ニュース猫"), right=("ride_kitten_bike", "博識な猫"), se="page_turn_01"),
+        dia("e02_basic", "1年に60万円まで　合計600万円まで", "bg19_kids_room",
+            left=("eat_crunchy_cat_luna", "ニュース猫"), right=("ride_kitten_bike", "博識な猫"), se="card_flip"),
+        dia("e02_basic", "増えた分に　税金がかからない（ふつうは約20％）", "bg19_kids_room",
+            left=("eat_crunchy_cat_luna", "ニュース猫"), right=("ride_kitten_bike", "博識な猫"), se="shine_kira_01"),
+        duo("bg19_kids_room", ("sulk_hungry_cat", "ニュース猫"), ("drive_driving_cat", "博識な猫"),
+            "60万って、月5万か", se="pikon"),
+        duo("bg19_kids_room", ("sulk_hungry_cat", "ニュース猫"), ("drive_driving_cat", "博識な猫"),
+            "そう。毎月5万なら\n10年で600万に届く", se="idea_newtype_01"),
+        close("bg16_food_aisle", "despair_dramatic_kitten", "ニュース猫", "いや月5万は\nムリだって！！",
+              se=["doon_heavy", "tsukkomi_bashi"]),
+        dia("e02_basic", "買えるのは　国が選んだ「積立向けの投資信託」だけ", "bg19_kids_room",
+            left=("blank_black_cat_zoning_out", "ニュース猫"), right=("calm_black_face_sheep", "博識な猫"), se="page_turn_02"),
+        dia("e02_basic", "お金を出して運用するのは　親など（親権者）", "bg19_kids_room",
+            left=("blank_black_cat_zoning_out", "ニュース猫"), right=("calm_black_face_sheep", "博識な猫"), se="card_place"),
+        duo("bg19_kids_room", ("blank_black_cat_zoning_out", "ニュース猫"), ("calm_black_face_sheep", "博識な猫"),
+            "・・・", se="silly", dur=1.4),
+        duo("bg19_kids_room", ("blank_black_cat_zoning_out", "ニュース猫"), ("calm_black_face_sheep", "博識な猫"),
+            "子どもの名前で\n親が運用……ややこしいな", se="cursor_move_01"),
         # ---- 3. ふつうのNISAとの違い ----
-        card("e03_compare", "ふつうのNISAと　比べてみると", "excited_hodomoe_city_cat", b="bg20_counter", dur=3.2),
-        card("e03_compare", "枠は　大人の6分の1くらい", "excited_hodomoe_city_cat", b="bg20_counter", dur=2.4),
-        sage("call_customer_service_cat", "しかも\n個別の株は\n買えないからな", b="bg20_counter"),
-        news("dance_maxwell_cat", "選べるのは\n投資信託だけね\n了解", b="bg20_counter", dur=1.8),
-        news("realize_wet_cat_stare", "引き出し\n12歳まで\nNGって……"),
-        news("huh_huh_cat", "引き出せないの\nキツくね？"),
-        card("e03b_withdraw", "12歳未満は　原則引き出せない（大きな災害など　やむを得ない時だけ例外）", "slack_nail_filing_cat",
-             b="bg21_school_gate", dur=3.2),
-        card("e03b_withdraw", "12歳からは　「子どものための出費」なら引き出せる", "slack_nail_filing_cat",
-             b="bg21_school_gate", dur=2.6),
-        card("e03b_withdraw", "ただし　子どもの同意と　使い道の書類が必要", "slack_nail_filing_cat", b="bg21_school_gate",
-             dur=2.4),
-        news("angry_cat_hits_cat", "子どもの同意!?\n反抗期だったら\n詰むじゃん", b="bg21_school_gate"),
-        sage("cocky_dj_cat", "お小遣いアップで\n交渉するしか\nない", b="bg21_school_gate"),
-        card("e03b_withdraw", "18歳になると　自動で「ふつうのNISA」に引っ越し", "taunt_cat_and_scared_dog", dur=2.4),
-        card("e03c_1800", "ただし　こどもNISAで使った枠は　大人の1,800万円に含まれる", "taunt_cat_and_scared_dog",
-             dur=3.0),
-        news("surprise_big_pupils_cat", "え、\n600万\n使ってたら……", se="don"),
-        sage("work_typing_cat", "大人になってからの\n残りは\n1,200万ってこと"),
-        news("glare_disgusted_cat", "将来の枠を\n前借りしてる\nだけじゃん", anchor=True),
+        chap("ふつうのNISAと　なにが違う？", se="quiz_question_01"),
+        dia("e03_compare", "ふつうのNISAと　比べてみると", "bg20_counter",
+            left=("huh_huh_cat", "ニュース猫"), right=("excited_hodomoe_city_cat", "博識な猫"), se="xylophone_transition"),
+        dia("e03_compare", "枠は　大人の6分の1くらい", "bg20_counter",
+            left=("huh_huh_cat", "ニュース猫"), right=("excited_hodomoe_city_cat", "博識な猫"), se="game_dq_miss"),
+        duo("bg20_counter", ("huh_huh_cat", "ニュース猫"), ("call_customer_service_cat", "博識な猫"),
+            "しかも個別の株は\n買えないからな", se="buzzer_wrong"),
+        duo("bg20_counter", ("huh_huh_cat", "ニュース猫"), ("call_customer_service_cat", "博識な猫"),
+            "引き出し\n12歳までNGって……", se="kon",
+            pops=pops((1.2, "？？？", (60, 380, 600, 520))), ),
+        close("bg20_counter", "realize_wet_cat_stare", "ニュース猫", "引き出せないの\nキツくね！？",
+              se=["doon_heavy"]),
+        place("bg21_school_gate", "12歳＝中学生になるころ"),
+        dia("e03b_withdraw", "12歳未満は　原則引き出せない（大きな災害などだけ例外）", "bg21_school_gate",
+            left=("slack_nail_filing_cat", "ニュース猫"), right=("taunt_cat_and_scared_dog", "博識な猫"), se="doon_heavy"),
+        dia("e03b_withdraw", "12歳からは　子どものための出費なら引き出せる", "bg21_school_gate",
+            left=("slack_nail_filing_cat", "ニュース猫"), right=("taunt_cat_and_scared_dog", "博識な猫"), se="pinpoon_note"),
+        dia("e03b_withdraw", "ただし　子どもの同意と　使い道の書類が必要", "bg21_school_gate",
+            left=("slack_nail_filing_cat", "ニュース猫"), right=("taunt_cat_and_scared_dog", "博識な猫"), se="pc_warning"),
+        close("bg21_school_gate", "angry_cat_hits_cat", "ニュース猫", "子どもの同意！？\n反抗期だったら詰むじゃん",
+              se=["game_mgs_alert"]),
+        duo("bg21_school_gate", ("angry_cat_hits_cat", "ニュース猫"), ("cocky_dj_cat", "博識な猫"),
+            "お小遣いアップで\n交渉するしかない", se="taiko_kaka"),
+        dia("e03b_withdraw", "18歳になると　自動で「ふつうのNISA」に引っ越し", "bg20_counter",
+            left=("surprise_big_pupils_cat", "ニュース猫"), right=("work_typing_cat", "博識な猫"), se="whoosh_shu"),
+        expl("bg20_counter", [cat("surprise_big_pupils_cat", "ニュース猫", 520), cat("work_typing_cat", "博識な猫", 1420)],
+             "え、600万使ってたら……", "実は　こどもNISAで使った枠は\n大人になってからの1,800万円に含まれます", dur=3.6,
+             se="doon_movie"),
+        dia("e03c_1800", "18歳からの残りは　1,200万円", "bg20_counter",
+            left=("surprise_big_pupils_cat", "ニュース猫"), right=("work_typing_cat", "博識な猫"), se="card_flip"),
+        close("bg20_counter", "glare_disgusted_cat", "ニュース猫", "将来の枠を\n前借りしてるだけじゃん！",
+              se=["game_aceattorney_desk_slam"]),
         # ---- 4. お得なところ ----
-        card("e04_merit", "お得なところ　① 家族の非課税の枠が増える", "happy_girlfriend_dance_cat", dur=2.6),
-        papa("calm_black_face_sheep", "うち、\n自分のNISA枠\nもう埋まりそう\nでさ"),
-        sage("itchy_kitten_butt", "そういう家は\n子どもの分\n600万が\n上乗せになる", b="bg14_home_night"),
-        papa("joy_happy_happy_happy_cat", "よっしゃ\n枠増えた", sound=True),
-        card("e04_merit", "② 0歳から始めると　18年も運用できる", "dance_wop_cat", b="bg19_kids_room", dur=2.4),
-        card("e04b_sim", "月1万円を0歳から18年　入れたお金は216万円", "dance_wop_cat", b="bg19_kids_room", dur=2.6),
-        card("e04b_sim", "年3％で増えたら　約286万円（※仮の計算。減ることもある）", "dance_wop_cat",
-             b="bg19_kids_room", dur=3.0),
-        news("weird_meowing_cat", "70万も\n増えてんの!?"),
-        sage("listen_dancing_dog", "あくまで\n“うまくいけば”\nな", dur=1.8),
-        news("peek_what_happen_cat", "じゃあ\n0歳から\n始めないと損？", b="bg19_kids_room"),
-        sage("blank_black_cat_zoning_out", "早く始めるほど\n時間を\n味方にできる\nってだけな", b="bg19_kids_room"),
-        card("e04c_junior", "③ 前の制度「ジュニアNISA」の反省で　使いやすくなった", "spit_not_my_taste_cat", dur=2.8),
-        card("e04c_junior", "前は　18歳まで原則引き出せず　非課税も5年だけ", "spit_not_my_taste_cat", dur=2.6),
-        card("e04c_junior", "こどもNISAは　12歳から教育費に使える・非課税は無期限", "spit_not_my_taste_cat", dur=2.8),
-        news("mock_swinging_cat", "中学・高校の\n入学金に\n使えるのは\nデカい", b="bg21_school_gate"),
-        card("e04_merit", "④ おじいちゃん・おばあちゃんからの援助の受け皿にもなる", "sleepy_old_memories_cat",
-             b="bg14_home_night", dur=2.8),
-        papa("shady_dancing_man", "じいじが\n孫のために\n何かしたい\nって言っててさ"),
-        card("e04_merit", "ただし　もらったお金は1年で合計110万円を超えると　贈与税に注意", "slack_nail_filing_cat",
-             b="bg14_home_night", dur=3.0),
-        news("spin_spinning_cat", "税金の話\n多すぎて\n目が回る", dur=1.8),
+        chap("じゃあ　お得なところは？", se="quiz_question_02"),
+        dia("e04_merit", "① 家族の非課税の枠が増える", "bg14_home_night",
+            left=("calm_black_face_sheep", "パパ猫"), right=("itchy_kitten_butt", "博識な猫"), se="pinpoon_correct"),
+        duo("bg14_home_night", ("calm_black_face_sheep", "パパ猫"), ("itchy_kitten_butt", "博識な猫"),
+            "うち、自分のNISA枠\nもう埋まりそうでさ", se="cursor_move_01"),
+        duo("bg14_home_night", ("calm_black_face_sheep", "パパ猫"), ("itchy_kitten_butt", "博識な猫"),
+            "そういう家は\n子どもの分600万が上乗せ", se="game_mario_1up"),
+        solo("bg14_home_night", "joy_happy_happy_happy_cat", "パパ猫", "よっしゃ\n枠増えた", side="L", sound=True),
+        dia("e04_merit", "② 0歳から始めると　18年も運用できる", "bg19_kids_room",
+            left=("dance_wop_cat", "ニュース猫"), right=("listen_dancing_dog", "博識な猫"), se="button_13"),
+        dia("e04b_sim", "月1万円を0歳から18年　入れたお金は216万円", "bg19_kids_room",
+            left=("dance_wop_cat", "ニュース猫"), right=("listen_dancing_dog", "博識な猫"), se="card_place"),
+        dia("e04b_sim", "年3％で増えたら　約286万円（※仮の計算。減ることもある）", "bg19_kids_room",
+            left=("dance_wop_cat", "ニュース猫"), right=("listen_dancing_dog", "博識な猫"), se="game_dq_level_up"),
+        close("bg19_kids_room", "weird_meowing_cat", "ニュース猫", "70万も\n増えてんの！？", se=["game_zelda_item_get"]),
+        duo("bg19_kids_room", ("peek_what_happen_cat", "ニュース猫"), ("blank_black_cat_zoning_out", "博識な猫"),
+            "あくまで\n“うまくいけば”な", se="game_smash_zannen"),
+        duo("bg19_kids_room", ("peek_what_happen_cat", "ニュース猫"), ("blank_black_cat_zoning_out", "博識な猫"),
+            "じゃあ0歳から\n始めないと損？", se="question_hatena_maou"),
+        duo("bg19_kids_room", ("peek_what_happen_cat", "ニュース猫"), ("blank_black_cat_zoning_out", "博識な猫"),
+            "早く始めるほど\n時間を味方にできるってだけな", se="shine_kira_01"),
+        dia("e04c_junior", "③ 前の制度「ジュニアNISA」の反省で　使いやすくなった", "bg03_blackboard",
+            left=("spit_not_my_taste_cat", "ニュース猫"), right=("drive_monkey_golf_cart", "博識な猫"), se="page_turn_02"),
+        dia("e04c_junior", "前は　18歳まで原則引き出せず　非課税も5年だけ", "bg03_blackboard",
+            left=("spit_not_my_taste_cat", "ニュース猫"), right=("drive_monkey_golf_cart", "博識な猫"), se="game_dq_attack_enemy"),
+        dia("e04c_junior", "こどもNISAは　12歳から教育費に使える・非課税は無期限", "bg03_blackboard",
+            left=("spit_not_my_taste_cat", "ニュース猫"), right=("drive_monkey_golf_cart", "博識な猫"), se="game_airride_checker"),
+        solo("bg21_school_gate", "mock_swinging_cat", "ニュース猫", "中学・高校の\n入学金に使えるのはデカい",
+             side="L", se="jan"),
+        dia("e04_merit", "④ おじいちゃん・おばあちゃんからの援助の受け皿にもなる", "bg14_home_night",
+            left=("shady_dancing_man", "パパ猫"), right=("sleepy_old_memories_cat", "博識な猫"), se="pinpon_notice"),
+        duo("bg14_home_night", ("shady_dancing_man", "パパ猫"), ("sleepy_old_memories_cat", "博識な猫"),
+            "じいじが孫のために\n何かしたいって言っててさ", se="cursor_move_02"),
+        expl("bg14_home_night", [cat("shady_dancing_man", "パパ猫", 520), cat("sleepy_old_memories_cat", "博識な猫", 1420)],
+             "", "ただし　もらったお金が1年で合計110万円を超えると\n贈与税がかかることがあるので注意", dur=3.4, se="pc_warning"),
+        close("bg14_home_night", "spin_spinning_cat", "ニュース猫", "税金の話\n多すぎて目が回る", red=False,
+              se=["spring_byoin"]),
         # ---- 5. イマイチなところ ----
-        card("e05_demerit", "でも　イマイチという声も多い", "sleepy_sleepy_cat", dur=2.4, bgm={"file": COCOA, "gain": -7}),
-        card("e05_demerit", "① 「まず親のNISAを埋めるのが先」", "sleepy_sleepy_cat", dur=2.2),
-        sage("drive_monkey_golf_cart", "親のNISAなら\nいつでも\n引き出せるし\n枠もデカいからな"),
-        net("sleep_sleeping_cat", "親の枠すら\n埋まってないのに\n子どもの分とか\n無理ゲー", "親の声"),
-        news("huh_huh_cat", "で、結局\n親と子\nどっちが先なの？"),
-        sage("angry_aiming_cat", "引き出しやすさで\n言えば\n親が先って\n意見が多いな"),
-        card("e05_demerit", "② 「お金に余裕のある家しか使えない」", "fight_cat_fight", dur=2.2),
-        net("rage_talking_cat", "結局\n金持ちの子が\nさらに有利に\nなるだけ", "格差を心配する声"),
-        net("laugh_laughing_dog", "親ガチャを\n国が強化してて\n草", "格差を心配する声"),
-        card("e05_demerit", "③ 引き出しのルールがめんどう", "fight_cat_fight", dur=2.0),
-        net("confused_i_dont_know_cat", "12歳まで\n使えない\nその後も書類\nハードル高い", "親の声"),
-        card("e05_demerit", "④ 18歳で子どものお金になる", "wakeup_dog_hits_bowl", dur=2.0),
-        net("despair_dramatic_kitten", "18歳で\nいきなり数百万\n全部溶かされたら\nどうすんの", "親の声"),
-        papa("tense_two_cats_face_off", "うちの子に\n限って……\nいや、ありうる"),
-        card("e05_demerit", "⑤ 投資だから　減ることもある（アンケートでも不安の1位）", "wakeup_dog_hits_bowl", dur=2.8),
-        news("sad_banana_cat_cry", "教育費が\n減ったら\nシャレにならん"),
-        card("e05_demerit", "⑥ 「どうせまた制度が変わる」　前のジュニアNISAは使われずに2023年で廃止",
-             "dance_trending_cat", dur=3.2),
-        news("angry_shooting_cat", "前作、\n打ち切り\nだったの!?", sting={"file": KAMI, "len": 4.0, "gain": -18}),
-        sage("sulk_hungry_cat", "ジュニアNISAは\n使う人が\n少なかったからな"),
-        net("mock_swinging_cat", "国のNISA\n毎回パッチ\n当てすぎ", "制度への不信"),
-        net("huh_goat_talks_to_huh_cat", "子どもが\n18歳になる前に\nまた変わりそう", "制度への不信"),
-        narr("bg09_sns", "一方で", "showoff_gojo_cosplay_cat", dur=1.4),
+        chap("でも　イマイチという声も多い…", se="doon_heavy",
+             bgm={"file": COCOA, "gain": -2}),
+        dia("e05_demerit", "① 「まず親のNISAを埋めるのが先」", "bg03_blackboard",
+            left=("sleepy_sleepy_cat", "ニュース猫"), right=("angry_aiming_cat", "博識な猫"), se="pi"),
+        duo("bg03_blackboard", ("sleepy_sleepy_cat", "ニュース猫"), ("angry_aiming_cat", "博識な猫"),
+            "親のNISAなら\nいつでも引き出せるし\n枠もデカいからな", se="pikon"),
+        net("sleep_sleeping_cat", "親の枠すら\n埋まってないのに\n子どもの分とか\n無理ゲー", "親の声", se="kon"),
+        dia("e05_demerit", "② 「お金に余裕のある家しか使えない」", "bg03_blackboard",
+            left=("fight_cat_fight", "ニュース猫"), right=("listen_dancing_dog", "博識な猫"), se="pi"),
+        net("rage_talking_cat", "結局\n金持ちの子が\nさらに有利に\nなるだけ", "格差を心配する声", se="boon"),
+        close("bg09_sns", "laugh_laughing_dog", "ネットの声", "親ガチャを\n国が強化してて草", se=["tv_gakitsuka_dedeen"]),
+        dia("e05_demerit", "③ 引き出しのルールがめんどう", "bg03_blackboard",
+            left=("fight_cat_fight", "ニュース猫"), right=("work_typing_cat", "博識な猫"), se="pi"),
+        net("confused_i_dont_know_cat", "12歳まで使えない\nその後も書類\nハードル高い", "親の声", se="tear_drop"),
+        dia("e05_demerit", "④ 18歳で子どものお金になる", "bg03_blackboard",
+            left=("despair_dramatic_kitten", "ニュース猫"), right=("itchy_kitten_butt", "博識な猫"), se="pi"),
+        close("bg14_home_night", "tense_two_cats_face_off", "パパ猫", "18歳でいきなり数百万……\n全部溶かされたら！？",
+              se=["game_undertale_encounter"]),
+        solo("bg14_home_night", "dance_wild_dog", "パパ猫", "うちの子に限って……\nいや、ありうる", side="R",
+             se="anime_shinchan_taraan"),
+        dia("e05_demerit", "⑤ 投資だから　減ることもある（アンケートでも不安の1位）", "bg03_blackboard",
+            left=("sad_banana_cat_cry", "ニュース猫"), right=("wakeup_dog_hits_bowl", "博識な猫"), se="pi"),
+        solo("bg02_room", "sad_banana_cat_cry", "ニュース猫", "教育費が減ったら\nシャレにならん", side="L", se="shock_piano"),
+        dia("e05_demerit", "⑥ 「どうせまた制度が変わる」", "bg03_blackboard",
+            left=("dance_trending_cat", "ニュース猫"), right=("sulk_hungry_cat", "博識な猫"), se="pi"),
+        expl("bg03_blackboard", [cat("dance_trending_cat", "ニュース猫", 520), cat("sulk_hungry_cat", "博識な猫", 1420)],
+             "", "前の制度「ジュニアNISA」は　使う人が少なく\n2023年で廃止されました", dur=3.4, se="fall_hyuu"),
+        close("bg06_spotlight", "angry_shooting_cat", "ニュース猫", "前作、\n打ち切りだったの！？",
+              se=["explosion_dokaan"], sting={"file": KAMI, "len": 4.0, "gain": -16}),
+        net("mock_swinging_cat", "国のNISA\n毎回パッチ\n当てすぎ", "制度への不信", se="game_minecraft_anvil"),
+        net("huh_goat_talks_to_huh_cat", "子どもが\n18歳になる前に\nまた変わりそう", "制度への不信", se="silly"),
+        chap("一方で…", dur=1.2),
         net("happy_chipi_chapa_cat", "出産祝いを\n預ける先が\nできてありがたい", "歓迎する声", sound=True),
-        net("wave_waving_cat", "子どもと一緒に\nお金の勉強が\nできる", "歓迎する声"),
+        net("wave_waving_cat", "子どもと一緒に\nお金の勉強が\nできる", "歓迎する声", se="pinpoon_correct"),
         # ---- 6. どんな家に向いてる？ ----
-        card("e06_fit", "向いているのは　親のNISAが埋まりそう・祖父母の援助がある家", "dance_edm_cat",
-             b="bg14_home_night", dur=3.0),
-        card("e06_fit", "向いていないのは　親のNISAがまだ空いている・すぐ使うかもしれないお金", "dance_edm_cat",
-             b="bg14_home_night", dur=3.2),
-        news("calmdown_dancing_cat", "なるほど、\nまず親の枠から\nってことね", b="bg14_home_night"),
-        news("dance_wild_dog", "……うち、\n親の枠も\nスカスカだわ", b="bg14_home_night", dur=1.9),
-        sage("eat_pop_cat", "余裕がある家の\n“追加の箱”って\n考えると\nわかりやすい", b="bg14_home_night"),
-        papa("cocky_dj_cat", "よし、\nまず自分のを\nちゃんとやるわ", flip=True),
+        chap("結局　どんな家に向いてる？", se="quiz_question_01"),
+        dia("e06_fit", "向いているのは　親のNISAが埋まりそう・祖父母の援助がある家", "bg14_home_night",
+            left=("dance_edm_cat", "パパ猫"), right=("eat_pop_cat", "博識な猫"), se="pinpoon_note"),
+        dia("e06_fit", "向いていないのは　親のNISAがまだ空いている・すぐ使うかもしれないお金", "bg14_home_night",
+            left=("dance_edm_cat", "パパ猫"), right=("eat_pop_cat", "博識な猫"), se="buzzer_wrong"),
+        duo("bg14_home_night", ("dance_edm_cat", "パパ猫"), ("eat_pop_cat", "博識な猫"),
+            "余裕がある家の\n“追加の箱”って考えると\nわかりやすい", se="idea_newtype_01"),
+        close("bg14_home_night", "calmdown_dancing_cat", "パパ猫", "……うち、\n親の枠もスカスカだわ", red=False,
+              se=["tv_dokkiri_tettere"]),
         # ---- 7. まとめ ----
-        dict(bg=bg("bg03_blackboard"), card=pt("e07_matome"), dur=4.4,
-             cats=[{"a": "excited_hodomoe_city_cat", "x": 1752, "h": 330, "bottom": 830, "float": True, "small": True}],
-             bgm={"file": MIRAI, "gain": -7, "fade": 0.8}),
-        sage("realize_wet_cat_stare", "お得かどうかは\n家庭しだい\nってわけ"),
-        news("glare_disgusted_cat", "結局\n余裕ある家の\n選択肢が\n増えたってことね"),
-        news("drive_driving_cat", "とりあえず\n自分のNISAから\nちゃんとやるわ"),
-        dict(bg=bg("bg03_blackboard"), card=pt("e08_ending"), dur=3.0,
+        dict(bg=bg("bg03_blackboard"), inset={"card": pt("e07_matome"), "box": (200, 60, 1720, 860)}, dur=4.4,
+             cats=[cat("excited_hodomoe_city_cat", "ニュース猫", 1750, h=380, bottom=1060, float=True)],
+             bgm={"file": MIRAI, "gain": -2, "fade": 0.8}, se="chiin_01"),
+        duo("bg02_room", ("glare_disgusted_cat", "ニュース猫"), ("realize_wet_cat_stare", "博識な猫"),
+            "お得かどうかは\n家庭しだいってわけ", se="tv_professional_poon"),
+        duo("bg02_room", ("glare_disgusted_cat", "ニュース猫"), ("realize_wet_cat_stare", "博識な猫"),
+            "結局、余裕ある家の\n選択肢が増えたってことね", se="taiko_kaka"),
+        solo("bg02_room", "drive_driving_cat", "ニュース猫", "とりあえず\n自分のNISAから\nちゃんとやるわ", side="L",
+             se="pikoon_retro"),
+        dict(bg=bg("bg03_blackboard"), card=pt("e08_ending"), dur=3.0, se="chirin",
              cats=[{"a": "wave_waving_cat", "x": 300, "h": 420, "bottom": 1040, "float": True}]),
     ]
 
-
-# 効果音（catmeme/se/）。セリフ・字幕・カード画像の一部が一致したカットに付ける（上から順に最初の一致）
-SE_MAP = [
-    # ゲーム・テレビ番組の音（⚠ 権利は各社。収益化で申し立てを受けることがある）
-    ("今日の本題", "game_monhun_quest_start"), ("e01b_theme", "game_smash_ready_go"), ("タダになる箱", "anime_doraemon_gadget"),
-    ("6分の1", "game_dq_miss"), ("反抗期", "game_mgs_alert"), ("前借り", "game_aceattorney_desk_slam"),
-    ("上乗せ", "game_mario_1up"), ("約286万円", "game_dq_level_up"), ("70万も", "game_zelda_item_get"),
-    ("うまくいけば", "game_smash_zannen"), ("前は　18歳まで", "game_dq_attack_enemy"), ("無期限", "game_airride_checker"),
-    ("じいじが", "pinpon_notice"), ("親ガチャ", "tv_gakitsuka_dedeen"), ("溶かされたら", "game_undertale_encounter"),
-    ("限って", "anime_shinchan_taraan"), ("打ち切り", "explosion_dokaan"), ("パッチ", "game_minecraft_anvil"),
-    ("スカスカ", "tv_dokkiri_tettere"), ("家庭しだい", "tv_professional_poon"),
-    ("そもそも\nなんだっけ", "pikon"), ("タダになる箱", "idea_newtype_01"), ("個別の株", "buzzer_wrong"),
-    ("投資信託だけね", "tsukkomi_bishi"), ("始めないと損", "question_hatena_maou"), ("時間を\n味方", "shine_kira_01"),
-    ("じいじが", "pinpon_notice"), ("どっちが先", "pi"), ("親が先って", "hyoshigi_01"), ("使う人が\n少なかった", "fall_hyuu"),
-    ("スカスカ", "deflate_hyororo"), ("選択肢が\n増えた", "taiko_kaka"),
-    ("e00_notice", {"f": "chime_announce", "len": 3.0, "gain": -2}), ("e01_title", "chirin"), ("e01b_theme", "jan"),
-    ("口座の受付", "quiz_question_01"), ("2027年1月から", "card_place"), ("子どもが\n投資", "question_hatena_maou"),
-    ("動かすのは", "tsukkomi_bishi"), ("なにが違う", "pi"), ("今日の本題", "shine_kiraan_maou"),
-    ("名前で作る", "page_turn_01"), ("合計600万円まで", "card_flip"), ("税金がかからない", "shine_kira_01"),
-    ("月5万か", "pikon"), ("10年で600万", "idea_newtype_01"), ("月5万は\nムリ", "tsukkomi_bashi"),
-    ("積立向けの投資信託", "page_turn_02"), ("親権者", "card_place"), ("ややこしいな", "silly"),
-    ("比べてみると", "xylophone_transition"), ("6分の1", "fall_hyuu"), ("12歳まで\nNG", "kon"),
-    ("引き出せないの", "boing_fail"), ("12歳未満は", "doon_heavy"), ("子どものための出費", "pinpoon_note"),
-    ("使い道の書類", "pc_warning"), ("反抗期", "explosion_chudoon"), ("交渉する", "taiko_kaka"),
-    ("自動で「ふつう", "whoosh_shu"), ("1,800万円に含まれる", "doon_movie"), ("1,200万", "card_flip"),
-    ("前借り", "punch"),
-    ("家族の非課税", "pinpoon_correct"), ("もう埋まりそう", "cursor_move_01"), ("上乗せ", "shine_kira_01"),
-    ("18年も運用", "button_13"), ("入れたお金は216", "card_place"), ("約286万円", "fanfare_pararappara"),
-    ("70万も", "voice_uuwaa"), ("うまくいけば", "deflate_hyororo"), ("ジュニアNISA」の反省", "page_turn_02"),
-    ("前は　18歳まで", "buzzer_wrong"), ("無期限", "pinpoon_correct"), ("入学金", "jan"),
-    ("援助の受け皿", "button_26"), ("110万円を超える", "pc_warning"), ("目が回る", "spring_byoin"),
-    ("イマイチという声", "quiz_question_02"), ("親のNISAを埋める", "pi"), ("いつでも\n引き出せる", "pikon"),
-    ("無理ゲー", "kon"), ("余裕のある家", "pi"), ("金持ちの子", "boon"), ("親ガチャ", "boing_01"),
-    ("ルールがめんどう", "pi"), ("ハードル高い", "tear_drop"), ("18歳で子ども", "pi"), ("溶かされたら", "glass_break_01"),
-    ("限って", "car_brake"), ("減ることもある（", "pi"), ("シャレにならん", "shock_piano"),
-    ("どうせまた制度", "pi"), ("打ち切り", "explosion_dokaan"), ("パッチ", "kote"), ("また変わりそう", "silly"),
-    ("一方で", "whoosh_shu"), ("ビール党", None), ("出産祝い", None), ("お金の勉強", "pinpoon_correct"),
-    ("向いているのは", "pinpoon_note"), ("向いていないのは", "buzzer_wrong"), ("まず親の枠", "taiko_kaka"),
-    ("追加の箱", "idea_newtype_01"), ("まず自分の", "hyoshigi_01"),
-    ("e07_matome", "chiin_01"), ("家庭しだい", "hyoshigi_02"), ("自分のNISAから", "pikoon_retro"),
-    ("e08_ending", "chirin"),
-]
 
 # 猫ミーム素材を途中で切らずに最後まで流すカット（切る秒は assets/play.json）
 FULL = ["よっしゃ", "出産祝い"]
 
 
-def apply_se(cuts):
+def apply_fx(cuts):
     for c in cuts:
         k = " ".join(str(c.get(x) or "") for x in ("say", "sub"))
         if any(f in k for f in FULL) and c.get("cats"):
@@ -250,18 +305,21 @@ def apply_se(cuts):
             cfg = R.ASSET_PLAY.get(c["cats"][0]["a"], {})
             if cfg.get("until"):
                 c["cats"][0]["until"] = cfg["until"]
+    # 場所（背景）が変わるカットの頭にシュッという音（すでに付いている音とは重ねる）
+    prev = None
     for c in cuts:
-        key = " ".join(str(c.get(k) or "") for k in ("say", "sub", "card", "layers"))
-        for snip, se in SE_MAP:
-            if snip in key:
-                if se is not None:
-                    c["se"] = se
-                break
+        if c.get("bg") != prev and prev is not None:
+            se = c.get("se")
+            lst = [] if not se else ([se] if isinstance(se, (str, dict)) else list(se))
+            if not any((s if isinstance(s, str) else s.get("f")) == "whoosh_shu" for s in lst):
+                lst = [{"f": "whoosh_shu", "gain": -10}] + lst
+            c["se"] = lst
+        prev = c.get("bg")
     return cuts
 
 
 def cuts_full():
-    return apply_se(cuts_all())
+    return apply_fx(cuts_all())
 
 
 if __name__ == "__main__":

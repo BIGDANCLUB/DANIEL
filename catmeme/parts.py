@@ -360,8 +360,12 @@ def wrap_nice(d, text, f, max_w):
     return [ln.lstrip("　 ") for ln in lines]
 
 
-def big_text(text, box, max_size=150, min_size=64, max_lines=3, gap=1.18):
-    """白い太字＋黒い太い縁取り。box=(x0,y0,x1,y1) の中に、大きく・中央揃えで収める。"""
+RED_TEXT = (235, 32, 32)
+
+
+def big_text(text, box, max_size=150, min_size=64, max_lines=3, gap=1.18, fill=WHITE, stroke=(0, 0, 0)):
+    """白い太字＋黒い太い縁取り。box=(x0,y0,x1,y1) の中に、大きく・中央揃えで収める。
+    fill/stroke で色を変えられる（強調は赤い文字＋白い縁取り：fill=RED_TEXT, stroke=WHITE）。"""
     img = canvas()
     d = ImageDraw.Draw(img)
     x0, y0, x1, y1 = box
@@ -384,7 +388,9 @@ def big_text(text, box, max_size=150, min_size=64, max_lines=3, gap=1.18):
     y = (y0 + y1) / 2 - lh * len(lines) / 2
     for ln in lines:
         x = (x0 + x1) / 2 - text_w(d, ln, f) / 2
-        d.text((x, y - size * 0.12), ln, font=f, fill=WHITE, stroke_width=sw, stroke_fill=(0, 0, 0))
+        if stroke != (0, 0, 0):   # 色つきの縁取りは、さらに外側に黒い細い縁を付けて背景から浮かせる
+            d.text((x, y - size * 0.12), ln, font=f, fill=stroke, stroke_width=sw + 4, stroke_fill=(0, 0, 0))
+        d.text((x, y - size * 0.12), ln, font=f, fill=fill, stroke_width=sw, stroke_fill=stroke)
         y += lh
     return img
 
@@ -398,4 +404,56 @@ def name_plate(text, x, y, size=72):
     px, py = size * 0.32, size * 0.2
     d.rectangle((x, y, x + w + px * 2, y + size * 1.25 + py * 2 - size * 0.25), fill=WHITE)
     d.text((x + px, y + py - size * 0.14), text, font=f, fill=(0, 0, 0))
+    return img
+
+
+def label_tag(text, color=None, size=58):
+    """猫の足元に付ける役名の札（参考動画ふう）。color=None は白地に黒字、色を指定すると色地に白字。
+    返すのは札だけの大きさの透過画像。"""
+    f = font("black", size)
+    tmp = ImageDraw.Draw(Image.new("RGBA", (10, 10)))
+    w = text_w(tmp, text, f)
+    pw, ph = int(size * 0.35), int(size * 0.18)
+    img = Image.new("RGBA", (int(w + pw * 2), int(size * 1.2 + ph * 2)), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    d.rectangle((0, 0, img.width - 1, img.height - 1), fill=color or WHITE)
+    d.text((pw, ph - size * 0.1), text, font=f, fill=WHITE if color else (0, 0, 0))
+    return img
+
+
+def speed_lines(center=(960, 540), color=(255, 255, 255), seed=0, n=90, inner=330):
+    """集中線（画面の外から中心に向かう細い三角）。強調のセリフの後ろに敷く。"""
+    import math
+    import random
+    rnd = random.Random(seed)
+    img = canvas()
+    d = ImageDraw.Draw(img)
+    cx, cy = center
+    for i in range(n):
+        a = 2 * math.pi * (i + rnd.random() * 0.6) / n
+        r0 = inner + rnd.random() * 220
+        wdt = 0.004 + rnd.random() * 0.012
+        far = 2300
+        pts = [(cx + far * math.cos(a - wdt), cy + far * math.sin(a - wdt)),
+               (cx + far * math.cos(a + wdt), cy + far * math.sin(a + wdt)),
+               (cx + r0 * math.cos(a), cy + r0 * math.sin(a))]
+        d.polygon(pts, fill=(*color, 210))
+    return img
+
+
+def plain_text(text, box, size=60, gap=1.35):
+    """黒地の上に置く説明文（白い文字・細い黒縁）。中央揃え。"""
+    img = canvas()
+    d = ImageDraw.Draw(img)
+    x0, y0, x1, y1 = box
+    f = font("black", size)
+    lines = []
+    for para in text.split("\n"):
+        lines += wrap_nice(d, para, f, x1 - x0)
+    lh = size * gap
+    y = (y0 + y1) / 2 - lh * len(lines) / 2
+    for ln in lines:
+        x = (x0 + x1) / 2 - text_w(d, ln, f) / 2
+        d.text((x, y - size * 0.12), ln, font=f, fill=WHITE, stroke_width=4, stroke_fill=(0, 0, 0))
+        y += lh
     return img

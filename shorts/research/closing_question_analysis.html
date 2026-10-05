@@ -1,0 +1,269 @@
+<title>問いかけ締めの分析</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one reading column (report), wide tables scroll in place; status chips mark 確認済 / 不明 / 推論 */
+:root {
+  --bg: #f6f6f3;
+  --paper: #ffffff;
+  --ink: #1b2230;
+  --muted: #5b6372;
+  --line: #d9dbe0;
+  --accent: #b4231c;      /* 字幕の赤 */
+  --hi: #f2c200;          /* 字幕の黄 */
+  --hi-soft: #fff4c2;
+  --ok: #1f6b45;
+  --ok-soft: #e1f1e8;
+  --warn: #8a5a00;
+  --warn-soft: #fbedd0;
+  --na: #5b6372;
+  --na-soft: #e9eaee;
+  --f-display: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  --f-body: "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Meiryo", "Noto Sans JP", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151b; --paper: #1a1e26; --ink: #e8eaee; --muted: #a2a9b6; --line: #2f3542;
+    --accent: #ff6b5f; --hi: #f2c200; --hi-soft: #3a3110;
+    --ok: #6fd3a0; --ok-soft: #173126; --warn: #f0b54a; --warn-soft: #3a2c10; --na: #a2a9b6; --na-soft: #262b35;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151b; --paper: #1a1e26; --ink: #e8eaee; --muted: #a2a9b6; --line: #2f3542;
+  --accent: #ff6b5f; --hi: #f2c200; --hi-soft: #3a3110;
+  --ok: #6fd3a0; --ok-soft: #173126; --warn: #f0b54a; --warn-soft: #3a2c10; --na: #a2a9b6; --na-soft: #262b35;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.8; padding: 0 16px; }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 40px 80px; display: flex; flex-direction: column; gap: 48px; }
+header { display: flex; flex-direction: column; gap: 14px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; color: var(--muted); }
+h1 { font-family: var(--f-display); font-weight: 900; font-size: clamp(28px, 5vw, 40px); line-height: 1.3; margin: 0; text-wrap: balance; }
+h1 .mark { background: linear-gradient(transparent 62%, var(--hi) 62%); }
+h2 { font-family: var(--f-display); font-weight: 700; font-size: 24px; line-height: 1.4; margin: 0 0 4px; text-wrap: balance; display: flex; gap: 12px; align-items: baseline; }
+h2 .no { font-family: var(--f-mono); font-size: 14px; color: var(--accent); }
+h3 { font-family: var(--f-display); font-weight: 700; font-size: 18px; margin: 18px 0 4px; }
+p { margin: 0; max-width: 68ch; }
+section { display: flex; flex-direction: column; gap: 14px; }
+.lede { font-size: 17px; }
+.limits { background: var(--paper); border: 1px solid var(--line); border-left: 4px solid var(--warn); padding: 16px 18px; border-radius: 4px; display: flex; flex-direction: column; gap: 8px; }
+.limits strong { color: var(--warn); }
+ul, ol { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 6px; max-width: 70ch; }
+.chip { display: inline-block; font-size: 12px; font-weight: 700; line-height: 1; padding: 4px 7px; border-radius: 3px; white-space: nowrap; vertical-align: 2px; }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.na { background: var(--na-soft); color: var(--na); }
+.chip.inf { background: var(--warn-soft); color: var(--warn); }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 13px; color: var(--muted); }
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); }
+table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 14px; line-height: 1.6; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+th { font-family: var(--f-display); font-weight: 700; font-size: 13px; color: var(--muted); background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+td .src { display: block; font-size: 12px; color: var(--muted); }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.titles { display: flex; flex-direction: column; gap: 8px; }
+.t { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 10px 14px; display: grid; grid-template-columns: 3.2em 1fr; gap: 10px; align-items: baseline; }
+.t .len { font-family: var(--f-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.t .body { min-width: 0; }
+.t .who { display: block; font-size: 12px; color: var(--muted); }
+.q { color: var(--accent); font-weight: 700; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.box { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.box h3 { margin: 0; }
+.recs { counter-reset: r; list-style: none; padding: 0; gap: 14px; max-width: none; }
+.recs li { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 14px 16px 14px 56px; position: relative; display: flex; flex-direction: column; gap: 6px; }
+.recs li::before { counter-increment: r; content: counter(r); position: absolute; left: 16px; top: 12px; font-family: var(--f-display); font-weight: 900; font-size: 24px; color: var(--accent); }
+.recs .what { font-family: var(--f-display); font-weight: 700; font-size: 17px; }
+.recs .ex { background: var(--hi-soft); padding: 8px 10px; border-radius: 3px; font-size: 14px; }
+.small { font-size: 13px; color: var(--muted); }
+.sources ol { font-size: 13px; line-height: 1.6; max-width: none; word-break: break-all; }
+code { font-family: var(--f-mono); font-size: 13px; background: var(--na-soft); padding: 1px 4px; border-radius: 3px; }
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">「日本で生きるということ」 / 調査日 2026-10-05 / 続編</div>
+  <h1>「<span class="mark">どう思いますか？</span>」で締めるニュース系ショートの分析</h1>
+  <p class="lede">ニュースを紹介して視聴者への問いかけで終わるショートを探し、問いかけの型、伸ばし方、リスクを整理しました。最後に、このチャンネルの台本の締めをどう変えるかを具体的に書いています。</p>
+  <div class="legend">
+    <span><span class="chip ok">確認済</span> 出典つきで確認できた数字・事実</span>
+    <span><span class="chip na">不明</span> 確認できなかったもの</span>
+    <span><span class="chip inf">推論</span> 確認済みの材料からの判断</span>
+  </div>
+</header>
+
+<div class="limits">
+  <p><strong>調査の限界</strong></p>
+  <ul>
+    <li>前回と同じく、この環境からは <b>youtube.com や集計サイトに直接アクセスできません</b>。検索エンジンの結果と要約だけで調べています。</li>
+    <li>「どう思いますか」は多くの場合<b>ナレーションか最後の字幕</b>にあり、検索エンジンには載りません。検索で拾えるのはタイトル・概要欄・ハッシュタグに問いかけを書いている動画だけです。<b>締めのナレーションまで確かめたチャンネルはありません</b>。</li>
+    <li>見つかった動画のチャンネル名・登録者数・再生数は、ほとんどが「不明」です。</li>
+  </ul>
+</div>
+
+<section id="summary">
+  <h2><span class="no">要点</span>先に結論</h2>
+  <ul>
+    <li><b>問いかけで締めるのは、主に個人・匿名の運営</b>です。皇室ゴシップ、海外の反応、2ch/5chまとめ風の政治ネタのショートで、タイトルや概要欄に問いかけを書いている例が見つかりました。テレビ局のニュースショートで問いかけ締めの例は見つかりませんでした。</li>
+    <li>問いかけには型があります。<b>汎用の「どう思いますか」</b>、<b>二択</b>、<b>対象者を呼んで確かめる問い</b>（「◯◯の人、知っていますか？」）、<b>タイトルで意見をにおわせる問い</b>（「本当に適任ですか？」）です。</li>
+    <li>このチャンネルでは、<b>ニュース系の4本（ST-027・038・039・040）がすべて同じ「あなたは どう思いますか？」で終わっています</b>。一方、反響が大きかったST-037と制度系の17本は「対象者＋確かめる問い」で終わっています。</li>
+    <li>先に知っておくべき変化が2つあります。<b>10月1日からショートは独自性の低い動画の露出を減らす</b>ようになりました。また、<b>2027年2月1日からショートの収益分配は「90日で1000万回再生」を保つチャンネルだけ</b>になります。</li>
+  </ul>
+</section>
+
+<section id="found">
+  <h2><span class="no">1</span>見つかった「問いかけ締め」系のチャンネル・動画</h2>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>チャンネル・動画</th><th>ジャンル</th><th>問いかけの出し方</th><th>数字</th></tr></thead>
+    <tbody>
+      <tr><td><b>令和の皇室物語</b>（検索要約でのチャンネル名） [1]</td><td>皇室ニュース</td>
+        <td>タイトルの頭の【】に意見をにおわせる問いや感想を置く：「【本当に適任ですか？】」「【意図的ですかね…】」「【お飾り公務ですか…】」「【放送事故レベルですね…】」。ハッシュタグは毎回同じ「#shorts #shortvideo #ニュース#皇室#チャンネル」</td>
+        <td><span class="chip na">不明</span></td></tr>
+      <tr><td>皇室系ショートチャンネル（売買サイトの出品） [2]</td><td>皇室ニュース</td>
+        <td><span class="chip na">不明</span></td>
+        <td>登録者5.5万人・月収20万円の実績 <span class="chip ok">確認済</span><span class="src">出品者の申告</span></td></tr>
+      <tr><td>「㊗️40万回再生🎉波乱万丈な悠仁さまの人生」 [1]</td><td>皇室</td>
+        <td>タイトルで再生数を自慢する型</td>
+        <td>40万回 <span class="chip inf">本人表記</span></td></tr>
+      <tr><td>「日本人が外国人に悪い先入観を持ってしまう理由」ほか、海外の反応系ショート [3]</td><td>外国人・日本</td>
+        <td>概要欄に「皆さんはどう思いますか」。地下鉄での外国人観光客の振る舞いの動画でも、視聴者に意見を聞く書き方 [3][4]</td>
+        <td><span class="chip na">不明</span></td></tr>
+      <tr><td>「【衝撃】『日本人早く気づいて...』ある動画が話題に」 [5]</td><td>移民・宗教・政治</td>
+        <td>2ch/5ch風のネットの声を並べて紹介し、視聴者の反応を誘う</td>
+        <td><span class="chip na">不明</span></td></tr>
+      <tr><td>【shortsニュース】（再生リスト） [6]</td><td>ニュース全般</td>
+        <td>ニュースの要点を短く紹介。締め方は<span class="chip na">不明</span></td>
+        <td><span class="chip na">不明</span></td></tr>
+      <tr><td>テレビ局のニュースショート（ANN・TBS・日テレ・FNNなど）</td><td>ニュース</td>
+        <td>問いかけで締める例は検索では見つからず。タイトルは記事見出しをそのまま使う型（前回レポート参照）</td>
+        <td>前回レポート参照</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small">2026年5月にも、ショートの投稿者が高評価とコメントを強く呼びかける投稿が話題になっていました [7]。呼びかけ自体はこのジャンルでよく使われています。</p>
+</section>
+
+<section id="types">
+  <h2><span class="no">2</span>問いかけの型と効き方</h2>
+  <p>ショートの解説記事では、締めの問いかけはコメントを増やし、コメントの多い動画は拡散の優先度が上がるとされています。「あなたはどちら派？」「あなたならどうしますか？」のように<b>答えやすい問い</b>や、<b>意見が分かれる結論をあえて出す</b>形が勧められています [8]。</p>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>型</th><th>例</th><th>良い点</th><th>弱い点</th></tr></thead>
+    <tbody>
+      <tr><td><b>A 汎用</b></td><td>あなたは どう思いますか？</td><td>どの事件にも使える</td><td>何について答えればよいか分からない。毎回同じだと定型に見える。答えが「◯◯人は出ていけ」のような集団への怒りに流れやすい <span class="chip inf">推論</span></td></tr>
+      <tr><td><b>B 二択</b></td><td>窃盗罪の上限10年 重いと思う？軽いと思う？</td><td>一言で答えられる。コメントが論点（刑罰・制度）に集まる</td><td>事件ごとに論点を一つ決める手間がかかる</td></tr>
+      <tr><td><b>C 対象者＋確かめる問い</b></td><td>家を貸しているあなた 誰が住んでいるか 知っていますか？（ST-037）</td><td>自分ごとになる。行動（確認・対策）につながる</td><td>対象から外れる人には刺さりにくい</td></tr>
+      <tr><td><b>D 当事者の立場</b></td><td>あなたなら どう対応しますか？（ST-008）</td><td>体験談がコメントに集まる</td><td>事件ニュースでは使いにくい</td></tr>
+      <tr><td><b>E においわせ疑問（真似しない）</b></td><td>【意図的ですかね…】【本当に適任ですか？】</td><td>クリックを引く</td><td>実在の人物に根拠のない疑いを向ける形。名誉毀損や「信頼できないコンテンツ」に近づく <span class="chip inf">推論</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="own">
+  <h2><span class="no">3</span>このチャンネルの締めの今</h2>
+  <p>リポジトリの台本（ST-003〜040）の最後の行を並べると、次のようになっていました。</p>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>系統</th><th>本数</th><th>締めの型</th><th>実例</th></tr></thead>
+    <tbody>
+      <tr><td>ニュース（外国人関連の事件）</td><td class="num">4本</td><td>A 汎用（4本とも同じ文）</td><td>ST-027・038・039・040「あなたは どう思いますか？」</td></tr>
+      <tr><td>ニュース（不法滞在の又貸し）</td><td class="num">1本</td><td>C 対象者＋確かめる問い</td><td>ST-037「家を貸しているあなた 誰が住んでいるか 知っていますか？」</td></tr>
+      <tr><td>制度・お金</td><td class="num">19本</td><td>C 対象者＋確かめる問い（17本）、確認の呼びかけ（2本）</td><td>「去年の医療費 10万円を 超えていませんか？」「自営業のあなた 付加年金入っていますか？」</td></tr>
+      <tr><td>人物伝（スポーツ）</td><td class="num">12本</td><td>答えを明かす（問いかけなし）</td><td>「その名は 井上尚弥」</td></tr>
+      <tr><td>体験・マナー</td><td class="num">2本</td><td>D 当事者の立場</td><td>「あなたなら どう対応しますか？」</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <ul>
+    <li>ニュース系だけが、型Aの同じ一文で終わっています。直前の行はそれぞれ違う事実（刑罰の上限、防犯対策、被害の影響）なので、<b>問いを直前の事実に結びつけるだけで型Bか型Cにできます</b>。</li>
+    <li>反響が大きかったと伺っているST-037は、ニュース系で唯一の型Cでした。締めだけが理由とは言えませんが、比べる価値があります <span class="chip inf">推論</span>。</li>
+  </ul>
+</section>
+
+<section id="risks">
+  <h2><span class="no">4</span>問いかけ締めのリスクと最近の変化</h2>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>項目</th><th>確認できたこと</th><th>このチャンネルへの影響</th></tr></thead>
+    <tbody>
+      <tr><td><b>コメントの呼びかけ</b></td><td>高評価・共有・コメントを促すこと自体は許可されている。報酬と引き換えの水増しや、繰り返しの多い定型コンテンツは禁止 [9]</td><td>問いかけは問題なし。ただし毎回同じ文は避ける</td></tr>
+      <tr><td><b>独自性の低いショートの露出減</b></td><td>2026年10月1日から、他人の動画を付加価値なしに再投稿するショートの露出を減らす更新。独自の解説・編集・語りで価値を足すよう求めている [10]</td><td>自前の台本・画像なので対象外とみられるが、締めの定型化は独自性を下げる方向 <span class="chip inf">推論</span></td></tr>
+      <tr><td><b>ショートの収益化基準</b></td><td>2027年2月1日から、ショートの広告収益の分配は<b>過去90日で1000万回以上</b>のチャンネルだけ。新規参加は90日で2000万回が必要 [11]</td><td>ショートだけで収益を得るには再生数の規模が必要になる。長尺への誘導やシリーズ化の重要度が上がる <span class="chip inf">推論</span></td></tr>
+      <tr><td><b>再生回数の定義変更</b></td><td>2026年8月24日から、全形式で再生開始の時点で1回と数える。過去分は再計算しない。収益やYPPの条件には影響しない [12]</td><td>8月24日の前後で再生数を比べるときは注意。締めの効果はコメント数÷再生数で比べる</td></tr>
+      <tr><td><b>においわせ疑問</b></td><td>前回レポートのとおり、名誉毀損での和解例や、動画に影響されたという放火事件の証言がある</td><td>型Eは使わない。問いは制度・刑罰・防犯に向ける</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="recs">
+  <h2><span class="no">5</span>提案：締めの書き換え</h2>
+  <ol class="recs">
+    <li>
+      <span class="what">ニュース系の締めを、直前の事実につなげた二択か確かめる問いにする</span>
+      <span>直前の行の内容をそのまま問いにします。答える内容がはっきりし、コメントが刑罰・防犯の話に集まります。</span>
+      <span class="ex">ST-027：窃盗罪は最大で 拘禁刑10年 → <b>この刑罰 重いと思う？ 軽いと思う？</b><br>
+      ST-038：ハンドルロックなど 二重の対策を → <b>あなたの車 盗難対策は していますか？</b><br>
+      ST-039：郵便物と明かりに注意を → <b>家を空けるとき 郵便は止めていますか？</b><br>
+      ST-040：発電所は 発電が止まる → <b>金属の盗難 罰はもっと重くすべき？</b></span>
+    </li>
+    <li>
+      <span class="what">型をローテーションする（A・B・Cを順に）</span>
+      <span>同じ締めが続くと定型に見えます。台本JSONに締めの型（<code>"closing": "B"</code> など）を書き、直近3本と同じ型が続いたら警告を出すと、量産に見えるのを防げます。</span>
+    </li>
+    <li>
+      <span class="what">固定コメントで同じ問いを選択肢つきで出す</span>
+      <span>「重い→1、軽い→2」のように数字で答えられると、50代以上の視聴者でも書き込みやすくなります。固定コメントには出典も一緒に書きます。</span>
+      <span class="small"><span class="chip inf">推論</span></span>
+    </li>
+    <li>
+      <span class="what">問いの主語を「人」でなく「制度・刑罰・自分の備え」にする</span>
+      <span>「この男をどう思う？」「◯◯国籍の人をどう思う？」は、集団への怒りがコメント欄に集まりやすく、ヘイトスピーチポリシーにも近づきます。</span>
+    </li>
+    <li>
+      <span class="what">締めの効果を数字で比べる</span>
+      <span>YouTube Studioで、型ごとに「コメント数 ÷ 視聴回数」と「最後まで見た割合」を比べます。8月24日の再生数の定義変更をまたぐ比較は避けます。</span>
+    </li>
+  </ol>
+</section>
+
+<section id="howto">
+  <h2><span class="no">6</span>自分で確認する手順</h2>
+  <ol>
+    <li>YouTubeで「どう思いますか ニュース」「あなたはどう思いますか 逮捕」を検索し、種類を<b>ショート</b>にする。</li>
+    <li>上位の動画を最後まで見て、締めの一言を書き出し、上の型A〜Eに分ける。</li>
+    <li>その動画のコメント数と再生数を書き、「コメント数 ÷ 再生数」を型ごとに比べる。</li>
+    <li>コメント欄の上位10件が、論点（刑罰・制度・防犯）についての意見か、集団への非難かを数える。</li>
+  </ol>
+  <p class="small">環境のネットワーク設定で youtube.com を許可してもらえれば、この作業はこちらで行えます。</p>
+</section>
+
+<section class="sources" id="sources">
+  <h2><span class="no">出典</span></h2>
+  <ol>
+    <li><a href="https://www.youtube.com/shorts/ImbWeAn0IKo">【本当に適任ですか？】…</a>／<a href="https://www.youtube.com/shorts/NeN9MxjTcU4">【意図的ですかね…】…</a>／<a href="https://www.youtube.com/shorts/eqZKHXHujok">【お飾り公務ですか…】…</a>／<a href="https://www.youtube.com/shorts/HMlZXIBHuEQ">【放送事故レベルですね…】…</a>／<a href="https://www.youtube.com/shorts/Zhqs24v1tjc">【さすがテレ東BIZ！】…</a>／<a href="https://www.youtube.com/shorts/FEptizeaEHo">㊗️40万回再生…</a>（チャンネル名は検索要約による）</li>
+    <li><a href="https://rakkoma.com/project/detail/22806">【収益化済み】登録者5.5万人／月収20万円の皇室系YouTubeチャンネル（ラッコM&amp;A）</a></li>
+    <li><a href="https://www.youtube.com/shorts/8jVdU_jwGVo">日本人が外国人に悪い先入観を持ってしまう理由</a>／<a href="https://www.youtube.com/shorts/K_vw_kBsE7k">日本に2年半住んだ外国人「もう限界です」</a>（検索要約による）</li>
+    <li><a href="https://www.youtube.com/shorts/b38368sIW04">マナー違反をする外国人を見る外国人</a>ほか（検索要約による）</li>
+    <li><a href="https://www.youtube.com/watch?v=Tkyrd4cNPGs">【衝撃】「日本人早く気づいて...」ある動画が話題に</a>（検索要約による）</li>
+    <li><a href="https://www.youtube.com/playlist?list=PLw3b2Pgq-sBdrvpUQbx3TUzGlL025G3zW">【shortsニュース】再生リスト</a></li>
+    <li><a href="https://search.yahoo.co.jp/realtime/search/matome/b23aaa7579004239b28af4ec3343db9c-1779451500">YouTube Shorts新作動画続々投稿、クリエイターが高評価とコメントを熱烈に呼びかける（Yahoo!リアルタイム検索, 2026/5/22）</a></li>
+    <li><a href="https://media.brain-market.com/short-algorithm-brain/">YouTubeショートの伸ばし方は“感情”が9割！</a>／<a href="https://www.ownly.jp/sslab/short-form-content-marketing">ショート動画マーケティング完全ガイド</a>／<a href="https://xcuu.jp/column/youtube-shortstips/">YouTubeショートの伸ばし方</a></li>
+    <li><a href="https://support.google.com/youtube/answer/3399767?hl=ja">虚偽のエンゲージメントに関するポリシー（YouTube ヘルプ）</a>／<a href="https://support.google.com/youtube/answer/2801973?hl=ja">スパム、欺瞞行為、詐欺に関するポリシー（同）</a></li>
+    <li><a href="https://www.neworder.co.jp/2026/10/04/youtube-shorts-original-content/">YouTubeショートが「オリジナル重視」に【2026年10月】（neworder）</a>／<a href="https://news.yahoo.co.jp/articles/9311c70fe5ab6a3f8c83884a37281140421abbaa">ショート動画の「転載系」に視聴数減少を予告（オタク総研）</a></li>
+    <li><a href="https://news.yahoo.co.jp/articles/37f38d47f82d2bd23082092afc4bb2c2c45cdc5c">ショート動画の収益制度を厳格化…「3ヶ月で1千万再生」（オタク総研）</a>／<a href="https://av.watch.impress.co.jp/docs/news/2132212.html">収益化基準を改定へ（AV Watch）</a>／<a href="https://www.itmedia.co.jp/news/article/2608/11/2000000495/">収益化基準を2027年に大幅引き上げへ（ITmedia）</a></li>
+    <li><a href="https://taisy0.com/2026/08/18/226370.html">8月24日より動画の視聴回数のカウント方法を変更へ</a>／<a href="https://news.yahoo.co.jp/articles/469df08d7b4184ac3a5bb34c46af05f9506377ad">再生回数が数倍に？「稼げる基準」は変わらず（The Hollywood Reporter Japan）</a></li>
+  </ol>
+  <p class="small">出典は検索エンジンの結果と要約で確認したもので、多くは本文を直接開けていません。前回のレポート「ニュース系ショート競合分析」もあわせてご覧ください。</p>
+</section>
+
+</div>

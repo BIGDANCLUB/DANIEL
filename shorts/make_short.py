@@ -42,6 +42,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 FONT_DIR = os.path.join(HERE, "fonts")
 FONTS = {
     "sans": ("NotoSansJP[wght].ttf", "ofl/notosansjp/NotoSansJP%5Bwght%5D.ttf"),
+    "thumb": ("ZenKakuGothicNew-Black.ttf", "ofl/zenkakugothicnew/ZenKakuGothicNew-Black.ttf"),  # サムネのあおり文
 }
 COLORS = {"{": "#ffe600", "<": "#ff2020"}
 
@@ -73,7 +74,8 @@ def font(kind, size):
         os.makedirs(FONT_DIR, exist_ok=True)
         urllib.request.urlretrieve("https://raw.githubusercontent.com/google/fonts/main/" + path, local)
     f = ImageFont.truetype(local, size)
-    f.set_variation_by_name("Black")
+    if "[wght]" in name:      # 可変フォントだけ太さを指定（固定ウェイトのフォントはそのまま）
+        f.set_variation_by_name("Black")
     return f
 
 
@@ -94,12 +96,12 @@ def plain(text):
     return re.sub(r"[{}<>]", "", text)
 
 
-def rich_text(text, size, max_w, base="#ffffff", stroke_ratio=0.14, line_gap=0.02):
+def rich_text(text, size, max_w, base="#ffffff", stroke_ratio=0.14, line_gap=0.02, kind="sans", stroke=True):
     """複数行・色分け・黒縁のテキストをRGBA画像で返す。幅に収まるよう自動縮小。"""
     lines = text.split("\n")
     while True:
-        f = font("sans", size)
-        sw = max(2, int(size * stroke_ratio))
+        f = font(kind, size)
+        sw = max(2, int(size * stroke_ratio)) if stroke else 0
         widths = [f.getlength(plain(l)) for l in lines]
         if max(widths) + 2 * sw <= max_w or size <= 30:
             break

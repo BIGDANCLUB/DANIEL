@@ -60,10 +60,9 @@
 ## サムネイル
 - `python3 make_thumb.py story_xxx.json out/xxx_thumb.jpg` … 1080x1920 のサムネイル（API不要）
 - 背景は1行目の画像、見出しは台本トップの `thumb`（`\n` で改行、`{黄}` `<赤>`）。タグは `thumb_tag`（省略時は banner の1行目）
-- `thumb_top`（2行）がある台本は、上の黒帯に見出し、写真の上に `thumb_teaser` をニュースのテロップのような色の板（座布団）に載せる
+- `thumb_top`（2行）がある台本は、上の黒帯に見出し、写真の上に `thumb_teaser` をニュースのテロップのような色の板（座布団）に載せる。文字は Zen Kaku Gothic New Black
   - `thumb_teaser` は2行にすると大きく出る。強調は `{…}`（板の色と重ならない色に自動でそろえる）
   - `thumb_teaser_style` … `"yellow"`（既定・黄色の板に黒文字）/ `"red"`（赤い板に白文字）
-  - `thumb_label` … 板の左上の小さな黒いタグ（例「供述」「防犯」「手口」）
 
 ## その他
 - `python3 tts_gemini.py --list-models` … 使える TTS モデル名の確認（モデル名が変わったとき用）

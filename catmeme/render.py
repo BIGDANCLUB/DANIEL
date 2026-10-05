@@ -470,7 +470,10 @@ class CutRenderer:
             over(out, self.card, self.card_a * k, 0, 0)
         if self.inset is not None:
             (im, ia), x, y = self.inset
-            self._pop(out, (im, ia, x, y), t)
+            if self.cut.get("inset_still"):   # 前のカットと同じ図なら飛び出さずにそのまま
+                over(out, im, ia, x, y)
+            else:
+                self._pop(out, (im, ia, x, y), t)
         for clip, scale, cx, bottom in self.cats:
             fr, a = clip.frame(t)
             pop = 1.0 if self.style == "meme" else 0.88 + 0.12 * ease_out(t / 0.18)

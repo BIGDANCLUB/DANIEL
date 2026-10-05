@@ -307,6 +307,13 @@ def apply_fx(cuts):
             cfg = R.ASSET_PLAY.get(c["cats"][0]["a"], {})
             if cfg.get("until"):
                 c["cats"][0]["until"] = cfg["until"]
+    # 前のカットと同じ図が続く時は、図を飛び出させない（同じ表がポンポン出直さないように）
+    prev_card = None
+    for c in cuts:
+        card = (c.get("inset") or {}).get("card")
+        if card and card == prev_card:
+            c["inset_still"] = True
+        prev_card = card
     # 場所（背景）が変わるカットの頭にシュッという音（すでに付いている音とは重ねる）
     prev = None
     for c in cuts:

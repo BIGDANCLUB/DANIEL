@@ -1,0 +1,372 @@
+<title>ニュース系ショート競合分析</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one reading column (report), wide tables scroll in place; status chips mark 確認済 / 不明 / 推論 */
+:root {
+  --bg: #f6f6f3;
+  --paper: #ffffff;
+  --ink: #1b2230;
+  --muted: #5b6372;
+  --line: #d9dbe0;
+  --accent: #b4231c;      /* 字幕の赤 */
+  --hi: #f2c200;          /* 字幕の黄 */
+  --hi-soft: #fff4c2;
+  --ok: #1f6b45;
+  --ok-soft: #e1f1e8;
+  --warn: #8a5a00;
+  --warn-soft: #fbedd0;
+  --na: #5b6372;
+  --na-soft: #e9eaee;
+  --f-display: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  --f-body: "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Meiryo", "Noto Sans JP", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151b; --paper: #1a1e26; --ink: #e8eaee; --muted: #a2a9b6; --line: #2f3542;
+    --accent: #ff6b5f; --hi: #f2c200; --hi-soft: #3a3110;
+    --ok: #6fd3a0; --ok-soft: #173126; --warn: #f0b54a; --warn-soft: #3a2c10; --na: #a2a9b6; --na-soft: #262b35;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151b; --paper: #1a1e26; --ink: #e8eaee; --muted: #a2a9b6; --line: #2f3542;
+  --accent: #ff6b5f; --hi: #f2c200; --hi-soft: #3a3110;
+  --ok: #6fd3a0; --ok-soft: #173126; --warn: #f0b54a; --warn-soft: #3a2c10; --na: #a2a9b6; --na-soft: #262b35;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.8; padding: 0 16px; }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 40px 80px; display: flex; flex-direction: column; gap: 48px; }
+header { display: flex; flex-direction: column; gap: 14px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; color: var(--muted); }
+h1 { font-family: var(--f-display); font-weight: 900; font-size: clamp(28px, 5vw, 40px); line-height: 1.3; margin: 0; text-wrap: balance; }
+h1 .mark { background: linear-gradient(transparent 62%, var(--hi) 62%); }
+h2 { font-family: var(--f-display); font-weight: 700; font-size: 24px; line-height: 1.4; margin: 0 0 4px; text-wrap: balance; display: flex; gap: 12px; align-items: baseline; }
+h2 .no { font-family: var(--f-mono); font-size: 14px; color: var(--accent); }
+h3 { font-family: var(--f-display); font-weight: 700; font-size: 18px; margin: 18px 0 4px; }
+p { margin: 0; max-width: 68ch; }
+section { display: flex; flex-direction: column; gap: 14px; }
+.lede { font-size: 17px; }
+.limits { background: var(--paper); border: 1px solid var(--line); border-left: 4px solid var(--warn); padding: 16px 18px; border-radius: 4px; display: flex; flex-direction: column; gap: 8px; }
+.limits strong { color: var(--warn); }
+ul, ol { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 6px; max-width: 70ch; }
+.chip { display: inline-block; font-size: 12px; font-weight: 700; line-height: 1; padding: 4px 7px; border-radius: 3px; white-space: nowrap; vertical-align: 2px; }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.na { background: var(--na-soft); color: var(--na); }
+.chip.inf { background: var(--warn-soft); color: var(--warn); }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 13px; color: var(--muted); }
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); }
+table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 14px; line-height: 1.6; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+th { font-family: var(--f-display); font-weight: 700; font-size: 13px; color: var(--muted); background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+td .src { display: block; font-size: 12px; color: var(--muted); }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.titles { display: flex; flex-direction: column; gap: 8px; }
+.t { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 10px 14px; display: grid; grid-template-columns: 3.2em 1fr; gap: 10px; align-items: baseline; }
+.t .len { font-family: var(--f-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.t .body { min-width: 0; }
+.t .who { display: block; font-size: 12px; color: var(--muted); }
+.q { color: var(--accent); font-weight: 700; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.box { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.box h3 { margin: 0; }
+.recs { counter-reset: r; list-style: none; padding: 0; gap: 14px; max-width: none; }
+.recs li { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 14px 16px 14px 56px; position: relative; display: flex; flex-direction: column; gap: 6px; }
+.recs li::before { counter-increment: r; content: counter(r); position: absolute; left: 16px; top: 12px; font-family: var(--f-display); font-weight: 900; font-size: 24px; color: var(--accent); }
+.recs .what { font-family: var(--f-display); font-weight: 700; font-size: 17px; }
+.recs .ex { background: var(--hi-soft); padding: 8px 10px; border-radius: 3px; font-size: 14px; }
+.small { font-size: 13px; color: var(--muted); }
+.sources ol { font-size: 13px; line-height: 1.6; max-width: none; word-break: break-all; }
+code { font-family: var(--f-mono); font-size: 13px; background: var(--na-soft); padding: 1px 4px; border-radius: 3px; }
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">「日本で生きるということ」 / 調査日 2026-10-05</div>
+  <h1>外国人事件・<span class="mark">「日本が狙われる」系</span>ショートの競合分析</h1>
+  <p class="lede">50代以上の男性向けに、時事ニュース（特に外国人が関わる事件）のショートで数字を取っているチャンネルを調べ、真似すべき点と避けるべきリスクをまとめました。</p>
+  <div class="legend">
+    <span><span class="chip ok">確認済</span> 出典つきで確認できた数字・事実</span>
+    <span><span class="chip na">不明</span> 確認できなかったもの</span>
+    <span><span class="chip inf">推論</span> 確認済みの材料からの判断</span>
+  </div>
+</header>
+
+<div class="limits">
+  <p><strong>調査の限界（最初にお読みください）</strong></p>
+  <ul>
+    <li>この調査環境のネットワーク設定で <b>youtube.com、Social Blade、ユーチュラ、ユーザーローカル、vidIQ、各ニュースサイト本文</b>への直接アクセスがすべて拒否されました。使えたのは検索エンジン（WebSearch）の結果と要約だけです。</li>
+    <li>そのため、<b>個人運営のショートチャンネル（AIナレーションで外国人事件を扱う、このチャンネルの直接の競合）の登録者数・平均再生数・投稿頻度は1件も確認できませんでした</b>。表では「不明」と書いています。</li>
+    <li>サムネイル、冒頭3秒、BGM、声の種類は、実際の映像を見られないため確認できていません。タイトルは検索結果に出た実物を使って分析しました。</li>
+    <li>このページ末尾の「自分で確認する手順」で、30分ほどで不明の欄を埋められるようにしてあります。</li>
+  </ul>
+</div>
+
+<section id="channels">
+  <h2><span class="no">1</span>チャンネルの洗い出し</h2>
+  <p>検索で確認できた範囲では、外国人事件のショートで目立つのは<b>テレビ局系のニュースチャンネル</b>です。個人運営の競合は名前や動画は見つかっても、数字は確認できませんでした。</p>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>チャンネル</th><th>種類</th><th>登録者</th><th>総再生 / その他の数字</th><th>このジャンルで確認できた動画・動き</th></tr></thead>
+    <tbody>
+      <tr><td><b>ANNnewsCH</b>（テレビ朝日）</td><td>TV局</td>
+        <td class="num">500万人 <span class="chip ok">確認済</span><span class="src">2026/5/27 到達 [1]</span></td>
+        <td>総再生 約60.5億回 <span class="chip inf">参考値</span><span class="src">ランキングサイトの検索要約。取得日不明 [3]</span></td>
+        <td>日本のニュースチャンネルで最大規模 [1]</td></tr>
+      <tr><td><b>TBS NEWS DIG Powered by JNN</b></td><td>TV局</td>
+        <td class="num">338万人 <span class="chip ok">確認済</span><span class="src">2026年9月時点 [3]／5/20時点 327万人 [2]</span></td>
+        <td>総再生 約53.2億回 <span class="chip inf">参考値</span><span class="src">同上 [3]</span></td>
+        <td>「窃盗ツーリズム」の手口（中野ブロードウェイ・再逮捕）をNスタ解説で配信 [12]。ST-027と同じ事件</td></tr>
+      <tr><td><b>日テレNEWS</b></td><td>TV局</td>
+        <td class="num">335万人 <span class="chip ok">確認済</span><span class="src">2026年9月時点 [2]</span></td>
+        <td><span class="chip na">不明</span></td>
+        <td>東横線スリ・中国籍の男逮捕（2026/10/2） [13]</td></tr>
+      <tr><td><b>FNNプライムオンライン</b></td><td>TV局</td>
+        <td><span class="chip na">不明</span></td><td><span class="chip na">不明</span></td>
+        <td>短期ビザでスリ「日本の生活費が高いから」 [14]／外国人の不安をあおる偽動画のファクトチェック（2026/7/1） [20]</td></tr>
+      <tr><td><b>産経ニュース</b></td><td>新聞社</td>
+        <td class="num">70.9万人 <span class="chip ok">確認済</span><span class="src">検索要約。時点不明 [4]</span></td>
+        <td><span class="chip na">不明</span></td>
+        <td>新聞社の公式チャンネルで登録者最大と自己紹介 [4]</td></tr>
+      <tr><td><b>ABEMAニュース【公式】</b></td><td>ネットTV</td>
+        <td><span class="chip na">不明</span></td><td><span class="chip na">不明</span></td>
+        <td>『ABEMA的ニュースショー』が2026/10/3から「犯罪特化」番組に刷新 [5]。アベプラで「川口自警団」回 [5]</td></tr>
+      <tr><td><b>須田慎一郎のウラドリ!</b></td><td>個人（ジャーナリスト）</td>
+        <td><span class="chip na">不明</span></td><td><span class="chip na">不明</span></td>
+        <td>「なぜ日本が狙われる？ヒット・アンド・アウェイ型犯罪」（長尺） [6][7]</td></tr>
+      <tr><td><b>AI生成の政治系チャンネル群</b><br><span class="small">「参政党ニュース速報」「日本―新時代の鼓動」「日本の輝け」「日本政治ストリーム!!」など</span></td><td>匿名・AI量産</td>
+        <td><span class="chip na">不明</span></td><td><span class="chip na">不明</span></td>
+        <td>ほぼ同じ定型の説明文を使うチャンネルが多数。元は別言語の料理チャンネルだったものも [8][9]。<b>競合というより、同一視されたくない相手</b></td></tr>
+      <tr><td><b>日本称賛・海外の反応系（AI運用）</b></td><td>匿名・AI量産</td>
+        <td class="num">4.8万人／8,500人 <span class="chip ok">確認済</span><span class="src">チャンネル売買サイトの出品 [10]</span></td>
+        <td>月収40万円／月収30万円超（出品者の申告） [10]</td>
+        <td>「AIで月400万円以上」とうたうマニュアルが出回っている [11]。同じ層を狙う隣のジャンル</td></tr>
+      <tr><td><b>個人の外国人系ショート</b><br><span class="small">「逮捕なんか怖くねえよと語る在日外国人」「迷惑系外国人YouTuber逮捕！大歓喜！！」など</span></td><td>個人</td>
+        <td><span class="chip na">不明</span></td><td><span class="chip na">不明</span></td>
+        <td>動画は検索で確認 [15]。チャンネル名・数字は確認できず</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small">開設時期と投稿頻度は、どのチャンネルについても確認できませんでした。</p>
+
+  <h3>同じ層の視聴実態（確認できた調査）</h3>
+  <ul>
+    <li>ショート動画を「よく見る・ときどき見る」は<b>50代 60.8%、60代 50.5%</b>。50〜60代の視聴先はYouTubeが中心。「時事ニュース」はどの年代でもよく見られているジャンル <span class="chip ok">確認済</span> [16]</li>
+    <li>50代以上の男性はニュース系チャンネルの視聴が多く、政治経済系も多い。60代以上は視聴時間帯が「特に決まっていない」割合が高い <span class="chip ok">確認済</span> [17]</li>
+    <li>2026年衆院選の関連動画では、再生の7割がショート、7割が匿名投稿者。攻撃的な（政党批判に偏った）動画は1本あたり平均より64%多く再生された <span class="chip ok">確認済</span> [18]</li>
+  </ul>
+</section>
+
+<section id="patterns">
+  <h2><span class="no">2</span>伸びている動画の共通点</h2>
+  <h3>タイトルの型（実物の文字数）</h3>
+  <p>検索で確認できた、このジャンルの実在タイトルです。左の数字は文字数です。</p>
+  <div class="titles">
+    <div class="t"><span class="len">48字</span><span class="body">短期ビザで複数回入国しスリ繰り返す 窃盗疑いで中国籍の男逮捕<span class="q">「日本の生活費が高いから」</span> 余罪捜査<span class="who">FNN [14]：経緯 → 疑い → 供述カギカッコ</span></span></div>
+    <div class="t"><span class="len">48字</span><span class="body">【中国籍の男逮捕】東急東横線の電車内で女性のバッグから財布盗んだ疑い 短期滞在ビザで来日し犯行か<span class="who">日テレ [13]：【】で結論 → 「疑い」「か」で断定を避ける</span></span></div>
+    <div class="t"><span class="len">54字</span><span class="body">世界で横行<span class="q">「窃盗ツーリズム」</span>の手口とは 中野ブロードウェイ時計店窃盗 チリ国籍の男2人を再逮捕【Nスタ解説】<span class="who">TBS [12]：現象に名前をつける → 事件</span></span></div>
+    <div class="t"><span class="len">58字</span><span class="body">【来日外国人の凶悪犯罪が増加】犯行後すぐに母国へ逃走 <span class="q">なぜ日本が狙われる？</span>ヒット・アンド・アウェイ型犯罪【ウラドリ】<span class="who">ウラドリ [7]：「日本が狙われる」を疑問形で</span></span></div>
+    <div class="t"><span class="len">39字</span><span class="body">【300万再生】日本の警察に逮捕される！？怯える外国人を待ち受けていた結末とは<span class="who">個人ショート [15]：結末を隠す</span></span></div>
+    <div class="t"><span class="len">18字</span><span class="body">逮捕なんか怖くねえよと語る在日外国人<span class="who">個人ショート [15]：発言を主語に、短く</span></span></div>
+  </div>
+  <ul>
+    <li><b>供述・発言のカギカッコ</b>はTV局・個人の両方で使われています（「日本の生活費が高いから」「刑罰が軽いと聞き来日」）。ST-027の「日本は刑罰が緩い」と同じ型です <span class="chip ok">確認済</span> [14][19]</li>
+    <li><b>TV局のタイトルは48〜58字と長く、国籍が入っています</b>。報道機関は記事タイトルをそのまま使うためです。ショートの見出しとして一般に勧められるのは28〜30字以内・重要語を先頭15字以内です <span class="chip ok">確認済</span> [21]</li>
+    <li>個人ショートは<b>18〜39字</b>で、感情語（「大歓喜」「怯える」）や結末を隠す書き方が目立ちます。ただし感情語は広告ガイドラインで不利になりやすい書き方です（4章） <span class="chip inf">推論</span></li>
+  </ul>
+
+  <h3>映像・音・締め・コメント</h3>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>項目</th><th>確認できたこと</th><th>このチャンネルへの示唆</th></tr></thead>
+    <tbody>
+      <tr><td>サムネ・1フレーム目</td><td><span class="chip na">不明</span>（映像を見られず）</td><td>一般論として、ショートは最初の0.5〜3秒で見続けるかが決まり、スワイプされずに見られた時間が最重要指標とされる [21][22]</td></tr>
+      <tr><td>冒頭3秒</td><td><span class="chip na">不明</span>（個別動画）</td><td>結論か衝撃の事実を先に出す構成が勧められている [22]。今の「数字のフック2行」は合っている</td></tr>
+      <tr><td>尺</td><td><span class="chip na">不明</span>（個別動画）</td><td>2026年の傾向として45〜75秒で情報を詰める型が挙げられている [22]。今の45〜55秒は範囲内</td></tr>
+      <tr><td>ナレーション・声</td><td><span class="chip na">不明</span></td><td>TV局は記者・アナウンサーの声＋報道映像。個人はAI音声が多いとみられるが未確認 <span class="chip inf">推論</span></td></tr>
+      <tr><td>画像</td><td>TV局は自社の報道映像。偽情報系は<b>海外の無関係な動画の流用</b>が問題になっている [19][20]</td><td>AI画像は「本物の現場」に見えないよう、イメージと分かる絵柄にする（4章）</td></tr>
+      <tr><td>BGM・効果音</td><td><span class="chip na">不明</span></td><td>—</td></tr>
+      <tr><td>締め方</td><td><span class="chip na">不明</span>（個別動画）</td><td>—</td></tr>
+      <tr><td>ハッシュタグ・概要欄</td><td>AI政治系チャンネル群で<b>ほぼ同一の定型の説明文</b>が使い回されていたと報告 [9]</td><td>概要欄は毎回、出典と日付を書いた本物の文章にする</td></tr>
+      <tr><td>コメント欄</td><td>中野の事件の報道には「日本の刑罰は軽いのか」という強いコメントが多く集まった [19]</td><td>刑罰・制度の論点はコメントを呼ぶ。差別的なコメントの管理が必要</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="topics">
+  <h2><span class="no">3</span>ネタ選び</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>確認できた「伸びている／話題の」切り口</h3>
+      <ul>
+        <li><b>「日本は刑罰が軽い」と聞いて来た</b>（窃盗ツーリズム）。TBSが手口解説で取り上げ、記事のコメントも強く反応 [12][19]</li>
+        <li><b>短期滞在ビザで入国→犯行→出国</b>（ヒット・アンド・アウェイ型）。警察庁も犯罪のグローバル化に警鐘 [6]</li>
+        <li><b>犯行の理由を語る供述</b>（「日本の生活費が高いから」） [14]</li>
+        <li><b>迷惑系外国人YouTuber</b>（福島・帰還困難区域への侵入など） [15]</li>
+        <li><b>不法残留・不法就労の摘発</b>（TV局の密着もの） [15]</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>外国人事件以外で同じ層に届いている時事</h3>
+      <ul>
+        <li><b>政治・選挙</b>：ショートが再生の中心。特に攻撃的な切り口が伸びる [18]</li>
+        <li><b>犯罪全般</b>：ABEMAが報道番組を「犯罪特化」に刷新した [5]。犯罪ニュースそのものに需要がある <span class="chip inf">推論</span></li>
+        <li><b>有名人の逮捕</b>：YouTuber「ヴァンビ」逮捕（2026/10/1）は各社が一斉に報道 [23]</li>
+        <li><b>防犯・身を守る情報</b>：50代の30.6%がショートをきっかけに行動している [16]。空き巣対策のような実用の締めと相性がよい <span class="chip inf">推論</span></li>
+      </ul>
+    </div>
+  </div>
+  <p class="small">ネタごとの再生数の比較は、YouTubeを直接見られないため確認できませんでした。</p>
+</section>
+
+<section id="risks">
+  <h2><span class="no">4</span>リスク</h2>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>リスク</th><th>同ジャンルで起きていること</th><th>避け方</th></tr></thead>
+    <tbody>
+      <tr><td><b>ヘイトスピーチでの削除</b></td>
+        <td>YouTubeのヘイトスピーチポリシーは<b>国籍・在留資格</b>を保護属性に含める。<b>固定観念を事実として扱う</b>表現も違反 [24]</td>
+        <td>主語を「◯◯人」でなく「この男」「この手口」「この制度」にする。国籍は本編で1回だけ（今の方針を維持）</td></tr>
+      <tr><td><b>広告の制限（黄色アイコン）</b></td>
+        <td>広告掲載に適したコンテンツのガイドラインでは、犯罪を扇情的・攻撃的に扱う表現や、集団への差別的な表現が広告制限の対象 [25]</td>
+        <td>「大歓喜」「ざまあ」のような感情語はタイトルに入れない。事実の数字で引く</td></tr>
+      <tr><td><b>量産型コンテンツでの収益化停止</b></td>
+        <td>2025/7/15に「繰り返しの多いコンテンツ」が「量産型のコンテンツ」に改称され、AIによる大量生成も対象と明確化 [26]。2026年初めからAI動画の収益化停止が相次ぎ、<b>週10本・毎日3本のような高頻度</b>のチャンネルに多い [27]。2025年10月からは違反があると<b>同じ運営者の全チャンネル</b>が対象 [28]</td>
+        <td>1日1本以内。毎回、台本に独自の調べ（統計・制度・比較）を入れる。画像の使い回し禁止（README の既存ルール）を続ける</td></tr>
+      <tr><td><b>誤情報</b></td>
+        <td>海外の無関係な動画を「日本で外国人が線路の金属を盗んでいる」と偽る投稿が大量に拡散（2026/9/26報道、コンステラ社調査） [19]。クウェートの強盗映像を日本の事件と偽った動画も [20]。テレ朝がクルド団体のテロ支援を報じたかのような切り取り動画も [29]</td>
+        <td>一次報道（県警発表・報道機関名・日付）に必ずあたる。SNSの動画だけをネタ元にしない。概要欄に出典を書く</td></tr>
+      <tr><td><b>AI画像を「本物」と誤解される</b></td>
+        <td>YouTubeは、実際の出来事を改変したり、起きていない場面を現実のように見せるAIコンテンツに<b>開示（ラベル）</b>を求めている [30]</td>
+        <td>事件現場を写実的に再現する画像は避けるか、開示を「はい」にする。画面に「※画像はイメージ」を入れる</td></tr>
+      <tr><td><b>名誉毀損・現実の被害</b></td>
+        <td>クルド人団体がジャーナリストを名誉毀損で提訴し、2025年11月に投稿撤回で和解 [31]。江別市のモスク放火事件の被告は「動画の影響はあったと思う」と証言（2026/9/24初公判、拘禁刑9年求刑） [32]</td>
+        <td>実名・顔を出さない方針を続ける。特定の集団への怒りをあおる締めにしない</td></tr>
+      <tr><td><b>AI量産の政治系と同一視される</b></td>
+        <td>定型の説明文、急な方向転換、外国からの運営が疑われるチャンネル群が報告されている [8][9]</td>
+        <td>チャンネル名・概要欄に運営方針（出典の示し方、容疑段階の扱い）を書く</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="recs">
+  <h2><span class="no">5</span>提案（優先順）</h2>
+  <p>今の配慮（「疑い」「とみられる」、実名・顔なし、国籍は本編で1回）は、上の4章のリスクにそのまま効いています。変えずに続けたうえで、次を足すことを勧めます。</p>
+  <ol class="recs">
+    <li>
+      <span class="what">概要欄と最後の1画面に出典を書く</span>
+      <span>誤情報系との一番の違いになります。「茨城県警発表・◯◯新聞（10月1日）」のように報道機関名と日付を書きます。台本JSONに <code>source</code> 欄を足し、最後の行の下に小さく出すと漏れません。</span>
+      <span class="small">根拠：偽情報の拡散 [19][20]、量産型コンテンツ判定 [26]</span>
+    </li>
+    <li>
+      <span class="what">タイトルは「数字＋供述」で28字以内、国籍なし</span>
+      <span>TV局の長いタイトルに対して、短く、重要語を先頭に置くのが勝ち筋です。供述のカギカッコはTV局も使う強い型です。</span>
+      <span class="ex">例（ST-027）：2億円の腕時計を10秒で 男は「日本は刑罰が緩い」（25字）<br>例（ST-039）：空き巣200件 男は「日本中をまわった」（20字）</span>
+      <span class="small">根拠：[14][21]</span>
+    </li>
+    <li>
+      <span class="what">1フレーム目を「サムネ兼フック」にする</span>
+      <span>今は冒頭に効果音（チリン）があり、上部帯と1行目の字幕が同時に出ます。0秒目の1枚で「数字」と「供述」の両方が読めるようにし、上部帯（banner）と1行目で同じ言葉を繰り返さないようにします。ST-027の上部帯「男が語った理由」と1行目「わずか10秒」は役割が分かれていてよい例です。</span>
+      <span class="small">根拠：[21][22]</span>
+    </li>
+    <li>
+      <span class="what">締めを「どう思いますか？」から、答えやすい二択に</span>
+      <span>同じ締めが毎回続くと定型に見えます。事件ごとに論点を一つに絞った問いにすると、コメントが増えやすく、話が集団への非難に流れにくくなります。</span>
+      <span class="ex">例：窃盗罪の上限は拘禁刑10年。<b>重いと思う？軽いと思う？</b><br>例：家を空けるとき、<b>郵便物は止めていますか？</b></span>
+      <span class="small">根拠：刑罰の論点にコメントが集まる [19] <span class="chip inf">推論</span></span>
+    </li>
+    <li>
+      <span class="what">シリーズ名を「日本が狙われる手口」にする</span>
+      <span>主語を国籍でなく手口・制度（刑罰、短期ビザ、民泊、在留管理）にそろえます。視聴者の関心（日本が狙われている）を保ちながら、ヘイトスピーチポリシーの「固定観念を事実として扱う」に当たりにくくなります。再生リストにまとめて連続視聴を促します。</span>
+      <span class="small">根拠：[6][24]</span>
+    </li>
+    <li>
+      <span class="what">続報（再逮捕・起訴・判決）を短く追う</span>
+      <span>ST-027は再逮捕のタイミングで作られています。同じ事件の続報は、前の動画を見た人に再び届きやすく、ネタ探しの手間も少なくて済みます。判決の量刑は「刑罰は緩いのか」への答えにもなります。</span>
+      <span class="small"><span class="chip inf">推論</span></span>
+    </li>
+    <li>
+      <span class="what">防犯の一言で終える回を増やす</span>
+      <span>ST-039の「郵便物と明かりに注意を」のように、50代以上の自宅・家族を守る実用情報で終えます。行動につながるショートは視聴者の3割に届いています。</span>
+      <span class="small">根拠：[16]</span>
+    </li>
+    <li>
+      <span class="what">投稿は1日1本まで、事件報道から24時間以内を優先</span>
+      <span>高頻度の投稿は収益化停止の共通点とされています。60代以上は見る時間帯が決まっていないため、時刻よりも鮮度を優先します。</span>
+      <span class="small">根拠：[17][27]。時間帯の最適値は未確認 <span class="chip inf">推論</span></span>
+    </li>
+    <li>
+      <span class="what">AI画像は「イメージ」と分かる絵柄に、写実的なら開示する</span>
+      <span>容疑者の顔や現場の実写風の画像は作らず、道具・場所・物の絵にとどめます。写実的な再現をした回はアップロード時の開示を「はい」にします。</span>
+      <span class="small">根拠：[30]</span>
+    </li>
+    <li>
+      <span class="what">コメント欄の管理を決めておく</span>
+      <span>YouTube Studio の「ブロックする単語」に差別語を登録し、固定コメントに出典と「容疑段階の情報です」を書きます。コメント欄の荒れは広告主の判断にも影響します。</span>
+      <span class="small"><span class="chip inf">推論</span></span>
+    </li>
+  </ol>
+</section>
+
+<section id="howto">
+  <h2><span class="no">6</span>自分で確認する手順（不明の欄を埋める）</h2>
+  <ol>
+    <li>YouTubeで「外国人 逮捕」「不法滞在」「窃盗ツーリズム」「日本が狙われる」を検索し、フィルタで<b>種類：ショート、並べ替え：視聴回数</b>にする。</li>
+    <li>上位20本のうちTV局以外のチャンネルを書き出し、各チャンネルの「ショート」タブを<b>人気順</b>にして上位5本と最新10本の再生数をメモする（平均と上位）。</li>
+    <li>チャンネルの「概要」で開設日を見る。最新10本の投稿日から投稿頻度を出す。</li>
+    <li>上位5本それぞれで、1フレーム目の画面、最初の3秒の言葉、尺、声（AIか人か）、画像の種類、締めの一言、概要欄の出典の有無を表にする。</li>
+    <li>自分のチャンネルのYouTube Studioで、ST-027・ST-037〜040の<b>「視聴した」と「スワイプして離れた」の割合</b>を比べ、他の回と差がある部分を確かめる。</li>
+  </ol>
+  <p class="small">この環境のネットワーク設定に youtube.com などを許可すれば、こちらで同じ作業を行えます。</p>
+</section>
+
+<section class="sources" id="sources">
+  <h2><span class="no">出典</span></h2>
+  <ol>
+    <li><a href="https://media-innovation.jp/article/2026/05/31/143381.html">テレビ朝日「ANNニュース」YouTubeチャンネル登録者数500万人到達（Media Innovation, 2026/5/31）</a></li>
+    <li><a href="https://youtube-data.com/ranking/postvideo?page=1&amp;f=all">YOUTUBE投稿数累計ランキング（2026-05-20）</a>／<a href="https://youranks.com/c/10965/">日テレNEWSの統計（youranks）</a>（検索結果の要約による）</li>
+    <li><a href="https://www.tuber-town.com/channel_list-tx/all-all-32-all_yd_1.html">ニュースユーチューバー人気ランキング（tuber-town）</a>／<a href="https://creators.tubers.app/news">ニュースYouTubeチャンネル人気ランキング（TUBERS）</a>（検索結果の要約による。個別ページは閲覧不可）</li>
+    <li><a href="https://www.youtube.com/channel/UC1zYGo1jIIjMVDTLL3dydow">産経ニュース YouTubeチャンネル</a>（検索結果の要約による）</li>
+    <li><a href="https://ri-zento-deka.com/2026%E5%B9%B410%E6%9C%883%E6%97%A5%E3%80%90abematv%E3%80%91%E3%80%8Eabema%E7%9A%84%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%B9%E3%82%B7%E3%83%A7%E3%83%BC%E3%80%8F%E5%87%BA%E6%BC%94">2026年10月3日『ABEMA的ニュースショー』出演</a>／<a href="https://www.youtube.com/watch?v=1OS4DRFboE8">【川口自警団】アベプラ</a></li>
+    <li><a href="https://news.livedoor.com/article/detail/28122793/">来日外国人による「ヒット・アンド・アウェイ型犯罪」が増加！日本はなぜ狙われる？（ライブドアニュース）</a></li>
+    <li><a href="https://www.youtube.com/watch?v=QLHGxVOfVgA">【来日外国人の凶悪犯罪が増加】…【ウラドリ】</a>／<a href="https://yutura.net/channel/130105/popular/">須田慎一郎のウラドリ!（ユーチュラ）</a></li>
+    <li><a href="https://nou-yunyun.hatenablog.com/entry/2025/10/18/070000">生成AIを利用したであろう「外国人アカウント」による日本の政治系などの動画が大量に出来ていた（電脳塵芥）</a></li>
+    <li><a href="https://nou-yunyun.hatenablog.com/entry/2026/01/18/210000">ほぼ同一のテンプレ説明文を用いてたAIを利用した政治系動画チャンネルについてのメモ（電脳塵芥）</a></li>
+    <li><a href="https://rakkoma.com/project/detail/9438">登録者数4.8万人 海外の反応・日本称賛系チャンネル（ラッコM&amp;A）</a>／<a href="https://rakkoma.com/project/detail/18638">登録者8,500人超・月収30万円超（同）</a></li>
+    <li><a href="https://togetter.com/li/2656584">日本礼賛のショート動画…AIで月400万以上も稼ぐマニュアル（Togetter）</a></li>
+    <li><a href="https://www.youtube.com/watch?v=wM4KNjV4Jx0">世界で横行「窃盗ツーリズム」の手口とは…【Nスタ解説】（TBS NEWS DIG）</a></li>
+    <li><a href="https://news.infoseek.co.jp/article/ntv_2026100205483742">東急東横線の電車内で…中国籍の男逮捕（日テレ, Infoseek）</a>／<a href="https://www.youtube.com/watch?v=0D3kv7JHsFo">YouTube</a></li>
+    <li><a href="https://news.yahoo.co.jp/articles/81020f3f2de66d5a28186e4f93041e2b9bd95613">短期ビザで複数回入国しスリ繰り返す…「日本の生活費が高いから」（FNN, Yahoo!ニュース）</a></li>
+    <li><a href="https://www.youtube.com/shorts/-su1DcgkXoM">逮捕なんか怖くねえよと語る在日外国人</a>／<a href="https://www.youtube.com/watch?v=MRsRyJ2scpE">迷惑系外国人YouTuber逮捕！大歓喜！！</a>／<a href="https://www.youtube.com/shorts/zp1feJWxjQ4">【300万再生】日本の警察に逮捕される！？</a>／<a href="https://www.youtube.com/watch?v=u2JvsJcERMg">“迷惑系”外国人YouTuber逮捕（スーパーJチャンネル）</a>／<a href="https://www.youtube.com/watch?v=ANy2OWlpfFU">不法残留の外国人を摘発</a></li>
+    <li><a href="https://prtimes.jp/main/html/rd/p/000000421.000000204.html">40〜60代の各年代で半数以上がショート動画を日常視聴（ベクトル, PR TIMES, 2026/7）</a></li>
+    <li><a href="https://manamina.valuesccg.com/articles/2029">YouTube利用動向調査（マナミナ）</a>／<a href="https://www.commercepick.com/archives/86390">日本人の視聴習慣と利用実態調査2026（コマースピック）</a></li>
+    <li><a href="https://www.nikkei.com/article/DGXZQOUC130W60T10C26A2000000/">「アンチ」政党・候補者動画が再生数稼ぐ 衆院選、平均より6割多く（日本経済新聞）</a>／<a href="https://www.nikkei.com/article/DGXZQOUC012LO0R00C26A2000000/">衆議院選挙のYouTube再生数、7割が匿名投稿（同）</a></li>
+    <li><a href="https://www.tokyo-np.co.jp/article/517842">「外国人窃盗」の偽情報が拡散 SNSで、過去の動画流用（東京新聞, 2026/9/26）</a>／<a href="https://carview.yahoo.co.jp/news/detail/39473c928478346a0cafc5ff500d114899ee0a26">「窃盗ツーリズム」報道で広がる排外主義（Merkmal）</a></li>
+    <li><a href="https://news.livedoor.com/topics/detail/31710891/">【ファクトチェック】「外国人はなんでもあり」“不安あおる”真偽不明の動画（FNN, 2026/7/1）</a></li>
+    <li><a href="https://trendmap.jp/blog/youtube-seo-guide-2026">YouTube SEO完全ガイド【2026年版】</a>／<a href="https://request.ne.jp/youtube-shorts-nobashikata/">YouTubeショートの伸ばし方7選（Re.Quest）</a></li>
+    <li><a href="https://0120.co.jp/blog/video-43/">ショート動画トレンド2026</a>／<a href="https://addness.co.jp/media/youtube-short-algorithms/">YouTubeショートアルゴリズム完全解説</a></li>
+    <li><a href="https://www.jiji.com/jc/article?k=2026100100800&amp;g=soc">ユーチューバーの「ヴァンビ」逮捕（時事ドットコム）</a></li>
+    <li><a href="https://support.google.com/youtube/answer/2801939?hl=ja">ヘイトスピーチに関するポリシー（YouTube ヘルプ）</a></li>
+    <li><a href="https://support.google.com/youtube/answer/6162278?hl=ja">広告掲載に適したコンテンツのガイドライン（YouTube ヘルプ）</a></li>
+    <li><a href="https://www.musically.jp/youtube-changed-its-monetising-policy">YouTubeが収益化ポリシーを更新、大量生産される動画は収益化対象外（Music Ally Japan）</a>／<a href="https://support.google.com/youtube/answer/1311392?hl=ja">チャンネル収益化ポリシー（YouTube ヘルプ）</a></li>
+    <li><a href="https://note.com/machosuke/n/nf4463c75c937">AI動画の収益化が次々停止されている2026年の現実と対策（note）</a>／<a href="https://0115765.com/archives/169724">YouTubeで収益化剥奪・削除の事例続出</a></li>
+    <li><a href="https://note.com/eitayoutuber/n/nc03b555aaf20">2025年10月からYouTube収益化停止の新ルール（note）</a></li>
+    <li><a href="https://www.factcheckcenter.jp/fact-check/media/inaccurate-kurdish-group-tv-report/">「川口のクルド団体がテロ支援」とテレビ朝日が報道？（日本ファクトチェックセンター）</a></li>
+    <li><a href="https://support.google.com/youtube/answer/14328491?hl=ja">生成 AI コンテンツの使用に関する開示（YouTube ヘルプ）</a></li>
+    <li><a href="https://ja.wikipedia.org/wiki/%E5%9C%A8%E6%97%A5%E3%82%AF%E3%83%AB%E3%83%89%E4%BA%BA%E3%81%B8%E3%81%AE%E3%83%98%E3%82%A4%E3%83%88">在日クルド人へのヘイト（Wikipedia）</a>／<a href="https://www.kinyobi.co.jp/kinyobinews/2025/01/23/antena-1573/">ヘイトデモ禁止をさいたま地裁が決定（週刊金曜日）</a></li>
+    <li><a href="https://news.yahoo.co.jp/articles/c3343436939bd1407f52f69b994ce96e6786434e">「外国人を取り上げた動画が原因」“嫌悪感”でモスク放火【裁判詳報】（STV, Yahoo!ニュース）</a></li>
+  </ol>
+  <p class="small">出典の内容は検索エンジンの結果と要約で確認したもので、多くは本文を直接開けていません。数字を外部に出す前に、元ページでの確認を勧めます。</p>
+</section>
+
+</div>

@@ -2225,6 +2225,12 @@
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "A cut chain-link fence around a solar power plant at dawn, a hole large enough to pass through, no people No faces visible, no readable text, no logos."
  },
+ "st040_ai_law": {
+  "file": "st040_ai_law.jpg",
+  "key": "81cc557be4193ace5312572332f07002293045c1",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A heavy-duty bolt cutter hidden inside a black sports bag on the floor of a car trunk, a police officer's flashlight beam falling on it, night No faces visible, no readable text, no logos."
+ },
  "st040_ai_map_pins": {
   "file": "st040_ai_map_pins.jpg",
   "key": "4d9e3ec328e553979a9978de3d276a5874f93932",

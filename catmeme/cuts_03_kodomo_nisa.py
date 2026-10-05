@@ -109,7 +109,8 @@ def pops(*items):
     """時間差で出る文字。items = (秒, 文字, (x0,y0,x1,y1)[, "red"])。それぞれポンの音つき。"""
     out = []
     for it in items:
-        out.append({"t": it[0], "text": it[1], "box": it[2], "dur": 9, "size": 100, "style": it[3] if len(it) > 3 else None})
+        out.append({"t": it[0], "text": it[1], "box": it[2], "dur": 9, "size": 100, "style": it[3] if len(it) > 3 else None,
+                    "align": "left"})
     return out
 
 
@@ -140,9 +141,9 @@ def cuts_all():
             "投資で増えた分の税金が\nタダになる箱な", se="anime_doraemon_gadget"),
         dict(bg=bg("bg06_spotlight"), say="今日のテーマ", text_top=True, dur=3.4, se=["jan"] + pop_se(0.7, 1.4, 2.1),
              cats=[cat("showoff_gojo_cosplay_cat", "博識な猫", 1640, h=560, float=True)],
-             pops=pops((0.7, "① ふつうのNISAとの違い", (80, 330, 1300, 470)),
-                       (1.4, "② お得なところ", (80, 520, 1300, 660)),
-                       (2.1, "③ イマイチなところ", (80, 710, 1300, 850), "red"))),
+             pops=pops((0.7, "① ふつうのNISAとの違い", (200, 330, 1400, 470)),
+                       (1.4, "② お得なところ", (200, 520, 1400, 660)),
+                       (2.1, "③ イマイチなところ", (200, 710, 1400, 850), "red"))),
         # ---- 2. こどもNISAってなに？ ----
         chap("まずは　きほんから", dur=1.4, bgm={"file": NORA, "gain": -2}),
         dia("e02_basic", "0〜17歳の子どもの名前で作る　NISAの口座", "bg19_kids_room",

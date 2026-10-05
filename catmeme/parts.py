@@ -369,7 +369,7 @@ def wrap_nice(d, text, f, max_w):
 RED_TEXT = (235, 32, 32)
 
 
-def big_text(text, box, max_size=150, min_size=64, max_lines=3, gap=1.18, fill=WHITE, stroke=(0, 0, 0)):
+def big_text(text, box, max_size=150, min_size=64, max_lines=3, gap=1.18, fill=WHITE, stroke=(0, 0, 0), align="center"):
     """白い太字＋黒い太い縁取り。box=(x0,y0,x1,y1) の中に、大きく・中央揃えで収める。
     fill/stroke で色を変えられる（強調は赤い文字＋白い縁取り：fill=RED_TEXT, stroke=WHITE）。"""
     img = canvas()
@@ -393,7 +393,7 @@ def big_text(text, box, max_size=150, min_size=64, max_lines=3, gap=1.18, fill=W
     lh = size * gap
     y = (y0 + y1) / 2 - lh * len(lines) / 2
     for ln in lines:
-        x = (x0 + x1) / 2 - text_w(d, ln, f) / 2
+        x = x0 if align == "left" else (x0 + x1) / 2 - text_w(d, ln, f) / 2
         if stroke != (0, 0, 0):   # 色つきの縁取りは、さらに外側に黒い細い縁を付けて背景から浮かせる
             d.text((x, y - size * 0.12), ln, font=f, fill=stroke, stroke_width=sw + 4, stroke_fill=(0, 0, 0))
         d.text((x, y - size * 0.12), ln, font=f, fill=fill, stroke_width=sw, stroke_fill=stroke)

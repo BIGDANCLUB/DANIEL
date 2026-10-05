@@ -371,7 +371,8 @@ class CutRenderer:
         for pp in cut.get("pops", []):
             red = pp.get("style") == "red"
             im = P.big_text(pp["text"], pp["box"], max_size=pp.get("size", 110), max_lines=pp.get("lines", 1),
-                            fill=P.RED_TEXT if red else P.WHITE, stroke=P.WHITE if red else (0, 0, 0))
+                            fill=P.RED_TEXT if red else P.WHITE, stroke=P.WHITE if red else (0, 0, 0),
+                            align=pp.get("align", "center"))
             self.pops.append((pp["t"], pp["t"] + pp.get("dur", 0.9), self._crop(im)))
         if cut.get("place"):
             pl = P.canvas()

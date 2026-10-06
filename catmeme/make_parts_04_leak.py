@@ -38,6 +38,29 @@ def table3(title, head, rows, widths=(240, 620), tag="", size=48):
     return img
 
 
+def glossary(title, rows, tag=""):
+    """ことばの意味。左に用語、＝、右にたとえ（順番や流れはないので矢印は使わない）。"""
+    img, d, (bx0, by0, bx1, by1) = P.card(title, tag)
+    row_h = (by1 - by0) / len(rows)
+    tf, ef = P.font("round_b", 60), P.font("round_b", 72)
+    for i, (term, desc) in enumerate(rows):
+        y0 = by0 + row_h * i + 12
+        y1 = by0 + row_h * (i + 1) - 12
+        cy = (y0 + y1) / 2
+        d.rounded_rectangle((bx0, y0, bx0 + 440, y1), 22, fill=P.NAVY)
+        d.text((bx0 + 220, cy), term, font=tf, fill=P.WHITE, anchor="mm")
+        d.text((bx0 + 500, cy), "＝", font=ef, fill=P.ACCENT, anchor="mm")
+        d.rounded_rectangle((bx0 + 560, y0, bx1, y1), 22, fill=(255, 244, 228))
+        size = 54
+        sf = P.font("round_b", size)
+        while (max(d.textlength(t, font=sf) for t in desc.split("\n")) > bx1 - bx0 - 620
+               or size * 1.25 * len(desc.split("\n")) > y1 - y0 - 10):
+            size -= 2
+            sf = P.font("round_b", size)
+        d.multiline_text((bx0 + 590, cy), desc, font=sf, fill=P.INK, anchor="lm", spacing=int(size * 0.25))
+    return img
+
+
 ITEMS = {
     "e00_notice": P.message(["※件数は各社の発表どおりです", "（「漏えいのおそれ」を含みます）",
                              "※被害を受けた会社を責める動画ではありません", "※猫は演出です"], opaque=True, size=72),
@@ -66,11 +89,22 @@ ITEMS = {
         ("フィッシング", 1, False, ""),
         ("人のうっかり", 2, False, "誤送付・誤入力"),
     ], unit="件", note="※うっかりの例はほかにも（紙の紛失・8年間の誤掲載など）"),
-    "e03b_words": P.flow("ことばの意味（たとえ）", [
-        ("VPN", "社員用の\n通用口"),
-        ("脆弱性", "壊れた\n裏口の鍵"),
-        ("ランサム\nウェア", "データを人質に\n身代金"),
-    ], hsize=58, ssize=46),
+    "e03c_weak": P.bullets("「機器やシステムの弱点」ってなに？", [
+        "ネットにつながった機器やプログラムの“欠陥”",
+        "例：プログラムのミス・古いままの設定",
+        "直す前・更新しないままだと　そこから侵入される",
+        "会社の外から入れる場所ほど　ねらわれやすい",
+    ], size=56),
+    "e03d_weak_ex": table3("9月の例：どこに弱点があった？", ("どこ", "弱点があった所", "たとえると"), [
+        ("デジタル庁", "VPN機器", ("社員用の通用口", True)),
+        ("ムラウチドットコム", "通販サイトのしくみ", "お店の入口"),
+        ("Gyazo", "画像のサーバー", "荷物の受付口"),
+    ], widths=(420, 520), size=56),
+    "e03b_words": glossary("ことばの意味（たとえ）", [
+        ("VPN", "会社の外から入るための\n社員用の通用口"),
+        ("脆弱性", "壊れた鍵\n（システムの弱点）"),
+        ("ランサムウェア", "データを人質にとって\n身代金を要求する攻撃"),
+    ]),
     "e04_ransom": P.bars("ランサムウェアの被害（上半期・警察庁）", [
         ("2022年", 114, False, ""),
         ("2023年", 103, False, ""),

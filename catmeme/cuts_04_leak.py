@@ -194,8 +194,9 @@ def cuts_all():
         close("bg02_room", "@react", "ニュース猫", "悪いことの\nサブスク！？", se=["game_smash_challenger"]),
         ss("IPAの「10大脅威」に\nAIをめぐるリスクが\n初めて入った", se="page_turn_01"),
         expl("bg23_hacker_room", [cat("@hack", "ハッカー猫", 960, h=700)], "",
-             "9月10〜15日の5日間　人間が指揮したAIが\nほぼ自動で100以上の組織を攻撃し　30以上に侵入\n"
-             "（海外の報告。日本の件と同じ犯人という根拠はない）", dur=4.6, se="game_undertale_encounter"),
+             "9月10〜15日の5日間\n人間が指揮したAIが\nほぼ自動で100以上の組織を攻撃", dur=3.0, se="game_undertale_encounter"),
+        expl("bg23_hacker_room", [cat("@hack", "ハッカー猫", 960, h=700)], "",
+             "30以上のサイトに侵入\n（海外の報告。日本の件と\n同じ犯人という根拠はない）", dur=3.0, se="pc_warning"),
         close("bg23_hacker_room", "@react", "ニュース猫", "AIが\nハッカーやってんの！？",
               se=["explosion_dokaan"], sting={"file": KAMI, "len": 4.0, "gain": -16}),
         dict(bg=bg("bg23_hacker_room"), sub="かかった費用は\n約8,000ドル", cats=[cat("@calm", "博識な猫", 470, h=640)],
@@ -235,8 +236,9 @@ def cuts_all():
         hk("ローンの審査？\nお気の毒さま〜", b="bg23_hacker_room", se="anime_shinchan_taraan"),
         ss("実際は　審査で\n電話や口座の確認もあるから\n画像だけで必ず通る\nわけじゃない", "bg20_counter", se="pinpon_notice"),
         expl("bg20_counter", [cat("@react", "ニュース猫", 500), cat("@calm", "博識な猫", 1430)], "",
-             "免許証が漏れたかもしれない時は　信用情報機関（CIC・JICC・全銀協）に\n"
-             "「本人申告」を登録すると　なりすましの契約を防ぎやすくなります", dur=4.6, se="pinpoon_correct"),
+             "免許証が漏れたかもしれない時は\n信用情報機関（CIC・JICC・全銀協）に", dur=3.0, se="pinpoon_correct"),
+        expl("bg20_counter", [cat("@react", "ニュース猫", 500), cat("@calm", "博識な猫", 1430)], "",
+             "「本人申告」を登録すると\nなりすましの契約を\n防ぎやすくなります", dur=3.0, se="pinpoon_note"),
         nn("信用情報って\n自分で\n見られるのか", "bg20_counter", se="pikon"),
         ss("開示を申し込めば\n見られるぞ\n身に覚えのない契約が\nないかチェックな", "bg20_counter", se="idea_newtype_01"),
         hk("お荷物の\nお届けに\nあがりました〜（偽）", b="bg26_phone_alert", se="cursor_move_02"),

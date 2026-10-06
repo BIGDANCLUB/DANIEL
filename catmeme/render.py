@@ -392,7 +392,7 @@ class CutRenderer:
         self.txt = self._crop(tc)
         self.explain = None
         if cut.get("explain"):
-            self.explain = to_np(P.plain_text(cut["explain"], (60, 695, 1860, 1070), size=cut.get("explain_size", 84), gap=1.25))
+            self.explain = to_np(P.plain_text(cut["explain"], (60, 695, 1860, 1070), size=cut.get("explain_size", 100), gap=1.22))
 
     @staticmethod
     def _crop(im):

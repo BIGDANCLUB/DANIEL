@@ -177,7 +177,7 @@ def cuts_all():
         ss("人間のうっかりは\nどこにでもあるからな", "bg25_office_desk", se="taiko_kaka"),
         # ---- 3. なぜ今 連発しているのか ----
         chap("なんで今　こんなに連発？", se="quiz_question_02"),
-        dia("e04_ransom", "ランサムウェア被害は　2026年上半期123件で　統計開始以来の最多（警察庁）", right=S,
+        dia("e04_ransom", "2026年上半期は123件　前の年より増えて　半期として過去最多（警察庁）", right=S,
             se="doon_heavy"),
         dia("e04_ransom", "ランサムウェアの侵入口は　約5割がVPN機器", right=S, se="pc_warning"),
         ss("ランサムウェアは\n“貸し出し”もされてて\n技術がなくても攻撃できる", se="cursor_move_01"),
@@ -197,7 +197,7 @@ def cuts_all():
         dia("e04b_big", "法律が変わり「漏えいのおそれ」でも報告が義務に　→　発表が増えて見える面も", right=S,
             se="pinpoon_note"),
         nn("大きいのが増えて\n目立ってるってことか", se="pikon"),
-        chap("ネットでは　こんな声も…\n（根拠は確認されていません）", se="whoosh_shu", dur=2.2),
+        chap("ネットでは　こんな声も…\n（根拠は未確認）", se="whoosh_shu", dur=2.2),
         net("@react", "AIで誰でも\n大量に攻撃\nできるように\nなったから", "ネットの声", se="pi"),
         net("@react", "日本企業は\nセキュリティに\nお金をかけない", "ネットの声", se="boon"),
         net("@react", "古いシステムと\nITに弱い経営陣", "ネットの声", se="kote"),

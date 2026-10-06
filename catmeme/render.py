@@ -500,16 +500,10 @@ class CutRenderer:
             amp = 18 * (1 - t / 0.35)
             dx, dy = amp * np.sin(t * 90), amp * np.cos(t * 70)
             out = cv2.warpAffine(out, np.float32([[1, 0, dx], [0, 1, dy]]), (W, H), borderMode=cv2.BORDER_REPLICATE)
-        if self.explain is not None:   # 説明モード：灰色の小窓＋黒地に説明文
-            g = cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
-            g = np.repeat(g[..., None], 3, 2)
-            sc = 0.55 if t >= 0.18 else 1.0 - 0.45 * ease_out(t / 0.18)
-            sw, sh = int(W * sc), int(H * sc)
-            small = cv2.resize(g, (sw, sh), interpolation=cv2.INTER_AREA)
-            out = np.zeros((H, W, 3), np.float32)
-            y0 = int(40 * (1 - sc) / 0.45) if sc < 1 else 0
-            out[y0:y0 + sh, (W - sw) // 2:(W - sw) // 2 + sw] = small
-            if t >= 0.18:
+        if self.explain is not None:   # 説明モード：画面はそのまま、下に半透明の黒い帯を敷いて説明文
+            k = min(1.0, t / 0.15)
+            out[680:] *= 1 - 0.62 * k
+            if t >= 0.1:
                 ei, ea = self.explain
                 over(out, ei, ea, 0, 0)
         return out

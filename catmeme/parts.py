@@ -383,7 +383,7 @@ def big_text(text, box, max_size=150, min_size=64, max_lines=3, gap=1.18, fill=W
         for para in text.split("\n"):
             lines += wrap_nice(d, para, f, x1 - x0)
         fits_w = max(text_w(d, ln, f) for ln in lines) <= x1 - x0
-        if "\n" in text and len(lines) > text.count("\n") + 1 and size > min_size + 30:
+        if "\n" in text and len(lines) > text.count("\n") + 1 and size > min_size:
             size -= 6   # 手で改行した行は、それ以上折り返さず文字を小さくして1行に収める
             continue
         if (len(lines) <= max_lines and fits_w and size * gap * len(lines) <= y1 - y0) or size <= min_size:

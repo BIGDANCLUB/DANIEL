@@ -32,9 +32,8 @@ def main():
     img.alpha_composite(Image.new("RGBA", (W, H), (0, 0, 0, 60)))
     d = ImageDraw.Draw(img)
     # 上：タイトル
-    d.polygon([(60, 230), (W - 60, 210), (W - 80, 320), (80, 340)], fill=RED)
-    fit_text(d, (W / 2, 275), "1分でわかる", 800, 84, WHITE, RED, sw_ratio=0.0)
-    fit_text(d, (W / 2, 470), "普通のNISAと", 1000, 130, WHITE, BLACK, double=None)
+    fit_text(d, (W / 2, 250), "こどもNISAは", 1030, 190, ORANGE, WHITE, double=BLACK)
+    fit_text(d, (W / 2, 445), "普通のNISAと", 1000, 125, WHITE, BLACK, double=None)
     fit_text(d, (W / 2, 650), "何が違う⁉", 1020, 200, YELLOW, BLACK, double=WHITE)
     # 真ん中：VS パネル
     pw = Image.new("RGBA", (W, 330), (0, 0, 0, 0))

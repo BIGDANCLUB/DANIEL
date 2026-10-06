@@ -453,6 +453,14 @@ def plain_text(text, box, size=60, gap=1.35):
     d = ImageDraw.Draw(img)
     x0, y0, x1, y1 = box
     f = font("black", size)
+    # 入らない行は、全角スペースのところで行を分ける（言葉の途中では切らない）
+    text = "\n".join(para.replace("　", "\n") if text_w(d, para, f) > x1 - x0 else para for para in text.split("\n"))
+    while size > 40 and max(text_w(d, para, f) for para in text.split("\n")) > x1 - x0:   # それでも入らなければ小さくする
+        size -= 4
+        f = font("black", size)
+    while size > 40 and size * gap * (text.count("\n") + 1) > 860:
+        size -= 4
+        f = font("black", size)
     lines = []
     for para in text.split("\n"):
         lines += wrap_nice(d, para, f, x1 - x0)

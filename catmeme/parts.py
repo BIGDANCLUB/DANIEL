@@ -461,13 +461,18 @@ def plain_text(text, box, size=60, gap=1.35):
     while size > 40 and size * gap * (text.count("\n") + 1) > 860:
         size -= 4
         f = font("black", size)
-    lines = []
-    for para in text.split("\n"):
-        lines += wrap_nice(d, para, f, x1 - x0)
+    while True:   # 枠の高さに収まるまで小さくする
+        lines = []
+        for para in text.split("\n"):
+            lines += wrap_nice(d, para, f, x1 - x0)
+        if size <= 40 or size * gap * len(lines) <= y1 - y0:
+            break
+        size -= 4
+        f = font("black", size)
     lh = size * gap
     y = (y0 + y1) / 2 - lh * len(lines) / 2
     for ln in lines:
         x = (x0 + x1) / 2 - text_w(d, ln, f) / 2
-        d.text((x, y - size * 0.12), ln, font=f, fill=WHITE, stroke_width=4, stroke_fill=(0, 0, 0))
+        d.text((x, y - size * 0.12), ln, font=f, fill=WHITE, stroke_width=max(4, size // 14), stroke_fill=(0, 0, 0))
         y += lh
     return img

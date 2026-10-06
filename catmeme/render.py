@@ -381,7 +381,7 @@ class CutRenderer:
                                     stroke_width=5, stroke_fill=(0, 0, 0))
             layers.append(pl)
         if cut.get("chapter"):
-            txt.append(P.plain_text(cut["chapter"], (160, 400, 1760, 680), size=cut.get("chapter_size", 64)))
+            txt.append(P.plain_text(cut["chapter"], (160, 300, 1760, 780), size=cut.get("chapter_size", 64)))
         comp = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         for ly in layers:
             comp.alpha_composite(ly.convert("RGBA"))
@@ -392,7 +392,7 @@ class CutRenderer:
         self.txt = self._crop(tc)
         self.explain = None
         if cut.get("explain"):
-            self.explain = to_np(P.plain_text(cut["explain"], (120, 700, 1800, 1050), size=cut.get("explain_size", 62)))
+            self.explain = to_np(P.plain_text(cut["explain"], (60, 695, 1860, 1070), size=cut.get("explain_size", 84), gap=1.25))
 
     @staticmethod
     def _crop(im):

@@ -153,6 +153,12 @@ def cuts_all():
         dia("e02_list", "タイムズカーは　免許証などの書類も約160万件　漏えいのおそれ", right=S, se="pc_warning"),
         dia("e02b_list", "9月にも　大きな発表が続いた", right=S, se="card_flip"),
         dia("e02b_list", "（京王電鉄はランサムウェア被害。情報の漏えいは確認されていない）", right=S, se="card_place"),
+        close("bg24_server_room", "@react", "ニュース猫", "ちょっと待って\nデジタル庁も！？", se=["explosion_chudoon"]),
+        close("bg24_server_room", "@react", "ニュース猫", "日本のデジタル戦略を\n担うところが！？", flip=True,
+              se=["game_aceattorney_desk_slam"]),
+        dict(bg=bg("bg24_server_room"), sub="デジタル庁が運用する「GSS」\n（省庁の職員が使う共通のIT環境）で\n約24.6万件　漏えいのおそれ",
+             cats=[cat("@calm", "博識な猫", 470, h=640)], se="pc_warning"),
+        ss("国の機関だって\n例外じゃない\nってことな", "bg24_server_room", se="hyoshigi_01"),
         nn("多すぎて\nもう何がなんだか", se="spring_byoin"),
         nn("全部足したら\n日本の人口超えるんじゃ……", se="question_hatena_maou"),
         ss("同じ人が何社にも\n登録してるから\n足しちゃダメなやつな", se="tsukkomi_bishi"),
@@ -184,8 +190,8 @@ def cuts_all():
         close("bg02_room", "@react", "ニュース猫", "悪いことの\nサブスク！？", se=["game_smash_challenger"]),
         ss("IPAの「10大脅威」に\nAIをめぐるリスクが\n初めて入った", se="page_turn_01"),
         expl("bg23_hacker_room", [cat("@hack", "ハッカー猫", 960, h=700)], "",
-             "9月10〜15日の5日間　人間が指揮したAIが　ほぼ自動で100以上の組織を攻撃\n"
-             "30以上のサイトに侵入（海外の報告。日本の件と同じ犯人という根拠はない）", dur=4.6, se="game_undertale_encounter"),
+             "9月10〜15日の5日間　人間が指揮したAIが\nほぼ自動で100以上の組織を攻撃し　30以上に侵入\n"
+             "（海外の報告。日本の件と同じ犯人という根拠はない）", dur=4.6, se="game_undertale_encounter"),
         close("bg23_hacker_room", "@react", "ニュース猫", "AIが\nハッカーやってんの！？",
               se=["explosion_dokaan"], sting={"file": KAMI, "len": 4.0, "gain": -16}),
         dict(bg=bg("bg23_hacker_room"), sub="かかった費用は\n約8,000ドル", cats=[cat("@calm", "博識な猫", 470, h=640)],

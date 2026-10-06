@@ -1,9 +1,11 @@
-"""桃太郎 長尺版のサムネイル（1280x720 PNG）を作る。
+"""長尺版のサムネイル（1280x720 PNG）を作る。
 
-  python3 make_thumb.py          … 全案を thumb_momotaro/ に書き出す
-  python3 make_thumb.py a c      … 指定した案だけ
+  python3 make_thumb.py                 … 桃太郎の全案を thumb_momotaro/ に書き出す
+  python3 make_thumb.py a c             … 桃太郎の指定した案だけ
+  python3 make_thumb.py urashima        … 浦島太郎の全案を thumb_urashima/ に書き出す
+  python3 make_thumb.py urashima b      … 浦島太郎の指定した案だけ
 
-イラスト（illust_momotaro/）の上に、太い縁取りの大きな文字を重ねる。描画は make_zu.py と同じく Chromium。
+イラスト（illust_<名前>/）の上に、太い縁取りの大きな文字を重ねる。描画は make_zu.py と同じく Chromium。
 """
 import os
 import subprocess
@@ -13,9 +15,7 @@ import tempfile
 from make_zu import chrome
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT_DIR = os.path.join(HERE, "thumb_momotaro")
 FONT_DIR = os.path.abspath(os.path.join(HERE, "..", "fonts"))
-ILL = os.path.join(HERE, "illust_momotaro")
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><style>
 @font-face{font-family:Noto;font-weight:100 900;src:url("file://FONTDIR/NotoSansJP[wght].ttf")}
@@ -34,7 +34,7 @@ html,body{width:1280px;height:720px;overflow:hidden;background:#000}body{positio
 <div class="tag">TAG</div>BODY</body></html>"""
 
 # 案ごとに：背景（絵・位置・拡大）、暗くする向き、文字
-T = {
+MOMOTARO = {
     "a": dict(img="scene_battle.png", pos="62% 40%", zoom="135%",
               shade="linear-gradient(90deg,rgba(0,0,0,.72) 0%,rgba(0,0,0,.35) 48%,rgba(0,0,0,0) 70%)",
               tag="桃太郎を現代風に解説",
@@ -53,9 +53,35 @@ T = {
                    '<div class="t r" style="--sw:24px;right:34px;top:450px;font-size:150px;text-align:right">ブラック</div>'),
 }
 
+URASHIMA = {
+    "a": dict(img="scene_office.png", pos="0% 15%", zoom="118%",
+              shade="linear-gradient(270deg,rgba(0,0,0,.78) 0%,rgba(0,0,0,.4) 50%,rgba(0,0,0,0) 72%)",
+              tag="浦島太郎を現代風に解説",
+              body='<div class="t w" style="--sw:20px;right:40px;top:205px;font-size:110px;text-align:right">帰ったら</div>'
+                   '<div class="t r" style="--sw:28px;right:30px;top:340px;font-size:200px;text-align:right">死亡扱い</div>'
+                   '<div class="t y" style="--sw:16px;right:44px;top:588px;font-size:76px;text-align:right">現代なら1年でアウト</div>'),
+    "b": dict(img="scene_warp.png", pos="25% 25%", zoom="118%",
+              shade="linear-gradient(270deg,rgba(0,0,0,.75) 0%,rgba(0,0,0,.35) 52%,rgba(0,0,0,0) 72%)",
+              tag="浦島太郎を現代風に解説",
+              body='<div class="t w" style="--sw:18px;right:40px;top:185px;font-size:86px;text-align:right">カメの速さ</div>'
+                   '<div class="t y" style="--sw:22px;right:34px;top:282px;font-size:120px;text-align:right">光速の</div>'
+                   '<div class="t y" style="--sw:26px;right:28px;top:400px;font-size:158px;text-align:right">99.995%</div>'
+                   '<div class="t r" style="--sw:18px;right:40px;top:584px;font-size:94px;text-align:right">ほぼ光ｗｗｗ</div>'),
+    "c": dict(img="scene_tamatebako.png", pos="5% 45%", zoom="150%",
+              shade="linear-gradient(270deg,rgba(0,0,0,.75) 0%,rgba(0,0,0,.35) 50%,rgba(0,0,0,0) 70%)",
+              tag="浦島太郎を現代風に解説",
+              body='<div class="t w" style="--sw:20px;right:40px;top:200px;font-size:100px;text-align:right">玉手箱は</div>'
+                   '<div class="t y" style="--sw:26px;right:30px;top:320px;font-size:150px;text-align:right">300年分</div>'
+                   '<div class="t r" style="--sw:26px;right:30px;top:478px;font-size:168px;text-align:right">一括払い</div>'),
+}
 
-def render(key):
-    c = T[key]
+SETS = {"momotaro": MOMOTARO, "urashima": URASHIMA}
+
+
+def render(name, key):
+    c = SETS[name][key]
+    ILL = os.path.join(HERE, f"illust_{name}")
+    OUT_DIR = os.path.join(HERE, f"thumb_{name}")
     html = (PAGE.replace("FONTDIR", FONT_DIR).replace("IMG", os.path.join(ILL, c["img"]))
             .replace("POS", c["pos"]).replace("ZOOM", c["zoom"]).replace("SHADE", c["shade"])
             .replace("TAG", c["tag"]).replace("BODY", c["body"]))
@@ -74,5 +100,7 @@ def render(key):
 
 
 if __name__ == "__main__":
-    for k in (sys.argv[1:] or T):
-        render(k)
+    args = sys.argv[1:]
+    name = args.pop(0) if args and args[0] in SETS else "momotaro"
+    for k in (args or SETS[name]):
+        render(name, k)

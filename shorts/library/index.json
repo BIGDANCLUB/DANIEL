@@ -2266,5 +2266,185 @@
   "key": "caf877dcd9982d53e7667e8c2ddb7cee94c96028",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "A large solar farm in the Japanese countryside at night under a dark sky, rows of panels faintly lit by moonlight, no people No faces visible, no readable text, no logos."
+ },
+ "st041_ai_boxes": {
+  "file": "st041_ai_boxes.jpg",
+  "key": "7073e9bbfa519c6a7354327221a88fc2164edead",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Stacked cardboard boxes filled with green grape bunches on a concrete floor, harsh overhead light No faces visible, no readable text, no logos."
+ },
+ "st041_ai_camera": {
+  "file": "st041_ai_camera.jpg",
+  "key": "712f3d82399317deeb36935538b5b4c1dd0a81ed",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A small security camera mounted on a wooden post at the edge of a vineyard, dusk No faces visible, no readable text, no logos."
+ },
+ "st041_ai_empty_vine": {
+  "file": "st041_ai_empty_vine.jpg",
+  "key": "3399f9989075075eb42bc70c03e41941119a8c67",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of grape vines with freshly cut empty stems where bunches were removed, morning light No faces visible, no readable text, no logos."
+ },
+ "st041_ai_greenhouse": {
+  "file": "st041_ai_greenhouse.jpg",
+  "key": "75862bf042b52809765208f620488bc2852982b4",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Inside a plastic greenhouse with grape vines, a torn plastic sheet and empty hooks, dim light No faces visible, no readable text, no logos."
+ },
+ "st041_ai_hands": {
+  "file": "st041_ai_hands.jpg",
+  "key": "e8aa6a9a3a6fc569eb8c425c68031d924390e432",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Weathered farmer's hands gently holding a large bunch of green Shine Muscat grapes, warm sunset light, hands only No faces visible, no readable text, no logos."
+ },
+ "st041_ai_orchard_map": {
+  "file": "st041_ai_orchard_map.jpg",
+  "key": "86d7a5ea9218f6e10d8f0676168c302fe63609ea",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A paper map of Japan on a farmhouse table with a few green grape bunches and a flashlight, warm lamp light No faces visible, no readable text, no logos."
+ },
+ "st041_ai_vine_day": {
+  "file": "st041_ai_vine_day.jpg",
+  "key": "8b5a4ef55e7a1f9c6611c9b3fbc8fddd079fb925",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Rows of green Shine Muscat grapes hanging under white paper hats on a pergola trellis in a Japanese vineyard, soft daylight No faces visible, no readable text, no logos."
+ },
+ "st041_ai_vine_night": {
+  "file": "st041_ai_vine_night.jpg",
+  "key": "d69d354a64bddbb042ccd9766e96c34cd9d81e0c",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese grape vineyard at night with empty overhead trellises and a few cut stems hanging, moonlight, eerie mood No faces visible, no readable text, no logos."
+ },
+ "st042_ai_badge": {
+  "file": "st042_ai_badge.jpg",
+  "key": "40e4b66b0619d3f881c75ba84950c4f42aaabc55",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A black leather police-style badge wallet and a paper document lying next to a smartphone, shallow focus, text blurred No faces visible, no readable text, no logos."
+ },
+ "st042_ai_chart": {
+  "file": "st042_ai_chart.jpg",
+  "key": "fc987756fe0a70010559d0ca8c4c05bb5f27e45d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A newspaper and a calculator on a desk with a rising red bar chart shape drawn on paper, dramatic light, text blurred No faces visible, no readable text, no logos."
+ },
+ "st042_ai_lonely_room": {
+  "file": "st042_ai_lonely_room.jpg",
+  "key": "388cb3e93ec405c3af70582d329045c888c955bb",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An older man seen from behind sitting alone in a dim Japanese living room staring at a phone, curtains closed No faces visible, no readable text, no logos."
+ },
+ "st042_ai_parcel": {
+  "file": "st042_ai_parcel.jpg",
+  "key": "b3cc051c08f441f0578408c5077e8eac7f3a4356",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An opened cardboard parcel on a Japanese genkan floor containing a new smartphone, evening light No faces visible, no readable text, no logos."
+ },
+ "st042_ai_phone_dark": {
+  "file": "st042_ai_phone_dark.jpg",
+  "key": "95f57532e5fc70fe47d9d5418644f7b6f2281409",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A smartphone ringing on a dark kitchen table at night showing an incoming call screen glow, blurred screen No faces visible, no readable text, no logos."
+ },
+ "st042_ai_police_desk": {
+  "file": "st042_ai_police_desk.jpg",
+  "key": "700e1c8e60d214413e37fc1af517837ae3bbd8a5",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese police box counter with a telephone and a stack of warning leaflets, daylight, text blurred No faces visible, no readable text, no logos."
+ },
+ "st042_ai_video_call": {
+  "file": "st042_ai_video_call.jpg",
+  "key": "0f339a639892467c43064cb414c85db00c251a28",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A smartphone propped on a low table showing a blurred video call with dark police-style uniforms, faces out of frame, dim living room No faces visible, no readable text, no logos."
+ },
+ "st043_ai_bag": {
+  "file": "st043_ai_bag.jpg",
+  "key": "78f916e51de14335fd119548b417ee2455040a82",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Close-up of a woman's open shoulder bag on a crowded train with a hand reaching toward a wallet, hands and bag only No faces visible, no readable text, no logos."
+ },
+ "st043_ai_crowd": {
+  "file": "st043_ai_crowd.jpg",
+  "key": "8312b4a49480cd62d2d9d7542d696cfd9bc75ef2",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A woman holding her handbag in front of her chest on a crowded train, torso and hands only No faces visible, no readable text, no logos."
+ },
+ "st043_ai_hotel": {
+  "file": "st043_ai_hotel.jpg",
+  "key": "98612f286fef23471a68a41680aeae9c8d232e00",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A cheap small business hotel room at night with a convenience store bag and loose coins on the bed No faces visible, no readable text, no logos."
+ },
+ "st043_ai_passport": {
+  "file": "st043_ai_passport.jpg",
+  "key": "ee1b5d4822018f354a634890398be84efeda000b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A generic passport and a boarding pass on an airport counter next to a small suitcase, text blurred No faces visible, no readable text, no logos."
+ },
+ "st043_ai_platform": {
+  "file": "st043_ai_platform.jpg",
+  "key": "7843a17fd15b7f5e6fa7b047c474ff621be448fd",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A busy Japanese station platform with commuters' legs and handbags, train arriving, motion blur No faces visible, no readable text, no logos."
+ },
+ "st043_ai_subway": {
+  "file": "st043_ai_subway.jpg",
+  "key": "3d3b4795de1387aceae9140de4a19c3b24303f64",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Tokyo subway car interior with hanging straps and a few passengers seen from behind, harsh light No faces visible, no readable text, no logos."
+ },
+ "st043_ai_train": {
+  "file": "st043_ai_train.jpg",
+  "key": "0ef05187e96a9ae9c0f99523118ae1f61402ba67",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Interior of a crowded Japanese commuter train during rush hour seen from low angle, passengers' bodies and bags only, cold fluorescent light No faces visible, no readable text, no logos."
+ },
+ "st044_ai_board_light": {
+  "file": "st044_ai_board_light.jpg",
+  "key": "b05ad9f2faee3cbbe7d97078af6accdb235b0ff1",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A wooden shogi board with pieces set up under a single spotlight in a quiet tatami room, dramatic light No faces visible, no readable text, no logos."
+ },
+ "st044_ai_hall": {
+  "file": "st044_ai_hall.jpg",
+  "key": "b64c738faec7f86ce2e67452a3c2cbe4400f6b80",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A traditional Japanese tournament hall with rows of shogi boards and empty cushions, soft light No faces visible, no readable text, no logos."
+ },
+ "st044_ai_puzzle": {
+  "file": "st044_ai_puzzle.jpg",
+  "key": "6756bcdd958021a70df97776106fb949b869ade2",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Shogi puzzle sheets and a pencil on a school desk, morning light, text blurred No faces visible, no readable text, no logos."
+ },
+ "st044_ai_streak": {
+  "file": "st044_ai_streak.jpg",
+  "key": "7623e180cad14a212f1cc4c26fc8bd1f0950c846",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Many shogi pieces lined up in a long row on a wooden board, shallow focus, golden light No faces visible, no readable text, no logos."
+ },
+ "st044_ai_study_shogi": {
+  "file": "st044_ai_study_shogi.jpg",
+  "key": "8a37225135d33edf9bb4f61068e101019a3369b6",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A colorful children's shogi set with arrow-marked pieces on a low table in a Japanese living room, warm afternoon light No faces visible, no readable text, no logos."
+ },
+ "st044_ai_sunrise_board": {
+  "file": "st044_ai_sunrise_board.jpg",
+  "key": "6917bada8de41217f6052b9ca1dfbc69739534fa",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A shogi board by a window at sunrise with light spilling across the pieces, hopeful mood No faces visible, no readable text, no logos."
+ },
+ "st044_ai_tears": {
+  "file": "st044_ai_tears.jpg",
+  "key": "c905a5c0cf355644424abdac9cc1e276ca1399d2",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A small child's hands gripping the edge of a shogi board, tear drops on the wood, hands only No faces visible, no readable text, no logos."
+ },
+ "st044_ai_two_cushions": {
+  "file": "st044_ai_two_cushions.jpg",
+  "key": "45b48a190d4b404032f64f81546a10a81b530ce2",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Two zabuton cushions facing each other across a shogi board in a tatami room, one small pair of slippers and one old pair outside, no people No faces visible, no readable text, no logos."
  }
 }

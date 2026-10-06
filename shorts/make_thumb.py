@@ -109,7 +109,7 @@ def teaser_board(text, style="yellow"):
         f = font("thumb", size)
         s_out, s_in = int(size * 0.12), int(size * 0.065)   # 外側（黒）・内側（白）の縁
         widths = [tracked(f, plain(l)) for l in lines]
-        if max(widths) + 2 * s_out + 24 <= W or size <= 60:
+        if max(widths) + 2 * s_out + 100 <= W or size <= 60:
             break
         size -= 4
     asc, desc = f.getmetrics()

@@ -163,6 +163,9 @@ def cuts_all():
         nn("全部足したら\n日本の人口超えるんじゃ……", se="question_hatena_maou"),
         ss("同じ人が何社にも\n登録してるから\n足しちゃダメなやつな", se="tsukkomi_bishi"),
         close("bg20_counter", "@react", "ニュース猫", "レンタカー予約しただけで\n免許証まで！？", se=["game_mgs_alert"]),
+        dia("e02c_times", "タイムズカーで　何が漏れたかもしれないのか", "bg20_counter", right=S, se="page_turn_01"),
+        dia("e02c_times", "約160万件は　運転免許証などの“本人確認書類”の情報", "bg20_counter", right=S, se="pc_warning"),
+        ss("免許証には\n名前・住所・生年月日・\n顔写真まで載ってるからな", "bg20_counter", se="hyoshigi_02"),
         # ---- 2. なぜ起きているか ----
         chap("なんでこんなに　盗まれるの？", se="quiz_question_01", bgm={"file": NORA, "gain": -2}),
         hk("ふっふっふ……\n入口なんて\nいくらでもあるのよ", se="anime_broly_dedeen"),

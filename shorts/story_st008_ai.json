@@ -1,0 +1,248 @@
+{
+ "_comment": "ST-008 スカッと系（案1：行列の割り込み）。悪役は国籍を出さず行動で描く。決着は店のルール・記録・警察への相談という正当な手段で、私刑や辱めはしない。",
+ "tempo": 1.22,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "スカッとする話\n{行列に割り込んだ男の末路}",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n62歳の日本人男性。小さなラーメン屋の店長。落ち着いた低めの声で、芯が強い。\n## THE SCENE\n店で起きた痛快な出来事を、常連客に打ち明けるように語っている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。緊張する場面は声を落とし、決着の場面は胸がすくように。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st008_ai/voice"
+ },
+ "image_gen": {
+  "image_dir": "work_st008_ai/images"
+ },
+ "scenes": {
+  "line": {
+   "prompt": "A line of customers waiting outside a small Japanese ramen shop at lunchtime, seen from behind, one man in a dark jacket pushing in at the front of the line, tense mood, noren curtain with no readable text"
+  },
+  "shop_ext": {
+   "prompt": "Exterior of a small traditional Japanese ramen shop at noon with a short line of people waiting outside, seen from behind, noren curtain and signs with no readable text"
+  },
+  "kitchen": {
+   "prompt": "Close-up of a ramen chef's hands placing toppings into a bowl of ramen in a small shop kitchen, rising steam, warm light, only hands and forearms visible"
+  },
+  "counter": {
+   "prompt": "Interior of a small Japanese ramen shop, wooden counter with seated customers seen from behind, steam, warm light, menus with no readable text"
+  },
+  "fist": {
+   "prompt": "Close-up of a man's clenched fist slamming down on a wooden ramen shop counter, bowls and chopsticks jumping, tense dramatic light, only fist and forearm visible"
+  },
+  "apron": {
+   "prompt": "View from the kitchen side: the back of a ramen shop owner in a white apron and white headband, standing calmly behind the counter facing the seated customers, only his back visible, customers blurred in background, warm light"
+  },
+  "tablet": {
+   "prompt": "Close-up of a hand holding a tablet over a ramen shop counter, the screen showing a blurry grayscale security camera still, screen content unreadable"
+  },
+  "door": {
+   "prompt": "A man in a dark jacket seen from behind walking out through the sliding wooden door of a small ramen shop, head down, noren curtain with no readable text"
+  },
+  "applause": {
+   "prompt": "Close-up of several customers' hands clapping above a ramen shop counter with steaming bowls, only hands and forearms visible, warm cheerful light"
+  },
+  "night": {
+   "prompt": "A small Japanese ramen shop at night with warm lantern light glowing on a quiet street, calm peaceful mood, no readable text"
+  }
+ },
+ "lines": [
+  {
+   "text": "怒鳴り散らした男が\n<一瞬で黙った>",
+   "tone": "痛快な結末を打ち明ける。力強く、少しニヤリと",
+   "say": "店で怒鳴り散らした男が、一瞬で黙りました。",
+   "hook": true,
+   "se": "don",
+   "scene": "fist",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "店長が見せた\n<ある記録>で",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "店長の私が見せた、ある記録で。",
+   "scene": "tablet",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "{62歳}の私は\n小さなラーメン屋の店長",
+   "tone": "穏やかに、少し誇らしく",
+   "say": "62歳の私は、小さなラーメン屋をやっています。",
+   "scene": "shop_ext",
+   "crop": [
+    0.5,
+    0.72,
+    1.5
+   ]
+  },
+  {
+   "text": "昼どきは{行列}ができる\n自慢の店です",
+   "tone": "うれしそうに",
+   "scene": "kitchen",
+   "crop": [
+    0.55,
+    0.62,
+    1.4
+   ]
+  },
+  {
+   "text": "ある日 行列に\n<割り込む男>がいました",
+   "tone": "不穏な空気を伝える。声を落として",
+   "say": "ある日、行列に割り込む男がいました。",
+   "scene": "line",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "注意したお客さんに\n<怒鳴り散らします>",
+   "tone": "怒りをこらえて",
+   "scene": "line",
+   "crop": [
+    0.5,
+    0.45,
+    1.6
+   ]
+  },
+  {
+   "text": "「客だぞ！早く出せ！」\n<店中が凍りつきました>",
+   "tone": "男の怒鳴り声は抑えめに再現し、店の緊張を伝える",
+   "say": "客だぞ、早く出せ。店中が凍りつきました。",
+   "scene": "counter",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "私は{落ち着いて}\n厨房から出ました",
+   "tone": "静かに、腹をくくって",
+   "scene": "apron",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「当店は{順番の通り}に\nご案内します」",
+   "tone": "丁寧だが毅然と、はっきり",
+   "say": "当店は、順番の通りにご案内します。",
+   "scene": "apron",
+   "crop": [
+    0.5,
+    0.4,
+    1.6
+   ]
+  },
+  {
+   "text": "男は「知るか」と\n<カウンターを叩きました>",
+   "tone": "緊迫して",
+   "say": "男は、知るか、とカウンターを叩きました。",
+   "scene": "fist",
+   "crop": [
+    0.5,
+    0.55,
+    1.6
+   ]
+  },
+  {
+   "text": "そこで私は\n{防犯カメラの記録}を見せました",
+   "tone": "一転して、落ち着いた自信をこめて",
+   "say": "そこで私は、防犯カメラの記録を見せました。",
+   "scene": "tablet",
+   "crop": [
+    0.5,
+    0.5,
+    1.6
+   ]
+  },
+  {
+   "text": "男は{先月も}\n<同じ騒ぎ>を起こしていたのです",
+   "tone": "核心を明かす。ゆっくり、はっきり",
+   "scene": "tablet",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「次は{警察に相談}すると\nお伝えしましたよね」",
+   "tone": "丁寧だが有無を言わせない口調で",
+   "say": "次は警察に相談すると、お伝えしましたよね。",
+   "scene": "apron",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "男は<真っ青>になり\n{黙って出て行きました}",
+   "tone": "胸がすくように、痛快に",
+   "say": "男は真っ青になり、黙って出て行きました。",
+   "se": "coin",
+   "scene": "door",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "もちろん{出入り禁止}\nそれが店のルールです",
+   "tone": "きっぱりと、力強く",
+   "say": "もちろん出入り禁止。それが店のルールです。",
+   "scene": "door",
+   "crop": [
+    0.5,
+    0.45,
+    1.6
+   ]
+  },
+  {
+   "text": "行列のお客さんから\n{拍手}が起きました",
+   "tone": "うれしさがこみ上げる",
+   "scene": "applause",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "順番を守る人が\n{気持ちよく食べられる}店に",
+   "tone": "しみじみと、誇らしく",
+   "say": "順番を守る人が、気持ちよく食べられる店でありたい。",
+   "scene": "night",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "あなたなら\n<どう対応>しますか？",
+   "tone": "聞き手に語りかける。まっすぐ問いかけるように",
+   "say": "あなたなら、どう対応しますか。",
+   "scene": "night",
+   "crop": [
+    0.5,
+    0.6,
+    1.5
+   ]
+  }
+ ]
+}

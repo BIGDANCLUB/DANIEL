@@ -1,0 +1,1701 @@
+{
+ "_comment": "むかしばなしにマジレス 浦島太郎・長尺横動画版（16:9）。イラストは scenes の8枚を crop で切り出して使い回し、解説図（images、make_zu_urashima.py で作成）を間に挟む。chapter は YouTube のチャプター用の目印（make_short.py では使われない）。",
+ "format": "landscape",
+ "tempo": 1.15,
+ "gap": 0.1,
+ "max_pause": 0.2,
+ "lead_in": 0.3,
+ "tail": 2.0,
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Puck",
+  "style": "# AUDIO PROFILE\n30代の日本人男性。若手お笑い芸人のような、明るく張りのある声。\n## THE SCENE\n昔話をネタにしたトークを、客席を笑わせながらテンポよく進めている。\n### DIRECTOR'S NOTES\n全体を速めのテンポで、サクサク読む。文と文の間は短く。説明は自信満々に勢いよく、数字は歯切れよく強調する。ツッコミどころは軽く笑いを含ませる。オチの一文は一拍おいて、真顔で言い切る。",
+  "voice_dir": "work_urashima_long/voice",
+  "batch": 20,
+  "check": true,
+  "batch_chars": 560
+ },
+ "image_gen": {
+  "style": "Horizontal 16:9 wide illustration in the style of a traditional Japanese folktale picture book: soft watercolor and sumi ink on textured washi paper, warm muted earthy colors, gentle brush outlines, simple rounded character designs, old Japan and the sea. Wide, detailed composition with several points of interest spread across the frame, so that parts of it can be cropped as separate shots. Expressive comedic faces are fine. No text, no letters, no numbers, no symbols, no logos, no watermark.",
+  "image_dir": "illust_urashima"
+ },
+ "scenes": {
+  "beach": {
+   "prompt": "Wide beach at sunset in old Japan. Left: village children poking a sea turtle with sticks. Center: Urashima holding out coins to the children. Right: the rescued sea turtle at the water's edge looking back gratefully. Calm sea and orange sky. The same characters throughout: Urashima Taro, a young fisherman with a topknot in a simple indigo work kimono; a large brown loggerhead sea turtle; Otohime, an elegant sea princess in flowing pastel robes."
+  },
+  "dive": {
+   "prompt": "Underwater view. Center: Urashima riding on the sea turtle's back, cheeks puffed out holding his breath. Top: shimmering sunlight rays from the surface. Left: a school of small fish. The water gradually becomes dark deep blue toward the bottom. The same characters throughout: Urashima Taro, a young fisherman with a topknot in a simple indigo work kimono; a large brown loggerhead sea turtle; Otohime, an elegant sea princess in flowing pastel robes."
+  },
+  "palace": {
+   "prompt": "The undersea Dragon Palace on the dark sea floor: a red-lacquered Japanese palace covered by a huge transparent glass dome in the center. Left: red sea bream that look dark and blackish in the deep. Right: Urashima and the turtle arriving. The same characters throughout: Urashima Taro, a young fisherman with a topknot in a simple indigo work kimono; a large brown loggerhead sea turtle; Otohime, an elegant sea princess in flowing pastel robes."
+  },
+  "banquet": {
+   "prompt": "Banquet hall inside the Dragon Palace. Center: Otohime holding a black lacquered box tied with a red cord. Left: a sea bream and a flounder dancing. Center-left: Urashima seated, delighted. Bottom-right: a low table full of food. The same characters throughout: Urashima Taro, a young fisherman with a topknot in a simple indigo work kimono; a large brown loggerhead sea turtle; Otohime, an elegant sea princess in flowing pastel robes."
+  },
+  "warp": {
+   "prompt": "The sea turtle carrying Urashima streaks through a swirling tunnel of light at enormous speed, motion lines everywhere. Top-right: blank clock faces and blank calendar pages flying past. The same characters throughout: Urashima Taro, a young fisherman with a topknot in a simple indigo work kimono; a large brown loggerhead sea turtle; Otohime, an elegant sea princess in flowing pastel robes."
+  },
+  "town": {
+   "prompt": "Present-day Japanese street, 300 years later. Center-left: bewildered Urashima in his old fisherman kimono. Center: people in modern clothes looking at smartphones. Right: a plain blank vending machine. No brand names, no signs with text. The same characters throughout: Urashima Taro, a young fisherman with a topknot in a simple indigo work kimono; a large brown loggerhead sea turtle; Otohime, an elegant sea princess in flowing pastel robes."
+  },
+  "office": {
+   "prompt": "A modern Japanese city hall service counter. Left-center: Urashima, confused. Behind the counter: a polite clerk. On the counter: blank documents. Right: a blank number-ticket machine on a stand. The same characters throughout: Urashima Taro, a young fisherman with a topknot in a simple indigo work kimono; a large brown loggerhead sea turtle; Otohime, an elegant sea princess in flowing pastel robes."
+  },
+  "tamatebako": {
+   "prompt": "Beach at dusk. Center: Urashima opening the black lacquered box; white smoke pours out and he is turning into an old man with a long white beard. Top-right: a crane flying into the sky. Bottom-right: the sea turtle on the shore heading to the sea. The same characters throughout: Urashima Taro, a young fisherman with a topknot in a simple indigo work kimono; a large brown loggerhead sea turtle; Otohime, an elegant sea princess in flowing pastel robes."
+  }
+ },
+ "images": {
+  "kame": "zu_urashima/kame.png",
+  "miseinen": "zu_urashima/miseinen.png",
+  "iki": "zu_urashima/iki.png",
+  "suiatsu": "zu_urashima/suiatsu.png",
+  "iro": "zu_urashima/iro.png",
+  "urashima": "zu_urashima/urashima.png",
+  "energy": "zu_urashima/energy.png",
+  "shisso": "zu_urashima/shisso.png",
+  "dryice": "zu_urashima/dryice.png",
+  "jumyo": "zu_urashima/jumyo.png"
+ },
+ "lines": [
+  {
+   "chapter": "オープニング",
+   "hook": true,
+   "se": "don",
+   "scene": "office",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "浦島太郎\n現代なら<1年で死亡扱い>",
+   "say": "浦島太郎。現代なら、たった1年で、法律上は死亡扱いになるかもしれません。",
+   "tone": "一文目から力強く言い切る。前置きなし"
+  },
+  {
+   "scene": "office",
+   "crop": [
+    0.25,
+    0.42,
+    1.5
+   ],
+   "text": "今日は浦島太郎を\n{現代風に解説}します",
+   "say": "今日は浦島太郎を、現代風に解説していきます。",
+   "tone": "得意げに、楽しそうに"
+  },
+  {
+   "scene": "office",
+   "crop": [
+    0.76,
+    0.55,
+    1.6
+   ],
+   "text": "カメ・海・時間・法律\n{全部入り}です",
+   "say": "カメ、海、時間、法律。全部入りでお送りします。",
+   "tone": "堂々と宣言する"
+  },
+  {
+   "scene": "beach",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "それでは…\nむかしむかし",
+   "say": "それでは。むかしむかし。",
+   "tone": "急に昔話っぽく、でもテンポよく切り替える"
+  },
+  {
+   "chapter": "第1章 カメ救出は売買契約",
+   "scene": "beach",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "あるところに\n{浦島太郎}という漁師がいました",
+   "say": "あるところに、浦島太郎という漁師がいました。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "beach",
+   "crop": [
+    0.72,
+    0.45,
+    1.5
+   ],
+   "text": "ある日、浜辺を歩いていると",
+   "say": "ある日、浜辺を歩いていると",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "beach",
+   "crop": [
+    0.25,
+    0.6,
+    1.6
+   ],
+   "text": "子どもたちが\n{カメ}をいじめていました",
+   "say": "子どもたちが、カメをいじめていました。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "beach",
+   "crop": [
+    0.72,
+    0.45,
+    1.6
+   ],
+   "text": "かわいそうに思った浦島太郎\n{お金}を払ってカメを助けます",
+   "say": "かわいそうに思った浦島太郎は、子どもたちにお金を払って、カメを助けてあげました。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "beach",
+   "crop": [
+    0.72,
+    0.45,
+    1.3
+   ],
+   "text": "いい話です\nでも現代風に言うと…",
+   "say": "いい話です。でも、現代風に言うと",
+   "tone": "ニヤッとしながら"
+  },
+  {
+   "shot": {
+    "image": "miseinen"
+   },
+   "move": "still",
+   "text": "これは{カメの売買契約}です",
+   "say": "これ、法律的には、カメの売買契約です。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "miseinen"
+   },
+   "move": "still",
+   "text": "子どもがカメを売って\n浦島太郎がお金を払った",
+   "say": "子どもたちがカメを売って、浦島太郎がお金を払った。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "miseinen"
+   },
+   "move": "still",
+   "text": "親の同意がない{未成年の契約}は\nあとから<取り消せる>",
+   "say": "そして、親の同意がない未成年の契約は、あとから取り消すことができます。民法5条です。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "miseinen"
+   },
+   "move": "still",
+   "text": "取り消されたら\n浦島太郎は{カメを返す}ことに",
+   "say": "取り消されたら、浦島太郎は、カメを返さないといけません。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "scene": "beach",
+   "crop": [
+    0.9,
+    0.6,
+    1.8
+   ],
+   "text": "でもカメは\n<もう海の中>",
+   "say": "でも、カメはもう、海の中です。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "beach",
+   "crop": [
+    0.25,
+    0.6,
+    1.5
+   ],
+   "text": "それに{そもそも}の話…",
+   "say": "それに、そもそもの話。",
+   "tone": "声をひそめて"
+  },
+  {
+   "shot": {
+    "image": "kame"
+   },
+   "move": "still",
+   "text": "ウミガメの多くは\n{絶滅が心配されている}種類",
+   "say": "ウミガメの多くは、絶滅が心配されている種類です。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "kame"
+   },
+   "move": "still",
+   "text": "地域によっては\n{捕まえること自体}が禁止",
+   "say": "地域によっては、捕まえること自体が、規則で禁止されています。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "scene": "beach",
+   "crop": [
+    0.25,
+    0.6,
+    1.8
+   ],
+   "text": "いじめる以前に\n<捕まえちゃダメ>",
+   "say": "いじめる以前に、捕まえちゃダメです。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "beach",
+   "crop": [
+    0.9,
+    0.6,
+    1.5
+   ],
+   "text": "さて、助けられたカメ\n後日{お礼}にやってきます",
+   "say": "さて、助けられたカメは、後日、お礼にやってきます。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "beach",
+   "crop": [
+    0.9,
+    0.6,
+    1.8
+   ],
+   "text": "「{竜宮城}へご案内します」",
+   "say": "竜宮城へ、ご案内します。",
+   "tone": "カメっぽく、ていねいに"
+  },
+  {
+   "scene": "beach",
+   "crop": [
+    0.62,
+    0.5,
+    1.3
+   ],
+   "text": "助けたお礼に{海底ご招待}\n<カメ、太っ腹>",
+   "say": "助けたお礼に、海底ご招待。カメ、太っ腹です。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "chapter": "第2章 カメで海底へ",
+   "scene": "dive",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "浦島太郎はカメの背中に乗って\n{海の底}へ",
+   "say": "浦島太郎は、カメの背中に乗って、海の底へ。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "dive",
+   "crop": [
+    0.5,
+    0.45,
+    1.6
+   ],
+   "text": "まず気になるのは\n{カメの負担}",
+   "say": "まず気になるのは、カメの負担です。",
+   "tone": "テンポよく"
+  },
+  {
+   "shot": {
+    "image": "kame"
+   },
+   "move": "still",
+   "text": "アカウミガメは大きいもので\n{100キロ}を超えることも",
+   "say": "アカウミガメは、大きいものだと、100キロを超えることもあります。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "kame"
+   },
+   "move": "still",
+   "text": "そこに浦島太郎{約60キロ}",
+   "say": "そこに浦島太郎、約60キロ。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "kame"
+   },
+   "move": "still",
+   "text": "合わせて<約160キロ>\nカメ、重労働",
+   "say": "合わせて約160キロ。カメ、重労働です。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "scene": "dive",
+   "crop": [
+    0.5,
+    0.45,
+    1.5
+   ],
+   "text": "しかもふだんの泳ぐ速さは\n{人が歩くくらい}",
+   "say": "しかも、ウミガメのふだんの泳ぐ速さは、人が歩くのと同じくらいか、それより遅いくらい。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "dive",
+   "crop": [
+    0.5,
+    0.45,
+    1.8
+   ],
+   "text": "竜宮城が遠いと\n<到着までに日が暮れる>",
+   "say": "竜宮城が遠いと、到着までに日が暮れます。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "scene": "dive",
+   "crop": [
+    0.5,
+    0.45,
+    1.8
+   ],
+   "text": "もっと気になるのが\n浦島太郎の{息}",
+   "say": "そして、もっと気になるのが、浦島太郎の息。",
+   "tone": "テンポよく"
+  },
+  {
+   "shot": {
+    "image": "iki"
+   },
+   "move": "still",
+   "text": "ふつうの人が息を止められるのは\n{1分前後}",
+   "say": "ふつうの人が息を止められるのは、1分前後。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "iki"
+   },
+   "move": "still",
+   "text": "訓練した人で{数分}",
+   "say": "訓練した人で、数分。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "iki"
+   },
+   "move": "still",
+   "text": "世界記録は{20分以上}\nただし酸素を吸ってから",
+   "say": "世界記録は、なんと20分以上。ただしこれは、事前に酸素を吸ってからの記録です。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "iki"
+   },
+   "move": "still",
+   "text": "<まねは絶対にしないでください>",
+   "say": "危ないので、まねは絶対にしないでください。",
+   "tone": "ここだけ真面目に、はっきりと"
+  },
+  {
+   "scene": "dive",
+   "crop": [
+    0.5,
+    0.45,
+    2.0
+   ],
+   "text": "竜宮城までの道のり\n<息止めRTA>",
+   "say": "竜宮城までの道のりは、ほぼ、息止めRTAです。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "dive",
+   "crop": [
+    0.5,
+    0.45,
+    1.4
+   ],
+   "text": "ちなみにウミガメは休んでいるとき\n{何時間も}潜っていられることも",
+   "say": "ちなみにウミガメは、休んでいるときなら、何時間も潜っていられることがあります。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "dive",
+   "crop": [
+    0.5,
+    0.45,
+    1.8
+   ],
+   "text": "カメは余裕\n<浦島太郎だけ必死>",
+   "say": "カメは余裕。浦島太郎だけ必死です。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "shot": {
+    "image": "suiatsu"
+   },
+   "move": "still",
+   "text": "さらに{水圧}の問題",
+   "say": "さらに、水圧の問題があります。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "suiatsu"
+   },
+   "move": "still",
+   "text": "水は10メートル潜るごとに\n{約1気圧}ずつ増える",
+   "say": "水は、10メートル潜るごとに、約1気圧ずつ増えていきます。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "suiatsu"
+   },
+   "move": "still",
+   "text": "水深30メートルで\n地上の{4倍}",
+   "say": "水深30メートルで、地上の4倍の圧力です。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "scene": "dive",
+   "crop": [
+    0.5,
+    0.45,
+    1.8
+   ],
+   "text": "耳が<キーン>どころじゃない",
+   "say": "耳がキーンとなるどころの話ではありません。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "scene": "dive",
+   "crop": [
+    0.5,
+    0.3,
+    1.4
+   ],
+   "text": "そして潜るほど\n{景色の色}が変わっていく",
+   "say": "そして、潜るほど、景色の色が変わっていきます。",
+   "tone": "テンポよく"
+  },
+  {
+   "shot": {
+    "image": "iro"
+   },
+   "move": "still",
+   "text": "海の中では\n{赤い光}から先に消える",
+   "say": "海の中では、赤い光から先に、届かなくなっていきます。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "iro"
+   },
+   "move": "still",
+   "text": "赤は{約5メートル}\nオレンジ、黄色と続いて",
+   "say": "赤は約5メートル。オレンジ、黄色と続いて",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "iro"
+   },
+   "move": "still",
+   "text": "最後まで残るのは{青}\nだから海は青く見える",
+   "say": "最後まで残るのは、青。だから海の中は、青く見えるんです。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "iro"
+   },
+   "move": "still",
+   "text": "水深{200メートル}より深いと\n太陽の光はほぼ届かない",
+   "say": "水深200メートルより深いと、太陽の光は、ほとんど届きません。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "scene": "dive",
+   "crop": [
+    0.5,
+    0.75,
+    1.6
+   ],
+   "text": "竜宮城が深海にあるなら\n<真っ暗>です",
+   "say": "もし竜宮城が深海にあるなら、そこは真っ暗です。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "chapter": "第3章 竜宮城は意外と現代的",
+   "scene": "palace",
+   "crop": [
+    0.45,
+    0.5,
+    1.0
+   ],
+   "text": "そしてついに\n{竜宮城}に到着",
+   "say": "そしてついに、竜宮城に到着しました。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "palace",
+   "crop": [
+    0.42,
+    0.4,
+    1.3
+   ],
+   "text": "浦島太郎のお話は\n{約1300年前}の書物にも登場",
+   "say": "ちなみに、浦島太郎のお話は、約1300年前の書物、日本書紀にも登場します。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "palace",
+   "crop": [
+    0.42,
+    0.4,
+    1.5
+   ],
+   "text": "そこでの行き先は\n竜宮城ではなく{蓬莱山}",
+   "say": "そこでの行き先は、竜宮城ではなく、蓬莱山。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "palace",
+   "crop": [
+    0.42,
+    0.4,
+    1.8
+   ],
+   "text": "海の向こうの{仙人の国}\n<1300年かけて設定が固まった>",
+   "say": "海の向こうにある、仙人の国です。1300年かけて、だんだん設定が固まってきたんですね。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "scene": "palace",
+   "crop": [
+    0.42,
+    0.4,
+    1.5
+   ],
+   "text": "海の底にある御殿\n現代ならどうでしょう",
+   "say": "海の底にある御殿。現代だとどうでしょう。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "palace",
+   "crop": [
+    0.42,
+    0.4,
+    1.8
+   ],
+   "text": "実は{海の中のレストラン}は\n世界に実在します",
+   "say": "実は、海の中にあるレストランは、世界に実在します。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "palace",
+   "crop": [
+    0.42,
+    0.4,
+    1.8
+   ],
+   "text": "分厚い{アクリルの窓}から\n魚をながめながら食事",
+   "say": "分厚いアクリルの窓から、魚をながめながら食事ができるんです。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "palace",
+   "crop": [
+    0.85,
+    0.68,
+    1.6
+   ],
+   "text": "竜宮城\n<意外と現代的>",
+   "say": "竜宮城、意外と現代的です。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "palace",
+   "crop": [
+    0.12,
+    0.4,
+    1.6
+   ],
+   "text": "ただ気になるのが{魚の色}",
+   "say": "ただ、ここで気になるのが、魚の色。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "palace",
+   "crop": [
+    0.12,
+    0.4,
+    1.8
+   ],
+   "text": "赤い光が届かないので\n赤い鯛も<黒っぽく>見える",
+   "say": "さっき見たとおり、深い海には赤い光が届きません。だから赤い鯛も、黒っぽく見えます。",
+   "tone": "テンポよく"
+  },
+  {
+   "shot": {
+    "image": "iro"
+   },
+   "move": "still",
+   "text": "深海の魚に赤が多いのは\n赤が{目立たない色}だからとされる",
+   "say": "深海の魚に赤い色が多いのは、赤が目立たない色だから、と考えられています。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "scene": "palace",
+   "crop": [
+    0.12,
+    0.4,
+    1.6
+   ],
+   "text": "赤い服で{隠れ身の術}\n深海の常識です",
+   "say": "赤い服で、隠れ身の術。深海の常識です。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "scene": "banquet",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "竜宮城では\n{乙姫さま}が出迎えてくれました",
+   "say": "竜宮城では、乙姫さまが出迎えてくれました。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "banquet",
+   "crop": [
+    0.68,
+    0.45,
+    1.6
+   ],
+   "text": "古いお話の中には\n助けたカメの正体が{乙姫さま}のものも",
+   "say": "ちなみに、古いお話の中には、助けたカメの正体が乙姫さま、というものもあります。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "banquet",
+   "crop": [
+    0.68,
+    0.45,
+    1.8
+   ],
+   "text": "{送迎}から{接待}まで\n<全部ご本人>",
+   "say": "送迎から接待まで、全部ご本人。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "banquet",
+   "crop": [
+    0.22,
+    0.6,
+    1.6
+   ],
+   "text": "宴会では\n{鯛やヒラメ}が踊っておもてなし",
+   "say": "宴会では、鯛やヒラメが踊って、おもてなし。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "banquet",
+   "crop": [
+    0.85,
+    0.75,
+    1.6
+   ],
+   "text": "テーブルには\n{ごちそう}がずらり",
+   "say": "テーブルには、ごちそうがずらり。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "banquet",
+   "crop": [
+    0.75,
+    0.7,
+    1.6
+   ],
+   "text": "もしここに\n{お刺身}が出てきたら",
+   "say": "もしここに、お刺身が出てきたら",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "banquet",
+   "crop": [
+    0.22,
+    0.6,
+    1.8
+   ],
+   "text": "踊っている鯛とヒラメ\n<気まずい>",
+   "say": "踊っている鯛とヒラメが、とても気まずい。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "banquet",
+   "crop": [
+    0.42,
+    0.6,
+    1.6
+   ],
+   "text": "楽しい毎日に\n浦島太郎は{時間を忘れます}",
+   "say": "楽しい毎日に、浦島太郎は、時間を忘れてしまいます。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "banquet",
+   "crop": [
+    0.42,
+    0.6,
+    1.3
+   ],
+   "text": "気がつけば{3年}",
+   "say": "気がつけば、3年。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "banquet",
+   "crop": [
+    0.42,
+    0.6,
+    1.6
+   ],
+   "text": "さすがに家が心配になって\n{帰る}ことにしました",
+   "say": "さすがに家が心配になって、帰ることにしました。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "banquet",
+   "crop": [
+    0.68,
+    0.45,
+    1.8
+   ],
+   "text": "帰りぎわ乙姫さまは\nおみやげに{玉手箱}",
+   "say": "帰りぎわ、乙姫さまは、おみやげに玉手箱を渡します。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "banquet",
+   "crop": [
+    0.68,
+    0.45,
+    2.0
+   ],
+   "text": "「{決して開けないでください}」",
+   "say": "決して、開けないでください。",
+   "tone": "乙姫っぽく、静かに念を押す"
+  },
+  {
+   "scene": "banquet",
+   "crop": [
+    0.42,
+    0.6,
+    1.8
+   ],
+   "text": "開けちゃダメな箱を\n<プレゼント>",
+   "say": "開けてはいけない箱を、プレゼント。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "chapter": "第4章 3年が300年",
+   "scene": "warp",
+   "crop": [
+    0.42,
+    0.52,
+    1.0
+   ],
+   "text": "カメに乗って\n{地上}へ帰ってきた浦島太郎",
+   "say": "カメに乗って、地上へ帰ってきた浦島太郎。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "ところが村の様子が\n{まるで違います}",
+   "say": "ところが、村の様子がまるで違います。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.6,
+    0.45,
+    1.6
+   ],
+   "text": "知っている人が\n{一人もいない}",
+   "say": "知っている人が、一人もいません。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.33,
+    0.5,
+    1.6
+   ],
+   "text": "聞けば地上では\n{300年}たっていました",
+   "say": "聞いてみると、地上では、300年がたっていました。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.33,
+    0.5,
+    1.4
+   ],
+   "text": "お話によっては{700年}のものも",
+   "say": "ちなみに、お話によっては、700年というものもあります。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.5,
+    0.5,
+    1.2
+   ],
+   "text": "今が令和だとすると\n300年前は{江戸時代}",
+   "say": "今が令和だとすると、300年前は、江戸時代です。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.88,
+    0.45,
+    1.6
+   ],
+   "text": "のどが渇いた浦島太郎\n{自動販売機}の前へ",
+   "say": "のどが渇いた浦島太郎、自動販売機の前へ。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.33,
+    0.5,
+    1.8
+   ],
+   "text": "持っているのは\n江戸時代のお金{寛永通宝}",
+   "say": "持っているのは、江戸時代のお金、寛永通宝。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.88,
+    0.45,
+    2.0
+   ],
+   "text": "<もちろん使えません>",
+   "say": "もちろん、使えません。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.33,
+    0.5,
+    1.6
+   ],
+   "text": "でも実は寛永通宝\n{昭和28年}まで法律上はお金でした",
+   "say": "でも実は、寛永通宝は、昭和28年まで、法律上はお金として使えたんです。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.33,
+    0.5,
+    1.8
+   ],
+   "text": "あと{70年}ちょっと早く帰っていれば\n<1厘として使えた>",
+   "say": "あと70年ちょっと早く帰っていれば、1厘として使えたんです。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.88,
+    0.45,
+    2.0
+   ],
+   "text": "でも1厘では\n<ジュースは買えません>",
+   "say": "でも、1厘では、ジュースは買えません。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.6,
+    0.45,
+    1.6
+   ],
+   "text": "ふと見ると町の人たち\nみんな{光る板}を見つめている",
+   "say": "ふと見ると、町の人たちは、みんな光る板を見つめています。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.6,
+    0.45,
+    1.8
+   ],
+   "text": "スマホを見ていると\n{時間があっという間}",
+   "say": "スマホを見ていると、時間があっという間にたちますよね。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.33,
+    0.5,
+    1.6
+   ],
+   "text": "浦島太郎から見れば\n<全員プチ竜宮城>",
+   "say": "浦島太郎から見れば、全員、プチ竜宮城にいる状態です。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "town",
+   "crop": [
+    0.5,
+    0.5,
+    1.3
+   ],
+   "text": "では、なぜ\n{3年が300年}になったのか",
+   "say": "では、なぜ、3年が300年になったのか。",
+   "tone": "問いかけるように"
+  },
+  {
+   "shot": {
+    "image": "urashima"
+   },
+   "move": "still",
+   "text": "物理の世界では\n{ウラシマ効果}と呼ばれています",
+   "say": "実はこれ、物理の世界で、ウラシマ効果と呼ばれています。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "urashima"
+   },
+   "move": "still",
+   "text": "ものすごく速く動くと\n{時間がゆっくり進む}",
+   "say": "ものすごく速く動くと、その人の時間は、ゆっくり進むんです。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "urashima"
+   },
+   "move": "still",
+   "text": "本人の名前が\n<そのまま現象名>",
+   "say": "本人の名前が、そのまま現象の名前になっています。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "shot": {
+    "image": "urashima"
+   },
+   "move": "still",
+   "text": "竜宮城の3年が地上の300年\nつまり時間の進みが{100分の1}",
+   "say": "竜宮城の3年が、地上の300年。つまり、時間の進みが100分の1。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "urashima"
+   },
+   "move": "still",
+   "text": "竜宮城で{1日}過ごすと\n地上では{100日}",
+   "say": "竜宮城で1日過ごすと、地上では100日。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "scene": "warp",
+   "crop": [
+    0.42,
+    0.52,
+    1.3
+   ],
+   "text": "週末に1泊2日のつもりが\n地上では<半年以上>",
+   "say": "週末に1泊2日のつもりで遊びに行くと、地上では、半年以上たっています。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "warp",
+   "crop": [
+    0.82,
+    0.3,
+    1.6
+   ],
+   "text": "有給休暇では\n<とても足りない>",
+   "say": "有給休暇では、とても足りません。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "shot": {
+    "image": "urashima"
+   },
+   "move": "still",
+   "text": "そのために必要な速さは\n{光の速さの99.995%}",
+   "say": "そのために必要な速さは、光の速さの、99.995パーセント。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "scene": "warp",
+   "crop": [
+    0.42,
+    0.52,
+    1.6
+   ],
+   "text": "<カメ、ほぼ光>",
+   "say": "カメ、ほぼ光です。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "shot": {
+    "image": "energy"
+   },
+   "move": "still",
+   "text": "では、カメと浦島太郎\n合わせて{160キロ}を",
+   "say": "では、カメと浦島太郎、合わせて160キロを",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "energy"
+   },
+   "move": "still",
+   "text": "ほぼ光の速さまで加速すると\n必要なエネルギーは",
+   "say": "ほぼ光の速さまで加速すると、必要なエネルギーは",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "energy"
+   },
+   "move": "still",
+   "text": "約{1.4×10の21乗}ジュール",
+   "say": "約、1.4かける10の21乗ジュール。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "energy"
+   },
+   "move": "still",
+   "text": "これは人類が使うエネルギーの\n{約2年分}",
+   "say": "これは、人類全体が使うエネルギーの、約2年分です。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "energy"
+   },
+   "move": "still",
+   "text": "帰りに止まる分も入れると\n<人類の約4年半分>",
+   "say": "帰りに止まる分も入れると、人類の約4年半分。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "scene": "warp",
+   "crop": [
+    0.42,
+    0.52,
+    1.3
+   ],
+   "text": "助けたお礼の\n<スケールがでかすぎる>",
+   "say": "助けたお礼の、スケールがでかすぎます。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "warp",
+   "crop": [
+    0.82,
+    0.3,
+    1.6
+   ],
+   "text": "ちなみに{重力}が強い場所でも\n時間はゆっくり進みます",
+   "say": "ちなみに、重力が強い場所でも、時間はゆっくり進みます。",
+   "tone": "テンポよく"
+  },
+  {
+   "shot": {
+    "image": "urashima"
+   },
+   "move": "still",
+   "text": "{GPS衛星}は、この時間のズレを\n補正して動いています",
+   "say": "スマホの地図で使う、GPSの衛星は、この時間のズレを補正して動いています。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "scene": "warp",
+   "crop": [
+    0.82,
+    0.3,
+    1.6
+   ],
+   "text": "ウラシマ効果\n<実はみんなお世話になってる>",
+   "say": "ウラシマ効果、実はみんな、毎日お世話になっています。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "scene": "palace",
+   "crop": [
+    0.42,
+    0.4,
+    1.3
+   ],
+   "text": "つまり竜宮城は\n{超高速で移動していた}説",
+   "say": "つまり、竜宮城は、ものすごいスピードで動いていた説。",
+   "tone": "得意げに"
+  },
+  {
+   "scene": "palace",
+   "crop": [
+    0.42,
+    0.4,
+    1.6
+   ],
+   "text": "竜宮城\n<実は宇宙船>",
+   "say": "竜宮城、実は宇宙船。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "chapter": "第5章 帰ったら死亡扱い",
+   "scene": "office",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "もし浦島太郎が\n{現代の人}だったら",
+   "say": "では、もし浦島太郎が、現代の人だったら、どうなるでしょう。",
+   "tone": "問いかけるように"
+  },
+  {
+   "scene": "office",
+   "crop": [
+    0.25,
+    0.42,
+    1.6
+   ],
+   "text": "カメに乗って\n海に消えた男",
+   "say": "カメに乗って、海に消えた男。",
+   "tone": "テンポよく"
+  },
+  {
+   "shot": {
+    "image": "shisso"
+   },
+   "move": "still",
+   "text": "行方不明が長く続くと\n{失踪宣告}という制度",
+   "say": "行方不明の状態が長く続くと、失踪宣告という制度があります。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "shisso"
+   },
+   "move": "still",
+   "text": "行方不明の人を、法律上\n{死亡したもの}とみなす制度",
+   "say": "行方不明の人を、法律上、死亡したものとみなす制度です。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "shisso"
+   },
+   "move": "still",
+   "text": "ふつうの行方不明なら{7年}",
+   "say": "ふつうの行方不明なら、7年。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "shisso"
+   },
+   "move": "still",
+   "text": "海の事故など{危険にあった}場合は\n<1年>",
+   "say": "でも、海の事故など、危険な目にあった場合は、1年です。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "scene": "office",
+   "crop": [
+    0.25,
+    0.42,
+    1.8
+   ],
+   "text": "カメに乗って海に消えた\n<たぶん危険枠>",
+   "say": "カメに乗って海に消えた。これはたぶん、危険にあった側です。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "scene": "office",
+   "crop": [
+    0.4,
+    0.45,
+    1.6
+   ],
+   "text": "家族が申し立てれば\n{1年}で死亡扱いになるかも",
+   "say": "家族が申し立てれば、たった1年で、死亡扱いになるかもしれません。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "office",
+   "crop": [
+    0.4,
+    0.45,
+    1.8
+   ],
+   "text": "すると{生命保険}がおりたり\n{相続}が始まったり",
+   "say": "すると、生命保険がおりたり、相続が始まったりします。",
+   "tone": "テンポよく"
+  },
+  {
+   "shot": {
+    "image": "shisso"
+   },
+   "move": "still",
+   "text": "生きて帰ってきたら\n{家庭裁判所}で取り消せる",
+   "say": "生きて帰ってきたら、家庭裁判所で、取り消してもらえます。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "shisso"
+   },
+   "move": "still",
+   "text": "相続された財産も\n{残っている分}は返してもらえる",
+   "say": "相続された財産も、残っている分は、返してもらえます。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "scene": "office",
+   "crop": [
+    0.25,
+    0.42,
+    1.8
+   ],
+   "text": "でも300年たっていたら\n<たぶん何も残っていない>",
+   "say": "でも、300年たっていたら、たぶん何も残っていません。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "office",
+   "crop": [
+    0.5,
+    0.42,
+    1.6
+   ],
+   "text": "それ以前に\n今の戸籍の始まりは{明治時代}",
+   "say": "それ以前の問題として、今の戸籍が始まったのは、明治時代。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "office",
+   "crop": [
+    0.5,
+    0.42,
+    1.8
+   ],
+   "text": "江戸時代の浦島太郎は\n<今の戸籍にいない>",
+   "say": "江戸時代生まれの浦島太郎は、今の戸籍に載っていないんです。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "scene": "office",
+   "crop": [
+    0.5,
+    0.42,
+    1.6
+   ],
+   "text": "「確認しますので\n{番号札}を取ってお待ちください」",
+   "say": "確認しますので、番号札を取って、お待ちください。",
+   "tone": "窓口の人っぽく、事務的に"
+  },
+  {
+   "scene": "office",
+   "crop": [
+    0.76,
+    0.55,
+    1.8
+   ],
+   "text": "300年待って帰ってきたのに\n<まだ待たされる>",
+   "say": "300年待って帰ってきたのに、まだ待たされます。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "chapter": "第6章 玉手箱の正体",
+   "scene": "tamatebako",
+   "crop": [
+    0.75,
+    0.45,
+    1.4
+   ],
+   "text": "途方に暮れた浦島太郎\n浜辺に座りこみます",
+   "say": "途方に暮れた浦島太郎は、浜辺に座りこみます。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.27,
+    0.55,
+    1.5
+   ],
+   "text": "そして{開けてはいけない}\n玉手箱を…",
+   "say": "そして、開けてはいけない玉手箱を",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.27,
+    0.55,
+    1.8
+   ],
+   "text": "<開けました>",
+   "say": "開けました。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.27,
+    0.55,
+    1.5
+   ],
+   "text": "ダメと言われるほど\n{やりたくなる}",
+   "say": "ダメと言われるほど、やりたくなる。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.27,
+    0.55,
+    1.5
+   ],
+   "text": "この心理は\n{カリギュラ効果}と呼ばれています",
+   "say": "この心理は、カリギュラ効果と呼ばれています。",
+   "tone": "テンポよく"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.27,
+    0.55,
+    1.8
+   ],
+   "text": "「開けないで」は\n<ほぼ開けてのフリ>",
+   "say": "開けないでください、は、ほぼ、開けてのフリです。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.27,
+    0.5,
+    1.6
+   ],
+   "text": "中から{白い煙}がもくもく",
+   "say": "中から、白い煙がもくもく。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.27,
+    0.55,
+    1.8
+   ],
+   "text": "浦島太郎は一瞬で\n{おじいさん}に",
+   "say": "浦島太郎は、一瞬でおじいさんになってしまいました。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.27,
+    0.5,
+    1.4
+   ],
+   "text": "この白い煙\n現代なら{ドライアイス}っぽい",
+   "say": "この白い煙、現代でいうと、ドライアイスっぽいですね。",
+   "tone": "テンポよく"
+  },
+  {
+   "shot": {
+    "image": "dryice"
+   },
+   "move": "still",
+   "text": "ドライアイスは{マイナス78.5度}",
+   "say": "ドライアイスは、マイナス78.5度。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "dryice"
+   },
+   "move": "still",
+   "text": "白い煙の正体は\n冷やされた空気中の{水分}",
+   "say": "白く見えるのは、冷やされた空気の中の水分。小さな水のつぶです。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "dryice"
+   },
+   "move": "still",
+   "text": "{二酸化炭素}そのものは\n目に見えません",
+   "say": "二酸化炭素そのものは、目に見えません。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "dryice"
+   },
+   "move": "still",
+   "text": "{密閉した箱}に入れると\n<破裂するおそれ>があって危険",
+   "say": "そして、密閉した箱に入れると、破裂するおそれがあって危険です。",
+   "tone": "ここだけ真面目に、はっきりと"
+  },
+  {
+   "shot": {
+    "image": "dryice"
+   },
+   "move": "still",
+   "text": "せまい部屋では{換気}も必要",
+   "say": "せまい部屋で使うなら、換気も必要です。",
+   "tone": "ここだけ真面目に、はっきりと"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.27,
+    0.55,
+    1.6
+   ],
+   "text": "玉手箱\n<安全面でもアウト>",
+   "say": "玉手箱、安全面でもアウトです。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.27,
+    0.55,
+    1.3
+   ],
+   "text": "ではなぜ\n{おじいさん}になったのか",
+   "say": "では、なぜおじいさんになったのか。",
+   "tone": "問いかけるように"
+  },
+  {
+   "shot": {
+    "image": "urashima"
+   },
+   "move": "still",
+   "text": "ウラシマ効果なら\n{本人はほとんど年をとらない}",
+   "say": "ウラシマ効果なら、本人は、ほとんど年をとっていません。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.27,
+    0.55,
+    1.6
+   ],
+   "text": "玉手箱には\n{300年分の時間}がしまってあった説",
+   "say": "玉手箱には、300年分の時間がしまってあった説。",
+   "tone": "得意げに"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.27,
+    0.55,
+    1.8
+   ],
+   "text": "ためていた時間を\n<一括でお支払い>",
+   "say": "ためていた時間を、一括でお支払い。",
+   "tone": "軽く笑いを含ませてツッコむ"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.27,
+    0.55,
+    2.0
+   ],
+   "text": "乙姫さま\n<容赦なし>",
+   "say": "乙姫さま、容赦なし。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "chapter": "第7章 鶴は千年、亀は万年",
+   "scene": "tamatebako",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "このお話には\n{続き}があるものも",
+   "say": "ところで、このお話には、続きがあるものもあります。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.9,
+    0.15,
+    1.8
+   ],
+   "text": "浦島太郎は{鶴}になって\n空へ飛んでいきます",
+   "say": "おじいさんになった浦島太郎が、鶴になって、空へ飛んでいくんです。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.85,
+    0.62,
+    1.8
+   ],
+   "text": "そしてカメは{海}へ",
+   "say": "そしてカメは、海へ。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.7,
+    0.33,
+    1.3
+   ],
+   "text": "{鶴は千年、亀は万年}\nめでたい二人です",
+   "say": "鶴は千年、亀は万年。めでたい二人です。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "shot": {
+    "image": "jumyo"
+   },
+   "move": "still",
+   "text": "でも実際の寿命は…",
+   "say": "でも、実際の寿命はというと",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "jumyo"
+   },
+   "move": "still",
+   "text": "野生のツルは{20〜30年}ほど",
+   "say": "野生のツルは、20年から30年ほど。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "jumyo"
+   },
+   "move": "still",
+   "text": "ウミガメは{50年以上}と考えられている",
+   "say": "ウミガメは、50年以上と考えられています。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "jumyo"
+   },
+   "move": "still",
+   "text": "日本人の平均は{約84年}",
+   "say": "日本人の平均寿命は、約84年。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "jumyo"
+   },
+   "move": "still",
+   "text": "ゾウガメには\n{190歳}を超える長生きも",
+   "say": "ゾウガメには、190歳を超える長生きもいます。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.9,
+    0.15,
+    1.8
+   ],
+   "text": "鶴になると\n<寿命が縮む>",
+   "say": "鶴になると、寿命、縮みます。",
+   "tone": "オチ。一拍おいて真顔で言い切る"
+  },
+  {
+   "scene": "beach",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "売買契約、息止めRTA\nほぼ光のカメ、死亡扱い",
+   "say": "振り返ると、カメの売買契約、息止めRTA、ほぼ光のカメ、そして死亡扱い。",
+   "tone": "語り部として、しみじみ振り返る"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.5,
+    0.5,
+    1.3
+   ],
+   "text": "今日の敵は\nぜんぶ<時間>でした",
+   "say": "今日の敵は、ぜんぶ、時間でした。",
+   "tone": "ぼそっと、でも味わい深く"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "楽しい時間はあっという間\n浦島太郎は{身をもって証明}",
+   "say": "楽しい時間は、あっという間。浦島太郎は、それを身をもって証明してくれました。",
+   "tone": "語り部として、しみじみ締める"
+  },
+  {
+   "scene": "tamatebako",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "本日の物語がおもしろかった方は\n{高評価}・{チャンネル登録}もお願いします",
+   "say": "本日の物語がおもしろかった方は、高評価、チャンネル登録も、お願いします。",
+   "tone": "語り部として、やさしく笑顔で締めくくる"
+  }
+ ],
+ "bgm": "今日も元気にオモテナシ.mp3",
+ "bgm_volume": -16
+}

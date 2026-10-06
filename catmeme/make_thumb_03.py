@@ -32,7 +32,8 @@ def tag(img, text, color, cx, y, size=40):
     img.alpha_composite(t, (int(cx - t.width / 2), int(y)))
 
 
-def make(out, left, right, top, big, sub, badge="年60万円・最大600万円", ray_cols=((255, 60, 60), (255, 220, 0)), bg="bg19_kids_room"):
+def make(out, left, right, top, big, sub, badge="年60万円・最大600万円", ray_cols=((255, 60, 60), (255, 220, 0)), bg="bg19_kids_room",
+         cat_h=470, extras=(), words=(), tags=True):
     path = os.path.join(HERE, "backgrounds", "03_kodomo_nisa", bg + ".png")
     img = Image.open(path).convert("RGB").resize((W, H)).filter(ImageFilter.GaussianBlur(3)).convert("RGBA")
     # 集中線
@@ -47,10 +48,14 @@ def make(out, left, right, top, big, sub, badge="年60万円・最大600万円",
     shade = Image.new("RGBA", (W, H), (0, 0, 0, 70))
     img.alpha_composite(shade)
     # 猫（左右に大きく）
+    for name, t, flip, x, h, bottom in extras:   # 脇役の小さい猫ミーム（大きい猫より奥）
+        c = outline(cat_img(name, t, h, flip), 6, (255, 255, 255, 255))
+        img.alpha_composite(c, (int(x - c.width / 2), int(bottom - c.height)))
     for (name, t, flip, role, color), x in ((left, 230), (right, 1050)):
-        c = outline(cat_img(name, t, 470, flip), 7, (255, 255, 255, 255))
+        c = outline(cat_img(name, t, cat_h, flip), 8, (255, 255, 255, 255))
         img.alpha_composite(c, (int(x - c.width / 2), H - c.height + 10))
-        tag(img, role, color, x, H - 78, size=42)
+        if tags:
+            tag(img, role, color, x, H - 78, size=42)
     d = ImageDraw.Draw(img)
     # 上の帯
     d.polygon([(250, 18), (1030, 18), (1010, 98), (270, 98)], fill=RED)
@@ -59,15 +64,27 @@ def make(out, left, right, top, big, sub, badge="年60万円・最大600万円",
     fit_text(d, (640, 225), big, 1180, 190, YELLOW, BLACK, double=WHITE)
     fit_text(d, (640, 400), sub, 760, 120, RED, WHITE, double=BLACK)
     # 下の真ん中の札（数字）
+    if not badge:
+        badge = None
     f = P.font("black", 56)
-    tw = d.textlength(badge, font=f)
+    tw = d.textlength(badge or "", font=f)
     bx0, by0 = 640 - tw / 2 - 30, 520
     b = Image.new("RGBA", (int(tw + 60), 100), (0, 0, 0, 0))
     bd = ImageDraw.Draw(b)
     bd.rounded_rectangle((0, 0, b.width - 1, 99), 20, fill=WHITE, outline=BLACK, width=7)
-    bd.text((b.width / 2, 52), badge, font=f, fill=BLACK, anchor="mm")
+    bd.text((b.width / 2, 52), badge or "", font=f, fill=BLACK, anchor="mm")
     b = b.rotate(3, expand=True, resample=Image.BICUBIC)
-    img.alpha_composite(b, (int(640 - b.width / 2), 515))
+    if badge:
+        img.alpha_composite(b, (int(640 - b.width / 2), 515))
+    # 猫のまわりの手書き風のひとこと（傾けて置く）
+    for text, x, y, size, col, rot in words:
+        f = P.font("black", size)
+        tw = int(d.textlength(text, font=f)) + 40
+        w = Image.new("RGBA", (tw, size + 40), (0, 0, 0, 0))
+        ImageDraw.Draw(w).text((tw / 2, (size + 40) / 2), text, font=f, fill=col, stroke_width=max(5, size // 9),
+                               stroke_fill=BLACK if col != BLACK else WHITE, anchor="mm")
+        w = w.rotate(rot, expand=True, resample=Image.BICUBIC)
+        img.alpha_composite(w, (int(x - w.width / 2), int(y - w.height / 2)))
     os.makedirs(os.path.dirname(out), exist_ok=True)
     img.convert("RGB").save(out)
     print("->", out)
@@ -83,6 +100,13 @@ VARIANTS = {
     "_c": dict(left=("weird_meowing_cat", 1.0, False, "ニュース猫", NEWS), right=("calm_black_face_sheep", 1.0, False, "博識な猫", SAGE),
                top="0歳から非課税で投資できる", big="こどもNISA", sub="親ガチャ強化!?", badge="余裕のある家ほど有利？",
                ray_cols=((255, 120, 0), (255, 230, 0))),
+    # 猫ミーム感を強めた版（Cベース）：おなじみの猫を増やし、猫のひとことを散らす
+    "_d": dict(left=("huh_huh_cat", 1.0, False, "ニュース猫", NEWS), right=("sad_banana_cat_cry", 1.0, False, "ニュース猫", NEWS),
+               top="0歳から非課税で投資できる", big="こどもNISA", sub="親ガチャ強化!?", badge="",
+               ray_cols=((255, 120, 0), (255, 230, 0)), cat_h=480, tags=False,
+               extras=(("excited_hodomoe_city_cat", 0.8, False, 450, 270, 735), ("laugh_laughing_dog", 0.8, False, 700, 270, 735)),
+               words=(("はぁ？", 150, 505, 92, WHITE, 12), ("ずるい…", 1150, 345, 64, (120, 200, 255), -10),
+                      ("ﾙﾝﾙﾝ♪", 450, 480, 54, YELLOW, 8), ("勝ち組www", 710, 480, 54, YELLOW, -8))),
 }
 
 if __name__ == "__main__":

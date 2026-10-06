@@ -1,0 +1,230 @@
+{
+ "_comment": "ST-045 イチロー。愛知県西春日井郡の豊山町立豊山小学校6年2組 鈴木一朗の作文「僕の夢」：「僕の夢は、一流のプロ野球選手になることです」「3年生の時から今までは、365日中、360日は激しい練習をやっています。だから1週間中で友達と遊べる時間は5〜6時間です」「そんなに練習をやっているのだから、必ずプロ野球の選手になれると思います」。父と毎日のようにバッティングセンターに通ったことは広く報道。1991年ドラフト4位でオリックス。2004年にメジャー年間最多262安打、メジャー通算3089安打。2025年にアメリカ野球殿堂入り（致知出版社ほか）。本人に似た人物の画像は使わない。",
+ "tempo": 1.05,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "小学6年の作文\n{「僕の夢は」}",
+ "thumb_top": "小学6年の作文\n「僕の夢は」",
+ "thumb_teaser": "{365日中}\n360日",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、温かく語りかける。\n## THE SCENE\nあるスポーツ選手の物語を、同世代の視聴者に静かに語って聞かせている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。最後の一文は胸を打つように力強く。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st045_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st045_ai/images"
+ },
+ "lines": [
+  {
+   "text": "小学6年の作文\n「<僕の夢は>」",
+   "tone": "静かに語り始める",
+   "say": "小学6年の作文。僕の夢は。",
+   "scene": "essay",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "書いた夢は\n<本当>になった",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "そこに書いた夢は、本当になった。",
+   "scene": "essay",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "愛知県の\n{小学6年生}",
+   "tone": "淡々と",
+   "say": "愛知県の、小学6年生。",
+   "scene": "classroom",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「僕の夢は\n<一流のプロ野球選手>に\nなることです」",
+   "tone": "少年の言葉を、まっすぐに",
+   "say": "僕の夢は、一流のプロ野球選手になることです。",
+   "scene": "classroom",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "「3年生の時から\n{365日中360日}」",
+   "tone": "力をこめて",
+   "say": "3年生の時から、365日中、360日。",
+   "scene": "batting",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「<激しい練習>を\nやっています」",
+   "tone": "力をこめて",
+   "say": "激しい練習を、やっています。",
+   "scene": "batting",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "相手は\nいつも<父>だった",
+   "tone": "しみじみと",
+   "say": "練習の相手は、いつも父だった。",
+   "scene": "batting",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "友達と遊べるのは\n1週間で{5〜6時間}",
+   "tone": "しみじみと",
+   "say": "友達と遊べるのは、1週間で、5時間か6時間。",
+   "scene": "sunset_field",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「そんなに練習を\nやっているのだから」",
+   "tone": "少年の言葉を、まっすぐに",
+   "say": "そんなに練習をやっているのだから。",
+   "scene": "sunset_field",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "「必ず\n<プロ野球の選手に>\nなれると思います」",
+   "tone": "少年の言葉を、力強く",
+   "say": "必ず、プロ野球の選手になれると思います。",
+   "scene": "sunset_field",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "高校卒業後\n{ドラフト4位}でプロへ",
+   "tone": "淡々と",
+   "say": "高校卒業後、ドラフト4位でプロへ。",
+   "scene": "draft",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "メジャーでは\n1シーズン{262安打}",
+   "tone": "興奮をこめて",
+   "say": "メジャーでは、1シーズン262安打。",
+   "scene": "stadium",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "メジャー通算\n{3089安打}",
+   "tone": "興奮をこめて",
+   "say": "メジャー通算、3089安打。",
+   "scene": "stadium",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "2025年\n<アメリカ野球殿堂>入り",
+   "tone": "誇らしく",
+   "say": "2025年、アメリカ野球殿堂入り。",
+   "scene": "hall",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "6年生の作文は\n<夢>ではなく<予定>だった",
+   "tone": "しみじみと、ゆっくり",
+   "say": "6年生の作文は、夢ではなく、予定だった。",
+   "scene": "hall",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "その少年は\n{イチロー}",
+   "tone": "胸を打つように、力強く",
+   "say": "その少年は、イチロー。",
+   "scene": "hall",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  }
+ ],
+ "scenes": {
+  "essay": {
+   "prompt": "A handwritten Japanese school composition on squared manuscript paper on a wooden desk, pencil beside it, warm light, text illegible No faces visible, no readable text, no logos."
+  },
+  "classroom": {
+   "prompt": "An empty Japanese elementary school classroom with wooden desks in afternoon sunlight No faces visible, no readable text, no logos."
+  },
+  "batting": {
+   "prompt": "A batting cage at night with a pitching machine and scattered baseballs under bright lights, no people No faces visible, no readable text, no logos."
+  },
+  "sunset_field": {
+   "prompt": "A small boy's baseball glove and bat lying on a dirt field at sunset, long shadows No faces visible, no readable text, no logos."
+  },
+  "draft": {
+   "prompt": "A baseball sitting on a folded team jersey in a locker, soft light, no logos No faces visible, no readable text, no logos."
+  },
+  "stadium": {
+   "prompt": "A huge American baseball stadium at night from the outfield with bright lights and a full crowd as a blur No faces visible, no readable text, no logos."
+  },
+  "hall": {
+   "prompt": "A bronze plaque wall in a museum hall with warm spotlights, plaques blurred and illegible No faces visible, no readable text, no logos."
+  }
+ },
+ "disclaimer": "※画像はAI生成のイメージ\n出典：致知出版社ほか",
+ "youtube": {
+  "title": "小学6年の作文「僕の夢は」 書いた夢は本当に",
+  "description": "小学6年生が作文に書いた「僕の夢は、一流のプロ野球選手になることです」。3年生のころから365日中360日の練習。そう書いた少年は、メジャーで1シーズン262安打、通算3089安打を打ち、2025年にアメリカ野球殿堂入りしました。\n\n出典：致知出版社ほか\n画像はAI生成のイメージです。人物は本人ではありません。\n\n#イチロー #野球 #感動",
+  "pinned_comment": "小学生のころ、作文に書いた夢を覚えていますか？\nコメントで教えてください。"
+ }
+}

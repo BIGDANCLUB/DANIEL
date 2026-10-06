@@ -1,0 +1,244 @@
+{
+ "_comment": "ST-044 藤井聡太。5歳で祖母から子ども向けの「スタディ将棋」（駒に動ける方向が書いてある）で将棋を覚えた。負けると盤にしがみついて泣くほどの負けず嫌い。小学6年（12歳）で詰将棋解答選手権に優勝しプロ棋士を上回った。2016年10月に14歳2か月で史上最年少の四段（プロ入り）、それまでの記録保持者は加藤一二三。2016年12月24日のデビュー戦（竜王戦予選、抽選）の相手が加藤一二三九段（76歳）で、62歳6か月差、110手で勝利。2017年6月26日に公式戦29連勝の新記録（30年ぶり更新）（東京新聞・日本将棋連盟・日経・プレジデントほか）。本人に似た人物の画像は使わない。",
+ "tempo": 1.05,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "14歳のデビュー戦\n{相手は62歳上}",
+ "thumb_top": "14歳のデビュー戦\n相手は62歳上だった",
+ "thumb_teaser": "{最年少記録}を\n持っていた人",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、温かく語りかける。\n## THE SCENE\nあるスポーツ選手の物語を、同世代の視聴者に静かに語って聞かせている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。最後の一文は胸を打つように力強く。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st044_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st044_ai/images"
+ },
+ "lines": [
+  {
+   "text": "{14歳}のデビュー戦\n相手は<62歳上>だった",
+   "tone": "静かに語り始める",
+   "say": "14歳のデビュー戦。相手は、62歳上だった。",
+   "scene": "board_light",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "その少年は\n<将棋界の頂点>へ",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "その少年は、のちに将棋界の頂点に立つ。",
+   "scene": "board_light",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{5歳}のとき\n<祖母>と将棋を始めた",
+   "tone": "やさしく",
+   "say": "5歳のとき、おばあちゃんと将棋を始めた。",
+   "scene": "study_shogi",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "駒に{動ける向き}が\n書いてある子ども用",
+   "tone": "やさしく",
+   "say": "駒に、動ける向きが書いてある、子ども用の将棋だった。",
+   "scene": "study_shogi",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "負けると\n<盤にしがみついて>泣いた",
+   "tone": "しみじみと",
+   "say": "負けると、盤にしがみついて泣いた。",
+   "scene": "tears",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "誰よりも\n{負けず嫌い}だった",
+   "tone": "しみじみと",
+   "say": "誰よりも、負けず嫌いだった。",
+   "scene": "tears",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{小学6年}で\n詰将棋の大会へ",
+   "tone": "テンポよく",
+   "say": "小学6年で、詰将棋の大会に出た。",
+   "scene": "puzzle",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "プロ棋士も出る大会で\n<優勝>した",
+   "tone": "誇らしく",
+   "say": "プロ棋士も出る大会で、優勝した。",
+   "scene": "puzzle",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{14歳2か月}で\nプロ棋士に",
+   "tone": "力をこめて",
+   "say": "14歳2か月で、プロ棋士に。",
+   "scene": "hall",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "<史上最年少>の\n記録だった",
+   "tone": "誇らしく",
+   "say": "史上最年少の、記録だった。",
+   "scene": "hall",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "デビュー戦の相手は\n{76歳}の大ベテラン",
+   "tone": "淡々と",
+   "say": "デビュー戦の相手は、76歳の大ベテラン。",
+   "scene": "two_cushions",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "それまでの最年少記録を\n持っていた<本人>だった",
+   "tone": "驚きをこめて",
+   "say": "それまでの最年少記録を、持っていた本人だった。",
+   "scene": "two_cushions",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "年の差は\n{62歳}",
+   "tone": "しみじみと",
+   "say": "年の差は、62歳。",
+   "scene": "two_cushions",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "少年は勝ち\nそこから<29連勝>",
+   "tone": "興奮をこめて",
+   "say": "少年は勝ち、そこから29連勝。",
+   "scene": "streak",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "{30年ぶり}の\n新記録だった",
+   "tone": "誇らしく",
+   "say": "30年ぶりの、新記録だった。",
+   "scene": "streak",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "祖母と始めた将棋は\n<新しい時代>を開いた",
+   "tone": "しみじみと、ゆっくり",
+   "say": "おばあちゃんと始めた将棋は、新しい時代を開いた。",
+   "scene": "sunrise_board",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "その少年は\n{藤井聡太}",
+   "tone": "胸を打つように、力強く",
+   "say": "その少年は、藤井聡太。",
+   "scene": "sunrise_board",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  }
+ ],
+ "scenes": {
+  "board_light": {
+   "prompt": "A wooden shogi board with pieces set up under a single spotlight in a quiet tatami room, dramatic light No faces visible, no readable text, no logos."
+  },
+  "study_shogi": {
+   "prompt": "A colorful children's shogi set with arrow-marked pieces on a low table in a Japanese living room, warm afternoon light No faces visible, no readable text, no logos."
+  },
+  "tears": {
+   "prompt": "A small child's hands gripping the edge of a shogi board, tear drops on the wood, hands only No faces visible, no readable text, no logos."
+  },
+  "puzzle": {
+   "prompt": "Shogi puzzle sheets and a pencil on a school desk, morning light, text blurred No faces visible, no readable text, no logos."
+  },
+  "hall": {
+   "prompt": "A traditional Japanese tournament hall with rows of shogi boards and empty cushions, soft light No faces visible, no readable text, no logos."
+  },
+  "two_cushions": {
+   "prompt": "Two zabuton cushions facing each other across a shogi board in a tatami room, one small pair of slippers and one old pair outside, no people No faces visible, no readable text, no logos."
+  },
+  "streak": {
+   "prompt": "Many shogi pieces lined up in a long row on a wooden board, shallow focus, golden light No faces visible, no readable text, no logos."
+  },
+  "sunrise_board": {
+   "prompt": "A shogi board by a window at sunrise with light spilling across the pieces, hopeful mood No faces visible, no readable text, no logos."
+  }
+ },
+ "disclaimer": "※画像はAI生成のイメージ\n出典：東京新聞・日本将棋連盟ほか",
+ "youtube": {
+  "title": "14歳のデビュー戦 相手は62歳上だった",
+  "description": "5歳でおばあちゃんと将棋を始めた負けず嫌いの少年。14歳2か月で史上最年少のプロ棋士になり、デビュー戦の相手は、それまでの最年少記録を持っていた76歳の大ベテランでした。そこから29連勝。\n\n出典：東京新聞・日本将棋連盟・日本経済新聞ほか\n画像はAI生成のイメージです。人物は本人ではありません。\n\n#藤井聡太 #将棋 #感動",
+  "pinned_comment": "あなたが子どものころ、夢中になったものは何ですか？\nコメントで教えてください。"
+ }
+}

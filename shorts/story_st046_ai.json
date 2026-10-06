@@ -1,0 +1,241 @@
+{
+ "_comment": "ST-046 松井秀喜。1992年8月16日、第74回全国高校野球選手権2回戦、星稜（石川）対明徳義塾（高知）。星稜の4番・松井が5打席連続で敬遠され、一度もバットを振れず、星稜は2-3で敗退。スタンドから「帰れ」の怒号。試合後、松井は「野球らしくないとは思うが、歩かせるのも作戦ですから、自分がどうこう言えるものではない」と話した。中学2年の夕食時、友人の悪口を言ったところ父に「人の悪口を言うような下品なことをするんじゃない」と叱られ、二度と言わないと約束、それを守り続けている（京都新聞・NEWSポストセブン・Number・ライブドアニュースほか）。巨人の4番を経て2003年ヤンキース、2009年ワールドシリーズMVP。本人に似た人物の画像は使わない。",
+ "tempo": 1.05,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "5打席連続敬遠\n{それでも少年は}",
+ "thumb_top": "5打席連続敬遠\n一度もバットを振れず",
+ "thumb_teaser": "{父との約束}を\n守った",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、温かく語りかける。\n## THE SCENE\nあるスポーツ選手の物語を、同世代の視聴者に静かに語って聞かせている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。最後の一文は胸を打つように力強く。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st046_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st046_ai/images"
+ },
+ "lines": [
+  {
+   "text": "{5打席}連続\n<敬遠>",
+   "tone": "静かに、重く語り始める",
+   "say": "5打席連続、敬遠。",
+   "scene": "koshien",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "一度も\n<バットを振れなかった>",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "一度も、バットを振れなかった。",
+   "scene": "koshien",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "1992年 夏の\n{甲子園}",
+   "tone": "淡々と",
+   "say": "1992年、夏の甲子園。",
+   "scene": "summer_stadium",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "高校の{4番}打者",
+   "tone": "淡々と",
+   "say": "その少年は、高校の4番打者だった。",
+   "scene": "summer_stadium",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "相手は5打席すべて\n<勝負を避けた>",
+   "tone": "重く",
+   "say": "相手は、5打席すべて、勝負を避けた。",
+   "scene": "walk",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "スタンドからは\n<怒号>が飛んだ",
+   "tone": "緊張感をもって",
+   "say": "スタンドからは、怒号が飛んだ。",
+   "scene": "walk",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "試合は\n{2対3}で敗れた",
+   "tone": "重く",
+   "say": "試合は、2対3で敗れた。",
+   "scene": "scoreboard",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "それでも少年は\n黙って<一塁>へ歩いた",
+   "tone": "しみじみと",
+   "say": "それでも少年は、黙って一塁へ歩いた。",
+   "scene": "first_base",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "試合後\n相手を<責めなかった>",
+   "tone": "しみじみと",
+   "say": "試合のあとも、相手を責めなかった。",
+   "scene": "first_base",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "「歩かせるのも作戦\n<どうこう言えない>」",
+   "tone": "穏やかに、少年の言葉を",
+   "say": "歩かせるのも作戦ですから、自分がどうこう言えるものではない。",
+   "scene": "first_base",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "中学2年のとき\n父と<約束>していた",
+   "tone": "やさしく",
+   "say": "中学2年のとき、父と約束していた。",
+   "scene": "dinner",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「人の悪口を\n<二度と言わない>」",
+   "tone": "やさしく、力をこめて",
+   "say": "人の悪口を、二度と言わない。",
+   "scene": "dinner",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "その約束を\n<守り続けた>",
+   "tone": "しみじみと",
+   "say": "その約束を、守り続けた。",
+   "scene": "dinner",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "プロでは{4番}を打ち\nそして{ニューヨーク}へ",
+   "tone": "誇らしく",
+   "say": "プロでは4番を打ち、そしてニューヨークへ。",
+   "scene": "ny",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "2009年\n<ワールドシリーズMVP>",
+   "tone": "興奮をこめて",
+   "say": "2009年、ワールドシリーズMVP。",
+   "scene": "ny",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "怒らなかった少年は\n<世界一の舞台>に立った",
+   "tone": "しみじみと、ゆっくり",
+   "say": "怒らなかった少年は、世界一の舞台に立った。",
+   "scene": "ny",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "その少年は\n{松井秀喜}",
+   "tone": "胸を打つように、力強く",
+   "say": "その少年は、松井秀喜。",
+   "scene": "ny",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  }
+ ],
+ "scenes": {
+  "koshien": {
+   "prompt": "A wooden baseball bat resting unused against a dugout railing at a sunny Japanese high school stadium, no people No faces visible, no readable text, no logos."
+  },
+  "summer_stadium": {
+   "prompt": "A packed Japanese summer high school baseball stadium seen from the stands, bright sun, crowd as a blur No faces visible, no readable text, no logos."
+  },
+  "walk": {
+   "prompt": "A catcher's mitt held far outside the plate in a baseball game, close-up, players' faces not visible No faces visible, no readable text, no logos."
+  },
+  "scoreboard": {
+   "prompt": "An old manual scoreboard at a summer baseball stadium at dusk, numbers blurred and illegible No faces visible, no readable text, no logos."
+  },
+  "first_base": {
+   "prompt": "A baseball player's spikes walking along the white chalk line toward first base, legs only, summer light No faces visible, no readable text, no logos."
+  },
+  "dinner": {
+   "prompt": "A simple Japanese family dinner table with rice bowls and miso soup under a warm lamp, no people No faces visible, no readable text, no logos."
+  },
+  "ny": {
+   "prompt": "A big city baseball stadium at night with fireworks over the stands, crowd as a blur No faces visible, no readable text, no logos."
+  }
+ },
+ "disclaimer": "※画像はAI生成のイメージ\n出典：京都新聞・Numberほか",
+ "youtube": {
+  "title": "5打席連続敬遠 それでも少年は怒らなかった",
+  "description": "1992年夏の甲子園。高校の4番打者は5打席連続で敬遠され、一度もバットを振れずに敗れました。それでも少年は相手を責めませんでした。中学2年のとき、父と「人の悪口を二度と言わない」と約束していたからです。\n\n出典：京都新聞・NEWSポストセブン・Number・ライブドアニュースほか\n画像はAI生成のイメージです。人物は本人ではありません。\n\n#松井秀喜 #甲子園 #感動",
+  "pinned_comment": "親から言われて、今も守っている言葉はありますか？\nコメントで教えてください。"
+ }
+}

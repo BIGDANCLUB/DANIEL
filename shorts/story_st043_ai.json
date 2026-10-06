@@ -1,0 +1,241 @@
+{
+ "_comment": "ST-043 ニュース: 東急東横線の車内スリ。中国籍の男(35)が2026年8月、多摩川駅〜武蔵小杉駅間の電車内で女性のショルダーバッグから現金約3万円などが入った財布を盗んだ疑いで逮捕（10月2日報道）。「覚えてないけど、認めます」「お金を盗んで、食べ物と宿泊代にあてます。日本での生活費が高いからです」。去年以降、短期滞在ビザで複数回来日。7月の京都、8月の川崎の事件ですでに逮捕。「バッグの中に財布が入っていることが多い女性を狙っていた」（FNN・ANN・日テレ・NHK）。類似：2025年12月、東京メトロ千代田線の車内で財布を盗んだ疑いで中国籍の男2人を警視庁が逮捕。令和5年以降16回、短期滞在で来日。実行役と見張り役。「観光目的で来た」と否認（産経・東スポ）。供述への疑問はユーザー指定。容疑段階。実名・顔は出さない。国籍は1回だけ。",
+ "tempo": 1.15,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "電車でスリの男\n{「日本の生活費が高い」}",
+ "thumb_top": "電車のスリで逮捕\n「日本の生活費が高いから」",
+ "thumb_teaser": "<何度も>\n日本へ来ていた",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、報道番組のように重みをもって語る。\n## THE SCENE\n実際に起きた事件を、同世代の視聴者に伝えている。\n### DIRECTOR'S NOTES\n煽りすぎず、事実を淡々と、しかし緊張感をもって伝える。最後の問いかけは視聴者にまっすぐ語りかける。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st043_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st043_ai/images"
+ },
+ "lines": [
+  {
+   "text": "「日本の生活費が\n<高いから>」",
+   "tone": "衝撃的な一言を、低く力強く告げる",
+   "say": "日本の生活費が、高いから。",
+   "scene": "train",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "そう話したのは\n<スリ>の男だった",
+   "tone": "秘密を明かす前のように、声を落として引きつける",
+   "say": "そう話したのは、スリの男だった。",
+   "scene": "train",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "8月 {東急東横線}の\n満員電車",
+   "tone": "淡々と、ニュースを伝えるように",
+   "say": "8月、東急東横線の、満員電車。",
+   "scene": "bag",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "女性のバッグから\n財布を<抜き取った>疑い",
+   "tone": "淡々と",
+   "say": "女性のバッグから、財布を抜き取った疑い。",
+   "scene": "bag",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "財布には\n現金{約3万円}",
+   "tone": "淡々と",
+   "say": "財布には、現金約3万円。",
+   "scene": "bag",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "{35歳}の男は{中国籍}\n<短期滞在>で何度も来日",
+   "tone": "淡々と",
+   "say": "35歳の男は中国籍。短期滞在のビザで、何度も来日していた。",
+   "scene": "passport",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "7月は{京都}\n8月は{川崎}でも逮捕",
+   "tone": "重く",
+   "say": "7月の京都、8月の川崎の事件でも、すでに逮捕されている。",
+   "scene": "passport",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "狙ったのは\n<女性のバッグ>",
+   "tone": "緊張感をもって",
+   "say": "狙ったのは、女性のバッグ。",
+   "scene": "platform",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "財布が入っていることが\n多いからだという",
+   "tone": "淡々と",
+   "say": "財布が入っていることが、多いからだという。",
+   "scene": "platform",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "男はこう話している\n「<食べ物と宿泊代>に」",
+   "tone": "重く",
+   "say": "男はこう話している。盗んだお金は、食べ物と宿泊代にあてます。",
+   "scene": "hotel",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「日本での生活費が\n<高いからです>」",
+   "tone": "相手の言葉を、冷たく再現するように",
+   "say": "日本での生活費が、高いからです。",
+   "scene": "hotel",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "去年12月には\n<16回>来日した2人組も",
+   "tone": "驚きをこめて",
+   "say": "去年12月には、16回来日した2人組も、逮捕された。",
+   "scene": "subway",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "{千代田線}で\nスリをした疑い",
+   "tone": "淡々と",
+   "say": "東京メトロ千代田線で、スリをした疑い。",
+   "scene": "subway",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "2人は\n「<観光目的>で来た」と否認",
+   "tone": "淡々と",
+   "say": "2人は、観光目的で来た、と容疑を否認している。",
+   "scene": "subway",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "生活費が高いなら\n<無理して>日本にいる\n必要はあるのか",
+   "tone": "静かに、疑問を投げかけるように",
+   "say": "生活費が高いなら、無理して日本にいる必要は、あるのだろうか。",
+   "scene": "crowd",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "満員電車では\n{バッグを前に}",
+   "tone": "やさしく、助言するように",
+   "say": "満員電車では、バッグを前に。",
+   "scene": "crowd",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "この言い分\nあなたは<どう思いますか？>",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "この言い分、あなたは、どう思いますか。",
+   "scene": "crowd",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  }
+ ],
+ "scenes": {
+  "train": {
+   "prompt": "Interior of a crowded Japanese commuter train during rush hour seen from low angle, passengers' bodies and bags only, cold fluorescent light No faces visible, no readable text, no logos."
+  },
+  "bag": {
+   "prompt": "Close-up of a woman's open shoulder bag on a crowded train with a hand reaching toward a wallet, hands and bag only No faces visible, no readable text, no logos."
+  },
+  "passport": {
+   "prompt": "A generic passport and a boarding pass on an airport counter next to a small suitcase, text blurred No faces visible, no readable text, no logos."
+  },
+  "platform": {
+   "prompt": "A busy Japanese station platform with commuters' legs and handbags, train arriving, motion blur No faces visible, no readable text, no logos."
+  },
+  "hotel": {
+   "prompt": "A cheap small business hotel room at night with a convenience store bag and loose coins on the bed No faces visible, no readable text, no logos."
+  },
+  "subway": {
+   "prompt": "A Tokyo subway car interior with hanging straps and a few passengers seen from behind, harsh light No faces visible, no readable text, no logos."
+  },
+  "crowd": {
+   "prompt": "A woman holding her handbag in front of her chest on a crowded train, torso and hands only No faces visible, no readable text, no logos."
+  }
+ },
+ "disclaimer": "※画像はAI生成のイメージ\n出典：FNN・ANN・日テレ・NHK・産経",
+ "youtube": {
+  "title": "スリの男「日本の生活費が高いから」",
+  "description": "東急東横線の電車内で、女性のバッグから現金約3万円入りの財布を盗んだ疑いで35歳の男が逮捕されました。短期滞在のビザで何度も来日し、「盗んだお金は食べ物と宿泊代にあてる。日本での生活費が高いから」と話しているということです。去年12月には、16回来日していた2人組が千代田線でのスリの疑いで逮捕されています。\n\n出典：FNN・ANN・日テレ・NHK（2026年10月）、産経新聞・東京スポーツ（2025年12月）\n画像はAI生成のイメージです。内容は報道時点の情報で、容疑段階のものを含みます。\n\n#ニュース #スリ #防犯",
+  "pinned_comment": "「日本の生活費が高いから」という言い分、どう思いますか？\n1 納得できない　2 短期滞在の入国をもっと厳しく　3 まず自分の防犯を\n数字でコメントしてください。\n（出典：FNN・ANN・日テレ・NHK 2026年10月の報道）"
+ }
+}

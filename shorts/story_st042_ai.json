@@ -1,0 +1,241 @@
+{
+ "_comment": "ST-042 ニュース: 特殊詐欺。警察庁によると2026年上半期の特殊詐欺被害は1816億2千万円で過去最悪、1日あたり約10億円。SNS型投資詐欺797億9千万円、警察官をかたるニセ警察詐欺507億9千万円（NHK・毎日・新潟日報）。新潟県中越地方の60代男性が大阪府警の警察官を名乗る男らから、送られてきたスマートフォンでのビデオ通話で約2か月「監視」され、現金3200万円と金の延べ棒約7701万円相当（計約1億円）をだまし取られた（UX新潟テレビ21）。類似：愛知県の60代男性が警察官を名乗る男とのビデオ通話で約6500万円の被害、警察「オンラインの取り調べは絶対ない」。警察はSNSやビデオ通話で取り調べをせず、警察手帳や逮捕状の画像を送らず、捜査名目で金銭を要求しない（警察庁・各県警）。",
+ "tempo": 1.15,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "1日10億円が奪われる\n{ニセ警察詐欺}",
+ "thumb_top": "電話の相手は\n「警察官」だった",
+ "thumb_teaser": "{ビデオ通話}で\n2か月監視",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、報道番組のように重みをもって語る。\n## THE SCENE\n実際に起きた事件を、同世代の視聴者に伝えている。\n### DIRECTOR'S NOTES\n煽りすぎず、事実を淡々と、しかし緊張感をもって伝える。最後の問いかけは視聴者にまっすぐ語りかける。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st042_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st042_ai/images"
+ },
+ "lines": [
+  {
+   "text": "1日{10億円}が\n<だまし取られている>",
+   "tone": "衝撃的な事実を、低く力強く告げる",
+   "say": "1日、10億円が、だまし取られている。",
+   "scene": "phone_dark",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "電話の相手は\n<警察官>を名乗った",
+   "tone": "秘密を明かす前のように、声を落として引きつける",
+   "say": "電話の相手は、警察官を名乗った。",
+   "scene": "phone_dark",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "今年上半期の特殊詐欺\n{1816億円}\n<過去最悪>",
+   "tone": "淡々と、ニュースを伝えるように",
+   "say": "今年上半期の特殊詐欺の被害は、1816億円。過去最悪だ。",
+   "scene": "chart",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "急増しているのが\n<ニセ警察詐欺>",
+   "tone": "重く",
+   "say": "中でも急増しているのが、ニセ警察詐欺。",
+   "scene": "chart",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "被害は半年で\n{507億円}",
+   "tone": "淡々と",
+   "say": "被害は、半年で507億円。",
+   "scene": "chart",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "新潟の60代男性の家に\n{スマートフォン}が届いた",
+   "tone": "緊張感をもって",
+   "say": "新潟県の60代の男性の家に、スマートフォンが届いた。",
+   "scene": "parcel",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "そのスマホで\n<ビデオ通話>",
+   "tone": "淡々と",
+   "say": "そのスマホで、ビデオ通話。",
+   "scene": "parcel",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "画面には\n{制服姿}の男たち",
+   "tone": "不気味さをにじませて",
+   "say": "画面には、制服姿の男たち。",
+   "scene": "video_call",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「あなた名義の口座が\n<詐欺に使われている>」",
+   "tone": "相手の言葉を、冷たく再現するように",
+   "say": "あなた名義の口座が、詐欺に使われている。",
+   "scene": "video_call",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "男性は約{2か月}\nずっと<監視>された",
+   "tone": "重く",
+   "say": "男性は、約2か月、ずっと監視された。",
+   "scene": "lonely_room",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "渡したのは\n現金と{金の延べ棒}",
+   "tone": "重く",
+   "say": "渡したのは、現金と、金の延べ棒。",
+   "scene": "lonely_room",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "被害は\n約<1億円>",
+   "tone": "重く、ゆっくり",
+   "say": "被害は、約1億円。",
+   "scene": "lonely_room",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "愛知でも60代男性が\n約{6500万円}の被害",
+   "tone": "淡々と",
+   "say": "愛知でも、60代の男性が、約6500万円の被害にあった。",
+   "scene": "police_desk",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "警察は言う\n「<オンラインの取り調べ>は\n絶対にない」",
+   "tone": "はっきりと",
+   "say": "警察は言う。オンラインの取り調べは、絶対にない。",
+   "scene": "police_desk",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{逮捕状}や{警察手帳}の\n画像も<送らない>",
+   "tone": "はっきりと",
+   "say": "逮捕状や警察手帳の画像を、送ることもない。",
+   "scene": "badge",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "お金を<振り込め>とは\n言わない",
+   "tone": "やさしく、助言するように",
+   "say": "捜査のために、お金を振り込めとは、言わない。",
+   "scene": "badge",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "警察を名乗る電話\n見分ける<自信>は\nありますか？",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "警察を名乗る電話。見分ける自信は、ありますか。",
+   "scene": "badge",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  }
+ ],
+ "scenes": {
+  "phone_dark": {
+   "prompt": "A smartphone ringing on a dark kitchen table at night showing an incoming call screen glow, blurred screen No faces visible, no readable text, no logos."
+  },
+  "chart": {
+   "prompt": "A newspaper and a calculator on a desk with a rising red bar chart shape drawn on paper, dramatic light, text blurred No faces visible, no readable text, no logos."
+  },
+  "parcel": {
+   "prompt": "An opened cardboard parcel on a Japanese genkan floor containing a new smartphone, evening light No faces visible, no readable text, no logos."
+  },
+  "video_call": {
+   "prompt": "A smartphone propped on a low table showing a blurred video call with dark police-style uniforms, faces out of frame, dim living room No faces visible, no readable text, no logos."
+  },
+  "lonely_room": {
+   "prompt": "An older man seen from behind sitting alone in a dim Japanese living room staring at a phone, curtains closed No faces visible, no readable text, no logos."
+  },
+  "police_desk": {
+   "prompt": "A Japanese police box counter with a telephone and a stack of warning leaflets, daylight, text blurred No faces visible, no readable text, no logos."
+  },
+  "badge": {
+   "prompt": "A black leather police-style badge wallet and a paper document lying next to a smartphone, shallow focus, text blurred No faces visible, no readable text, no logos."
+  }
+ },
+ "disclaimer": "※画像はAI生成のイメージ\n出典：警察庁・NHK・UX新潟テレビ21ほか",
+ "youtube": {
+  "title": "1日10億円 電話の相手は「警察官」だった",
+  "description": "2026年上半期の特殊詐欺の被害は1816億円で過去最悪。中でも警察官を名乗る「ニセ警察詐欺」が507億円にのぼります。新潟の60代男性は、送られてきたスマホでのビデオ通話で約2か月監視され、約1億円をだまし取られました。\n本物の警察は、ビデオ通話で取り調べをせず、逮捕状や警察手帳の画像を送らず、お金を振り込ませることもありません。\n\n出典：警察庁・NHK・毎日新聞（2026年7月）、UX新潟テレビ21、各県警の注意喚起\n画像はAI生成のイメージです。\n\n#ニュース #特殊詐欺 #ニセ警察詐欺",
+  "pinned_comment": "警察を名乗る電話、見分ける自信はありますか？\n1 ある　2 正直わからない　3 家族と合言葉を決めている\n数字でコメントしてください。\n怪しい電話は一度切って、110番か最寄りの警察署へ。\n（出典：警察庁・NHK・UX新潟テレビ21）"
+ }
+}

@@ -1,0 +1,244 @@
+{
+ "_comment": "ST-041 ニュース: 新潟市南区のブドウ畑で収穫前のシャインマスカット約200房（約40万円相当）が盗まれていたことが2026年10月5日に判明。この畑は2025年11月・12月、2026年8月にも被害があり防犯カメラを設置していた。管内のブドウ盗難は4件目で警察は連続盗難の可能性も含め捜査（BSN・UX・TeNY・新潟日報）。類似：和歌山県かつらぎ町で約100房（時価30万円）を盗んだ疑いで紀の川市の68歳の果物農家の男を2026年8月に逮捕、容疑を認める（MBS・読売テレビ）。岡山県久米南町のハウスから約200房（約40万円）を盗んだ疑いで倉敷市の無職の男(42)を8月に逮捕、「売って生活費に」、自宅から約300房、ネット販売の疑い（KSB・津山朝日・朝日）。新潟の件は犯人不明。容疑段階。実名・顔は出さない。",
+ "tempo": 1.15,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "シャインマスカット200房\n{畑から消えた}",
+ "thumb_top": "収穫前のシャインマスカット\n200房が消えた",
+ "thumb_teaser": "{防犯カメラ}が\nあっても",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、報道番組のように重みをもって語る。\n## THE SCENE\n実際に起きた事件を、同世代の視聴者に伝えている。\n### DIRECTOR'S NOTES\n煽りすぎず、事実を淡々と、しかし緊張感をもって伝える。最後の問いかけは視聴者にまっすぐ語りかける。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st041_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st041_ai/images"
+ },
+ "lines": [
+  {
+   "text": "収穫前の{200房}が\n<消えた>",
+   "tone": "衝撃的な事実を、低く力強く告げる",
+   "say": "収穫前の200房が、消えた。",
+   "scene": "vine_night",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "盗まれたのは\n{シャインマスカット}",
+   "tone": "秘密を明かす前のように、声を落として引きつける",
+   "say": "盗まれたのは、シャインマスカット。",
+   "scene": "vine_night",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "10月5日\n{新潟市}のブドウ畑",
+   "tone": "淡々と、ニュースを伝えるように",
+   "say": "10月5日、新潟市のブドウ畑で、被害が分かった。",
+   "scene": "vine_day",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "被害は\n約{40万円}相当",
+   "tone": "淡々と",
+   "say": "被害は、約40万円相当。",
+   "scene": "vine_day",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "この畑は\n去年から<4回目>の被害",
+   "tone": "重く",
+   "say": "この畑は、去年から、4回目の被害だった。",
+   "scene": "empty_vine",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "{防犯カメラ}を付けた\nそれでも<盗まれた>",
+   "tone": "悔しさをにじませて",
+   "say": "防犯カメラを付けた。それでも、盗まれた。",
+   "scene": "camera",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "警察は\n<連続盗難>の可能性も\n調べている",
+   "tone": "淡々と",
+   "say": "警察は、連続盗難の可能性も調べている。",
+   "scene": "camera",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "被害は\n新潟だけではない",
+   "tone": "緊張感をもって",
+   "say": "被害は、新潟だけではない。",
+   "scene": "orchard_map",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "8月 和歌山で\n{68歳}の<農家>の男を逮捕",
+   "tone": "淡々と",
+   "say": "8月、和歌山で、68歳の農家の男が逮捕された。",
+   "scene": "orchard_map",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "ブドウ畑から\n{約100房}を盗んだ疑い",
+   "tone": "淡々と",
+   "say": "ブドウ畑から、約100房を盗んだ疑い。",
+   "scene": "orchard_map",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "岡山では\nハウスから{約200房}",
+   "tone": "淡々と",
+   "say": "岡山では、ビニールハウスから、約200房が盗まれた疑い。",
+   "scene": "greenhouse",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "逮捕された男は\n「<売って生活費に>」",
+   "tone": "重く",
+   "say": "逮捕された男は、売って生活費にした、と話しているという。",
+   "scene": "greenhouse",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "自宅からは\n{約300房}のブドウ",
+   "tone": "驚きをこめて",
+   "say": "自宅からは、約300房のブドウが見つかった。",
+   "scene": "boxes",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "警察は\n<ネットでの販売>も\n調べている",
+   "tone": "淡々と",
+   "say": "警察は、ネットでの販売も調べている。",
+   "scene": "boxes",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{1年}かけて\n育てた房だった",
+   "tone": "しみじみと、ゆっくり",
+   "say": "1年かけて、育てた房だった。",
+   "scene": "hands",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "防犯カメラでも\n<防げない>盗み",
+   "tone": "静かに、問題を投げかけるように",
+   "say": "防犯カメラでも、防げない盗み。",
+   "scene": "hands",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "あなたなら\n<どう守り>ますか？",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "あなたなら、どう守りますか。",
+   "scene": "hands",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  }
+ ],
+ "scenes": {
+  "vine_night": {
+   "prompt": "A Japanese grape vineyard at night with empty overhead trellises and a few cut stems hanging, moonlight, eerie mood No faces visible, no readable text, no logos."
+  },
+  "vine_day": {
+   "prompt": "Rows of green Shine Muscat grapes hanging under white paper hats on a pergola trellis in a Japanese vineyard, soft daylight No faces visible, no readable text, no logos."
+  },
+  "empty_vine": {
+   "prompt": "Close-up of grape vines with freshly cut empty stems where bunches were removed, morning light No faces visible, no readable text, no logos."
+  },
+  "camera": {
+   "prompt": "A small security camera mounted on a wooden post at the edge of a vineyard, dusk No faces visible, no readable text, no logos."
+  },
+  "orchard_map": {
+   "prompt": "A paper map of Japan on a farmhouse table with a few green grape bunches and a flashlight, warm lamp light No faces visible, no readable text, no logos."
+  },
+  "greenhouse": {
+   "prompt": "Inside a plastic greenhouse with grape vines, a torn plastic sheet and empty hooks, dim light No faces visible, no readable text, no logos."
+  },
+  "boxes": {
+   "prompt": "Stacked cardboard boxes filled with green grape bunches on a concrete floor, harsh overhead light No faces visible, no readable text, no logos."
+  },
+  "hands": {
+   "prompt": "Weathered farmer's hands gently holding a large bunch of green Shine Muscat grapes, warm sunset light, hands only No faces visible, no readable text, no logos."
+  }
+ },
+ "disclaimer": "※画像はAI生成のイメージ\n出典：BSN・UX・MBS・KSBほか",
+ "youtube": {
+  "title": "シャインマスカット200房が消えた 防犯カメラでも",
+  "description": "新潟市のブドウ畑で、収穫前のシャインマスカット約200房（約40万円相当）が盗まれました。この畑の被害は去年から4回目で、防犯カメラを付けた後でした。8月には和歌山と岡山でも、シャインマスカットを盗んだ疑いで男が逮捕されています。\n\n出典：BSN新潟放送・UX新潟テレビ21・TeNYテレビ新潟・新潟日報（2026年10月）、MBS・読売テレビ・KSB・津山朝日新聞（2026年8月）\n画像はAI生成のイメージです。内容は報道時点の情報で、容疑段階のものを含みます。\n\n#ニュース #シャインマスカット #農作物盗難",
+  "pinned_comment": "防犯カメラを付けても盗まれた畑。あなたならどう守りますか？\n1 見回りを増やす　2 センサーライトや柵　3 罰を重くするべき\n数字でコメントしてください。\n（出典：BSN新潟放送・UX新潟テレビ21 2026年10月の報道）"
+ }
+}

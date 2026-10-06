@@ -170,7 +170,7 @@ def cuts_all():
         chap("なんでこんなに　盗まれるの？", se="quiz_question_01", bgm={"file": NORA, "gain": -2}),
         hk("ふっふっふ……\n入口なんて\nいくらでもあるのよ", se="anime_broly_dedeen"),
         dia("e03_cause", "9月に原因まで公表された10件を見ると", "bg24_server_room", right=S, se="xylophone_transition"),
-        dia("e03_cause", "いちばん多いのは　外から触れる「入口の穴」", "bg24_server_room", right=S, se="doon_heavy"),
+        dia("e03_cause", "いちばん多いのは　ネットにつながった機器やシステムの「弱点」をつかれたケース", "bg24_server_room", right=S, se="doon_heavy"),
         dia("e03b_words", "むずかしい言葉は　こう考えるとわかりやすい", "bg24_server_room", right=S, se="idea_newtype_01"),
         ss("デジタル庁は\nVPN機器の弱点から\nGyazoはアップロードの\nサーバーから", "bg24_server_room", se="page_turn_02"),
         nn("通用口の鍵が\n壊れてたってことか", "bg24_server_room", se="kon"),

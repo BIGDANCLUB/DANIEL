@@ -191,20 +191,24 @@ class ShortCut:
 
 
 def main():
-    cs = cuts()
+    run(cuts(), title_band(), OUT, os.path.join(HERE, "out", "short_03_preview"))
+
+
+def run(cs, title_img, out_path, prev):
+    """カット一覧を縦動画に書き出す（ほかのショートからも使う）。"""
+    OUT = out_path
     durs = [R.cut_dur(c) for c in cs]
     starts = list(np.cumsum([0] + durs[:-1]))
     total = sum(durs)
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     wav = OUT + ".audio.f32"
     R.build_audio(cs, starts, durs, total).tofile(wav)
-    title = R.to_np(title_band())
+    title = R.to_np(title_img)
     proc = subprocess.Popen(
         ["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{SW}x{SH}", "-r", str(R.FPS), "-i", "-",
          "-f", "f32le", "-ar", str(R.SR), "-ac", "2", "-i", wav, "-c:v", "libx264", "-preset", "veryfast", "-crf", "21",
          "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", OUT], stdin=subprocess.PIPE)
     frame_no = 0
-    prev = os.path.join(HERE, "out", "short_03_preview")
     os.makedirs(prev, exist_ok=True)
     for i, c in enumerate(cs):
         sc = ShortCut(c)

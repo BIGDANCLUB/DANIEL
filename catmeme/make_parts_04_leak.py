@@ -48,7 +48,10 @@ def glossary(title, rows, tag=""):
         y1 = by0 + row_h * (i + 1) - 12
         cy = (y0 + y1) / 2
         d.rounded_rectangle((bx0, y0, bx0 + 440, y1), 22, fill=P.NAVY)
-        d.text((bx0 + 220, cy), term, font=tf, fill=P.WHITE, anchor="mm")
+        f = tf
+        while d.textlength(term, font=f) > 400 and f.size > 34:
+            f = P.font("round_b", f.size - 2)
+        d.text((bx0 + 220, cy), term, font=f, fill=P.WHITE, anchor="mm")
         d.text((bx0 + 500, cy), "＝", font=ef, fill=P.ACCENT, anchor="mm")
         d.rounded_rectangle((bx0 + 560, y0, bx1, y1), 22, fill=(255, 244, 228))
         size = 54

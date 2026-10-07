@@ -127,9 +127,9 @@ def cuts_b():
             bgm={"file": PURPLE, "gain": -4}),
         one("bg26_phone_alert", "taunt_cat_and_scared_dog", "ハッカー猫", HACK, "お詫びの\nクーポンです〜（偽）", dur=2.6,
             se="shine_kira_01"),
-        two("bg26_phone_alert", "happy_chipi_chapa_cat", "glare_disgusted_cat", "え、クーポン？\nラッキー♪", who="L", dur=2.4, until=2.8,
+        two("bg26_phone_alert", "joy_happy_happy_happy_cat", "glare_disgusted_cat", "え、クーポン？\nラッキー♪", who="L", dur=2.4, until=2.8,
             se="game_mario_1up"),
-        two("bg26_phone_alert", "happy_chipi_chapa_cat", "glare_disgusted_cat", "待て\nそれが一番あやしい", who="R", dur=2.4, until=2.8,
+        two("bg26_phone_alert", "joy_happy_happy_happy_cat", "glare_disgusted_cat", "待て\nそれが一番あやしい", who="R", dur=2.4, until=2.8,
             se="tsukkomi_bishi"),
         panel(flow("お詫びクーポンのワナ", [
             ("偽のお詫びが届く", "漏えいの\nニュースに便乗", False),

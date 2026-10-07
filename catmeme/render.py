@@ -40,6 +40,7 @@ FPS = 30
 SR = 44100
 W, H = P.W, P.H
 STYLE = "meme"      # "meme" … 参考動画ふう（大きな縁取り文字・役名札・白飛び転換） / "box" … 字幕帯＋吹き出し
+AVOID_TEXT = False   # True で、猫を大きな文字から離して置く
 WHITE_DIP = 0.25    # 場所が変わる時の白飛び（片側の秒数）
 BGM_GAIN = -10
 NYAS_STYLE = False  # True で文字の飛び出しなど参考動画ふうの動きを既定にする（動画ごとのスクリプトで切り替え）
@@ -390,9 +391,56 @@ class CutRenderer:
         for ly in txt:
             tc.alpha_composite(ly.convert("RGBA"))
         self.txt = self._crop(tc)
+        if AVOID_TEXT and self.style == "meme" and not cut.get("keep_overlap"):
+            self._avoid_text([ly.convert("RGBA").getbbox() for ly in txt], cut)
         self.explain = None
         if cut.get("explain"):
             self.explain = to_np(P.plain_text(cut["explain"], (60, 695, 1860, 1070), size=cut.get("explain_size", 100), gap=1.22))
+
+    def _avoid_text(self, boxes, cut):
+        """猫と大きな文字が重ならないように、猫を文字から離す。
+        文字が上にあるときは猫を小さくして下げる。横にあるときは反対側へずらす。"""
+        boxes = [b for b in boxes if b]
+        if not boxes:
+            return
+        m = 18   # 文字と猫のすき間
+        new = []
+        for (clip, scale, cx, bottom), c in zip(self.cats, cut.get("cats", [])):
+            if c.get("small"):
+                new.append((clip, scale, cx, bottom))
+                continue
+            bx0, by0, bx1, by1 = clip.bbox
+            for tx0, ty0, tx1, ty1 in boxes:
+                w, h = (bx1 - bx0) * scale, (by1 - by0) * scale
+                x0, x1, y0 = cx - w / 2, cx + w / 2, bottom - h
+                if min(x1, tx1 + m) - max(x0, tx0 - m) <= 0 or min(bottom, ty1 + m) - max(y0, ty0 - m) <= 0:
+                    continue
+                if (ty0 + ty1) / 2 < y0 + h * 0.35:   # 文字が上 → 小さくして、足りない分は下へ
+                    need = ty1 + m - y0
+                    f = max(0.62, (h - need) / h)
+                    scale *= f
+                    rest = need - h * (1 - f)
+                    if rest > 0:
+                        bottom = min(bottom + rest, H + h * f * 0.35)
+                else:   # 文字が横 → 反対側へずらす（はみ出す分は小さく）
+                    if (tx0 + tx1) / 2 > cx:
+                        shift = x1 - (tx0 - m)
+                        ncx = max(w * 0.35, cx - shift)
+                    else:
+                        shift = (tx1 + m) - x0
+                        ncx = min(W - w * 0.35, cx + shift)
+                    left = shift - abs(ncx - cx)
+                    cx = ncx
+                    if left > 0:
+                        scale *= max(0.62, (w - 2 * left) / w)
+            new.append((clip, scale, cx, bottom))
+        self.cats = new
+        self.labels = []
+        for (clip, scale, cx, bottom), c in zip(self.cats, cut.get("cats", [])):
+            if c.get("label"):
+                tag = P.label_tag(c["label"], c.get("label_color"), size=c.get("label_size", 58))
+                y = min(bottom, H) - tag.height - c.get("label_up", 40)
+                self.labels.append((to_np(tag), int(cx - tag.width / 2), int(y)))
 
     @staticmethod
     def _crop(im):

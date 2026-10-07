@@ -19,6 +19,7 @@ import render as R
 
 R.NYAS_STYLE = True     # 文字がポンと飛び出す
 R.WHITE_DIP = 0.0       # 白飛びの転換はしない（パッと切り替え）
+R.AVOID_TEXT = True     # 猫と大きな文字を重ねない
 R.FG_DUCK = -9          # 猫の音・SEが鳴っている間のBGMの下げ幅（前は -20。参考動画はBGMが大きめ）
 
 HERE = os.path.dirname(os.path.abspath(__file__))

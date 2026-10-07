@@ -33,7 +33,7 @@ def tag(img, text, color, cx, y, size=40):
 
 
 def make(out, left, right, top, big, sub, badge="年60万円・最大600万円", ray_cols=((255, 60, 60), (255, 220, 0)), bg="bg19_kids_room",
-         cat_h=470, extras=(), words=(), tags=True, bg_dir="03_kodomo_nisa"):
+         cat_h=470, extras=(), words=(), tags=True, bg_dir="03_kodomo_nisa", stickers=()):
     path = os.path.join(HERE, "backgrounds", bg_dir, bg + ".png")
     img = Image.open(path).convert("RGB").resize((W, H)).filter(ImageFilter.GaussianBlur(3)).convert("RGBA")
     # 集中線
@@ -76,6 +76,19 @@ def make(out, left, right, top, big, sub, badge="年60万円・最大600万円",
     b = b.rotate(3, expand=True, resample=Image.BICUBIC)
     if badge:
         img.alpha_composite(b, (int(640 - b.width / 2), 515))
+    # 札（ニュースの中身を短く。text, x, y, 文字の大きさ, 地の色, 文字の色, 角度）
+    for text, x, y, size, bgc, fg, rot in stickers:
+        f = P.font("black", size)
+        lines = text.split("\n")
+        tw = int(max(d.textlength(t, font=f) for t in lines)) + 50
+        th = int(size * 1.2 * len(lines)) + 30
+        st = Image.new("RGBA", (tw, th), (0, 0, 0, 0))
+        sd = ImageDraw.Draw(st)
+        sd.rounded_rectangle((0, 0, tw - 1, th - 1), 16, fill=bgc, outline=WHITE, width=6)
+        for j, t in enumerate(lines):
+            sd.text((tw / 2, 15 + size * 0.6 + j * size * 1.2), t, font=f, fill=fg, anchor="mm")
+        st = st.rotate(rot, expand=True, resample=Image.BICUBIC)
+        img.alpha_composite(st, (int(x - st.width / 2), int(y - st.height / 2)))
     # 猫のまわりの手書き風のひとこと（傾けて置く）
     for text, x, y, size, col, rot in words:
         f = P.font("black", size)

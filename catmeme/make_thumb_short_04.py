@@ -79,30 +79,25 @@ def license_thumb():
     img = base("bg23_hacker_room", ((255, 40, 40, 150), (255, 210, 0, 120)))
     d = ImageDraw.Draw(img)
     topic_band(img, "個人情報流出")
-    fit_text(d, (W / 2, 330), "レンタカー予約で", 1030, 140, WHITE, BLACK, double=None)
-    fit_text(d, (W / 2, 530), "免許証まで⁉", 1040, 190, YELLOW, BLACK, double=WHITE)
-    # 真ん中：免許証ふうのカード（中身は伏せ字）
-    pw = Image.new("RGBA", (900, 360), (0, 0, 0, 0))
-    pd = ImageDraw.Draw(pw)
-    pd.rounded_rectangle((0, 0, 900, 350), 30, fill=(240, 248, 236), outline=(60, 120, 70), width=10)
-    pd.rounded_rectangle((0, 0, 900, 80), 30, fill=(60, 120, 70))
-    pd.text((450, 42), "本人確認書類", font=P.font("black", 52), fill=WHITE, anchor="mm")
-    pd.rectangle((40, 110, 250, 320), fill=(200, 205, 210))
-    pd.text((145, 215), "？", font=P.font("black", 120), fill=(120, 125, 130), anchor="mm")
-    for k, lab in enumerate(("名前", "住所", "生年月日")):
-        y = 135 + k * 70
-        pd.text((290, y), lab, font=P.font("black", 44), fill=BLACK, anchor="lm")
-        pd.rectangle((500, y - 20, 850, y + 20), fill=BLACK)
-    pw = pw.rotate(4, expand=True, resample=Image.BICUBIC)
-    img.alpha_composite(pw, (int(W / 2 - pw.width / 2), 670))
-    stamp = Image.new("RGBA", (560, 150), (0, 0, 0, 0))
-    sd = ImageDraw.Draw(stamp)
-    sd.rounded_rectangle((0, 0, 560, 150), 20, fill=RED, outline=WHITE, width=8)
-    sd.text((280, 75), "約160万件", font=P.font("black", 100), fill=WHITE, anchor="mm")
-    stamp = stamp.rotate(-8, expand=True, resample=Image.BICUBIC)
-    img.alpha_composite(stamp, (int(W / 2 - stamp.width / 2 + 190), 850))
+    fit_text(d, (W / 2, 330), "免許証が", 1030, 150, WHITE, BLACK, double=None)
+    fit_text(d, (W / 2, 520), "流出すると…？", 1040, 180, YELLOW, BLACK, double=WHITE)
+    # 真ん中：「信用情報が傷つく → ローンが組めない」の2段
+    for k, (text, fill, fg, y, rot, size) in enumerate((("知らぬ間に\n信用情報が傷つき", WHITE, BLACK, 635, -2, 74),
+                                                        ("家や車のローンが組めない⁉", RED, WHITE, 945, 2, 66))):
+        f = P.font("black", size)
+        lines = text.split("\n")
+        bw, bh = 980, int(size * 1.25 * len(lines)) + 50
+        b = Image.new("RGBA", (bw, bh), (0, 0, 0, 0))
+        bd = ImageDraw.Draw(b)
+        bd.rounded_rectangle((0, 0, bw - 1, bh - 1), 28, fill=fill, outline=BLACK if fill == WHITE else WHITE, width=9)
+        for n, t in enumerate(lines):
+            bd.text((bw / 2, 25 + size * 0.62 + n * size * 1.25), t, font=f, fill=fg, anchor="mm")
+        b = b.rotate(rot, expand=True, resample=Image.BICUBIC)
+        img.alpha_composite(b, (int(W / 2 - b.width / 2), y))
+    d = ImageDraw.Draw(img)
+    d.polygon([(W / 2 - 55, 885), (W / 2 + 55, 885), (W / 2, 938)], fill=YELLOW, outline=BLACK, width=5)
     cats(img, ("huh_huh_cat", 1.0, False), ("surprise_big_pupils_cat", 0.6, True))
-    words(img, [("は？", 230, 1240, 130, WHITE, 10), ("ブラックリスト\n入り！？", 790, 1250, 78, RED, -8)])
+    words(img, [("は？", 230, 1250, 130, WHITE, 10), ("家も車も\nムリ！？", 800, 1260, 90, RED, -8)])
     save(img, "short_04a_license")
 
 

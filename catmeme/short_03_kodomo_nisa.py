@@ -20,6 +20,7 @@ import render as R
 R.NYAS_STYLE = True
 R.FG_DUCK = -9
 SW, SH = 1080, 1920
+SHORT_MIN, SHORT_MAX = 45.0, 58.0   # ショートの長さ（秒）
 HERE = os.path.dirname(os.path.abspath(__file__))
 BGS = [os.path.join(HERE, "backgrounds", d) for d in ("03_kodomo_nisa", "02_october", "01_todai")]
 BGM = os.path.join(HERE, "bgm")
@@ -200,6 +201,8 @@ def run(cs, title_img, out_path, prev):
     durs = [R.cut_dur(c) for c in cs]
     starts = list(np.cumsum([0] + durs[:-1]))
     total = sum(durs)
+    if not SHORT_MIN <= total <= SHORT_MAX:   # ショートは45〜58秒（チャンネルのルール）
+        raise SystemExit(f"ショートの長さ {total:.1f}秒 が {SHORT_MIN}〜{SHORT_MAX}秒の範囲外です。カットを足すか削ってください")
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     wav = OUT + ".audio.f32"
     R.build_audio(cs, starts, durs, total).tofile(wav)

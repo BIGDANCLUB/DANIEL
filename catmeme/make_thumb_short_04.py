@@ -60,6 +60,14 @@ def cats(img, left, right):
     img.alpha_composite(b, (int(810 - b.width / 2), H - b.height - 40))
 
 
+def topic_band(img, text="個人情報流出"):
+    """いちばん上の帯（何の話か一目でわかるように）。"""
+    d = ImageDraw.Draw(img)
+    d.polygon([(40, 70), (W - 40, 50), (W - 60, 200), (60, 215)], fill=RED)
+    d.polygon([(40, 70), (W - 40, 50), (W - 60, 200), (60, 215)], outline=WHITE, width=8)
+    fit_text(d, (W / 2, 135), text, 940, 120, WHITE, RED, sw_ratio=0.0)
+
+
 def save(img, name):
     out = os.path.join(HERE, "thumbs", name + ".png")
     os.makedirs(os.path.dirname(out), exist_ok=True)
@@ -70,8 +78,9 @@ def save(img, name):
 def license_thumb():
     img = base("bg23_hacker_room", ((255, 40, 40, 150), (255, 210, 0, 120)))
     d = ImageDraw.Draw(img)
-    fit_text(d, (W / 2, 250), "レンタカー予約で", 1030, 150, WHITE, BLACK, double=None)
-    fit_text(d, (W / 2, 470), "免許証まで⁉", 1040, 210, YELLOW, BLACK, double=WHITE)
+    topic_band(img, "個人情報流出")
+    fit_text(d, (W / 2, 330), "レンタカー予約で", 1030, 140, WHITE, BLACK, double=None)
+    fit_text(d, (W / 2, 530), "免許証まで⁉", 1040, 190, YELLOW, BLACK, double=WHITE)
     # 真ん中：免許証ふうのカード（中身は伏せ字）
     pw = Image.new("RGBA", (900, 360), (0, 0, 0, 0))
     pd = ImageDraw.Draw(pw)
@@ -85,13 +94,13 @@ def license_thumb():
         pd.text((290, y), lab, font=P.font("black", 44), fill=BLACK, anchor="lm")
         pd.rectangle((500, y - 20, 850, y + 20), fill=BLACK)
     pw = pw.rotate(4, expand=True, resample=Image.BICUBIC)
-    img.alpha_composite(pw, (int(W / 2 - pw.width / 2), 610))
+    img.alpha_composite(pw, (int(W / 2 - pw.width / 2), 670))
     stamp = Image.new("RGBA", (560, 150), (0, 0, 0, 0))
     sd = ImageDraw.Draw(stamp)
     sd.rounded_rectangle((0, 0, 560, 150), 20, fill=RED, outline=WHITE, width=8)
     sd.text((280, 75), "約160万件", font=P.font("black", 100), fill=WHITE, anchor="mm")
     stamp = stamp.rotate(-8, expand=True, resample=Image.BICUBIC)
-    img.alpha_composite(stamp, (int(W / 2 - stamp.width / 2 - 120), 950))
+    img.alpha_composite(stamp, (int(W / 2 - stamp.width / 2 + 190), 850))
     cats(img, ("huh_huh_cat", 1.0, False), ("surprise_big_pupils_cat", 0.6, True))
     words(img, [("は？", 230, 1240, 130, WHITE, 10), ("ブラックリスト\n入り！？", 790, 1250, 78, RED, -8)])
     save(img, "short_04a_license")
@@ -100,8 +109,9 @@ def license_thumb():
 def coupon_thumb():
     img = base("bg26_phone_alert", ((255, 40, 40, 150), (255, 210, 0, 120)))
     d = ImageDraw.Draw(img)
-    fit_text(d, (W / 2, 250), "その「お詫びクーポン」", 1030, 120, WHITE, BLACK, double=None)
-    fit_text(d, (W / 2, 470), "押しちゃダメ⁉", 1040, 190, YELLOW, BLACK, double=WHITE)
+    topic_band(img, "個人情報流出のあとに…")
+    fit_text(d, (W / 2, 330), "その「お詫びクーポン」", 1030, 120, WHITE, BLACK, double=None)
+    fit_text(d, (W / 2, 530), "押しちゃダメ⁉", 1040, 180, YELLOW, BLACK, double=WHITE)
     # 真ん中：スマホの通知ふう（実在の会社名は出さない）
     pw = Image.new("RGBA", (900, 330), (0, 0, 0, 0))
     pd = ImageDraw.Draw(pw)
@@ -112,13 +122,13 @@ def coupon_thumb():
     pd.text((40, 175), "ご迷惑をおかけしました。", font=P.font("black", 42), fill=(80, 80, 80), anchor="lm")
     pd.text((40, 245), "こちらから受け取り → http://…", font=P.font("black", 42), fill=(30, 90, 220), anchor="lm")
     pw = pw.rotate(3, expand=True, resample=Image.BICUBIC)
-    img.alpha_composite(pw, (int(W / 2 - pw.width / 2), 620))
+    img.alpha_composite(pw, (int(W / 2 - pw.width / 2), 680))
     stamp = Image.new("RGBA", (420, 150), (0, 0, 0, 0))
     sd = ImageDraw.Draw(stamp)
     sd.rounded_rectangle((0, 0, 420, 150), 20, fill=RED, outline=WHITE, width=8)
     sd.text((210, 75), "偽物かも", font=P.font("black", 96), fill=WHITE, anchor="mm")
     stamp = stamp.rotate(-10, expand=True, resample=Image.BICUBIC)
-    img.alpha_composite(stamp, (int(W / 2 - stamp.width / 2 + 200), 880))
+    img.alpha_composite(stamp, (int(W / 2 - stamp.width / 2 + 200), 930))
     cats(img, ("happy_girlfriend_dance_cat", 0.5, False), ("glare_disgusted_cat", 1.0, True))
     words(img, [("ラッキー♪", 250, 1240, 100, WHITE, 10), ("押すな！", 800, 1250, 120, RED, -8)])
     save(img, "short_04b_coupon")

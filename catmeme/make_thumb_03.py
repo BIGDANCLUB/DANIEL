@@ -33,8 +33,8 @@ def tag(img, text, color, cx, y, size=40):
 
 
 def make(out, left, right, top, big, sub, badge="年60万円・最大600万円", ray_cols=((255, 60, 60), (255, 220, 0)), bg="bg19_kids_room",
-         cat_h=470, extras=(), words=(), tags=True):
-    path = os.path.join(HERE, "backgrounds", "03_kodomo_nisa", bg + ".png")
+         cat_h=470, extras=(), words=(), tags=True, bg_dir="03_kodomo_nisa"):
+    path = os.path.join(HERE, "backgrounds", bg_dir, bg + ".png")
     img = Image.open(path).convert("RGB").resize((W, H)).filter(ImageFilter.GaussianBlur(3)).convert("RGBA")
     # 集中線
     rays = Image.new("RGBA", (W, H), (0, 0, 0, 0))

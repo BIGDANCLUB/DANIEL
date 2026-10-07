@@ -81,12 +81,11 @@ def license_thumb():
     topic_band(img, "個人情報流出")
     fit_text(d, (W / 2, 330), "免許証が", 1030, 150, WHITE, BLACK, double=None)
     fit_text(d, (W / 2, 520), "流出すると…？", 1040, 180, YELLOW, BLACK, double=WHITE)
-    # 真ん中：「信用情報が傷つく → ローンが組めない」の2段
-    for k, (text, fill, fg, y, rot, size) in enumerate((("知らぬ間に\n信用情報が傷つき", WHITE, BLACK, 635, -2, 74),
-                                                        ("家や車のローンが組めない⁉", RED, WHITE, 945, 2, 66))):
+    # 真ん中：「ローンが組めない」を大きく
+    for k, (text, fill, fg, y, rot, size) in enumerate((("家や車のローンが\n組めない⁉", RED, WHITE, 680, -3, 118),)):
         f = P.font("black", size)
         lines = text.split("\n")
-        bw, bh = 980, int(size * 1.25 * len(lines)) + 50
+        bw, bh = 1020, int(size * 1.25 * len(lines)) + 50
         b = Image.new("RGBA", (bw, bh), (0, 0, 0, 0))
         bd = ImageDraw.Draw(b)
         bd.rounded_rectangle((0, 0, bw - 1, bh - 1), 28, fill=fill, outline=BLACK if fill == WHITE else WHITE, width=9)
@@ -94,8 +93,6 @@ def license_thumb():
             bd.text((bw / 2, 25 + size * 0.62 + n * size * 1.25), t, font=f, fill=fg, anchor="mm")
         b = b.rotate(rot, expand=True, resample=Image.BICUBIC)
         img.alpha_composite(b, (int(W / 2 - b.width / 2), y))
-    d = ImageDraw.Draw(img)
-    d.polygon([(W / 2 - 55, 885), (W / 2 + 55, 885), (W / 2, 938)], fill=YELLOW, outline=BLACK, width=5)
     cats(img, ("huh_huh_cat", 1.0, False), ("surprise_big_pupils_cat", 0.6, True))
     words(img, [("は？", 230, 1250, 130, WHITE, 10), ("家も車も\nムリ！？", 800, 1260, 90, RED, -8)])
     save(img, "short_04a_license")

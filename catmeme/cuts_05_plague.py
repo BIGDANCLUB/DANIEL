@@ -135,12 +135,12 @@ def cuts_all():
         nn("“まとめ”より\n“一次情報”ね", "bg30_airport", se="idea_newtype_01"),
         # ---- 6. ネットの声 ----
         chap("ネットの声", se="whoosh_shu", bgm={"file": MIRAI, "gain": -2, "fade": 0.8}),
-        net("@react", "コロナの時も\n最初は“原因不明の肺炎”\nだったんよ", se="kon"),
-        net("@react", "“噂ではなく公式情報を”\nって言われるほど\n噂を信じたくなる", se="silly"),
-        net("@react", "抗生物質で治るって聞いて\n少し安心した", se="pikon"),
-        net("@react", "教科書でしか見たことない\n単語がニュースに出てくるの\n怖い", se="boing_01"),
-        net("@react", "シベリアから北海道まで\n何キロあると思ってんの", se="tsukkomi_bishi"),
-        net("sleepy_old_memories_cat", "亡くなった職員さんが\n一番気の毒", se="chiin_01"),
+        net("@react", "コロナの時も\n最初は\n“原因不明の肺炎”\nだったんよ", se="kon"),
+        net("@react", "“公式情報を”\nって言われるほど\n噂を\n信じたくなる", se="silly"),
+        net("@react", "抗生物質で\n治るって聞いて\n少し安心した", se="pikon"),
+        net("@react", "教科書でしか\n見たことない単語が\nニュースに\n出てくるの怖い", se="boing_01"),
+        net("@react", "シベリアから\n北海道まで\n何キロあると\n思ってんの", se="tsukkomi_bishi"),
+        net("sleepy_old_memories_cat", "亡くなった\n職員さんが\n一番気の毒", se="chiin_01"),
         # ---- 7. まとめ ----
         dict(bg=bg("bg03_blackboard"), inset={"card": pt("e09_matome"), "box": (200, 60, 1720, 860)}, dur=5.0,
              cats=[cat("@react", "ニュース猫", 1750, h=380, bottom=1060, float=True)], se="chiin_01"),

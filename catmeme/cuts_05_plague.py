@@ -60,7 +60,7 @@ def cuts_all():
              "先に結論：ロシア当局は\n「ペストは確認されていない」と発表", dur=3.4, se="pinpon_notice"),
         # ---- 2. 何が起きたか ----
         chap("何が起きたのか…", se="doon_heavy"),
-        dia("e02_map", "ロシア・シベリアのイルクーツク州", right=S, se="xylophone_transition"),
+        dia("e02_map", "ロシア・シベリアのイルクーツク州", right=S, dur=5.5, se="xylophone_transition"),
         ss("ペストの診断や対策のために\n菌を研究してる所な", "bg27_lab", se="page_turn_01"),
         dia("e03_timeline", "9月末に体調をくずし　10月2日に重い肺炎で亡くなった", right=S, se="card_flip"),
         dia("e03_timeline", "接触した人は　約90人→約200人に（現地の報道）", right=S, se="card_place"),
@@ -125,7 +125,7 @@ def cuts_all():
         # ---- 5. 日本への影響 ----
         chap("日本は大丈夫？", se="quiz_den"),
         nn("北海道から\n近くない？", "bg30_airport", se="question_hatena_maou"),
-        dia("e02_map", "イルクーツクから札幌まで　直線で約2,900km", "bg30_airport", right=S, se="card_flip"),
+        dia("e02_map", "イルクーツクから札幌まで　直線で約2,900km", "bg30_airport", right=S, dur=5.0, se="card_flip"),
         two("bg30_airport", "今のところ\n日本への影響が出ている\nという報道はない", se="pinpoon_correct"),
         two("bg30_airport", "当局の発表では\nペストは検出されず\n接触者にも感染者なし", se="page_turn_01"),
         two("bg30_airport", "仮にペストでも\n抗生物質で治療できる", se="pikon"),

@@ -17,9 +17,9 @@ THUMBS = {
     "05_plague": dict(
         bg_dir="01_todai", bg="bg11_tsukuba", ray_cols=((120, 40, 40), (60, 60, 90)),
         left=("surprise_big_pupils_cat", 0.6, False, "ニュース猫", NEWS), right=("think_bike_front_seat_cat", 1.0, False, "博識な猫", SAGE),
-        top="シベリアの研究所で職員が死亡・約200人を隔離", big="ペスト", sub="再来!?　結局どうなった？", badge="",
+        top="シベリアの研究所で職員が死亡・約200人を隔離", big="令和のペスト", sub="結局どうなった？", badge="",
         cat_h=470, tags=True,
-        stickers=(("当局「ペストは検出されず」", 640, 560, 44, WHITE, RED, -2),),
+        stickers=(("ロシア当局「ペストは検出されず」⇒本当か？", 640, 560, 42, WHITE, RED, -2),),
         words=()),
     "06_zetsubou": dict(
         bg_dir="02_october", bg="bg14_home_night", ray_cols=((255, 60, 60), (255, 210, 0)),

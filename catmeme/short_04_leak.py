@@ -32,14 +32,14 @@ def bg(n):
     raise FileNotFoundError(n)
 
 
-def title_band(top, main):
+def title_band(top, main, label="個人情報流出問題"):
     img = Image.new("RGBA", (SW, 400), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
     d.rectangle((0, 0, SW, 400), fill=NAVY)
     d.polygon([(0, 330), (SW, 300), (SW, 400), (0, 400)], fill=RED)
     # いちばん上に「何の話か」の札
     d.rounded_rectangle((250, 14, SW - 250, 104), 20, fill=RED, outline=WHITE, width=5)
-    img.alpha_composite(text_img("個人情報流出問題", SW - 520, 90, 62, fill=WHITE), (260, 14))
+    img.alpha_composite(text_img(label, SW - 520, 90, 62, fill=WHITE), (260, 14))
     img.alpha_composite(text_img(top, SW, 105, 88, fill=WHITE), (0, 108))
     img.alpha_composite(text_img(main, SW, 150, 130, fill=YELLOW), (0, 200))
     return img

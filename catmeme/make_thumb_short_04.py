@@ -17,8 +17,8 @@ W, H = 1080, 1920
 YELLOW, RED, WHITE, BLACK, NAVY, ORANGE = (255, 222, 0), (235, 25, 25), (255, 255, 255), (0, 0, 0), (25, 32, 56), (240, 110, 40)
 
 
-def base(bg_name, ray_cols):
-    bg = Image.open(os.path.join(HERE, "backgrounds", "04_leak", bg_name + ".png")).convert("RGB")
+def base(bg_name, ray_cols, bg_dir="04_leak"):
+    bg = Image.open(os.path.join(HERE, "backgrounds", bg_dir, bg_name + ".png")).convert("RGB")
     bg = bg.resize((int(bg.width * H / bg.height), H))
     x0 = (bg.width - W) // 2
     img = bg.crop((x0, 0, x0 + W, H)).filter(ImageFilter.GaussianBlur(4)).convert("RGBA")

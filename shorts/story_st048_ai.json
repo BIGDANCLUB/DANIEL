@@ -1,0 +1,241 @@
+{
+ "_comment": "ST-048 ニュース: 2024年9月、北海道小樽市の国道で、飲酒した男(34)の車が対向車と正面衝突し、大学院生の男性（当時24）が死亡。前日午後5時半ごろから飲み始め、居酒屋でビールやハイボールなど6杯、スナックでウーロンハイ9杯など、12時間以上飲酒（STV・HTB・北海道新聞）。危険運転致死罪で、求刑懲役5年6か月に対し、2026年7月29日に札幌地裁小樽支部が懲役4年6か月（「反省の態度」「損害賠償が見込まれる」）。8月13日に確定。遺族「その程度で済むんだと思う判決」「飲酒運転の悪質さが理解されず、強く罰せられなかった」、9月に「敵は司法」。危険運転致死罪の上限は20年（有期拘禁刑）。被害者・被告の実名は出さない。",
+ "tempo": 1.15,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "12時間飲んで運転\n{奪った命は4年6か月}",
+ "thumb_top": "12時間飲んで運転\n奪った命は4年6か月",
+ "thumb_teaser": "「その程度で\n<済むんだ>」",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、報道番組のように重みをもって語る。\n## THE SCENE\n実際に起きた事件を、同世代の視聴者に伝えている。\n### DIRECTOR'S NOTES\n煽りすぎず、事実を淡々と、しかし緊張感をもって伝える。最後の問いかけは視聴者にまっすぐ語りかける。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st048_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st048_ai/images"
+ },
+ "lines": [
+  {
+   "text": "{12時間}飲んで\n<ハンドルを握った>",
+   "tone": "怒りを押し殺して、低く力強く告げる",
+   "say": "12時間飲んで、ハンドルを握った。",
+   "scene": "highway_night",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "奪った命の刑は\n<4年6か月>",
+   "tone": "秘密を明かす前のように、重く",
+   "say": "奪った命の刑は、4年6か月。",
+   "scene": "highway_night",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "2024年9月\n北海道{小樽市}",
+   "tone": "淡々と、ニュースを伝えるように",
+   "say": "2024年9月、北海道小樽市。",
+   "scene": "bar",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "男は夕方から\n<朝まで>飲み続けた",
+   "tone": "重く",
+   "say": "男は夕方から、朝まで飲み続けた。",
+   "scene": "bar",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "居酒屋で{6杯}\nスナックで{9杯}",
+   "tone": "淡々と",
+   "say": "居酒屋で6杯。スナックで9杯。",
+   "scene": "glasses",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "<12時間以上>の\n飲酒だった",
+   "tone": "重く",
+   "say": "12時間以上の、飲酒だった。",
+   "scene": "glasses",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "その車が\n対向車と<正面衝突>",
+   "tone": "緊迫して",
+   "say": "その車が、対向車と、正面衝突した。",
+   "scene": "crash",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "亡くなったのは\n{24歳}の<大学院生>",
+   "tone": "胸がいっぱいで、ゆっくり",
+   "say": "亡くなったのは、24歳の大学院生。",
+   "scene": "crash",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "検察の求刑は\n{懲役5年6か月}",
+   "tone": "淡々と",
+   "say": "検察の求刑は、懲役5年6か月。",
+   "scene": "court",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "判決は\nそれより<軽い4年6か月>",
+   "tone": "怒りを押し殺して、低く",
+   "say": "判決は、それより軽い、4年6か月。",
+   "scene": "court",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "理由は\n「<反省の態度>」",
+   "tone": "怒りを押し殺して、低く",
+   "say": "理由のひとつは、反省の態度。",
+   "scene": "court",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "遺族は言った\n「<その程度で済むんだ>」",
+   "tone": "悔しさをにじませて",
+   "say": "遺族は言った。その程度で済むんだ、と思う判決だった。",
+   "scene": "empty_room",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「悪質さが理解されず\n<強く罰せられなかった>」",
+   "tone": "悔しさをにじませて",
+   "say": "飲酒運転の悪質さが理解されず、強く罰せられなかった。",
+   "scene": "empty_room",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "判決は\nそのまま<確定>した",
+   "tone": "重く",
+   "say": "判決は、そのまま確定した。",
+   "scene": "empty_room",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "危険運転致死の上限は\n{20年}",
+   "tone": "はっきりと",
+   "say": "危険運転致死の上限は、20年。",
+   "scene": "scales",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "12時間飲んで\n命を奪って\n<4年6か月>",
+   "tone": "怒りを押し殺して、低く",
+   "say": "12時間飲んで、命を奪って、4年6か月。",
+   "scene": "scales",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "この刑で\n飲酒運転は<止まる>と\n思いますか？",
+   "tone": "同世代に語りかける。まっすぐ、強く問いかけるように",
+   "say": "この刑で、飲酒運転は、止まると思いますか。",
+   "scene": "scales",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  }
+ ],
+ "scenes": {
+  "highway_night": {
+   "prompt": "A dark wet national highway at night seen through a car windshield with blurred headlights, ominous mood No faces visible, no readable text, no logos."
+  },
+  "bar": {
+   "prompt": "The counter of a small Japanese snack bar late at night with empty glasses and a dim warm lamp, no people No faces visible, no readable text, no logos."
+  },
+  "glasses": {
+   "prompt": "Many empty beer mugs and highball glasses lined up on a bar counter, harsh light No faces visible, no readable text, no logos."
+  },
+  "crash": {
+   "prompt": "Shattered headlight glass and debris on a dark asphalt road at night with flashing red lights reflected, no people No faces visible, no readable text, no logos."
+  },
+  "court": {
+   "prompt": "An empty Japanese courtroom with wooden benches and the judges' bench, cold light No faces visible, no readable text, no logos."
+  },
+  "empty_room": {
+   "prompt": "An empty young man's room with a desk, university textbooks and a backpack, morning light, quiet and sad No faces visible, no readable text, no logos."
+  },
+  "scales": {
+   "prompt": "A brass balance scale on a dark desk tilted unevenly, dramatic light No faces visible, no readable text, no logos."
+  }
+ },
+ "disclaimer": "※画像はAI生成のイメージ",
+ "youtube": {
+  "title": "12時間飲んで運転 奪った命は4年6か月 #Shorts",
+  "description": "2024年9月、北海道小樽市で、12時間以上お酒を飲んだ男の車が対向車と正面衝突し、24歳の大学院生が亡くなりました。危険運転致死の罪で、判決は求刑より軽い懲役4年6か月。そのまま確定しました。遺族は「その程度で済むんだと思う判決」と語っています。\n\n画像はAI生成のイメージです。\n\n#ニュース #飲酒運転 #危険運転致死",
+  "pinned_comment": "12時間飲んで運転し、人の命を奪って懲役4年6か月。この刑で飲酒運転は止まると思いますか？\n1 止まらない　2 もっと重くするべき　3 妥当だと思う\n数字でコメントしてください。"
+ }
+}

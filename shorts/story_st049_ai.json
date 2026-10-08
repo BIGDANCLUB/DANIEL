@@ -1,0 +1,244 @@
+{
+ "_comment": "ST-049 ニュース: 埼玉県警が2026年7月2日、リフォーム会社の社長の男(30)ら男女4人を準詐欺の疑いで逮捕。千葉県松戸市の認知症の女性（当時80）に必要のない工事を契約させ、2024年6月〜11月に工事6回分、計1995万円（約2000万円）を振り込ませた疑い。「点検させて」と家に入り、ペットボトルの水をトイレにまいて水漏れを演出（容疑者のスマホに「必殺技」とのやりとり）。従業員同士が通信アプリで、認知症とみられる被害者を「激アツ」「ド当たり」と送り合っていた。県警は5都県の約850人から約10億円を受け取っていたとみる。7月22日に再逮捕。認否は非公表（埼玉新聞・朝日・日テレ・テレ朝・毎日・NHK）。警察庁：2025年の点検商法による悪質リフォームの摘発は83件で過去最多、被害約151億円、被害者の7割超が65歳以上（時事）。準詐欺は10年以下の拘禁刑。実名は出さない。",
+ "tempo": 1.15,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "認知症のお年寄りは\n{「激アツ」と呼ばれた}",
+ "thumb_top": "認知症のお年寄りは\n「激アツ」と呼ばれた",
+ "thumb_teaser": "水をまいて\n<水漏れ>に",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、報道番組のように重みをもって語る。\n## THE SCENE\n実際に起きた事件を、同世代の視聴者に伝えている。\n### DIRECTOR'S NOTES\n煽りすぎず、事実を淡々と、しかし緊張感をもって伝える。最後の問いかけは視聴者にまっすぐ語りかける。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st049_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st049_ai/images"
+ },
+ "lines": [
+  {
+   "text": "認知症のお年寄りは\n<「激アツ」>と呼ばれた",
+   "tone": "怒りを押し殺して、低く力強く告げる",
+   "say": "認知症のお年寄りは、激アツと呼ばれた。",
+   "scene": "old_house",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "そう呼んだのは\n<リフォーム会社>の社員",
+   "tone": "秘密を明かす前のように、声を落として",
+   "say": "そう呼んでいたのは、リフォーム会社の社員たちだった。",
+   "scene": "old_house",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "「<点検>させてください」",
+   "tone": "相手の言葉を、冷たく再現するように",
+   "say": "点検させてください。",
+   "scene": "doorbell",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "そう言って\n<家に上がり込んだ>",
+   "tone": "重く",
+   "say": "そう言って、家に上がり込んだ。",
+   "scene": "doorbell",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "トイレに\n<ペットボトルの水>をまいた",
+   "tone": "怒りを押し殺して、低く",
+   "say": "トイレに、ペットボトルの水をまいた。",
+   "scene": "toilet",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「<水漏れ>しています」",
+   "tone": "相手の言葉を、冷たく再現するように",
+   "say": "水漏れしています。",
+   "scene": "toilet",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "仲間内では\n<「必殺技」>と呼んでいた",
+   "tone": "怒りを押し殺して、低く",
+   "say": "仲間内では、それを、必殺技と呼んでいたという。",
+   "scene": "toilet",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "認知症とわかると\n<「激アツ」「ド当たり」>",
+   "tone": "怒りを押し殺して、低く",
+   "say": "認知症とわかると、激アツ、ド当たり、と送り合っていた。",
+   "scene": "phone_chat",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "{80歳}の女性は\n6回の工事で{1995万円}",
+   "tone": "重く",
+   "say": "80歳の女性は、6回の工事で、1995万円を支払わされた疑い。",
+   "scene": "bankbook",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "必要のない<工事>だった",
+   "tone": "怒りを押し殺して、低く",
+   "say": "必要のない、工事だった。",
+   "scene": "bankbook",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "埼玉県警が\n社長ら{4人}を逮捕",
+   "tone": "淡々と",
+   "say": "埼玉県警が、社長ら4人を逮捕した。",
+   "scene": "police",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "約{850人}から\n<約10億円>",
+   "tone": "重く、ゆっくり",
+   "say": "警察は、約850人から、約10億円を受け取っていたとみている。",
+   "scene": "police",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "こうした悪質リフォームは\n去年<過去最多>",
+   "tone": "淡々と",
+   "say": "こうした悪質リフォームの摘発は、去年、過去最多。",
+   "scene": "chart",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "被害は\n{約151億円}",
+   "tone": "重く",
+   "say": "被害は、約151億円。",
+   "scene": "chart",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "被害者の{7割}以上が\n<65歳以上>",
+   "tone": "重く",
+   "say": "被害者の7割以上が、65歳以上だった。",
+   "scene": "chart",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "あなたの親の家にも\n<来ている>かもしれない",
+   "tone": "静かに、警告するように",
+   "say": "あなたの親の家にも、来ているかもしれない。",
+   "scene": "parents",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "親の家に来た業者\n<確かめて>いますか？",
+   "tone": "同世代に語りかける。まっすぐ、強く問いかけるように",
+   "say": "親の家に来た業者。確かめていますか。",
+   "scene": "parents",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  }
+ ],
+ "scenes": {
+  "old_house": {
+   "prompt": "An old Japanese house with a small garden and a frail elderly woman's hands resting on a cane in the doorway, hands only, overcast No faces visible, no readable text, no logos."
+  },
+  "doorbell": {
+   "prompt": "A man in a work uniform pressing the intercom button of a Japanese house, seen from behind, no face visible No faces visible, no readable text, no logos."
+  },
+  "toilet": {
+   "prompt": "A hand pouring water from a plastic bottle onto a tiled bathroom floor next to a toilet, hands only No faces visible, no readable text, no logos."
+  },
+  "phone_chat": {
+   "prompt": "A smartphone on a car dashboard showing a blurred chat app with many messages, night, screen text illegible No faces visible, no readable text, no logos."
+  },
+  "bankbook": {
+   "prompt": "An old bankbook and a pile of invoices on a kotatsu table with reading glasses, text blurred No faces visible, no readable text, no logos."
+  },
+  "police": {
+   "prompt": "Police officers in Japanese uniforms carrying cardboard evidence boxes out of an office building, seen from behind, no faces No faces visible, no readable text, no logos."
+  },
+  "chart": {
+   "prompt": "A rising bar chart drawn on paper next to a calculator and a stack of contracts, dramatic light, text blurred No faces visible, no readable text, no logos."
+  },
+  "parents": {
+   "prompt": "An elderly couple's slippers at the entrance of a Japanese home with a stranger's work boots beside them, no faces No faces visible, no readable text, no logos."
+  }
+ },
+ "disclaimer": "※画像はAI生成のイメージ",
+ "youtube": {
+  "title": "認知症のお年寄りは「激アツ」と呼ばれた #Shorts",
+  "description": "「点検させてください」と家に上がり、トイレに水をまいて水漏れに見せかける。埼玉県警は、認知症の80歳の女性に必要のない工事を契約させ、1995万円を支払わせたとして、リフォーム会社の社長ら4人を逮捕しました。認知症とわかると、仲間内で「激アツ」と送り合っていたとされます。約850人から約10億円を受け取っていたとみられています。\n\n画像はAI生成のイメージです。内容は報道時点の情報で、容疑段階のものを含みます。\n\n#ニュース #点検商法 #悪質リフォーム",
+  "pinned_comment": "親の家に来た業者、確かめていますか？\n1 確かめている　2 正直わからない　3 親と話してみる\n数字でコメントしてください。\n「点検」の訪問はその場で家に入れず、家族や消費生活センター（188）に相談を。"
+ }
+}

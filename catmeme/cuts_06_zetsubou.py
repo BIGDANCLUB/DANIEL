@@ -18,8 +18,8 @@ L.BGS = [os.path.join(HERE, "backgrounds", d) for d in ("06_zetsubou", "04_leak"
 L.PT = os.path.join(HERE, "parts", "06_zetsubou")
 HONNIN = "本人（再現）"
 L.ROLE[HONNIN] = (35, 140, 65)
-# 新しい背景が届くまでの仮の背景
-STANDIN = {"bg31_factory_line": "bg25_office_desk", "bg32_simple_room": "bg14_home_night", "bg33_wedding": "bg19_kids_room"}
+# 新しい背景がないときは、これまでの背景で代用する（ユーザー判断 10/8：既存のイラストで作る）
+STANDIN = {"bg31_factory_line": "bg12_liquor_shelf", "bg32_simple_room": "bg14_home_night", "bg33_wedding": "bg19_kids_room"}
 _bg = L.bg
 
 
@@ -27,7 +27,6 @@ def bg(n):
     try:
         return _bg(n)
     except FileNotFoundError:
-        print(f"（仮）{n} → {STANDIN[n]}")
         return _bg(STANDIN[n])
 
 

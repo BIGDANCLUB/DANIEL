@@ -15,8 +15,8 @@ import render as R
 HERE = L.HERE
 L.BGS = [os.path.join(HERE, "backgrounds", d) for d in ("05_plague", "04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
 L.PT = os.path.join(HERE, "parts", "05_plague")
-# 新しい背景が届くまでの仮の背景
-STANDIN = {"bg27_lab": "bg25_office_desk", "bg28_siberia_town": "bg14_home_night", "bg29_medieval": "bg06_spotlight",
+# 新しい背景がないときは、これまでの背景で代用する（ユーザー判断 10/8：既存のイラストで作る）
+STANDIN = {"bg27_lab": "bg18_backyard", "bg28_siberia_town": "bg11_tsukuba", "bg29_medieval": "bg10_kyoto",
            "bg30_airport": "bg20_counter"}
 _bg = L.bg
 
@@ -25,7 +25,6 @@ def bg(n):
     try:
         return _bg(n)
     except FileNotFoundError:
-        print(f"（仮）{n} → {STANDIN[n]}")
         return _bg(STANDIN[n])
 
 

@@ -240,7 +240,17 @@ def ease_out(x):
 _DUR_CACHE = {}
 
 
+# この素材が出るカットは、最低この秒数は見せる（ユーザー指定 10/8：dance_edm_cat は5秒以上）
+ASSET_MIN_DUR = {"dance_edm_cat": 5.0}
+
+
 def cut_dur(cut):
+    d = _cut_dur(cut)
+    mins = [ASSET_MIN_DUR[k["a"]] for k in cut.get("cats", []) if k["a"] in ASSET_MIN_DUR and not k.get("small")]
+    return max([d] + mins)
+
+
+def _cut_dur(cut):
     """カットの長さ。猫ミームの音が鳴るカットは、音が途中で切れないよう、近くの「音の切れ目」まで伸び縮みさせる。"""
     for k in cut.get("cats", []):
         cfg = ASSET_PLAY.get(k["a"])

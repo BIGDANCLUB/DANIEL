@@ -2447,6 +2447,90 @@
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "Two zabuton cushions facing each other across a shogi board in a tatami room, one small pair of slippers and one old pair outside, no people No faces visible, no readable text, no logos."
  },
+ "st045_ai_batting": {
+  "file": "st045_ai_batting.jpg",
+  "key": "5f0d12680cf5537274c55780673aa3f0ce522ae9",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A batting cage at night with a pitching machine and scattered baseballs under bright lights, no people No faces visible, no readable text, no logos."
+ },
+ "st045_ai_classroom": {
+  "file": "st045_ai_classroom.jpg",
+  "key": "502620e7b693a9cbea5dc6a8c58a508b2ebe41f5",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An empty Japanese elementary school classroom with wooden desks in afternoon sunlight No faces visible, no readable text, no logos."
+ },
+ "st045_ai_draft": {
+  "file": "st045_ai_draft.jpg",
+  "key": "c9379c4bab36bddede35982e3dc03e667a8fdf9a",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A baseball sitting on a folded team jersey in a locker, soft light, no logos No faces visible, no readable text, no logos."
+ },
+ "st045_ai_essay": {
+  "file": "st045_ai_essay.jpg",
+  "key": "eaacf26021b6469e4cf498ba0f218e6f8f29c985",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A handwritten Japanese school composition on squared manuscript paper on a wooden desk, pencil beside it, warm light, text illegible No faces visible, no readable text, no logos."
+ },
+ "st045_ai_hall": {
+  "file": "st045_ai_hall.jpg",
+  "key": "5a992a5e9979b16f8f694277d652b0308650db6f",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A bronze plaque wall in a museum hall with warm spotlights, plaques blurred and illegible No faces visible, no readable text, no logos."
+ },
+ "st045_ai_stadium": {
+  "file": "st045_ai_stadium.jpg",
+  "key": "becb5f56d0123ef23f0dc2fcff0a1f89513c0b84",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A huge American baseball stadium at night from the outfield with bright lights and a full crowd as a blur No faces visible, no readable text, no logos."
+ },
+ "st045_ai_sunset_field": {
+  "file": "st045_ai_sunset_field.jpg",
+  "key": "c0580f15638547f444eaf79749e1d61cd3c9707c",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A small boy's baseball glove and bat lying on a dirt field at sunset, long shadows No faces visible, no readable text, no logos."
+ },
+ "st046_ai_dinner": {
+  "file": "st046_ai_dinner.jpg",
+  "key": "0447c24297cb5f781a996820ee5ecadee83993ba",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A simple Japanese family dinner table with rice bowls and miso soup under a warm lamp, no people No faces visible, no readable text, no logos."
+ },
+ "st046_ai_first_base": {
+  "file": "st046_ai_first_base.jpg",
+  "key": "9dc8dbab461c3f6b13b0284795132e0f39729a35",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A baseball player's spikes walking along the white chalk line toward first base, legs only, summer light No faces visible, no readable text, no logos."
+ },
+ "st046_ai_koshien": {
+  "file": "st046_ai_koshien.jpg",
+  "key": "ba7e8464cc27e3f53003def79163a58d943e1c95",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A wooden baseball bat resting unused against a dugout railing at a sunny Japanese high school stadium, no people No faces visible, no readable text, no logos."
+ },
+ "st046_ai_ny": {
+  "file": "st046_ai_ny.jpg",
+  "key": "b1642a5e145fbe2d6f07dbdeafe5803f5940739b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A big city baseball stadium at night with fireworks over the stands, crowd as a blur No faces visible, no readable text, no logos."
+ },
+ "st046_ai_scoreboard": {
+  "file": "st046_ai_scoreboard.jpg",
+  "key": "319f8159baf0bb0348df45d7c4af7b9e2adc4944",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An old manual scoreboard at a summer baseball stadium at dusk, numbers blurred and illegible No faces visible, no readable text, no logos."
+ },
+ "st046_ai_summer_stadium": {
+  "file": "st046_ai_summer_stadium.jpg",
+  "key": "514bba2f342ef0810a2247ae84e3f82b55b99d64",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A packed Japanese summer high school baseball stadium seen from the stands, bright sun, crowd as a blur No faces visible, no readable text, no logos."
+ },
+ "st046_ai_walk": {
+  "file": "st046_ai_walk.jpg",
+  "key": "9e41e751ebf2744d367b9e14ebe32097ce7960c5",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A catcher's mitt held far outside the plate in a baseball game, close-up, players' faces not visible No faces visible, no readable text, no logos."
+ },
  "st047_ai_cityhall_day": {
   "file": "st047_ai_cityhall_day.jpg",
   "key": "1c7b7f23278fe3ea26cc0bedb928c9dee31bd8f4",
@@ -2488,5 +2572,95 @@
   "key": "e2e759d9af841ba5b6c76fe084a8c7844a93e6fa",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "A young mother's hand holding a smartphone near a police consultation leaflet on a table, hands only, text blurred No faces visible, no readable text, no logos."
+ },
+ "st048_ai_bar": {
+  "file": "st048_ai_bar.jpg",
+  "key": "ba4c71741d1bde03a3f4ac2202eb0ad915e6ffdd",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "The counter of a small Japanese snack bar late at night with empty glasses and a dim warm lamp, no people No faces visible, no readable text, no logos."
+ },
+ "st048_ai_court": {
+  "file": "st048_ai_court.jpg",
+  "key": "33611f14ddd077f70e14a60f41855cd65c7c1753",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An empty Japanese courtroom with wooden benches and the judges' bench, cold light No faces visible, no readable text, no logos."
+ },
+ "st048_ai_crash": {
+  "file": "st048_ai_crash.jpg",
+  "key": "774139e06022c12afda9d24418106fd901cc4660",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Shattered headlight glass and debris on a dark asphalt road at night with flashing red lights reflected, no people No faces visible, no readable text, no logos."
+ },
+ "st048_ai_empty_room": {
+  "file": "st048_ai_empty_room.jpg",
+  "key": "a372a14bc52cd9ff44b0461c43c0450eef86bfd6",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An empty young man's room with a desk, university textbooks and a backpack, morning light, quiet and sad No faces visible, no readable text, no logos."
+ },
+ "st048_ai_glasses": {
+  "file": "st048_ai_glasses.jpg",
+  "key": "9fb407a0b34e9e3db44a0f36fdab570d125245f3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Many empty beer mugs and highball glasses lined up on a bar counter, harsh light No faces visible, no readable text, no logos."
+ },
+ "st048_ai_highway_night": {
+  "file": "st048_ai_highway_night.jpg",
+  "key": "a8bdb8307047ad1f6875fd3c954a9e8f32227eef",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A dark wet national highway at night seen through a car windshield with blurred headlights, ominous mood No faces visible, no readable text, no logos."
+ },
+ "st048_ai_scales": {
+  "file": "st048_ai_scales.jpg",
+  "key": "5f705eaab551137920f552e28c922c8ef1eee1d7",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A brass balance scale on a dark desk tilted unevenly, dramatic light No faces visible, no readable text, no logos."
+ },
+ "st049_ai_bankbook": {
+  "file": "st049_ai_bankbook.jpg",
+  "key": "03fa9a5b4cfae93deac95eafbc622506271ae2e7",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An old bankbook and a pile of invoices on a kotatsu table with reading glasses, text blurred No faces visible, no readable text, no logos."
+ },
+ "st049_ai_chart": {
+  "file": "st049_ai_chart.jpg",
+  "key": "1dc28a39612cdf0c736a8abfb22d9cfb165b2f1c",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A rising bar chart drawn on paper next to a calculator and a stack of contracts, dramatic light, text blurred No faces visible, no readable text, no logos."
+ },
+ "st049_ai_doorbell": {
+  "file": "st049_ai_doorbell.jpg",
+  "key": "5109e496b0675df60ba5e6a3c55e186edf786766",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A man in a work uniform pressing the intercom button of a Japanese house, seen from behind, no face visible No faces visible, no readable text, no logos."
+ },
+ "st049_ai_old_house": {
+  "file": "st049_ai_old_house.jpg",
+  "key": "5411cc7fa2d7a6da588199786cd5ea367681d700",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An old Japanese house with a small garden and a frail elderly woman's hands resting on a cane in the doorway, hands only, overcast No faces visible, no readable text, no logos."
+ },
+ "st049_ai_parents": {
+  "file": "st049_ai_parents.jpg",
+  "key": "849bc968d3bb3d58c78acfc12791405313bf50f3",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An elderly couple's slippers at the entrance of a Japanese home with a stranger's work boots beside them, no faces No faces visible, no readable text, no logos."
+ },
+ "st049_ai_phone_chat": {
+  "file": "st049_ai_phone_chat.jpg",
+  "key": "b87e12964fe30b298e4d907b64b9cd75163e082e",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A smartphone on a car dashboard showing a blurred chat app with many messages, night, screen text illegible No faces visible, no readable text, no logos."
+ },
+ "st049_ai_police": {
+  "file": "st049_ai_police.jpg",
+  "key": "4a8b64546a302ddc291df154f7854336d55d4d3c",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Police officers in Japanese uniforms carrying cardboard evidence boxes out of an office building, seen from behind, no faces No faces visible, no readable text, no logos."
+ },
+ "st049_ai_toilet": {
+  "file": "st049_ai_toilet.jpg",
+  "key": "de64f8b8f2c0496bfcb66b95ab1d26902d9f471b",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A hand pouring water from a plastic bottle onto a tiled bathroom floor next to a toilet, hands only No faces visible, no readable text, no logos."
  }
 }

@@ -151,6 +151,9 @@ class ShortCut:
         self.c = c
         self.dur = R.cut_dur(c)
         self.scene = None
+        self.draw = c.get("draw") if c["kind"] == "hook" else None   # つかみ用：自前で1枚絵を描く関数 draw(t)
+        if self.draw:
+            return
         if c["kind"] == "scene":
             sc = {k: v for k, v in c.items() if k not in ("cap", "cap_col", "kind", "img")}
             self.scene = R.CutRenderer(sc)
@@ -161,6 +164,8 @@ class ShortCut:
         self.cap = R.to_np(cap)
 
     def frame(self, t, title):
+        if self.draw:
+            return self.draw(t)
         out = np.zeros((SH, SW, 3), np.float32)
         out[:] = np.array(NAVY[::-1], np.float32) / 255 * 0.6
         if self.scene is not None:
@@ -195,13 +200,13 @@ def main():
     run(cuts(), title_band(), OUT, os.path.join(HERE, "out", "short_03_preview"))
 
 
-def run(cs, title_img, out_path, prev):
+def run(cs, title_img, out_path, prev, check=True):
     """カット一覧を縦動画に書き出す（ほかのショートからも使う）。"""
     OUT = out_path
     durs = [R.cut_dur(c) for c in cs]
     starts = list(np.cumsum([0] + durs[:-1]))
     total = sum(durs)
-    if not SHORT_MIN <= total <= SHORT_MAX:   # ショートは45〜58秒（チャンネルのルール）
+    if check and not SHORT_MIN <= total <= SHORT_MAX:   # ショートは45〜58秒（チャンネルのルール）
         raise SystemExit(f"ショートの長さ {total:.1f}秒 が {SHORT_MIN}〜{SHORT_MAX}秒の範囲外です。カットを足すか削ってください")
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     wav = OUT + ".audio.f32"

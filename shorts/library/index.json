@@ -2446,5 +2446,47 @@
   "key": "45b48a190d4b404032f64f81546a10a81b530ce2",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "Two zabuton cushions facing each other across a shogi board in a tatami room, one small pair of slippers and one old pair outside, no people No faces visible, no readable text, no logos."
+ },
+ "st047_ai_cityhall_day": {
+  "file": "st047_ai_cityhall_day.jpg",
+  "key": "1c7b7f23278fe3ea26cc0bedb928c9dee31bd8f4",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese municipal office counter area with a sign board shape for the childcare section, daylight, text blurred No faces visible, no readable text, no logos."
+ },
+ "st047_ai_cityhall_night": {
+  "file": "st047_ai_cityhall_night.jpg",
+  "key": "09a5341c16639407451a379297ecb3964383491d",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A Japanese city hall building at night with a few office windows lit, cold blue tones, ominous mood No faces visible, no readable text, no logos."
+ },
+ "st047_ai_door": {
+  "file": "st047_ai_door.jpg",
+  "key": "bf5b4e5c8d0ee4e1f981ba1330935c86cefcecb4",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "The front door of a small Japanese apartment at dusk with a man's shoes and dark trousers standing outside, legs only No faces visible, no readable text, no logos."
+ },
+ "st047_ai_empty_desk": {
+  "file": "st047_ai_empty_desk.jpg",
+  "key": "c12013efaf1ce15a0a0b3c2bccf4e22d0fb321a9",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "An empty office desk in a Japanese city hall with a nameplate turned face down and a closed laptop, fluorescent light No faces visible, no readable text, no logos."
+ },
+ "st047_ai_gavel": {
+  "file": "st047_ai_gavel.jpg",
+  "key": "b8bddd734cd6c14296939db02f56600e6621ec40",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A judge's gavel on a dark wooden desk with a thick law book, dramatic light No faces visible, no readable text, no logos."
+ },
+ "st047_ai_papers": {
+  "file": "st047_ai_papers.jpg",
+  "key": "40b68997490fe187d124efd062fac4dfb43137a2",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Childcare fee documents and a calculator on a low table in a modest apartment, a man's hand pushing a paper forward, hands only, text blurred No faces visible, no readable text, no logos."
+ },
+ "st047_ai_phone_desk": {
+  "file": "st047_ai_phone_desk.jpg",
+  "key": "e2e759d9af841ba5b6c76fe084a8c7844a93e6fa",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A young mother's hand holding a smartphone near a police consultation leaflet on a table, hands only, text blurred No faces visible, no readable text, no logos."
  }
 }

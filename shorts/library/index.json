@@ -2662,5 +2662,29 @@
   "key": "de64f8b8f2c0496bfcb66b95ab1d26902d9f471b",
   "model": "gemini-3.1-flash-lite-image",
   "prompt": "A hand pouring water from a plastic bottle onto a tiled bathroom floor next to a toilet, hands only No faces visible, no readable text, no logos."
+ },
+ "st050_ai_courthouse": {
+  "file": "st050_ai_courthouse.jpg",
+  "key": "5a38b2259fe28921f753cd192966715ca6b0f6c6",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "The exterior of a Japanese district courthouse at dusk under a heavy cloudy sky, no people No faces visible, no readable text, no logos."
+ },
+ "st050_ai_mirror": {
+  "file": "st050_ai_mirror.jpg",
+  "key": "14a45ac09011bd30245902298c113c7d4f49c670",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Two identical judge's gavels placed side by side facing each other on a dark desk, symmetrical, dramatic light No faces visible, no readable text, no logos."
+ },
+ "st050_ai_papers": {
+  "file": "st050_ai_papers.jpg",
+  "key": "f3d7cbe115604d5325a71b348bc291319d5abb9a",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "Legal documents with a fountain pen and a personal seal on a desk, text blurred, no people No faces visible, no readable text, no logos."
+ },
+ "st050_ai_phone_game": {
+  "file": "st050_ai_phone_game.jpg",
+  "key": "60ad3e60264bf526c2cb476a99bb910113618402",
+  "model": "gemini-3.1-flash-lite-image",
+  "prompt": "A smartphone lying on a dark table showing a blurred colorful game screen, nobody in the frame No faces visible, no readable text, no logos."
  }
 }

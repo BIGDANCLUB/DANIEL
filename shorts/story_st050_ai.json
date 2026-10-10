@@ -1,0 +1,241 @@
+{
+ "_comment": "ST-050 ニュース（判決）: 2019年9月4日、高松地裁（三上孝浩裁判長）は、2019年1月に高松市の自宅で13歳未満と知りながら当時小学6年の男子児童にわいせつな行為などをしたとして、強制性交等や児童買春・児童ポルノ禁止法違反などの罪に問われた当時23歳の女に、懲役3年・執行猶予5年（求刑懲役5年）。2人は2018年9月にスマホのオンラインゲームで知り合った。判決は判断能力や性的知識の乏しさにつけ込んだ点を悪質としつつ、双方に恋愛感情があったこと、今後一切連絡しない示談の成立を考慮（KSB瀬戸内海放送）。男女逆の比較：2026年7月13日、福岡地裁小倉支部は、13歳未満と知りながらSNSで知り合った小学生の女児と性交したとして不同意性交等罪に問われた22歳の男子大学生に、拘禁刑3年・執行猶予5年（求刑5年）。示談成立・前科なし等を考慮（RKB毎日放送、日刊SPA!で元裁判官・岡口基一氏が市民感覚とのずれを批判）。13歳未満は同意の有無にかかわらず処罰される。被害児童の特定につながる情報、行為の具体的描写、子どもの画像は出さない。実名は出さない。",
+ "tempo": 1.15,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "小6男児への性犯罪\n{判決は執行猶予}",
+ "thumb_top": "小6の男の子に性犯罪\n23歳の女に執行猶予",
+ "thumb_teaser": "男女が<逆>なら\n同じ判決？",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、報道番組のように重みをもって語る。\n## THE SCENE\n実際に起きた事件を、同世代の視聴者に伝えている。\n### DIRECTOR'S NOTES\n煽りすぎず、事実を淡々と、しかし緊張感をもって伝える。最後の問いかけは視聴者にまっすぐ語りかける。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st050_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st050_ai/images"
+ },
+ "lines": [
+  {
+   "text": "小学6年の男の子への\n<性犯罪>",
+   "tone": "怒りを押し殺して、低く力強く告げる",
+   "say": "小学6年の男の子への、性犯罪。",
+   "scene": "courthouse",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "判決は\n<執行猶予>だった",
+   "tone": "秘密を明かす前のように、重く",
+   "say": "判決は、執行猶予だった。",
+   "scene": "courthouse",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "被告は\n{23歳}の<女>",
+   "tone": "淡々と",
+   "say": "被告は、23歳の女。",
+   "scene": "court_empty",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "2019年\n{高松地裁}の判決",
+   "tone": "淡々と、ニュースを伝えるように",
+   "say": "2019年、高松地方裁判所の判決だ。",
+   "scene": "court_empty",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "出会いは\n{オンラインゲーム}",
+   "tone": "淡々と",
+   "say": "2人の出会いは、オンラインゲームだった。",
+   "scene": "phone_game",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "{13歳未満}と\n<知りながら>",
+   "tone": "怒りを押し殺して、低く",
+   "say": "女は、相手が13歳未満と、知りながら。",
+   "scene": "phone_game",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "求刑は\n{懲役5年}",
+   "tone": "淡々と",
+   "say": "検察の求刑は、懲役5年。",
+   "scene": "gavel",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "判決は{懲役3年}\n<執行猶予5年>",
+   "tone": "怒りを押し殺して、低く",
+   "say": "判決は、懲役3年、執行猶予5年。",
+   "scene": "gavel",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "裁判長は\n「<悪質>」と言いながら",
+   "tone": "重く",
+   "say": "裁判長は、悪質だ、と指摘しながら。",
+   "scene": "gavel",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "「<お互いに恋愛感情>が\nあった」と考慮した",
+   "tone": "怒りを押し殺して、低く",
+   "say": "お互いに、恋愛感情があった、と考慮した。",
+   "scene": "papers",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "<示談>も\n成立していた",
+   "tone": "怒りを押し殺して、低く",
+   "say": "示談も、成立していた。",
+   "scene": "papers",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "もし男女が<逆>だったら\n同じ判決だったのか",
+   "tone": "静かに、疑問を投げかけるように",
+   "say": "もし、男女が逆だったら。同じ判決だったのだろうか。",
+   "scene": "mirror",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "今年7月 福岡で\n{22歳}の<男>の判決",
+   "tone": "緊張感をもって",
+   "say": "今年7月、福岡で、22歳の男子大学生に、判決が出た。",
+   "scene": "mirror",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "相手は\n{13歳未満}の<女の子>",
+   "tone": "重く",
+   "say": "相手は、13歳未満の、小学生の女の子。",
+   "scene": "mirror",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "判決は<同じ>\n{3年} 執行猶予{5年}",
+   "tone": "怒りを押し殺して、低く",
+   "say": "判決は、同じ。拘禁刑3年、執行猶予5年。",
+   "scene": "scales",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "理由も\nまた<示談>だった",
+   "tone": "怒りを押し殺して、低く",
+   "say": "理由のひとつも、また、示談だった。",
+   "scene": "scales",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "子どもへの性犯罪に\n<執行猶予>\nこれで守れますか？",
+   "tone": "同世代に語りかける。まっすぐ、強く問いかけるように",
+   "say": "子どもへの性犯罪に、執行猶予。これで、子どもを守れると思いますか。",
+   "scene": "scales",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  }
+ ],
+ "scenes": {
+  "courthouse": {
+   "prompt": "The exterior of a Japanese district courthouse at dusk under a heavy cloudy sky, no people No faces visible, no readable text, no logos."
+  },
+  "court_empty": {
+   "prompt": "An empty Japanese courtroom with wooden benches and the judges' bench, cold light No faces visible, no readable text, no logos."
+  },
+  "phone_game": {
+   "prompt": "A smartphone lying on a dark table showing a blurred colorful game screen, nobody in the frame No faces visible, no readable text, no logos."
+  },
+  "gavel": {
+   "prompt": "A judge's gavel on a dark wooden desk with a thick law book, dramatic light No faces visible, no readable text, no logos."
+  },
+  "papers": {
+   "prompt": "Legal documents with a fountain pen and a personal seal on a desk, text blurred, no people No faces visible, no readable text, no logos."
+  },
+  "mirror": {
+   "prompt": "Two identical judge's gavels placed side by side facing each other on a dark desk, symmetrical, dramatic light No faces visible, no readable text, no logos."
+  },
+  "scales": {
+   "prompt": "A brass balance scale on a dark desk tilted unevenly, dramatic light No faces visible, no readable text, no logos."
+  }
+ },
+ "disclaimer": "※画像はAI生成のイメージ",
+ "youtube": {
+  "title": "小6男児に性犯罪 23歳女に執行猶予 #Shorts",
+  "description": "2019年、高松地裁は、13歳未満と知りながら小学6年の男の子に性的な行為をしたとして罪に問われた23歳の女に、懲役3年・執行猶予5年の判決を言い渡しました。求刑は懲役5年。判決は「悪質」と指摘しながらも、「お互いに恋愛感情があった」ことや示談の成立を考慮しました。\nもし男女が逆だったら、同じ判決だったのでしょうか。今年7月、福岡で、13歳未満の小学生の女の子と性交した22歳の男子大学生に出た判決も、同じ拘禁刑3年・執行猶予5年でした。\n\n画像はAI生成のイメージです。\n\n#ニュース #判決 #子どもを守る",
+  "pinned_comment": "子どもへの性犯罪に執行猶予。男女が逆でも同じ判決でした。あなたはどう思いますか？\n1 男女とも軽すぎる　2 示談で軽くなるのはおかしい　3 妥当だと思う\n数字でコメントしてください。"
+ }
+}

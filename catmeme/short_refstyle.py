@@ -27,8 +27,8 @@ OUT = os.path.join(HERE, "out", "short_refstyle_license.mp4")
 BGS = [os.path.join(HERE, "backgrounds", d) for d in ("04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
 WHITE, BLACK, RED, YELLOW = (255, 255, 255), (0, 0, 0), (235, 25, 25), (255, 230, 0)
 LIME = (120, 235, 40)
-BAND = (210, 470)   # 黒い帯の上下（この上には背景が見える）
-TEXT_Y = 640        # セリフの中心
+BAND = (170, 500)   # 黒い帯の上下（この上には背景が見える）
+TEXT_Y = 680        # セリフの中心
 
 
 def bg_path(n):
@@ -90,7 +90,7 @@ def title_band(top, sub):
     im = Image.new("RGBA", (SW, BAND[1] - BAND[0]), (0, 0, 0, 255))
     t1 = outline_text([[(top, RED)]], 170)
     t2 = outline_text([[(sub, YELLOW)]], 104)
-    im.alpha_composite(t1, ((SW - t1.width) // 2, 0))
+    im.alpha_composite(t1, ((SW - t1.width) // 2, -22))
     im.alpha_composite(t2, ((SW - t2.width) // 2, im.height - t2.height + 4))
     return im
 

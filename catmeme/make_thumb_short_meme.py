@@ -28,20 +28,25 @@ def tag(img, text, col, cx, cy, rot):
     img.alpha_composite(t, (int(cx - t.width / 2), int(cy - t.height / 2)))
 
 
-def main():
+def main(name="short_meme_phrases", phrases=PHRASES, big="名フレーズ6選"):
     img = base("bg06_spotlight", ((255, 60, 60, 150), (255, 210, 0, 130)), bg_dir="01_todai")
     d = ImageDraw.Draw(img)
     topic_band(img, "ネットで生まれた名フレーズ")
     fit_text(d, (W / 2, 320), "ニュースから生まれた", 1000, 110, WHITE, BLACK, double=None)
-    fit_text(d, (W / 2, 500), "名フレーズ6選", 1040, 190, YELLOW, BLACK, double=WHITE)
-    for i, (text, col) in enumerate(PHRASES):
-        cx = 280 if i % 2 == 0 else 800
-        cy = 700 + (i // 2) * 150
+    fit_text(d, (W / 2, 500), big, 1040, 190, YELLOW, BLACK, double=WHITE)
+    for i, (text, col) in enumerate(phrases):
+        if len(phrases) <= 3:   # 少ないときは1列で大きく
+            cx, cy = W / 2, 720 + i * 170
+        else:
+            cx, cy = (280 if i % 2 == 0 else 800), 700 + (i // 2) * 150
         tag(img, text, col, cx, cy, -4 if i % 2 == 0 else 4)
     cats(img, ("huh_huh_cat", 1.0, False), ("surprise_big_pupils_cat", 0.6, True))
     words(img, [("全部わかる？", 290, 1250, 78, WHITE, 8), ("どれが好き？", 800, 1260, 84, RED, -8)])
-    save(img, "short_meme_phrases")
+    save(img, name)
 
+
+PHRASES2 = [("並べない万博", RED), ("暫定とは？", (200, 120, 20)), ("ステルス値上げ", NAVY)]
 
 if __name__ == "__main__":
     main()
+    main("short_meme_phrases2", PHRASES2, "名フレーズ第2弾")

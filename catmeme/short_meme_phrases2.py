@@ -31,7 +31,7 @@ def cuts():
         Q.panel(card(1, "大阪・関西万博（2025年）", "並べない万博", ["目標は「並ばない万博」", "実際は大行列　予約も取れず「並べない」"]),
                 "並ばない\n→並べない！？", dur=5.0, se="card_flip"),
         react("bg09_sns", "huh_huh_cat", "“並ばない”って\nそういう意味！？", dur=2.6, se="boing_01"),
-        Q.two("bg09_sns", "weird_meowing_cat", "eat_pop_cat", "「並ばない万博」→「長く並ぶ万博」→\n「並べない万博」と\n言い換えが進化した", who="R", dur=3.6,
+        Q.two("bg09_sns", "weird_meowing_cat", "eat_pop_cat", "並ばない→長く並ぶ\n→並べない\nと言い換えが進化", who="R", dur=3.6,
               se="page_turn_01"),
         # ② 暫定とは？
         Q.panel(card(2, "ガソリンの暫定税率（1974〜2025年）", "暫定とは？", ["「暫定」として1974年にスタート", "そのまま約51年続いて　2025年末に廃止"],

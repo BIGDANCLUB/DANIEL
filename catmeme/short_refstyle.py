@@ -13,6 +13,7 @@ python3 catmeme/short_refstyle.py → out/short_refstyle_license.mp4
 """
 import os
 
+import cv2
 import numpy as np
 from PIL import Image, ImageDraw
 
@@ -99,6 +100,15 @@ def role_label(name):
     return outline_text([[(name, LIME)]], 110, w=700)
 
 
+def moving_bg(bg, T):
+    """背景をゆっくり動かす：ふわっと寄ったり引いたりしながら、左右・上下に少しずつ流れる（カットをまたいでつながる）。"""
+    z = 1.10 + 0.05 * np.sin(T * 0.45)
+    dx = 45 * np.sin(T * 0.31)
+    dy = 30 * np.cos(T * 0.27)
+    M_ = np.float32([[z, 0, (1 - z) * SW / 2 + dx], [0, z, (1 - z) * SH / 2 + dy]])
+    return cv2.warpAffine(bg, M_, (SW, SH), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+
+
 def make_draw(c, title):
     """1カットぶんの絵を描く関数（t はカットの頭からの秒）。"""
     bg = vbg(c["bg"])
@@ -106,10 +116,14 @@ def make_draw(c, title):
     lab = role_label(c["label"]) if c.get("label") else None
 
     def draw(t):
-        out = bg.copy()
+        out = moving_bg(bg, c.get("t0", 0.0) + t)
         for k in c["cats"]:
             s = H.pop(t, k.get("delay", 0.0), 0.16) if k.get("pop", True) else 1.0
-            H.cat(out, k["a"], t + k.get("ss", 0.0), k["x"], SH + k.get("drop", 60), k["h"], s, flip=k.get("flip", False))
+            x, h = k["x"], k["h"]
+            if k.get("from"):
+                u = R.ease_out(min(1.0, t / 0.25))
+                x, h = k["from"][0] + (x - k["from"][0]) * u, k["from"][1] + (h - k["from"][1]) * u
+            H.cat(out, k["a"], t + k.get("ss", 0.0), x, SH + k.get("drop", 60), h, s, flip=k.get("flip", False))
         if lab is not None:
             H.put(out, lab, c.get("label_x", 760), SH - 330)
         H.put(out, title, SW / 2, (BAND[0] + BAND[1]) / 2)
@@ -181,9 +195,30 @@ def cuts():
     ]
 
 
+def keep_going(cs):
+    """前のカットと同じ素材が続くときは、登場し直さない（ポンと出ない・動きと音を前のカットの続きから）。"""
+    prev = {}   # 素材名 → (前のカットでの x, そのカットの終わりの素材時間)
+    t0 = 0.0
+    for c in cs:
+        d = R.cut_dur(c)
+        c["t0"] = t0   # 動画の頭からの時刻（背景をカットをまたいで動かし続けるため）
+        t0 += d
+        now = {}
+        for k in c["cats"]:
+            if k["a"] in prev:
+                px, ph, end = prev[k["a"]]
+                k["ss"] = end
+                k["pop"] = False
+                if abs(px - k["x"]) > 5 or abs(ph - k["h"]) > 5:
+                    k["from"] = (px, ph)   # 位置や大きさが変わるときは、すっと移動する
+            now[k["a"]] = (k["x"], k["h"], k.get("ss", 0.0) + d)
+        prev = now
+    return cs
+
+
 def main():
     title = title_band("閲覧注意", "免許証が漏れるとヤバすぎる")
-    cs = cuts()
+    cs = keep_going(cuts())
     for c in cs:   # 絵を描く関数を用意（タイトル帯を毎フレーム重ねる）
         c["draw"] = make_draw(c, title)
     S.run(cs, title, OUT, os.path.join(HERE, "out", "short_refstyle_license_preview"))

@@ -60,12 +60,23 @@
 | call_customer_service_cat.mp4 | 顧客と通話する | 顧客と通話する　downloads_客服猫.mp4 | |
 | eat_pop_cat.mp4 | 食べる（ポップキャット） | 食べる　downloads_Pop Cat Green screen 猫ミーム素材 cat meme .mp4 | |
 | eat_crunchy_cat_luna.mp4 | 食事中（カリカリ猫） | 食事中　Green Screen Crunchy Cat Luna Meme 猫ミーム素材 .mp4 | |
+| dance_white_dog.mp4 | くるくる踊る白い犬（ノリノリ・浮かれる） | dancing dog green screen .mp4 | あり |
+| lick_talking_goat.mp4 | 舌を出してしゃべるヤギ（ドアップ・ふざけ・ツッコミ待ち） | Talking Goat 2.0 Meme Green Screen Template cat meme .mp4 | あり |
+| stand_real_sheep.mp4 | 立っている本物のヒツジ（小さめ・ぽつん） | REAL SHEEP GREEN SCREEN PART 2 -CHROMA KEY cat meme .mp4 | あり |
+| snore_snoring_dog.mp4 | なでられていびきをかく犬（寝る・油断） | Snoring Dog Meme Green Screen Chroma Key Templatecat meme.mp4 | あり |
+| work_dog_staring_computer.mp4 | パソコンを見つめる犬（仕事・調べもの・ハッカー役にも） | Green Screen Dog Staring at Computer Meme.mp4 | あり |
+| sad_black_dog.mp4 | しょんぼりした黒い犬（悲しい・反省） | Green Screen Sad Black Dog Meme cat meme.mp4 | あり |
+| rizz_cat_rizz.mp4 | キメ顔で迫る猫（ドヤ・口説く・悪役） | Green Screen Cat Rizz Meme.mp4 | あり |
+| flip_emo_cat_hair.mp4 | 髪をかき上げる猫（キザ・すまし顔） | Emo Cat Hair Flip _ Green Screen.mp4 | あり |
+| stare_standing_marmot.mp4 | 立ってじっと見るマーモット（無言の圧・様子見） | Cat meme green screen.mp4 | あり |
+| dance_cute_dog.mp4 | 二本足で踊る犬（喜ぶ・浮かれる） | Cute dog dance green screen.mp4 | あり |
+| eat_chips_cat.mp4 | ポテチを食べる猫（観戦・他人事） | Cat eating chips on a green screen.mp4 | あり |
 | surprise_big_pupils_cat.mp4 | 驚く（目がまんまる） | 驚く　Cute Cat With Big Dilated Pupils Meme Green Screen Chroma Key Template 猫ミーム素材.mp4 | |
 
 - ⚠ は曲名がついている、または曲で有名なミーム。届いたら実際に聞いて確認し、表を更新する
 
 ## 届いた素材の確認メモ（2026-10-02）
-- 56本。ほぼ 1280x720、長さ5〜49秒、すべて音あり
+- 67本（10/11 に11本追加。「Beat the Koto Nai Cat」は dance_koto_nai_cat と同じ中身だったので入れていない）。ほぼ 1280x720、長さ5〜49秒、すべて音あり
 - 同じ中身だった2組（Girlfriend ダンス、怒る猫と怒られる猫）は1本ずつにまとめた
 - 背景が濃い緑で、抜くときに色の調整がいるもの: wakeup_dog_hits_bowl, work_typing_cat
 - 端に黒い帯・線があり、切り取りがいるもの: itchy_kitten_butt（左右）, excited_hodomoe_city_cat（左）, listen_dancing_dog（下）, sad_banana_cat_cry（下）

@@ -345,7 +345,7 @@ DRAW = {"A": hook_A, "B": hook_B, "C": hook_C, "D": hook_D, "E": hook_E}
 def cuts(key):
     hook = dict(kind="hook", draw=DRAW[key], dur=HOOK / R.TEMPO, fixed=True, cap="",
                 se=[{"f": f, "at": a, "gain": -4} for a, f in SE[key]], bgm={"file": M.PURPLE, "gain": -4})
-    rest = M.cuts()[1:2]   # 今のショートの続き（①553＞1107のパネル）
+    rest = M.cuts(hook=False)[1:2]   # 今のショートの続き（①553＞1107のパネル）
     rest[0].pop("bgm", None)
     return [hook] + rest
 
@@ -359,3 +359,63 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# ---------- 採用案：A（連打フラッシュ）＋ D（猫ミーム乱入）をあわせたつかみ ----------
+AD_CATS = ["surprise_big_pupils_cat", "huh_huh_cat", "weird_meowing_cat", "glare_disgusted_cat", "spin_spinning_cat",
+           "joy_happy_happy_happy_cat"]
+AD_BGS = [(220, 30, 30), (255, 200, 0), (25, 32, 56), (20, 20, 20), (220, 30, 30), (255, 200, 0)]
+
+
+def make_hook_AD(phrases, pre="ニュースから生まれた", big="名フレーズ", count="6連発!!", beat_total=3.0):
+    """前半：フレーズが1つずつ、背景色が切り替わりながら叩きつけられ、猫ミームが横から飛び込む（A＋D）。
+    後半：回る集中線の上に猫がそろって、「名フレーズ ○連発!!」をドカン。phrases=[(文字, 色)]。"""
+    n = len(phrases)
+    beat = beat_total / n
+
+    def draw(t):
+        if t < beat_total:
+            i = min(int(t / beat), n - 1)
+            t0 = i * beat
+            bg = AD_BGS[i % len(AD_BGS)]
+            out = blank(bg)
+            rays(out, t, cols=((255, 255, 255), bg), speed=60, alpha=0.25)
+            side = -1 if i % 2 == 0 else 1
+            fx = 540 + side * 260 + (1 - R.ease_out(min(1, (t - t0) / 0.15))) * side * 800
+            cat(out, AD_CATS[i % len(AD_CATS)], t - t0, fx, SH + 40, 760, flip=side > 0)
+            put(out, text(f"{i + 1}", 300, fill=YELLOW if i % 2 == 0 else WHITE, w=500), 160 if side > 0 else SW - 160, 300,
+                slam(t, t0, 3, 0.1))
+            ph, col = phrases[i]
+            put(out, tag(ph, col, size=130 if "\n" not in ph else 110), SW / 2, SH * 0.40, slam(t, t0 + 0.05, 2.8, 0.1),
+                angle=(-6 if i % 2 else 6))
+            out = shake(out, t, t0 + 0.05, 45, 0.25)
+            out = flash(out, t, t0, 0.08)
+            return finish(out)
+        u0 = beat_total
+        out = blank((220, 30, 30))
+        rays(out, t, cols=((255, 220, 0), (220, 30, 30)), speed=50, alpha=0.9)
+        # 猫ミームがそろって飛び込む
+        spots = [(200, SH + 40), (880, SH + 40), (540, SH + 120)]
+        for k, (x, bottom) in enumerate(spots):
+            t1 = u0 + 0.1 * k
+            if t >= t1:
+                fx = x + (1 - R.ease_out(min(1, (t - t1) / 0.15))) * (-700 if x < 540 else 700)
+                cat(out, AD_CATS[k], t - t1, fx, bottom, 620 if k < 2 else 520, flip=x > 540)
+        put(out, text(pre, 100), SW / 2, 380, pop(t, u0))
+        put(out, text(big, 210, fill=YELLOW), SW / 2, 610, slam(t, u0 + 0.15, 3, 0.12), angle=-4)
+        put(out, text(count, 250, fill=WHITE, stroke=RED), SW / 2, 880, slam(t, u0 + 0.35, 3.2, 0.12), angle=4)
+        out = shake(out, t, u0 + 0.35, 60, 0.4)
+        out = flash(out, t, u0 + 0.35, 0.15)
+        return finish(out)
+
+    return draw
+
+
+def hook_cut_AD(phrases, pre="ニュースから生まれた", big="名フレーズ", count="6連発!!", beat_total=3.0, bgm=None):
+    """A＋D のつかみを、ショートのカット（5秒）として返す。"""
+    n = len(phrases)
+    beat = beat_total / n
+    se = [(i * beat, "whoosh_shu") for i in range(n)] + [(i * beat + 0.05, "taiko_don") for i in range(n)]
+    se += [(beat_total, "whoosh_shu"), (beat_total + 0.15, "jan"), (beat_total + 0.35, "explosion_chudoon")]
+    return dict(kind="hook", draw=make_hook_AD(phrases, pre, big, count, beat_total), dur=HOOK / R.TEMPO, fixed=True, cap="",
+                se=[{"f": f, "at": a, "gain": -4} for a, f in se], bgm=bgm or {"file": M.PURPLE, "gain": -4})

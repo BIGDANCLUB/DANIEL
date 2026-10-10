@@ -23,7 +23,6 @@ YELLOW, RED, NAVY, BLACK, WHITE = S.YELLOW, S.RED, S.NAVY, S.BLACK, S.WHITE
 SW = S.SW
 ptext = Q.ptext
 OUT = os.path.join(HERE, "out", "short_meme_phrases.mp4")
-S.SHORT_MAX = 58.5   # この回だけ 58.4秒でOK（ユーザー判断 10/8）
 
 
 def card(no, origin, phrase, lines, col=RED):
@@ -47,10 +46,15 @@ def react(b, a, cap, **kw):
     return dict(kind="scene", bg=Q.bg(b), cats=[Q.cat(a, "ネットの声", 960, NET, h=860)], cap=cap, **kw)
 
 
-def cuts():
-    return [
-        Q.one("bg06_spotlight", "surprise_big_pupils_cat", "ニュース猫", NEWS, "ニュースから生まれた\nネットの名フレーズ\n6連発！", cap_col=YELLOW,
-              dur=2.8, fx=["lines", "shake"], se=["jan", "doon_heavy"], bgm={"file": PURPLE, "gain": -6}),
+def cuts(hook=True):
+    """hook=True で、最初の5秒を A＋D のつかみ（短い時間でフレーズ連打→猫ミーム乱入→「6連発!!」）にする。"""
+    if hook:
+        import short_hooks as H   # short_hooks がこのファイルを読むので、ここで読む
+        first = [H.hook_cut_AD(H.PHRASES, bgm={"file": PURPLE, "gain": -4})]
+    else:
+        first = [Q.one("bg06_spotlight", "surprise_big_pupils_cat", "ニュース猫", NEWS, "ニュースから生まれた\nネットの名フレーズ\n6連発！",
+                       cap_col=YELLOW, dur=2.8, fx=["lines", "shake"], se=["jan", "doon_heavy"], bgm={"file": PURPLE, "gain": -6})]
+    return first + [
         # ① 553＞1107
         Q.panel(card(1, "東大の総長選（2026年）", "553＞1107", ["553票の2位が　総長に選ばれた", "算数ではありえない“不等式”に"]),
                 "票が少ないほうが\n勝った！？", dur=4.4, se="card_flip"),
@@ -75,8 +79,6 @@ def cuts():
         Q.panel(card(6, "GoToトラベル（2020年）", "GoTo\nトラブル", ["前倒し→東京は対象外→地域ごとに停止", "→全国で一時停止…と変更が続いた"]),
                 "1文字ちがい", dur=4.6, se="card_flip"),
         react("bg20_counter", "weird_meowing_cat", "トラベルじゃなくて\nトラブル！", dur=2.4, se="pikon"),
-        Q.two("bg02_room", "sleepy_sleepy_cat", "eat_pop_cat", "笑いのなかに\nモヤモヤが入ってるのが\n名フレーズの条件だな", who="R", dur=3.4,
-              se="tv_professional_poon"),
         Q.one("bg03_blackboard", "wave_waving_cat", "ニュース猫", NEWS, "どれが好き？\nほかに知ってたら\nコメントで！", cap_col=YELLOW, h=760,
               dur=3.2, se="chirin", bgm={"file": MIRAI, "gain": -8, "fade": 0.8}),
     ]

@@ -102,9 +102,9 @@ def role_label(name):
 
 def moving_bg(bg, T):
     """背景をゆっくり動かす：ふわっと寄ったり引いたりしながら、左右・上下に少しずつ流れる（カットをまたいでつながる）。"""
-    z = 1.10 + 0.05 * np.sin(T * 0.45)
-    dx = 45 * np.sin(T * 0.31)
-    dy = 30 * np.cos(T * 0.27)
+    z = 1.10 + 0.05 * np.sin(T * 0.9)
+    dx = 55 * np.sin(T * 0.7)
+    dy = 35 * np.cos(T * 0.6)
     M_ = np.float32([[z, 0, (1 - z) * SW / 2 + dx], [0, z, (1 - z) * SH / 2 + dy]])
     return cv2.warpAffine(bg, M_, (SW, SH), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
 

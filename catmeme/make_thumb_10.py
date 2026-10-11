@@ -20,5 +20,14 @@ THUMB = dict(
               ("※ハッカーの主張", 640, 630, 36, NAVY, YELLOW, 2)),
     words=())
 
+# ユーザー指定の文言（10/11）：「IDCF、7時間ハッキングに気づいていないことをハッカーにばらされるｗｗｗ」
+THUMB_C = dict(THUMB, top="IDCF、7時間ハッキングに気づいていないことを", big="ハッカーにばらされる", sub="ｗｗｗ",
+               stickers=(("YOUR CLOUD IS OURS.", 640, 520, 44, (90, 255, 120), (12, 14, 16), -2),
+                         ("※「7時間気づいていない」はハッカーの主張", 690, 605, 32, NAVY, YELLOW, 2)))
+# 同じ文言から「ｗｗｗ」だけ外した案（被害を受けた会社を笑う形にしない）
+THUMB_D = dict(THUMB_C, sub="", big="ハッカーにばらされる")
+
 if __name__ == "__main__":
     make(os.path.join(HERE, "thumbs", "10_idcf.png"), **THUMB)
+    make(os.path.join(HERE, "thumbs", "10_idcf_c.png"), **THUMB_C)
+    make(os.path.join(HERE, "thumbs", "10_idcf_d.png"), **THUMB_D)

@@ -114,6 +114,8 @@ def make_draw(c, title):
     bg = vbg(c["bg"])
     cap = outline_text(parse(c["say"], c.get("col", WHITE)), c.get("size", 100))
     lab = role_label(c["label"]) if c.get("label") else None
+    extra = [(role_label(t_), x_) for t_, x_ in c.get("labels", [])]   # 2つ目以降の役名
+    tags = {k["tag"]: role_label(k["tag"]) for k in c["cats"] if k.get("tag")}
 
     def draw(t):
         out = moving_bg(bg, c.get("t0", 0.0) + t)
@@ -123,9 +125,18 @@ def make_draw(c, title):
             if k.get("from"):
                 u = R.ease_out(min(1.0, t / 0.25))
                 x, h = k["from"][0] + (x - k["from"][0]) * u, k["from"][1] + (h - k["from"][1]) * u
-            H.cat(out, k["a"], t + k.get("ss", 0.0), x, SH + k.get("drop", 60), h, s, flip=k.get("flip", False))
+            bottom = SH + k.get("drop", 60)
+            if k.get("move"):   # 横に走り抜ける（競馬など）。bob で上下にはねる
+                x0, x1 = k["move"]
+                x = x0 + (x1 - x0) * min(1.0, t / max(0.1, R.cut_dur(c)))
+                bottom -= abs(np.sin(t * 9 + k.get("phase", 0.0))) * k.get("bob", 0)
+            H.cat(out, k["a"], t + k.get("ss", 0.0), x, bottom, h, s, flip=k.get("flip", False))
+            if k.get("tag"):   # その猫の足元に役名（猫といっしょに動く）
+                H.put(out, tags[k["tag"]], x, bottom - k.get("tag_up", 300))
         if lab is not None:
             H.put(out, lab, c.get("label_x", 760), SH - 330)
+        for im, lx in extra:
+            H.put(out, im, lx, SH - 330)
         H.put(out, title, SW / 2, (BAND[0] + BAND[1]) / 2)
         H.put(out, cap, SW / 2, TEXT_Y + cap.height / 2 - 60, H.pop(t, 0.0, 0.14))
         if c.get("shake"):

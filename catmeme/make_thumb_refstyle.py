@@ -44,9 +44,9 @@ def phrases():
 
 def dame_rent():
     """ダメ人間 #1（家賃で馬券）。"""
-    title = M.title_band("ダメ人間", "家賃で馬券買っちゃった")
+    title = M.title_band("とあるダメ人間の", "家賃で馬券買っちゃった")
     c = M.cut("bg06_spotlight", "家賃払うために\n*家賃で馬券*\n買っちゃった。",
-              [("sad_banana_cat_cry", M.L, 1000, False), ("cocky_dj_cat", M.Rr, 950, True)], size=130, label="ダメ人間", label_x=280)
+              [("sad_banana_cat_cry", M.L, 1000, False), ("rizz_cat_rizz", M.Rr, 1000, True)], size=130, label="競馬", label_x=800)
     for k in c["cats"]:
         k["pop"] = False
     f = M.make_draw(c, title)(1.0)

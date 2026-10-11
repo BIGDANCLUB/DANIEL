@@ -11,8 +11,8 @@ import short_refstyle as M
 
 HERE = M.HERE
 NAME = "short_dame_rent"
-TITLE = ("ダメ人間", "家賃で馬券買っちゃった")
-C = M.C
+TITLE = ("とあるダメ人間の", "家賃で馬券買っちゃった")
+C, L, Rr = M.C, M.L, M.Rr
 RED = M.RED
 NORA = os.path.join(S.BGM, "野良猫は宇宙を目指した.mp3")
 VADER = os.path.join(S.BGM, "～やる気のないダースベイダーのテーマ～ (320  kbps).mp3")
@@ -25,40 +25,66 @@ def one(bg, say, a, dur, h=1100, **kw):
     return M.cut(bg, say, [(a, C, h, kw.pop("flip", False))], dur, **kw)
 
 
+def two(bg, say, me, other, dur, label, speaker=0, **kw):
+    """主人公（左）と相手役（右・足元に役名）の掛け合い。me / other = (素材, 高さ)。"""
+    return M.cut(bg, say, [(me[0], L, me[1], False), (other[0], Rr, other[1], True)], dur, label=label, speaker=speaker, **kw)
+
+
+def race(say, runners, dur, **kw):
+    """競馬：馬役の猫ミームが右から左へ走り抜ける。runners=[(素材, 高さ, 速さ, 下からの位置, 役名)]。"""
+    c = M.cut(PHONE if kw.pop("phone", False) else SPOT, say, [(a, 540, h, False) for a, h, _, _, _ in runners], dur, **kw)
+    for k, (a, h, speed, lift, tag) in zip(c["cats"], runners):
+        k.update(move=(1500, 1500 - 2200 * speed), bob=40, phase=lift / 100, drop=-lift, pop=False, mute=True)
+        if tag:
+            k.update(tag=tag, tag_up=h * 0.15)
+    return c
+
+
+# 登場人物（主人公以外）
+KEIBA = ("rizz_cat_rizz", 1100)              # 競馬（ささやいてくる誘惑）
+ZANDAKA = ("stand_real_sheep", 650)          # 残高4千円（ぽつんと立つ）
+OYA = ("sleepy_old_memories_cat", 1000)      # 大家さん（ずっと待ってくれている）
+RUN1 = [("ride_kitten_bike", 520, 1.05, 0, "あの馬"), ("drive_monkey_golf_cart", 560, 1.25, 260, None),
+        ("dance_cute_dog", 600, 1.4, 520, None)]
+RUN2 = [("dance_white_dog", 560, 1.35, 0, None), ("drive_monkey_golf_cart", 560, 1.2, 280, None),
+        ("stand_real_sheep", 520, 0.55, 540, "あの馬")]
+
+
 def cuts():
     return [
         # 冒頭：まとめで目を引く
-        one(SPOT, "家賃払うために\n*家賃で馬券*\n買っちゃった。", "sad_banana_cat_cry", 3.2, size=120, shake=True, label="ダメ人間", label_x=540,
+        one(SPOT, "家賃払うために\n*家賃で馬券*\n買っちゃった。", "sad_banana_cat_cry", 3.2, size=120, shake=True,
             se=["jan", "explosion_chudoon"], bgm={"file": NORA, "gain": -6}),
         one(HOME, "……いや、最初から\nそのつもりじゃ\nなかったんだけど。", "sad_black_dog", 2.8, se="whoosh_shu"),
-        one(HOME, "家賃 *7万2千円*", "think_bike_front_seat_cat", 2.0, size=130, se="page_turn_01"),
-        one(HOME, "口座に *7万6千円*", "think_bike_front_seat_cat", 2.0, size=130, se="pi"),
+        two(HOME, "家賃 *7万2千円*", ("think_bike_front_seat_cat", 1000), OYA, 2.0, "大家さん", size=130, se="page_turn_01"),
+        two(HOME, "口座に *7万6千円*", ("think_bike_front_seat_cat", 1000), ("calm_black_face_sheep", 900), 2.0, "口座", size=130, se="pi"),
         one(HOME, "今月こそ\n払わんとな。", "think_bike_front_seat_cat", 2.0, se="kon"),
-        one(HOME, "……でも4千円で\n給料日まで2週間か。", "sulk_hungry_cat", 2.6, se="tear_drop"),
-        one(HOME, "あー、きっつ。", "sulk_hungry_cat", 1.8, size=140),
-        one(PHONE, "……あ、今日\n*競馬*あるじゃん。", "realize_wet_cat_stare", 2.2, se="pikon"),
-        one(PHONE, "いやいや、\n*千円だけ*。", "happy_girlfriend_dance_cat", 2.0, se="shine_kira_01"),
-        one(PHONE, "生活費の方からだし。", "happy_girlfriend_dance_cat", 2.0),
-        one(PHONE, "……。", "stare_standing_marmot", 1.8, size=200, se="drumroll"),
-        one(PHONE, "は？外れた。", "huh_huh_cat", 1.8, size=150, se="buzzer_wrong"),
-        one(HOME, "クッソ、あの馬\nなんで来ねえんだよ。", "angry_cat_hits_cat", 2.4, shake=True, se="tsukkomi_bishi"),
-        one(PHONE, "……次のレース\n*3倍*か。", "work_dog_staring_computer", 2.2, se="cursor_move_01"),
-        one(PHONE, "5千円入れたら\n*1万5千円*……。", "work_dog_staring_computer", 2.2, se="price_display"),
-        one(HOME, "家賃払っても\n飯食えるな。", "eat_crunchy_cat_luna", 2.2, se="eat_paku"),
+        two(HOME, "……でも4千円で\n給料日まで2週間か。", ("sulk_hungry_cat", 1000), ZANDAKA, 2.6, "残り4千円", se="tear_drop"),
+        two(HOME, "あー、きっつ。", ("sulk_hungry_cat", 1000), ZANDAKA, 1.8, "残り4千円", size=140),
+        two(PHONE, "……あ、今日\n*競馬*あるじゃん。", ("realize_wet_cat_stare", 1000), KEIBA, 2.2, "競馬", se="pikon"),
+        two(PHONE, "いやいや、\n*千円だけ*。", ("happy_girlfriend_dance_cat", 1000), KEIBA, 2.0, "競馬", se="shine_kira_01"),
+        two(PHONE, "生活費の方からだし。", ("happy_girlfriend_dance_cat", 1000), KEIBA, 2.0, "競馬"),
+        race("……。", RUN1, 2.3, se=["drumroll", "dash_super_fast"]),
+        two(PHONE, "は？外れた。", ("huh_huh_cat", 1050), ("snore_snoring_dog", 900), 1.8, "あの馬", size=150, se="buzzer_wrong"),
+        two(HOME, "クッソ、あの馬\nなんで来ねえんだよ。", ("angry_cat_hits_cat", 1050), ("snore_snoring_dog", 900), 2.4, "あの馬",
+            shake=True, se="tsukkomi_bishi"),
+        two(PHONE, "……次のレース\n*3倍*か。", ("work_dog_staring_computer", 1000), KEIBA, 2.2, "競馬", se="cursor_move_01"),
+        two(PHONE, "5千円入れたら\n*1万5千円*……。", ("work_dog_staring_computer", 1000), KEIBA, 2.2, "競馬", se="price_display"),
+        two(HOME, "家賃払っても\n飯食えるな。", ("eat_crunchy_cat_luna", 1000), KEIBA, 2.2, "競馬", se="eat_paku"),
         one(HOME, "……よし。", "flip_emo_cat_hair", 1.6, size=200, se="sword_shakiin"),
-        one(PHONE, "……。", "blank_black_cat_zoning_out", 1.8, size=200, se="drumroll"),
-        one(SPOT, "はあ！？\n*最下位*！？", "surprise_big_pupils_cat", 1.9, size=160, shake=True, se=["explosion_dokaan"],
-            bgm={"file": VADER, "gain": -6, "fade": 0.3}),
+        race("……。", RUN2, 2.4, se=["drumroll", "dash_super_fast"]),
+        two(SPOT, "はあ！？\n*最下位*！？", ("surprise_big_pupils_cat", 1100), ("stand_real_sheep", 600), 1.9, "あの馬", size=160, shake=True,
+            se=["explosion_dokaan"], bgm={"file": VADER, "gain": -6, "fade": 0.3}),
         one(SPOT, "ふざけんなよ！！", "rage_talking_cat", 1.9, size=150, shake=True, se="game_aceattorney_desk_slam"),
-        one(HOME, "……。", "stand_real_sheep", 1.4, size=200),
+        one(HOME, "……。", "blank_black_cat_zoning_out", 1.2, size=200),
         one(HOME, "あ、*家賃まで*\n使っちゃった。", "realize_wet_cat_stare", 2.2, se="shock_piano"),
         one(HOME, "……やべえ。", "despair_dramatic_kitten", 1.8, size=170, se="deflate_hyororo"),
-        one(HOME, "大家さん、ずっと\n待ってくれてんのに。", "sad_black_dog", 2.4, se="tear_drop",
+        two(HOME, "大家さん、ずっと\n待ってくれてんのに。", ("sad_black_dog", 950), OYA, 2.4, "大家さん", se="tear_drop",
             bgm={"file": LETTER, "gain": -6, "fade": 0.6}),
-        one(HOME, "……。", "sleepy_old_memories_cat", 1.4, size=200),
+        two(HOME, "……。", ("sad_black_dog", 950), OYA, 1.2, "大家さん", size=200),
         one(HOME, "いや、だからこそ\n半端な金額じゃ\n*失礼*だよな。", "showoff_gojo_cosplay_cat", 2.6, se="idea_newtype_01",
             bgm={"file": NORA, "gain": -6, "fade": 0.3}),
-        one(HOME, "……明日もう一回増やして\n*ちゃんと払お*。", "cocky_dj_cat", 3.0, label="ダメ人間", label_x=540, se="tv_dokkiri_tettere"),
+        two(HOME, "……明日もう一回増やして\n*ちゃんと払お*。", ("cocky_dj_cat", 1000), KEIBA, 2.8, "競馬", se="tv_dokkiri_tettere"),
     ]
 
 

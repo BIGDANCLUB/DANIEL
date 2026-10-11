@@ -31,7 +31,7 @@ THUMB_E = dict(THUMB, top="", big="", sub="",
                cat_h=380,   # 猫の顔に文字が被らないよう、猫を小さめにして文字を上に寄せる（10/11）
                lines=(("IDCF、7時間ハッキングに", 66, 92, YELLOW, BLACK, WHITE),
                       ("気づいていないことを", 170, 92, YELLOW, BLACK, WHITE),
-                      ([("ハッカーにばらされる", YELLOW, BLACK, WHITE), ("www", RED, WHITE, BLACK)], 274, 92, None, None, None)))
+                      ("ハッカーにばらされるwww", 274, 92, YELLOW, BLACK, WHITE)))
 # 同じ文言から「ｗｗｗ」だけ外した案（被害を受けた会社を笑う形にしない）
 THUMB_D = dict(THUMB_C, sub="", big="ハッカーにばらされる")
 

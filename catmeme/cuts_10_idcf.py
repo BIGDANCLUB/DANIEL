@@ -100,8 +100,7 @@ def cuts_all():
         # ---- 2. そもそも「IDCFクラウド」って？ ----
         chap("そもそも何が止まったのか", se="doon_heavy"),
         two("bg25_office_desk", "IDCFクラウド\n＝ソフトバンクの子会社\n「IDCフロンティア」のクラウド", se="page_turn_01"),
-        nn("クラウドって\nあのフワフワした\nやつでしょ", "bg25_office_desk", se="boing_02"),
-        ss("フワフワしてない\n中身はデータセンターにある\n本物のサーバーだ", SERVER, se="tsukkomi_bishi"),
+        ss("クラウドの中身は\nデータセンターにある\n本物のサーバー", SERVER, se="pikon"),
         dia("e02_mansion", "クラウド＝大きなマンション　企業や自治体＝部屋を借りている住人", right=S, se="card_flip"),
         ss("自分でサーバーを買うかわりに\n部屋を借りて\nホームページやシステムを置いてる", se="pikon"),
         nn("で、今回は？", se="question_mark_pop_confused_huh"),
@@ -140,7 +139,7 @@ def cuts_all():
         hk("YOUR CLOUD\nIS OURS.", se="anime_yugioh_summon_powerful_appearance"),
         hk("東日本リージョン1を\n暗号化した\nかかった時間は\nたった7分", se="shine_kiraan_maou"),
         re(dia("e04_claims", "ハッカーが主張する被害（確認されていない）", HACKER, right=HK, dur=5.0, se="card_flip")),
-        re(nn("ペタってなに？\nギガの上の上の……？", HACKER, se="question_hatena_maou")),
+        re(nn("3.6ペタバイトって\nどれくらい？", HACKER, se="question_hatena_maou")),
         re(ss("128ギガのスマホでいうと\nだいたい数万台分", HACKER, se="pikon")),
         re(close(HACKER, "@react", "ニュース猫", "スケールが\nでかすぎる", se=["explosion_dokaan"])),
         ex(HACKER, "数字はすべて　ハッカーの主張\nIDCFは「調査中」としている", se="pinpon_notice"),

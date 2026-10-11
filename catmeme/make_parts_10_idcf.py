@@ -41,6 +41,29 @@ def screen(lines, tag="ハッカーの主張（要旨を再現）", big=0):
     return img
 
 
+SHOT = os.path.join(OUT, "src", "hacker_message.png")
+
+
+def shot(box, mark=None):
+    """実際のメッセージ画像（SNSで広まったもの）の一部を切り出す。
+    侵入の手順にあたる下の部分（コマンド・ファイルの場所）は使わない（y=875 より下は切る）。mark=(x0,y0,x1,y1) は赤い枠で囲む所。"""
+    im = Image.open(SHOT).convert("RGBA")
+    x0, y0, x1, y1 = box
+    im = im.crop((x0, y0, x1, min(y1, 875)))
+    d = ImageDraw.Draw(im)
+    if mark:
+        m = (mark[0] - x0, mark[1] - y0, mark[2] - x0, mark[3] - y0)
+        d.rounded_rectangle(m, 12, outline=(255, 220, 0), width=6)
+    k = 1600 / im.width
+    im = im.resize((1600, int(im.height * k)), Image.LANCZOS)
+    out = Image.new("RGBA", (im.width + 16, im.height + 76), (60, 60, 60, 255))
+    out.paste(im, (8, 68))
+    d = ImageDraw.Draw(out)
+    d.text((24, 34), "実際に表示されたメッセージ（SNSで拡散・IDCFも同様の画像を確認）　※侵入の手順にあたる部分は隠しています",
+           font=P.font("round_b", 30), fill=(255, 220, 0), anchor="lm")
+    return out
+
+
 def badge(text="※ハッカーの主張・言われていることをもとにした再現"):
     """再現パートの間ずっと出す、画面左上の札。"""
     img = P.canvas()
@@ -136,6 +159,10 @@ ITEMS = {
     ], size=64),
     "e10_ending": P.message(["あなたの会社は　大丈夫？", "コメントで教えて！"], size=96),
     "badge": badge(),
+    "r0_full": shot((0, 0, 1330, 875)),
+    "r1_top": shot((0, 30, 1330, 445), mark=(20, 235, 520, 280)),
+    "r2_stats": shot((0, 280, 1330, 710), mark=(20, 465, 1245, 705)),
+    "r3_noc": shot((0, 560, 1330, 875), mark=(20, 730, 1245, 870)),
 }
 
 

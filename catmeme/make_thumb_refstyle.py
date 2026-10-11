@@ -40,3 +40,16 @@ def phrases():
     out = os.path.join(HERE, "thumbs", "short_meme_phrases_refstyle.png")
     cv2.imwrite(out, (np.clip(f, 0, 1) * 255).astype(np.uint8))
     print("->", out)
+
+
+def dame_rent():
+    """ダメ人間 #1（家賃で馬券）。"""
+    title = M.title_band("ダメ人間", "家賃で馬券買っちゃった")
+    c = M.cut("bg06_spotlight", "家賃払うために\n*家賃で馬券*\n買っちゃった。",
+              [("sad_banana_cat_cry", M.L, 1000, False), ("cocky_dj_cat", M.Rr, 950, True)], size=130, label="ダメ人間", label_x=280)
+    for k in c["cats"]:
+        k["pop"] = False
+    f = M.make_draw(c, title)(1.0)
+    out = os.path.join(HERE, "thumbs", "short_dame_rent.png")
+    cv2.imwrite(out, (np.clip(f, 0, 1) * 255).astype(np.uint8))
+    print("->", out)

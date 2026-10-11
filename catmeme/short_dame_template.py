@@ -19,7 +19,7 @@ import short_refstyle as M
 
 HERE = M.HERE
 NAME = "short_dame_template"
-TITLE = ("とあるダメ人間の", "給料日3日後の財布がヤバすぎる")   # 上の黒い帯（1行目は赤い大きな文字、2行目は黄色）
+TITLE = ("とあるダメ人間", "給料日3日後の財布がヤバすぎる")   # 上の黒い帯（1行目は赤い大きな文字、2行目は黄色）
 L, Rr, C = M.L, M.Rr, M.C
 LIME, WHITE = M.LIME, M.WHITE
 NORA = os.path.join(S.BGM, "野良猫は宇宙を目指した.mp3")

@@ -15,6 +15,7 @@ FONTS = {
     "round": ("MPLUSRounded1c-ExtraBold.ttf", "ofl/mplusrounded1c/MPLUSRounded1c-ExtraBold.ttf"),
     "round_b": ("MPLUSRounded1c-Bold.ttf", "ofl/mplusrounded1c/MPLUSRounded1c-Bold.ttf"),
     "black": ("NotoSansJP[wght].ttf", "ofl/notosansjp/NotoSansJP%5Bwght%5D.ttf"),
+    "dela": ("DelaGothicOne-Regular.ttf", "ofl/delagothicone/DelaGothicOne-Regular.ttf"),   # サムネ用の極太
 }
 _FONT_CACHE = {}
 

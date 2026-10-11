@@ -42,17 +42,6 @@ def phrases():
     print("->", out)
 
 
-def dame_rent():
-    """ダメ人間 #1（家賃で馬券）。"""
-    title = M.title_band("とあるダメ人間の", "家賃で馬券買っちゃった")
-    c = M.cut("bg06_spotlight", "家賃払うために\n*家賃で馬券*\n買っちゃった。",
-              [("sad_banana_cat_cry", M.L, 1000, False), ("rizz_cat_rizz", M.Rr, 1000, True)], size=130, label="競馬", label_x=800)
-    for k in c["cats"]:
-        k["pop"] = False
-    f = M.make_draw(c, title)(1.0)
-    out = os.path.join(HERE, "thumbs", "short_dame_rent.png")
-    cv2.imwrite(out, (np.clip(f, 0, 1) * 255).astype(np.uint8))
-    print("->", out)
 
 
 def idcf():

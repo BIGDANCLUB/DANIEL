@@ -53,3 +53,19 @@ def dame_rent():
     out = os.path.join(HERE, "thumbs", "short_dame_rent.png")
     cv2.imwrite(out, (np.clip(f, 0, 1) * 255).astype(np.uint8))
     print("->", out)
+
+
+def idcf():
+    """10本目のショート（IDCF、7時間気づかずハッカーに報告されるwww）。"""
+    import short_10_idcf as D
+    title = M.title_band(*D.TITLE)
+    c = M.cut("bg24_server_room", "*7時間*たっても\nまだ気づいてない\nとかwww",
+              [("work_typing_cat", M.L, 950, False), ("laugh_laughing_dog", M.Rr, 1050, True)], label="ハッカー", label_x=830,
+              col=M.LIME, size=120)
+    c["labels"] = [("運用の人", 250)]
+    for k in c["cats"]:
+        k["pop"] = False
+    f = M.make_draw(c, title)(1.0)
+    out = os.path.join(HERE, "thumbs", "short_10_idcf.png")
+    cv2.imwrite(out, (np.clip(f, 0, 1) * 255).astype(np.uint8))
+    print("->", out)

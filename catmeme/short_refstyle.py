@@ -119,6 +119,8 @@ def make_draw(c, title):
 
     def draw(t):
         out = moving_bg(bg, c.get("t0", 0.0) + t)
+        if c.get("img") is not None:   # 実際の画像（ニュースの画像など）をセリフの下に差し込む。猫はその手前
+            H.put(out, c["img"], SW / 2, c.get("img_y", 1060), H.pop(t, 0.05, 0.16))
         for k in c["cats"]:
             s = H.pop(t, k.get("delay", 0.0), 0.16) if k.get("pop", True) else 1.0
             x, h = k["x"], k["h"]

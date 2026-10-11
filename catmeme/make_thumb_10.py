@@ -27,11 +27,12 @@ THUMB_C = dict(THUMB, top="IDCF、7時間ハッキングに気づいていない
 # 10/11 ユーザー指定：赤帯なし・文言を全部入れる（少し小さくてよい）・ｗｗｗあり・「ハッカーの主張」の札はなし（概要欄でカバー）
 BLACK = (0, 0, 0)
 THUMB_E = dict(THUMB, top="", big="", sub="",
-               stickers=(("YOUR CLOUD IS OURS.", 640, 610, 40, (90, 255, 120), (12, 14, 16), -2),),
-               lines=(("IDCF、7時間ハッキングに", 88, 118, YELLOW, BLACK, WHITE),
-                      ("気づいていないことを", 222, 118, YELLOW, BLACK, WHITE),
-                      ("ハッカーにばらされる", 356, 118, YELLOW, BLACK, WHITE),
-                      ("ｗｗｗ", 485, 120, RED, WHITE, BLACK)))
+               stickers=(("YOUR CLOUD IS OURS.", 640, 560, 40, (90, 255, 120), (12, 14, 16), -2),),
+               cat_h=380,   # 猫の顔に文字が被らないよう、猫を小さめにして文字を上に寄せる（10/11）
+               lines=(("IDCF、7時間ハッキングに", 66, 92, YELLOW, BLACK, WHITE),
+                      ("気づいていないことを", 170, 92, YELLOW, BLACK, WHITE),
+                      ("ハッカーにばらされる", 274, 92, YELLOW, BLACK, WHITE),
+                      ("ｗｗｗ", 420, 110, RED, WHITE, BLACK)))
 # 同じ文言から「ｗｗｗ」だけ外した案（被害を受けた会社を笑う形にしない）
 THUMB_D = dict(THUMB_C, sub="", big="ハッカーにばらされる")
 

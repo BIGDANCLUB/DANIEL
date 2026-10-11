@@ -68,7 +68,18 @@ def make(out, left, right, top, big, sub, badge="年60万円・最大600万円",
         fit_text(d, (640, 400), sub, 760, 120, RED, WHITE, double=BLACK)
     # 長い文言を何行かに分けて大きく（text, y, 文字の大きさ, 色, 縁の色, 外側の縁の色）
     for text, y, size, fill, stroke, double in lines:
-        fit_text(d, (640, y), text, 1230, size, fill, stroke, double=double)
+        if isinstance(text, str):
+            fit_text(d, (640, y), text, 1230, size, fill, stroke, double=double)
+            continue
+        # 色ちがいの文字を1行に並べる：text = [(文字, 色, 縁の色, 外側の縁の色), ...]
+        f = P.font("black", size)
+        while sum(d.textlength(t[0], font=f) for t in text) > 1230 and size > 30:
+            size -= 4
+            f = P.font("black", size)
+        x = 640 - sum(d.textlength(t[0], font=f) for t in text) / 2
+        for t, fl, st, db in text:
+            fit_text(d, (x, y), t, 9999, size, fl, st, double=db, anchor="lm")
+            x += d.textlength(t, font=f)
     # 下の真ん中の札（数字）
     if not badge:
         badge = None

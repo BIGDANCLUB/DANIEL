@@ -69,6 +69,22 @@ def burst(text, r=235, n=16, fill=RED, col=YELLOW, size=62):
     return im
 
 
+def envelope(top, money, w=390, h=275):
+    """飛んでいく茶封筒（家賃袋など）。左に流れる線つき。"""
+    m = 90    # 流れる線の分
+    im = Image.new("RGBA", (w + m + 30, h + 30), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    for i, y in enumerate((0.25, 0.5, 0.75)):
+        d.line([(10 + 25 * (i % 2), h * y), (m - 10, h * y)], fill=WHITE + (230,), width=12)
+    x0 = m
+    d.rounded_rectangle((x0 + 14, 16, x0 + w + 14, h + 16), 14, fill=(0, 0, 0, 150))
+    d.rounded_rectangle((x0, 0, x0 + w, h), 14, fill=(214, 168, 104, 255), outline=BLACK, width=8)
+    d.polygon([(x0 + 6, 6), (x0 + w - 6, 6), (x0 + w / 2, h * 0.38)], fill=(190, 142, 80, 255), outline=BLACK, width=6)
+    d.text((x0 + w / 2, h * 0.52), top, font=P.font("dela", 76), fill=BLACK, anchor="mm")
+    d.text((x0 + w / 2, h * 0.80), money, font=P.font("dela", 66), fill=RED, anchor="mm", stroke_width=6, stroke_fill=WHITE)
+    return im
+
+
 def rays(out, cy, cols=((255, 40, 40), (255, 200, 0)), alpha=0.55, n=48):
     """止まった集中線（放射状）。"""
     im = Image.new("RGBA", (SW, SH), (0, 0, 0, 0))
@@ -87,8 +103,9 @@ def vignette(out, k=0.75):
     out *= (1 - k * np.clip(r - 0.55, 0, 1))[..., None]
 
 
-def make(out_path, top, lines, cats, badge=None, bg="bg06_spotlight"):
-    """lines=[(文字, 大きさ, 中心y, 角度, 上の色, 下の色)]、cats=[(素材, x, 高さ, 反転, 役名)]。"""
+def make(out_path, top, lines, cats, items=(), bg="bg06_spotlight"):
+    """lines=[(文字, 大きさ, 中心y, 角度, 上の色, 下の色)]、cats=[(素材, x, 高さ, 反転, 役名)]、
+    items=[(画像, 中心x, 中心y, 角度)]（爆発バッジ・封筒など。猫ミームに重ならない所に置く）。"""
     out = M.vbg(bg).copy() * 0.55
     rays(out, SH * 0.42)
     vignette(out)
@@ -98,8 +115,8 @@ def make(out_path, top, lines, cats, badge=None, bg="bg06_spotlight"):
             H.put(out, fancy(tag, 120, top=(200, 255, 120), bottom=(90, 210, 20), rims=((0, 0, 0, 22),), shadow=10), x, SH - 200)
     for s, size, y, ang, c1, c2 in lines:
         H.put(out, fancy(s, size, top=c1, bottom=c2, max_w=SW + 40), SW / 2, y, angle=ang)
-    if badge:
-        H.put(out, burst(badge), 235, SH - 330, angle=-10)
+    for im, x, y, ang in items:
+        H.put(out, im, x, y, angle=ang)
     band = Image.new("RGBA", (SW, 300), (0, 0, 0, 235))
     H.put(out, band, SW / 2, 170)
     H.put(out, fancy(top, 170, top=(255, 90, 90), bottom=(200, 0, 0), rims=((255, 255, 255, 9), (0, 0, 0, 22)), shadow=10,
@@ -112,11 +129,11 @@ def make(out_path, top, lines, cats, badge=None, bg="bg06_spotlight"):
 def dame_rent():
     """#1 家賃で馬券買っちゃった。"""
     make(os.path.join(HERE, "thumbs", "short_dame_rent.png"), "とあるダメ人間",
-         [("家賃で", 210, 560, -5, (255, 255, 255), (220, 220, 220)),
-          ("馬券", 360, 850, -5, (255, 250, 140), (255, 120, 0)),
-          ("買っちゃった", 150, 1110, -5, (255, 255, 255), (220, 220, 220))],
-         [("sad_banana_cat_cry", 300, 1050, False, None), ("stand_real_sheep", 800, 880, True, "あの馬")],
-         badge="家賃\n7万2千円")
+         [("家賃で", 200, 520, -5, (255, 255, 255), (220, 220, 220)),
+          ("馬券", 340, 790, -5, (255, 250, 140), (255, 120, 0)),
+          ("買っちゃった", 145, 1030, -5, (255, 255, 255), (220, 220, 220))],
+         [("sad_banana_cat_cry", 290, 800, False, None)],
+         items=[(envelope("家賃", "7万2千円"), 840, 1330, 12)])
 
 
 if __name__ == "__main__":

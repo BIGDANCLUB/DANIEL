@@ -211,3 +211,28 @@
 | explosion_chudoon.mp3 | チュドーン（爆発） |  | ﾁｭﾄﾞｰﾝ　爆発1.mp3 |  |
 | explosion_doon.mp3 | ドーン（爆発） |  | ﾄﾞｰﾝ　爆発2.mp3 |  |
 | fanfare_pararappara.mp3 | パラララッパラー |  | ﾊﾟﾗﾗﾗｯﾊﾟﾗｰ.mp3 |  |
+
+## 追加分（2026-10-11・ニコニ・コモンズ）
+英語名は「音の種類＋使う場面・気持ち」。元のファイル名の頭の nc番号は、ニコニ・コモンズの素材番号（クレジット用）。
+
+| ファイル名 | 中身・使う場面 | 注意 | 元のファイル名 | 配布元 |
+|---|---|---|---|---|
+| game_pokemon_super_effective_hit_big_damage.wav | 「こうかはばつぐんだ！」の大ダメージ音。図星を突かれる・言葉が刺さる場面 | ⚠ゲーム | 【ポケモンFRLG】ダメージ音３【こうかはばつぐんだ！】.wav | ニコニ・コモンズ nc114901 |
+| chin_bell_failure_sad_ending.mp3 | チーン（3.5秒の余韻）。失敗・お先真っ暗・オチの「終わった…」 |  | チーン.mp3 | ニコニ・コモンズ nc115456 |
+| scream_woman_shock_horror.mp3 | 女性の悲鳴（だんだん大きく）。ショック・恐怖・とんでもない事実が発覚 |  | 女性の悲鳴.mp3 | ニコニ・コモンズ nc115457 |
+| question_mark_pop_confused_huh.mp3 | はてなマークが浮かぶ音。「え？」「どういうこと？」と首をかしげる場面 |  | はてなマークが頭上に浮かぶ.mp3 | ニコニ・コモンズ nc151327 |
+| anime_conan_hirameki_idea_realize_truth.mp3 | コナンのひらめき（短め1.5秒）。真相に気づく・名案を思いつく | ⚠テレビ・アニメ | 名探偵コナン_ひらめき音.mp3 | ニコニ・コモンズ nc166983 |
+| store_famima_entry_chime_arrive_welcome.mp3 | ファミマの入店音（5.9秒）。コンビニに入る・ついつい寄り道 | ⚠お店の音 | ファミマ入店音.mp3 | ニコニ・コモンズ nc18763 |
+| game_yoshi_detteiu_so_what_bored.mp3 | 「でっていう」。だから何？・しらける・興味なしの返し | ⚠ゲーム | でっていう.mp3 | ニコニ・コモンズ nc191423 |
+| game_coin_get_money_gain_happy.wav | コインを取る音。お金が手に入る・得した・ちょっと嬉しい | ⚠ゲーム | コインを取る音.wav | ニコニ・コモンズ nc23750 |
+| game_rockman_death_tiun_fail_game_over.wav | ロックマンのティウンティウン。やられた・計画失敗・ゲームオーバー（元は .wma を .wav に変換） | ⚠ゲーム | 【ロックマン】ﾃｨｳﾝﾃｨｳﾝﾃｨｳﾝ【効果音】.wma | ニコニ・コモンズ nc24448 |
+| game_touhou_pichuun_miss_defeat.wav | 東方のピチューン（被弾）。うっかりミス・一発アウト | ⚠ゲーム | 【東方】ピチューン効果音_高音質.wav | ニコニ・コモンズ nc245960 |
+| game_persona5_cutin_dramatic_entrance.wav | ペルソナ5のカットイン。キメ顔で登場・ドヤる・大事な一言の前 | ⚠ゲーム | 【ペルソナ5】_カットイン音_高音質.wav | ニコニ・コモンズ nc246091 |
+| game_mario_jump_retro_hop_excited.mp3 | ファミコンのマリオのジャンプ（0.5秒）。ぴょんと跳ねる・浮かれる | ⚠ゲーム | スーパーマリオブラザーズのジャンプ音【ファミコン】.mp3 | ニコニ・コモンズ nc27131 |
+| tv_hissatsu_slash_finishing_blow_kill.wav | 必殺仕事人の斬る音。とどめの一言・バッサリ切り捨てる | ⚠テレビ・アニメ | 必殺仕事人_斬音.wav | ニコニ・コモンズ nc31015 |
+| drink_gulp_gokugoku_thirsty_chug.mp3 | ごくごく飲む（3.5秒）。酒・ジュースを一気飲み・やけ酒 |  | ごくごく飲む.mp3 | ニコニ・コモンズ nc44239 |
+| click_tap_select_button.mp3 | クリック（0.3秒）。ボタンを押す・スマホで購入確定 |  | クリック.mp3 | ニコニ・コモンズ nc44409 |
+| game_zelda_puzzle_solved_mystery_cleared.wav | ゼルダの謎解き音（4.6秒）。謎が解けた・うまくいった・扉が開く | ⚠ゲーム | 謎解き音【ゼルダの伝説】.wav | ニコニ・コモンズ nc62985 |
+| anime_yugioh_summon_powerful_appearance.wav | 遊戯王の召喚音。強キャラ・切り札の登場 | ⚠テレビ・アニメ | 遊戯王_召喚音.wav | ニコニ・コモンズ nc87740 |
+
+すでに同じ音があったので入れなかったもの：スマブラSPズーム撃墜音（= game_smash_finish.wav）、ゴング（= gong_kaan.wav）、拳銃の音（= gunshot_bakyun.mp3）、骨が折れる音（= gugi.wav）

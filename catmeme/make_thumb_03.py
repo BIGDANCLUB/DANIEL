@@ -33,7 +33,7 @@ def tag(img, text, color, cx, y, size=40):
 
 
 def make(out, left, right, top, big, sub, badge="年60万円・最大600万円", ray_cols=((255, 60, 60), (255, 220, 0)), bg="bg19_kids_room",
-         cat_h=470, extras=(), words=(), tags=True, bg_dir="03_kodomo_nisa", stickers=()):
+         cat_h=470, extras=(), words=(), tags=True, bg_dir="03_kodomo_nisa", stickers=(), lines=()):
     path = os.path.join(HERE, "backgrounds", bg_dir, bg + ".png")
     img = Image.open(path).convert("RGB").resize((W, H)).filter(ImageFilter.GaussianBlur(3)).convert("RGBA")
     # 集中線
@@ -57,12 +57,18 @@ def make(out, left, right, top, big, sub, badge="年60万円・最大600万円",
         if tags:
             tag(img, role, color, x, H - 78, size=42)
     d = ImageDraw.Draw(img)
-    # 上の帯
-    d.polygon([(250, 18), (1030, 18), (1010, 98), (270, 98)], fill=RED)
-    fit_text(d, (640, 58), top, 720, 56, WHITE, RED, sw_ratio=0.0)
+    # 上の帯（top が空なら帯なし）
+    if top:
+        d.polygon([(250, 18), (1030, 18), (1010, 98), (270, 98)], fill=RED)
+        fit_text(d, (640, 58), top, 720, 56, WHITE, RED, sw_ratio=0.0)
     # メインの大きな文字
-    fit_text(d, (640, 225), big, 1180, 190, YELLOW, BLACK, double=WHITE)
-    fit_text(d, (640, 400), sub, 760, 120, RED, WHITE, double=BLACK)
+    if big:
+        fit_text(d, (640, 225), big, 1180, 190, YELLOW, BLACK, double=WHITE)
+    if sub:
+        fit_text(d, (640, 400), sub, 760, 120, RED, WHITE, double=BLACK)
+    # 長い文言を何行かに分けて大きく（text, y, 文字の大きさ, 色, 縁の色, 外側の縁の色）
+    for text, y, size, fill, stroke, double in lines:
+        fit_text(d, (640, y), text, 1230, size, fill, stroke, double=double)
     # 下の真ん中の札（数字）
     if not badge:
         badge = None

@@ -198,7 +198,7 @@ def cuts_all():
         nn("どこから\n入られたの？", se="question_mark_pop_confused_huh"),
         ex("bg02_room", "侵入経路：10月11日時点で\nまだ公表されていない", se="pinpon_notice"),
         nn("そこが一番\n知りたいのに", se="deflate_hyororo"),
-        ex("bg02_room", "同じ週に日本で捕まったハッカー集団（9本目）と\n同じ犯人かどうかは\n分かっていない", dur=3.8, se="pinpoon_note"),
+        ex("bg02_room", "同じ週に日本で捕まったハッカー集団「Qilin」と\n同じ犯人かどうかは\n分かっていない", dur=3.8, se="pinpoon_note"),
         # ---- 8. ネットの声 ----
         chap("ネットの声", se="whoosh_shu", dur=1.4),
         net("@react", "“YOUR CLOUD\nIS OURS”\n悔しいけど\nかっこいい", se="kon"),
@@ -223,7 +223,7 @@ def cuts_all():
         nn("続報が出たら\nまたやります", se="pikoon_retro"),
         dict(bg=bg("bg03_blackboard"), card=pt("e10_ending"), dur=3.0, se="chirin",
              cats=[{"a": "wave_waving_cat", "x": 300, "h": 420, "bottom": 1040, "float": True}]),
-        dict(chap("→ 4本目「個人情報、盗まれすぎ問題」\n9本目「ハッカー集団の中心メンバー拘束」もどうぞ", dur=3.0), chapter_size=70),
+        dict(chap("→ 4本目「個人情報、盗まれすぎ問題」もどうぞ", dur=3.0), chapter_size=70),
     ]
 
 

@@ -1,6 +1,6 @@
 # ダメ人間の猫ミーム #3「明日から本気でやせる」
 
-- 台本：案（10/12）。ユーザー確認待ち
+- 台本：10/12 作成・書き出し済み（short_dame_diet.py）
 - 上の帯：赤「とあるダメ人間」／黄「明日から本気でやせる」
 - 登場人物（生き物だけ）：主人公（ダメ人間）・友だち・同僚・ラーメン屋の店主
 - 長さ：約50秒・23カット
@@ -38,7 +38,7 @@
 | 14 | ラーメン屋 | 【相手】いらっしゃい！<br>大盛り*無料*だよ！ | peek_what_happen_cat | 店主：rizz_cat_rizz | 2.4 | anime_shinchan_taraan |
 | 15 | ラーメン屋 | ……*無料*なら<br>食べないと損か。 | realize_wet_cat_stare | 店主：rizz_cat_rizz | 2.4 | idea_newtype_01 |
 | 16 | ラーメン屋 | 【相手】チャーシューも<br>のせとく？ | realize_wet_cat_stare | 店主：rizz_cat_rizz | 2.2 | |
-| 17 | ラーメン屋 | のせて*ください*！！ | happy_chipi_chapa_cat | | 2.0 | jan（揺れ） |
+| 17 | ラーメン屋 | のせて*ください*！！ | excited_hodomoe_city_cat | | 2.0 | jan（揺れ） |
 | 18 | ラーメン屋 | ……。 | eat_crunchy_cat_luna | | 1.6 | eat_paku |
 | 19 | 家 | うますぎた……。 | sleepy_old_memories_cat | | 2.0 | chirin |
 | 20 | 家 | 【相手】お前、*明日から*って<br>言ってなかった？ | sleepy_old_memories_cat | 友だち：lick_talking_goat | 2.6 | |

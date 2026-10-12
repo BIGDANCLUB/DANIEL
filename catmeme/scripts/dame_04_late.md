@@ -1,6 +1,6 @@
 # ダメ人間の猫ミーム #4「遅刻の言い訳が雑すぎる」
 
-- 台本：案（10/12）。ユーザー確認待ち
+- 台本：10/12 作成・書き出し済み（short_dame_late.py）
 - 上の帯：赤「とあるダメ人間」／黄「遅刻の言い訳が雑すぎる」
 - 登場人物（生き物だけ）：主人公（ダメ人間）・上司・同僚
 - 長さ：約48秒・23カット
@@ -26,7 +26,7 @@
 | 2 | 家 | ……ん？ | sleep_sleeping_cat | | 1.6 | cuckoo_pappo |
 | 3 | 家 | *9時始業*……。 | surprise_big_pupils_cat | | 1.8 | |
 | 4 | 家 | あと*10分*！？ | despair_dramatic_kitten | | 2.0 | explosion_dokaan（揺れ） |
-| 5 | 家 | 無理無理無理！ | spin_spinning_cat | | 1.8 | run_away_zazaza_fast |
+| 5 | 家 | 無理無理無理！ | leave_cat_leaves_home | | 1.8 | run_away_zazaza_fast |
 | 6 | 外 | とりあえず出発！ | ride_kitten_bike | | 2.0 | dash_super_fast |
 | 7 | 外 | ……言い訳、<br>考えないと。 | think_bike_front_seat_cat | | 2.2 | thinking_time |
 | 8 | 外 | *電車遅延*でいっか。 | flip_emo_cat_hair | | 2.0 | shine_kira_01 |
@@ -36,8 +36,8 @@
 | 12 | 会社 | ……。 | blank_black_cat_zoning_out | 上司：stare_standing_marmot | 1.4 | |
 | 13 | 会社 | あ、*自転車*が<br>遅れて……。 | confused_i_dont_know_cat | 上司：stare_standing_marmot | 2.4 | boing_fail |
 | 14 | 会社 | 【相手】自転車は<br>遅れない。 | confused_i_dont_know_cat | 上司：stare_standing_marmot | 2.0 | buzzer_wrong |
-| 15 | 会社 | 【相手】ヘルメット、<br>かぶったままだし。 | confused_i_dont_know_cat | 同僚：eat_chips_cat | 2.4 | |
-| 16 | 会社 | 【相手】*寝ぐせ*も<br>ついてるし。 | confused_i_dont_know_cat | 同僚：eat_chips_cat | 2.2 | eat_paku |
+| 15 | 会社 | 【相手】ヘルメット、<br>かぶったままだし。 | confused_i_dont_know_cat | 同僚：laugh_laughing_dog | 2.4 | |
+| 16 | 会社 | 【相手】*寝ぐせ*も<br>ついてるし。 | confused_i_dont_know_cat | 同僚：laugh_laughing_dog | 2.2 | silly |
 | 17 | 会社 | ……すいません、<br>*寝坊*です。 | sad_black_dog | 上司：stare_standing_marmot | 2.4 | tear_drop |
 | 18 | 会社 | 【相手】最初から<br>そう言え。 | sad_black_dog | 上司：stare_standing_marmot | 2.0 | kon |
 | 19 | 会社 | はい……。 | sulk_hungry_cat | | 1.6 | deflate_hyororo |

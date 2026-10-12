@@ -1,6 +1,6 @@
 # ダメ人間の猫ミーム #2「給料日から3日で金がない」
 
-- 台本：案（10/12）。ユーザー確認待ち
+- 台本：10/12 作成・書き出し済み（short_dame_payday.py）
 - 上の帯：赤「とあるダメ人間」／黄「給料日から3日で金がない」
 - 登場人物（生き物だけ）：主人公（ダメ人間）・後輩・店員・母ちゃん
 - 長さ：約50秒・22カット
@@ -31,8 +31,8 @@
 | 7 | 焼肉 | 【相手】お会計<br>*3万8千円*です | showoff_gojo_cosplay_cat | 店員：call_customer_service_cat | 2.4 | price_display |
 | 8 | 焼肉 | ……カードで。 | showoff_gojo_cosplay_cat | 店員：call_customer_service_cat | 1.8 | |
 | 9 | コンビニ | 2日目。<br>ちょっとだけコンビニ。 | happy_girlfriend_dance_cat | | 2.2 | store_famima_entry_chime_arrive_welcome |
-| 10 | コンビニ | 新作スイーツ、新作ポテチ、<br>*新作全部*。 | eat_chips_cat | | 2.4 | eat_paku |
-| 11 | コンビニ | 【相手】お会計<br>*4千2百円*です | eat_chips_cat | 店員：call_customer_service_cat | 2.2 | price_display |
+| 10 | コンビニ | 新作スイーツ、新作ポテチ、<br>*新作全部*。 | eat_pop_cat | | 2.4 | eat_paku |
+| 11 | コンビニ | 【相手】お会計<br>*4千2百円*です | eat_pop_cat | 店員：call_customer_service_cat | 2.2 | price_display |
 | 12 | スマホ | 3日目。<br>……スマホ代の引き落とし。 | peek_what_happen_cat | | 2.4 | pc_warning |
 | 13 | スマホ | 残高 *82円* | surprise_big_pupils_cat | | 2.0 | explosion_dokaan（揺れ） |
 | 14 | 家 | は？ | huh_huh_cat | | 1.6 | question_hatena_maou |

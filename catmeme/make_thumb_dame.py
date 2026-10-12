@@ -85,6 +85,64 @@ def envelope(top, money, w=390, h=275):
     return im
 
 
+def _canvas(w, h):
+    im = Image.new("RGBA", (w + 30, h + 30), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    return im, d
+
+
+def wallet(money, w=400, h=270):
+    """開いた空っぽの財布。"""
+    im, d = _canvas(w, h)
+    d.rounded_rectangle((14, 16, w + 14, h + 16), 30, fill=(0, 0, 0, 150))
+    d.rounded_rectangle((0, 0, w, h), 30, fill=(150, 40, 40, 255), outline=BLACK, width=8)
+    d.rounded_rectangle((26, 26, w - 26, h * 0.42), 16, fill=(60, 15, 15, 255), outline=BLACK, width=6)   # 札入れ（空っぽ）
+    d.text((w / 2, h * 0.24), "スッカラカン", font=P.font("dela", 48), fill=(200, 200, 200), anchor="mm")
+    d.text((w / 2, h * 0.72), money, font=P.font("dela", 96), fill=YELLOW, anchor="mm", stroke_width=8, stroke_fill=BLACK)
+    return im
+
+
+def scale(value, w=380, h=320):
+    """体重計（数字の画面つき）。"""
+    im, d = _canvas(w, h)
+    d.rounded_rectangle((14, 16, w + 14, h + 16), 40, fill=(0, 0, 0, 150))
+    d.rounded_rectangle((0, 0, w, h), 40, fill=(245, 245, 245, 255), outline=BLACK, width=8)
+    d.rounded_rectangle((40, 36, w - 40, h * 0.55), 14, fill=(30, 40, 30, 255), outline=BLACK, width=6)
+    d.text((w / 2, h * 0.32), value, font=P.font("dela", 92), fill=(255, 70, 70), anchor="mm")
+    d.text((w / 2, h * 0.78), "体重計", font=P.font("dela", 56), fill=BLACK, anchor="mm")
+    return im
+
+
+def clock(hhmm, r=180):
+    """目覚まし時計（針と数字）。"""
+    w = h = r * 2 + 40
+    im, d = _canvas(w, h)
+    c = w / 2
+    for sx in (-1, 1):   # ベル
+        d.ellipse((c + sx * r * 0.62 - 55, 0, c + sx * r * 0.62 + 55, 90), fill=(230, 40, 40, 255), outline=BLACK, width=7)
+    d.ellipse((c - r + 14, 40 + 16, c + r + 14, 40 + 2 * r + 16), fill=(0, 0, 0, 150))
+    d.ellipse((c - r, 40, c + r, 40 + 2 * r), fill=(230, 40, 40, 255), outline=BLACK, width=8)
+    d.ellipse((c - r + 28, 68, c + r - 28, 40 + 2 * r - 28), fill=WHITE + (255,), outline=BLACK, width=6)
+    cy = 40 + r
+    h_, m_ = (int(v) for v in hhmm.split(":"))
+    for ang, ln, wd in (((h_ % 12 + m_ / 60) * 30, r * 0.42, 16), (m_ * 6, r * 0.66, 10)):
+        a = math.radians(ang - 90)
+        d.line([(c, cy), (c + ln * math.cos(a), cy + ln * math.sin(a))], fill=BLACK, width=wd)
+    d.text((c, cy - r * 0.40), hhmm, font=P.font("dela", 70), fill=RED, anchor="mm", stroke_width=6, stroke_fill=WHITE)
+    return im
+
+
+def phone(top, value, w=300, h=460):
+    """スマホの画面（残高など）。"""
+    im, d = _canvas(w, h)
+    d.rounded_rectangle((14, 16, w + 14, h + 16), 40, fill=(0, 0, 0, 150))
+    d.rounded_rectangle((0, 0, w, h), 40, fill=(25, 25, 30, 255), outline=WHITE, width=8)
+    d.rounded_rectangle((22, 50, w - 22, h - 50), 18, fill=(240, 240, 245, 255))
+    d.text((w / 2, h * 0.36), top, font=P.font("dela", 62), fill=BLACK, anchor="mm")
+    d.text((w / 2, h * 0.58), value, font=P.font("dela", 74), fill=RED, anchor="mm")
+    return im
+
+
 def rays(out, cy, cols=((255, 40, 40), (255, 200, 0)), alpha=0.55, n=48):
     """止まった集中線（放射状）。"""
     im = Image.new("RGBA", (SW, SH), (0, 0, 0, 0))
@@ -136,5 +194,40 @@ def dame_rent():
          items=[(envelope("家賃", "7万2千円"), 840, 1330, 12)])
 
 
+WHITE2 = ((255, 255, 255), (255, 255, 255))
+GOLD = ((255, 240, 0), (255, 170, 0))
+TOP = "とあるダメ人間"
+
+
+def thumb(name, lines, cat, item, item_y=1330):
+    """#2 以降の共通の並び：3行の文字・左下に猫ミーム・右下に小物（猫に重ねない）。lines=[(文字, 大きさ, 金色か)]。"""
+    ys = (520, 790, 1030)
+    make(os.path.join(HERE, "thumbs", name + ".png"), TOP,
+         [(s, size, y, -5, *(GOLD if gold else WHITE2)) for (s, size, gold), y in zip(lines, ys)],
+         [(cat, 290, 800, False, None)], items=[(item, 840, item_y, 12)])
+
+
+def dame_payday():
+    thumb("short_dame_payday", [("給料日から", 190, False), ("3日で", 230, False), ("残高82円", 260, True)],
+          "despair_dramatic_kitten", wallet("82円"))
+
+
+def dame_diet():
+    thumb("short_dame_diet", [("ダイエット", 200, False), ("3日目で", 190, False), ("ラーメン大盛り", 220, True)],
+          "eat_crunchy_cat_luna", scale("+5kg"))
+
+
+def dame_late():
+    thumb("short_dame_late", [("電車のせいに", 180, False), ("したら", 160, False), ("自転車通勤", 230, True)],
+          "confused_i_dont_know_cat", clock("9:25"), item_y=1470)
+
+
+def dame_gacha():
+    thumb("short_dame_gacha", [("生活費で", 210, False), ("ガチャ", 340, True), ("回した", 190, False)],
+          "blank_black_cat_zoning_out", phone("残高", "512円"), item_y=1480)
+
+
 if __name__ == "__main__":
-    dame_rent()
+    import sys
+    for n in sys.argv[1:] or ["rent"]:
+        globals()["dame_" + n]()

@@ -69,3 +69,17 @@ def idcf():
     out = os.path.join(HERE, "thumbs", "short_10_idcf.png")
     cv2.imwrite(out, (np.clip(f, 0, 1) * 255).astype(np.uint8))
     print("->", out)
+
+
+def fukiso():
+    """11本目のショート（まさかの不起訴）。"""
+    import short_11_fukiso as D
+    title = M.title_band(*D.TITLE)
+    c = M.cut("bg07_press", "結果\n→　*不起訴*", [("rage_talking_cat", M.L, 1000, False), ("sad_banana_cat_cry", M.Rr, 1000, True)],
+              label="車の持ち主", label_x=740, size=150)
+    for k in c["cats"]:
+        k["pop"] = False
+    f = M.make_draw(c, title)(1.0)
+    out = os.path.join(HERE, "thumbs", "short_11_fukiso.png")
+    cv2.imwrite(out, (np.clip(f, 0, 1) * 255).astype(np.uint8))
+    print("->", out)

@@ -69,6 +69,7 @@ def cuts_all():
     return [
         # ---- 0. 注意書き ----
         dict(card=None, layers=[pt("e00_notice")], dur=4.6, se={"f": "chime_announce", "len": 3.0, "gain": -2}),
+        ask(),   # 本編の一番最初にも問いかけ（10/12 ユーザー指定）
         # ---- 1. つかみ ----
         one(HOME, "時価2,000万円の\n高級車", se="doon_movie", sting={"file": KAMI, "len": 4.0, "gain": -14}),
         one(HOME, "盗んだ疑いで逮捕\nほかの高級車もあわせて\n3件で逮捕・送検", se="siren_police", bgm={"file": PURPLE, "gain": -4}),

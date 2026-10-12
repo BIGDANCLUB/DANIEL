@@ -425,7 +425,10 @@ class CutRenderer:
                 x0, x1, y0 = cx - w / 2, cx + w / 2, bottom - h
                 if min(x1, tx1 + m) - max(x0, tx0 - m) <= 0 or min(bottom, ty1 + m) - max(y0, ty0 - m) <= 0:
                     continue
-                if (ty0 + ty1) / 2 < y0 + h * 0.35:   # 文字が上 → 小さくして、足りない分は下へ
+                # 文字が猫の真上にかかっているときだけ「上」。猫の横にある文字（1匹＋反対側の文字）は横によける
+                # （10/12：横の文字を「上」とみなして猫を画面の下へ押し出し、見切れていたのを直した）
+                above = (ty0 + ty1) / 2 < y0 + h * 0.35 and tx0 - m < cx < tx1 + m
+                if above:   # 文字が上 → 小さくして、足りない分は下へ
                     need = ty1 + m - y0
                     f = max(0.62, (h - need) / h)
                     scale *= f
@@ -435,10 +438,10 @@ class CutRenderer:
                 else:   # 文字が横 → 反対側へずらす（はみ出す分は小さく）
                     if (tx0 + tx1) / 2 > cx:
                         shift = x1 - (tx0 - m)
-                        ncx = max(w * 0.35, cx - shift)
+                        ncx = max(w * 0.5, cx - shift)   # 画面からはみ出さない（はみ出す分は小さくする）
                     else:
                         shift = (tx1 + m) - x0
-                        ncx = min(W - w * 0.35, cx + shift)
+                        ncx = min(W - w * 0.5, cx + shift)
                     left = shift - abs(ncx - cx)
                     cx = ncx
                     if left > 0:

@@ -73,6 +73,7 @@ def cuts_all():
     return [
         # ---- 0. 注意書き ----
         dict(card=None, layers=[pt("e00_notice")], dur=5.0, se={"f": "chime_announce", "len": 3.0, "gain": -2}),
+        ask(),   # 本編の一番最初にも問いかけ（10/12 ユーザー指定）
         # ---- 1. つかみ ----
         one(CONV, "毎年10月1日から始まる\n「赤い羽根共同募金」", se="doon_movie", sting={"file": KAMI, "len": 4.0, "gain": -14}),
         one(PRESS, "大臣たちが　胸に赤い羽根をつけて\nテレビに映る\nおなじみの季節", se="page_turn_01", bgm={"file": PURPLE, "gain": -4}),

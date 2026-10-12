@@ -87,10 +87,20 @@ def parse(text, base=WHITE):
     return out
 
 
+def fit_wide(im, w, h, squeeze=0.8):
+    """長い文字を横幅に収める。小さくする前に、まず横だけ少し細くする（最大 squeeze 倍）ので文字が大きく保てる（10/12）。"""
+    im = im.crop(im.getbbox())
+    k = min(1.0, w / im.width)          # 横幅に収める倍率
+    sx, sy = k, (1.0 if k >= squeeze else k / squeeze)   # 細くするのは squeeze 倍まで、その先は全体を小さく
+    if im.height * sy > h:
+        sx, sy = sx * h / (im.height * sy), h / im.height
+    return im.resize((max(1, int(im.width * sx)), max(1, int(im.height * sy))), Image.LANCZOS)
+
+
 def title_band(top, sub):
     im = Image.new("RGBA", (SW, BAND[1] - BAND[0]), (0, 0, 0, 255))
     t1 = outline_text([[(top, RED)]], 170)
-    t2 = outline_text([[(sub, YELLOW)]], 104)
+    t2 = fit_wide(outline_text([[(sub, YELLOW)]], 104, w=4000), SW - 24, im.height - t1.height + 40)
     im.alpha_composite(t1, ((SW - t1.width) // 2, -22))
     im.alpha_composite(t2, ((SW - t2.width) // 2, im.height - t2.height + 4))
     return im

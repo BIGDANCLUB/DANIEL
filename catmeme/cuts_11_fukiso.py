@@ -190,7 +190,8 @@ def cuts_all():
         ask(card="nattoku_last", dur=3.2, se="doon_heavy"),
         dict(bg=bg(BOARD), card=pt("e11_ending"), dur=3.0, se="chirin",
              cats=[{"a": "wave_waving_cat", "x": 300, "h": 420, "bottom": 1040, "float": True}]),
-        dict(chap("→ 4本目「個人情報、盗まれすぎ問題」\n10本目「ハッカーに煽られたクラウド」もどうぞ", dur=3.0), chapter_size=70),
+        dict(bg=None, card=os.path.join(HERE, "parts", "common", "subscribe.png"), dur=3.4, se="chirin",
+             cats=[{"a": "wave_waving_cat", "x": 1560, "h": 520, "bottom": 1040, "float": True}]),   # 最後はチャンネル登録（10/12）
     ]
 
 

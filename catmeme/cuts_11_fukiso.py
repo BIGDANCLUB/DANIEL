@@ -72,14 +72,14 @@ def cuts_all():
         ask(),   # 本編の一番最初にも問いかけ（10/12 ユーザー指定）
         # ---- 1. つかみ ----
         one(HOME, "時価2,000万円の\n高級車", se="doon_movie", sting={"file": KAMI, "len": 4.0, "gain": -14}),
-        one(HOME, "盗んだ疑いで逮捕\nほかの高級車もあわせて\n3件で逮捕・送検", se="siren_police", bgm={"file": PURPLE, "gain": -4}),
+        one(HOME, "盗んだ疑いで\nブラジル国籍の男性を逮捕\nほかの高級車とあわせ3件で送検", se="siren_police", bgm={"file": PURPLE, "gain": -4}),
         nn("さすがにこれは\n起訴でしょ", HOME, se="kon"),
         fk(HOME),
         close(HOME, "@react", "ニュース猫", "はあああ！？", se=["game_pokemon_super_effective_hit_big_damage"]),
-        one(FEST, "2日後　お祭りで\n警備員を殴った疑いで\n逮捕された男性", se="punch"),
+        one(FEST, "2日後　お祭りで\n警備員を殴った疑いで\nアメリカ国籍の男性を逮捕", se="punch"),
         fk(FEST),
         close(FEST, "@react", "ニュース猫", "また！？", se=["explosion_chudoon"]),
-        one(PRESS, "どちらも\n外国籍の男性", se="pi"),
+        one(PRESS, "ブラジル国籍と\nアメリカ国籍の男性", se="pi"),
         one(PRESS, "そして　どちらも\nくわしい理由は\n説明されていない", se="pc_warning"),
         net("@react", "日本\n完全に\nナメられてる", se="boing_01"),
         net("@react", "捕まっても\n不起訴なら\nやったもん勝ち", se="kon"),

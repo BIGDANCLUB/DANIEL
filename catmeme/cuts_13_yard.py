@@ -63,8 +63,7 @@ def cuts_all():
     return [
         # ---- 0. 注意書き・冒頭の問いかけ ----
         dict(card=None, layers=[pt("e00_notice")], dur=5.0, se={"f": "chime_announce", "len": 3.0, "gain": -2}),
-        ask(),
-        # ---- 1. つかみ ----
+        # ---- 1. つかみ ----（「これ、納得できますか？」は原稿で指定された所だけ。冒頭には入れない：10/13 ユーザー指定）
         vic("朝　仕事に行こうとしたら……\nハイエースが……\nない……", se="tear_drop", sting={"file": KAMI, "len": 4.0, "gain": -14}),
         vic("工具も全部\n積んだままだったのに……", se="chin_bell_failure_sad_ending", bgm={"file": PURPLE, "gain": -4}),
         one(LOT, "2024年以降\n関東一円で盗まれた車\n300台以上", se="doon_movie"),

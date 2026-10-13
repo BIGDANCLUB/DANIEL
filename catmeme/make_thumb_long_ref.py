@@ -197,22 +197,22 @@ if __name__ == "__main__" and os.environ.get("THUMB", "12") == "12":
 
 
 def yard():
-    """13本目（盗難ハイエース・ヤード）で3案。逮捕された人は描かない。猫はニュース猫と車を盗まれた猫。"""
-    type_a("13_yard_ref_a.png", "bg18_backyard", "bg18_backyard",
+    """13本目（盗難ハイエース・ヤード）で3案。逮捕された人は描かない。背景は 10/13 ユーザー提供の写真（backgrounds/13_yard）。猫はニュース猫と車を盗まれた猫。"""
+    type_a("13_yard_ref_a.png", "bg39_hiace_black_garage", "bg41_yard_scrap",
            ("surprise_big_pupils_cat", 0.6, 250, 470, 520, False),
            [("sad_banana_cat_cry", 1.0, 760, 410, 330, True), ("glare_disgusted_cat", 1.0, 1080, 410, 300, True)],
            "条例違反は30万円…",
            [("盗難ハイエース", BLACK), ("300台", BLUE)], [("塀の中で解体し海外へ", RED)])
     type_b("13_yard_ref_b.png",
-           [("bg18_backyard", [("sad_banana_cat_cry", 1.0, 160, 470, 360, False)]),
-            ("bg07_press", [("huh_huh_cat", 1.0, 160, 470, 360, False)]),
-            ("bg20_counter", [("glare_disgusted_cat", 1.0, 160, 470, 340, False)]),
+           [("bg39_hiace_black_garage", [("sad_banana_cat_cry", 1.0, 160, 470, 360, False)]),
+            ("bg42_yard_raid_ai", [("huh_huh_cat", 1.0, 160, 470, 360, False)]),
+            ("bg41_yard_scrap", [("glare_disgusted_cat", 1.0, 160, 470, 340, False)]),
             ("bg26_phone_alert", [("sad_black_dog", 1.0, 160, 470, 330, False)])],
            [("txt", "車がない…", 160, 60, 46, YELLOW, -6), ("txt", "!!", 420, 130, 110, RED, 8),
             ("txt", "容疑は1台!?", 480, 330, 44, YELLOW, 4), ("arrow", 860, 110, 900, 230),
             ("txt", "条例違反30万円", 820, 60, 44, YELLOW, -4), ("txt", "自分で探す…", 1130, 260, 40, YELLOW, 6)],
            [("盗難車300台が塀の中へ", RED)], [("日本は盗難天国なのか", NAVY)])
-    type_c("13_yard_ref_c.png", "bg18_backyard",
+    type_c("13_yard_ref_c.png", "bg42_yard_raid_ai",
            [("surprise_big_pupils_cat", 0.6, 250, 560, 500, False), ("sad_banana_cat_cry", 1.0, 660, 560, 470, True),
             ("rage_talking_cat", 1.0, 1040, 560, 470, True)],
            "盗難ハイエース300台が塀の中で解体され海外へ", "日本ナメられすぎ")

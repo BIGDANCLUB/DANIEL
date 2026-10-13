@@ -28,6 +28,9 @@ OUT = os.path.join(HERE, "out", "short_refstyle_license.mp4")
 BGS = [os.path.join(HERE, "backgrounds", d) for d in ("04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
 WHITE, BLACK, RED, YELLOW = (255, 255, 255), (0, 0, 0), (235, 25, 25), (255, 230, 0)
 LIME = (120, 235, 40)
+# スマホの YouTube ショート画面は 9:16 より縦長なので、左右が約9%ずつ切れる（10/13 ユーザー確認）。
+# 文字はこの幅の中に収める（左右それぞれ 120px あける）
+SAFE_W = SW - 240
 BAND = (170, 500)   # 黒い帯の上下（この上には背景が見える）
 TEXT_Y = 680        # セリフの中心
 
@@ -53,7 +56,7 @@ def vbg(n):
     return _BG[n]
 
 
-def outline_text(lines, size, w=SW - 30):
+def outline_text(lines, size, w=SAFE_W):
     """参考ふうのセリフ：太い文字＋黒い太縁。lines=[[(文字, 色), ...], ...]（1行の中で色を変えられる）。"""
     f = P.font("black", size)
     d0 = ImageDraw.Draw(Image.new("RGBA", (8, 8)))
@@ -99,8 +102,8 @@ def fit_wide(im, w, h, squeeze=0.8):
 
 def title_band(top, sub):
     im = Image.new("RGBA", (SW, BAND[1] - BAND[0]), (0, 0, 0, 255))
-    t1 = outline_text([[(top, RED)]], 170)
-    t2 = fit_wide(outline_text([[(sub, YELLOW)]], 104, w=4000), SW - 24, im.height - t1.height + 40)
+    t1 = outline_text([[(top, RED)]], 170, w=SAFE_W + 40)
+    t2 = fit_wide(outline_text([[(sub, YELLOW)]], 104, w=4000), SAFE_W, im.height - t1.height + 40)
     im.alpha_composite(t1, ((SW - t1.width) // 2, -22))
     im.alpha_composite(t2, ((SW - t2.width) // 2, im.height - t2.height + 4))
     return im

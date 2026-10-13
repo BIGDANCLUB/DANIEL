@@ -138,7 +138,8 @@ def moving_bg(bg, T):
 def make_draw(c, title):
     """1カットぶんの絵を描く関数（t はカットの頭からの秒）。"""
     bg = vbg(c["bg"])
-    cap = outline_text(parse(c["say"], c.get("col", WHITE)), c.get("size", 100))
+    # セリフは大きめに（10/13 ユーザー指定）：横幅に収まらない分は、まず横だけ少し細くして大きさを保つ
+    cap = fit_wide(outline_text(parse(c["say"], c.get("col", WHITE)), int(c.get("size", 100) * 1.3), w=3000), SAFE_W + 20, 900)
     lab = role_label(c["label"]) if c.get("label") else None
     extra = [(role_label(t_), x_) for t_, x_ in c.get("labels", [])]   # 2つ目以降の役名
     tags = {k["tag"]: role_label(k["tag"]) for k in c["cats"] if k.get("tag")}
@@ -236,6 +237,9 @@ def cuts():
 
 def keep_going(cs):
     """前のカットと同じ素材が続くときは、登場し直さない（ポンと出ない・動きと音を前のカットの続きから）。"""
+    # ショートの最初の効果音は「チリン」（se/short_start_chirin.mp3）に統一（10/13 ユーザー指定）
+    if cs:
+        cs[0]["se"] = "short_start_chirin"
     prev = {}   # 素材名 → (前のカットでの x, そのカットの終わりの素材時間)
     t0 = 0.0
     for c in cs:

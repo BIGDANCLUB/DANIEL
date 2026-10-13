@@ -1,7 +1,7 @@
 """ショートのサムネ：参考フォーマット（ユーザー指定 10/13）をマネして作る。縦 1080x1920。
 
 参考3枚（「外国人が思わず撮影！日本の子供に衝撃！」「整備工場にトヨタが来た時の海外の反応」「帰国直後に衝撃 日本との違い」）の作り
-- 上：黒い帯に2行の極太ゴシック。1行目と2行目で色を変える（赤×黄／黄×オレンジ／黄×ピンク）。行いっぱいの大きさ
+- 上：黒い帯（2行の文字の高さぴったり・上に余白を作らない）に2行の極太ゴシック。1行目と2行目で色を変える（赤×黄／黄×オレンジ／黄×ピンク）。行いっぱいの大きさ
 - 真ん中〜下：写真を全面に（帯のすぐ下から一番下まで）。猫ミームは写真の中に入れ込む
 - 写真の中ほど〜下に、ひとことテロップを1つ（3種類）
     a) 青い文字＋白い縁を、半透明の白いぼかし帯にのせる（「日本の日常の光景。」）
@@ -39,10 +39,9 @@ def bg_path(n):
     raise FileNotFoundError(n)
 
 
-def photo(name, zoom=1.0, cx=0.5):
+def photo(name, zoom=1.0, cx=0.5, h=SH - BAND_H):
     """背景を帯の下の全面に敷く（縦に合わせて拡大し、cx の位置で切り出す）。"""
     im = Image.open(bg_path(name)).convert("RGB")
-    h = SH - BAND_H
     k = h / im.height * zoom
     im = im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
     x0 = int((im.width - SW) * cx)
@@ -86,19 +85,20 @@ def caption(text, style):
 
 def make(out_name, line1, col1, line2, col2, bg, cats, cap, cap_style, cap_y=1220, credit="", zoom=1.0, cx=0.5,
          stroke1=BLACK):
+    # 上の黒い帯：参考どおり、2行の文字の高さぴったり（上下に余りを作らない）。文字は横幅の約95%（10/13）
+    t1 = heavy(line1, 190, col1, stroke1, 6, w=SW - 20)
+    t2 = heavy(line2, 190, col2, BLACK, 6, w=SW - 20)
+    pad, gap = 26, 22
+    band_h = pad + t1.height + gap + t2.height + pad
     img = Image.new("RGB", (SW, SH), BLACK)
-    img.paste(photo(bg, zoom, cx), (0, BAND_H))
+    ph = photo(bg, zoom, cx, h=SH - band_h)
+    img.paste(ph, (0, band_h))
     out = np.asarray(img)[:, :, ::-1].astype(np.float32) / 255
     for name, t, x, bottom, h, flip in cats:   # 猫ミームを写真の中に入れ込む
         H.cat(out, name, t, x, bottom, h, flip=flip)
     pil = Image.fromarray((np.clip(out, 0, 1) * 255).astype(np.uint8)[:, :, ::-1]).convert("RGBA")
-    # 上の黒い帯（2行）
-    t1 = heavy(line1, 190, col1, stroke1, 6)   # 参考どおり1行8〜10文字で、横いっぱいの大きさ
-    t2 = heavy(line2, 190, col2, BLACK, 6)
-    gap = 30
-    top = 150 + (BAND_H - 150 - t1.height - t2.height - gap) // 2
-    pil.alpha_composite(t1, ((SW - t1.width) // 2, top))
-    pil.alpha_composite(t2, ((SW - t2.width) // 2, top + t1.height + gap))
+    pil.alpha_composite(t1, ((SW - t1.width) // 2, pad))
+    pil.alpha_composite(t2, ((SW - t2.width) // 2, pad + t1.height + gap))
     # ひとことテロップ
     c, _ = caption(cap, cap_style)
     pil.alpha_composite(c, ((SW - c.width) // 2, int(cap_y - c.height / 2)))

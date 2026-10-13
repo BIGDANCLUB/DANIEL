@@ -1,0 +1,125 @@
+"""ショートのサムネ：参考フォーマット（ユーザー指定 10/13）をマネして作る。縦 1080x1920。
+
+参考3枚（「外国人が思わず撮影！日本の子供に衝撃！」「整備工場にトヨタが来た時の海外の反応」「帰国直後に衝撃 日本との違い」）の作り
+- 上：黒い帯に2行の極太ゴシック。1行目と2行目で色を変える（赤×黄／黄×オレンジ／黄×ピンク）。行いっぱいの大きさ
+- 真ん中〜下：写真を全面に（帯のすぐ下から一番下まで）。猫ミームは写真の中に入れ込む
+- 写真の中ほど〜下に、ひとことテロップを1つ（3種類）
+    a) 青い文字＋白い縁を、半透明の白いぼかし帯にのせる（「日本の日常の光景。」）
+    b) 赤い文字＋黒い太縁、少し傾ける（「40年ぶりだぞ!!」）
+    c) 白い文字＋青い縁を2行、暗い半透明の帯にのせる（「こんなこと日本では…」）
+- 写真を借りたときは、左下に小さく灰色で「引用元：○○」
+- いちばん下の白いタイトルはYouTubeの画面の表示なので、サムネには入れない
+- YouTube の一覧では上下が少し切れる（約9:14）ので、大事な物は y=140〜1780 の中に置く
+
+python3 catmeme/make_thumb_short_ref.py → thumbs/short_12_akaihane_ref_a.png / _b / _c
+"""
+import os
+
+import cv2
+import numpy as np
+from PIL import Image, ImageDraw, ImageFilter
+
+import parts as P
+import render as R
+import short_hooks as H
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+SW, SH = 1080, 1920
+BAND_H = 560            # 黒い帯の下端（2行とも横いっぱいの大きな文字。一覧では上が約140切れる）
+WHITE, BLACK = (255, 255, 255), (0, 0, 0)
+RED, YELLOW, ORANGE, PINK, BLUE = (232, 28, 36), (255, 228, 0), (255, 108, 24), (240, 56, 120), (24, 84, 200)
+BGS = [os.path.join(HERE, "backgrounds", d) for d in ("04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
+
+
+def bg_path(n):
+    for d in BGS:
+        p = os.path.join(d, n + ".png")
+        if os.path.exists(p):
+            return p
+    raise FileNotFoundError(n)
+
+
+def photo(name, zoom=1.0, cx=0.5):
+    """背景を帯の下の全面に敷く（縦に合わせて拡大し、cx の位置で切り出す）。"""
+    im = Image.open(bg_path(name)).convert("RGB")
+    h = SH - BAND_H
+    k = h / im.height * zoom
+    im = im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
+    x0 = int((im.width - SW) * cx)
+    y0 = (im.height - h) // 2
+    return im.crop((x0, y0, x0 + SW, y0 + h))
+
+
+def heavy(text, size, fill, stroke, sw, w=SW - 30):
+    """極太ゴシックを1行。横幅に収まるまで小さくする。"""
+    f = P.font("black", size)
+    d0 = ImageDraw.Draw(Image.new("RGBA", (8, 8)))
+    while d0.textlength(text, font=f) > w - sw * 2 and size > 40:
+        size -= 4
+        f = P.font("black", size)
+    tw = int(d0.textlength(text, font=f)) + sw * 2 + 10
+    im = Image.new("RGBA", (tw, int(size * 1.3) + sw * 2), (0, 0, 0, 0))
+    ImageDraw.Draw(im).text((sw + 5, sw), text, font=f, fill=fill, stroke_width=sw, stroke_fill=stroke)
+    return im.crop(im.getbbox())
+
+
+def caption(text, style):
+    lines = text.split("\n")
+    if style == "a":     # 青い文字＋白い縁、半透明の白いぼかし帯
+        t = heavy(text, 92, BLUE, WHITE, 9, w=SW - 160)
+        pad = Image.new("RGBA", (t.width + 120, t.height + 60), (255, 255, 255, 120)).filter(ImageFilter.GaussianBlur(6))
+        pad.alpha_composite(t, (60, 30))
+        return pad, 0
+    if style == "b":     # 赤い文字＋黒い太縁、少し傾ける
+        t = heavy(text, 120, RED, BLACK, 12, w=SW - 120)
+        return t.rotate(4, expand=True, resample=Image.BICUBIC), 0
+    # c: 白い文字＋青い縁を2行、暗い半透明の帯
+    ts = [heavy(ln, 76, WHITE, BLUE, 8, w=SW - 140) for ln in lines]
+    w, h = max(t.width for t in ts) + 80, sum(t.height + 16 for t in ts) + 40
+    pad = Image.new("RGBA", (w, h), (20, 30, 60, 150))
+    y = 20
+    for t in ts:
+        pad.alpha_composite(t, ((w - t.width) // 2, y))
+        y += t.height + 16
+    return pad, 0
+
+
+def make(out_name, line1, col1, line2, col2, bg, cats, cap, cap_style, cap_y=1220, credit="", zoom=1.0, cx=0.5,
+         stroke1=BLACK):
+    img = Image.new("RGB", (SW, SH), BLACK)
+    img.paste(photo(bg, zoom, cx), (0, BAND_H))
+    out = np.asarray(img)[:, :, ::-1].astype(np.float32) / 255
+    for name, t, x, bottom, h, flip in cats:   # 猫ミームを写真の中に入れ込む
+        H.cat(out, name, t, x, bottom, h, flip=flip)
+    pil = Image.fromarray((np.clip(out, 0, 1) * 255).astype(np.uint8)[:, :, ::-1]).convert("RGBA")
+    # 上の黒い帯（2行）
+    t1 = heavy(line1, 190, col1, stroke1, 6)   # 参考どおり1行8〜10文字で、横いっぱいの大きさ
+    t2 = heavy(line2, 190, col2, BLACK, 6)
+    gap = 30
+    top = 150 + (BAND_H - 150 - t1.height - t2.height - gap) // 2
+    pil.alpha_composite(t1, ((SW - t1.width) // 2, top))
+    pil.alpha_composite(t2, ((SW - t2.width) // 2, top + t1.height + gap))
+    # ひとことテロップ
+    c, _ = caption(cap, cap_style)
+    pil.alpha_composite(c, ((SW - c.width) // 2, int(cap_y - c.height / 2)))
+    if credit:
+        ImageDraw.Draw(pil).text((40, 1700), "引用元：" + credit, font=P.font("round_b", 34), fill=(190, 190, 190, 255))
+    p = os.path.join(HERE, "thumbs", out_name)
+    pil.convert("RGB").save(p)
+    print("->", p)
+
+
+def akaihane():
+    """12本目（赤い羽根）で3案。1行8〜10文字。"""
+    make("short_12_akaihane_ref_a.png", "国税が来て発覚！", RED, "赤い羽根2.5億円", YELLOW,
+         "bg15_convenience", [("sad_banana_cat_cry", 1.0, 780, 1800, 720, True), ("surprise_big_pupils_cat", 0.6, 260, 1830, 600, False)],
+         "善意のお釣りの行方。", "a", cap_y=860, stroke1=WHITE)
+    make("short_12_akaihane_ref_b.png", "大臣が赤い羽根を", YELLOW, "つけなかった理由", ORANGE,
+         "bg07_press", [("huh_huh_cat", 1.0, 540, 1820, 1000, False)], "2.5億円が消えた!!", "b", cap_y=1560)
+    make("short_12_akaihane_ref_c.png", "通帳も印鑑も1人", YELLOW, "赤い羽根の闇", PINK,
+         "bg25_office_desk", [("glare_disgusted_cat", 1.0, 540, 1840, 900, False)],
+         "こんなこと普通の会社では\n絶対ありえないんだけど…", "c", cap_y=1600)
+
+
+if __name__ == "__main__":
+    akaihane()

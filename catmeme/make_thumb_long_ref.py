@@ -1,0 +1,196 @@
+"""長尺動画のサムネ：参考フォーマット（ユーザー指定 10/13）をマネして作る。横 1280x720。
+
+参考3枚の作り
+- A（「山本由伸の季節到来に…」型）：上6割は写真2枚（左にアップ、右に場面）。左の写真の下に白い札＋赤い文字の小見出しを少し傾けて。
+  下4割は黄色の地に、黒い極太文字2行（大事な言葉だけ青・赤）、白い縁取り
+- B（「ここは大人の遊園地だ！」型）：写真4枚を縦に切って横に並べる。赤い矢印と黄色の書き文字で写真の中を指す。
+  下に白〜黄色のグラデーションの帯、赤い文字と紺の文字の2行、白い太縁＋影
+- C（「全員日本に連れてけ」型）：写真を全面に。上の端に黄色い小さめの1行（黒縁）、下に黄色グラデーションの超巨大文字1行（黒い太縁）
+- 右下（約1060〜1270, 640〜700）は再生時間の表示で隠れるので、大事な文字は置かない
+- 猫ミームは写真の中に入れ込む
+
+python3 catmeme/make_thumb_long_ref.py → thumbs/12_akaihane_ref_a.png / _b / _c
+"""
+import os
+
+import numpy as np
+from PIL import Image, ImageDraw, ImageFilter
+
+import parts as P
+from make_thumb_01 import cat_img
+from make_thumb_short_ref import bg_path
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+W, H = 1280, 720
+WHITE, BLACK = (255, 255, 255), (0, 0, 0)
+RED, YELLOW, BLUE, NAVY = (226, 30, 30), (255, 236, 40), (36, 90, 220), (20, 30, 110)
+
+
+def fill_photo(name, w, h, cx=0.5, zoom=1.0):
+    im = Image.open(bg_path(name)).convert("RGB")
+    k = max(w / im.width, h / im.height) * zoom
+    im = im.resize((int(im.width * k) + 1, int(im.height * k) + 1), Image.LANCZOS)
+    x0 = int((im.width - w) * cx)
+    y0 = (im.height - h) // 2
+    return im.crop((x0, y0, x0 + w, y0 + h)).convert("RGBA")
+
+
+def put_cat(img, name, t, x, bottom, h, flip=False):
+    c = cat_img(name, t, h, flip)
+    img.alpha_composite(c, (int(x - c.width / 2), int(bottom - c.height)))
+
+
+def runs(parts, size, sw, max_w, shadow=False, grad=None):
+    """色ちがいの文字を1行に並べる。parts=[(文字, 色)]。grad=(上の色, 下の色) で文字をグラデーションに。"""
+    f = P.font("black", size)
+    d0 = ImageDraw.Draw(Image.new("RGBA", (8, 8)))
+    while sum(d0.textlength(t, font=f) for t, _ in parts) > max_w - sw * 2 and size > 30:
+        size -= 3
+        f = P.font("black", size)
+    tw = int(sum(d0.textlength(t, font=f) for t, _ in parts)) + sw * 2 + 20
+    th = int(size * 1.3) + sw * 2
+    im = Image.new("RGBA", (tw, th), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    x = sw + 10
+    for t, col in parts:
+        stroke = col[1] if isinstance(col, tuple) and isinstance(col[0], tuple) else WHITE
+        fill = col[0] if isinstance(col[0], tuple) else col
+        if shadow:
+            d.text((x + 6, sw + 6), t, font=f, fill=(0, 0, 0, 160), stroke_width=sw, stroke_fill=(0, 0, 0, 160))
+        d.text((x, sw), t, font=f, fill=fill, stroke_width=sw, stroke_fill=stroke)
+        x += d.textlength(t, font=f)
+    if grad:
+        mask = Image.new("L", im.size, 0)
+        md = ImageDraw.Draw(mask)
+        x = sw + 10
+        for t, _ in parts:
+            md.text((x, sw), t, font=f, fill=255)
+            x += d.textlength(t, font=f)
+        g = Image.new("RGBA", im.size)
+        gd = ImageDraw.Draw(g)
+        for y in range(im.height):
+            u = y / im.height
+            gd.line((0, y, im.width, y), fill=tuple(int(a + (b - a) * u) for a, b in zip(grad[0], grad[1])) + (255,))
+        im.paste(g, (0, 0), mask)
+    return im.crop(im.getbbox())
+
+
+def arrow(img, x0, y0, x1, y1, col=RED, w=22):
+    d = ImageDraw.Draw(img)
+    v = np.array([x1 - x0, y1 - y0], float)
+    n = v / np.linalg.norm(v)
+    p = np.array([-n[1], n[0]])
+    tip = np.array([x1, y1])
+    base = tip - n * 48
+    d.line((x0, y0, *base), fill=WHITE, width=w + 10)
+    d.line((x0, y0, *base), fill=col, width=w)
+    tri = [tuple(tip + n * 6), tuple(base + p * 40), tuple(base - p * 40)]
+    d.polygon([tuple(tip + n * 12), tuple(base + p * 48 - n * 6), tuple(base - p * 48 - n * 6)], fill=WHITE)
+    d.polygon(tri, fill=col)
+
+
+def scribble(img, text, x, y, size, col=YELLOW, angle=0):
+    t = runs([(text, (col, BLACK))], size, max(6, size // 9), 900)
+    t = t.rotate(angle, expand=True, resample=Image.BICUBIC)
+    img.alpha_composite(t, (int(x - t.width / 2), int(y - t.height / 2)))
+
+
+def save(img, name):
+    p = os.path.join(HERE, "thumbs", name)
+    img.convert("RGB").save(p)
+    print("->", p)
+
+
+def type_a(name, left_bg, right_bg, left_cat, right_cats, tag, line1, line2):
+    img = Image.new("RGBA", (W, H), WHITE)
+    top_h = 410
+    img.alpha_composite(fill_photo(left_bg, 500, top_h, cx=0.3, zoom=1.3), (0, 0))
+    img.alpha_composite(fill_photo(right_bg, W - 504, top_h), (504, 0))
+    put_cat(img, *left_cat)
+    for c in right_cats:
+        put_cat(img, *c)
+    # 小見出しの札
+    t = runs([(tag, (RED, WHITE))], 52, 2, 640)
+    box = Image.new("RGBA", (t.width + 50, t.height + 34), WHITE + (255,))
+    ImageDraw.Draw(box).rectangle((0, 0, box.width - 1, box.height - 1), outline=BLACK, width=5)
+    box.alpha_composite(t, (25, 17))
+    box = box.rotate(2, expand=True, resample=Image.BICUBIC)
+    img.alpha_composite(box, (14, top_h - box.height + 40))
+    # 下の黄色い地と2行
+    ImageDraw.Draw(img).rectangle((0, top_h + 18, W, H), fill=(255, 245, 60, 255), outline=BLACK, width=6)
+    l1 = runs(line1, 150, 8, W - 40)
+    l2 = runs(line2, 150, 8, W - 40)
+    img.alpha_composite(l1, ((W - l1.width) // 2, top_h + 40))
+    img.alpha_composite(l2, ((W - l2.width) // 2, top_h + 50 + l1.height))
+    save(img, name)
+
+
+def type_b(name, panels, notes, line1, line2):
+    img = Image.new("RGBA", (W, H), WHITE)
+    pw = W // len(panels)
+    for i, (bg, cats) in enumerate(panels):
+        ph = fill_photo(bg, pw - 6, 470, cx=0.5)
+        for c in cats:
+            put_cat(ph, *c)
+        img.alpha_composite(ph, (i * pw + 3, 0))
+    for kind, *a in notes:
+        if kind == "arrow":
+            arrow(img, *a)
+        else:
+            scribble(img, *a)
+    g = Image.new("RGBA", (W, H - 455))
+    gd = ImageDraw.Draw(g)
+    for y in range(g.height):
+        u = y / g.height
+        gd.line((0, y, W, y), fill=(255, 255, int(235 - 160 * u), 255))
+    img.alpha_composite(g, (0, 455))
+    l1 = runs(line1, 104, 9, W - 30, shadow=True)
+    l2 = runs(line2, 104, 9, W - 30, shadow=True)
+    gap = (H - 455 - l1.height - l2.height) // 3
+    img.alpha_composite(l1, ((W - l1.width) // 2, 455 + gap))
+    img.alpha_composite(l2, ((W - l2.width) // 2, 455 + gap * 2 + l1.height))
+    save(img, name)
+
+
+def type_c(name, bg, cats, top, big):
+    img = fill_photo(bg, W, H)
+    for c in cats:
+        put_cat(img, *c)
+    shade = Image.new("RGBA", (W, H))
+    sd = ImageDraw.Draw(shade)
+    for y in range(H):
+        a = int(150 * max(0, (y - 420) / 300))
+        sd.line((0, y, W, y), fill=(0, 0, 0, a))
+    img.alpha_composite(shade)
+    t = runs([(top, (YELLOW, BLACK))], 64, 6, W - 30)
+    img.alpha_composite(t, ((W - t.width) // 2, 12))
+    b = runs([(big, (YELLOW, BLACK))], 230, 12, W - 40, grad=((255, 250, 210), (245, 200, 30)))
+    img.alpha_composite(b, ((W - b.width) // 2, H - b.height - 22))
+    save(img, name)
+
+
+def akaihane():
+    """12本目（赤い羽根）で3案。元事務局長は描かない。"""
+    type_a("12_akaihane_ref_a.png", "bg07_press", "bg15_convenience",
+           ("surprise_big_pupils_cat", 0.6, 250, 470, 520, False),
+           [("sad_banana_cat_cry", 1.0, 760, 410, 330, True), ("sulk_hungry_cat", 1.0, 1080, 410, 300, True)],
+           "通帳も印鑑も1人で管理…",
+           [("赤い羽根募金", BLACK), ("2.5億円", BLUE)], [("国税が来て初めて発覚", RED)])
+    type_b("12_akaihane_ref_b.png",
+           [("bg07_press", [("huh_huh_cat", 1.0, 160, 470, 360, False)]),
+            ("bg15_convenience", [("sad_banana_cat_cry", 1.0, 160, 470, 360, False)]),
+            ("bg25_office_desk", [("glare_disgusted_cat", 1.0, 160, 470, 340, False)]),
+            ("bg21_school_gate", [("sad_black_dog", 1.0, 160, 470, 330, False)])],
+           [("txt", "!!", 110, 130, 140, RED, -8), ("txt", "羽根なし!!", 120, 330, 48, YELLOW, -6),
+            ("arrow", 420, 110, 500, 200), ("txt", "お釣り入れてたのに", 470, 330, 38, YELLOW, 4),
+            ("arrow", 860, 110, 900, 230), ("txt", "1人で管理!?", 820, 60, 46, YELLOW, -4),
+            ("txt", "お弁当半分…", 1130, 260, 40, YELLOW, 6)],
+           [("赤い羽根2.5億円が", RED)], [("行方不明に大激怒", NAVY)])
+    type_c("12_akaihane_ref_c.png", "bg15_convenience",
+           [("surprise_big_pupils_cat", 0.6, 250, 560, 500, False), ("sad_banana_cat_cry", 1.0, 660, 560, 470, True),
+            ("glare_disgusted_cat", 1.0, 1040, 560, 470, True)],
+           "赤い羽根2.5億円が行方不明 通帳も印鑑も1人で管理", "善意どこ行った")
+
+
+if __name__ == "__main__":
+    akaihane()

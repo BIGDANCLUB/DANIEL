@@ -39,6 +39,9 @@ ROLE = {"ニュース猫": NEWS, "博識な猫": SAGE, "パパ猫": PAPA, "ネ�
 
 
 def bg(n):
+    v = os.path.join(HERE, "assets_video", "wide", n + ".mp4")   # 横動画用の動く背景（assets_video/wide）
+    if os.path.exists(v):
+        return v
     for d in BGS:
         p = os.path.join(d, n + ".png")
         if os.path.exists(p):

@@ -135,9 +135,17 @@ def moving_bg(bg, T):
     return cv2.warpAffine(bg, M_, (SW, SH), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
 
 
+def tall_video(n):
+    """ショート用の動く背景（assets_video/tall の縦長 mp4）。あればそのパス。"""
+    p = os.path.join(HERE, "assets_video", "tall", n + ".mp4")
+    return p if os.path.exists(p) else None
+
+
 def make_draw(c, title):
     """1カットぶんの絵を描く関数（t はカットの頭からの秒）。"""
-    bg = vbg(c["bg"])
+    vp = tall_video(c["bg"])
+    vid = R.VideoBG(vp, (SW, SH), c.get("bg_ss", 0.0)) if vp else None
+    bg = None if vid else vbg(c["bg"])
     # セリフは大きめに（10/13 ユーザー指定）：横幅に収まらない分は、まず横だけ少し細くして大きさを保つ
     cap = fit_wide(outline_text(parse(c["say"], c.get("col", WHITE)), int(c.get("size", 100) * 1.3), w=3000), SAFE_W + 20, 900)
     lab = role_label(c["label"]) if c.get("label") else None
@@ -145,7 +153,7 @@ def make_draw(c, title):
     tags = {k["tag"]: role_label(k["tag"]) for k in c["cats"] if k.get("tag")}
 
     def draw(t):
-        out = moving_bg(bg, c.get("t0", 0.0) + t)
+        out = vid.frame(t).copy() if vid else moving_bg(bg, c.get("t0", 0.0) + t)
         if c.get("img") is not None:   # 実際の画像（ニュースの画像など）をセリフの下に差し込む。猫はその手前
             H.put(out, c["img"], SW / 2, c.get("img_y", 1060), H.pop(t, 0.05, 0.16))
         for k in c["cats"]:

@@ -318,11 +318,50 @@ def auto_dur(cut):
     return max(cut.get("min", 1.5), 0.6 + n * 0.09)
 
 
+VIDEO_DIR = os.path.join(HERE, "assets_video")
+
+
+class VideoBG:
+    """動く背景（assets_video/ の mp4）。カットの頭から順に読み、短ければ頭に戻ってくり返す（10/13 追加）。"""
+
+    def __init__(self, path, size, ss=0.0):
+        self.path, self.size, self.ss = path, size, ss
+        self.cap = cv2.VideoCapture(path)
+        self.fps = self.cap.get(cv2.CAP_PROP_FPS) or 30
+        self.n = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 1
+        self.pos, self.last = -1, None
+
+    def frame(self, t):
+        want = int((self.ss + t) * self.fps) % self.n
+        if want != self.pos + 1:
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, want)
+        ok, fr = self.cap.read()
+        if not ok:
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ok, fr = self.cap.read()
+        self.pos = want
+        if ok:
+            w, h = self.size
+            fh, fw = fr.shape[:2]
+            k = max(w / fw, h / fh)
+            fr = cv2.resize(fr, (int(fw * k + 0.5), int(fh * k + 0.5)), interpolation=cv2.INTER_AREA)
+            y0, x0 = (fr.shape[0] - h) // 2, (fr.shape[1] - w) // 2
+            self.last = fr[y0:y0 + h, x0:x0 + w].astype(np.float32) / 255.0
+        return self.last
+
+    def close(self):
+        self.cap.release()
+
+
 class CutRenderer:
     def __init__(self, cut):
         self.cut = cut
         self.dur = cut_dur(cut)
-        if cut.get("bg"):
+        self.vbg = None
+        if cut.get("bg") and cut["bg"].endswith(".mp4"):   # 動く背景
+            self.vbg = VideoBG(cut["bg"], (W, H), cut.get("bg_ss", 0.0))
+            self.bg = self.vbg.frame(0.0)
+        elif cut.get("bg"):
             bg = cv2.imread(cut["bg"], cv2.IMREAD_COLOR)
             self.bg = cv2.resize(bg, (W, H)).astype(np.float32) / 255.0
         else:
@@ -515,6 +554,8 @@ class CutRenderer:
         return out
 
     def frame(self, t):
+        if self.vbg is not None:
+            self.bg = self.vbg.frame(t)
         # 背景はゆっくり寄る（参考動画ふうの時は止める）
         z = 1.0 + (0.03 * (t / self.dur) if self.style != "meme" else 0)
         if z > 1.001:
@@ -572,6 +613,8 @@ class CutRenderer:
     def close(self):
         for clip, *_ in self.cats:
             clip.close()
+        if self.vbg is not None:
+            self.vbg.close()
 
 
 # ---------- 音 ----------

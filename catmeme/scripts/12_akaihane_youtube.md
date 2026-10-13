@@ -83,7 +83,7 @@ Purple / RYU ITO（RYU ITO MUSIC）
 - 〔本編のURL〕は本編を公開したあとのURLに差し替える。YouTube Studio の「関連動画」にも本編を設定する
 
 ### サムネ（参考フォーマットの3案から選ぶ・10/13）
-- A：release/short_12_akaihane_thumb_a.png（「国税が来て発覚！／赤い羽根2.5億円」＋テロップ「善意のお釣りの行方。」）
+- A：release/short_12_akaihane_thumb_a.png（「国税が来て発覚！／赤い羽根2.5億円」＋テロップ「2.5億円が消えた!!」（赤い文字・黒縁・傾け））
 - B：release/short_12_akaihane_thumb_b.png（「大臣が赤い羽根を／つけなかった理由」＋テロップ「2.5億円が消えた!!」）
 - C：release/short_12_akaihane_thumb_c.png（「通帳も印鑑も1人／赤い羽根の闇」＋テロップ「こんなこと普通の会社では…」）
 

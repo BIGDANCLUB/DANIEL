@@ -113,7 +113,7 @@ def akaihane():
     """12本目（赤い羽根）で3案。1行8〜10文字。"""
     make("short_12_akaihane_ref_a.png", "国税が来て発覚！", RED, "赤い羽根2.5億円", YELLOW,
          "bg15_convenience", [("sad_banana_cat_cry", 1.0, 780, 1800, 720, True), ("surprise_big_pupils_cat", 0.6, 260, 1830, 600, False)],
-         "善意のお釣りの行方。", "a", cap_y=860, stroke1=WHITE)
+         "2.5億円が消えた!!", "b", cap_y=880, stroke1=WHITE)
     make("short_12_akaihane_ref_b.png", "大臣が赤い羽根を", YELLOW, "つけなかった理由", ORANGE,
          "bg07_press", [("huh_huh_cat", 1.0, 540, 1820, 1000, False)], "2.5億円が消えた!!", "b", cap_y=1560)
     make("short_12_akaihane_ref_c.png", "通帳も印鑑も1人", YELLOW, "赤い羽根の闇", PINK,

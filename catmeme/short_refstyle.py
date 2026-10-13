@@ -102,15 +102,23 @@ def fit_wide(im, w, h, squeeze=0.8):
 
 def title_band(top, sub, top_col=RED, sub_col=YELLOW, top_stroke=BLACK):
     """上の黒い帯：ショートのサムネ（make_thumb_short_ref.py）と同じ作り（10/13 ユーザー指定）。
-    画面の一番上から黒。2行の極太ゴシックを帯の下の方に、それぞれ横いっぱい（スマホで切れない幅）に。"""
+    画面の一番上から黒。極太ゴシックを帯の下の方に、それぞれ横いっぱい（スマホで切れない幅）に。
+    sub に \n を入れると下の行を2行に分けられる（長い文でも文字を大きく出すため。帯の上の余白を使う）。"""
     from make_thumb_short_ref import heavy
     im = Image.new("RGBA", (SW, BAND[1] - BAND[0]), (0, 0, 0, 255))
-    t1 = heavy(top, 190, top_col, top_stroke, 6, w=SAFE_W + 40)
-    t2 = heavy(sub, 190, sub_col, BLACK, 6, w=SAFE_W + 40)
-    gap = 26
-    y = im.height - 30 - t2.height - gap - t1.height
-    im.alpha_composite(t1, ((SW - t1.width) // 2, y))
-    im.alpha_composite(t2, ((SW - t2.width) // 2, y + t1.height + gap))
+    ts = [heavy(top, 190, top_col, top_stroke, 6, w=SAFE_W + 40)]
+    ts += [heavy(ln, 190, sub_col, BLACK, 6, w=SAFE_W + 40) for ln in sub.split("\n")]
+    gap = 22
+    room = im.height - 40
+    total = sum(t.height for t in ts) + gap * (len(ts) - 1)
+    if total > room:   # 入りきらないときは全体を小さく
+        k = (room - gap * (len(ts) - 1)) / sum(t.height for t in ts)
+        ts = [t.resize((int(t.width * k), int(t.height * k)), Image.LANCZOS) for t in ts]
+        total = sum(t.height for t in ts) + gap * (len(ts) - 1)
+    y = im.height - 26 - total
+    for t in ts:
+        im.alpha_composite(t, ((SW - t.width) // 2, y))
+        y += t.height + gap
     return im
 
 

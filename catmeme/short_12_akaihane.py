@@ -15,7 +15,7 @@ import short_refstyle as M
 
 HERE = M.HERE
 NAME = "short_12_akaihane"
-TITLE = ("赤い羽根募金", "2.5億円が行方不明", M.RED, M.YELLOW, M.WHITE)   # 何が起きたか分かる文言に（10/13 ユーザー指定）
+TITLE = ("赤い羽根募金", "2.5億円が\n行方不明", M.RED, M.YELLOW, M.WHITE)   # 何が起きたか分かる文言に（10/13 ユーザー指定）
 C, L, Rr = M.C, M.L, M.Rr
 LIME = M.LIME
 PURPLE = os.path.join(S.BGM, "著作権フリー BGM ジャズ 「Purple」（ピアノ、アップテンポ）.mp3")

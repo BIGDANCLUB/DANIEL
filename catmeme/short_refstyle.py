@@ -31,8 +31,8 @@ LIME = (120, 235, 40)
 # スマホの YouTube ショート画面は 9:16 より縦長なので、左右が約9%ずつ切れる（10/13 ユーザー確認）。
 # 文字はこの幅の中に収める（左右それぞれ 120px あける）
 SAFE_W = SW - 240
-BAND = (170, 500)   # 黒い帯の上下（この上には背景が見える）
-TEXT_Y = 680        # セリフの中心
+BAND = (0, 560)     # 黒い帯の上下。サムネと同じく画面の一番上から黒（10/13 ユーザー指定）
+TEXT_Y = 740        # セリフの中心
 
 
 def bg_path(n):
@@ -61,7 +61,7 @@ def outline_text(lines, size, w=SAFE_W):
     f = P.font("black", size)
     d0 = ImageDraw.Draw(Image.new("RGBA", (8, 8)))
     width = lambda ln: sum(d0.textlength(t, font=f) for t, _ in ln)
-    while max(width(ln) for ln in lines) > w - 40 and size > 50:
+    while max(width(ln) for ln in lines) > w - 40 and size > 30:
         size -= 4
         f = P.font("black", size)
     sw = max(8, size // 7)
@@ -100,12 +100,17 @@ def fit_wide(im, w, h, squeeze=0.8):
     return im.resize((max(1, int(im.width * sx)), max(1, int(im.height * sy))), Image.LANCZOS)
 
 
-def title_band(top, sub):
+def title_band(top, sub, top_col=RED, sub_col=YELLOW, top_stroke=BLACK):
+    """上の黒い帯：ショートのサムネ（make_thumb_short_ref.py）と同じ作り（10/13 ユーザー指定）。
+    画面の一番上から黒。2行の極太ゴシックを帯の下の方に、それぞれ横いっぱい（スマホで切れない幅）に。"""
+    from make_thumb_short_ref import heavy
     im = Image.new("RGBA", (SW, BAND[1] - BAND[0]), (0, 0, 0, 255))
-    t1 = outline_text([[(top, RED)]], 170, w=SAFE_W + 40)
-    t2 = fit_wide(outline_text([[(sub, YELLOW)]], 104, w=4000), SAFE_W, im.height - t1.height + 40)
-    im.alpha_composite(t1, ((SW - t1.width) // 2, -22))
-    im.alpha_composite(t2, ((SW - t2.width) // 2, im.height - t2.height + 4))
+    t1 = heavy(top, 190, top_col, top_stroke, 6, w=SAFE_W + 40)
+    t2 = heavy(sub, 190, sub_col, BLACK, 6, w=SAFE_W + 40)
+    gap = 26
+    y = im.height - 30 - t2.height - gap - t1.height
+    im.alpha_composite(t1, ((SW - t1.width) // 2, y))
+    im.alpha_composite(t2, ((SW - t2.width) // 2, y + t1.height + gap))
     return im
 
 

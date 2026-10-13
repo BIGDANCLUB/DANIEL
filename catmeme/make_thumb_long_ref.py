@@ -104,7 +104,7 @@ def save(img, name):
 def type_a(name, left_bg, right_bg, left_cat, right_cats, tag, line1, line2):
     img = Image.new("RGBA", (W, H), WHITE)
     top_h = 410
-    img.alpha_composite(fill_photo(left_bg, 500, top_h, cx=0.3, zoom=1.3), (0, 0))
+    img.alpha_composite(fill_photo(left_bg, 500, top_h, cx=0.5), (0, 0))
     img.alpha_composite(fill_photo(right_bg, W - 504, top_h), (504, 0))
     put_cat(img, *left_cat)
     for c in right_cats:
@@ -172,24 +172,23 @@ def type_c(name, bg, cats, top, big):
 
 def akaihane():
     """12本目（赤い羽根）で3案。元事務局長は描かない。"""
-    type_a("12_akaihane_ref_a.png", "bg07_press", "bg15_convenience",
-           ("surprise_big_pupils_cat", 0.6, 250, 470, 520, False),
-           [("sad_banana_cat_cry", 1.0, 760, 410, 330, True), ("sulk_hungry_cat", 1.0, 1080, 410, 300, True)],
+    type_a("12_akaihane_ref_a.png", "bg35_akaihane_box", "bg36_akaihane_bow",
+           ("surprise_big_pupils_cat", 0.6, 480, 330, 200, False),
+           [("sad_banana_cat_cry", 1.0, 1180, 410, 300, True)],
            "国税が来て初めて発覚…",
            [("赤い羽根募金", BLACK), ("2.5億円", BLUE)], [("が行方不明になっていた", RED)])   # 何が起きたか分かる文言に（10/13 ユーザー指定）
     type_b("12_akaihane_ref_b.png",
-           [("bg07_press", [("huh_huh_cat", 1.0, 160, 470, 360, False)]),
-            ("bg15_convenience", [("sad_banana_cat_cry", 1.0, 160, 470, 360, False)]),
-            ("bg25_office_desk", [("glare_disgusted_cat", 1.0, 160, 470, 340, False)]),
+           [("bg36_akaihane_bow", [("huh_huh_cat", 1.0, 160, 470, 300, False)]),
+            ("bg35_akaihane_box", [("sad_banana_cat_cry", 1.0, 160, 470, 300, False)]),
+            ("bg37_akaihane_hands", [("glare_disgusted_cat", 1.0, 160, 470, 300, False)]),
             ("bg21_school_gate", [("sad_black_dog", 1.0, 160, 470, 330, False)])],
            [("txt", "!!", 110, 130, 140, RED, -8), ("txt", "羽根なし!!", 120, 330, 48, YELLOW, -6),
             ("arrow", 420, 110, 500, 200), ("txt", "お釣り入れてたのに", 470, 330, 38, YELLOW, 4),
             ("arrow", 860, 110, 900, 230), ("txt", "1人で管理!?", 820, 60, 46, YELLOW, -4),
             ("txt", "お弁当半分…", 1130, 260, 40, YELLOW, 6)],
            [("赤い羽根2.5億円が", RED)], [("行方不明に大激怒", NAVY)])
-    type_c("12_akaihane_ref_c.png", "bg15_convenience",
-           [("surprise_big_pupils_cat", 0.6, 250, 560, 500, False), ("sad_banana_cat_cry", 1.0, 660, 560, 470, True),
-            ("glare_disgusted_cat", 1.0, 1040, 560, 470, True)],
+    type_c("12_akaihane_ref_c.png", "bg34_akaihane_full",
+           [("surprise_big_pupils_cat", 0.6, 960, 560, 330, False)],
            "赤い羽根2.5億円が行方不明 通帳も印鑑も1人で管理", "善意どこ行った")
 
 

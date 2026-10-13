@@ -28,7 +28,7 @@ SW, SH = 1080, 1920
 BAND_H = 560            # 黒い帯の下端（2行とも横いっぱいの大きな文字。一覧では上が約140切れる）
 WHITE, BLACK = (255, 255, 255), (0, 0, 0)
 RED, YELLOW, ORANGE, PINK, BLUE = (232, 28, 36), (255, 228, 0), (255, 108, 24), (240, 56, 120), (24, 84, 200)
-BGS = [os.path.join(HERE, "backgrounds", d) for d in ("04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
+BGS = [os.path.join(HERE, "backgrounds", d) for d in ("added", "04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
 
 
 def bg_path(n):
@@ -112,12 +112,12 @@ def make(out_name, line1, col1, line2, col2, bg, cats, cap, cap_style, cap_y=122
 def akaihane():
     """12本目（赤い羽根）で3案。1行8〜10文字。"""
     make("short_12_akaihane_ref_a.png", "国税が来て発覚！", RED, "赤い羽根2.5億円", YELLOW,
-         "bg15_convenience", [("sad_banana_cat_cry", 1.0, 780, 1800, 720, True), ("surprise_big_pupils_cat", 0.6, 260, 1830, 600, False)],
+         "bg35_akaihane_box", [("sad_banana_cat_cry", 1.0, 820, 1880, 640, True), ("surprise_big_pupils_cat", 0.6, 230, 1900, 560, False)],
          "2.5億円が消えた!!", "b", cap_y=880, stroke1=WHITE)
     make("short_12_akaihane_ref_b.png", "大臣が赤い羽根を", YELLOW, "つけなかった理由", ORANGE,
-         "bg07_press", [("huh_huh_cat", 1.0, 540, 1820, 1000, False)], "2.5億円が消えた!!", "b", cap_y=1560)
+         "bg36_akaihane_bow", [("huh_huh_cat", 1.0, 540, 1940, 820, False)], "2.5億円が消えた!!", "b", cap_y=1180)
     make("short_12_akaihane_ref_c.png", "通帳も印鑑も1人", YELLOW, "赤い羽根の闇", PINK,
-         "bg25_office_desk", [("glare_disgusted_cat", 1.0, 540, 1840, 900, False)],
+         "bg34_akaihane_full", [("glare_disgusted_cat", 1.0, 540, 1960, 760, False)],
          "こんなこと普通の会社では\n絶対ありえないんだけど…", "c", cap_y=1600)
 
 

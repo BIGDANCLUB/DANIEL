@@ -359,11 +359,17 @@ def allocate(cuts, max_use=3, gap=2):
             def ok(a):
                 near_fixed = any(abs(j - i) <= gap for j in fixed_at.get(a, []))
                 return (count.get(a, 0) < max_use and a not in here and i - last.get(a, -99) > gap and not near_fixed)
-            for name in [pool] + FALLBACK[pool]:
-                cands = [a for a in POOLS[name] if ok(a)]
+            # 曲つき素材（R.MUSIC）が同じカットにもう入っていたら、曲つきは選ばない（BGMが2つ鳴るのを防ぐ：10/13 ユーザー指定）
+            music_here = any(x in R.MUSIC for x in here)
+            cands = []
+            for avoid_music in ([True, False] if music_here else [False]):
+                for name in [pool] + FALLBACK[pool]:
+                    cands = [a for a in POOLS[name] if ok(a) and not (avoid_music and a in R.MUSIC)]
+                    if cands:
+                        break
                 if cands:
                     break
-            else:
+            if not cands:
                 raise RuntimeError(f"cut {i}: 猫ミームが足りない")
             a = min(cands, key=lambda a: (count.get(a, 0), last.get(a, -99)))
             k["a"] = a

@@ -175,7 +175,7 @@ def akaihane():
     type_a("12_akaihane_ref_a.png", "bg07_press", "bg15_convenience",
            ("surprise_big_pupils_cat", 0.6, 250, 470, 520, False),
            [("sad_banana_cat_cry", 1.0, 760, 410, 330, True), ("sulk_hungry_cat", 1.0, 1080, 410, 300, True)],
-           "通帳も印鑑も1人で管理…",
+           "国税が来て初めて発覚…",
            [("赤い羽根募金", BLACK), ("2.5億円", BLUE)], [("が行方不明になっていた", RED)])   # 何が起きたか分かる文言に（10/13 ユーザー指定）
     type_b("12_akaihane_ref_b.png",
            [("bg07_press", [("huh_huh_cat", 1.0, 160, 470, 360, False)]),

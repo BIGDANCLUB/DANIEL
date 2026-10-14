@@ -362,6 +362,9 @@ def fitted_video(path, size):
     return out
 
 
+EXPLAIN_TOP = 680   # 説明モードの黒い字幕帯の上の端
+
+
 # ユーザーが渡した写真（静止画）は、ゆっくり横・縦に動かして動画っぽく見せる（10/14 ユーザー指定）
 PAN_DIRS = ("13_yard", "added")
 PAN_ZOOM = 1.10
@@ -456,6 +459,12 @@ class CutRenderer:
             # 体の途中で切れている素材は画面の下の辺から生やす（少し大きめに）
             scale = c.get("h", 560) * (1.15 if anchored else 1.0) / (by1 - by0)
             bottom = H if anchored else c.get("bottom", 850)
+            if cut.get("explain") and bottom > EXPLAIN_TOP - 10:
+                # 説明モード：猫は下の黒い字幕帯にかからないよう、帯の上に収める（役名札は帯にかかってもよい）
+                # 10/14 ユーザー指定
+                hh = min(c.get("h", 560), EXPLAIN_TOP - 10 - 30)
+                scale = hh / (by1 - by0)
+                bottom = EXPLAIN_TOP - 10
             self.cats.append((clip, scale, c.get("x", 960), bottom))
         # 足元の役名札
         self.labels = []
@@ -691,7 +700,7 @@ class CutRenderer:
             out = cv2.warpAffine(out, np.float32([[1, 0, dx], [0, 1, dy]]), (W, H), borderMode=cv2.BORDER_REPLICATE)
         if self.explain is not None:   # 説明モード：画面はそのまま、下に半透明の黒い帯を敷いて説明文
             k = min(1.0, t / 0.15)
-            out[680:] *= 1 - 0.62 * k
+            out[EXPLAIN_TOP:] *= 1 - 0.62 * k
             if t >= 0.1:
                 over_t(out, self.explain_t)
         return out

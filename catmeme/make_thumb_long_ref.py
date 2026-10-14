@@ -273,3 +273,29 @@ def vambi():
 
 if __name__ == "__main__" and os.environ.get("THUMB") == "15":
     vambi()
+
+
+def tenchim():
+    """16本目（てんちむ モテフィット裁判の逆転）で3案。背景はユーザー提供の本人の写真（backgrounds/16_tenchim）。
+    猫は顔にかけない。控訴審の結果は本人の報告なので「確定」とは書かない。"""
+    type_a("16_tenchim_ref_a.png", "bg81_tenchim_neon", "bg84_courthouse",
+           ("surprise_big_pupils_cat", 0.6, 90, 470, 300, False),
+           [("huh_huh_cat", 1.0, 1130, 410, 300, True)],
+           "ナイトブラ裁判",
+           [("てんちむ3.8億円", BLACK), ("逆転で0円に", RED)], [("控訴審で支払い命令取り消し", BLUE)])
+    type_b("16_tenchim_ref_b.png",
+           [("bg82_tenchim_feather", []),
+            ("bg87_refund_money", [("surprise_big_pupils_cat", 0.6, 160, 470, 340, False)]),
+            ("bg84_courthouse", [("sad_banana_cat_cry", 1.0, 160, 470, 330, False)]),
+            ("bg85_courtroom", [("excited_hodomoe_city_cat", 1.0, 160, 470, 360, False)])],
+           [("txt", "豊胸隠し発覚", 160, 330, 42, YELLOW, -6), ("txt", "自腹で返金", 480, 70, 44, YELLOW, 4),
+            ("txt", "一審3.8億円…", 800, 70, 42, YELLOW, -4), ("arrow", 860, 110, 900, 230),
+            ("txt", "逆転!!", 1130, 260, 54, RED, 6)],
+           [("3億8,000万円が0円に", RED)], [("てんちむ　6年越しの逆転", NAVY)])
+    type_c("16_tenchim_ref_c.png", "bg81_tenchim_neon",
+           [("surprise_big_pupils_cat", 0.6, 170, 560, 420, False), ("huh_huh_cat", 1.0, 1130, 560, 420, True)],
+           "てんちむ ナイトブラ裁判 3億8,000万円の支払い命令が控訴審で取り消し", "まさかの逆転")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "16":
+    tenchim()

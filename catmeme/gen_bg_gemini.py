@@ -62,6 +62,16 @@ BG_LIST = {
         "bg79_timeline": "An abstract timeline background with glowing dots connected by a line on a dark blue gradient",
         "bg80_counter_rocket": "A subscriber counter style display with big numbers rising and a rocket launching, celebratory confetti, no readable text",
     },
+    "16_tenchim": {
+        "bg84_courthouse": "The exterior of a large modern Japanese courthouse building in daylight with stone steps, no people",
+        "bg85_courtroom": "An empty Japanese courtroom with wooden judges' bench, witness stand and seats, solemn atmosphere",
+        "bg86_product_shelf": "A pastel pink cosmetics and lingerie shop shelf with plain unbranded boxes, soft lighting, no readable text",
+        "bg87_refund_money": "Stacks of Japanese yen banknotes and bank transfer slips on a desk with a calculator, no readable text",
+        "bg88_contract_papers": "A desk covered with contract documents, a pen and a red seal stamp, close-up, no readable text",
+        "bg89_ad_studio": "A bright advertising photo studio with softbox lights, a camera and a white backdrop, no people",
+        "bg90_phone_post": "A smartphone on a table showing a social media post screen with hearts and comment icons, no readable text",
+        "bg91_tv_studio_kids": "A colorful children's TV show studio set with bright shapes and cameras, no people",
+    },
 }
 
 

@@ -29,7 +29,7 @@ BAND_H = 560            # 黒い帯の下端（2行とも横いっぱいの大�
 WHITE, BLACK = (255, 255, 255), (0, 0, 0)
 RED, YELLOW, ORANGE, PINK, BLUE = (232, 28, 36), (255, 228, 0), (255, 108, 24), (240, 56, 120), (24, 84, 200)
 DEEP_YELLOW = (255, 190, 0)   # 白い縁の明るい黄色は見にくい（10/14 ユーザー指定）→ 濃い黄色＋黒い縁
-BGS = [os.path.join(HERE, "backgrounds", d) for d in ("added", "13_yard", "14_japan", "15_vambi", "02_october", "01_todai", "04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
+BGS = [os.path.join(HERE, "backgrounds", d) for d in ("added", "13_yard", "14_japan", "15_vambi", "16_tenchim", "02_october", "01_todai", "04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
 
 
 def bg_path(n):

@@ -220,3 +220,29 @@ def yard():
 
 if __name__ == "__main__" and os.environ.get("THUMB") == "13":
     yard()
+
+
+def japan():
+    """14本目（日本が世界で最も魅力的な国 4年連続1位）で3案。背景は AI 生成のイラスト（backgrounds/14_japan）。"""
+    type_a("14_japan_ref_a.png", "bg59_sakura_park", "bg46_sushi_counter",
+           ("surprise_big_pupils_cat", 0.6, 250, 470, 520, False),
+           [("excited_hodomoe_city_cat", 1.0, 760, 410, 330, True), ("happy_girlfriend_dance_cat", 0.5, 1080, 410, 300, True)],
+           "米旅行誌の読者投票",
+           [("日本が世界1位", BLACK), ("4年連続", RED)], [("海外が驚く“当たり前”", BLUE)])
+    type_b("14_japan_ref_b.png",
+           [("bg46_sushi_counter", [("excited_hodomoe_city_cat", 1.0, 160, 470, 360, False)]),
+            ("bg49_public_toilet", [("huh_huh_cat", 1.0, 160, 470, 360, False)]),
+            ("bg52_koban", [("surprise_big_pupils_cat", 0.6, 160, 470, 340, False)]),
+            ("bg65_crowded_kyoto", [("sad_banana_cat_cry", 1.0, 160, 470, 330, False)])],
+           [("txt", "満足度96.9%", 160, 60, 44, YELLOW, -6), ("txt", "ゴミ箱どこ!?", 480, 70, 44, YELLOW, 4),
+            ("txt", "財布が戻る!!", 800, 330, 44, YELLOW, -4), ("arrow", 860, 110, 900, 230),
+            ("txt", "混雑は不満…", 1130, 260, 40, YELLOW, 6)],
+           [("世界で最も魅力的な国", RED)], [("日本が4年連続1位", NAVY)])
+    type_c("14_japan_ref_c.png", "bg59_sakura_park",
+           [("surprise_big_pupils_cat", 0.6, 250, 560, 500, False), ("excited_hodomoe_city_cat", 1.0, 660, 560, 470, True),
+            ("happy_girlfriend_dance_cat", 0.5, 1040, 560, 470, True)],
+           "米旅行誌の読者投票で日本が4年連続世界1位", "なぜ日本なの？")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "14":
+    japan()

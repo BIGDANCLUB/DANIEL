@@ -28,7 +28,7 @@ SW, SH = 1080, 1920
 BAND_H = 560            # 黒い帯の下端（2行とも横いっぱいの大きな文字。一覧では上が約140切れる）
 WHITE, BLACK = (255, 255, 255), (0, 0, 0)
 RED, YELLOW, ORANGE, PINK, BLUE = (232, 28, 36), (255, 228, 0), (255, 108, 24), (240, 56, 120), (24, 84, 200)
-BGS = [os.path.join(HERE, "backgrounds", d) for d in ("added", "13_yard", "04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
+BGS = [os.path.join(HERE, "backgrounds", d) for d in ("added", "13_yard", "14_japan", "02_october", "01_todai", "04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
 
 
 def bg_path(n):

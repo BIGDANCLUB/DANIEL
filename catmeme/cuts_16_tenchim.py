@@ -39,6 +39,7 @@ for _o in ORG_CAT:
 
 # ユーザー提供の写真（本人）＋ AI で作った背景
 NEON, FEATHER, EVENT = "bg81_tenchim_neon", "bg82_tenchim_feather", "bg83_tenchim_event"
+CHILD, YOUNG = "bg92_tenchim_child", "bg93_tenchim_young"   # 子役時代・若い頃（10/14 ユーザー提供）
 COURT, ROOMC, SHELF, MONEY, PAPERS, ADSTUDIO, POST, KIDS = (
     "bg84_courthouse", "bg85_courtroom", "bg86_product_shelf", "bg87_refund_money", "bg88_contract_papers", "bg89_ad_studio",
     "bg90_phone_post", "bg91_tv_studio_kids")
@@ -95,10 +96,10 @@ def cuts_all():
         # ---- 2. てんちむの経歴（0:40〜1:30）----
         chap("てんちむって\nどんな人？", se="doon_heavy", bgm={"file": NORA, "gain": -4, "fade": 0.6}),
         card("e02_profile", "1993年生まれ　子役時代は橋本甜歌の名前で活動", b=KIDS),
-        two(KIDS, "NHK\n「天才てれびくんMAX」に\n出演していた", se="jan"),
+        photo(CHILD, "子役時代は「橋本甜歌」の名前で活動\nNHK「天才てれびくんMAX」にも出演していた", se="jan"),
         nn("子役\nだったの！？", KIDS, se=["explosion_chudoon"]),
         ss("その後は\nギャル系雑誌の\nモデルとしても活躍", ADSTUDIO, se="pi"),
-        two(STUDIO, "2016年に\nYouTubeチャンネルを開設", se="pikon"),
+        photo(YOUNG, "2016年に　YouTubeチャンネルを開設", se="pikon"),
         ss("美容・ファッション\n日常の動画で\n人気を集めた", STUDIO, se="pi"),
         ss("2024年5月の時点で\nチャンネル登録者は\n約165万人", STUDIO, se="pikon"),
         nn("子役→モデル→YouTuber\n芸歴がめちゃくちゃ長い", STUDIO, se="idea_newtype_01"),

@@ -69,9 +69,8 @@ for _o in ORG_CAT:
 
 
 def org(b, who, sub, **kw):
-    """団体の猫をまん中に置き、左右にニュース猫と博識な猫。"""
-    return dict(bg=bg(b), cats=[cat("@react", "ニュース猫", 330, h=620), cat(ORG_CAT[who], who, 960, h=680),
-                                cat("@calm", "博識な猫", 1590, h=620)], say=sub, text_top=True, **kw)
+    """団体の猫だけをまん中に置く。第三者が出る場面にはニュース猫・博識な猫は出さない（10/14 ユーザー指定）。"""
+    return dict(bg=bg(b), cats=[cat(ORG_CAT[who], who, 960, h=720)], say=sub, text_top=True, **kw)
 
 
 def ex(b, text, **kw):

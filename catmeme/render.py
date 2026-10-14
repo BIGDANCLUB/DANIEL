@@ -232,6 +232,26 @@ def over(dst, src, alpha, x, y):
     d += s * a
 
 
+def trim(pair):
+    """全画面の透過レイヤーを、中身のある範囲だけに切り詰める → (img, alpha, x, y)。
+    毎フレームの重ね合わせが画面全体ではなく中身の範囲だけになるので速い（10/14）。中身がなければ None。"""
+    img, a = pair
+    m = a[..., 0] > 0 if a.ndim == 3 else a > 0
+    ys, xs = np.nonzero(m.any(1))[0], np.nonzero(m.any(0))[0]
+    if not len(ys):
+        return None
+    y0, y1, x0, x1 = ys[0], ys[-1] + 1, xs[0], xs[-1] + 1
+    return img[y0:y1, x0:x1].copy(), a[y0:y1, x0:x1].copy(), int(x0), int(y0)
+
+
+def over_t(dst, tr, k=1.0):
+    """trim() したレイヤーを重ねる。k は透明度（1 なら掛け算しない）。"""
+    if tr is None:
+        return
+    img, a, x, y = tr
+    over(dst, img, a if k >= 1.0 else a * k, x, y)
+
+
 def ease_out(x):
     x = min(max(x, 0.0), 1.0)
     return 1 - (1 - x) ** 3
@@ -321,10 +341,32 @@ def auto_dur(cut):
 VIDEO_DIR = os.path.join(HERE, "assets_video")
 
 
+def fitted_video(path, size):
+    """動く背景を画面の大きさ（size）に合わせた版を返す。合わせた版は assets_video/_fitted/ に保存して覚えておき、
+    2回目からは変換せずにそれを使う（10/14 ユーザー指定「一度使った映像は調整したサイズを記憶」）。"""
+    w, h = size
+    cap = cv2.VideoCapture(path)
+    vw, vh = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    cap.release()
+    if (vw, vh) == (w, h):
+        return path
+    d = os.path.join(HERE, "assets_video", "_fitted")
+    out = os.path.join(d, f"{os.path.splitext(os.path.basename(path))[0]}_{w}x{h}.mp4")
+    if os.path.exists(out) and os.path.getmtime(out) >= os.path.getmtime(path):
+        return out
+    os.makedirs(d, exist_ok=True)
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", path, "-an",
+                    "-vf", f"scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h}",
+                    "-c:v", "libx264", "-crf", "16", "-preset", "fast", out + ".tmp.mp4"], check=True)
+    os.replace(out + ".tmp.mp4", out)
+    return out
+
+
 class VideoBG:
     """動く背景（assets_video/ の mp4）。カットの頭から順に読み、短ければ頭に戻ってくり返す（10/13 追加）。"""
 
     def __init__(self, path, size, ss=0.0):
+        path = fitted_video(path, size)
         self.path, self.size, self.ss = path, size, ss
         self.cap = cv2.VideoCapture(path)
         self.fps = self.cap.get(cv2.CAP_PROP_FPS) or 30
@@ -340,7 +382,9 @@ class VideoBG:
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
             ok, fr = self.cap.read()
         self.pos = want
-        if ok:
+        if ok and fr.shape[1::-1] == tuple(self.size):   # すでに画面の大きさ（変換ずみ）ならそのまま使う
+            self.last = fr.astype(np.float32) / 255.0
+        elif ok:
             w, h = self.size
             fh, fw = fr.shape[:2]
             k = max(w / fw, h / fh)
@@ -386,6 +430,7 @@ class CutRenderer:
         fx = cut.get("fx", [])
         self.lines = [to_np(P.speed_lines(cut.get("lines_c", (960, 540)), cut.get("lines_color", (255, 255, 255)), seed=k))
                       for k in range(3)] if "lines" in fx else []
+        self.lines_t = [trim(x) for x in self.lines]
         self.fx = fx
         # 図の差し込み（解説カードから図の部分だけ切り出す）
         self.inset = None
@@ -400,6 +445,7 @@ class CutRenderer:
         layers = []
         if cut.get("card"):   # カードは猫の下に敷く（右下の小さい猫がカードに隠れないように）
             self.card, self.card_a = to_np(Image.open(cut["card"]))
+            self.card_t = trim((self.card, self.card_a))
         else:
             self.card = None
         for ly in cut.get("layers", []):
@@ -436,6 +482,7 @@ class CutRenderer:
         for ly in layers:
             comp.alpha_composite(ly.convert("RGBA"))
         self.ov, self.ov_a = to_np(comp)
+        self.ov_t = trim((self.ov, self.ov_a))
         tc = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         for ly in txt:
             tc.alpha_composite(ly.convert("RGBA"))
@@ -445,6 +492,7 @@ class CutRenderer:
         self.explain = None
         if cut.get("explain"):
             self.explain = to_np(P.plain_text(cut["explain"], (60, 695, 1860, 1070), size=cut.get("explain_size", 100), gap=1.22))
+            self.explain_t = trim(self.explain)
 
     def _avoid_text(self, boxes, cut):
         """猫と大きな文字が重ならないように、猫を文字から離す。
@@ -567,10 +615,9 @@ class CutRenderer:
             out = self.bg.copy()
         k = 1.0 if self.style == "meme" else ease_out(t / 0.15)
         if self.lines:
-            ln, la = self.lines[int(t * FPS / 3) % len(self.lines)]
-            over(out, ln, la, 0, 0)
+            over_t(out, self.lines_t[int(t * FPS / 3) % len(self.lines_t)])
         if self.card is not None:
-            over(out, self.card, self.card_a * k, 0, 0)
+            over_t(out, self.card_t, k)
         if self.inset is not None:
             (im, ia), x, y = self.inset
             if self.cut.get("inset_still"):   # 前のカットと同じ図なら飛び出さずにそのまま
@@ -587,7 +634,7 @@ class CutRenderer:
             over(out, img, al, int(cx - w / 2), int(bottom - h))
         for (im, ia), x, y in self.labels:
             over(out, im, ia, x, y)
-        over(out, self.ov, self.ov_a * k, 0, 0)
+        over_t(out, self.ov_t, k)
         self._pop(out, self.txt, t)
         for t0, t1, item in self.pops:
             if t0 <= t < t1:
@@ -606,8 +653,7 @@ class CutRenderer:
             k = min(1.0, t / 0.15)
             out[680:] *= 1 - 0.62 * k
             if t >= 0.1:
-                ei, ea = self.explain
-                over(out, ei, ea, 0, 0)
+                over_t(out, self.explain_t)
         return out
 
     def close(self):

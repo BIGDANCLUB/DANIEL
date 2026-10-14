@@ -60,6 +60,20 @@ def two(b, sub, **kw):
                 text_top=True, **kw)
 
 
+# 主語になる団体（県・税関・警察など）は猫にして登場させる（10/14 ユーザー指定）
+ORG_COLOR = (90, 60, 150)
+ORG_CAT = {"茨城県": "work_typing_cat", "税関": "angry_aiming_cat", "警察庁": "showoff_gojo_cosplay_cat",
+           "4県警": "stare_standing_marmot"}
+for _o in ORG_CAT:
+    L.ROLE[_o] = ORG_COLOR
+
+
+def org(b, who, sub, **kw):
+    """団体の猫をまん中に置き、左右にニュース猫と博識な猫。"""
+    return dict(bg=bg(b), cats=[cat("@react", "ニュース猫", 330, h=620), cat(ORG_CAT[who], who, 960, h=680),
+                                cat("@calm", "博識な猫", 1590, h=620)], say=sub, text_top=True, **kw)
+
+
 def ex(b, text, **kw):
     return expl(b, [cat("@react", "ニュース猫", 500), cat("@calm", "博識な猫", 1430)], "", text, dur=kw.pop("dur", 3.6), **kw)
 
@@ -87,7 +101,7 @@ def cuts_all():
              cats=[{"a": "wave_waving_cat", "x": 300, "h": 420, "bottom": 1040, "float": True}]),
         # ---- 2. 何が起きたのか ----
         chap("2026年6月\n4県警がいっせいに", se="doon_heavy"),
-        two("v16_police_car_lights", "神奈川・茨城・千葉・埼玉の\n4県警の合同捜査本部が\n4人を逮捕", se="siren_police"),
+        org("v16_police_car_lights", "4県警", "神奈川・茨城・千葉・埼玉の\n4県警の合同捜査本部が\n4人を逮捕", se="siren_police"),
         dia("e02_roles", "盗む役は日本人の男2人とされる", right=S, dur=4.4, se="card_flip"),
         dia("e02_roles", "受け取ってバラす役は　茨城県鉾田市のヤードの経営者と従業員", right=S, dur=4.6, se="card_place"),
         dia("e02_roles", "部品などにして海外へ（中東などへ、と言われている）", right=S, dur=4.4, se="card_flip"),
@@ -147,10 +161,10 @@ def cuts_all():
         ss("逮捕は大ニュース\nでも　その後は静か", V_PHONE_W, se="kon"),
         two(PORT, "一方で\n“出口”で止めた例もある", se="pi"),
         two(PORT, "2026年5月　盗難車のランドクルーザーを\n「ミニバン」と偽って\n横浜港から輸出しようとした疑いで4人逮捕", se="page_turn_02"),
-        two(PORT, "見抜いたのは\n税関のコンテナX線検査", se="pinpoon_correct"),
-        nn("税関、有能！", PORT, se="game_coin_get_money_gain_happy"),
-        two("v16_police_car_lights", "警察庁は2026年4月\nヤードへの立ち入り検査や\n悪質なヤードの取り締まりを強めると表明", se="page_turn_01"),
-        two(PRESS, "茨城県は　条例と取り締まりで\n2019年の全国ワースト1位から\n2024年は4位に", se="pinpoon_correct"),
+        org(PORT, "税関", "見抜いたのは\n税関のコンテナX線検査", se="pinpoon_correct"),
+        dict(org(PORT, "税関", "税関、有能！"), se="game_coin_get_money_gain_happy"),
+        org("v16_police_car_lights", "警察庁", "警察庁は2026年4月\nヤードへの立ち入り検査や\n悪質なヤードの取り締まりを強めると表明", se="page_turn_01"),
+        org(PRESS, "茨城県", "茨城県は　条例と取り締まりで\n2019年の全国ワースト1位から\n2024年は4位に", se="pinpoon_correct"),
         nn("やればできるじゃん！", V_FUJI, se="idea_newtype_01"),
         one(V_DARK, "ところが……", se="shock_piano"),
         one("v05_city_night_river", "最近　盗難が減っている理由のひとつは\n「ホルムズ海峡が閉鎖されて\n中東に運べないから」と言われている", dur=4.2, se="pc_warning"),

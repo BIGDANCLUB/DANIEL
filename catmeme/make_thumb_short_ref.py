@@ -121,5 +121,16 @@ def akaihane():
          "こんなこと普通の会社では\n絶対ありえないんだけど…", "c", cap_y=1600)
 
 
+def yard():
+    """13本目（盗難ハイエース）のショート2本ぶん。1行8〜10文字。逮捕された人は描かない。"""
+    make("short_13_yard_ref.png", "盗難ハイエース", YELLOW, "容疑はたった1台", RED,
+         "bg41_yard_scrap", [("surprise_big_pupils_cat", 0.6, 250, 1900, 620, False), ("sad_banana_cat_cry", 1.0, 830, 1880, 600, True)],
+         "300台なのに!?", "b", cap_y=900, stroke1=WHITE)
+    make("short_13b_yard_ref.png", "盗難が減った理由", YELLOW, "まさかの“海峡”", RED,
+         "bg42_yard_raid_ai", [("rage_talking_cat", 1.0, 540, 1960, 780, False)],
+         "対策じゃなかった!?", "b", cap_y=1000, stroke1=WHITE)
+
+
 if __name__ == "__main__":
-    akaihane()
+    import sys
+    {"12": akaihane, "13": yard}[sys.argv[1] if len(sys.argv) > 1 else "13"]()

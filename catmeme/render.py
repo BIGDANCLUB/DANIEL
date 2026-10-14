@@ -362,6 +362,39 @@ def fitted_video(path, size):
     return out
 
 
+# ユーザーが渡した写真（静止画）は、ゆっくり横・縦に動かして動画っぽく見せる（10/14 ユーザー指定）
+PAN_DIRS = ("13_yard", "added")
+PAN_ZOOM = 1.10
+
+
+def pan_mode(cut):
+    """写真の動かし方を決める。cut["pan"] で指定もできる（"lr" "rl" "ud" "du" "in"、False で止める）。"""
+    if "pan" in cut:
+        return cut["pan"] or None
+    d = os.path.basename(os.path.dirname(cut["bg"]))
+    if d not in PAN_DIRS:
+        return None
+    import zlib
+    key = (cut["bg"] + str(cut.get("say") or cut.get("sub") or cut.get("explain") or "")).encode("utf-8")
+    return ("lr", "rl", "lr", "rl", "in", "du")[zlib.crc32(key) % 6]
+
+
+def pan_frame(big, mode, p):
+    """少し大きくした写真 big から、進み具合 p（0〜1）の位置を画面の大きさで切り出す。小数の位置も滑らかに。"""
+    bh, bw = big.shape[:2]
+    mx, my = bw - W, bh - H
+    e = p * p * (3 - 2 * p) * 0.6 + p * 0.4   # はじめと終わりを少しゆるやかに
+    if mode == "in":   # ゆっくり寄りながら少し右へ
+        z = 1.0 + 0.06 * e
+        cx, cy = bw / 2 + mx * 0.15 * e, bh / 2
+        m = np.float32([[z, 0, W / 2 - cx * z], [0, z, H / 2 - cy * z]])
+        return cv2.warpAffine(big, m, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
+    x = {"lr": mx * e, "rl": mx * (1 - e)}.get(mode, mx / 2)
+    y = {"ud": my * e, "du": my * (1 - e)}.get(mode, my / 2)
+    m = np.float32([[1, 0, -x], [0, 1, -y]])
+    return cv2.warpAffine(big, m, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
+
+
 class VideoBG:
     """動く背景（assets_video/ の mp4）。カットの頭から順に読み、短ければ頭に戻ってくり返す（10/13 追加）。"""
 
@@ -402,12 +435,17 @@ class CutRenderer:
         self.cut = cut
         self.dur = cut_dur(cut)
         self.vbg = None
+        self.pan = None
         if cut.get("bg") and cut["bg"].endswith(".mp4"):   # 動く背景
             self.vbg = VideoBG(cut["bg"], (W, H), cut.get("bg_ss", 0.0))
             self.bg = self.vbg.frame(0.0)
         elif cut.get("bg"):
             bg = cv2.imread(cut["bg"], cv2.IMREAD_COLOR)
             self.bg = cv2.resize(bg, (W, H)).astype(np.float32) / 255.0
+            self.pan = pan_mode(cut)
+            if self.pan:   # 少し大きくしておき、その中をゆっくり動かす
+                self.bg_big = cv2.resize(bg, (int(W * PAN_ZOOM), int(H * PAN_ZOOM)),
+                                         interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
         else:
             self.bg = np.zeros((H, W, 3), np.float32)
         self.cats = []
@@ -606,7 +644,9 @@ class CutRenderer:
             self.bg = self.vbg.frame(t)
         # 背景はゆっくり寄る（参考動画ふうの時は止める）
         z = 1.0 + (0.03 * (t / self.dur) if self.style != "meme" else 0)
-        if z > 1.001:
+        if self.pan:
+            out = pan_frame(self.bg_big, self.pan, t / max(self.dur, 0.01))
+        elif z > 1.001:
             bw, bh = int(W * z), int(H * z)
             big = cv2.resize(self.bg, (bw, bh), interpolation=cv2.INTER_LINEAR)
             ox, oy = (bw - W) // 2, (bh - H) // 2

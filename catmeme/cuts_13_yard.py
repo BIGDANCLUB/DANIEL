@@ -75,7 +75,7 @@ def cuts_all():
         # ---- 1. つかみ ----（「これ、納得できますか？」は原稿で指定された所だけ。冒頭には入れない：10/13 ユーザー指定）
         vic("朝　仕事に行こうとしたら……\nハイエースが……\nない……", se="tear_drop", sting={"file": KAMI, "len": 4.0, "gain": -14}),
         vic("工具も全部\n積んだままだったのに……", HIACE_B, se="chin_bell_failure_sad_ending", bgm={"file": PURPLE, "gain": -4}),
-        one("v17_cherry_road_aerial", "このヤードが\n受け取ったとみられる盗難車だけで\n2024年以降　300台以上", se="doon_movie"),
+        one("v17_cherry_road_aerial", "このヤードだけで\n2024年以降\n盗難車300台以上を\n受け取ったとみられる", se="doon_movie"),
         one(YARD, "その多くが　その日のうちに\n茨城県の「ヤード」へ運ばれ", se="car_brake"),
         one(RAID, "塀の中で解体されて\n海外へ輸出された\nとみられる", se="pc_warning"),
         close(RAID, "@react", "ニュース猫", "300台！？\n盗んで　バラして　海外って……\n流れ作業じゃん", se=["explosion_chudoon"]),

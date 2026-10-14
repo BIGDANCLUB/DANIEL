@@ -246,3 +246,30 @@ def japan():
 
 if __name__ == "__main__" and os.environ.get("THUMB") == "14":
     japan()
+
+
+def vambi():
+    """15本目（ヴァンビの経歴と逮捕報道）で3案。本人・関係者の写真や似顔絵は使わない。背景は AI 生成（backgrounds/15_vambi）。
+    逮捕は容疑の段階なので、有罪のように見える言葉は使わない。"""
+    type_a("15_vambi_ref_a.png", "bg80_counter_rocket", "bg76_roppongi_night",
+           ("surprise_big_pupils_cat", 0.6, 250, 470, 520, False),
+           [("huh_huh_cat", 1.0, 760, 410, 330, True), ("peek_what_happen_cat", 1.0, 1080, 410, 300, True)],
+           "日本人最速1,000万人",
+           [("人気YouTuber", BLACK), ("ヴァンビ", RED)], [("成功から逮捕報道まで", BLUE)])
+    type_b("15_vambi_ref_b.png",
+           [("bg69_vkei_stage", [("surprise_big_pupils_cat", 0.6, 160, 470, 340, False)]),
+            ("bg71_wedding_chapel", [("huh_huh_cat", 1.0, 160, 470, 360, False)]),
+            ("bg80_counter_rocket", [("excited_hodomoe_city_cat", 1.0, 160, 470, 360, False)]),
+            ("bg77_police_station", [("peek_what_happen_cat", 1.0, 160, 470, 340, False)])],
+           [("txt", "元バンドマン", 160, 60, 44, YELLOW, -6), ("txt", "結婚企画で炎上", 480, 70, 42, YELLOW, 4),
+            ("txt", "1,000万人!!", 800, 330, 46, YELLOW, -4), ("arrow", 860, 110, 900, 230),
+            ("txt", "逮捕報道…", 1130, 260, 42, YELLOW, 6)],
+           [("ヴァンビの経歴", RED)], [("成功と騒動のくり返し", NAVY)])
+    type_c("15_vambi_ref_c.png", "bg76_roppongi_night",
+           [("surprise_big_pupils_cat", 0.6, 250, 560, 500, False), ("huh_huh_cat", 1.0, 660, 560, 470, True),
+            ("peek_what_happen_cat", 1.0, 1040, 560, 470, True)],
+           "登録者1,000万人のYouTuberヴァンビ 逮捕報道と事務所退所", "何があった？")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "15":
+    vambi()

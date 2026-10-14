@@ -47,7 +47,21 @@ BG_LIST = {
         "bg66_hotel_price": "A hotel front desk with a price board and a calculator, abstract numbers, no readable text",
         "bg67_food_sample": "A restaurant window display with realistic plastic food samples of ramen, curry and omurice",
         "bg68_coin_lockers": "A row of coin lockers in a Japanese train station hallway",
-    }
+    },
+    "15_vambi": {
+        "bg69_vkei_stage": "A dark rock concert live house stage with purple and red spotlights, smoke, drum set and microphone stand",
+        "bg70_youtube_studio": "A bright home video studio room with a camera on a tripod, ring light, colorful wall and sofa",
+        "bg71_wedding_chapel": "An empty wedding chapel decorated with white flowers and a long aisle, warm light",
+        "bg72_live_stream": "A computer desk at night with two monitors showing a live streaming screen with chat bubbles (no readable text), Christmas decorations",
+        "bg73_shorts_phone": "A big smartphone floating with vertical short video frames around it, play icons and heart icons, colorful pop background",
+        "bg74_world_viewers": "A glowing world map with many connection lines and play button icons spreading across continents, night",
+        "bg75_seminar_hall": "A modern seminar hall with a stage, big screen and rows of chairs, bright business atmosphere",
+        "bg76_roppongi_night": "A Tokyo nightlife street in Roppongi at night, neon lights, tall buildings, wet road, no people",
+        "bg77_police_station": "The entrance of a Japanese police station building at night with a red lamp and a flagpole",
+        "bg78_agency_office": "A talent agency office meeting room with a long table and chairs, papers on the table, serious atmosphere",
+        "bg79_timeline": "An abstract timeline background with glowing dots connected by a line on a dark blue gradient",
+        "bg80_counter_rocket": "A subscriber counter style display with big numbers rising and a rocket launching, celebratory confetti, no readable text",
+    },
 }
 
 

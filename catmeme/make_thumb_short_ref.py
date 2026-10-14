@@ -127,7 +127,7 @@ def yard():
          "bg41_yard_scrap", [("surprise_big_pupils_cat", 0.6, 250, 1900, 620, False), ("sad_banana_cat_cry", 1.0, 830, 1880, 600, True)],
          "300台なのに!?", "b", cap_y=900, stroke1=WHITE)
     make("short_13b_yard_ref.png", "盗難が減った理由", YELLOW, "まさかの“海峡”", RED,
-         "bg42_yard_raid_ai", [("rage_talking_cat", 1.0, 540, 1960, 780, False)],
+         "bg42_yard_raid_ai", [("huh_huh_cat", 1.0, 560, 1960, 900, False)],
          "対策じゃなかった!?", "b", cap_y=1000, stroke1=WHITE)
 
 

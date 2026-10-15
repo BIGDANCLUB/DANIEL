@@ -78,7 +78,7 @@ Purple / RYU ITO（RYU ITO MUSIC）
 ```
 
 ### サムネ
-- release/short_16_tenchim_thumb.png（上の帯「てんちむ3.8億円／まさかの0円に」＋本人の写真＋「控訴審で逆転!!」）
+- release/short_16_tenchim_thumb.png（上の帯「てんちむ3.8億円賠償／まさかの0円に」＋本人の写真＋「どうやって覆した!?」）
 
 ## ショート2（short_16b_tenchim）「元子役の返金負担は4億円超」
 
@@ -94,7 +94,7 @@ Purple / RYU ITO（RYU ITO MUSIC）
 ```
 
 ### サムネ
-- release/short_16b_tenchim_thumb.png（上の帯「この元子役が／返金負担4億円超」＋子役時代の写真＋「まさかの自腹!?」）
+- release/short_16b_tenchim_thumb.png（上の帯「この元子役が／返金負担4億円超」＋子役時代の写真＋「なぜ自腹で!?」）
 
 ### メモ（2本共通）
 - 本人の写真は、セリフの下に枠つきで見せる形にした（顔に字幕や猫をかけない）

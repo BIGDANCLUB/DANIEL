@@ -300,3 +300,28 @@ def tenchim():
 
 if __name__ == "__main__" and os.environ.get("THUMB") == "16":
     tenchim()
+
+
+def imamori():
+    """17本目（今森茉耶）で3案。本人の写真は使わない（背景はAI）。疑惑は疑惑と書く。"""
+    type_a("17_imamori_ref_a.png", "bg95_hero_studio", "bg101_phone_chat",
+           ("surprise_big_pupils_cat", 0.6, 250, 470, 520, False),
+           [("stare_big_eyes_tabby_kitten", 1.0, 760, 410, 330, True), ("stare_interviewer_cat", 1.0, 1080, 410, 300, True)],
+           "元戦隊ヒロイン",
+           [("再出発からわずか", BLACK), ("6日", RED)], [("今森茉耶がSNS発信休止", BLUE)])
+    type_b("17_imamori_ref_b.png",
+           [("bg94_magazine_stand", [("excited_hodomoe_city_cat", 1.0, 160, 470, 360, False)]),
+            ("bg95_hero_studio", [("surprise_big_pupils_cat", 0.6, 160, 470, 340, False)]),
+            ("bg98_izakaya_night", [("sad_banana_cat_cry", 1.0, 160, 470, 330, False)]),
+            ("bg101_phone_chat", [("realize_wet_cat_stare", 1.0, 160, 470, 340, False)])],
+           [("txt", "ミスマガGP", 160, 60, 44, YELLOW, -6), ("txt", "戦隊ヒロイン", 480, 70, 42, YELLOW, 4),
+            ("txt", "20歳未満飲酒で降板", 800, 330, 38, YELLOW, -4), ("arrow", 860, 110, 900, 230),
+            ("txt", "発信休止…", 1130, 260, 44, YELLOW, 6)],
+           [("元戦隊ヒロインの1年", RED)], [("今森茉耶に何があった？", NAVY)])
+    type_c("17_imamori_ref_c.png", "bg95_hero_studio",
+           [("stare_big_eyes_tabby_kitten", 1.0, 250, 560, 470, False), ("stare_interviewer_cat", 1.0, 1040, 560, 470, True)],
+           "元戦隊ヒロイン今森茉耶 YouTube再出発から6日で発信休止", "何があった？")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "17":
+    imamori()

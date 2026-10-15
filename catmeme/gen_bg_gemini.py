@@ -72,6 +72,18 @@ BG_LIST = {
         "bg90_phone_post": "A smartphone on a table showing a social media post screen with hearts and comment icons, no readable text",
         "bg91_tv_studio_kids": "A colorful children's TV show studio set with bright shapes and cameras, no people",
     },
+    "17_imamori": {
+        "bg94_magazine_stand": "A convenience store magazine rack full of colorful magazines with blank covers, no readable text, no people",
+        "bg95_hero_studio": "A tokusatsu hero TV show filming set in a quarry with smoke effects, camera cranes and colorful lights, no people",
+        "bg96_hero_toys": "A shelf of colorful generic hero action figures and transformation belt toys in a toy store, no logos, no readable text",
+        "bg97_tabloid_desk": "A weekly tabloid magazine editorial desk with camera, notebooks and printed pages, dramatic lamp light, no readable text",
+        "bg98_izakaya_night": "An izakaya table at night with glasses and bottles, warm light, blurred, no people",
+        "bg99_tv_station": "A modern TV broadcasting station building exterior at dusk with antenna tower, no logos",
+        "bg100_lounge_night": "A calm upscale lounge bar interior at night with sofas and soft lights, no people",
+        "bg101_phone_chat": "A smartphone on a bed at night showing a blurred chat app screen, no readable text, dim blue light",
+        "bg102_quiet_room": "A quiet dim room with a window and curtains, soft morning light, calm and lonely atmosphere, no people",
+        "bg103_timeline2": "An abstract timeline background with glowing dots connected by a line on a dark purple gradient",
+    },
 }
 
 

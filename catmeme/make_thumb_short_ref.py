@@ -132,6 +132,16 @@ def yard():
          "対策じゃなかった!?", "b", cap_y=1000)
 
 
+def tenchim():
+    """16本目（てんちむ）のショート2本ぶん。背景はユーザー提供の本人の写真。猫は顔にかけない。"""
+    make("short_16_tenchim_ref.png", "てんちむ3.8億円", DEEP_YELLOW, "まさかの0円に", RED,
+         "bg81_tenchim_neon", [("surprise_big_pupils_cat", 0.6, 170, 1900, 520, False), ("excited_hodomoe_city_cat", 1.0, 900, 1900, 560, True)],
+         "控訴審で逆転!!", "b", cap_y=1560)
+    make("short_16b_tenchim_ref.png", "この元子役が", DEEP_YELLOW, "返金負担4億円超", RED,
+         "bg92_tenchim_child", [("stare_big_eyes_tabby_kitten", 1.0, 170, 1900, 520, False), ("huh_huh_cat", 1.0, 900, 1900, 520, True)],
+         "まさかの自腹!?", "b", cap_y=1560)
+
+
 if __name__ == "__main__":
     import sys
-    {"12": akaihane, "13": yard}[sys.argv[1] if len(sys.argv) > 1 else "13"]()
+    {"12": akaihane, "13": yard, "16": tenchim}[sys.argv[1] if len(sys.argv) > 1 else "13"]()

@@ -139,7 +139,7 @@ def tenchim():
          "bg81_tenchim_neon", [("surprise_big_pupils_cat", 0.6, 150, 1520, 600, False), ("excited_hodomoe_city_cat", 1.0, 950, 1520, 640, True)],
          "どうやって覆した!?", "b", cap_y=1700)
     make("short_16b_tenchim_ref.png", "この元子役が", DEEP_YELLOW, "返金負担4億円超", RED,
-         "bg92_tenchim_child", [("stare_big_eyes_tabby_kitten", 1.0, 150, 1520, 600, False), ("huh_huh_cat", 1.0, 950, 1520, 600, True)],
+         "bg92_tenchim_child", [("stare_big_eyes_tabby_kitten", 1.0, 150, 1520, 600, False), ("huh_huh_cat", 1.0, 860, 1610, 600, True)],
          "なぜ自腹で!?", "b", cap_y=1700)
 
 

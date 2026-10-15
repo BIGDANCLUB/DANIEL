@@ -72,6 +72,15 @@
 | dance_cute_dog.mp4 | 二本足で踊る犬（喜ぶ・浮かれる） | Cute dog dance green screen.mp4 | あり |
 | eat_chips_cat.mp4 | ポテチを食べる猫（観戦・他人事） | Cat eating chips on a green screen.mp4 | あり |
 | surprise_big_pupils_cat.mp4 | 驚く（目がまんまる） | 驚く　Cute Cat With Big Dilated Pupils Meme Green Screen Chroma Key Template 猫ミーム素材.mp4 | |
+| stare_interviewer_cat.mp4 | 正面をじっと見る茶白猫（面接官・審査する・様子見） | 5-14（TikTok保存・10/15 ユーザー追加） | |
+| talk_orange_white_sitting_cat.mp4 | 座ってしゃべる茶白猫（説明・ぼやく） | 5-17（TikTok保存・10/15 ユーザー追加） | |
+| meow_gray_white_kitten.mp4 | 口をもぐもぐ鳴く白黒の子猫（とぼける・ゆるい返事） | 5-12（TikTok保存・10/15 ユーザー追加） | |
+| stare_big_eyes_tabby_kitten.mp4 | 目がまんまるのキジ白子猫（驚く・ぽかん） | 5-13（TikTok保存・10/15 ユーザー追加） | |
+| yell_orange_fat_cat.mp4 | 目を細めて叫ぶ茶トラ（ドヤ・叫ぶ・熱唱） | 5-10（TikTok保存・10/15 ユーザー追加） | |
+| meow_ragdoll_chubby_cat.mp4 | にらんで鳴くぽっちゃり猫（不満・文句） | 5-11（TikTok保存・10/15 ユーザー追加） | |
+| punch_tabby_cat_reach.mp4 | 手を伸ばすキジトラ（ちょっかい・ツッコミ・止める） | 5-16（TikTok保存・10/15 ユーザー追加） | |
+| dance_three_kittens.mp4 | 3匹そろって踊る子猫（浮かれる・お祝い） | 5-8（TikTok保存・10/15 ユーザー追加） | ⚠ |
+| dance_tabby_standing_cat.mp4 | 二本足で踊るキジトラ（ノリノリ） | 5-15（TikTok保存・10/15 ユーザー追加） | ⚠ |
 
 - ⚠ は曲名がついている、または曲で有名なミーム。届いたら実際に聞いて確認し、表を更新する
 
@@ -81,3 +90,5 @@
 - 背景が濃い緑で、抜くときに色の調整がいるもの: wakeup_dog_hits_bowl, work_typing_cat
 - 端に黒い帯・線があり、切り取りがいるもの: itchy_kitten_butt（左右）, excited_hodomoe_city_cat（左）, listen_dancing_dog（下）, sad_banana_cat_cry（下）
 - 解像度が低め（640x360 前後）: wave_waving_cat, mock_swinging_cat, excited_hodomoe_city_cat, itchy_kitten_butt。画面の小さめの位置で使う
+- TikTok保存の素材（10/15 追加の9本）は、左右の黒い帯を切り、TikTokのロゴ・ユーザー名を消してから入れた（変換スクリプト: `tools/clean_tiktok_greenscreen.py`）。小さな点が残ることがあるので、大きく映すときは確認する
+- 10/15 追加分の「音」は聞いて確認していない。踊る2本は曲が入っている可能性が高いので ⚠（音を消す）にした

@@ -66,6 +66,16 @@ def org(b, who, sub, **kw):
     return dict(bg=bg(b), cats=[cat(ORG_CAT[who], who, 960, h=720)], say=sub, text_top=True, **kw)
 
 
+PH = os.path.join(HERE, "backgrounds", "17_imamori", "photos")
+
+
+def pic(name, text, b=TL, **kw):
+    """ユーザー提供の写真を上に枠つきで大きく見せ、説明は下の帯。猫は右に小さく（写真の人の顔にかけない）。"""
+    return dict(bg=bg(b), inset={"card": os.path.join(PH, name + "_framed.png"), "box": (140, 16, 1640, 672)}, say="",
+                explain=text, no_pop=True, text_top=True, dur=kw.pop("dur", 4.4),
+                cats=[cat("@calm", "博識な猫", 1760, h=380, bottom=660, float=True)], **kw)
+
+
 def card(c, sub, b=BOARD, **kw):
     return dia(c, sub, b, right=S, dur=kw.pop("dur", 5.8), se=kw.pop("se", "card_flip"), **kw)
 
@@ -101,21 +111,24 @@ def cuts_all():
         ss("中学生のころから\nTikTokで活動していた", V_PHONE_W, se="pi"),
         card("e02_profile", "2022年に芸能事務所 seju と契約　2023年にグラビアデビュー", b=MAG, se="card_place"),
         two(MAG, "そして\n「ミスマガジン2023」で\nグランプリ", se="jan"),
+        pic("p2_missmagazine_gp", "「ミスマガジン2023」グランプリ", MAG, se="jan"),
         nn("デビューの年に\nいきなりグランプリ！？", MAG, se=["explosion_chudoon"]),
         ss("ミスマガジンは\n多くの人気女優を生んだ\n講談社のオーディション", MAG, se="pi"),
-        ss("雑誌やCMにも出て\n知名度が一気に上がった", MAG, se="pikon"),
-        ss("写真集は\n地元の宮崎と\nフィリピンのセブ島で撮影（報道）", MAG, se="pi"),
+        pic("p5_event_smile", "雑誌やCMにも出て　知名度が一気に上がった", MAG, se="pikon"),
+        pic("p6_event_portrait", "写真集は　地元の宮崎とフィリピンのセブ島で撮影（報道）", MAG, se="pi"),
         nn("TikTokから\nグラビア　そして……", MAG, se="idea_newtype_01"),
         ss("次に決まったのが\nあの有名シリーズの\nヒロインだった", MAG, se="kon"),
         # ---- 3. 戦隊初の女性ブラック（1:25〜2:15）----
         ss("グランプリの先に\n待っていたのは……", MAG, se="kon"),
         chap("戦隊シリーズ初の\n女性ブラック", se="doon_heavy", bgm={"file": PURPLE, "gain": -4, "fade": 0.6}),
         card("e03_sentai", "2025年2月放送開始　一河角乃／ゴジュウユニコーン役", b=HERO),
+        pic("p1_cast_and_hero", "一河角乃（左）と　変身したゴジュウユニコーン（右）", HERO, se="jan"),
         nn("シリーズ初の\n女性ブラック！？", HERO, se=["explosion_chudoon"]),
         ss("ブラックは\nこれまで男性の戦士が\n続いてきた色", HERO, se="pi"),
-        ss("しかも放送開始時は18歳\nスーパー戦隊50周年の\n記念作品のヒロイン", HERO, se="pi"),
+        pic("p7_cast_announcement", "放送開始時は18歳　スーパー戦隊50周年の記念作品のヒロイン（左から2人目）", HERO, se="pi"),
         card("e03_sentai", "戦隊シリーズは若手俳優の登竜門と言われる", b=TOYS, se="card_place"),
-        ss("戦隊出身から\n人気俳優になった人は多い", TOYS, se="pikon"),
+        pic("p8_cast_items", "戦隊出身から　人気俳優になった人は多い", TOYS, se="pikon"),
+        pic("p3_official_instagram", "番組の公式Instagramでも紹介された（2025年4月）", TOYS, se="pi"),
         nn("将来を期待される\nスタートだった", TOYS, se="idea_newtype_01"),
         ss("ところが\n放送中に\n大きく変わっていく", TOYS, se="kon"),
         # ---- 4. 2025年9月の不倫疑惑報道（2:15〜3:05）----
@@ -159,7 +172,7 @@ def cuts_all():
         org(TVSTA, "東映", "起用の発表は\n降板から1週間後の\n11月15日", se="page_turn_01"),
         ss("物語の中では\n“顔と声が変わった”という\n設定で引き継いだと紹介された", HERO, se="kon"),
         nn("むちゃな設定……\nでも番組を\n止めないための工夫か", HERO, se="question_hatena_maou"),
-        ss("志田さんは\n『暴太郎戦隊ドンブラザーズ』で\nヒロインを演じた経験者", HERO, se="pikon"),
+        pic("p4_shida_kohaku", "役を引き継いだ志田こはくさん　『暴太郎戦隊ドンブラザーズ』でヒロインを演じた経験者", HERO, se="pikon"),
         ss("撮り直しや脚本の調整など\n制作の現場には\n大きな負担になったとみられる", HERO, se="kon"),
         nn("一人の行動が\n番組全体に\n影響したんだね", TOYS, se="deflate_hyororo"),
         # ---- 7. YouTubeで再出発（4:55〜5:45）----

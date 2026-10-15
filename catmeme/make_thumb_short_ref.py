@@ -143,6 +143,16 @@ def tenchim():
          "なぜ自腹で!?", "b", cap_y=1640)
 
 
+def imamori():
+    """17本目（今森茉耶）のショート2本ぶん。背景はユーザー提供の写真。猫は顔にも字幕にもかけない（字幕より上・右の端）。"""
+    make("short_17_imamori_ref.png", "元戦隊ヒロイン", DEEP_YELLOW, "再出発から6日", RED,
+         "p6_event_portrait", [("stare_big_eyes_tabby_kitten", 1.0, 840, 1470, 360, True)],
+         "何があった!?", "b", cap_y=1640, cx=0.2)
+    make("short_17b_imamori_ref.png", "放送中に", DEEP_YELLOW, "ヒロイン交代", RED,
+         "p7_cast_announcement", [("surprise_big_pupils_cat", 0.6, 760, 1460, 360, True)],
+         "番組はどうした!?", "b", cap_y=1640, cx=0.18)
+
+
 if __name__ == "__main__":
     import sys
-    {"12": akaihane, "13": yard, "16": tenchim}[sys.argv[1] if len(sys.argv) > 1 else "13"]()
+    {"12": akaihane, "13": yard, "16": tenchim, "17": imamori}[sys.argv[1] if len(sys.argv) > 1 else "13"]()

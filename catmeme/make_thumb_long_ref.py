@@ -282,7 +282,7 @@ def tenchim():
            ("surprise_big_pupils_cat", 0.6, 90, 470, 300, False),
            [("huh_huh_cat", 1.0, 1130, 410, 300, True)],
            "ナイトブラ裁判",
-           [("てんちむ3.8億円", BLACK), ("逆転で0円に", RED)], [("控訴審で支払い命令取り消し", BLUE)])
+           [("てんちむ3.8億円賠償", BLACK), ("が0円に", RED)], [("控訴審で支払い命令取り消し", BLUE)])
     type_b("16_tenchim_ref_b.png",
            [("bg82_tenchim_feather", []),
             ("bg87_refund_money", [("surprise_big_pupils_cat", 0.6, 160, 470, 340, False)]),

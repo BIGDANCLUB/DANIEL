@@ -101,11 +101,12 @@ def save(img, name):
     print("->", p)
 
 
-def type_a(name, left_bg, right_bg, left_cat, right_cats, tag, line1, line2):
+def type_a(name, left_bg, right_bg, left_cat, right_cats, tag, line1, line2, split=500):
+    """split＝左の写真の幅（人物の写真を大きく見せたい時は広げる）。"""
     img = Image.new("RGBA", (W, H), WHITE)
     top_h = 410
-    img.alpha_composite(fill_photo(left_bg, 500, top_h, cx=0.5), (0, 0))
-    img.alpha_composite(fill_photo(right_bg, W - 504, top_h), (504, 0))
+    img.alpha_composite(fill_photo(left_bg, split, top_h, cx=0.5), (0, 0))
+    img.alpha_composite(fill_photo(right_bg, W - split - 4, top_h), (split + 4, 0))
     put_cat(img, *left_cat)
     for c in right_cats:
         put_cat(img, *c)
@@ -282,7 +283,7 @@ def tenchim():
            ("surprise_big_pupils_cat", 0.6, 90, 470, 300, False),
            [("huh_huh_cat", 1.0, 1130, 410, 300, True)],
            "ナイトブラ裁判",
-           [("てんちむ3.8億円賠償", BLACK), ("が0円に", RED)], [("控訴審で支払い命令取り消し", BLUE)])
+           [("てんちむ3.8億円賠償", BLACK), ("が0円に", RED)], [("控訴審で支払い命令取り消し", BLUE)], split=780)
     type_b("16_tenchim_ref_b.png",
            [("bg82_tenchim_feather", []),
             ("bg87_refund_money", [("surprise_big_pupils_cat", 0.6, 160, 470, 340, False)]),

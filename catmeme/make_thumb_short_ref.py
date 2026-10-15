@@ -136,11 +136,11 @@ def tenchim():
     """16本目（てんちむ）のショート2本ぶん。背景はユーザー提供の本人の写真。猫は顔にも字幕にもかけない（字幕より上・左右の端）。
     10/15 ユーザー指定：「賠償」だと分かる文言、結果ではなく「どうやって!?」と中身を気にさせるひとこと。"""
     make("short_16_tenchim_ref.png", "てんちむ3.8億円賠償", DEEP_YELLOW, "まさかの0円に", RED,
-         "bg81_tenchim_neon", [("surprise_big_pupils_cat", 0.6, 150, 1520, 600, False), ("excited_hodomoe_city_cat", 1.0, 950, 1520, 640, True)],
-         "どうやって覆した!?", "b", cap_y=1700)
+         "bg81_tenchim_neon", [("surprise_big_pupils_cat", 0.6, 120, 1440, 400, False), ("excited_hodomoe_city_cat", 1.0, 960, 1440, 420, True)],
+         "どうやって覆した!?", "b", cap_y=1640)
     make("short_16b_tenchim_ref.png", "この元子役が", DEEP_YELLOW, "返金負担4億円超", RED,
-         "bg92_tenchim_child", [("stare_big_eyes_tabby_kitten", 1.0, 150, 1520, 600, False), ("huh_huh_cat", 1.0, 860, 1610, 600, True)],
-         "なぜ自腹で!?", "b", cap_y=1700)
+         "bg92_tenchim_child", [("stare_big_eyes_tabby_kitten", 1.0, 120, 1440, 400, False), ("huh_huh_cat", 1.0, 900, 1560, 400, True)],
+         "なぜ自腹で!?", "b", cap_y=1640)
 
 
 if __name__ == "__main__":

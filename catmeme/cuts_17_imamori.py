@@ -57,8 +57,8 @@ V_PHONE_W, V_HANDS, V_HAND, V_NIGHT, V_SHIBUYA, V_TYPE, V_SLEEP = (
 
 
 def two(b, sub, **kw):
-    return dict(bg=bg(b), cats=[cat("@react", "ニュース猫", 500, h=700), cat("@calm", "博識な猫", 1430, h=700)], say=sub,
-                text_top=True, **kw)
+    """説明の場面。しゃべっている博識な猫だけを出す（10/15 ユーザー指定）。"""
+    return ss(sub, b, **kw)
 
 
 def org(b, who, sub, **kw):
@@ -88,6 +88,7 @@ def cuts_all():
         nn("元戦隊ヒロインが\nYouTubeで再出発……\nわずか6日で発信休止！？", HERO, se=["jan", "explosion_chudoon"], bgm={"file": AM223, "gain": -4}),
         ss("2025年\n『ナンバーワン戦隊ゴジュウジャー』の\nヒロインだった今森茉耶さん", HERO, se="doon_movie"),
         ss("週刊誌の不倫疑惑\nそして20歳未満の飲酒で\n番組を降板", HERO, se="pi"),
+        ss("それでも\n活動を再開し\n再出発！", STUDIO, se="pikon"),
         ss("2026年10月8日\nYouTubeに初投稿\n10月14日　すべての発信を休止と表明", V_HANDS, se="pi"),
         nn("降板から\n約1年での再出発\nだったのに……", V_HANDS, se="shock_piano"),
         dict(bg=bg(TL), card=pt("e01_title"), dur=3.8, se="jan",
@@ -167,9 +168,9 @@ def cuts_all():
         card("e07_youtube", "10月8日にYouTubeへ初投稿（本人の動画・報道）", b=STUDIO),
         card("e07_youtube", "約4か月ラウンジで働いたと説明　パパ活の疑いは否定", b=LOUNGE, se="card_place"),
         ss("芸能界には\n戻らない考えを\n示したと報じられた", STUDIO, se="pi"),
-        ss("Instagramでは\n降板のころのことには\n今後触れられないと説明していた（報道）", V_PHONE_W, se="kon"),
+        ss("降板のころのことは\n“これからも話せない”と\nInstagramで説明していた（報道）", V_PHONE_W, se="kon"),
         ss("事務所に入らず\n個人で発信できるのが\nYouTubeの場所", STUDIO, se="pikon"),
-        ss("2026年3月の\n20歳の誕生日のころにも\nSNSの投稿が賛否を呼んでいた（報道）", V_PHONE_W, se="pi"),
+        ss("2026年3月　20歳の誕生日に\nSNSで写真を公開すると\n“反省して”という声も集まった（報道）", V_PHONE_W, se="pi"),
         ss("別のYouTuberの動画では\nいじめや不登校の過去も\n話したと報じられた", STUDIO, se="kon"),
         nn("一からの\n再スタート……", STUDIO, se="idea_newtype_01"),
         ss("ただ　ネットで\n“交際相手”などの\nうわさも出たけど", V_HANDS, se="kon"),

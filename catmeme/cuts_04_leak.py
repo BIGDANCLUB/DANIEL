@@ -57,11 +57,24 @@ def cat(a, role, x, h=640, bottom=1010, **kw):
     return dict(a=a, x=x, h=h, bottom=bottom, label=role, label_color=ROLE[role], label_size=kw.pop("label_size", 66), **kw)
 
 
-def duo(b, left, right, say, who="L", **kw):
-    """2匹並べての掛け合い。left/right = (素材, 役名)。who はしゃべる側（L/R）。しゃべっていない方の猫の音は消す。"""
-    cats = [cat(left[0], left[1], 500, h=760, bottom=1040, flip=kw.pop("lflip", False), mute=who != "L"),
-            cat(right[0], right[1], 1430, h=760, bottom=1040, flip=kw.pop("rflip", False), mute=who != "R")]
+def duo(b, left, right, say, who="L", both=None, **kw):
+    """掛け合い。left/right = (素材, 役名)。who はしゃべる側（L/R）。
+    10/15 ユーザー指定：しゃべっている猫だけを出す（対話感を出すため）。2匹並ぶのが自然な場面だけ both=True。
+    （昔の動画を作り直すときは DUO_BOTH=True で前と同じ2匹並び）"""
+    both = DUO_BOTH if both is None else both
+    lf, rf = kw.pop("lflip", False), kw.pop("rflip", False)
+    if not both:
+        if who == "L":
+            cats = [cat(left[0], left[1], 560, h=800, bottom=1040, flip=lf)]
+        else:
+            cats = [cat(right[0], right[1], 1360, h=800, bottom=1040, flip=rf)]
+        return dict(bg=bg(b), cats=cats, say=say, text_top=True, **kw)
+    cats = [cat(left[0], left[1], 500, h=760, bottom=1040, flip=lf, mute=who != "L"),
+            cat(right[0], right[1], 1430, h=760, bottom=1040, flip=rf, mute=who != "R")]
     return dict(bg=bg(b), cats=cats, say=say, text_top=True, **kw)
+
+
+DUO_BOTH = False
 
 
 def solo(b, a, role, say, side="L", **kw):

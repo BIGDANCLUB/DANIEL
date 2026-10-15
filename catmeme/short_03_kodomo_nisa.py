@@ -20,7 +20,9 @@ import render as R
 R.NYAS_STYLE = True
 R.FG_DUCK = -9
 SW, SH = 1080, 1920
-SHORT_MIN, SHORT_MAX = 45.0, 58.0   # ショートの長さ（秒）
+SHORT_MIN, SHORT_MAX = 45.0, 58.0   # （旧ルール。10/15 から下の SHORT_EXACT を使う）
+SHORT_EXACT = 60.0   # ショートは必ず60秒ちょうど（10/15 ユーザー指定）
+SHORT_PAD_MAX = 4.0  # 最後のカットを伸ばして合わせてよい最大の秒数
 HERE = os.path.dirname(os.path.abspath(__file__))
 BGS = [os.path.join(HERE, "backgrounds", d) for d in ("03_kodomo_nisa", "02_october", "01_todai")]
 BGM = os.path.join(HERE, "bgm")
@@ -206,8 +208,14 @@ def run(cs, title_img, out_path, prev, check=True):
     durs = [R.cut_dur(c) for c in cs]
     starts = list(np.cumsum([0] + durs[:-1]))
     total = sum(durs)
-    if check and not SHORT_MIN <= total <= SHORT_MAX:   # ショートは45〜58秒（チャンネルのルール）
-        raise SystemExit(f"ショートの長さ {total:.1f}秒 が {SHORT_MIN}〜{SHORT_MAX}秒の範囲外です。カットを足すか削ってください")
+    if check:   # ショートは必ず60秒ちょうど：最後のカット（注意書き・締め）の長さで合わせる
+        diff = SHORT_EXACT - total
+        if diff > SHORT_PAD_MAX or durs[-1] + diff < 2.0:
+            raise SystemExit(f"ショートの長さ {total:.1f}秒。60秒ちょうどにするには {diff:+.1f}秒 の調整が必要です"
+                             f"（最後のカットで合わせられるのは +{SHORT_PAD_MAX:.0f}秒まで）。カットを足すか削ってください")
+        durs[-1] += diff
+        starts = list(np.cumsum([0] + durs[:-1]))
+        total = SHORT_EXACT
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     wav = OUT + ".audio.f32"
     R.build_audio(cs, starts, durs, total).tofile(wav)
@@ -215,7 +223,7 @@ def run(cs, title_img, out_path, prev, check=True):
     proc = subprocess.Popen(
         ["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{SW}x{SH}", "-r", str(R.FPS), "-i", "-",
          "-f", "f32le", "-ar", str(R.SR), "-ac", "2", "-i", wav, "-c:v", "libx264", "-preset", "veryfast", "-crf", "21",
-         "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", OUT], stdin=subprocess.PIPE)
+         "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-t", f"{total:.3f}", "-movflags", "+faststart", OUT], stdin=subprocess.PIPE)
     frame_no = 0
     os.makedirs(prev, exist_ok=True)
     for i, c in enumerate(cs):

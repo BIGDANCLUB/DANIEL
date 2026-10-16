@@ -33,6 +33,10 @@ LIME = (120, 235, 40)
 SAFE_W = SW - 240
 BAND = (0, 560)     # 黒い帯の上下。サムネと同じく画面の一番上から黒（10/13 ユーザー指定）
 TEXT_Y = 740        # セリフの中心
+# ショート画面の下（約2割）はタイトル・チャンネル名で隠れるので、猫・役名・画像はこの線より上に置く（10/16 ユーザー指定）
+SAFE_BOTTOM = 1540
+SAFE_SCALE = 0.6    # 猫の高さは各ショートで書いた値のこの倍（足元を SAFE_BOTTOM まで上げるぶん小さく）
+SAFE_RIGHT = SW - 140   # 右端はいいね等のボタンで隠れる
 
 
 def bg_path(n):
@@ -122,8 +126,8 @@ def title_band(top, sub, top_col=RED, sub_col=YELLOW, top_stroke=BLACK):
     return im
 
 
-def role_label(name):
-    return outline_text([[(name, LIME)]], 110, w=700)
+def role_label(name, size=110):
+    return outline_text([[(name, LIME)]], size, w=700)
 
 
 def moving_bg(bg, T):
@@ -148,21 +152,30 @@ def make_draw(c, title):
     bg = None if vid else vbg(c["bg"])
     # セリフは大きめに（10/13 ユーザー指定）：横幅に収まらない分は、まず横だけ少し細くして大きさを保つ
     cap = fit_wide(outline_text(parse(c["say"], c.get("col", WHITE)), int(c.get("size", 100) * 1.3), w=3000), SAFE_W + 20, 900)
-    lab = role_label(c["label"]) if c.get("label") else None
+    lab = role_label(c["label"], c.get("label_size", 110)) if c.get("label") else None
     extra = [(role_label(t_), x_) for t_, x_ in c.get("labels", [])]   # 2つ目以降の役名
+    safe = c.get("safe", True)
+    lab_y = SAFE_BOTTOM - 70 if safe else SH - 330
+
+    def lab_x(im, x):   # 役名が右のボタンや画面の外にはみ出さないように
+        return min(max(x, im.width / 2 + 20), SAFE_RIGHT - im.width / 2) if safe else x
     tags = {k["tag"]: role_label(k["tag"]) for k in c["cats"] if k.get("tag")}
 
     def draw(t):
         out = vid.frame(t).copy() if vid else moving_bg(bg, c.get("t0", 0.0) + t)
         if c.get("img") is not None:   # 実際の画像（ニュースの画像など）をセリフの下に差し込む。猫はその手前
-            H.put(out, c["img"], SW / 2, c.get("img_y", 1060), H.pop(t, 0.05, 0.16))
+            H.put(out, c["img"], c.get("img_x", SW / 2), c.get("img_y", 1060), H.pop(t, 0.05, 0.16))
         for k in c["cats"]:
             s = H.pop(t, k.get("delay", 0.0), 0.16) if k.get("pop", True) else 1.0
             x, h = k["x"], k["h"]
             if k.get("from"):
                 u = R.ease_out(min(1.0, t / 0.25))
                 x, h = k["from"][0] + (x - k["from"][0]) * u, k["from"][1] + (h - k["from"][1]) * u
-            bottom = SH + k.get("drop", 60)
+            if safe and not k.get("raw"):
+                h *= SAFE_SCALE
+                bottom = SAFE_BOTTOM + k.get("drop", 60) * SAFE_SCALE
+            else:
+                bottom = SH + k.get("drop", 60)
             if k.get("move"):   # 横に走り抜ける（競馬など）。bob で上下にはねる
                 x0, x1 = k["move"]
                 x = x0 + (x1 - x0) * min(1.0, t / max(0.1, R.cut_dur(c)))
@@ -171,9 +184,9 @@ def make_draw(c, title):
             if k.get("tag"):   # その猫の足元に役名（猫といっしょに動く）
                 H.put(out, tags[k["tag"]], x, bottom - k.get("tag_up", 300))
         if lab is not None:
-            H.put(out, lab, c.get("label_x", 760), SH - 330)
+            H.put(out, lab, lab_x(lab, c.get("label_x", 760)), lab_y)
         for im, lx in extra:
-            H.put(out, im, lx, SH - 330)
+            H.put(out, im, lab_x(im, lx), lab_y)
         H.put(out, title, SW / 2, (BAND[0] + BAND[1]) / 2)
         H.put(out, cap, SW / 2, TEXT_Y + cap.height / 2 - 60, H.pop(t, 0.0, 0.14))
         if c.get("shake"):

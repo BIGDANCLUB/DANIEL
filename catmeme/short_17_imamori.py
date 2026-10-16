@@ -32,17 +32,24 @@ def one(bg, say, a, dur, h=1100, who=None, **kw):
     return M.cut(bg, say, [(a, C, h, kw.pop("flip", False))], dur, label={"N": NEWS, "S": SAGE}.get(who), label_x=540, **kw)
 
 
-def photo_img(name, w=1000):
+def photo_img(name, box=(600, 430)):
+    """写真を box の中に収まる大きさにして白い枠をつける。"""
     from PIL import Image, ImageOps
     im = Image.open(M.bg_path(name)).convert("RGB")
-    im = im.resize((w, int(im.height * w / im.width)), Image.LANCZOS)
+    k = min(box[0] / im.width, box[1] / im.height)
+    im = im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
     return ImageOps.expand(im, border=10, fill=(255, 255, 255)).convert("RGBA")
 
 
 def side(name, say, a, dur, who=None, **kw):
-    """写真をセリフの下に枠つきで見せ、猫は右下に小さく（顔にも字幕にもかけない）。"""
-    c = M.cut(TL, say, [(a, 900, 520, False)], dur, label={"N": NEWS, "S": SAGE}.get(who), label_x=760, **kw)
-    c["img"], c["img_y"] = photo_img(name), 1420
+    """写真をセリフの下・右寄りに枠つきで見せ、しゃべる猫は左に小さく。
+    顔にも字幕にもかけず、画面の下（隠れるところ）にも置かない（10/16 ユーザー指定）。"""
+    kw.setdefault("size", 86)
+    c = M.cut(TL, say, [(a, 175, 400, False)], dur, label={"N": NEWS, "S": SAGE}.get(who), label_x=175, **kw)
+    c["cats"][0].update(raw=True, drop=M.SAFE_BOTTOM + 20 - M.SH)
+    c["label_size"] = 64
+    img = photo_img(name)
+    c["img"], c["img_x"], c["img_y"] = img, 630, M.SAFE_BOTTOM - 10 - img.height / 2
     return c
 
 

@@ -64,7 +64,7 @@ def heavy(text, size, fill, stroke, sw, w=SW - 30):
     return im.crop(im.getbbox())
 
 
-def caption(text, style):
+def caption(text, style, col=RED):
     lines = text.split("\n")
     if style == "a":     # 青い文字＋白い縁、半透明の白いぼかし帯
         t = heavy(text, 92, BLUE, WHITE, 9, w=SW - 160)
@@ -72,7 +72,7 @@ def caption(text, style):
         pad.alpha_composite(t, (60, 30))
         return pad, 0
     if style == "b":     # 赤い文字＋黒い太縁、少し傾ける
-        t = heavy(text, 120, RED, BLACK, 12, w=SW - 120)
+        t = heavy(text, 120, col, BLACK, 12, w=SW - 120)
         return t.rotate(4, expand=True, resample=Image.BICUBIC), 0
     # c: 白い文字＋青い縁を2行、暗い半透明の帯
     ts = [heavy(ln, 76, WHITE, BLUE, 8, w=SW - 140) for ln in lines]
@@ -86,7 +86,7 @@ def caption(text, style):
 
 
 def make(out_name, line1, col1, line2, col2, bg, cats, cap, cap_style, cap_y=1220, credit="", zoom=1.0, cx=0.5,
-         stroke1=BLACK):
+         stroke1=BLACK, cap_col=RED):
     img = Image.new("RGB", (SW, SH), BLACK)
     img.paste(photo(bg, zoom, cx), (0, BAND_H))
     out = np.asarray(img)[:, :, ::-1].astype(np.float32) / 255
@@ -101,7 +101,7 @@ def make(out_name, line1, col1, line2, col2, bg, cats, cap, cap_style, cap_y=122
     pil.alpha_composite(t1, ((SW - t1.width) // 2, top))
     pil.alpha_composite(t2, ((SW - t2.width) // 2, top + t1.height + gap))
     # ひとことテロップ
-    c, _ = caption(cap, cap_style)
+    c, _ = caption(cap, cap_style, cap_col)
     pil.alpha_composite(c, ((SW - c.width) // 2, int(cap_y - c.height / 2)))
     if credit:
         ImageDraw.Draw(pil).text((40, 1700), "引用元：" + credit, font=P.font("round_b", 34), fill=(190, 190, 190, 255))
@@ -144,13 +144,14 @@ def tenchim():
 
 
 def imamori():
-    """17本目（今森茉耶）のショート2本ぶん。背景はユーザー提供の写真。猫は顔にも字幕にもかけない（字幕より上・右の端）。"""
+    """17本目（今森茉耶）のショート2本ぶん。背景はユーザー提供の写真。猫は顔にも字幕にもかけない（字幕より上・右の端）。
+    ひとことは濃い黄色で、画面の下（隠れるところ）より上に（10/16 ユーザー指定）。"""
     make("short_17_imamori_ref.png", "元戦隊ヒロイン", DEEP_YELLOW, "再出発から6日", RED,
-         "p6_event_portrait", [("stare_big_eyes_tabby_kitten", 1.0, 840, 1470, 360, True)],
-         "何があった!?", "b", cap_y=1640, cx=0.2)
+         "p6_event_portrait", [("stare_big_eyes_tabby_kitten", 1.0, 840, 1240, 360, True)],
+         "何があった!?", "b", cap_y=1420, cx=0.2, cap_col=DEEP_YELLOW)
     make("short_17b_imamori_ref.png", "放送中に", DEEP_YELLOW, "ヒロイン交代", RED,
-         "p7_cast_announcement", [("surprise_big_pupils_cat", 0.6, 760, 1460, 360, True)],
-         "番組はどうした!?", "b", cap_y=1640, cx=0.18)
+         "p7_cast_announcement", [("surprise_big_pupils_cat", 0.6, 150, 1250, 300, False)],
+         "番組はどうした!?", "b", cap_y=1420, cx=0.18, cap_col=DEEP_YELLOW)
 
 
 if __name__ == "__main__":

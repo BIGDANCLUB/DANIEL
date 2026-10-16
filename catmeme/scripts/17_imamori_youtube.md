@@ -100,7 +100,7 @@ Purple / RYU ITO（RYU ITO MUSIC）
 ```
 
 ### サムネ
-- release/short_17_imamori_thumb.png（上の帯「元戦隊ヒロイン／再出発から6日」＋イベントの写真＋「何があった!?」）
+- release/short_17_imamori_thumb.png（上の帯「元戦隊ヒロイン／再出発から6日」＋イベントの写真＋濃い黄色の「何があった!?」を少し上に）
 
 ## ショート2（short_17b_imamori）「放送中にヒロイン交代」
 
@@ -132,7 +132,7 @@ Purple / RYU ITO（RYU ITO MUSIC）
 ```
 
 ### サムネ
-- release/short_17b_imamori_thumb.png（上の帯「放送中に／ヒロイン交代」＋キャスト発表の写真＋「番組はどうした!?」）
+- release/short_17b_imamori_thumb.png（上の帯「放送中に／ヒロイン交代」＋キャスト発表の写真＋濃い黄色の「番組はどうした!?」を少し上に）
 
 ### メモ（2本共通）
 - 長さは60秒ちょうど

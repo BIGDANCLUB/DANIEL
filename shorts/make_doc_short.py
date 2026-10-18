@@ -42,7 +42,7 @@ W, H, FPS = 1080, 1920, 30
 HERE = os.path.dirname(os.path.abspath(__file__))
 SANS = os.path.join(HERE, "fonts", "NotoSansJP[wght].ttf")
 SERIF = os.path.join(HERE, "fonts", "NotoSerifJP[wght].ttf")
-YELLOW, RED = "#e7ff02", "#fa0103"   # 参考動画の画素から取った色
+YELLOW, RED = "#ffff00", "#fa0000"   # チャンネルのルールで固定
 SUB_SIZE = 102         # 参考動画の文字枠（576px幅で7文字382×64px）に合わせて実測で校正
 SUB_CY = 0.50          # 字幕の中心（画面の高さに対する割合）
 SUB_MAX_W = 1050
@@ -126,6 +126,61 @@ def caption(text, size=SUB_SIZE):
     out = Image.new("RGBA", (iw + 6, ih + 6), (0, 0, 0, 0))
     out.alpha_composite(shadow, (6, 6))
     out.alpha_composite(txt, (0, 0))
+    return out
+
+
+def mora(text):
+    """読み上げの長さの目安（かな1字=1、漢字≈1.8、数字は読みの長さ）。字幕の切り替えに使う。"""
+    t = plain(text).replace("\n", "")
+    n = 0.0
+    for m in re.finditer(r"\d+|.", t):
+        g = m.group()
+        if g.isdigit():
+            n += 2.2 * len(g) + (1 if len(g) >= 4 else 0)   # 2016 → にせんじゅうろく
+        elif re.match(r"[\u4e00-\u9fff々]", g):
+            n += 1.8
+        elif re.match(r"[ぁ-んァ-ンー]", g):
+            n += 0.0 if g in "ゃゅょャュョァィゥェォ" else 1.0
+        elif g in "、。，．！？「」『』（）・ 　":
+            n += 0.0
+        else:
+            n += 1.0
+    return max(n, 0.5)
+
+
+def pauses(a, min_len=0.08, db_th=-38):
+    """音声の中の間（秒）を [(中心, 長さ)] で返す。"""
+    win = int(0.01 * SR)
+    n = len(a) // win
+    if n == 0:
+        return []
+    db = 20 * np.log10(np.sqrt((a[:n * win].reshape(n, win) ** 2).mean(1)) + 1e-9)
+    q, out, i = db < db_th, [], 0
+    while i < n:
+        if q[i]:
+            j = i
+            while j < n and q[j]:
+                j += 1
+            if j - i >= min_len * 100 and i > 0 and j < n:
+                out.append(((i + j) / 200, (j - i) / 100))
+            i = j
+        else:
+            i += 1
+    return out
+
+
+def phrase_bounds(clip, phrases):
+    """文の中のフレーズの切り替え時刻（文頭からの秒）。読みの長さで見積もり、近くの間に合わせる。"""
+    total = len(clip) / SR
+    w = np.array([mora(p) for p in phrases])
+    est = np.cumsum(w)[:-1] / w.sum() * total
+    gaps = pauses(clip)
+    out, last = [], 0.0
+    for e in est:
+        cand = [g for g, L in gaps if last + 0.25 < g < total - 0.2 and abs(g - e) < 0.8]
+        b = min(cand, key=lambda g: abs(g - e)) if cand else max(e, last + 0.3)
+        out.append(b)
+        last = b
     return out
 
 
@@ -256,12 +311,9 @@ def main(story_path, out):
         if li == 0:   # フックはまとめて1ブロック
             subs.append((0.0, nxt, caption(phrases[0])))
             continue
-        lens = [max(1, len(plain(p).replace("\n", ""))) for p in phrases]
-        cum = np.cumsum([0] + lens) / sum(lens)
+        cuts = [s] + [s + x for x in phrase_bounds(clips[li], phrases)] + [nxt]
         for k, p in enumerate(phrases):
-            a = s + (e - s) * cum[k]
-            bb = s + (e - s) * cum[k + 1] if k + 1 < len(phrases) else nxt
-            subs.append((a, bb, caption(p)))
+            subs.append((cuts[k], cuts[k + 1], caption(p)))
 
     # カット: 文ごとに場面。同じ場面が続く文は1カットにまとめる
     shots = []

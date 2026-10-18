@@ -42,12 +42,28 @@ W, H, FPS = 1080, 1920, 30
 HERE = os.path.dirname(os.path.abspath(__file__))
 SANS = os.path.join(HERE, "fonts", "NotoSansJP[wght].ttf")
 SERIF = os.path.join(HERE, "fonts", "NotoSerifJP[wght].ttf")
-YELLOW, RED = "#fff21a", "#ff2626"
-SUB_SIZE = 96          # 参考動画（576px幅で1文字約51px）を1080px幅に換算
+YELLOW, RED = "#e7ff02", "#fa0103"   # 参考動画の画素から取った色
+SUB_SIZE = 102         # 参考動画の文字枠（576px幅で7文字382×64px）に合わせて実測で校正
 SUB_CY = 0.50          # 字幕の中心（画面の高さに対する割合）
-SUB_MAX_W = 1040
+SUB_MAX_W = 1050
 ZOOM = 0.14            # 1カットの間にズームインする量
-POP = 0.10             # 字幕のポップ時間
+# 字幕の出方（参考動画を30fpsで実測）: 小さく半透明で出て 0.13 秒で 104% まで拡大、
+# 0.27 秒まで保ってから 0.37 秒で 100% に戻る
+POP_CURVE = [(0.0, 0.48), (0.033, 0.78), (0.067, 0.93), (0.13, 1.045), (0.27, 1.045), (0.37, 1.0)]
+
+
+def pop_scale(dt):
+    pts = POP_CURVE
+    if dt >= pts[-1][0]:
+        return 1.0
+    for (t0, s0), (t1, s1) in zip(pts, pts[1:]):
+        if t0 <= dt < t1:
+            return s0 + (s1 - s0) * (dt - t0) / (t1 - t0)
+    return 1.0
+
+
+def pop_alpha(dt):
+    return min(1.0, 0.5 + dt / 0.07 * 0.5)
 DURATION = 60.0        # 尺（秒）
 INTRO_SE = os.path.join(HERE, "se", "チリン.mp3")
 MAX_FILE_USES = 2      # 渡された素材は1本で2回まで
@@ -88,7 +104,7 @@ def caption(text, size=SUB_SIZE):
     lines = text.split("\n")
     while True:
         f = font(SANS, size, "Black")
-        sw = max(3, int(size * 0.075))
+        sw = max(3, int(size * 0.11))      # 黒縁は参考動画と同じ太さ（1080px幅で約11px）
         widths = [f.getlength(plain(l)) for l in lines]
         if max(widths) + 2 * sw <= SUB_MAX_W or size < 36:
             break
@@ -272,8 +288,12 @@ def main(story_path, out):
         cur = [x for x in subs if x[0] <= tt < x[1]]
         if cur:
             a, _, cap = cur[-1]
-            sc = 0.88 + 0.12 * min(1, (tt - a) / POP)
-            c = cap if sc >= 1 else cap.resize((int(cap.width * sc), int(cap.height * sc)), Image.BILINEAR)
+            dt = tt - a
+            sc, al = pop_scale(dt), pop_alpha(dt)
+            c = cap if sc == 1.0 else cap.resize((max(1, int(cap.width * sc)), max(1, int(cap.height * sc))), Image.BICUBIC)
+            if al < 1:
+                c = c.copy()
+                c.putalpha(c.getchannel("A").point(lambda v: int(v * al)))
             frame.alpha_composite(c, ((W - c.width) // 2, int(H * SUB_CY) - c.height // 2))
         proc.stdin.write(frame.convert("RGB").tobytes())
         if fi % 300 == 0:

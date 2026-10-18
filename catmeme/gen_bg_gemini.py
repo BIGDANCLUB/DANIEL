@@ -17,6 +17,9 @@ from tts_gemini import _request  # noqa: E402
 MODEL = "gemini-3.1-flash-lite-image"
 STYLE = ("Wide 16:9 anime-style background illustration, bright clean colors, detailed scenery like a Japanese animation "
          "background art. No people, no animals, no text, no letters, no readable signs, no logos, no watermark.")
+# 「PHOTO:」で始まる背景は写真ふう（物語形式の動画・18本目〜）。人物は顔を出さない
+PHOTO_STYLE = ("Wide 16:9 realistic stock photograph, natural lighting, high resolution, sharp focus. "
+               "No faces, no animals, no text, no letters, no readable signs, no logos, no watermark.")
 W, H = 1920, 1080
 
 BG_LIST = {
@@ -84,12 +87,23 @@ BG_LIST = {
         "bg102_quiet_room": "A quiet dim room with a window and curtains, soft morning light, calm and lonely atmosphere, no people",
         "bg103_timeline2": "An abstract timeline background with glowing dots connected by a line on a dark purple gradient",
     },
+    "18_story": {
+        "st01_phone_hands": "PHOTO: Close-up of a teenager's hands holding a smartphone in front of a white t-shirt, bright white background, "
+                            "small colorful social media heart and comment bubble icons floating around the phone, face not visible",
+        "st02_home_kitchen": "PHOTO: A modern home kitchen interior with white upper cabinets, wooden lower cabinets and a wooden counter, "
+                             "bright daylight, no people",
+        "st03_konbini": "PHOTO: Interior of a bright Japanese convenience store at night, shelves of rice balls, bento boxes and drinks, "
+                        "checkout counter, no people, no readable text",
+    },
 }
 
 
 def generate(prompt):
+    style = STYLE
+    if prompt.startswith("PHOTO:"):
+        prompt, style = prompt[6:].strip(), PHOTO_STYLE
     res = _request(f"models/{MODEL}:generateContent", {
-        "contents": [{"parts": [{"text": f"{prompt}\n\n{STYLE}"}]}],
+        "contents": [{"parts": [{"text": f"{prompt}\n\n{style}"}]}],
         "generationConfig": {"responseModalities": ["IMAGE"], "imageConfig": {"aspectRatio": "16:9"}},
     })
     parts = res["candidates"][0]["content"]["parts"]

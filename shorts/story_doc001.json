@@ -1,0 +1,188 @@
+{
+ "_comment": "DOC-001 参考動画と同じ作り（make_doc_short.py）。シャインマスカットの海外流出と改正種苗法。農研機構などが開発し2006年に品種登録。海外で品種登録しておらず、2016年ごろから苗木が無断で持ち出されたとみられる。2022年時点で中国約7万3700ha・韓国約6067haで合計は日本の約30倍（農水省資料）。鈴木農相が2026年6月22日の会見で、中韓への流出による許諾料の損失は年200億円近くと説明。2026年7月に改正種苗法が成立し、品種登録の出願から登録までの間も海外への持ち出しを差し止められるようになった（日経・日本農業新聞・アグリジャーナル報道）。イチゴ（韓国）・和牛の遺伝資源も過去に流出。 「今年7月」は2026年7月（2026年中の公開を前提）。",
+ "tempo": 1.12,
+ "gap": 0.1,
+ "max_pause": 0.22,
+ "bgm": "神隠しの真相.mp3",
+ "outro_bgm": "未来を創る君たちへ.mp3",
+ "bgm_volume": -12,
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n30代の日本人男性ナレーター。低めで硬質、はっきりした声。\n## THE SCENE\n日本に関わる出来事を、告発するドキュメンタリーのナレーションとして読み上げている。\n### DIRECTOR'S NOTES\n感情を込めすぎず、淡々と、しかし緊張感をもって。やや速めのテンポで、文末の「のである」は言い切る。",
+  "voice_dir": "work_doc001/voice",
+  "batch": 4
+ },
+ "outro_tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Leda",
+  "style": "# AUDIO PROFILE\n20代の日本人女性。明るく柔らかい声。\n## THE SCENE\n動画の最後に、視聴者へお礼を伝えている。\n### DIRECTOR'S NOTES\n明るく、親しみやすく、自然なテンポで。",
+  "voice_dir": "work_doc001/voice_outro"
+ },
+ "image_gen": {
+  "image_dir": "work_doc001/images",
+  "style": "Photorealistic vertical stock photo, sharp focus, vivid natural colors, professional photography. No text, no letters, no logos, no watermark. If people appear, show them from behind or only their hands."
+ },
+ "lines": [
+  {
+   "say": "もう盗ませない。日本のシャインマスカットを無断で広めた中国と韓国に、日本がついに反撃。",
+   "tone": "怒りを抑えて、力強く言い切る",
+   "subs": [
+    "「{もう盗ませない！}」\n日本の\n{シャインマスカット}を\n無断で広めた\n中国と韓国に\n<日本がついに反撃>"
+   ],
+   "scene": "grapes_hero"
+  },
+  {
+   "say": "シャインマスカットは、日本の研究機関が長い年月をかけて生み出した、日本が誇る高級ブドウである。",
+   "tone": "淡々と",
+   "subs": [
+    "{シャインマスカット}は",
+    "日本の研究機関が",
+    "長い年月をかけて\n生み出した",
+    "日本が誇る\n{高級ブドウ}である"
+   ],
+   "scene": "lab"
+  },
+  {
+   "say": "2006年に品種登録されると、皮ごと食べられる甘さで、たちまち大人気となった。",
+   "tone": "淡々と、少し誇らしく",
+   "subs": [
+    "{2006年}に\n品種登録されると",
+    "{皮ごと}食べられる\n甘さで",
+    "たちまち\n大人気となった"
+   ],
+   "scene": "gift_box"
+  },
+  {
+   "say": "ところが2016年ごろから、その苗木が海外へ無断で持ち出されたとみられている。",
+   "tone": "暗転するように、重く",
+   "subs": [
+    "ところが\n{2016年}ごろから",
+    "その苗木が",
+    "海外へ\n<無断で持ち出された>",
+    "とみられている"
+   ],
+   "scene": "seedlings"
+  },
+  {
+   "say": "開発当時、海外で品種登録をしていなかったため、海外での栽培を止められなかったのである。",
+   "tone": "悔しさをにじませて",
+   "subs": [
+    "開発当時",
+    "海外で<品種登録>を\nしていなかったため",
+    "海外での栽培を",
+    "<止められなかった>\nのである"
+   ],
+   "scene": "documents"
+  },
+  {
+   "say": "2022年には、中国と韓国の栽培面積は、合わせて日本の約30倍にまで広がった。",
+   "tone": "重く、強調して",
+   "subs": [
+    "{2022年}には",
+    "中国と韓国の\n栽培面積は",
+    "合わせて日本の\n<約30倍>に",
+    "まで広がった"
+   ],
+   "scene": "vast_vineyard"
+  },
+  {
+   "say": "農林水産省によると、本来得られたはずの使用料の損失は、年200億円近くにのぼるという。",
+   "tone": "重く",
+   "subs": [
+    "{農林水産省}によると",
+    "本来得られたはずの\n使用料の損失は",
+    "<年200億円近く>に",
+    "のぼるという"
+   ],
+   "scene": "money"
+  },
+  {
+   "say": "しかし、日本も黙ってはいなかった。",
+   "tone": "引きつけるように、力強く",
+   "subs": [
+    "しかし",
+    "日本も\n<黙ってはいなかった>"
+   ],
+   "scene": "diet"
+  },
+  {
+   "say": "そして今年7月、改正種苗法が成立。品種登録を出願した段階から、海外への持ち出しを差し止められるようにしたのである。",
+   "tone": "力強く、言い切る",
+   "subs": [
+    "そして{今年7月}",
+    "{改正種苗法}が成立",
+    "品種登録を\n出願した段階から",
+    "海外への持ち出しを",
+    "<差し止められる>\nようにしたのである"
+   ],
+   "scene": "diet"
+  },
+  {
+   "say": "イチゴや和牛など、日本の宝はこれまでも海外へ流出してきた。",
+   "tone": "しみじみと、重く",
+   "subs": [
+    "{イチゴ}や{和牛}など",
+    "日本の宝は",
+    "これまでも\n<海外へ流出>してきた"
+   ],
+   "scene": "strawberry_wagyu"
+  },
+  {
+   "say": "日本の農家の努力の結晶を、これ以上奪われてはならないのである。",
+   "tone": "胸を打つように、力強く言い切る",
+   "subs": [
+    "日本の農家の",
+    "{努力の結晶}を",
+    "これ以上\n<奪われてはならない>",
+    "のである"
+   ],
+   "scene": "farmer"
+  }
+ ],
+ "outro": {
+  "say": "ご視聴ありがとうございます。いいねやコメントも、ぜひお願いいたします。",
+  "tone": "明るく、やさしく",
+  "icon": "outro_icon",
+  "bg": "outro_bg",
+  "ask": "いいね・コメントも\nなんとかお願いします！"
+ },
+ "scenes": {
+  "grapes_hero": {
+   "prompt": "Close-up of glossy green Shine Muscat grape bunches hanging in a Japanese vineyard, dramatic side light, water droplets"
+  },
+  "lab": {
+   "prompt": "A Japanese agricultural research greenhouse with rows of young grapevines, a researcher's gloved hands examining a grape cluster"
+  },
+  "gift_box": {
+   "prompt": "A premium green grape bunch presented in an elegant wooden gift box on a department store counter, soft spotlight"
+  },
+  "seedlings": {
+   "prompt": "Small grapevine seedlings in pots being packed into a cardboard box at night in a dim warehouse, suspicious mood, only hands visible"
+  },
+  "documents": {
+   "prompt": "Official registration documents with a red seal stamp on a desk, a pen and reading glasses, text blurred, dramatic light"
+  },
+  "vast_vineyard": {
+   "prompt": "Aerial view of an enormous vineyard stretching to the horizon with endless rows of grapevines under hazy sky"
+  },
+  "money": {
+   "prompt": "Stacks of Japanese yen banknotes next to a bunch of green grapes on a dark table, dramatic light, money details blurred"
+  },
+  "diet": {
+   "prompt": "The National Diet Building in Tokyo under a blue sky, wide shot, no people"
+  },
+  "strawberry_wagyu": {
+   "prompt": "Premium red strawberries and marbled wagyu beef slices arranged side by side on a black slate, studio lighting"
+  },
+  "farmer": {
+   "prompt": "An elderly Japanese farmer's weathered hands gently holding a green grape bunch in a vineyard at sunset"
+  },
+  "outro_icon": {
+   "prompt": "Anime-style illustration of Mount Fuji at sunrise reflected in a calm lake, colorful sky with purple and orange clouds, red autumn leaves framing the scene, vivid and bright, square composition"
+  },
+  "outro_bg": {
+   "prompt": "A golden sunset over a calm sea with gentle waves, sun near the horizon, warm orange sky with soft clouds, no people"
+  }
+ }
+}

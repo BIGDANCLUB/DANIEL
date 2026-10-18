@@ -343,7 +343,8 @@ def ensure_voice(story_path, force=False):
                 if plausible(pcm, rate, t) and heard_ok(pcm, rate, t, [l.get("tone")]):
                     break
                 # 本文が最後に読まれていれば、前の余計な部分を切り落とす
-                if _norm(getattr(heard_ok, "last", "")).endswith(_norm(t)[-6:]):
+                hb, ta = _norm(getattr(heard_ok, "last", "")), _norm(t)
+                if len(hb) > len(ta) and difflib.SequenceMatcher(None, ta, hb[-len(ta):]).ratio() >= 0.6:
                     tail = keep_tail(pcm, rate, t, [l.get("tone")])
                     if tail:
                         pcm = tail

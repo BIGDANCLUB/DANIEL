@@ -4,7 +4,6 @@
  "gap": 0.1,
  "max_pause": 0.22,
  "bgm": "神隠しの真相.mp3",
- "outro_bgm": "未来を創る君たちへ.mp3",
  "bgm_volume": -12,
  "tts": {
   "model": "gemini-3.8-flash-tts",
@@ -12,12 +11,6 @@
   "style": "# AUDIO PROFILE\n30代の日本人男性ナレーター。低めで硬質、はっきりした声。\n## THE SCENE\n日本に関わる出来事を、告発するドキュメンタリーのナレーションとして読み上げている。\n### DIRECTOR'S NOTES\n感情を込めすぎず、淡々と、しかし緊張感をもって。やや速めのテンポで、文末の「のである」は言い切る。",
   "voice_dir": "work_doc001/voice",
   "batch": 4
- },
- "outro_tts": {
-  "model": "gemini-3.8-flash-tts",
-  "voice": "Leda",
-  "style": "# AUDIO PROFILE\n20代の日本人女性。明るく柔らかい声。\n## THE SCENE\n動画の最後に、視聴者へお礼を伝えている。\n### DIRECTOR'S NOTES\n明るく、親しみやすく、自然なテンポで。",
-  "voice_dir": "work_doc001/voice_outro"
  },
  "image_gen": {
   "image_dir": "work_doc001/images",
@@ -140,13 +133,6 @@
    "scene": "farmer"
   }
  ],
- "outro": {
-  "say": "ご視聴ありがとうございます。いいねやコメントも、ぜひお願いいたします。",
-  "tone": "明るく、やさしく",
-  "icon": "outro_icon",
-  "bg": "outro_bg",
-  "ask": "いいね・コメントも\nなんとかお願いします！"
- },
  "scenes": {
   "grapes_hero": {
    "prompt": "Close-up of glossy green Shine Muscat grape bunches hanging in a Japanese vineyard, dramatic side light, water droplets"
@@ -177,12 +163,7 @@
   },
   "farmer": {
    "prompt": "An elderly Japanese farmer's weathered hands gently holding a green grape bunch in a vineyard at sunset"
-  },
-  "outro_icon": {
-   "prompt": "Anime-style illustration of Mount Fuji at sunrise reflected in a calm lake, colorful sky with purple and orange clouds, red autumn leaves framing the scene, vivid and bright, square composition"
-  },
-  "outro_bg": {
-   "prompt": "A golden sunset over a calm sea with gentle waves, sun near the horizon, warm orange sky with soft clouds, no people"
   }
- }
+ },
+ "duration": 60.0
 }

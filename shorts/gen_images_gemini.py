@@ -145,6 +145,8 @@ def ensure_images(story_path, only=None):
             jobs.append((image_path(cfg, base, i), line["prompt"], None, f"{stem}_{i + 1:02d}",
                          only is not None and (i + 1) in only))
     for sname, sc in cfg.get("scenes", {}).items():
+        if "file" in sc:      # 渡された画像・動画はそのまま使う
+            continue
         jobs.append((scene_path(cfg, base, sname), sc.get("prompt"), sc.get("library"), f"{stem}_{sname}",
                      only is not None and sname in only))
     for out, prompt, lib_name, reg_name, forced in jobs:

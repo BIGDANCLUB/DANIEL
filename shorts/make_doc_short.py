@@ -231,10 +231,59 @@ def zoom_frame(big, p):
 
 
 # --- 声 ---
+VOICEVOX_URL = os.environ.get("VOICEVOX_URL", "http://127.0.0.1:50021")
+
+
+def voicevox_speaker(name, style):
+    """話者名（例 青山龍星）とスタイル名（例 ノーマル）から VOICEVOX の話者IDを探す。"""
+    import urllib.parse
+    sp = json.load(urllib.request.urlopen(VOICEVOX_URL + "/speakers"))
+    for s in sp:
+        if s["name"] == name:
+            for st in s["styles"]:
+                if st["name"] == style:
+                    return st["id"]
+    sys.exit(f"VOICEVOX に話者 {name}（{style}）がありません")
+
+
+def voicevox_clips(tts, lines, base, cfg):
+    """ローカルの VOICEVOX エンジンで1行ずつ読み上げる（作った音声は保存して使い回す）。
+    エンジンが動いていなければ tools/voicevox_setup.sh で入れて起動する。"""
+    import hashlib
+    import urllib.parse
+    try:
+        urllib.request.urlopen(VOICEVOX_URL + "/version", timeout=3)
+    except Exception:
+        subprocess.run(["bash", os.path.join(HERE, "tools", "voicevox_setup.sh")], check=True)
+    sid = voicevox_speaker(tts.get("speaker", "青山龍星"), tts.get("style", "ノーマル"))
+    vdir = os.path.join(base, tts["voice_dir"])
+    os.makedirs(vdir, exist_ok=True)
+    params = {k: tts[k] for k in ("speedScale", "pitchScale", "intonationScale", "volumeScale") if k in tts}
+    clips = []
+    for i, l in enumerate(lines):
+        text = l["say"]
+        key = hashlib.sha1(json.dumps([sid, text, params], ensure_ascii=False).encode()).hexdigest()[:12]
+        out = os.path.join(vdir, f"{i + 1:02d}_{key}.wav")
+        if not os.path.exists(out):
+            q = urllib.parse.urlencode({"text": text, "speaker": sid})
+            req = urllib.request.Request(f"{VOICEVOX_URL}/audio_query?{q}", method="POST")
+            query = json.load(urllib.request.urlopen(req))
+            query.update(params)
+            query["prePhonemeLength"], query["postPhonemeLength"] = 0.05, 0.05
+            req = urllib.request.Request(f"{VOICEVOX_URL}/synthesis?speaker={sid}", method="POST",
+                                         data=json.dumps(query).encode(), headers={"Content-Type": "application/json"})
+            open(out, "wb").write(urllib.request.urlopen(req).read())
+            print(f"[{i + 1:02d}] {text}", flush=True)
+        clips.append(shorten_pauses(trim_silence(load_audio(out).copy()), cfg.get("max_pause", 0.25)))
+    return clips
+
+
 def voice_clips(story_path, cfg, key, lines, work):
     """tts_gemini で声を作り（足りない分だけ）、行ごとの音声を返す。"""
     tts = dict(cfg[key])
     base = os.path.dirname(os.path.abspath(story_path))
+    if tts.get("engine") == "voicevox":
+        return voicevox_clips(tts, lines, base, cfg)
     if tts.get("engine") == "voicevox_files":
         # VOICEVOX アプリの「音声を全て書き出し」で出したファイル（001_…wav, 002_…wav …）を行の順に使う
         d = os.path.join(base, tts["dir"])

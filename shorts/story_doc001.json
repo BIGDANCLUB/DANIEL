@@ -1,16 +1,17 @@
 {
  "_comment": "DOC-001 参考動画と同じ作り（make_doc_short.py）。シャインマスカットの海外流出と改正種苗法。農研機構などが開発し2006年に品種登録。海外で品種登録しておらず、2016年ごろから苗木が無断で持ち出されたとみられる。2022年時点で中国約7万3700ha・韓国約6067haで合計は日本の約30倍（農水省資料）。鈴木農相が2026年6月22日の会見で、中韓への流出による許諾料の損失は年200億円近くと説明。2026年7月に改正種苗法が成立し、品種登録の出願から登録までの間も海外への持ち出しを差し止められるようになった（日経・日本農業新聞・アグリジャーナル報道）。イチゴ（韓国）・和牛の遺伝資源も過去に流出。 「今年7月」は2026年7月（2026年中の公開を前提）。",
- "tempo": 1.12,
+ "tempo": 1.0,
  "gap": 0.1,
  "max_pause": 0.22,
  "bgm": "神隠しの真相.mp3",
  "bgm_volume": -12,
  "tts": {
-  "model": "gemini-3.8-flash-tts",
-  "voice": "Algenib",
-  "style": "# AUDIO PROFILE\n30代の日本人男性ナレーター。低めで硬質、はっきりした声。\n## THE SCENE\n日本に関わる出来事を、告発するドキュメンタリーのナレーションとして読み上げている。\n### DIRECTOR'S NOTES\n感情を込めすぎず、淡々と、しかし緊張感をもって。やや速めのテンポで、文末の「のである」は言い切る。",
-  "voice_dir": "work_doc001/voice",
-  "batch": 4
+  "engine": "voicevox",
+  "speaker": "青山龍星",
+  "style": "ノーマル",
+  "speedScale": 1.1,
+  "intonationScale": 1.1,
+  "voice_dir": "work_doc001/voice_vv"
  },
  "image_gen": {
   "image_dir": "work_doc001/images",
@@ -80,12 +81,12 @@
    "scene": "vast_vineyard"
   },
   {
-   "say": "農林水産省によると、本来得られたはずの使用料の損失は、年200億円近くにのぼるという。",
+   "say": "農林水産省によると、本来得られたはずの使用料の損失は、年間200億円近くにのぼるという。",
    "tone": "重く",
    "subs": [
     "{農林水産省}によると",
     "本来得られたはずの\n使用料の損失は",
-    "<年200億円近く>に",
+    "<年間200億円近く>に",
     "のぼるという"
    ],
    "scene": "cash_video"
@@ -168,5 +169,12 @@
    "file": "../catmeme/assets_video/wide/v07_mt_fuji_clouds.mp4"
   }
  },
- "duration": 60.0
+ "duration": 60.0,
+ "tts_gemini_backup": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n30代の日本人男性ナレーター。低めで硬質、はっきりした声。\n## THE SCENE\n日本に関わる出来事を、告発するドキュメンタリーのナレーションとして読み上げている。\n### DIRECTOR'S NOTES\n感情を込めすぎず、淡々と、しかし緊張感をもって。やや速めのテンポで、文末の「のである」は言い切る。",
+  "voice_dir": "work_doc001/voice",
+  "batch": 4
+ }
 }

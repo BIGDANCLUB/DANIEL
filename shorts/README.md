@@ -69,6 +69,10 @@
   - こちらから渡す画像・動画は scenes に `{"file": "パス"}` で指定。1本で2回まで（超えるとエラー）。足りない分は Gemini で生成
 
 ### VOICEVOX（青山龍星）の声を使う
+- **自動（おすすめ）**: 台本の `tts` を `{"engine": "voicevox", "speaker": "青山龍星", "style": "ノーマル", "speedScale": 1.1, "voice_dir": "work_docXXX/voice_vv"}` にするだけ
+  - エンジンが動いていなければ `tools/voicevox_setup.sh` が自動でダウンロード（約1.8GB）・展開・起動する（コンテナが作り直された後も自動）
+  - 話す速さは `speedScale`、抑揚は `intonationScale`。作った声は voice_dir に保存して使い回す
+- **PCで書き出す場合**:
 1. `voicevox/docXXX.txt`（台本の読み上げ文を1行ずつ並べたもの）を VOICEVOX で「ファイル → テキスト読み込み」
 2. 全部の行のキャラクターを「青山龍星」にする（話速などはここで調整）
 3. 「ファイル → 音声を全て書き出し」で、フォルダ `voicevox/docXXX/` に書き出す（001_…wav, 002_…wav … と行の順に並ぶ）

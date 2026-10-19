@@ -1,4 +1,6 @@
-"""横動画用の背景イラスト（1920x1080）を Gemini で作る。shorts/tts_gemini.py の _request を使う（GEMINI_API_KEY）。
+"""【10/19 から使わない】背景は ChatGPT の画像生成でユーザーが作る（README「背景づくり」）。ここは過去の指示文の記録として残す。
+
+横動画用の背景イラスト（1920x1080）を Gemini で作る。shorts/tts_gemini.py の _request を使う（GEMINI_API_KEY）。
 
 python3 catmeme/gen_bg_gemini.py 14_japan   → backgrounds/14_japan/*.png（BG_LIST の名前ごと。あるものは作らない）
 AIで作った背景は、動画の概要欄・注意書きで「AI生成」と書く（チャンネルのルール）。

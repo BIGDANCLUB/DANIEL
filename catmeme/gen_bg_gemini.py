@@ -20,6 +20,9 @@ STYLE = ("Wide 16:9 anime-style background illustration, bright clean colors, de
 # 「PHOTO:」で始まる背景は写真ふう（物語形式の動画・18本目〜）。人物は顔を出さない
 PHOTO_STYLE = ("Wide 16:9 realistic stock photograph, natural lighting, high resolution, sharp focus. "
                "No faces, no animals, no text, no letters, no readable signs, no logos, no watermark.")
+# 「ILLUST:」は吹き出しに入れるイラスト（白い背景の一枚絵）
+ILLUST_STYLE = ("Cute simple flat clipart illustration, bold clean outlines, bright colors, centered single subject, "
+                "plain pure white background, no text, no letters, no watermark.")
 W, H = 1920, 1080
 
 BG_LIST = {
@@ -94,6 +97,12 @@ BG_LIST = {
                              "bright daylight, no people",
         "st03_konbini": "PHOTO: Interior of a bright Japanese convenience store at night, shelves of rice balls, bento boxes and drinks, "
                         "checkout counter, no people, no readable text",
+        "st04_konbini_friends": "PHOTO: Two teenage girls in school uniforms seen from behind, looking at a shelf of rice balls in a bright "
+                                "Japanese convenience store, faces not visible",
+        "st05_rainbow_meadow": "A cute bright illustration of a green meadow with small flowers and a big rainbow in a light blue sky, "
+                               "simple flat picture-book style",
+        "il_onigiri": "ILLUST: A single cute simple flat illustration of a rice ball (onigiri) and a bento box with steam, "
+                      "isolated on a plain white background, clipart style",
     },
 }
 
@@ -102,6 +111,8 @@ def generate(prompt):
     style = STYLE
     if prompt.startswith("PHOTO:"):
         prompt, style = prompt[6:].strip(), PHOTO_STYLE
+    elif prompt.startswith("ILLUST:"):
+        prompt, style = prompt[7:].strip(), ILLUST_STYLE
     res = _request(f"models/{MODEL}:generateContent", {
         "contents": [{"parts": [{"text": f"{prompt}\n\n{style}"}]}],
         "generationConfig": {"responseModalities": ["IMAGE"], "imageConfig": {"aspectRatio": "16:9"}},

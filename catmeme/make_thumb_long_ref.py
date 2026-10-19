@@ -101,7 +101,7 @@ def save(img, name):
     print("->", p)
 
 
-def type_a(name, left_bg, right_bg, left_cat, right_cats, tag, line1, line2, split=500):
+def type_a(name, left_bg, right_bg, left_cat, right_cats, tag, line1, line2, split=500, size=150):
     """split＝左の写真の幅（人物の写真を大きく見せたい時は広げる）。"""
     img = Image.new("RGBA", (W, H), WHITE)
     top_h = 410
@@ -119,8 +119,8 @@ def type_a(name, left_bg, right_bg, left_cat, right_cats, tag, line1, line2, spl
     img.alpha_composite(box, (14, top_h - box.height + 40))
     # 下の黄色い地と2行
     ImageDraw.Draw(img).rectangle((0, top_h + 18, W, H), fill=(255, 245, 60, 255), outline=BLACK, width=6)
-    l1 = runs(line1, 150, 8, W - 40)
-    l2 = runs(line2, 150, 8, W - 40)
+    l1 = runs(line1, size, 8, W - 40)
+    l2 = runs(line2, size, 8, W - 40)
     img.alpha_composite(l1, ((W - l1.width) // 2, top_h + 40))
     img.alpha_composite(l2, ((W - l2.width) // 2, top_h + 50 + l1.height))
     save(img, name)
@@ -325,3 +325,77 @@ def imamori():
 
 if __name__ == "__main__" and os.environ.get("THUMB") == "17":
     imamori()
+
+
+def semicon():
+    """18本目【寸劇】日本の素材と半導体で3案。背景は AI（backgrounds/18_semicon）。他の国をバカにする言葉は使わない。"""
+    type_a("18_semicon_ref_a.png", "bg03_jp_material_plant", "ph02_wafer_closeup",
+           ("talk_orange_white_sitting_cat", 1.0, 250, 470, 400, False),
+           [("surprise_big_pupils_cat", 0.6, 1100, 410, 300, True)],
+           "【寸劇】AIブームの陰の主役",
+           [("日本の素材がないと", BLACK)], [("半導体が作れない？", RED)], split=600, size=126)
+    type_b("18_semicon_ref_b.png",
+           [("bg01_us_ai_office", [("dance_edm_cat", 1.0, 160, 470, 360, False)]),
+            ("bg02_cleanroom", [("work_typing_cat", 1.0, 160, 470, 340, False)]),
+            ("bg03_jp_material_plant", [("talk_orange_white_sitting_cat", 1.0, 160, 470, 360, False)]),
+            ("bg04_kumamoto_factory", [("surprise_big_pupils_cat", 0.6, 160, 470, 330, False)])],
+           [("txt", "AIチップ今すぐ!", 160, 60, 40, YELLOW, -6), ("txt", "材料さえあれば", 480, 60, 40, YELLOW, 4),
+            ("txt", "“いつものやつ”", 800, 60, 42, YELLOW, -4), ("arrow", 860, 110, 900, 230),
+            ("txt", "工場ごと来た!?", 1130, 60, 40, YELLOW, 6)],
+           [("AIの陰の主役は", RED)], [("日本の“地味な”素材", NAVY)])
+    type_c("18_semicon_ref_c.png", "ph02_wafer_closeup",
+           [("talk_orange_white_sitting_cat", 1.0, 200, 560, 420, False), ("surprise_big_pupils_cat", 0.6, 1100, 560, 400, True)],
+           "【寸劇】日本の素材がないと半導体が作れない？", "陰の主役")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "18":
+    semicon()
+
+
+def inawashiro():
+    """19本目（猪苗代湖ボート事故の逆転有罪）で3案。人が亡くなった事故なので、落ち着いた猫だけ・事故の様子は描かない。名前は出さない。"""
+    type_a("19_inawashiro_ref_a.png", "bg106_lake_calm", "bg104_supreme_court",
+           ("realize_wet_cat_stare", 1.0, 120, 470, 300, False),
+           [("calm_black_face_sheep", 1.0, 1180, 410, 260, True)],
+           "猪苗代湖ボート事故",
+           [("最高裁で", BLACK), ("逆転有罪", RED)], [("6年目の判決", BLUE)], split=640, size=126)
+    type_b("19_inawashiro_ref_b.png",
+           [("bg106_lake_calm", []),
+            ("bg105_courtroom", [("realize_wet_cat_stare", 1.0, 160, 470, 320, False)]),
+            ("bg104_supreme_court", [("sad_black_dog", 1.0, 160, 470, 320, False)]),
+            ("bg110_lake_sunset", [])],
+           [("txt", "2020年 湖で", 160, 60, 44, YELLOW, -6), ("txt", "一審 有罪", 480, 60, 46, YELLOW, 4),
+            ("txt", "二審 無罪", 800, 60, 46, YELLOW, -4), ("txt", "最高裁 有罪", 1130, 60, 46, RED, 6)],
+           [("「見えたはず」か", RED)], [("「見えなかった」か", NAVY)])
+    type_c("19_inawashiro_ref_c.png", "bg104_supreme_court",
+           [("realize_wet_cat_stare", 1.0, 170, 560, 380, False)],
+           "猪苗代湖ボート事故　最高裁が二審の無罪を破棄", "逆転有罪")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "19":
+    inawashiro()
+
+
+def sagi():
+    """20本目（郵便局を名乗る特殊詐欺）で3案。被害を公表した YouTuber の名前・写真は出さない。被害者を笑いにしない。"""
+    type_a("20_sagi_ref_a.png", "bg17_post_office", "bg77_police_station",
+           ("surprise_big_pupils_cat", 0.6, 250, 470, 480, False),
+           [("angry_aiming_cat", 1.0, 1100, 410, 300, True)],
+           "人気YouTuberも被害",
+           [("「郵便局です」", RED), ("は", BLACK)], [("ニセ警察の入り口", BLUE)], split=620, size=126)
+    type_b("20_sagi_ref_b.png",
+           [("bg14_home_night", [("peek_what_happen_cat", 1.0, 160, 470, 330, False)]),
+            ("bg17_post_office", [("call_customer_service_cat", 1.0, 160, 470, 340, False)]),
+            ("bg77_police_station", [("angry_aiming_cat", 1.0, 160, 470, 330, False)]),
+            ("bg26_phone_alert", [("surprise_big_pupils_cat", 0.6, 160, 470, 330, False)])],
+           [("txt", "自動音声", 160, 60, 46, YELLOW, -6), ("txt", "“郵便局員”", 480, 60, 44, YELLOW, 4),
+            ("txt", "“警察官”に交代", 800, 60, 40, YELLOW, -4), ("arrow", 860, 110, 900, 230),
+            ("txt", "お金を移して!?", 1130, 60, 40, RED, 6)],
+           [("1日10億円の特殊詐欺", RED)], [("その電話、いったん切って", NAVY)])
+    type_c("20_sagi_ref_c.png", "bg26_phone_alert",
+           [("surprise_big_pupils_cat", 0.6, 200, 560, 420, False), ("angry_aiming_cat", 1.0, 1100, 560, 400, True)],
+           "人気YouTuberも次々被害　郵便局を名乗る特殊詐欺", "それ詐欺です")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "20":
+    sagi()

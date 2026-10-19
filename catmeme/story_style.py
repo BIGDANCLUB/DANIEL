@@ -70,11 +70,56 @@ def text_img(text, size, fill=WHITE, stroke=0, align="center", stroke_col=BLACK,
     return im.crop(im.getbbox())
 
 
-def label_img(text, size=72):
-    """役名：白い四角に黒い太字。"""
+def flag_img(code, h=46):
+    """役名の札に付ける小さい国旗（絵で描く）。code = "jp" / "us" / "tw"。"""
+    w = int(h * 1.5)
+    im = Image.new("RGB", (w * 4, h * 4), WHITE)
+    d = ImageDraw.Draw(im)
+    W4, H4 = im.size
+    if code == "jp":
+        r = H4 * 0.3
+        d.ellipse((W4 / 2 - r, H4 / 2 - r, W4 / 2 + r, H4 / 2 + r), fill=(188, 0, 45))
+    elif code == "us":
+        sh = H4 / 13
+        for i in range(13):
+            d.rectangle((0, i * sh, W4, (i + 1) * sh), fill=(178, 34, 52) if i % 2 == 0 else WHITE)
+        cw, ch = W4 * 0.4, sh * 7
+        d.rectangle((0, 0, cw, ch), fill=(60, 59, 110))
+        for row in range(5):
+            for col in range(6):
+                x, y = cw * (col + 0.5) / 6, ch * (row + 0.5) / 5
+                d.ellipse((x - 4, y - 4, x + 4, y + 4), fill=WHITE)
+    elif code == "tw":
+        d.rectangle((0, 0, W4, H4), fill=(254, 0, 0))
+        cw, ch = W4 / 2, H4 / 2
+        d.rectangle((0, 0, cw, ch), fill=(0, 0, 149))
+        cx, cy, r = cw / 2, ch / 2, ch * 0.18
+        for i in range(12):
+            a = 2 * math.pi * i / 12
+            p = [(cx + math.cos(a) * ch * 0.38, cy + math.sin(a) * ch * 0.38),
+                 (cx + math.cos(a + 0.26) * r, cy + math.sin(a + 0.26) * r), (cx + math.cos(a - 0.26) * r, cy + math.sin(a - 0.26) * r)]
+            d.polygon(p, fill=WHITE)
+        d.ellipse((cx - r * 1.15, cy - r * 1.15, cx + r * 1.15, cy + r * 1.15), fill=(0, 0, 149))
+        d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=WHITE)
+    im = im.resize((w, h), Image.LANCZOS)
+    out = Image.new("RGBA", (w + 2, h + 2), (150, 150, 150, 255))
+    out.paste(im, (1, 1))
+    return out
+
+
+FLAG_OF = {"日本": "jp", "アメリカ": "us", "台湾": "tw"}
+FLAGS = False   # 国どうしの寸劇で True（役名の札に国旗）
+
+
+def label_img(text, size=72, flag=None):
+    """役名：白い四角に黒い太字。flag があれば文字の左に小さい国旗。"""
     t = text_img(text, size, fill=BLACK)
-    im = Image.new("RGBA", (t.width + 28, t.height + 22), (255, 255, 255, 255))
-    im.alpha_composite(t, (14, 11))
+    fl = flag_img(flag, int(size * 0.62)) if flag else None
+    fw = fl.width + 14 if fl else 0
+    im = Image.new("RGBA", (t.width + 28 + fw, t.height + 22), (255, 255, 255, 255))
+    if fl:
+        im.alpha_composite(fl, (14, (im.height - fl.height) // 2))
+    im.alpha_composite(t, (14 + fw, 11))
     return im
 
 
@@ -216,7 +261,7 @@ class Scene:
                 if sd != side:
                     self.age[sd] = 99
         cats, lines = self._snapshot()
-        c = dict(kind="beat", bg=self.bg, cats=cats, lines=lines, n=len(self.order))
+        c = dict(kind="beat", bg=self.bg, cats=cats, lines=lines, n=len(self.order), speaker=side)
         if se:
             c["se"] = se
         self._push(c, dur or self._dur(text))
@@ -256,11 +301,11 @@ class Renderer:
             put(self.base, t, (W - t.width) / 2, (H - t.height) / 2)
         elif k == "photo":
             self.base = np.zeros((H, W, 3), np.float32)
+            t = text_img(c["text"], 80, stroke=4, max_w=W - 80)
             im = Image.open(bg_path(c["photo"])).convert("RGB")
-            s = min(1220 / im.width, 800 / im.height)
+            s = min(1220 / im.width, min(800, H - 50 - t.height - 70) / im.height)   # 字幕が3行でも入るように写真を縮める
             im = im.resize((int(im.width * s), int(im.height * s)), Image.LANCZOS).convert("RGBA")
             put(self.base, im, (W - im.width) / 2, 50)
-            t = text_img(c["text"], 80, stroke=4, max_w=W - 80)
             put(self.base, t, (W - t.width) / 2, 50 + im.height + (H - 50 - im.height - t.height) / 2)
         elif k == "still":
             self.base = cover(c["img"])
@@ -280,16 +325,28 @@ class Renderer:
         # 役名：左の役は左上、右の役は右上、真ん中の役は真ん中の上（参考どおり画面の上に固定）
         self.labels = []
         for k_ in c["cats"]:
-            lab = label_img(k_["label"])
+            lab = label_img(k_["label"], flag=k_.get("flag") or FLAG_OF.get(k_["label"]) if FLAGS else None)
             x = {"L": 40, "R": W - 40 - lab.width}.get(k_["side"], self.cx[k_["side"]] - lab.width / 2)
             self.labels.append((lab, x, 40 if k_["side"] != "C" else 70))
         # セリフ：左の役は左寄せ、右の役は右寄せ、真ん中は猫の下あたり。同じ役の行は下に足す
         self.lines = []
-        for sd, ts in c["lines"].items():
-            for i, t in enumerate(ts):
-                im = text_img(t, 72, stroke=7, max_w=W * 0.62)
-                x = {"L": 50, "R": W - 50 - im.width}.get(sd, self.cx[sd] - im.width / 2)
-                self.lines.append((im, x, 720 + i * 96 - (len(ts) - 1) * 40))
+        spk = c.get("speaker")
+        order = sorted(c["lines"], key=lambda sd: sd != spk)   # 今しゃべっている役から置く
+        placed = []
+        for sd in order:
+            ims = [text_img(t, 72, stroke=7, max_w=W * 0.62) for t in c["lines"][sd]]
+            hh = sum(im.height for im in ims) + 14 * (len(ims) - 1)
+            xs = [{"L": 50, "R": W - 50 - im.width}.get(sd, self.cx[sd] - im.width / 2) for im in ims]
+            x0, x1 = min(xs), max(x + im.width for x, im in zip(xs, ims))
+            y = 760 - hh / 2
+            # 前のセリフが今のセリフと横に重なるときは、上にずらす
+            for px0, px1, py0, py1 in placed:
+                if x0 < px1 and px0 < x1 and y < py1 and py0 < y + hh:
+                    y = py0 - hh - 24
+            placed.append((x0, x1, y, y + hh))
+            for x, im in zip(xs, ims):
+                self.lines.append((im, x, y))
+                y += im.height + 14
         self.caps = []
         if zm:
             fill, st = CAP[zm["color"]]
@@ -305,7 +362,7 @@ class Renderer:
         if c["kind"] != "beat":
             return self.base
         out = self.base.copy()
-        tops = {}
+        tops, acx = {}, {}
         for i, (k_, clip) in enumerate(zip(c["cats"], self.clips)):
             fr, a = clip.frame(t + k_["ss"])
             if i not in self.bbox:   # 素材の余白を落とし、h は見えている猫の高さにする
@@ -323,15 +380,16 @@ class Renderer:
             w, h = max(1, int(fr.shape[1] * s)), max(1, int(fr.shape[0] * s))
             img = cv2.resize(fr, (w, h), interpolation=cv2.INTER_AREA).astype(np.float32) / 255
             al = cv2.resize(a.astype(np.float32), (w, h), interpolation=cv2.INTER_AREA)
-            cx = self.cx[k_["side"]]
+            cx = min(max(self.cx[k_["side"]], w * 0.4), W - w * 0.4)   # 横に広い素材も画面から大きくはみ出さないように
             R.over(out, img, al, int(cx - w / 2), H + 30 - h)
             tops[k_["side"]] = H + 30 - h
+            acx[k_["side"]] = cx
         for lab, x, y in self.labels:
             put(out, lab, x, y)
         zm = c.get("zoom")
         if zm:   # 画面ごと話す猫へズーム（役名もいっしょに大きくなって上が切れる）
             z = zm["z"]
-            cx = self.cx[zm["side"]]
+            cx = acx[zm["side"]]
             cy = tops[zm["side"]] + (H - tops[zm["side"]]) * (0.30 if zm["pos"] == "mid" else 0.42)
             ww, hh = W / z, H / z
             x0 = min(max(cx - ww / 2, 0), W - ww)
@@ -359,6 +417,21 @@ class Renderer:
         for cl in self.clips:
             if getattr(cl, "cap", None) is not None:
                 cl.cap.release()
+
+
+def remux(cs, out_path):
+    """音だけ作り直す（映像はそのまま）。"""
+    durs = [c["dur"] for c in cs]
+    starts = list(np.cumsum([0] + durs[:-1]))
+    total = float(sum(durs))
+    wav = out_path + ".audio.f32"
+    R.build_audio(cs, starts, durs, total).tofile(wav)
+    tmp = out_path.replace(".mp4", "_a.mp4")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", out_path, "-f", "f32le", "-ar", str(R.SR), "-ac", "2", "-i", wav, "-map", "0:v",
+                    "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-t", f"{total:.3f}", "-movflags", "+faststart", tmp],
+                   check=True)
+    os.replace(tmp, out_path)
+    os.remove(wav)
 
 
 def run(cs, out_path, prev=None):

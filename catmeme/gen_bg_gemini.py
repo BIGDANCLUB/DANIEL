@@ -90,6 +90,41 @@ BG_LIST = {
         "bg102_quiet_room": "A quiet dim room with a window and curtains, soft morning light, calm and lonely atmosphere, no people",
         "bg103_timeline2": "An abstract timeline background with glowing dots connected by a line on a dark purple gradient",
     },
+    "20_sagi": {   # 郵便局を名乗る特殊詐欺。実在の郵便局・警察のロゴや制服に似せない
+        "bg113_landline_ring": "An old landline telephone ringing on a small table in a Japanese living room, slightly tense mood, no text",
+        "bg114_video_call": "A laptop on a desk showing a blurry video call with a dark silhouette of a person, dim room, tense, no logos, no text",
+        "bg115_parents_home": "A warm traditional Japanese parents' living room with a low table, a landline phone and a calendar, afternoon light",
+        "bg116_net_banking": "A smartphone in a hand showing an abstract bank transfer screen with big numbers blurred, no readable text",
+        "bg117_video_titles": "A computer screen showing a grid of blurred video thumbnails on a video site, no readable text, no logos",
+        "bg118_stats_chart": "An abstract dark blue background with a rising red bar chart and warning icons, no text",
+        "bg119_hang_up": "A hand pressing the end call button on a smartphone, close-up, calm light, no text",
+    },
+    "19_inawashiro": {   # 猪苗代湖ボート事故（人が亡くなった事故。事故そのものは描かない・静かな絵）
+        "bg104_supreme_court": "A solemn grey stone court building exterior in Japan under a cloudy sky, modern granite architecture, no text",
+        "bg105_courtroom": "An empty Japanese courtroom interior with the judges' bench and wooden seats, calm and serious, no people",
+        "bg106_lake_calm": "A wide calm lake in Fukushima Japan with a large mountain behind it, late summer, clear water, quiet, no boats",
+        "bg107_lake_shore": "A quiet empty sandy lakeshore beach with gentle small waves and green trees, late summer morning",
+        "bg108_lifejacket": "An orange life jacket placed on a wooden pier by a calm lake, quiet and lonely atmosphere",
+        "bg109_calendar": "A wall calendar and a clock in a quiet dim room, feeling of years passing",
+        "bg110_lake_sunset": "A calm lake at sunset with golden reflections on the water and distant mountains, peaceful memorial mood",
+        "bg111_white_flowers": "A quiet room by a window with soft light and a small vase of white flowers on a table",
+        "bg112_swim_area": "A lake swimming area marked with a line of floating buoys and small flags, sunny, calm water, no people",
+    },
+    "18_semicon": {   # 寸劇「日本の素材と半導体」。実在の会社のロゴ・建物・制服に似せない。人の顔ははっきり描かない
+        "ph01_smartphone_ai": "PHOTO: A desk at night with a glowing smartphone and an open laptop, screens glowing softly with no text, dark room",
+        "ph02_wafer_closeup": "PHOTO: Extreme close-up of a silicon wafer with an iridescent rainbow sheen of microchip patterns",
+        "ph03_chemical_plant": "PHOTO: A chemical factory in rural Japan in daytime, storage tanks and pipes, blue sky, no logos",
+        "ph04_japan_factory_town": "PHOTO: A small Japanese countryside town with rice paddies in front and a factory visible in the distance",
+        "ph05_cleanroom_workers": "PHOTO: Workers in white cleanroom suits and hoods working in a semiconductor cleanroom, faces not visible, "
+                                  "seen from behind",
+        "ph06_kumamoto_fields": "PHOTO: Green farm fields and mountains with a large new modern factory building in the distance, no logos",
+        "ph07_sunset_factory": "PHOTO: Factory chimneys silhouetted against a warm orange sunset sky",
+        "bg01_us_ai_office": "A modern American tech company office with large monitors showing abstract graphs, glass walls, bright",
+        "bg02_cleanroom": "A semiconductor factory cleanroom with yellow lighting, machines and wafer carriers, clean and futuristic",
+        "bg03_jp_material_plant": "A small Japanese materials maker office and factory, shelves with chemical containers and bottles, "
+                                  "simple desks, warm daylight",
+        "bg04_kumamoto_factory": "A large semiconductor factory surrounded by green countryside fields under a clear blue sky",
+    },
     "18_story": {
         "st01_phone_hands": "PHOTO: Close-up of a teenager's hands holding a smartphone in front of a white t-shirt, bright white background, "
                             "small colorful social media heart and comment bubble icons floating around the phone, face not visible",

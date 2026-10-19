@@ -222,11 +222,31 @@ def cover(img):
     return img.convert("RGB").resize((int(W * (1 + ZOOM)), int(H * (1 + ZOOM))), Image.LANCZOS)
 
 
-def zoom_frame(big, p):
-    """p=0..1 でゆっくりズームイン（中央基準）。"""
-    s = 1 + ZOOM - ZOOM * (1 - p)          # 表示する範囲の倍率（1+ZOOM の画像から切り出す）
-    w, h = big.width / s, big.height / s
-    x, y = (big.width - w) / 2, (big.height - h) / 2
+MOVES = ["in", "left", "out", "up", "right", "down"]   # カットごとに順に使う（台本の "move" で指定も可）
+
+
+def zoom_frame(big, p, move="in"):
+    """p=0..1 の背景の動き。big は画面の (1+ZOOM) 倍の画像。
+    in=ズームイン、out=ズームアウト（アップから引き）、left/right/up/down=その向きに絵が流れる"""
+    bw, bh = big.width, big.height
+    if move in ("in", "out"):
+        q = p if move == "in" else 1 - p
+        s = 1 + ZOOM * q                    # 1=画像全体（引き）、1+ZOOM=画面いっぱい（アップ）
+        w, h = bw / s, bh / s
+        x, y = (bw - w) / 2, (bh - h) / 2
+    else:
+        s = 1 + ZOOM * 0.6                  # 少し寄った状態で平行に動かす
+        w, h = bw / s, bh / s
+        mx, my = bw - w, bh - h
+        x, y = mx / 2, my / 2
+        if move == "left":                  # 絵が左へ流れる＝見る範囲が右へ
+            x = mx * p
+        elif move == "right":
+            x = mx * (1 - p)
+        elif move == "up":
+            y = my * p
+        elif move == "down":
+            y = my * (1 - p)
     return big.transform((W, H), Image.EXTENT, (x, y, x + w, y + h), Image.BILINEAR)
 
 
@@ -468,13 +488,13 @@ def main(story_path, out):
     for li, (l, (s, e)) in enumerate(zip(lines, timings)):
         st = 0.0 if li == 0 else s
         if not (shots and shots[-1][2] == l["scene"]):
-            shots.append([st, None, l["scene"]])
+            shots.append([st, None, l["scene"], l.get("move") or MOVES[len(shots) % len(MOVES)]])
     for i in range(len(shots)):
         shots[i][1] = shots[i + 1][0] if i + 1 < len(shots) else duration
     def is_video(sc):
         return scenes[sc].get("file", "").lower().endswith(VIDEO_EXT)
     bigs = {sc: (VideoBG(os.path.join(base, scenes[sc]["file"]), scenes[sc].get("ss", 0)) if is_video(sc)
-                 else cover(img(sc))) for _, _, sc in shots}
+                 else cover(img(sc))) for _, _, sc, _ in shots}
     current = None
 
     # --- 書き出し（ちょうど duration 秒） ---
@@ -497,7 +517,7 @@ def main(story_path, out):
         if isinstance(bg, VideoBG):
             frame = bg.frame().convert("RGBA")       # 動画はそのまま流す（ズームなし）
         else:
-            frame = zoom_frame(bg, min(1, p)).convert("RGBA")
+            frame = zoom_frame(bg, min(1, p), sh[3]).convert("RGBA")
         cur = [x for x in subs if x[0] <= tt < x[1]]
         if cur:
             a, _, cap = cur[-1]

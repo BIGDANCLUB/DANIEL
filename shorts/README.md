@@ -67,3 +67,15 @@
   - 参考動画の最後のエンディング（ご視聴ありがとうございます等）は使わない
   - 冒頭に `se/チリン.mp3`
   - こちらから渡す画像・動画は scenes に `{"file": "パス"}` で指定。1本で2回まで（超えるとエラー）。足りない分は Gemini で生成
+
+### VOICEVOX（青山龍星）の声を使う
+1. `voicevox/docXXX.txt`（台本の読み上げ文を1行ずつ並べたもの）を VOICEVOX で「ファイル → テキスト読み込み」
+2. 全部の行のキャラクターを「青山龍星」にする（話速などはここで調整）
+3. 「ファイル → 音声を全て書き出し」で、フォルダ `voicevox/docXXX/` に書き出す（001_…wav, 002_…wav … と行の順に並ぶ）
+4. そのフォルダを送ってもらい、台本の `tts` を `{"engine": "voicevox_files", "dir": "voicevox/docXXX"}` にして書き出す
+- 概要欄に「VOICEVOX:青山龍星」のクレジットを必ず入れる（VOICEVOX の利用規約）
+
+### 背景に動画・渡された画像を使う
+- scenes に `{"file": "../catmeme/assets_video/wide/v06_cash_counting.mp4"}` のように書く（動画は画面いっぱいに切り抜いて流す。`"ss": 秒` で途中から）
+- 使える素材: `../catmeme/assets_video/`（wide 22本・tall 5本、一覧は同フォルダの README）、`../catmeme/backgrounds/`（背景画像）
+- 渡された素材は1本で2回まで

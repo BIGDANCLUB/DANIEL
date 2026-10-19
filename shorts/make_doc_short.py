@@ -184,6 +184,32 @@ def phrase_bounds(clip, phrases):
     return out
 
 
+VIDEO_EXT = (".mp4", ".mov", ".webm", ".m4v")
+
+
+class VideoBG:
+    """動く背景。縦画面いっぱいに切り抜き、30fps で順に読む（短ければくり返す）。"""
+    def __init__(self, path, ss=0.0):
+        self.path, self.ss, self.proc = path, ss, None
+
+    def start(self):
+        vf = f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},fps={FPS}"
+        self.proc = subprocess.Popen([FF, "-loglevel", "error", "-stream_loop", "-1", "-ss", f"{self.ss}",
+                                      "-i", self.path, "-vf", vf, "-an", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
+                                     stdout=subprocess.PIPE)
+
+    def frame(self):
+        if self.proc is None:
+            self.start()
+        buf = self.proc.stdout.read(W * H * 3)
+        return Image.frombytes("RGB", (W, H), buf)
+
+    def stop(self):
+        if self.proc:
+            self.proc.kill()
+            self.proc = None
+
+
 def cover(img):
     """画像を 9:16 に切り抜いて、ズーム用に少し大きめ（1.0倍=画面ぴったり）で返す。"""
     iw, ih = img.size
@@ -208,7 +234,16 @@ def zoom_frame(big, p):
 def voice_clips(story_path, cfg, key, lines, work):
     """tts_gemini で声を作り（足りない分だけ）、行ごとの音声を返す。"""
     tts = dict(cfg[key])
-    tts["voice_dir"] = os.path.join(os.path.dirname(os.path.abspath(story_path)), tts["voice_dir"])
+    base = os.path.dirname(os.path.abspath(story_path))
+    if tts.get("engine") == "voicevox_files":
+        # VOICEVOX アプリの「音声を全て書き出し」で出したファイル（001_…wav, 002_…wav …）を行の順に使う
+        d = os.path.join(base, tts["dir"])
+        files = sorted(f for f in os.listdir(d) if f.lower().endswith(".wav"))
+        if len(files) != len(lines):
+            sys.exit(f"{d} の wav が {len(files)} 個です（台本は {len(lines)} 行）。VOICEVOX で1行ずつ書き出してください")
+        return [shorten_pauses(trim_silence(load_audio(os.path.join(d, f)).copy()), cfg.get("max_pause", 0.25))
+                for f in files]
+    tts["voice_dir"] = os.path.join(base, tts["voice_dir"])
     sub = {"tts": tts, "lines": [{"text": l["say"], "say": l["say"], "tone": l.get("tone")} for l in lines]}
     p = os.path.join(work, f"_{key}.json")
     json.dump(sub, open(p, "w", encoding="utf-8"), ensure_ascii=False)
@@ -323,7 +358,11 @@ def main(story_path, out):
             shots.append([st, None, l["scene"]])
     for i in range(len(shots)):
         shots[i][1] = shots[i + 1][0] if i + 1 < len(shots) else duration
-    bigs = {sc: cover(img(sc)) for _, _, sc in shots}
+    def is_video(sc):
+        return scenes[sc].get("file", "").lower().endswith(VIDEO_EXT)
+    bigs = {sc: (VideoBG(os.path.join(base, scenes[sc]["file"]), scenes[sc].get("ss", 0)) if is_video(sc)
+                 else cover(img(sc))) for _, _, sc in shots}
+    current = None
 
     # --- 書き出し（ちょうど duration 秒） ---
     nframes = int(round(duration * FPS))
@@ -336,7 +375,16 @@ def main(story_path, out):
         tt = fi / FPS
         sh = next(x for x in shots if x[0] <= tt < x[1] or x is shots[-1])
         p = (tt - sh[0]) / max(0.1, sh[1] - sh[0])
-        frame = zoom_frame(bigs[sh[2]], min(1, p)).convert("RGBA")
+        bg = bigs[sh[2]]
+        if current is not sh:
+            for other in bigs.values():
+                if isinstance(other, VideoBG) and other is not bg:
+                    other.stop()
+            current = sh
+        if isinstance(bg, VideoBG):
+            frame = bg.frame().convert("RGBA")       # 動画はそのまま流す（ズームなし）
+        else:
+            frame = zoom_frame(bg, min(1, p)).convert("RGBA")
         cur = [x for x in subs if x[0] <= tt < x[1]]
         if cur:
             a, _, cap = cur[-1]

@@ -88,7 +88,7 @@
     "<年200億円近く>に",
     "のぼるという"
    ],
-   "scene": "money"
+   "scene": "cash_video"
   },
   {
    "say": "しかし、日本も黙ってはいなかった。",
@@ -97,7 +97,7 @@
     "しかし",
     "日本も\n<黙ってはいなかった>"
    ],
-   "scene": "diet"
+   "scene": "fuji_video"
   },
   {
    "say": "そして今年7月、改正種苗法が成立。品種登録を出願した段階から、海外への持ち出しを差し止められるようにしたのである。",
@@ -152,9 +152,6 @@
   "vast_vineyard": {
    "prompt": "Aerial view of an enormous vineyard stretching to the horizon with endless rows of grapevines under hazy sky"
   },
-  "money": {
-   "prompt": "Stacks of Japanese yen banknotes next to a bunch of green grapes on a dark table, dramatic light, money details blurred"
-  },
   "diet": {
    "prompt": "The National Diet Building in Tokyo under a blue sky, wide shot, no people"
   },
@@ -163,6 +160,12 @@
   },
   "farmer": {
    "prompt": "An elderly Japanese farmer's weathered hands gently holding a green grape bunch in a vineyard at sunset"
+  },
+  "cash_video": {
+   "file": "../catmeme/assets_video/wide/v06_cash_counting.mp4"
+  },
+  "fuji_video": {
+   "file": "../catmeme/assets_video/wide/v07_mt_fuji_clouds.mp4"
   }
  },
  "duration": 60.0

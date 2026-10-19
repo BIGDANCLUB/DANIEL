@@ -246,11 +246,46 @@ def voicevox_speaker(name, style):
     sys.exit(f"VOICEVOX に話者 {name}（{style}）がありません")
 
 
+VOICE_BOUNDS = {}       # 行番号 → 字幕ページの切り替え時刻（行頭からの秒）。VOICEVOX のときだけ正確に分かる
+
+
+def vv_post(path, body=None):
+    req = urllib.request.Request(VOICEVOX_URL + path, method="POST",
+                                 data=None if body is None else json.dumps(body).encode(),
+                                 headers={"Content-Type": "application/json"})
+    return urllib.request.urlopen(req).read()
+
+
+def vv_query(text, sid):
+    import urllib.parse
+    return json.loads(vv_post("/audio_query?" + urllib.parse.urlencode({"text": text, "speaker": sid})))
+
+
+def mora_starts(query):
+    """audio_query から、各モーラの読み始め（秒、音声の先頭から）を返す。最後に読み終わりを付ける。"""
+    sp = query.get("speedScale", 1.0)
+    t = query.get("prePhonemeLength", 0.1) / sp
+    starts = []
+    for ap in query["accent_phrases"]:
+        for m in ap["moras"]:
+            starts.append(t)
+            t += ((m.get("consonant_length") or 0) + m["vowel_length"]) / sp
+        if ap.get("pause_mora"):
+            pm = ap["pause_mora"]
+            t += ((pm.get("consonant_length") or 0) + pm["vowel_length"]) * query.get("pauseLengthScale", 1.0) / sp
+    starts.append(t)
+    return starts
+
+
+def n_moras(query):
+    return sum(len(ap["moras"]) for ap in query["accent_phrases"])
+
+
 def voicevox_clips(tts, lines, base, cfg):
-    """ローカルの VOICEVOX エンジンで1行ずつ読み上げる（作った音声は保存して使い回す）。
+    """ローカルの VOICEVOX エンジンで1文ずつ読み上げる（作った音声は保存して使い回す）。
+    字幕ページの切り替えは、VOICEVOX が返すモーラ（音）ごとの時刻から求めるので読み上げとずれない。
     エンジンが動いていなければ tools/voicevox_setup.sh で入れて起動する。"""
     import hashlib
-    import urllib.parse
     try:
         urllib.request.urlopen(VOICEVOX_URL + "/version", timeout=3)
     except Exception:
@@ -258,24 +293,49 @@ def voicevox_clips(tts, lines, base, cfg):
     sid = voicevox_speaker(tts.get("speaker", "青山龍星"), tts.get("style", "ノーマル"))
     vdir = os.path.join(base, tts["voice_dir"])
     os.makedirs(vdir, exist_ok=True)
-    params = {k: tts[k] for k in ("speedScale", "pitchScale", "intonationScale", "volumeScale") if k in tts}
+    params = {k: tts[k] for k in ("speedScale", "pitchScale", "intonationScale", "volumeScale", "pauseLengthScale")
+              if k in tts}
+    params.update({"prePhonemeLength": 0.0, "postPhonemeLength": 0.05})
     clips = []
     for i, l in enumerate(lines):
         text = l["say"]
+        query = vv_query(text, sid)
+        query.update(params)
         key = hashlib.sha1(json.dumps([sid, text, params], ensure_ascii=False).encode()).hexdigest()[:12]
         out = os.path.join(vdir, f"{i + 1:02d}_{key}.wav")
         if not os.path.exists(out):
-            q = urllib.parse.urlencode({"text": text, "speaker": sid})
-            req = urllib.request.Request(f"{VOICEVOX_URL}/audio_query?{q}", method="POST")
-            query = json.load(urllib.request.urlopen(req))
-            query.update(params)
-            query["prePhonemeLength"], query["postPhonemeLength"] = 0.05, 0.05
-            req = urllib.request.Request(f"{VOICEVOX_URL}/synthesis?speaker={sid}", method="POST",
-                                         data=json.dumps(query).encode(), headers={"Content-Type": "application/json"})
-            open(out, "wb").write(urllib.request.urlopen(req).read())
+            open(out, "wb").write(vv_post(f"/synthesis?speaker={sid}", query))
             print(f"[{i + 1:02d}] {text}", flush=True)
-        clips.append(shorten_pauses(trim_silence(load_audio(out).copy()), cfg.get("max_pause", 0.25)))
+        clips.append(load_audio(out))          # 時刻をずらさないよう、無音の切り詰めはしない
+        # 字幕ページの切り替え時刻: 各ページのモーラ数を数え、文全体のモーラ時刻に当てはめる
+        pages = l.get("subs", [])
+        if i > 0 and len(pages) > 1:
+            starts = mora_starts(query)
+            counts = [n_moras(vv_query(page_reading(pg), sid)) for pg in pages]
+            total = n_moras(query)
+            scale = total / max(1, sum(counts))          # 数え方が少し違っても全体に合わせる
+            # 単語（アクセント句）の区切りのモーラ番号。ページの切れ目はたいてい単語の区切りなので、近ければそこに合わせる
+            ends, k = [], 0
+            for ap in query["accent_phrases"]:
+                k += len(ap["moras"])
+                ends.append(k)
+            cum, bounds = 0.0, []
+            for c in counts[:-1]:
+                cum += c * scale
+                idx = int(round(cum))
+                near = [e for e in ends if abs(e - cum) <= 2]
+                if near:
+                    idx = min(near, key=lambda e: abs(e - cum))
+                bounds.append(starts[min(len(starts) - 1, idx)])
+            VOICE_BOUNDS[i] = bounds
     return clips
+
+
+def page_reading(page):
+    """字幕ページの読み（表示用の記号・改行を外す。ページに say があればそれ）。"""
+    if isinstance(page, dict):
+        return page.get("say") or plain(page["text"]).replace("\n", "")
+    return plain(page).replace("\n", "")
 
 
 def voice_clips(story_path, cfg, key, lines, work):
@@ -395,9 +455,13 @@ def main(story_path, out):
         if li == 0:   # フックはまとめて1ブロック
             subs.append((0.0, nxt, caption(phrases[0])))
             continue
-        cuts = [s] + [s + x for x in phrase_bounds(clips[li], phrases)] + [nxt]
+        if li in VOICE_BOUNDS:      # VOICEVOX: 音の時刻から正確に（テンポ変更にも合わせる）
+            bs = [x / tempo for x in VOICE_BOUNDS[li]]
+        else:
+            bs = phrase_bounds(clips[li], phrases)
+        cuts = [s] + [s + x for x in bs] + [nxt]
         for k, p in enumerate(phrases):
-            subs.append((cuts[k], cuts[k + 1], caption(p)))
+            subs.append((cuts[k], cuts[k + 1], caption(p["text"] if isinstance(p, dict) else p)))
 
     # カット: 文ごとに場面。同じ場面が続く文は1カットにまとめる
     shots = []

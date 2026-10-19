@@ -24,6 +24,7 @@ def cuts():
                [("surprise_big_pupils_cat", "留学生", "L", 760), ("talk_orange_white_sitting_cat", "店員", "R", 940)],
                [("お弁当、温めますか？", "R", 0.3), ("え、お店で温めてくれるの！？", "L", 2.2)],
                5.0),
+        T.ending(),
     ]
 
 

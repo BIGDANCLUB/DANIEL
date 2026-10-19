@@ -6,6 +6,7 @@
   3. 寸劇：写真の背景を全面に、猫ミームを左右に大きく。猫の頭の上に役名（白い四角に黒い太字）。
      セリフは白い太字＋黒縁。左の猫は左寄せ、右の猫は右寄せで、前のセリフを残したまま下に足していく。
      BGM は寸劇から始まる
+「寸劇」シリーズ（ユーザーが「寸劇」と指定した動画）はこの作り方で作る（10/19 ユーザー指定・README）。
 使い方は story_18_demo.py を見る。
 """
 import os
@@ -95,6 +96,12 @@ def photo(name, text, dur=4.0):
     return dict(kind="photo", photo=name, text=text, dur=dur, fixed=True, no_pop=True)
 
 
+def ending(dur=3.4):
+    """チャンネル共通の締め：「チャンネル登録よろしく！」の画面。"""
+    return dict(kind="still", img=os.path.join(HERE, "parts", "common", "subscribe.png"), dur=dur, fixed=True, no_pop=True,
+                se="chirin")
+
+
 def skit(bg, cats, lines, dur, bgm=None, se=None):
     """寸劇。cats=[(素材, 役名, "L"/"R", 高さ)]、lines=[(セリフ, "L"/"R", 出る秒)]。
     猫の音は消す（参考は BGM だけ）。"""
@@ -123,6 +130,8 @@ class Renderer:
             put(self.base, im, (W - im.width) / 2, 60)
             t = text_img(c["text"], 84, stroke=5)
             put(self.base, t, (W - t.width) / 2, 60 + im.height + (H - 60 - im.height - t.height) / 2)
+        elif k == "still":
+            self.base = cover(c["img"])
         else:
             self.base = cover(c["bg"])
             self.clips = [R.Clip(k_["a"], flip=(k_["side"] == "R")) for k_ in c["cats"]]

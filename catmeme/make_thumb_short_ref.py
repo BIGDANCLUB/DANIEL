@@ -154,6 +154,13 @@ def imamori():
          "番組はどうした!?", "b", cap_y=1420, cx=0.18, cap_col=DEEP_YELLOW)
 
 
+def inawashiro():
+    """19本目（猪苗代湖ボート事故）のショート。人が亡くなった事故なので落ち着いた猫だけ。事故の様子は描かない。"""
+    make("short_19_inawashiro_ref.png", "猪苗代湖ボート事故", DEEP_YELLOW, "最高裁で逆転有罪", RED,
+         "bg104_supreme_court", [("realize_wet_cat_stare", 1.0, 870, 1240, 340, True)],
+         "なぜ覆った？", "b", cap_y=1420, cap_col=DEEP_YELLOW)
+
+
 if __name__ == "__main__":
     import sys
-    {"12": akaihane, "13": yard, "16": tenchim, "17": imamori}[sys.argv[1] if len(sys.argv) > 1 else "13"]()
+    {"12": akaihane, "13": yard, "16": tenchim, "17": imamori, "19": inawashiro}[sys.argv[1] if len(sys.argv) > 1 else "13"]()

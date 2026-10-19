@@ -1,0 +1,170 @@
+{
+ "_comment": "DOC-002 参考動画（大谷翔平の商標）の原稿を少し変えて同じ内容。事実: 2023年12月13日、中国福建省の衣料品会社が「大谷翔平」を第25類（衣類・靴・帽子）で出願（出願番号75780648）。会社側は取材に「偶然の一致」と主張し「譲ってもいい」と持ちかけた（FNN）。同社は「木村拓哉」「YOASOBI」「羽生結弦」も出願（オトナンサー）。出願は審査で拒絶（栗原潔氏の記事。拒絶査定は不服審判の余地があり未確定と報じられた時期あり）。無印良品（良品計画）は2019年11月、北京の二審で「無印良品」商標を持つ現地企業に寝具などの区分で敗訴（AFP・日経）。参考動画の「ドラゴンボール」は裏付けが取れないので外した。画像はユーザーから渡された写真4枚（各2回まで）と catmeme の背景動画。",
+ "duration": 60.0,
+ "tempo": 1.0,
+ "gap": 0.12,
+ "bgm": "神隠しの真相.mp3",
+ "bgm_volume": -12,
+ "tts": {
+  "engine": "voicevox",
+  "speaker": "青山龍星",
+  "style": "ノーマル",
+  "speedScale": 1.15,
+  "intonationScale": 1.1,
+  "pauseLengthScale": 0.5,
+  "voice_dir": "work_doc002/voice_vv"
+ },
+ "image_gen": {
+  "image_dir": "work_doc002/images"
+ },
+ "lines": [
+  {
+   "say": "名前を使いたければ、金を払え。中国企業が、大谷翔平の名前を、勝手に商標出願していたのである。",
+   "subs": [
+    "「名前を使いたければ\n{金を払え}」\n中国企業が\n「{大谷翔平}」を\n<勝手に商標出願>"
+   ],
+   "scene": "p14"
+  },
+  {
+   "say": "大谷翔平選手は、今や世界で最も有名な野球選手だ。",
+   "subs": [
+    "{大谷翔平}選手は\n今や世界で",
+    "最も有名な\n{野球選手}だ"
+   ],
+   "scene": "p12a"
+  },
+  {
+   "say": "その名前が狙われたのは、アメリカでもにほんでもなく、中国だった。",
+   "subs": [
+    "その名前が\n狙われたのは",
+    "アメリカでも\n日本でもなく",
+    "<中国>だった"
+   ],
+   "scene": "city"
+  },
+  {
+   "say": "2023年12月、中国の衣料品会社が、その名前を服や靴の商標として出願したのである。",
+   "subs": [
+    "{2023年12月}\n中国の衣料品会社が",
+    "その名前を\n服や靴の",
+    "<商標として出願>\nしたのである"
+   ],
+   "scene": "typing"
+  },
+  {
+   "say": "もちろん本人には、全く無断で出願されていた。",
+   "subs": [
+    "もちろん本人には\n<全く無断>で",
+    "出願されていた"
+   ],
+   "scene": "p12b"
+  },
+  {
+   "say": "会社側は、偶然の一致だと主張し、譲ってもいいとまで持ちかけたという。",
+   "subs": [
+    "会社側は\n{偶然の一致}だと主張し",
+    "<譲ってもいい>とまで\n持ちかけたという"
+   ],
+   "scene": "handshake"
+  },
+  {
+   "say": "中国では、有名人やブランドの名前を先回りして出願する手口が、後を絶たない。",
+   "subs": [
+    "中国では\n{有名人}や{ブランド}の",
+    "名前を先回りして\n出願する手口が",
+    "<後を絶たない>"
+   ],
+   "scene": "meeting"
+  },
+  {
+   "say": "本物が中国で商品を売ろうとすると、高値での買い取りを迫るのである。",
+   "subs": [
+    "本物が中国で\n商品を売ろうとすると",
+    "<高値での買い取り>を\n迫るのである"
+   ],
+   "scene": "cash"
+  },
+  {
+   "say": "実際、無印良品は中国で、先に商標を取った現地企業に訴えられ、敗訴している。",
+   "subs": [
+    "実際\n{無印良品}は中国で",
+    "先に商標を取った\n現地企業に訴えられ",
+    "<敗訴>している"
+   ],
+   "scene": "court"
+  },
+  {
+   "say": "同じ会社は、木村拓哉やヨアソビの名前まで、出願していたという。",
+   "subs": [
+    "同じ会社は\n{木村拓哉}や",
+    "{YOASOBI}の名前まで\n<出願していた>という"
+   ],
+   "scene": "phone"
+  },
+  {
+   "say": "大谷翔平の出願は、幸いにも審査で拒絶された。",
+   "subs": [
+    "「{大谷翔平}」の出願は\n幸いにも",
+    "審査で\n<拒絶された>"
+   ],
+   "scene": "p13"
+  },
+  {
+   "say": "しかし、にほんの名前が狙われる構図は、何も変わっていない。",
+   "subs": [
+    "しかし\n日本の名前が狙われる",
+    "構図は\n<何も変わっていない>"
+   ],
+   "scene": "shibuya"
+  },
+  {
+   "say": "にほんの名前と信用は、にほんが守らなければならないのである。",
+   "subs": [
+    "日本の名前と信用は",
+    "日本が<守らなければ>\nならないのである"
+   ],
+   "scene": "p11"
+  }
+ ],
+ "scenes": {
+  "p14": {
+   "file": "provided/doc002/14.jpg"
+  },
+  "p12a": {
+   "file": "provided/doc002/12.jpg"
+  },
+  "p12b": {
+   "file": "provided/doc002/12.jpg"
+  },
+  "p13": {
+   "file": "provided/doc002/13.jpg"
+  },
+  "p11": {
+   "file": "provided/doc002/11.jpg"
+  },
+  "city": {
+   "file": "../catmeme/assets_video/wide/v05_city_night_river.mp4"
+  },
+  "typing": {
+   "file": "../catmeme/assets_video/wide/v02_typing_keyboard_closeup.mp4"
+  },
+  "handshake": {
+   "file": "../catmeme/assets_video/wide/v19_handshake_business.mp4"
+  },
+  "meeting": {
+   "file": "../catmeme/assets_video/wide/v14_business_meeting.mp4"
+  },
+  "cash": {
+   "file": "../catmeme/assets_video/wide/v06_cash_counting.mp4"
+  },
+  "court": {
+   "file": "../catmeme/backgrounds/16_tenchim/bg85_courtroom.png"
+  },
+  "phone": {
+   "file": "../catmeme/assets_video/wide/v20_smartphone_hands.mp4"
+  },
+  "shibuya": {
+   "file": "../catmeme/assets_video/wide/v09_shibuya_crossing_aerial.mp4"
+  }
+ }
+}

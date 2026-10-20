@@ -3,7 +3,7 @@
  "tempo": 1.0,
  "gap": 0.1,
  "max_pause": 0.22,
- "bgm": "神隠しの真相.mp3",
+ "bgm": "none",
  "bgm_volume": -12,
  "tts": {
   "engine": "voicevox",

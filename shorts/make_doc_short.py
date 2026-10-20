@@ -20,7 +20,7 @@
            1行目の subs はフック文（"\\n" で改行した1つのブロック）
   scenes:  {"名前": {"prompt": "..."}}（Gemini 生成）または {"名前": {"file": "渡された画像のパス"}}
   tts:     声の設定（tts_gemini と同じ。後で VOICEVOX に差し替えられるよう分けてある）
-  bgm:     bgm/ からの相対パス。"none" で BGM 無し
+  bgm:     既定は無し（10/20 ユーザー指定）。入れるときだけ bgm/ からの相対パス
 
 usage: python3 make_doc_short.py story_doc001.json out/DOC-001.mp4
 """
@@ -454,7 +454,7 @@ def main(story_path, out):
 
     # BGM（声の間は下げる簡易ダッキング）。最後はフェードアウト。"bgm": "none" で無し
     mix = voice
-    if cfg.get("bgm", "none") != "none":
+    if cfg.get("bgm", "none") not in ("none", ""):
         env = np.convolve(np.abs(voice), np.ones(int(0.3 * SR)) / (0.3 * SR), "same")
         duck = np.where(env > 0.02, 10 ** (-4 / 20), 1.0)
         duck = np.convolve(duck, np.ones(int(0.2 * SR)) / (0.2 * SR), "same")

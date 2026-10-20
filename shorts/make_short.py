@@ -10,7 +10,7 @@
   - 赤字（<…>）は表示直後にもう一度ポンと弾ませる
   - 行に "se": "don" / "coin" があれば、その行の頭に効果音を重ねる
   - 冒頭には se/ の固定SE（既定「チリン」）を鳴らす
-  - BGM は bgm/ の曲からランダムに1曲（台本の "bgm" で指定も可）。声の間は自動で下げる
+  - BGM は既定で無し（10/20 ユーザー指定）。台本の "bgm" で "random" や曲名を書いたときだけ入れる。声の間は自動で下げる
 
 素材（BGMは後付け前提なので入れない）:
   音声 … 行に "audio":[開始,終了] があれば元動画から切り出し、無ければ Gemini TTS（tts_gemini.py）
@@ -206,13 +206,13 @@ BGM_EXT = (".mp3", ".wav", ".m4a", ".aac", ".ogg", ".flac")
 
 def pick_bgm(cfg, work):
     """使う BGM のパスを返す。
-    "bgm" 省略 or "random" … bgm/ 直下とサブフォルダ全部からランダム
+    "bgm" 省略 or "none"   … BGM なし（10/20 から既定）
+    "random"               … bgm/ 直下とサブフォルダ全部からランダム
     "random:スカッと"      … bgm/スカッと/ の中からランダム
     "曲名.mp3"             … bgm/ からの相対パスで指定
-    "none"                 … BGM なし
     ランダムで選んだ曲は work に記録し、作り直しても同じ曲を使う。
     他の動画で使った回数が少ない曲を優先するので、曲が偏らない。"""
-    spec = cfg.get("bgm", "random")
+    spec = cfg.get("bgm", "none")
     if not spec or spec == "none":
         return None
     if not spec.startswith("random"):

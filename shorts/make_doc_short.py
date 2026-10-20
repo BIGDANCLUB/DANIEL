@@ -412,11 +412,17 @@ def main(story_path, out):
 
     # 素材（画像）: 渡された素材は2回まで、それ以外は Gemini で生成
     scenes = cfg["scenes"]
-    for name, sc in scenes.items():
-        if "file" in sc:
-            uses = sum(1 for l in lines if l["scene"] == name)
-            if uses > MAX_FILE_USES:
-                sys.exit(f"渡された素材 {name} を {uses} 回使っています（1本で{MAX_FILE_USES}回まで）")
+    uses = {}
+    for l in lines:
+        f = scenes[l["scene"]].get("file")
+        if f:
+            uses[f] = uses.get(f, 0) + 1
+    for f, n in uses.items():
+        if n > MAX_FILE_USES:
+            sys.exit(f"渡された素材 {f} を {n} 回使っています（1本で{MAX_FILE_USES}回まで）")
+    # 冒頭のタイトル画面の背景は静止画だけ（10/20 ユーザー指定）
+    if scenes[lines[0]["scene"]].get("file", "").lower().endswith(VIDEO_EXT):
+        sys.exit("冒頭のタイトル画面に動画は使えません（静止画にしてください）")
     gen_images_gemini.ensure_images(story_path)
 
     def img(name):

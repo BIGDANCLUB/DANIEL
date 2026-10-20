@@ -160,7 +160,6 @@
    "file": "../catmeme/assets_video/wide/v07_mt_fuji_clouds.mp4"
   }
  },
- "duration": 60.0,
  "tts_gemini_backup": {
   "model": "gemini-3.8-flash-tts",
   "voice": "Algenib",

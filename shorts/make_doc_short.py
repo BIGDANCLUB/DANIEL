@@ -20,7 +20,7 @@
            1行目の subs はフック文（"\\n" で改行した1つのブロック）
   scenes:  {"名前": {"prompt": "..."}}（Gemini 生成）または {"名前": {"file": "渡された画像のパス"}}
   tts:     声の設定（tts_gemini と同じ。後で VOICEVOX に差し替えられるよう分けてある）
-  bgm:     bgm/ からの相対パス
+  bgm:     bgm/ からの相対パス。"none" で BGM 無し
 
 usage: python3 make_doc_short.py story_doc001.json out/DOC-001.mp4
 """
@@ -452,15 +452,18 @@ def main(story_path, out):
     se = load_audio(INTRO_SE) * 10 ** (cfg.get("intro_se_volume", -3) / 20)
     voice[:len(se)] += se[:n]
 
-    # BGM（声の間は下げる簡易ダッキング）。最後はフェードアウト
-    env = np.convolve(np.abs(voice), np.ones(int(0.3 * SR)) / (0.3 * SR), "same")
-    duck = np.where(env > 0.02, 10 ** (-4 / 20), 1.0)
-    duck = np.convolve(duck, np.ones(int(0.2 * SR)) / (0.2 * SR), "same")
-    b = bgm_track(os.path.join(HERE, "bgm", cfg["bgm"]), n, cfg.get("bgm_volume", -11))
-    b[:int(0.6 * SR)] *= np.linspace(0, 1, int(0.6 * SR))
-    fo = int(min(2.5, duration - end_voice + 1.0) * SR)
-    b[-fo:] *= np.linspace(1, 0, fo)
-    mix = np.clip(voice + b * duck, -0.98, 0.98).astype(np.float32)
+    # BGM（声の間は下げる簡易ダッキング）。最後はフェードアウト。"bgm": "none" で無し
+    mix = voice
+    if cfg.get("bgm", "none") != "none":
+        env = np.convolve(np.abs(voice), np.ones(int(0.3 * SR)) / (0.3 * SR), "same")
+        duck = np.where(env > 0.02, 10 ** (-4 / 20), 1.0)
+        duck = np.convolve(duck, np.ones(int(0.2 * SR)) / (0.2 * SR), "same")
+        b = bgm_track(os.path.join(HERE, "bgm", cfg["bgm"]), n, cfg.get("bgm_volume", -11))
+        b[:int(0.6 * SR)] *= np.linspace(0, 1, int(0.6 * SR))
+        fo = int(min(2.5, duration - end_voice + 1.0) * SR)
+        b[-fo:] *= np.linspace(1, 0, fo)
+        mix = voice + b * duck
+    mix = np.clip(mix, -0.98, 0.98).astype(np.float32)
     wav = os.path.splitext(out)[0] + "_audio.wav"
     mix.tofile(wav + ".f32")
     subprocess.run([FF, "-loglevel", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", wav + ".f32",

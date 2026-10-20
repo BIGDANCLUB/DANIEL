@@ -327,13 +327,37 @@ if __name__ == "__main__" and os.environ.get("THUMB") == "17":
     imamori()
 
 
+def put_flag(img, code, x, y, h=90, angle=0):
+    """国旗を写真の中に（白い縁＋影）。code は story_style.flag_img と同じ（jp / us / tw）。"""
+    import story_style as T
+    fl = T.flag_img(code, h).convert("RGBA")
+    box = Image.new("RGBA", (fl.width + 12, fl.height + 12), WHITE + (255,))
+    box.alpha_composite(fl, (6, 6))
+    sh = Image.new("RGBA", (box.width + 30, box.height + 30), (0, 0, 0, 0))
+    ImageDraw.Draw(sh).rectangle((15, 15, 15 + box.width, 15 + box.height), fill=(0, 0, 0, 120))
+    sh = sh.filter(ImageFilter.GaussianBlur(6))
+    sh.alpha_composite(box, (9, 9))
+    sh = sh.rotate(angle, expand=True, resample=Image.BICUBIC)
+    img.alpha_composite(sh, (int(x - sh.width / 2), int(y - sh.height / 2)))
+
+
+def flags_on(name, items):
+    """できあがったサムネに国旗を重ねて保存し直す。items = [(code, x, y, h, angle)]。"""
+    p = os.path.join(HERE, "thumbs", name)
+    img = Image.open(p).convert("RGBA")
+    for it in items:
+        put_flag(img, *it)
+    img.convert("RGB").save(p)
+
+
 def semicon():
-    """18本目【寸劇】日本の素材と半導体で3案。背景は AI（backgrounds/18_semicon）。他の国をバカにする言葉は使わない。"""
+    """18本目（寸劇シリーズ）日本の素材と半導体で3案。サムネには「寸劇」と書かない（10/20 ユーザー指定・「実は〜」で）。国旗を写真の中に入れる。背景は AI（backgrounds/18_semicon）。他の国をバカにする言葉は使わない。"""
     type_a("18_semicon_ref_a.png", "bg03_jp_material_plant", "ph02_wafer_closeup",
            ("talk_orange_white_sitting_cat", 1.0, 250, 470, 400, False),
            [("surprise_big_pupils_cat", 0.6, 1100, 410, 300, True)],
-           "【寸劇】AIブームの陰の主役",
+           "実は…AIブームの陰の主役",
            [("日本の素材がないと", BLACK)], [("半導体が作れない？", RED)], split=600, size=126)
+    flags_on("18_semicon_ref_a.png", [("jp", 70, 60, 70, -6), ("us", 760, 70, 80, 5), ("tw", 900, 60, 80, -4)])
     type_b("18_semicon_ref_b.png",
            [("bg01_us_ai_office", [("dance_edm_cat", 1.0, 160, 470, 360, False)]),
             ("bg02_cleanroom", [("work_typing_cat", 1.0, 160, 470, 340, False)]),
@@ -343,9 +367,12 @@ def semicon():
             ("txt", "“いつものやつ”", 800, 60, 42, YELLOW, -4), ("arrow", 860, 110, 900, 230),
             ("txt", "工場ごと来た!?", 1130, 60, 40, YELLOW, 6)],
            [("AIの陰の主役は", RED)], [("日本の“地味な”素材", NAVY)])
+    flags_on("18_semicon_ref_b.png", [("us", 250, 420, 56, -5), ("tw", 570, 420, 56, 4), ("jp", 890, 420, 56, -4),
+                                      ("tw", 1210, 420, 56, 5)])
     type_c("18_semicon_ref_c.png", "ph02_wafer_closeup",
            [("talk_orange_white_sitting_cat", 1.0, 200, 560, 420, False), ("surprise_big_pupils_cat", 0.6, 1100, 560, 400, True)],
-           "【寸劇】日本の素材がないと半導体が作れない？", "陰の主役")
+           "実は…日本の素材がないと半導体が作れない？", "陰の主役")
+    flags_on("18_semicon_ref_c.png", [("jp", 200, 150, 80, -6), ("us", 960, 150, 80, 4), ("tw", 1120, 165, 80, -4)])
 
 
 if __name__ == "__main__" and os.environ.get("THUMB") == "18":

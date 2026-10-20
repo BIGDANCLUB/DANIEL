@@ -126,8 +126,19 @@ def title_band(top, sub, top_col=RED, sub_col=YELLOW, top_stroke=BLACK):
     return im
 
 
-def role_label(name, size=110):
-    return outline_text([[(name, LIME)]], size, w=700)
+def role_label(name, size=110, flag=None):
+    """役名（黄緑の文字）。flag（jp / us / tw）があれば左に小さい国旗（国どうしの話・10/20）。"""
+    t = outline_text([[(name, LIME)]], size, w=700)
+    if not flag:
+        return t
+    import story_style as T
+    fl = T.flag_img(flag, int(size * 0.62)).convert("RGBA")
+    box = Image.new("RGBA", (fl.width + 8, fl.height + 8), (255, 255, 255, 255))
+    box.alpha_composite(fl, (4, 4))
+    im = Image.new("RGBA", (box.width + 14 + t.width, max(box.height, t.height)), (0, 0, 0, 0))
+    im.alpha_composite(box, (0, (im.height - box.height) // 2))
+    im.alpha_composite(t, (box.width + 14, (im.height - t.height) // 2))
+    return im
 
 
 def moving_bg(bg, T):
@@ -152,7 +163,7 @@ def make_draw(c, title):
     bg = None if vid else vbg(c["bg"])
     # セリフは大きめに（10/13 ユーザー指定）：横幅に収まらない分は、まず横だけ少し細くして大きさを保つ
     cap = fit_wide(outline_text(parse(c["say"], c.get("col", WHITE)), int(c.get("size", 100) * 1.3), w=3000), SAFE_W + 20, 900)
-    lab = role_label(c["label"], c.get("label_size", 110)) if c.get("label") else None
+    lab = role_label(c["label"], c.get("label_size", 110), c.get("label_flag")) if c.get("label") else None
     extra = [(role_label(t_), x_) for t_, x_ in c.get("labels", [])]   # 2つ目以降の役名
     safe = c.get("safe", True)
     lab_y = SAFE_BOTTOM - 70 if safe else SH - 330

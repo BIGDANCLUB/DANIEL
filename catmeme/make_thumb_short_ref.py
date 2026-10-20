@@ -161,6 +161,20 @@ def inawashiro():
          "なぜ覆った？", "b", cap_y=1420, cap_col=DEEP_YELLOW)
 
 
+def semicon():
+    """18本目（日本の素材と半導体）のショート。国旗を写真の中に。「寸劇」とは書かない。"""
+    make("short_18_semicon_ref.png", "実はAIブームの陰の主役", DEEP_YELLOW, "日本の“素材”", RED,
+         "ph02_wafer_closeup", [("talk_orange_white_sitting_cat", 1.0, 840, 1250, 380, True)],
+         "なぜ日本なの!?", "b", cap_y=1420, cap_col=DEEP_YELLOW)
+    from PIL import Image as _I
+    import make_thumb_long_ref as LR
+    p = os.path.join(HERE, "thumbs", "short_18_semicon_ref.png")
+    img = _I.open(p).convert("RGBA")
+    for code, x, y, a in (("us", 180, 700, -6), ("tw", 380, 720, 5), ("jp", 840, 820, -4)):
+        LR.put_flag(img, code, x, y, 110, a)
+    img.convert("RGB").save(p)
+
+
 if __name__ == "__main__":
     import sys
-    {"12": akaihane, "13": yard, "16": tenchim, "17": imamori, "19": inawashiro}[sys.argv[1] if len(sys.argv) > 1 else "13"]()
+    {"12": akaihane, "13": yard, "16": tenchim, "17": imamori, "19": inawashiro, "18": semicon}[sys.argv[1] if len(sys.argv) > 1 else "13"]()

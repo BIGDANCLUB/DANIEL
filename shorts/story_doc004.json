@@ -1,0 +1,193 @@
+{
+ "_comment": "DOC-004 食料品の消費税1%と外食10%（ユーザーの台本指示書。字幕をそのまま読む、句読点なし、話速は通常=1.0）。事実: 10/20 衆院本会議で審議入り（共同・NHK）。2027年4月から2年間、飲食料品8%→1%、所得連動の支援金（日経）。店内飲食は10%据え置き、税率差2→9ポイント、税抜1000円で持ち帰り1010円・店内1100円（ABC）。すかいらーくはガスト等で宅配向け弁当・宅配専門店（日経・時事）。首相が10/16にプレミアム商品券含む外食支援策の検討を表明（日経・東京新聞）。Gemini残高ゼロのため catmeme の素材。",
+ "tempo": 1.0,
+ "gap": 0.22,
+ "bgm": "none",
+ "tts": {
+  "engine": "voicevox",
+  "speaker": "青山龍星",
+  "style": "ノーマル",
+  "speedScale": 1.0,
+  "intonationScale": 1.35,
+  "pauseLengthScale": 0.5,
+  "voice_dir": "work_doc004/voice_vv"
+ },
+ "image_gen": {
+  "image_dir": "work_doc004/images"
+ },
+ "lines": [
+  {
+   "say": "食料品の消費税は1%に下がる、それなのに外食は10%のままだ",
+   "subs": [
+    "{食料品の消費税は}\n{1%に下がる}\nそれなのに\n<外食は10%>\n<のままだ>"
+   ],
+   "scene": "bg47"
+  },
+  {
+   "say": "10月20日減税法案が国会で審議入りした",
+   "subs": [
+    "{10月20日}\n減税法案が",
+    "国会で\n<審議入り>した"
+   ],
+   "scene": "bg05"
+  },
+  {
+   "say": "2027年4月から2年間食料品の税率を8%から1%に下げる案だ",
+   "subs": [
+    "{2027年4月}から\n2年間食料品の",
+    "税率を<8%から>\n<1%>に下げる案だ"
+   ],
+   "scene": "bg16"
+  },
+  {
+   "say": "残る1%分は所得に応じた支援金で補う",
+   "subs": [
+    "残る1%分は\n所得に応じた",
+    "<支援金>で補う"
+   ],
+   "scene": "bg87"
+  },
+  {
+   "say": "ただしまだ成立はしていない",
+   "subs": [
+    "ただしまだ\n<成立はしていない>"
+   ],
+   "scene": "bg04"
+  },
+  {
+   "say": "持ち帰りや出前も原則1%だ",
+   "subs": [
+    "持ち帰りや出前も\n原則<1%>だ"
+   ],
+   "scene": "st03"
+  },
+  {
+   "say": "ところが店内飲食は10%のまま",
+   "subs": [
+    "ところが\n<店内飲食>は",
+    "<10%>のまま"
+   ],
+   "scene": "bg46"
+  },
+  {
+   "say": "税率の差は2ポイントから9ポイントに広がる",
+   "subs": [
+    "税率の差は\n{2ポイント}から",
+    "<9ポイント>に\n広がる"
+   ],
+   "scene": "v11"
+  },
+  {
+   "say": "税抜1000円なら今は持ち帰り1080円で店内1100円",
+   "subs": [
+    "{税抜1000円}なら\n今は持ち帰り",
+    "{1080円}で\n店内{1100円}"
+   ],
+   "scene": "bg67"
+  },
+  {
+   "say": "減税後は持ち帰り1010円店内1100円",
+   "subs": [
+    "減税後は\n持ち帰り<1010円>",
+    "店内<1100円>"
+   ],
+   "scene": "bg13"
+  },
+  {
+   "say": "差は90円に広がる計算だ",
+   "subs": [
+    "差は<90円>に\n広がる計算だ"
+   ],
+   "scene": "bg15"
+  },
+  {
+   "say": "外食業界は客離れを心配している",
+   "subs": [
+    "{外食業界}は客離れを\n<心配している>"
+   ],
+   "scene": "bg47b"
+  },
+  {
+   "say": "ガストは宅配向けの弁当を増やす方針だ",
+   "subs": [
+    "{ガスト}は\n宅配向けの弁当を",
+    "<増やす方針>だ"
+   ],
+   "scene": "v04"
+  },
+  {
+   "say": "政府は商品券などの外食支援を検討中だが中身は未定だ",
+   "subs": [
+    "政府は商品券などの\n{外食支援}を",
+    "検討中だが\n<中身は未定>だ"
+   ],
+   "scene": "bg07"
+  },
+  {
+   "say": "家計には恩恵だが外食には逆風となるおそれもある",
+   "subs": [
+    "家計には<恩恵>だが\n外食には",
+    "<逆風>となる\nおそれもある"
+   ],
+   "scene": "bg16b"
+  },
+  {
+   "say": "巨額の財源や社会保障への影響も問われている",
+   "subs": [
+    "巨額の<財源>や\n社会保障への",
+    "<影響>も\n問われている"
+   ],
+   "scene": "bg57"
+  }
+ ],
+ "scenes": {
+  "bg47": {
+   "file": "../catmeme/backgrounds/14_japan/bg47_ramen_shop.png"
+  },
+  "bg05": {
+   "file": "../catmeme/backgrounds/01_todai/bg05_meeting.png"
+  },
+  "bg16": {
+   "file": "../catmeme/backgrounds/02_october/bg16_food_aisle.png"
+  },
+  "bg87": {
+   "file": "../catmeme/backgrounds/16_tenchim/bg87_refund_money.png"
+  },
+  "bg04": {
+   "file": "../catmeme/backgrounds/01_todai/bg04_voting.png"
+  },
+  "st03": {
+   "file": "../catmeme/backgrounds/18_story/st03_konbini.png"
+  },
+  "bg46": {
+   "file": "../catmeme/backgrounds/14_japan/bg46_sushi_counter.png"
+  },
+  "v11": {
+   "file": "../catmeme/assets_video/wide/v11_stock_chart_blue.mp4"
+  },
+  "bg67": {
+   "file": "../catmeme/backgrounds/14_japan/bg67_food_sample.png"
+  },
+  "bg13": {
+   "file": "../catmeme/backgrounds/02_october/bg13_izakaya.png"
+  },
+  "bg15": {
+   "file": "../catmeme/backgrounds/02_october/bg15_convenience.png"
+  },
+  "bg47b": {
+   "file": "../catmeme/backgrounds/14_japan/bg47_ramen_shop.png"
+  },
+  "v04": {
+   "file": "../catmeme/assets_video/wide/v04_smartphone_man_coat.mp4"
+  },
+  "bg07": {
+   "file": "../catmeme/backgrounds/01_todai/bg07_press.png"
+  },
+  "bg16b": {
+   "file": "../catmeme/backgrounds/02_october/bg16_food_aisle.png"
+  },
+  "bg57": {
+   "file": "../catmeme/backgrounds/14_japan/bg57_tokyo_skyline.png"
+  }
+ }
+}

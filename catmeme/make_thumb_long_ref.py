@@ -426,3 +426,84 @@ def sagi():
 
 if __name__ == "__main__" and os.environ.get("THUMB") == "20":
     sagi()
+
+
+def carbon():
+    """21本目（炭素繊維と787）で3案。「寸劇」とは書かない（「実は…」）。国旗を写真の中に。背景は仮（ChatGPT の画像が届いたら差しかえ）。"""
+    type_a("21_carbon_ref_a.png", "bg03_jp_material_plant", "bg45_airport_arrival",
+           ("talk_orange_white_sitting_cat", 1.0, 250, 470, 400, False),
+           [("surprise_big_pupils_cat", 0.6, 1100, 410, 300, True)],
+           "実は…飛行機の半分は“糸”？",
+           [("ボーイング787を", BLACK)], [("支える日本の“黒い糸”", RED)], split=600, size=112)
+    flags_on("21_carbon_ref_a.png", [("jp", 70, 60, 70, -6), ("us", 900, 60, 80, 5), ("eu", 1050, 70, 80, -4)])
+    type_b("21_carbon_ref_b.png",
+           [("bg01_us_ai_office", [("despair_dramatic_kitten", 1.0, 160, 470, 340, False)]),
+            ("bg03_jp_material_plant", [("talk_orange_white_sitting_cat", 1.0, 160, 470, 360, False)]),
+            ("bg45_airport_arrival", [("cocky_dj_cat", 1.0, 160, 470, 340, False)]),
+            ("ph07_sunset_factory", [("realize_wet_cat_stare", 1.0, 160, 470, 330, False)])],
+           [("txt", "燃料代高すぎ…", 160, 60, 40, YELLOW, -6), ("txt", "うちの“糸”です", 480, 60, 40, YELLOW, 4),
+            ("txt", "ほぼ日本製!?", 800, 60, 44, YELLOW, -4), ("txt", "ほんとに飛んだ…", 1130, 60, 38, YELLOW, 6)],
+           [("787の半分は", RED)], [("日本の“黒い糸”？", NAVY)])
+    flags_on("21_carbon_ref_b.png", [("us", 250, 420, 56, -5), ("jp", 570, 420, 56, 4), ("us", 890, 420, 56, -4), ("jp", 1210, 420, 56, 5)])
+    type_c("21_carbon_ref_c.png", "bg45_airport_arrival",
+           [("talk_orange_white_sitting_cat", 1.0, 200, 560, 420, False), ("surprise_big_pupils_cat", 0.6, 1100, 560, 400, True)],
+           "実は…飛行機の半分は“日本の糸”？　ボーイング787", "黒い糸")
+    flags_on("21_carbon_ref_c.png", [("jp", 200, 150, 80, -6), ("us", 960, 150, 80, 4), ("eu", 1120, 165, 80, -4)])
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "21":
+    carbon()
+
+
+def terakoya():
+    """22本目（寺子屋と江戸の識字率）で3案。「世界一」と言い切らない。「寸劇」とは書かない。背景は仮。"""
+    type_a("22_terakoya_ref_a.png", "bg56_kyoto_temple", "bg55_ryokan",
+           ("excited_hodomoe_city_cat", 1.0, 250, 470, 380, False),
+           [("surprise_big_pupils_cat", 0.6, 1100, 410, 300, True)],
+           "実は…江戸の子は字が読めた",
+           [("江戸の識字率は", BLACK)], [("世界トップクラス？", RED)], split=600, size=112)
+    flags_on("22_terakoya_ref_a.png", [("jp", 70, 60, 70, -6), ("gb", 1040, 60, 80, 5)])
+    type_b("22_terakoya_ref_b.png",
+           [("bg56_kyoto_temple", [("excited_hodomoe_city_cat", 1.0, 160, 470, 340, False)]),
+            ("bg55_ryokan", [("sleepy_old_memories_cat", 1.0, 160, 470, 340, False)]),
+            ("bg16_food_aisle", [("huh_goat_talks_to_huh_cat", 1.0, 160, 470, 320, False)]),
+            ("bg08_study", [("realize_wet_cat_stare", 1.0, 160, 470, 330, False)])],
+           [("txt", "看板が読める!?", 160, 60, 40, YELLOW, -6), ("txt", "先生は町の人", 480, 60, 42, YELLOW, 4),
+            ("txt", "授業料が大根!?", 800, 60, 40, RED, -4), ("txt", "推計で幅あり", 1130, 60, 40, YELLOW, 6)],
+           [("江戸の子どもは", RED)], [("字が読めた", NAVY)])
+    type_c("22_terakoya_ref_c.png", "bg60_autumn_leaves",
+           [("surprise_big_pupils_cat", 0.6, 200, 560, 420, False), ("sleepy_old_memories_cat", 1.0, 1100, 560, 380, True)],
+           "実は…江戸の子どもは字が読めた　寺子屋のひみつ", "寺子屋")
+    flags_on("22_terakoya_ref_c.png", [("gb", 200, 150, 80, -6), ("jp", 1100, 150, 80, 4)])
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "22":
+    terakoya()
+
+
+def passport():
+    """23本目（世界2位のパスポート）で3案。順位の低い国は出さない。「寸劇」とは書かない。背景は仮。"""
+    type_a("23_passport_ref_a.png", "bg43_award_stage", "bg45_airport_arrival",
+           ("sleepy_sleepy_cat", 1.0, 250, 470, 360, False),
+           [("surprise_big_pupils_cat", 0.6, 1100, 410, 300, True)],
+           "実は…世界2位なのに",
+           [("5人に4人が", BLACK)], [("パスポートなし", RED)], split=600, size=112)
+    flags_on("23_passport_ref_a.png", [("jp", 70, 60, 70, -6), ("sg", 900, 60, 80, 5), ("kr", 1050, 70, 80, -4)])
+    type_b("23_passport_ref_b.png",
+           [("bg43_award_stage", [("showoff_gojo_cosplay_cat", 1.0, 160, 470, 340, False)]),
+            ("bg43_award_stage", [("dance_trending_cat", 1.0, 160, 470, 360, False)]),
+            ("bg25_office_desk", [("sulk_hungry_cat", 1.0, 160, 470, 330, False)]),
+            ("bg20_counter", [("excited_hodomoe_city_cat", 1.0, 160, 470, 340, False)])],
+           [("txt", "1位シンガポール", 160, 60, 38, YELLOW, -6), ("txt", "2位 日本・韓国", 480, 60, 40, YELLOW, 4),
+            ("txt", "休めない…", 800, 60, 44, YELLOW, -4), ("txt", "7,000円安く!?", 1130, 60, 40, RED, 6)],
+           [("世界2位のパスポート", RED)], [("保有率は17.8%", NAVY)])
+    flags_on("23_passport_ref_b.png", [("sg", 250, 420, 56, -5), ("jp", 520, 420, 56, 4), ("kr", 620, 420, 56, -4),
+                                       ("jp", 890, 420, 56, -4), ("jp", 1210, 420, 56, 5)])
+    type_c("23_passport_ref_c.png", "bg44_world_map",
+           [("sleepy_sleepy_cat", 1.0, 200, 560, 400, False), ("surprise_big_pupils_cat", 0.6, 1100, 560, 400, True)],
+           "実は…最強パスポートなのに　日本人の5人に4人が持っていない", "17.8%")
+    flags_on("23_passport_ref_c.png", [("jp", 200, 150, 80, -6), ("sg", 960, 150, 80, 4), ("kr", 1120, 165, 80, -4)])
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "23":
+    passport()

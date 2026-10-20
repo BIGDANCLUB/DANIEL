@@ -26,7 +26,7 @@ W, H = 1920, 1080
 WHITE, BLACK = (255, 255, 255), (0, 0, 0)
 YELLOW, RED = (255, 225, 0), (230, 20, 20)
 CAP = {"white": (WHITE, BLACK), "yellow": (YELLOW, BLACK), "red": (RED, WHITE)}   # 強調字幕の色（文字, 縁）
-BGS = [os.path.join(HERE, "backgrounds", d) for d in ("18_story",)]
+BGS = [os.path.join(HERE, "backgrounds", d) for d in ("18_story", "18_semicon", "14_japan", "19_inawashiro", "16_tenchim", "15_vambi", "17_imamori", "04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
 _FONTS = {}
 
 
@@ -40,6 +40,9 @@ def font(size):
     return _FONTS[size]
 
 
+STANDIN = {}   # 背景がまだ届いていない時の仮の背景（名前 → 仮の名前）。届いたら自動でそちらを使う
+
+
 def bg_path(name):
     if os.path.isabs(name) and os.path.exists(name):
         return name
@@ -48,6 +51,8 @@ def bg_path(name):
             p = os.path.join(d, name + ext)
             if os.path.exists(p):
                 return p
+    if name in STANDIN:
+        return bg_path(STANDIN[name])
     raise FileNotFoundError(name)
 
 
@@ -68,6 +73,15 @@ def text_img(text, size, fill=WHITE, stroke=0, align="center", stroke_col=BLACK,
         x = {"center": (im.width - w) / 2, "left": stroke + 6, "right": im.width - w - stroke - 6}[align]
         d.text((x, stroke + 6 + i * lh), ln, font=f, fill=fill, stroke_width=stroke, stroke_fill=stroke_col)
     return im.crop(im.getbbox())
+
+
+def _star(d, cx, cy, r, fill):
+    pts = []
+    for i in range(10):
+        a = -math.pi / 2 + math.pi * i / 5
+        rr = r if i % 2 == 0 else r * 0.42
+        pts.append((cx + math.cos(a) * rr, cy + math.sin(a) * rr))
+    d.polygon(pts, fill=fill)
 
 
 def flag_img(code, h=46):
@@ -101,13 +115,49 @@ def flag_img(code, h=46):
             d.polygon(p, fill=WHITE)
         d.ellipse((cx - r * 1.15, cy - r * 1.15, cx + r * 1.15, cy + r * 1.15), fill=(0, 0, 149))
         d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=WHITE)
+    elif code == "eu":
+        d.rectangle((0, 0, W4, H4), fill=(0, 51, 153))
+        for i in range(12):
+            a = 2 * math.pi * i / 12
+            _star(d, W4 / 2 + math.cos(a) * H4 / 3, H4 / 2 + math.sin(a) * H4 / 3, H4 / 18, (255, 204, 0))
+    elif code == "gb":
+        d.rectangle((0, 0, W4, H4), fill=(1, 33, 105))
+        d.line((0, 0, W4, H4), fill=WHITE, width=int(H4 / 5))
+        d.line((0, H4, W4, 0), fill=WHITE, width=int(H4 / 5))
+        d.line((0, 0, W4, H4), fill=(200, 16, 46), width=int(H4 / 15))
+        d.line((0, H4, W4, 0), fill=(200, 16, 46), width=int(H4 / 15))
+        d.rectangle((W4 / 2 - H4 / 6, 0, W4 / 2 + H4 / 6, H4), fill=WHITE)
+        d.rectangle((0, H4 / 2 - H4 / 6, W4, H4 / 2 + H4 / 6), fill=WHITE)
+        d.rectangle((W4 / 2 - H4 / 10, 0, W4 / 2 + H4 / 10, H4), fill=(200, 16, 46))
+        d.rectangle((0, H4 / 2 - H4 / 10, W4, H4 / 2 + H4 / 10), fill=(200, 16, 46))
+    elif code == "sg":
+        d.rectangle((0, 0, W4, H4 / 2), fill=(238, 36, 49))
+        cx, cy, r = W4 * 0.2, H4 * 0.25, H4 * 0.16
+        d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=WHITE)
+        d.ellipse((cx - r + r * 0.3, cy - r * 0.95, cx + r * 1.25, cy + r * 0.95), fill=(238, 36, 49))
+        for i in range(5):
+            a = -math.pi / 2 + 2 * math.pi * i / 5
+            _star(d, W4 * 0.31 + math.cos(a) * H4 * 0.08, cy + math.sin(a) * H4 * 0.08, H4 * 0.028, WHITE)
+    elif code == "kr":
+        cx, cy, r = W4 / 2, H4 / 2, H4 * 0.25
+        d.pieslice((cx - r, cy - r, cx + r, cy + r), 180, 360, fill=(205, 46, 58))
+        d.pieslice((cx - r, cy - r, cx + r, cy + r), 0, 180, fill=(0, 71, 160))
+        d.ellipse((cx - r, cy - r / 2, cx, cy + r / 2), fill=(205, 46, 58))
+        d.ellipse((cx, cy - r / 2, cx + r, cy + r / 2), fill=(0, 71, 160))
+        for k, (bx, by) in enumerate(((0.2, 0.25), (0.8, 0.25), (0.2, 0.75), (0.8, 0.75))):   # 四すみの卦（かんたんに）
+            for j in range(3):
+                y = H4 * by + (j - 1) * H4 * 0.055
+                ang = 1 if (k in (0, 3)) else -1
+                x0, x1 = W4 * bx - H4 * 0.11, W4 * bx + H4 * 0.11
+                d.line((x0, y - ang * (x0 - W4 * bx) * 0.6, x1, y - ang * (x1 - W4 * bx) * 0.6), fill=BLACK, width=int(H4 * 0.035))
     im = im.resize((w, h), Image.LANCZOS)
     out = Image.new("RGBA", (w + 2, h + 2), (150, 150, 150, 255))
     out.paste(im, (1, 1))
     return out
 
 
-FLAG_OF = {"日本": "jp", "アメリカ": "us", "台湾": "tw"}
+FLAG_OF = {"日本": "jp", "アメリカ": "us", "台湾": "tw", "ヨーロッパ": "eu", "イギリスの旅行者": "gb", "江戸の子ども": "jp",
+           "寺子屋の師匠": "jp", "八百屋のおかみ": "jp", "シンガポール": "sg", "韓国": "kr", "日本の会社員": "jp"}
 FLAGS = False   # 国どうしの寸劇で True（役名の札に国旗）
 
 
@@ -327,7 +377,15 @@ class Renderer:
         for k_ in c["cats"]:
             lab = label_img(k_["label"], flag=k_.get("flag") or FLAG_OF.get(k_["label"]) if FLAGS else None)
             x = {"L": 40, "R": W - 40 - lab.width}.get(k_["side"], self.cx[k_["side"]] - lab.width / 2)
-            self.labels.append((lab, x, 40 if k_["side"] != "C" else 70))
+            self.labels.append([lab, x, 40 if k_["side"] != "C" else 70, k_["side"]])
+        # 真ん中の役名が左右の役名と重なるときは、下の段にずらす（長い役名のとき）
+        side = {sd: (x, x + lab.width) for lab, x, y, sd in self.labels}
+        for it in self.labels:
+            if it[3] == "C":
+                x0, x1 = it[1], it[1] + it[0].width
+                if ("L" in side and x0 < side["L"][1] + 16) or ("R" in side and x1 > side["R"][0] - 16):
+                    it[2] = 40 + it[0].height + 14
+        self.labels = [tuple(it[:3]) for it in self.labels]
         # セリフ：左の役は左寄せ、右の役は右寄せ、真ん中は猫の下あたり。同じ役の行は下に足す
         self.lines = []
         spk = c.get("speaker")

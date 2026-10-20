@@ -61,7 +61,7 @@ def cuts():
     cs += b.cuts
     cs += [
         ph("ph02_terakoya", "寺子屋は、町や村の人がひらいた、\n子どものための手習い塾。"),
-        ph("ph02_terakoya", "幕末には全国で1万を超え、1万5千以上とも言われます。\n江戸の町だけでも1,200以上あったとされています。", dur=5.4),
+        ph("ph02_terakoya", "幕末には全国で1万を超え、\n1万5千以上とも言われます。\n江戸の町だけでも1,200以上あったとされています。", dur=5.4),
     ]
     # ---- 3. 月謝は野菜でもいい？ ----
     c = T.Scene("bg02_terakoya_room", [(GB, "L", "surprise_big_pupils_cat"), (SEN, "C", "sleepy_old_memories_cat"),
@@ -71,8 +71,8 @@ def cuts():
     c.zoom("L", "授業料が大根！？", color="red", rays=True, cat="huh_goat_talks_to_huh_cat")
     c.say("R", "お金のない家は、\nそれで十分さ", cat="laugh_laughing_dog", dur=2.6)
     cs += c.cuts
-    cs.append(ph("ph03_daikon", "お礼は、お金でも、季節の野菜や品物でもよかったと言われています。\n"
-                                "身分に関係なく通えたことも、広がった理由のひとつとされます。", dur=5.8))
+    cs.append(ph("ph03_daikon", "お礼は、お金でも、季節の野菜や品物でも\nよかったと言われています。身分に関係なく\n"
+                                "通えたことも、広がった理由のひとつとされます。", dur=5.8))
     # ---- 4. なぜ、みんな字を習った？ ----
     d = T.Scene("bg01_edo_shop_street", [(GB, "L", "think_bike_front_seat_cat"), (KID, "C", "dance_koto_nai_cat"),
                                          (OKA, "R", "slack_nail_filing_cat")])
@@ -88,8 +88,8 @@ def cuts():
     # ---- 5. 数字で見ると ----
     cs += [
         ph("ph05_old_books", "幕末の識字率には、正確な統計はありません。"),
-        ph("ph05_old_books", "推計では、庶民の男子で5割前後、女子で2割前後とも、\n江戸の町では7割を超えていたとも言われます。", dur=5.4),
-        ph("ph05_old_books", "当時としては、世界でもトップクラスだったと\n言われることがあります。（数字は資料によって幅があります）", dur=5.4),
+        ph("ph05_old_books", "推計では、庶民の男子で5割前後、\n女子で2割前後とも、\n江戸の町では7割を超えていたとも言われます。", dur=5.4),
+        ph("ph05_old_books", "当時としては、世界でもトップクラスだったと\n言われることがあります。\n（数字は資料によって幅があります）", dur=5.4),
     ]
     e = T.Scene("bg02_terakoya_room", [(GB, "L", "realize_wet_cat_stare"), (SEN, "C", "talk_orange_white_sitting_cat"),
                                        (KID, "R", "dance_trending_cat")])

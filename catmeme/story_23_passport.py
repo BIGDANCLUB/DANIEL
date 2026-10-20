@@ -78,7 +78,7 @@ def cuts():
     c.say("R", "英語も、ちょっと不安……", add=True)
     c.say("R", "あと、パスポート代も高かった……", add=True, dur=2.6)
     cs += c.cuts
-    cs.append(ph("ph04_yen_coins", "休みの取りにくさ、円安、言葉の不安。\nパスポートを持たない理由として、よく挙げられると言われています。",
+    cs.append(ph("ph04_yen_coins", "休みの取りにくさ、円安、言葉の不安。\nパスポートを持たない理由として、\nよく挙げられると言われています。",
                  dur=5.2))
     d = T.Scene("bg02_jp_office", [(KR, "L", "realize_wet_cat_stare"), (WORKER, "R", "sulk_hungry_cat")])
     d.zoom("L", ["わかる…", "でも…", "もったいない…"], pos="mid", cat="realize_wet_cat_stare")
@@ -87,13 +87,13 @@ def cuts():
     cs += [
         T.intro("そして2026年7月——", 2.6),
         ph("ph05_passport_counter", "パスポートの手数料が下がりました。", bgm=JAZZ),
-        ph("ph05_passport_counter", "18歳以上は10年用に一本化され、窓口の申請で\n16,300円 → 9,300円に。オンライン申請なら8,900円。", dur=5.4),
+        ph("ph05_passport_counter", "18歳以上は10年用に一本化され、\n窓口の申請で16,300円 → 9,300円に。\nオンライン申請なら8,900円。", dur=5.4),
     ]
     e = T.Scene("bg02_jp_office", [(KR, "L", "happy_girlfriend_dance_cat"), (WORKER, "R", "excited_hodomoe_city_cat")])
     e.zoom("R", "7,000円も安くなった！？", color="red", rays=True, cat="excited_hodomoe_city_cat")
     e.say("L", "よかったじゃん！")
     cs += e.cuts
-    cs.append(ph("ph06_departure_gate", "ただし同じ7月から、日本を出るときにかかる\n“出国税”が1,000円 → 3,000円に上がりました。", dur=5.0))
+    cs.append(ph("ph06_departure_gate", "ただし同じ7月から、\n日本を出るときにかかる“出国税”が\n1,000円 → 3,000円に上がりました。", dur=5.0))
     f = T.Scene("bg02_jp_office", [(KR, "L", "work_typing_cat"), (WORKER, "R", "rage_talking_cat")])
     f.zoom("R", "……上がってるやつもある！！", color="yellow", cat="rage_talking_cat")
     f.say("L", "10年に1回の手数料が7,000円下がって、\n出国税は1回2,000円アップ……", dur=3.6)
@@ -113,7 +113,7 @@ def cuts():
     # ---- 6. 締め ----
     cs += [
         ph("ph08_sunset_plane", "世界でも指折りの“強いパスポート”。", bgm=BRIGHT),
-        ph("ph08_sunset_plane", "その力を使うかどうかは、引き出しの中から取り出す、\nほんの少しの勇気なのかもしれません。", dur=4.8),
+        ph("ph08_sunset_plane", "その力を使うかどうかは、\n引き出しの中から取り出す、\nほんの少しの勇気なのかもしれません。", dur=4.8),
     ]
     h = T.Scene("bg03_rainbow_meadow", [(SG, "L", "wave_waving_cat"), (JP, "C", "dance_trending_cat"),
                                         (WORKER, "R", "excited_hodomoe_city_cat")])

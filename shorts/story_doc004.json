@@ -8,7 +8,7 @@
   "speaker": "青山龍星",
   "style": "ノーマル",
   "speedScale": 1.0,
-  "intonationScale": 1.35,
+  "intonationScale": 1.2,
   "pauseLengthScale": 0.5,
   "voice_dir": "work_doc004/voice_vv"
  },

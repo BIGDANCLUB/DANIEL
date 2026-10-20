@@ -1,0 +1,167 @@
+{
+ "_comment": "DOC-003 新名神6人死亡事故（TikTokを見ながら運転）。事実: 2026年3月20日未明、三重県亀山市の新名神で大型トラックが渋滞の列に追突し、静岡県袋井市の一家5人を含む6人死亡。被告は55歳の元トラック運転手（女性）、TikTokの料理動画を見て約13秒前方から目を離し、時速約82キロ。罪名は過失運転致死、検察は論告で「危険運転にも比肩しうる」。10/20 津地裁が求刑どおり上限の拘禁刑7年（日経・共同・東海テレビ・CBC）。遺族は厳罰化を訴え（日経）。危険運転は飲酒・制御困難な高速度・信号無視・妨害運転などの類型に限られ、ながらスマホは対象外。字幕をそのまま読む（ユーザー指定）。Gemini残高ゼロのため catmeme の素材で作成。",
+ "tempo": 1.0,
+ "gap": 0.12,
+ "bgm": "none",
+ "tts": {
+  "engine": "voicevox",
+  "speaker": "青山龍星",
+  "style": "ノーマル",
+  "speedScale": 1.07,
+  "intonationScale": 1.1,
+  "pauseLengthScale": 0.5,
+  "voice_dir": "work_doc003/voice_vv"
+ },
+ "image_gen": {
+  "image_dir": "work_doc003/images"
+ },
+ "lines": [
+  {
+   "say": "ティックトックを見ながら運転し、6人が死亡。それでも判決は、拘禁刑7年。",
+   "subs": [
+    "{TikTokを}\n{見ながら運転}\n<6人が死亡>\nそれでも判決は\n<拘禁刑7年>"
+   ],
+   "scene": "v22"
+  },
+  {
+   "say": "今年3月三重県のしんめいしんで、大型トラックが渋滞の列に追突した、速度は時速約82キロ。",
+   "subs": [
+    "{今年3月}\n三重県の新名神で",
+    "大型トラックが\n<渋滞の列に追突>した",
+    "速度は\n{時速約82キロ}"
+   ],
+   "scene": "v17"
+  },
+  {
+   "say": "静岡の一家5人ら6人が亡くなった。",
+   "subs": [
+    "静岡の一家5人ら\n<6人が亡くなった>"
+   ],
+   "scene": "v16"
+  },
+  {
+   "say": "運転していたのは55歳の女性、ティックトックの料理動画を見ており。",
+   "subs": [
+    "運転していたのは\n{55歳の女性}",
+    "{TikTok}の\n<料理動画を見ており>"
+   ],
+   "scene": "v18"
+  },
+  {
+   "say": "なんと13秒間も目を離したのである。",
+   "subs": [
+    "なんと{13秒間}も\n<目を離した>のである"
+   ],
+   "scene": "st01"
+  },
+  {
+   "say": "検察は危険運転にも、ひけんしうる運転だと厳しく指摘した。",
+   "subs": [
+    "検察は\n{危険運転にも}",
+    "比肩しうる運転だと\n<厳しく指摘した>"
+   ],
+   "scene": "bg84"
+  },
+  {
+   "say": "しかし起訴にあたり問われたのは、危険運転ではなく、過失運転致死の罪であった。",
+   "subs": [
+    "しかし起訴にあたり\n問われたのは",
+    "危険運転ではなく",
+    "<過失運転致死>の\n罪であった"
+   ],
+   "scene": "bg88"
+  },
+  {
+   "say": "危険運転が適用されるのは、飲酒や猛スピードなど一部の運転のみ。",
+   "subs": [
+    "{危険運転}が\n適用されるのは",
+    "{飲酒}や{猛スピード}\nなど一部の運転のみ"
+   ],
+   "scene": "bg51"
+  },
+  {
+   "say": "なんとながらスマホは、そこに入っていないのである。",
+   "subs": [
+    "なんと\n{ながらスマホ}は",
+    "<そこに入っていない>\nのである"
+   ],
+   "scene": "bg73"
+  },
+  {
+   "say": "過失運転致死の刑の上限は7年、亡くなったのが1人でも6人でも、上限は変わらないのだ。",
+   "subs": [
+    "過失運転致死の\n刑の上限は<7年>",
+    "亡くなったのが\n{1人でも6人でも}",
+    "上限は\n<変わらない>のだ"
+   ],
+   "scene": "bg06"
+  },
+  {
+   "say": "10月20日つちさいは求刑どおり、上限いっぱいの7年を言い渡した、裁判所はこれ以上、重くできなかったのである。",
+   "subs": [
+    "{10月20日}\n津地裁は求刑どおり",
+    "<上限いっぱい>の\n7年を言い渡した",
+    "裁判所は\nこれ以上",
+    "<重くできなかった>\nのである"
+   ],
+   "scene": "bg85"
+  },
+  {
+   "say": "遺族はながらスマホの、厳罰化を訴えている。",
+   "subs": [
+    "遺族は\n{ながらスマホ}の",
+    "<厳罰化>を\n訴えている"
+   ],
+   "scene": "bg14"
+  },
+  {
+   "say": "6人の命と7年、この重さは本当に釣り合っているのか。",
+   "subs": [
+    "{6人の命}と\n<7年>",
+    "この重さは本当に\n<釣り合っている>のか"
+   ],
+   "scene": "v17b"
+  }
+ ],
+ "scenes": {
+  "v22": {
+   "file": "../catmeme/assets_video/wide/v22_smartphone_hand.mp4"
+  },
+  "v17": {
+   "file": "../catmeme/assets_video/wide/v17_cherry_road_aerial.mp4"
+  },
+  "v16": {
+   "file": "../catmeme/assets_video/wide/v16_police_car_lights.mp4"
+  },
+  "v18": {
+   "file": "../catmeme/assets_video/wide/v18_smartphone_woman.mp4"
+  },
+  "st01": {
+   "file": "../catmeme/backgrounds/18_story/st01_phone_hands.png"
+  },
+  "bg84": {
+   "file": "../catmeme/backgrounds/16_tenchim/bg84_courthouse.png"
+  },
+  "bg88": {
+   "file": "../catmeme/backgrounds/16_tenchim/bg88_contract_papers.png"
+  },
+  "bg51": {
+   "file": "../catmeme/backgrounds/14_japan/bg51_night_street.png"
+  },
+  "bg73": {
+   "file": "../catmeme/backgrounds/15_vambi/bg73_shorts_phone.png"
+  },
+  "bg06": {
+   "file": "../catmeme/backgrounds/01_todai/bg06_spotlight.png"
+  },
+  "bg85": {
+   "file": "../catmeme/backgrounds/16_tenchim/bg85_courtroom.png"
+  },
+  "bg14": {
+   "file": "../catmeme/backgrounds/02_october/bg14_home_night.png"
+  },
+  "v17b": {
+   "file": "../catmeme/assets_video/wide/v17_cherry_road_aerial.mp4"
+  }
+ }
+}

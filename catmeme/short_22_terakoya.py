@@ -53,8 +53,8 @@ ST, ROOM = "bg01_edo_shop_street", "bg02_terakoya_room"
 
 def cuts():
     return [
-        say(ST, "KID", "“本日、*大安売り*”\nだって！", "excited_hodomoe_city_cat", 2.6, bgm={"file": NORA, "gain": -2}),
-        say(ST, "GB", "……今\n*読んだ？*", "surprise_big_pupils_cat", 2.2, size=110),
+        say(ST, "KID", "“本日、*大安売り*”\nだって！", "excited_hodomoe_city_cat", 3.0, bgm={"file": NORA, "gain": -2}),
+        say(ST, "GB", "……今\n*読んだ？*", "surprise_big_pupils_cat", 2.6, size=110),
         say(ST, "KID", "みんな読めるよ\n*寺子屋*で習ったもん", "dance_trending_cat", 2.8),
         say(ST, "GB", "*テラコヤ……？*", "huh_huh_cat", 2.0, size=110),
         tell("ph02_terakoya", "寺子屋は\n町や村の人がひらいた\n*子どもの手習い塾*", 3.2),
@@ -62,7 +62,7 @@ def cuts():
         say(ROOM, "GB", "ふつうの町の人が\n*先生！？*", "stare_big_eyes_tabby_kitten", 2.6),
         tell("ph02_terakoya", "幕末には全国で\n*1万を超え*\n1万5千以上とも", 3.2),
         say(ROOM, "OKA", "先生、今月のお礼\n*大根*でいいかい？", "slack_nail_filing_cat", 2.8),
-        say(ROOM, "GB", "授業料が\n*大根！？*", "huh_goat_talks_to_huh_cat", 2.2, size=110),
+        say(ROOM, "GB", "授業料が\n*大根！？*", "huh_goat_talks_to_huh_cat", 2.6, size=110),
         tell("ph02_terakoya", "お礼は野菜や品物でも\n*よかった*と言われる", 3.0),
         say(ST, "OKA", "読めなきゃ\n*商売にならない*\nからね", "slack_nail_filing_cat", 2.6),
         tell("ph05_old_books", "識字率に*正確な統計はない*\n推計で 庶民の男子5割前後\n女子2割前後とも", 3.6, size=80),

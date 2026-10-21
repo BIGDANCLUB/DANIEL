@@ -320,8 +320,13 @@ def voicevox_clips(tts, lines, base, cfg):
     for i, l in enumerate(lines):
         text = l["say"]
         query = vv_query(text, sid)
+        if l.get("kana"):
+            # 読み・アクセント・区切りを直接指定（例: "ツイトツ'_シタ"。/ で句の区切り、、で間、' でアクセント）
+            import urllib.parse
+            query["accent_phrases"] = json.loads(vv_post("/accent_phrases?" + urllib.parse.urlencode(
+                {"text": l["kana"], "speaker": sid, "is_kana": "true"})))
         query.update(params)
-        key = hashlib.sha1(json.dumps([sid, text, params], ensure_ascii=False).encode()).hexdigest()[:12]
+        key = hashlib.sha1(json.dumps([sid, text, l.get("kana"), params], ensure_ascii=False).encode()).hexdigest()[:12]
         out = os.path.join(vdir, f"{i + 1:02d}_{key}.wav")
         if not os.path.exists(out):
             open(out, "wb").write(vv_post(f"/synthesis?speaker={sid}", query))

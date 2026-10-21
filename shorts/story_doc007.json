@@ -7,7 +7,7 @@
   "engine": "voicevox",
   "speaker": "青山龍星",
   "style": "ノーマル",
-  "speedScale": 1.0,
+  "speedScale": 1.25,
   "intonationScale": 1.2,
   "pauseLengthScale": 0.5,
   "voice_dir": "work_doc007/voice_vv"
@@ -34,6 +34,15 @@
    "scene": "s01"
   },
   {
+   "say": "1回目の投票でも染谷氏は818票、藤垣氏の倍以上だった。",
+   "subs": [
+    "1回目の投票でも\n染谷氏は<818票>",
+    "藤垣氏の\n倍以上だった"
+   ],
+   "scene": "x10",
+   "kana": "イッカイ'メノ/トオヒョオデモ'/ソ'メヤシワ/ハッピャク'ジュウ/ハッ'ピョオ、フジガキ'シノ/バイイ'ジョオダッタ"
+  },
+  {
    "say": "2位の藤垣裕子氏は553票、ダブルスコアの差だった。",
    "subs": [
     "2位の藤垣裕子氏は\n<553票>",
@@ -53,12 +62,29 @@
    "kana": "トコロ'ガ/センコオカ'イギガ/エラ'ンダノワ/ニイ'ノ/フジガキ'シ/ダ'ッタ、トオダイハツノ'/ジョセエソ'オチョオノ/タンジョオ'"
   },
   {
+   "say": "任期は来年4月から、6年の予定だ。",
+   "subs": [
+    "任期は\n{来年4月}から",
+    "<6年>の予定だ"
+   ],
+   "scene": "x11"
+  },
+  {
    "say": "なぜ2位が選ばれたのか、学内外から疑問の声が相次いだ。",
    "subs": [
     "なぜ2位が\n選ばれたのか",
     "学内外から\n<疑問の声>が相次いだ"
    ],
    "scene": "s04"
+  },
+  {
+   "say": "SNSでも何のための投票か、という声が広がった。",
+   "subs": [
+    "{SNS}でも\n<何のための投票か>",
+    "という声が\n広がった"
+   ],
+   "scene": "x12",
+   "kana": "エスエヌエ'スデモ/ナ'ニノ/タメ'ノ/トオヒョオカ'、ト'イウ/コ'エガ/ヒロガ'ッタ"
   },
   {
    "say": "そして10月20日、文部科学大臣が異例の対応に出た、選考の経緯を検証するよう、東大に求めたのである。",
@@ -102,6 +128,13 @@
    "kana": "トオダイワ'/ケンショオオ'/ススメ'/セツメエセ'キニンオ/ハタ'スト/_シテイ'ル、タ'ダシ/モンカ'ショオモ/_フセエガ'/ア'ッタト/ミトメタ'/ワ'ケデワナイ"
   },
   {
+   "say": "東大の検証結果に注目が集まる。",
+   "subs": [
+    "東大の検証結果に\n<注目が集まる>"
+   ],
+   "scene": "y99"
+  },
+  {
    "say": "投票は何のためにあるのか、日本の最高学府に説明が、求められている。",
    "subs": [
     "投票は\n何のためにあるのか",
@@ -119,29 +152,41 @@
   "s01": {
    "file": "../catmeme/backgrounds/14_japan/bg44_world_map.png"
   },
-  "s02": {
+  "x10": {
    "file": "../catmeme/backgrounds/14_japan/bg45_airport_arrival.png"
   },
-  "s03": {
+  "s02": {
    "file": "../catmeme/backgrounds/14_japan/bg46_sushi_counter.png"
   },
-  "s04": {
+  "s03": {
    "file": "../catmeme/backgrounds/14_japan/bg47_ramen_shop.png"
   },
-  "s05": {
+  "x11": {
    "file": "../catmeme/backgrounds/14_japan/bg48_clean_street.png"
   },
-  "s06": {
+  "s04": {
    "file": "../catmeme/backgrounds/14_japan/bg49_public_toilet.png"
   },
-  "s07": {
+  "x12": {
    "file": "../catmeme/backgrounds/14_japan/bg50_classroom_cleaning.png"
   },
-  "s08": {
+  "s05": {
    "file": "../catmeme/backgrounds/14_japan/bg51_night_street.png"
   },
-  "s09": {
+  "s06": {
    "file": "../catmeme/backgrounds/14_japan/bg52_koban.png"
+  },
+  "s07": {
+   "file": "../catmeme/backgrounds/14_japan/bg53_shinkansen.png"
+  },
+  "s08": {
+   "file": "../catmeme/backgrounds/14_japan/bg54_station_crowd_map.png"
+  },
+  "s09": {
+   "file": "../catmeme/backgrounds/14_japan/bg55_ryokan.png"
+  },
+  "y99": {
+   "file": "../catmeme/backgrounds/16_tenchim/bg81_tenchim_neon.png"
   }
  }
 }

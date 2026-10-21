@@ -7,7 +7,7 @@
   "engine": "voicevox",
   "speaker": "青山龍星",
   "style": "ノーマル",
-  "speedScale": 1.0,
+  "speedScale": 1.25,
   "intonationScale": 1.2,
   "pauseLengthScale": 0.5,
   "voice_dir": "work_doc006/voice_vv"
@@ -33,6 +33,26 @@
    ],
    "scene": "s01",
    "kana": "ク'ガツニ/ブンレツ'_シ/ジジツジョオ'/カイタ'イ_シタ、チュウドオカイカクレ'ンゴオ、イ'マ/ノコ'ッテイル/ギ'インワ/タッタ'/_ヒト'リダ"
+  },
+  {
+   "say": "この党は今年1月立憲民主党と、公明党が手を組み作った新党だ、しかし2月の衆院選で、大敗した。",
+   "subs": [
+    "この党は今年1月\n{立憲民主党}と",
+    "{公明党}が手を組み\n作った新党だ",
+    "しかし\n2月の衆院選で",
+    "<大敗>した"
+   ],
+   "scene": "x15",
+   "kana": "コノ'/ト'オワ/コトシ'/イチガツ'/リッケンミン_シュトオト'、コオメエトオガ'/テ'オ/ク'ミ、ツク'ッタ/シ'ントオダ、_シカ'シ/ニガツ'ノ/シュウインセンデ'/タイハイ'_シタ"
+  },
+  {
+   "say": "残っている1人も清算のためだけに、党に残った議員なのである。",
+   "subs": [
+    "残っている1人も\n<清算のためだけ>に",
+    "党に残った\n議員なのである"
+   ],
+   "scene": "x16",
+   "kana": "ノコ'ッテイル/_ヒト'リモ/セエサンノ'/タメダケニ'、ト'オニ/ノコ'ッタ/ギ'インナノデアル"
   },
   {
    "say": "その党に10月20日、政党交付金約5億8000万円、が支払われたのである。",
@@ -104,10 +124,11 @@
    "kana": "ソレデ'モ/シ'ナシワ/オイメオ'/カンジル'/モノ'デワ/ナ'イト/イイキ'ッタノデアル"
   },
   {
-   "say": "公明党の幹事長も使い道を、示してほしいと注文をつけた。",
+   "say": "かつて手を組んだ公明党の幹事長も、使い道を示してほしいと、注文をつけた。",
    "subs": [
-    "公明党の幹事長も\n{使い道}を",
-    "示してほしいと\n<注文をつけた>"
+    "かつて手を組んだ\n公明党の幹事長も",
+    "{使い道}を\n示してほしいと",
+    "<注文をつけた>"
    ],
    "scene": "s10"
   },
@@ -155,44 +176,50 @@
   "s01": {
    "file": "../catmeme/backgrounds/14_japan/bg44_world_map.png"
   },
-  "s02": {
+  "x15": {
    "file": "../catmeme/backgrounds/14_japan/bg45_airport_arrival.png"
   },
-  "s03": {
+  "x16": {
    "file": "../catmeme/backgrounds/14_japan/bg46_sushi_counter.png"
   },
-  "s04": {
+  "s02": {
    "file": "../catmeme/backgrounds/14_japan/bg47_ramen_shop.png"
   },
-  "s05": {
+  "s03": {
    "file": "../catmeme/backgrounds/14_japan/bg48_clean_street.png"
   },
-  "s06": {
+  "s04": {
    "file": "../catmeme/backgrounds/14_japan/bg49_public_toilet.png"
   },
-  "s07": {
+  "s05": {
    "file": "../catmeme/backgrounds/14_japan/bg50_classroom_cleaning.png"
   },
-  "s08": {
+  "s06": {
    "file": "../catmeme/backgrounds/14_japan/bg51_night_street.png"
   },
-  "s09": {
+  "s07": {
    "file": "../catmeme/backgrounds/14_japan/bg52_koban.png"
   },
-  "s10": {
+  "s08": {
    "file": "../catmeme/backgrounds/14_japan/bg53_shinkansen.png"
   },
-  "s11": {
+  "s09": {
    "file": "../catmeme/backgrounds/14_japan/bg54_station_crowd_map.png"
   },
-  "s12": {
+  "s10": {
    "file": "../catmeme/backgrounds/14_japan/bg55_ryokan.png"
   },
-  "s13": {
+  "s11": {
    "file": "../catmeme/backgrounds/14_japan/bg56_kyoto_temple.png"
   },
-  "s14": {
+  "s12": {
    "file": "../catmeme/backgrounds/14_japan/bg57_tokyo_skyline.png"
+  },
+  "s13": {
+   "file": "../catmeme/backgrounds/14_japan/bg58_akihabara.png"
+  },
+  "s14": {
+   "file": "../catmeme/backgrounds/14_japan/bg59_sakura_park.png"
   }
  }
 }

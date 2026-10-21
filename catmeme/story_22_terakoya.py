@@ -42,12 +42,10 @@ def cuts():
     a.zoom("L", "……今、読んだ？", color="white", cat="surprise_big_pupils_cat")
     a.say("R", "え？　読めるよ？", cat="huh_huh_cat")
     a.zoom("L", "この子、字が読めるの！？", color="yellow", cat="stare_big_eyes_tabby_kitten")
-    for c in a.cuts:
-        c["note"] = NOTE
     cs += a.cuts
     cs += [
-        T.full("ph01_edo_street", "今から160年ほど前、江戸。", dur=3.2, note=NOTE),
-        T.full("ph01_edo_street", "海の向こうから来た人たちが、\nある“当たり前の光景”に驚いたと言われています。", dur=4.6, note=NOTE),
+        T.full("ph01_edo_street", "今から160年ほど前、江戸。", dur=3.2),
+        T.full("ph01_edo_street", "海の向こうから来た人たちが、\nある“当たり前の光景”に驚いたと言われています。", dur=4.6),
     ]
     a2 = T.Scene("bg01_edo_shop_street", [(GB, "L", "stare_big_eyes_tabby_kitten"), (KID, "R", "dance_trending_cat")])
     a2.say("R", "みんな読めるよ。\n寺子屋で習ったもん", dur=2.8)

@@ -44,12 +44,12 @@ def stage(cats):
 def cuts():
     # ---- 0. 出だし（数字ドン・10/21：黒い画面で始めない） ----
     cs = [
-        T.hook("ph02_ranking_board", "世界2位", sub="日本のパスポートの強さは", color="yellow", rays=True, dur=2.8, note=NOTE,
+        T.hook("ph02_ranking_board", "世界2位", sub="日本のパスポートの強さは", color="yellow", rays=True, dur=2.8,
                bgm=JAZZ),
-        T.hook("ph03_empty_passport_office", "約17.8%", sub="なのに、持っている人は", color="red", dur=3.0, note=NOTE,
+        T.hook("ph03_empty_passport_office", "約17.8%", sub="なのに、持っている人は", color="red", dur=3.0,
                se="doon_heavy", cat=("surprise_big_pupils_cat", "R")),
-        T.full("ph01_passports", "パスポートの強さは、\nビザなしで行ける国や地域の数で比べられます。", dur=4.2, note=NOTE),
-        T.full("ph01_passports", "毎年発表される世界ランキングで、\n日本はずっと上位の常連です。", dur=3.8, note=NOTE),
+        T.full("ph01_passports", "パスポートの強さは、\nビザなしで行ける国や地域の数で比べられます。", dur=4.2),
+        T.full("ph01_passports", "毎年発表される世界ランキングで、\n日本はずっと上位の常連です。", dur=3.8),
     ]
     # ---- 1. ランキング発表 ----
     cs += [

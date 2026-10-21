@@ -38,10 +38,10 @@ def ph(name, text, **kw):
 def cuts():
     # ---- 0. 出だし（クイズ型・10/21：黒い画面で始めない） ----
     cs = [
-        T.hook("ph01_airplane_sky", "ある旅客機の半分近くは\n何でできている？", sub="Q.", color="yellow", dur=3.4, note=NOTE,
+        T.hook("ph01_airplane_sky", "ある旅客機の半分近くは\n何でできている？", sub="Q.", color="yellow", dur=3.4,
                bgm=LIGHT, cat=("think_bike_front_seat_cat", "R")),
-        T.full("ph01_airplane_sky", "空を飛ぶ旅客機。\nその体は、ずっと“金属”で作られてきました。", dur=4.0, note=NOTE),
-        T.full("ph01_airplane_sky", "ところが今、その半分近くが\n“糸”から作られている飛行機があります。", dur=4.2, note=NOTE),
+        T.full("ph01_airplane_sky", "空を飛ぶ旅客機。\nその体は、ずっと“金属”で作られてきました。", dur=4.0),
+        T.full("ph01_airplane_sky", "ところが今、その半分近くが\n“糸”から作られている飛行機があります。", dur=4.2),
     ]
     # ---- 1. アメリカ、燃料代に泣く ----
     a = T.Scene("bg01_us_hangar", [(US, "L", "despair_dramatic_kitten"), (EU, "R", "slack_nail_filing_cat")])

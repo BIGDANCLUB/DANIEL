@@ -26,6 +26,7 @@ NORA = {"file": os.path.join(BGM_DIR, "野良猫は宇宙を目指した.mp3"), 
 BRIGHT = {"file": os.path.join(BGM_DIR, "未来を創る君たちへ.mp3"), "gain": -2}
 GB, KID, SEN, OKA = "イギリスの旅行者", "江戸の子ども", "寺子屋の師匠", "八百屋のおかみ"
 OUT = os.path.join(T.HERE, "out", "22_terakoya_full.mp4")
+NOTE = "※幕末の日本を訪れた外国人の驚きをもとに再構成したお話です（登場人物は架空）"
 
 
 def ph(name, text, **kw):
@@ -34,21 +35,24 @@ def ph(name, text, **kw):
 
 
 def cuts():
-    cs = [
-        T.intro("これは、幕末の日本を訪れた外国人の驚きを", 3.2),
-        T.intro("もとに再構成したお話です。", 3.0),
-        ph("ph01_edo_street", "今から160年ほど前、江戸。"),
-        ph("ph01_edo_street", "海の向こうから来た人たちが、\nある“当たり前の光景”に驚いたと言われています。"),
-    ]
-    # ---- 1. 子どもが看板を読んでいる ----
+    # ---- 0〜1. 出だし（いきなり寸劇・10/21：黒い画面で始めない。「再構成」は左下の札） ----
+    cs = []
     a = T.Scene("bg01_edo_shop_street", [(GB, "L", "surprise_big_pupils_cat"), (KID, "R", "excited_hodomoe_city_cat")], bgm=NORA)
     a.say("R", "“本日、大安売り”だって！\nおっかあに言ってこよ！", dur=3.0)
     a.zoom("L", "……今、読んだ？", color="white", cat="surprise_big_pupils_cat")
     a.say("R", "え？　読めるよ？", cat="huh_huh_cat")
     a.zoom("L", "この子、字が読めるの！？", color="yellow", cat="stare_big_eyes_tabby_kitten")
-    a.say("R", "みんな読めるよ。\n寺子屋で習ったもん", cat="dance_trending_cat", dur=2.8)
-    a.zoom("L", "テラコヤ……？", color="white", bubble="il_terakoya", cat="think_bike_front_seat_cat")
+    for c in a.cuts:
+        c["note"] = NOTE
     cs += a.cuts
+    cs += [
+        T.full("ph01_edo_street", "今から160年ほど前、江戸。", dur=3.2, note=NOTE),
+        T.full("ph01_edo_street", "海の向こうから来た人たちが、\nある“当たり前の光景”に驚いたと言われています。", dur=4.6, note=NOTE),
+    ]
+    a2 = T.Scene("bg01_edo_shop_street", [(GB, "L", "stare_big_eyes_tabby_kitten"), (KID, "R", "dance_trending_cat")])
+    a2.say("R", "みんな読めるよ。\n寺子屋で習ったもん", dur=2.8)
+    a2.zoom("L", "テラコヤ……？", color="white", bubble="il_terakoya", cat="think_bike_front_seat_cat")
+    cs += a2.cuts
     # ---- 2. 寺子屋へ ----
     b = T.Scene("bg02_terakoya_room", [(GB, "L", "think_bike_front_seat_cat"), (SEN, "C", "sleepy_old_memories_cat"),
                                        (KID, "R", "itchy_kitten_butt")])

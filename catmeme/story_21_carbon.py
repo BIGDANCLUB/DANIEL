@@ -27,6 +27,7 @@ LIGHT = {"file": os.path.join(BGM_DIR, "nc102462_Cat_life.mp3"), "gain": -1}
 BRIGHT = {"file": os.path.join(BGM_DIR, "未来を創る君たちへ.mp3"), "gain": -2}
 US, EU, JP = "アメリカ", "ヨーロッパ", "日本"
 OUT = os.path.join(T.HERE, "out", "21_carbon_full.mp4")
+NOTE = "※飛行機と“ある素材”をめぐる国と企業の関係をもとに再構成したお話です"
 
 
 def ph(name, text, **kw):
@@ -35,14 +36,15 @@ def ph(name, text, **kw):
 
 
 def cuts():
+    # ---- 0. 出だし（クイズ型・10/21：黒い画面で始めない） ----
     cs = [
-        T.intro("これは、飛行機と“ある素材”をめぐる国と企業の関係を", 3.4),
-        T.intro("もとに再構成したお話です。", 3.0),
-        ph("ph01_airplane_sky", "空を飛ぶ旅客機。\nその体は、ずっと“金属”で作られてきました。"),
-        ph("ph01_airplane_sky", "ところが今、その半分近くが\n“糸”から作られている飛行機があります。"),
+        T.hook("ph01_airplane_sky", "ある旅客機の半分近くは\n何でできている？", sub="Q.", color="yellow", dur=3.4, note=NOTE,
+               bgm=LIGHT, cat=("think_bike_front_seat_cat", "R")),
+        T.full("ph01_airplane_sky", "空を飛ぶ旅客機。\nその体は、ずっと“金属”で作られてきました。", dur=4.0, note=NOTE),
+        T.full("ph01_airplane_sky", "ところが今、その半分近くが\n“糸”から作られている飛行機があります。", dur=4.2, note=NOTE),
     ]
     # ---- 1. アメリカ、燃料代に泣く ----
-    a = T.Scene("bg01_us_hangar", [(US, "L", "despair_dramatic_kitten"), (EU, "R", "slack_nail_filing_cat")], bgm=LIGHT)
+    a = T.Scene("bg01_us_hangar", [(US, "L", "despair_dramatic_kitten"), (EU, "R", "slack_nail_filing_cat")])
     a.say("L", "燃料代、高すぎる……")
     a.say("L", "機体がもっと軽ければ……", add=True)
     a.say("R", "アルミより軽くて、鉄より強いもの？\nそんな都合のいいもの、\nあるわけないでしょ", dur=3.6)

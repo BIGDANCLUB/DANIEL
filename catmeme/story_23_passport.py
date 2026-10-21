@@ -29,6 +29,7 @@ LOFI = {"file": os.path.join(BGM_DIR, "星降る夜のホットココア.mp3"), 
 BRIGHT = {"file": os.path.join(BGM_DIR, "未来を創る君たちへ.mp3"), "gain": -2}
 SG, KR, JP, WORKER = "シンガポール", "韓国", "日本", "日本の会社員"
 OUT = os.path.join(T.HERE, "out", "23_passport_full.mp4")
+NOTE = "※世界の“パスポートの強さ”ランキングをもとに再構成したお話です"
 
 
 def ph(name, text, **kw):
@@ -41,15 +42,18 @@ def stage(cats):
 
 
 def cuts():
+    # ---- 0. 出だし（数字ドン・10/21：黒い画面で始めない） ----
     cs = [
-        T.intro("これは、世界の“パスポートの強さ”ランキングを", 3.2),
-        T.intro("もとに再構成したお話です。", 3.0),
-        ph("ph01_passports", "パスポートの強さは、\nビザなしで行ける国や地域の数で比べられます。"),
-        ph("ph01_passports", "毎年発表される世界ランキングで、\n日本はずっと上位の常連です。"),
+        T.hook("ph02_ranking_board", "世界2位", sub="日本のパスポートの強さは", color="yellow", rays=True, dur=2.8, note=NOTE,
+               bgm=JAZZ),
+        T.hook("ph03_empty_passport_office", "約17.8%", sub="なのに、持っている人は", color="red", dur=3.0, note=NOTE,
+               se="doon_heavy", cat=("surprise_big_pupils_cat", "R")),
+        T.full("ph01_passports", "パスポートの強さは、\nビザなしで行ける国や地域の数で比べられます。", dur=4.2, note=NOTE),
+        T.full("ph01_passports", "毎年発表される世界ランキングで、\n日本はずっと上位の常連です。", dur=3.8, note=NOTE),
     ]
     # ---- 1. ランキング発表 ----
     cs += [
-        ph("ph02_ranking_board", "2026年1月版。\n1位はシンガポール、192か所。", bgm=JAZZ),
+        ph("ph02_ranking_board", "2026年1月版。\n1位はシンガポール、192か所。"),
         ph("ph02_ranking_board", "2位は日本と韓国、188か所。"),
     ]
     a = stage(["showoff_gojo_cosplay_cat", "dance_trending_cat", "sleepy_sleepy_cat"])

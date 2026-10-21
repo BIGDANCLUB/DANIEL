@@ -232,6 +232,40 @@ def photo(name, text, dur=4.0, bgm=None):
     return c
 
 
+# ---- 出だし（10/21 ユーザー指定：毎回「黒い画面＋白い文字」で始めない。下の型を回して使う） ----
+# 「再構成したお話」は note=（左下の小さい札）で出だしの数カットに出す（ルールは守ったまま、黒い画面にしない）
+
+def hook(bg, big, sub=None, color="yellow", dur=3.0, rays=False, cat=None, note=None, se="jan", bgm=None):
+    """つかみ：背景を画面いっぱいに、真ん中に大きな文字（クイズ・数字ドン・ひとこと）。sub は上の小さい文字。
+    cat=(素材, "L"/"R") で猫を1匹そえる。"""
+    c = dict(kind="hook", bg=bg, big=big, sub=sub, color=color, dur=dur, rays=rays, fixed=True, no_pop=True, se=se,
+             cats=[dict(a=cat[0], side=cat[1], mute=True)] if cat else [])
+    if note:
+        c["note"] = note
+    if bgm:
+        c["bgm"] = bgm
+    return c
+
+
+def full(bg, text, dur=4.0, note=None, bgm=None, se=None):
+    """語り：写真を画面いっぱいに（黒い画面にしない）、下に字幕。"""
+    c = dict(kind="full", bg=bg, text=text, dur=dur, fixed=True, no_pop=True)
+    if note:
+        c["note"] = note
+    if bgm:
+        c["bgm"] = bgm
+    if se:
+        c["se"] = se
+    return c
+
+
+def note_img(text):
+    t = text_img(text, 40, fill=WHITE)
+    im = Image.new("RGBA", (t.width + 36, t.height + 22), (0, 0, 0, 170))
+    im.alpha_composite(t, (18, 11))
+    return im
+
+
 def subscribe_card(dur=3.4):
     """チャンネル共通の「チャンネル登録よろしく！」の画面（寸劇では Scene.ending を使う）。"""
     return dict(kind="still", img=os.path.join(HERE, "parts", "common", "subscribe.png"), dur=dur, fixed=True, no_pop=True,
@@ -359,8 +393,23 @@ class Renderer:
             put(self.base, t, (W - t.width) / 2, 50 + im.height + (H - 50 - im.height - t.height) / 2)
         elif k == "still":
             self.base = cover(c["img"])
+        elif k == "hook":
+            self.base = cover(c["bg"]) * 0.72
+            if c.get("rays"):
+                rays(self.base, W / 2, H / 2)
+            fill, st = CAP[c["color"]]
+            self.big = text_img(c["big"], 170, fill=fill, stroke=12, stroke_col=st, max_w=W - 120)
+            self.sub = text_img(c["sub"], 70, stroke=7, max_w=W - 120) if c.get("sub") else None
+            self.clips = [R.Clip(k_["a"]) for k_ in c["cats"]]
+        elif k == "full":
+            self.base = cover(c["bg"])
+            g = np.linspace(0, 1, 360, dtype=np.float32)[:, None, None] ** 1.5 * 0.75   # 下を暗くして字幕を読みやすく
+            self.base[H - 360:] *= 1 - g
+            t = text_img(c["text"], 76, stroke=6, max_w=W - 100)
+            put(self.base, t, (W - t.width) / 2, H - t.height - (110 if c.get("note") else 60))   # 左下の札と重ねない
         else:
             self._init_beat(c)
+        self.note = note_img(c["note"]) if c.get("note") else None
 
     def _init_beat(self, c):
         self.base = cover(c["bg"])
@@ -416,7 +465,30 @@ class Renderer:
             self.caps.append((text_img(c["caption"], 130, stroke=10, max_w=W - 80), 0.0))
 
     def frame(self, t):
+        out = self._frame(t)
+        if self.note is not None:
+            out = out.copy() if out is self.base else out
+            put(out, self.note, 30, H - self.note.height - 26)
+        return out
+
+    def _frame(self, t):
         c = self.c
+        if c["kind"] == "hook":
+            out = self.base.copy()
+            for k_, clip in zip(c["cats"], self.clips):
+                fr, a = clip.frame(t)
+                s = 500 / fr.shape[0]
+                w, h = int(fr.shape[1] * s), int(fr.shape[0] * s)
+                img = cv2.resize(fr, (w, h), interpolation=cv2.INTER_AREA).astype(np.float32) / 255
+                al = cv2.resize(a.astype(np.float32), (w, h), interpolation=cv2.INTER_AREA)
+                R.over(out, img, al, int((200 if k_["side"] == "L" else W - 200) - w / 2), H + 30 - h)
+            k = 1.0 if t > 0.18 else 1.6 - 0.6 * (t / 0.18)   # ドンと出る
+            big = self.big if k == 1.0 else self.big.resize((int(self.big.width * k), int(self.big.height * k)))
+            y = H / 2 - big.height / 2 + (40 if self.sub else 0)
+            put(out, big, (W - big.width) / 2, y)
+            if self.sub is not None and t > 0.1:
+                put(out, self.sub, (W - self.sub.width) / 2, H / 2 - self.big.height / 2 - self.sub.height - 10)
+            return out
         if c["kind"] != "beat":
             return self.base
         out = self.base.copy()

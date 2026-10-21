@@ -29,7 +29,8 @@
     "{10月20日}\n減税法案が",
     "国会で\n<審議入り>した"
    ],
-   "scene": "bg05"
+   "scene": "bg05",
+   "kana": "ジュウガツ'/ハ_ツカ'/ゲンゼエホ'オアンガ/コッカイデ'/シンギ'イリ_シタ"
   },
   {
    "say": "2027年4月から2年間食料品の税率を8%から1%に下げる案だ",
@@ -52,7 +53,8 @@
    "subs": [
     "ただしまだ\n<成立はしていない>"
    ],
-   "scene": "bg04"
+   "scene": "bg04",
+   "kana": "タ'ダシ/マ'ダ/セエリツワ'/_シテイ'ナイ"
   },
   {
    "say": "持ち帰りや出前も原則1%だ",
@@ -105,7 +107,8 @@
    "subs": [
     "{外食業界}は客離れを\n<心配している>"
    ],
-   "scene": "bg47b"
+   "scene": "bg47b",
+   "kana": "ガイショクギョ'オカイワ/キャクバ'ナレオ/シンパイ_シテイ'ル"
   },
   {
    "say": "ガストは宅配向けの弁当を増やす方針だ",
@@ -137,18 +140,19 @@
     "巨額の<財源>や\n社会保障への",
     "<影響>も\n問われている"
    ],
-   "scene": "bg57"
+   "scene": "bg57",
+   "kana": "キョガクノ'/ザイゲンヤ'/シャカイホ'ショオエノ/エエキョオモ'/ト'ワレテイル"
   }
  ],
  "scenes": {
   "bg47": {
-   "file": "../catmeme/backgrounds/14_japan/bg47_ramen_shop.png"
+   "file": "../catmeme/backgrounds/karriezhu-food-1050813_1920.jpg"
   },
   "bg05": {
    "file": "../catmeme/backgrounds/01_todai/bg05_meeting.png"
   },
   "bg16": {
-   "file": "../catmeme/backgrounds/02_october/bg16_food_aisle.png"
+   "file": "../catmeme/backgrounds/jjuntune-vegetables-317497_1920.jpg"
   },
   "bg87": {
    "file": "../catmeme/backgrounds/16_tenchim/bg87_refund_money.png"
@@ -157,22 +161,22 @@
    "file": "../catmeme/backgrounds/01_todai/bg04_voting.png"
   },
   "st03": {
-   "file": "../catmeme/backgrounds/18_story/st03_konbini.png"
+   "file": "../catmeme/assets_video/wide/383258_medium.mp4"
   },
   "bg46": {
-   "file": "../catmeme/backgrounds/14_japan/bg46_sushi_counter.png"
+   "file": "../catmeme/backgrounds/mymieu-food-4801581_1920.jpg"
   },
   "v11": {
    "file": "../catmeme/assets_video/wide/v11_stock_chart_blue.mp4"
   },
   "bg67": {
-   "file": "../catmeme/backgrounds/14_japan/bg67_food_sample.png"
+   "file": "../catmeme/assets_video/wide/335643_medium.mp4"
   },
   "bg13": {
-   "file": "../catmeme/backgrounds/02_october/bg13_izakaya.png"
+   "file": "../catmeme/assets_video/wide/111832-692674343_medium.mp4"
   },
   "bg15": {
-   "file": "../catmeme/backgrounds/02_october/bg15_convenience.png"
+   "file": "../catmeme/backgrounds/detait-fruit-8773085_1920.jpg"
   },
   "bg47b": {
    "file": "../catmeme/backgrounds/14_japan/bg47_ramen_shop.png"
@@ -184,7 +188,7 @@
    "file": "../catmeme/backgrounds/01_todai/bg07_press.png"
   },
   "bg16b": {
-   "file": "../catmeme/backgrounds/02_october/bg16_food_aisle.png"
+   "file": "../catmeme/assets_video/wide/151-135737478_medium.mp4"
   },
   "bg57": {
    "file": "../catmeme/backgrounds/14_japan/bg57_tokyo_skyline.png"

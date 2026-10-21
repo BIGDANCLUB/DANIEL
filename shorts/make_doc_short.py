@@ -227,7 +227,8 @@ MOVES = ["in", "left", "out", "up", "right", "down"]   # カットごとに順�
 
 def zoom_frame(big, p, move="in"):
     """p=0..1 の背景の動き。big は画面の (1+ZOOM) 倍の画像。
-    in=ズームイン、out=ズームアウト（アップから引き）、left/right/up/down=その向きに絵が流れる"""
+    in=ズームイン、out=ズームアウト（アップから引き）、left/right/up/down=その向きに絵が流れる
+    （台本の "move" に sweep_left / sweep_right を書くと、横長の画像を端から端まで速めに流す）"""
     bw, bh = big.width, big.height
     if move in ("in", "out"):
         q = p if move == "in" else 1 - p
@@ -510,6 +511,7 @@ def main(story_path, out):
     bigs = {sc: (VideoBG(os.path.join(base, scenes[sc]["file"]), scenes[sc].get("ss", 0)) if is_video(sc)
                  else cover(img(sc))) for _, _, sc, _ in shots}
     current = None
+    sweeps = {}
 
     # --- 書き出し（ちょうど duration 秒） ---
     nframes = int(round(duration * FPS))
@@ -530,6 +532,15 @@ def main(story_path, out):
             current = sh
         if isinstance(bg, VideoBG):
             frame = bg.frame().convert("RGBA")       # 動画はそのまま流す（ズームなし）
+        elif sh[3] in ("sweep_left", "sweep_right"):
+            # 横長の画像を切り抜かずに高さだけ合わせ、端から端まで速めに流す（sweep_left=絵が左へ流れる）
+            if sh[2] not in sweeps:
+                im = img(sh[2]).convert("RGB")
+                sweeps[sh[2]] = im.resize((max(W, int(im.width * H / im.height)), H), Image.LANCZOS)
+            wide = sweeps[sh[2]]
+            q = min(1, p) if sh[3] == "sweep_left" else 1 - min(1, p)
+            x = (wide.width - W) * q
+            frame = wide.transform((W, H), Image.EXTENT, (x, 0, x + W, H), Image.BILINEAR).convert("RGBA")
         else:
             frame = zoom_frame(bg, min(1, p), sh[3]).convert("RGBA")
         cur = [x for x in subs if x[0] <= tt < x[1]]

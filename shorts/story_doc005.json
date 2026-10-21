@@ -56,7 +56,7 @@
    "subs": [
     "ドジャースは\n{3回}に勝ち越すが"
    ],
-   "scene": "qxb",
+   "scene": "y7b",
    "kana": "ド'ジャアスワ/サ'ンカイニ/カチコ'スガ"
   },
   {
@@ -89,7 +89,7 @@
     "<声をかけた>のが",
     "<大谷翔平>だった"
    ],
-   "scene": "of"
+   "scene": "qxb"
   },
   {
    "say": "実はこの日大谷自身も、無安打に、苦しんでいたのである。",
@@ -99,7 +99,8 @@
     "苦しんでいた\nのである"
    ],
    "scene": "ay",
-   "kana": "ジツ'ワ/コノ'/ヒ'/オオタニ'/ジ'シンモ、ムア'ンダニ、クルシ'ンデイタノデアル"
+   "kana": "ジツ'ワ/コノ'/ヒ'/オオタニ'/ジ'シンモ、ムア'ンダニ、クルシ'ンデイタノデアル",
+   "move": "sweep_left"
   },
   {
    "say": "自分が苦しい時でも仲間に寄り添う、その姿は中継に映し出され、SNSでも称賛の声が相次いだ。",
@@ -108,7 +109,7 @@
     "その姿は\n中継に映し出され",
     "SNSでも\n<称賛の声>が相次いだ"
    ],
-   "scene": "ofb"
+   "scene": "hand"
   },
   {
    "say": "日本人同士の確かな絆が、そこにはあったのである。",
@@ -148,11 +149,14 @@
   "ay": {
    "file": "provided/general/image/20250228_ohtani_yamamoto_ay.jpg"
   },
-  "ofb": {
-   "file": "provided/general/image/20240509_ohtani_yamamoto_of.jpg"
-  },
   "geb": {
    "file": "provided/general/image/20240521_ohtani_yamamoto_ge.jpg"
+  },
+  "y7b": {
+   "file": "provided/general/image/20251102_yamamoto7_ay.jpg"
+  },
+  "hand": {
+   "file": "../catmeme/assets_video/wide/v19_handshake_business.mp4"
   }
  }
 }

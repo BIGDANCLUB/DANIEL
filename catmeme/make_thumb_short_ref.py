@@ -29,7 +29,7 @@ BAND_H = 560            # 黒い帯の下端（2行とも横いっぱいの大�
 WHITE, BLACK = (255, 255, 255), (0, 0, 0)
 RED, YELLOW, ORANGE, PINK, BLUE = (232, 28, 36), (255, 228, 0), (255, 108, 24), (240, 56, 120), (24, 84, 200)
 DEEP_YELLOW = (255, 190, 0)   # 白い縁の明るい黄色は見にくい（10/14 ユーザー指定）→ 濃い黄色＋黒い縁
-BGS = [os.path.join(HERE, "backgrounds", d) for d in ("added", "13_yard", "14_japan", "15_vambi", "16_tenchim", "17_imamori", "17_imamori/photos", "18_semicon", "18_story", "19_inawashiro", "02_october", "01_todai", "04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
+BGS = [os.path.join(HERE, "backgrounds", d) for d in ("added", "13_yard", "14_japan", "15_vambi", "16_tenchim", "17_imamori", "17_imamori/photos", "18_semicon", "18_story", "19_inawashiro", "22_terakoya", "02_october", "01_todai", "04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
 
 
 def bg_path(n):
@@ -175,6 +175,24 @@ def semicon():
     img.convert("RGB").save(p)
 
 
+def terakoya():
+    """22本目（寺子屋）のショート。「世界一」と言わない。国旗を写真の中に。背景は仮（ChatGPT の画像が届いたら差しかえ）。"""
+    import make_thumb_long_ref as LR
+    bgn = "bg01_edo_shop_street"
+    try:
+        bg_path(bgn)
+    except FileNotFoundError:
+        bgn = "bg56_kyoto_temple"
+    make("short_22_terakoya_ref.png", "実は江戸の子どもは", DEEP_YELLOW, "字が読めた", RED,
+         bgn, [("excited_hodomoe_city_cat", 1.0, 820, 1250, 400, True), ("surprise_big_pupils_cat", 0.6, 230, 1250, 330, False)],
+         "授業料が大根!?", "b", cap_y=1420, cap_col=DEEP_YELLOW)
+    p = os.path.join(HERE, "thumbs", "short_22_terakoya_ref.png")
+    img = Image.open(p).convert("RGBA")
+    LR.put_flag(img, "gb", 230, 830, 100, -6)
+    LR.put_flag(img, "jp", 820, 780, 100, 5)
+    img.convert("RGB").save(p)
+
+
 if __name__ == "__main__":
     import sys
-    {"12": akaihane, "13": yard, "16": tenchim, "17": imamori, "19": inawashiro, "18": semicon}[sys.argv[1] if len(sys.argv) > 1 else "13"]()
+    {"12": akaihane, "13": yard, "16": tenchim, "17": imamori, "19": inawashiro, "18": semicon, "22": terakoya}[sys.argv[1] if len(sys.argv) > 1 else "13"]()

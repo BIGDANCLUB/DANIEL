@@ -460,7 +460,7 @@ def main(story_path, out):
     print(f"  読み終わり {end_voice:.2f}s → 空白 {duration - end_voice:.2f}s")
 
     # 冒頭のチリン
-    se = load_audio(INTRO_SE) * 10 ** (cfg.get("intro_se_volume", -3) / 20)
+    se = load_audio(INTRO_SE) * 10 ** (cfg.get("intro_se_volume", -6) / 20)
     voice[:len(se)] += se[:n]
 
     # BGM（声の間は下げる簡易ダッキング）。最後はフェードアウト。"bgm": "none" で無し

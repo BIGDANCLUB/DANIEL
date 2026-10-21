@@ -64,6 +64,13 @@ def cuts():
     a.say("R", "いや……うちの国民、\nあんまり持ってないから……", cat="blank_black_cat_zoning_out", dur=3.0)
     a.zoom("L", "は？", color="white", cat="glare_disgusted_cat", dur=1.6)
     cs += a.cuts
+    a2 = stage(["glare_disgusted_cat", "think_bike_front_seat_cat", "blank_black_cat_zoning_out"])
+    a2.say("C", "持ってないって、どういうこと？", dur=2.4)
+    a2.say("R", "そもそも、作ってない人が多くて……", dur=2.6)
+    a2.say("L", "ビザなしで188か所も\n行けるのに？", dur=2.6)
+    a2.say("R", "……行ける“だけ”で", cat="sleepy_sleepy_cat")
+    a2.zoom("C", "宝の持ちぐされ！！", color="red", cat="huh_huh_cat")
+    cs += a2.cuts
     # ---- 2. 5人に4人が持っていない ----
     cs += [
         ph("ph03_empty_passport_office", "日本で有効なパスポートを持っている人は、\n2025年末で約17.8％。（外務省の旅券統計から計算）"),
@@ -87,6 +94,13 @@ def cuts():
     d = T.Scene("bg02_jp_office", [(KR, "L", "realize_wet_cat_stare"), (WORKER, "R", "sulk_hungry_cat")])
     d.zoom("L", ["わかる…", "でも…", "もったいない…"], pos="mid", cat="realize_wet_cat_stare")
     cs += d.cuts
+    d2 = T.Scene("bg02_jp_office", [(KR, "L", "think_bike_front_seat_cat"), (WORKER, "R", "sulk_hungry_cat")])
+    d2.say("L", "連休に、ちょっとだけでも？", dur=2.4)
+    d2.say("R", "連休は、どこも高くて……", dur=2.4)
+    d2.say("R", "それに、パスポートって\n申請がめんどうそうで……", add=True, dur=2.8)
+    d2.say("L", "いまはオンラインでも\n申請できるよ", cat="work_typing_cat", dur=2.6)
+    d2.zoom("R", "えっ、そうなの！？", color="white", cat="surprise_big_pupils_cat")
+    cs += d2.cuts
     # ---- 4. 2026年7月、パスポートが安くなった ----
     cs += [
         T.intro("そして2026年7月——", 2.6),
@@ -104,6 +118,12 @@ def cuts():
     f.say("L", "年に1回くらいの旅行なら、\nまあトントン？", add=True, dur=3.0)
     f.say("R", "計算させないで……", cat="blank_black_cat_zoning_out")
     cs += f.cuts
+    f2 = T.Scene("bg02_jp_office", [(KR, "L", "work_typing_cat"), (WORKER, "R", "think_bike_front_seat_cat")])
+    f2.say("R", "18歳未満の子どもは？", dur=2.2)
+    f2.say("L", "5年用で、\n窓口4,800円・オンライン4,400円", dur=3.0)
+    f2.say("R", "家族で作るなら、\nだいぶ違うな……", dur=2.6)
+    f2.zoom("R", ["……まずは", "自分の分から"], pos="mid", cat="realize_wet_cat_stare")
+    cs += f2.cuts
     # ---- 5. 実は、少しずつ“弱く”なっている？ ----
     cs += [
         ph("ph07_world_map", "実は日本のビザなし渡航先は、\n前の年の193から188に減りました。（1月版）"),

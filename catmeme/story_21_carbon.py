@@ -51,6 +51,14 @@ def cuts():
     a.zoom("L", "……あるらしいんだよ", color="white", cat="realize_wet_cat_stare")
     a.say("R", "は？", cat="huh_huh_cat", dur=1.6)
     cs += a.cuts
+    a2 = T.Scene("bg01_us_hangar", [(US, "L", "sulk_hungry_cat"), (EU, "R", "slack_nail_filing_cat")])
+    a2.say("R", "まあ、燃料代はうちも悩みだけどね")
+    a2.say("L", "軽くなれば、もっと遠くまで飛べるし……", dur=2.8)
+    a2.say("L", "燃料も少なくて済むし……", add=True)
+    a2.say("R", "で、その“あるらしいもの”って何？", dur=2.6)
+    a2.say("L", "日本に、すごい“糸”があるって", cat="think_bike_front_seat_cat", dur=2.8)
+    a2.zoom("R", "糸ぉ！？", color="yellow", cat="huh_huh_cat", dur=1.8)
+    cs += a2.cuts
     # ---- 2. 日本の“黒い糸” ----
     b = T.Scene("bg02_jp_fiber_plant", [(US, "L", "realize_wet_cat_stare"), (JP, "R", "talk_orange_white_sitting_cat")])
     b.say("R", "いらっしゃいませ。\nこちら、うちの“糸”です", dur=2.8)
@@ -66,6 +74,14 @@ def cuts():
     c.zoom("L", "それで飛行機、作って！！", color="red", rays=True, cat="angry_aiming_cat")
     c.say("R", "……がんばります", cat="meow_gray_white_kitten", dur=2.0)
     cs += c.cuts
+    c2 = T.Scene("bg02_jp_fiber_plant", [(US, "L", "think_bike_front_seat_cat"), (JP, "R", "talk_orange_white_sitting_cat")])
+    c2.say("L", "でも、飛行機だよ？\n本当に大丈夫？", dur=2.6)
+    c2.say("R", "樹脂で固めて“複合材料”にすれば、\n軽くて強い板になります", dur=3.2)
+    c2.say("L", "サビないってことは、\n手入れも楽……？", dur=2.8)
+    c2.say("R", "……そう言われています", cat="sleepy_old_memories_cat")
+    c2.zoom("L", "決めた！！　全部これにする！！", color="red", cat="excited_hodomoe_city_cat")
+    c2.say("R", "全部は……ちょっと……", cat="blank_black_cat_zoning_out")
+    cs += c2.cuts
     # ---- 3. 787、誕生 ----
     cs += [
         T.intro("そして——", 2.4),
@@ -84,6 +100,14 @@ def cuts():
     d.say("C", "……で、うちにも糸、\n売ってくれる？", cat="slack_nail_filing_cat", dur=2.8)
     d.zoom("L", "ずるい！！", color="yellow", cat="sad_banana_cat_cry", dur=1.8)
     cs += d.cuts
+    d2 = T.Scene("bg02_jp_fiber_plant", [(US, "L", "cocky_dj_cat"), (EU, "C", "glare_disgusted_cat"),
+                                         (JP, "R", "talk_orange_white_sitting_cat")])
+    d2.say("C", "胴体も翼も、日本から？", dur=2.4)
+    d2.say("R", "翼は、日本の別の会社が\n作っておりまして……", dur=2.8)
+    d2.zoom("C", ["翼まで…", "日本…"], pos="mid", cat="realize_wet_cat_stare")
+    d2.say("L", "組み立てるのはうちだから！！", cat="rage_talking_cat", dur=2.6)
+    d2.say("R", "はい、もちろんです", cat="meow_gray_white_kitten")
+    cs += d2.cuts
     # ---- 4. なぜ日本が強い？ ----
     cs += [
         ph("ph04_factory_furnace", "炭素繊維は、糸を何千度という高温で焼いて作ります。"),
@@ -97,6 +121,14 @@ def cuts():
     e.say("R", "“いつか飛行機に”って、\n言い続けてたら……", add=True, dur=3.0)
     e.zoom("L", ["……ほんとに", "飛んだ…"], pos="mid", cat="realize_wet_cat_stare")
     cs += e.cuts
+    e2 = T.Scene("bg02_jp_fiber_plant", [(US, "L", "realize_wet_cat_stare"), (EU, "C", "slack_nail_filing_cat"),
+                                         (JP, "R", "sleepy_old_memories_cat")])
+    e2.say("C", "売れるかわからないものを、\nずっと作り続けたの？", dur=3.0)
+    e2.say("R", "ちょっとずつ、良くしながら……", dur=2.6)
+    e2.say("L", "半導体の素材の人も、\n同じこと言ってた気がする……", cat="think_bike_front_seat_cat", dur=3.0)
+    e2.say("R", "日本の素材屋は、\nだいたいそんな感じでして", cat="talk_orange_white_sitting_cat", dur=2.8)
+    e2.zoom("C", "地味なのに強い！！", color="red", rays=True, cat="angry_cat_hits_cat")
+    cs += e2.cuts
     # ---- 5. 締め ----
     cs += [
         ph("ph05_sunset_runway", "派手な飛行機の陰で、\n黒い糸を作り続けてきた日本の会社。", bgm=BRIGHT),

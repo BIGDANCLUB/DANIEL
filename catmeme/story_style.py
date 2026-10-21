@@ -187,18 +187,36 @@ def cover(path):
     return np.asarray(im.crop((x0, y0, x0 + W, y0 + H)))[:, :, ::-1].astype(np.float32) / 255
 
 
-def rays(out, cx, cy, n=34, col=(0, 220, 255)):
-    """黄色の集中線（色は BGR）。"""
-    rng = np.random.default_rng(7)
-    ov = np.zeros_like(out)
+def rays(out, cx, cy, n=150, col=(0, 215, 255), seed=7):
+    """マンガふうの集中線（10/21 ユーザー指定「もっとかっこよく」）。色は BGR。
+    外側が太く中心に向かって細くなる三角の線を細かく並べ、中心はぽっかり空ける。線のふちに濃い色、外側ほど少し暗く。"""
+    rng = np.random.default_rng(seed)
+    hh, ww = out.shape[:2]
+    R_ = math.hypot(ww, hh)
+    ov = np.zeros((hh, ww), np.float32)       # 線の濃さ
+    edge = np.zeros((hh, ww), np.float32)     # 線のふち
     for i in range(n):
-        a = 2 * math.pi * i / n + rng.uniform(-0.05, 0.05)
-        r0 = rng.uniform(260, 420)
-        p0 = (int(cx + math.cos(a) * r0), int(cy + math.sin(a) * r0))
-        p1 = (int(cx + math.cos(a) * 2400), int(cy + math.sin(a) * 2400))
-        cv2.line(ov, p0, p1, col, int(rng.uniform(3, 9)), cv2.LINE_AA)
-    m = ov.max(2, keepdims=True) > 0
-    out[:] = np.where(m, np.array(col, np.float32) / 255, out)
+        a = 2 * math.pi * (i + rng.uniform(-0.35, 0.35)) / n
+        r0 = rng.uniform(300, 520) * (1.0 if i % 3 else 1.35)   # 内側のはじまり（ばらつかせる）
+        half = rng.uniform(0.004, 0.013) * (2.2 if i % 7 == 0 else 1.0)   # 外側の太さ（ときどき太い線）
+        tip = (cx + math.cos(a) * r0, cy + math.sin(a) * r0)
+        p1 = (cx + math.cos(a - half) * R_, cy + math.sin(a - half) * R_)
+        p2 = (cx + math.cos(a + half) * R_, cy + math.sin(a + half) * R_)
+        pts = np.array([tip, p1, p2], np.int32)
+        cv2.fillConvexPoly(ov, pts, 1.0, cv2.LINE_AA)
+        cv2.polylines(edge, [pts], True, 1.0, 3, cv2.LINE_AA)
+    # 中心は空け、外側ほどくっきり
+    yy, xx = np.mgrid[0:hh, 0:ww].astype(np.float32)
+    d = np.hypot(xx - cx, yy - cy)
+    fade = np.clip((d - 260) / 260, 0, 1)
+    ov *= fade
+    edge *= fade
+    dark = np.clip(1 - 0.35 * np.clip((d - 400) / 900, 0, 1), 0.6, 1)[..., None]   # まわりを少し暗く（周辺減光）
+    out *= dark
+    c = np.array(col, np.float32) / 255
+    ec = c * 0.45                              # ふちは濃い色
+    out[:] = out * (1 - edge[..., None]) + ec * edge[..., None]
+    out[:] = out * (1 - ov[..., None]) + c * ov[..., None]
 
 
 def bubble_img(path, w=760, h=560):
@@ -274,6 +292,18 @@ def subscribe_card(dur=3.4):
 
 # ---- 寸劇の場面 ----
 
+# 素材の声をそのまま使う猫（10/21 ユーザー指定）。しゃべる役がこの猫のときだけ元の音を鳴らす（ほかの猫は音を消す）
+VOICE = {"huh_huh_cat",               # 「はぁ？」
+         "despair_dramatic_kitten"}   # 泣く・絶望する
+
+
+def _voice(cats, side):
+    for k in cats:
+        if k["side"] == side and k["a"] in VOICE:
+            k["mute"] = False
+
+
+PACE = 0.3   # セリフ1つごとの「間」を少し長めに（10/21：動画は3〜4分。速すぎると内容が追えない）
 SLOTS = {2: {"L": 330, "R": W - 330}, 3: {"L": 270, "C": 930, "R": W - 260}}
 
 
@@ -331,7 +361,7 @@ class Scene:
 
     @staticmethod
     def _dur(text):
-        return min(3.6, max(1.6, 1.0 + 0.1 * len(text)))
+        return min(3.6, max(1.6, 1.0 + 0.1 * len(text))) + PACE
 
     def say(self, side, text, cat=None, dur=None, add=False, h=None, flip=None, se=None, clear_others=False):
         """セリフ。cat で話す猫を差しかえる。add=True で同じ役の前のセリフを残して下に足す。"""
@@ -345,6 +375,7 @@ class Scene:
                 if sd != side:
                     self.age[sd] = 99
         cats, lines = self._snapshot()
+        _voice(cats, side)
         c = dict(kind="beat", bg=self.bg, cats=cats, lines=lines, n=len(self.order), speaker=side)
         if se:
             c["se"] = se
@@ -357,6 +388,7 @@ class Scene:
         texts = text if isinstance(text, list) else [text]
         step = [self._dur(t) for t in texts]
         cats, _ = self._snapshot()
+        _voice(cats, side)
         c = dict(kind="beat", bg=self.bg, cats=cats, lines={}, n=len(self.order),
                  zoom=dict(side=side, z=z or (2.0 if pos == "mid" else 1.5), pos=pos, color="yellow" if pos == "mid" else color,
                            texts=texts, at=list(np.cumsum([0] + step[:-1])), rays=rays, bubble=bubble))

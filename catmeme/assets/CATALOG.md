@@ -12,7 +12,7 @@
 | itchy_kitten_butt.mp4 | お尻がかゆい・ほのぼの | お尻がかゆい　ほのぼのdownloads_子猫のお尻のお尻.mp4 | |
 | wakeup_dog_hits_bowl.mp4 | しっかりしろ・起こす（犬） | しっかりしろ　起こすdownloads_狗敲盆.mp4 | |
 | spin_spinning_cat.mp4 | その場で回転する | その場で回転する　Green Screen Spinning Cat Meme _ 猫ミーム素材 cat meme.mp4 | ⚠ |
-| huh_huh_cat.mp4 | はぁ？ | はぁ？　Huh Cat Meme Green Screen 猫ミーム素材 cat meme.mp4 | |
+| huh_huh_cat.mp4 | はぁ？（**寸劇では声を出す**・10/21） | はぁ？　Huh Cat Meme Green Screen 猫ミーム素材 cat meme.mp4 | |
 | calm_black_face_sheep.mp4 | ほのぼの（ヒツジ） | ほのぼの　ヤギ　Green Screen black face sheep (ovelha ) 猫ミーム素材.mp4 | |
 | huh_goat_talks_to_huh_cat.mp4 | わけのわからない話・はぁ？（ヤギと猫） | わけわからないことを言うヤギ　はぁ？　Green Screen Goat Talking to Clueless Huh Cat Meme 猫ミーム素材.mp4 | |
 | happy_girlfriend_dance_cat.mp4 | ウキウキ | ウキウキ　Cat Dances to Girlfriend 猫ミーム素材 .mp4 | ⚠ |
@@ -48,7 +48,7 @@
 | sleepy_sleepy_cat.mp4 | 眠い | 眠い　Sleepy Cat Green Screen 猫ミーム素材 cat meme .mp4 | |
 | ride_kitten_bike.mp4 | 移動する（自転車） | 移動する　Kitten Riding A Bike Cat Memes Green Screen Chroma Key Template 猫ミーム素材 cat meme .mp4 | |
 | think_bike_front_seat_cat.mp4 | 移動中・考え事 | 移動中　考え事downloads_前乗りバイク猫.mp4 | |
-| despair_dramatic_kitten.mp4 | 絶望する・苦しむ | 絶望する　苦しむ　Green Screen Dramatic Kitten Meme 猫ミーム素材 .mp4 | |
+| despair_dramatic_kitten.mp4 | 絶望する・苦しむ・泣く（**寸劇では声を出す**・10/21） | 絶望する　苦しむ　Green Screen Dramatic Kitten Meme 猫ミーム素材 .mp4 | |
 | leave_cat_leaves_home.mp4 | 荷物を背負う・出ていく | 荷物を背負う　Cat leave home 猫ミーム素材.mp4 | |
 | calmdown_dancing_cat.mp4 | 落ち着いて | 落ち着いて　Cat dancing green screen 猫ミーム素材.mp4 | ⚠ |
 | blank_black_cat_zoning_out.mp4 | 話を聞いていない・ぼーっとする・虚ろ | 話を聞いていない　ぼーっとする　虚ろ　Green Screen Black Cat Zoning Out Meme 猫ミーム素材mp4.mp4 | |

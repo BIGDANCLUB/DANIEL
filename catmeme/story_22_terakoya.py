@@ -61,6 +61,14 @@ def cuts():
     b.say("C", "わしはただの隠居じゃよ。\n町内の子に教えとるだけ", cat="talk_orange_white_sitting_cat", dur=3.0)
     b.zoom("L", "ふつうの町の人が、先生！？", color="yellow", cat="surprise_big_pupils_cat")
     cs += b.cuts
+    b2 = T.Scene("bg02_terakoya_room", [(GB, "L", "think_bike_front_seat_cat"), (SEN, "C", "sleepy_old_memories_cat"),
+                                        (KID, "R", "dance_trending_cat")])
+    b2.say("L", "何人くらい、通ってるの？")
+    b2.say("C", "今日は二十人ほどかのう", dur=2.4)
+    b2.say("R", "となりの寺子屋にも、\n友だちがいっぱい！", dur=2.6)
+    b2.zoom("L", "町に、いくつもあるの！？", color="yellow", cat="surprise_big_pupils_cat")
+    b2.say("C", "町内ごとに、ひとつふたつは\nあるもんじゃよ", cat="talk_orange_white_sitting_cat", dur=2.8)
+    cs += b2.cuts
     cs += [
         ph("ph02_terakoya", "寺子屋は、町や村の人がひらいた、\n子どものための手習い塾。"),
         ph("ph02_terakoya", "幕末には全国で1万を超え、\n1万5千以上とも言われます。\n江戸の町だけでも1,200以上あったとされています。", dur=5.4),
@@ -73,6 +81,13 @@ def cuts():
     c.zoom("L", "授業料が大根！？", color="red", rays=True, cat="huh_goat_talks_to_huh_cat")
     c.say("R", "お金のない家は、\nそれで十分さ", cat="laugh_laughing_dog", dur=2.6)
     cs += c.cuts
+    c2 = T.Scene("bg02_terakoya_room", [(GB, "L", "realize_wet_cat_stare"), (SEN, "C", "sleepy_old_memories_cat"),
+                                        (OKA, "R", "slack_nail_filing_cat")])
+    c2.say("L", "お金のない家の子も、\n来ていいの？", dur=2.6)
+    c2.say("C", "もちろん。読めて困る子は\nおらんからの", dur=2.8)
+    c2.say("R", "うちの子なんか、\n今じゃわたしより字がうまいよ", cat="laugh_laughing_dog", dur=3.0)
+    c2.zoom("L", ["親より…", "うまい…"], pos="mid", cat="stare_big_eyes_tabby_kitten")
+    cs += c2.cuts
     cs.append(ph("ph03_daikon", "お礼は、お金でも、季節の野菜や品物でも\nよかったと言われています。身分に関係なく\n"
                                 "通えたことも、広がった理由のひとつとされます。", dur=5.8))
     # ---- 4. なぜ、みんな字を習った？ ----
@@ -83,6 +98,13 @@ def cuts():
     d.say("R", "証文（契約書）も、帳簿も、\nお触れ（お知らせ）も、全部、字", add=True, dur=3.6)
     d.say("C", "それに、\n貸本屋の本が読みたい！", dur=2.6)
     cs += d.cuts
+    d2 = T.Scene("bg01_edo_shop_street", [(GB, "L", "surprise_big_pupils_cat"), (KID, "C", "dance_koto_nai_cat"),
+                                          (OKA, "R", "slack_nail_filing_cat")])
+    d2.say("C", "読めないと、\nお使いもできないし！", dur=2.6)
+    d2.say("R", "値段の札も、\n全部字だからね", dur=2.4)
+    d2.say("L", "町じゅうが、\n字であふれてる……", cat="realize_wet_cat_stare", dur=2.6)
+    d2.zoom("L", "まるで町全体が学校だ！！", color="yellow", cat="excited_hodomoe_city_cat")
+    cs += d2.cuts
     cs += [
         ph("ph04_kashihonya", "江戸には本を貸して回る“貸本屋”がいて、\n町の人たちは物語や瓦版を楽しんでいました。"),
         ph("ph04_kashihonya", "読み・書き・そろばんは、\n暮らしと商売に欠かせない力だったのです。"),
@@ -100,6 +122,13 @@ def cuts():
     e.zoom("L", "国に帰ったら、絶対に書き残す！！", color="red", rays=True, cat="angry_aiming_cat")
     e.say("R", "じゃあ、わたしが字、\n教えてあげる！", dur=2.6)
     cs += e.cuts
+    e2 = T.Scene("bg02_terakoya_room", [(GB, "L", "meow_gray_white_kitten"), (SEN, "C", "sleepy_old_memories_cat"),
+                                        (KID, "R", "excited_hodomoe_city_cat")])
+    e2.say("R", "まずは“い”から！\nこうやって筆を持って……", dur=2.8)
+    e2.say("L", "……むずかしい", cat="sulk_hungry_cat", dur=2.0)
+    e2.say("C", "みんな最初はそうじゃ。\nゆっくりでええ", dur=2.6)
+    e2.say("R", "毎日ちょっとずつ！", add=True)
+    cs += e2.cuts
     # ---- 6. その後 ----
     cs += [
         T.intro("そして——", 2.4),

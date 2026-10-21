@@ -21,7 +21,7 @@
    "subs": [
     "「{美味すぎる！}」\n東京五輪で\n外国人選手が\n<驚いた>\n<日本の食べ物3選>"
    ],
-   "scene": "s00",
+   "scene": "c00",
    "kana": "ウマスギ'ル、トオキョオゴ'リンデ/ガイコク'ジン/セ'ンシュガ/オドロ'イタ、ニッポ'ンノ/タベ'モノ/サ'ンセン"
   },
   {
@@ -31,7 +31,7 @@
     "選手村の食堂は\n世界中の選手の",
     "<胃袋をつかんだ>"
    ],
-   "scene": "s01"
+   "scene": "c01"
   },
   {
    "say": "中でも話題になった、食べ物を紹介しよう。",
@@ -39,14 +39,14 @@
     "中でも\n話題になった",
     "食べ物を\n紹介しよう"
    ],
-   "scene": "s02"
+   "scene": "c02"
   },
   {
    "say": "その1餃子。",
    "subs": [
     "その1\n{餃子}"
    ],
-   "scene": "s03",
+   "scene": "c03",
    "kana": "ソノ'/イチ'、ギョ'オザ"
   },
   {
@@ -58,7 +58,7 @@
     "毎食\n食べていると",
     "明かしたのだ"
    ],
-   "scene": "s04",
+   "scene": "c04",
    "kana": "アメリカノ'/ジョ'_シ/シチニンセエ'/ラ'グビイ、ダイヒョオ'/マ'ア/セ'ンシュワ、セカ'イイチ/オイシ'イ/ギョオザト'/ゼッサン'、マイショ_ク'/タベ'テイルト、アカ'_シタノダ"
   },
   {
@@ -70,7 +70,7 @@
     "ネットでは\n<さすが味の素>の",
     "声が相次いだ"
    ],
-   "scene": "s05"
+   "scene": "c05"
   },
   {
    "say": "開発のきっかけは羽生結弦選手の、餃子好きだったという。",
@@ -78,7 +78,7 @@
     "開発のきっかけは\n{羽生結弦}選手の",
     "餃子好き\nだったという"
    ],
-   "scene": "s06",
+   "scene": "c06",
    "kana": "カイハツノ'/キッカケワ'/ハブ'/ユズルセ'ンシュノ、ギョオザ'/ス'キダッタト/イ'ウ"
   },
   {
@@ -88,14 +88,14 @@
     "店頭では\n<品薄>になるほど",
     "日本の冷凍食品\n<恐るべし>"
    ],
-   "scene": "s07"
+   "scene": "c07"
   },
   {
    "say": "その2寿司。",
    "subs": [
     "その2\n{寿司}"
    ],
-   "scene": "s08",
+   "scene": "c08",
    "kana": "ソノ'/ニ'、ス'シ"
   },
   {
@@ -108,7 +108,7 @@
     "かっぱ巻きを\n箸で味わう動画も",
     "<話題>になった"
    ],
-   "scene": "s09",
+   "scene": "c09",
    "kana": "スシ'ワ/センシュムラノ'/ショクドオデモ'、ニンキメ'ニュウノ/_ヒト'ツダッタ、ス_シコ'オナアニワ/ギョオレツガ'/デキ'テイタト/イウ'ノダ、カッパマキオ'/ハ'シデ/アジワ'ウ/ドオガモ'/ワダイニ'/ナ'ッタ"
   },
   {
@@ -116,7 +116,7 @@
    "subs": [
     "その3\n{果汁グミ}"
    ],
-   "scene": "s10",
+   "scene": "c10",
    "kana": "ソノ'/サ'ン、カジュウ'グミ"
   },
   {
@@ -126,7 +126,7 @@
     "<定番>がランクイン",
     "選手村の食堂に\n<山積み>で用意され"
    ],
-   "scene": "s11",
+   "scene": "c11",
    "kana": "ナ'ント/コンビニオカ'シノ、テエバンガ'/ランク'イン、センシュムラノ'/ショクドオニ'/ヤマズミデ'/ヨ'オイサレ"
   },
   {
@@ -138,7 +138,7 @@
     "果汁グミを\n<どっさり>",
     "持ち帰っていた"
    ],
-   "scene": "s12",
+   "scene": "c12",
    "kana": "ニュウジイラ'ンドノ/キョオエエセ'ンシュワ、タベ'ル/ス'ガタオ/エスエヌエ'スニ/トオコオ'、オオ_ストラ'リアノ/バ_スケセ'ンシュワ、カジュウ'グミオ/ドッサ'リ、モ_チカ'エッテイタ"
   },
   {
@@ -147,52 +147,52 @@
     "日本の食べ物は\n{お菓子}までもが",
     "<驚きの対象>\nなのである"
    ],
-   "scene": "s13",
+   "scene": "c13",
    "kana": "ニッポ'ンノ/タベモ'ノワ/オカ'シマデモガ、オドロキノ'/タイ'ショオナノデアル"
   }
  ],
  "scenes": {
-  "s00": {
-   "file": "../catmeme/backgrounds/14_japan/bg43_award_stage.png"
+  "c00": {
+   "file": "provided/doc008/image/000000000445_c1HJ0WZ.jpg"
   },
-  "s01": {
-   "file": "../catmeme/backgrounds/14_japan/bg44_world_map.png"
+  "c01": {
+   "file": "provided/doc008/video/11291-229221027_medium.mp4"
   },
-  "s02": {
-   "file": "../catmeme/backgrounds/14_japan/bg45_airport_arrival.png"
+  "c02": {
+   "file": "provided/doc008/image/81c+Y6rL5WL._AC_SL1500_.jpg"
   },
-  "s03": {
-   "file": "../catmeme/backgrounds/14_japan/bg46_sushi_counter.png"
+  "c03": {
+   "file": "provided/doc008/image/72673009.jpg"
   },
-  "s04": {
-   "file": "../catmeme/backgrounds/14_japan/bg47_ramen_shop.png"
+  "c04": {
+   "file": "provided/doc008/image/000000000445_c1HJ0WZ.jpg"
   },
-  "s05": {
-   "file": "../catmeme/backgrounds/14_japan/bg48_clean_street.png"
+  "c05": {
+   "file": "provided/doc008/image/72673009.jpg"
   },
-  "s06": {
-   "file": "../catmeme/backgrounds/14_japan/bg49_public_toilet.png"
+  "c06": {
+   "file": "provided/doc008/image/81c+Y6rL5WL._AC_SL1500_.jpg"
   },
-  "s07": {
-   "file": "../catmeme/backgrounds/14_japan/bg50_classroom_cleaning.png"
+  "c07": {
+   "file": "../catmeme/backgrounds/02_october/bg16_food_aisle.png"
   },
-  "s08": {
-   "file": "../catmeme/backgrounds/14_japan/bg51_night_street.png"
+  "c08": {
+   "file": "provided/doc008/video/108371-680178223_medium.mp4"
   },
-  "s09": {
-   "file": "../catmeme/backgrounds/14_japan/bg52_koban.png"
+  "c09": {
+   "file": "provided/doc008/video/3625-172488382_medium.mp4"
   },
-  "s10": {
-   "file": "../catmeme/backgrounds/14_japan/bg53_shinkansen.png"
+  "c10": {
+   "file": "provided/doc008/image/51hNQGNtzBL._SS500_.jpg"
   },
-  "s11": {
-   "file": "../catmeme/backgrounds/14_japan/bg54_station_crowd_map.png"
+  "c11": {
+   "file": "provided/doc008/image/71ueoc4YTKL._AC_SL1500_.jpg"
   },
-  "s12": {
-   "file": "../catmeme/backgrounds/14_japan/bg55_ryokan.png"
+  "c12": {
+   "file": "provided/doc008/image/51hNQGNtzBL._SS500_.jpg"
   },
-  "s13": {
-   "file": "../catmeme/backgrounds/14_japan/bg56_kyoto_temple.png"
+  "c13": {
+   "file": "provided/doc008/image/71ueoc4YTKL._AC_SL1500_.jpg"
   }
  }
 }

@@ -21,7 +21,7 @@
    "subs": [
     "「{議員1人の党に}\n{5億8000万円}」\n事実上解体した\n政党が\n<税金を受け取った>"
    ],
-   "scene": "s00",
+   "scene": "c00",
    "kana": "ギ'イン/_ヒト'リノ/ト'オニ/ゴ'オ_ク/ハッセ'ン/マン'エン、ジジツジョオ'/カイタ'イ_シタ/セエトオガ'、ゼエキンオ'/ウケト'ッタ"
   },
   {
@@ -31,7 +31,7 @@
     "中道改革連合",
     "今残っている議員は\n<たった1人>だ"
    ],
-   "scene": "s01",
+   "scene": "c01",
    "kana": "ク'ガツニ/ブンレツ'_シ/ジジツジョオ'/カイタ'イ_シタ、チュウドオカイカクレ'ンゴオ、イ'マ/ノコ'ッテイル/ギ'インワ/タッタ'/_ヒト'リダ"
   },
   {
@@ -42,7 +42,7 @@
     "しかし\n2月の衆院選で",
     "<大敗>した"
    ],
-   "scene": "x15",
+   "scene": "c02",
    "kana": "コノ'/ト'オワ/コトシ'/イチガツ'/リッケンミン_シュトオト'、コオメエトオガ'/テ'オ/ク'ミ、ツク'ッタ/シ'ントオダ、_シカ'シ/ニガツ'ノ/シュウインセンデ'/タイハイ'_シタ"
   },
   {
@@ -51,7 +51,7 @@
     "残っている1人も\n<清算のためだけ>に",
     "党に残った\n議員なのである"
    ],
-   "scene": "x16",
+   "scene": "c03",
    "kana": "ノコ'ッテイル/_ヒト'リモ/セエサンノ'/タメダケニ'、ト'オニ/ノコ'ッタ/ギ'インナノデアル"
   },
   {
@@ -61,7 +61,7 @@
     "政党交付金\n約<5億8000万円>",
     "が支払われた\nのである"
    ],
-   "scene": "s02",
+   "scene": "c04",
    "kana": "ソノ'/ト'オニ/ジュウガツ'/ハ_ツカ'、セエトオコオフ'キン/ヤ'ク/ゴ'オ_ク/ハッセ'ン/マン'エンガ/_シハラ'ワレタノデアル"
   },
   {
@@ -70,7 +70,7 @@
     "しかも\n{12月}にも",
     "支払いが\n<予定されている>"
    ],
-   "scene": "s03",
+   "scene": "c05",
    "kana": "_シカ'モ/ジュウニガツ'ニモ、_シハライガ'/ヨテエ'サレテイル"
   },
   {
@@ -79,21 +79,21 @@
     "合わせると\nその額は",
     "<10億円>を超える"
    ],
-   "scene": "s04"
+   "scene": "c06"
   },
   {
    "say": "政党交付金の原資は私たちの税金だ。",
    "subs": [
     "政党交付金の原資は\n<私たちの税金>だ"
    ],
-   "scene": "s05"
+   "scene": "c07"
   },
   {
    "say": "一体何に使われるのか。",
    "subs": [
     "一体何に\n<使われるのか>"
    ],
-   "scene": "s06"
+   "scene": "c08"
   },
   {
    "say": "幹事長を務めた階猛氏は、残務整理や債務処理に、必要だと説明した。",
@@ -102,7 +102,7 @@
     "{残務整理}や\n{債務処理}に",
     "必要だと説明した"
    ],
-   "scene": "s07",
+   "scene": "c09",
    "kana": "カンジ'チョオオ/_ツトメ'タ/シ'ナ/タケ'_シシワ、ザンムセ'エリヤ/サイム'ショリニ、_ヒツヨオダト'/セツメエ'_シタ"
   },
   {
@@ -111,7 +111,7 @@
     "だが\n具体的な使い道は",
     "<まだ示されていない>"
    ],
-   "scene": "s08",
+   "scene": "c10",
    "kana": "ダ'ガ/グタイ'テキナ/_ツカイミチワ'、マ'ダ/シメ'サレテイナイ"
   },
   {
@@ -120,7 +120,7 @@
     "それでも階氏は\n<負い目を感じる>",
     "ものではないと\n言い切ったのである"
    ],
-   "scene": "s09",
+   "scene": "c11",
    "kana": "ソレデ'モ/シ'ナシワ/オイメオ'/カンジル'/モノ'デワ/ナ'イト/イイキ'ッタノデアル"
   },
   {
@@ -130,7 +130,7 @@
     "{使い道}を\n示してほしいと",
     "<注文をつけた>"
    ],
-   "scene": "s10"
+   "scene": "c12"
   },
   {
    "say": "SNSでも批判の声が、相次いでいる。",
@@ -138,7 +138,7 @@
     "SNSでも\n<批判の声>が",
     "相次いでいる"
    ],
-   "scene": "s11",
+   "scene": "c13",
    "kana": "エスエヌエ'スデモ/ヒハンノ'/コ'エガ/ア'イツイデイル"
   },
   {
@@ -147,7 +147,7 @@
     "残務整理に\n<億単位の税金>が",
     "本当に必要なのか"
    ],
-   "scene": "s12",
+   "scene": "c14",
    "kana": "ザンムセ'エリニ/オ_クタ'ンイノ/ゼエキンガ'、ホントオニ'/_ヒツヨ'オナノカ"
   },
   {
@@ -156,7 +156,7 @@
     "解体した党に\n<消えていく税金>",
     "誰のための\nお金なのか"
    ],
-   "scene": "s13",
+   "scene": "c15",
    "kana": "カイタ'イ_シタ/ト'オニ/キエテ'/イク'/ゼエキン'、ダ'レノ/タメ'ノ/オカネ'ナ/ノカ'"
   },
   {
@@ -165,61 +165,61 @@
     "その使い道を\n<見届けなければ>",
     "ならない"
    ],
-   "scene": "s14",
+   "scene": "c16",
    "kana": "ソノ'/_ツカイミチオ'/ミトドケナケレ'バ/ナラ'ナイ"
   }
  ],
  "scenes": {
-  "s00": {
-   "file": "../catmeme/backgrounds/14_japan/bg43_award_stage.png"
+  "c00": {
+   "file": "provided/doc006/image/9.jpg"
   },
-  "s01": {
-   "file": "../catmeme/backgrounds/14_japan/bg44_world_map.png"
+  "c01": {
+   "file": "../catmeme/backgrounds/01_todai/bg07_press.png"
   },
-  "x15": {
-   "file": "../catmeme/backgrounds/14_japan/bg45_airport_arrival.png"
+  "c02": {
+   "file": "provided/doc006/image/9.jpg"
   },
-  "x16": {
-   "file": "../catmeme/backgrounds/14_japan/bg46_sushi_counter.png"
+  "c03": {
+   "file": "../catmeme/backgrounds/17_imamori/bg102_quiet_room.png"
   },
-  "s02": {
-   "file": "../catmeme/backgrounds/14_japan/bg47_ramen_shop.png"
+  "c04": {
+   "file": "../catmeme/backgrounds/16_tenchim/bg87_refund_money.png"
   },
-  "s03": {
-   "file": "../catmeme/backgrounds/14_japan/bg48_clean_street.png"
+  "c05": {
+   "file": "../catmeme/backgrounds/16_tenchim/bg88_contract_papers.png"
   },
-  "s04": {
-   "file": "../catmeme/backgrounds/14_japan/bg49_public_toilet.png"
+  "c06": {
+   "file": "../catmeme/assets_video/wide/v06_cash_counting.mp4"
   },
-  "s05": {
-   "file": "../catmeme/backgrounds/14_japan/bg50_classroom_cleaning.png"
+  "c07": {
+   "file": "../catmeme/assets_video/wide/v09_shibuya_crossing_aerial.mp4"
   },
-  "s06": {
-   "file": "../catmeme/backgrounds/14_japan/bg51_night_street.png"
+  "c08": {
+   "file": "../catmeme/backgrounds/01_todai/bg06_spotlight.png"
   },
-  "s07": {
-   "file": "../catmeme/backgrounds/14_japan/bg52_koban.png"
+  "c09": {
+   "file": "provided/doc006/image/000504609_1200.jpg"
   },
-  "s08": {
-   "file": "../catmeme/backgrounds/14_japan/bg53_shinkansen.png"
+  "c10": {
+   "file": "../catmeme/assets_video/wide/v01_typing_keyboard_desk.mp4"
   },
-  "s09": {
-   "file": "../catmeme/backgrounds/14_japan/bg54_station_crowd_map.png"
+  "c11": {
+   "file": "provided/doc006/image/HChn1tObAAAW9FZ.jpg"
   },
-  "s10": {
-   "file": "../catmeme/backgrounds/14_japan/bg55_ryokan.png"
+  "c12": {
+   "file": "../catmeme/assets_video/wide/v14_business_meeting.mp4"
   },
-  "s11": {
-   "file": "../catmeme/backgrounds/14_japan/bg56_kyoto_temple.png"
+  "c13": {
+   "file": "../catmeme/assets_video/wide/v22_smartphone_hand.mp4"
   },
-  "s12": {
-   "file": "../catmeme/backgrounds/14_japan/bg57_tokyo_skyline.png"
+  "c14": {
+   "file": "../catmeme/assets_video/wide/v06_cash_counting.mp4"
   },
-  "s13": {
-   "file": "../catmeme/backgrounds/14_japan/bg58_akihabara.png"
+  "c15": {
+   "file": "../catmeme/backgrounds/16_tenchim/bg87_refund_money.png"
   },
-  "s14": {
-   "file": "../catmeme/backgrounds/14_japan/bg59_sakura_park.png"
+  "c16": {
+   "file": "../catmeme/assets_video/wide/v05_city_night_river.mp4"
   }
  }
 }

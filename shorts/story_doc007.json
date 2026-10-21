@@ -21,7 +21,7 @@
    "subs": [
     "「{何のための}\n{投票なのか}」\n東大総長選びに\n<文科省が>\n<異例の検証要請>"
    ],
-   "scene": "s00"
+   "scene": "c00"
   },
   {
    "say": "東大の次の総長を選ぶ、意向投票で、1位になったのは染谷隆夫氏、得票は1107票。",
@@ -31,7 +31,7 @@
     "1位になったのは\n{染谷隆夫氏}",
     "得票は<1107票>"
    ],
-   "scene": "s01"
+   "scene": "c01"
   },
   {
    "say": "1回目の投票でも染谷氏は818票、藤垣氏の倍以上だった。",
@@ -39,7 +39,7 @@
     "1回目の投票でも\n染谷氏は<818票>",
     "藤垣氏の\n倍以上だった"
    ],
-   "scene": "x10",
+   "scene": "c02",
    "kana": "イッカイ'メノ/トオヒョオデモ'/ソ'メヤシワ/ハッピャク'ジュウ/ハッ'ピョオ、フジガキ'シノ/バイイ'ジョオダッタ"
   },
   {
@@ -48,7 +48,7 @@
     "2位の藤垣裕子氏は\n<553票>",
     "{ダブルスコア}の\n差だった"
    ],
-   "scene": "s02",
+   "scene": "c03",
    "kana": "ニイ'ノ/フジガキ'/ユ'ウコシワ/ゴヒャク'/ゴジュウ'/サ'ンピョオ、ダブル_スコ'アノ/サダ'ッタ"
   },
   {
@@ -58,7 +58,7 @@
     "のは<2位の藤垣氏>\nだった",
     "東大初の\n{女性総長}の誕生"
    ],
-   "scene": "s03",
+   "scene": "c04",
    "kana": "トコロ'ガ/センコオカ'イギガ/エラ'ンダノワ/ニイ'ノ/フジガキ'シ/ダ'ッタ、トオダイハツノ'/ジョセエソ'オチョオノ/タンジョオ'"
   },
   {
@@ -67,7 +67,7 @@
     "任期は\n{来年4月}から",
     "<6年>の予定だ"
    ],
-   "scene": "x11"
+   "scene": "c05"
   },
   {
    "say": "なぜ2位が選ばれたのか、学内外から疑問の声が相次いだ。",
@@ -75,7 +75,7 @@
     "なぜ2位が\n選ばれたのか",
     "学内外から\n<疑問の声>が相次いだ"
    ],
-   "scene": "s04"
+   "scene": "c06"
   },
   {
    "say": "SNSでも何のための投票か、という声が広がった。",
@@ -83,7 +83,7 @@
     "{SNS}でも\n<何のための投票か>",
     "という声が\n広がった"
    ],
-   "scene": "x12",
+   "scene": "c07",
    "kana": "エスエヌエ'スデモ/ナ'ニノ/タメ'ノ/トオヒョオカ'、ト'イウ/コ'エガ/ヒロガ'ッタ"
   },
   {
@@ -94,7 +94,7 @@
     "選考の経緯を\n検証するよう",
     "東大に\n<求めたのである>"
    ],
-   "scene": "s05",
+   "scene": "c08",
    "kana": "ソ_シテ'/ジュウガツ'/ハ_ツカ'、モンブカガクダ'イジンガ/イレエノ'/タイオオニ'/デタ'、センコオノ'/ケ'エイオ/ケンショオ'/スル'/ヨ'オ/トオダイニ'/モトメ'タノデアル"
   },
   {
@@ -103,7 +103,7 @@
     "国立大の総長選びで\n検証を求めるのは",
     "<初めて>と\nみられる"
    ],
-   "scene": "s06"
+   "scene": "c09"
   },
   {
    "say": "大臣は最終的な判断が、無記名投票で、どう選んだのか説明が足りないと、指摘した。",
@@ -113,7 +113,7 @@
     "どう選んだのか\n<説明が足りない>と",
     "指摘した"
    ],
-   "scene": "s07",
+   "scene": "c10",
    "kana": "ダ'イジンワ/サイシュウ'テキナ/ハ'ンダンガ/ムキメエト'オヒョオデ、ド'オ/エラ'ンダ/ノカ'/セツメエガ'/タリナイト'/シテキ'_シタ"
   },
   {
@@ -124,7 +124,7 @@
     "ただし文科省も\n<不正>があったと",
     "認めたわけではない"
    ],
-   "scene": "s08",
+   "scene": "c11",
    "kana": "トオダイワ'/ケンショオオ'/ススメ'/セツメエセ'キニンオ/ハタ'スト/_シテイ'ル、タ'ダシ/モンカ'ショオモ/_フセエガ'/ア'ッタト/ミトメタ'/ワ'ケデワナイ"
   },
   {
@@ -132,7 +132,7 @@
    "subs": [
     "東大の検証結果に\n<注目が集まる>"
    ],
-   "scene": "y99"
+   "scene": "c12"
   },
   {
    "say": "投票は何のためにあるのか、日本の最高学府に説明が、求められている。",
@@ -141,52 +141,52 @@
     "日本の最高学府に\n<説明>が",
     "求められている"
    ],
-   "scene": "s09",
+   "scene": "c13",
    "kana": "トオヒョオワ'/ナ'ニノ/タメ'ニ/ア'ル/ノカ'、ニッポ'ンノ/サイコオガ'_クフニ/セツメエガ'/モトメ'ラレテイル"
   }
  ],
  "scenes": {
-  "s00": {
-   "file": "../catmeme/backgrounds/14_japan/bg43_award_stage.png"
+  "c00": {
+   "file": "provided/doc007/image/toukyoudaigaku2.jpg"
   },
-  "s01": {
-   "file": "../catmeme/backgrounds/14_japan/bg44_world_map.png"
+  "c01": {
+   "file": "../catmeme/backgrounds/01_todai/bg04_voting.png"
   },
-  "x10": {
-   "file": "../catmeme/backgrounds/14_japan/bg45_airport_arrival.png"
+  "c02": {
+   "file": "../catmeme/assets_video/wide/v11_stock_chart_blue.mp4"
   },
-  "s02": {
-   "file": "../catmeme/backgrounds/14_japan/bg46_sushi_counter.png"
+  "c03": {
+   "file": "provided/doc007/image/4d6fe_1581_cdbe7110_e63852a8.jpg"
   },
-  "s03": {
-   "file": "../catmeme/backgrounds/14_japan/bg47_ramen_shop.png"
+  "c04": {
+   "file": "provided/doc007/image/20261019-00120415-president-000-4-view.jpg"
   },
-  "x11": {
-   "file": "../catmeme/backgrounds/14_japan/bg48_clean_street.png"
+  "c05": {
+   "file": "provided/doc007/image/1647836822589-noname.png"
   },
-  "s04": {
-   "file": "../catmeme/backgrounds/14_japan/bg49_public_toilet.png"
+  "c06": {
+   "file": "../catmeme/backgrounds/01_todai/bg05_meeting.png"
   },
-  "x12": {
-   "file": "../catmeme/backgrounds/14_japan/bg50_classroom_cleaning.png"
+  "c07": {
+   "file": "../catmeme/assets_video/wide/v20_smartphone_hands.mp4"
   },
-  "s05": {
-   "file": "../catmeme/backgrounds/14_japan/bg51_night_street.png"
+  "c08": {
+   "file": "provided/doc007/image/20261020-00010007-annd-000-2-view.jpg"
   },
-  "s06": {
-   "file": "../catmeme/backgrounds/14_japan/bg52_koban.png"
+  "c09": {
+   "file": "provided/doc007/image/toukyoudaigaku2.jpg"
   },
-  "s07": {
-   "file": "../catmeme/backgrounds/14_japan/bg53_shinkansen.png"
+  "c10": {
+   "file": "provided/doc007/image/m_jiji-2026102000692.jpg"
   },
-  "s08": {
-   "file": "../catmeme/backgrounds/14_japan/bg54_station_crowd_map.png"
+  "c11": {
+   "file": "provided/doc007/image/1647836822589-noname.png"
   },
-  "s09": {
-   "file": "../catmeme/backgrounds/14_japan/bg55_ryokan.png"
+  "c12": {
+   "file": "provided/doc007/image/20261019-00120415-president-000-4-view.jpg"
   },
-  "y99": {
-   "file": "../catmeme/backgrounds/16_tenchim/bg81_tenchim_neon.png"
+  "c13": {
+   "file": "../catmeme/backgrounds/01_todai/bg04_voting.png"
   }
  }
 }

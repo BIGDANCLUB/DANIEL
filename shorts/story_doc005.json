@@ -79,7 +79,7 @@
     "ベンチに戻った\n山本は",
     "<うつむいていた>"
    ],
-   "scene": "of",
+   "scene": "mound",
    "kana": "ニ'カイ/サン'プンノ/ニ'、サンシ'ッテン、ポ_ストシイズンジコサ'イタンノ/コオバン'、ベ'ンチニ/モド'ッタ/ヤマモトワ'、ウツム'イテイタ"
   },
   {
@@ -157,6 +157,9 @@
   },
   "hand": {
    "file": "../catmeme/assets_video/wide/v19_handshake_business.mp4"
+  },
+  "mound": {
+   "file": "library/st022_ai_mlb_mound.jpg"
   }
  }
 }

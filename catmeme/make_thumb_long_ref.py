@@ -26,12 +26,12 @@ WHITE, BLACK = (255, 255, 255), (0, 0, 0)
 RED, YELLOW, BLUE, NAVY = (226, 30, 30), (255, 236, 40), (36, 90, 220), (20, 30, 110)
 
 
-def fill_photo(name, w, h, cx=0.5, zoom=1.0):
+def fill_photo(name, w, h, cx=0.5, zoom=1.0, cy=0.5):
     im = Image.open(bg_path(name)).convert("RGB")
     k = max(w / im.width, h / im.height) * zoom
     im = im.resize((int(im.width * k) + 1, int(im.height * k) + 1), Image.LANCZOS)
     x0 = int((im.width - w) * cx)
-    y0 = (im.height - h) // 2
+    y0 = int((im.height - h) * cy)
     return im.crop((x0, y0, x0 + w, y0 + h)).convert("RGBA")
 
 
@@ -153,8 +153,8 @@ def type_b(name, panels, notes, line1, line2):
     save(img, name)
 
 
-def type_c(name, bg, cats, top, big):
-    img = fill_photo(bg, W, H)
+def type_c(name, bg, cats, top, big, zoom=1.0, cy=0.5, cx=0.5):
+    img = fill_photo(bg, W, H, cx=cx, zoom=zoom, cy=cy)
     for c in cats:
         put_cat(img, *c)
     shade = Image.new("RGBA", (W, H))
@@ -510,23 +510,24 @@ if __name__ == "__main__" and os.environ.get("THUMB") == "23":
 
 
 def chudo():
-    """24本目（中道改革連合の政党交付金）で3案。実在の政治家の写真・似顔絵は使わない。党のロゴは描かない。悪口・あだ名は書かない。"""
-    type_a("24_chudo_ref_a.png", "bg25_office_desk", "bg87_refund_money",
-           ("surprise_big_pupils_cat", 0.6, 250, 470, 460, False),
-           [("huh_huh_cat", 1.0, 1100, 410, 300, True)],
+    """24本目（中道改革連合の政党交付金）で3案。10/22 作り直し：ユーザー提供の報道写真（backgrounds/24_chudo/photos）を使う。
+    猫は顔にかけない。笑顔の写真は使わない（からかっているように見せない）。悪口・あだ名は書かない。"""
+    type_a("24_chudo_ref_a.png", "p2_hashina_talk", "bg87_refund_money",
+           ("surprise_big_pupils_cat", 0.6, 80, 470, 260, False),
+           [("huh_huh_cat", 1.0, 1150, 410, 300, True)],
            "中道改革連合の政党交付金",
-           [("議員1人の党に", BLACK)], [("交付金5.8億円", RED)], split=600, size=112)
+           [("議員1人の党に", BLACK)], [("交付金5.8億円", RED)], split=700, size=112)
     type_b("24_chudo_ref_b.png",
-           [("bg04_voting", [("sad_banana_cat_cry", 1.0, 160, 470, 330, False)]),
-            ("bg05_meeting", [("glare_disgusted_cat", 1.0, 160, 470, 330, False)]),
+           [("bg05_meeting", [("peek_what_happen_cat", 1.0, 160, 470, 330, False)]),
+            ("bg04_voting", [("sad_banana_cat_cry", 1.0, 160, 470, 330, False)]),
             ("bg25_office_desk", [("blank_black_cat_zoning_out", 1.0, 160, 470, 330, False)]),
             ("bg87_refund_money", [("surprise_big_pupils_cat", 0.6, 160, 470, 330, False)])],
-           [("txt", "衆院選で49議席", 160, 60, 40, YELLOW, -6), ("txt", "9月 事実上解体", 480, 60, 40, YELLOW, 4),
+           [("txt", "1月 合流して結党", 160, 60, 38, YELLOW, -6), ("txt", "衆院選で49議席", 480, 60, 40, YELLOW, 4),
             ("txt", "残ったのは1人", 800, 60, 42, YELLOW, -4), ("txt", "交付金5.8億円!?", 1130, 60, 40, RED, 6)],
            [("議員1人の党に交付金", RED)], [("あなたは納得できる？", NAVY)])
-    type_c("24_chudo_ref_c.png", "bg87_refund_money",
-           [("surprise_big_pupils_cat", 0.6, 200, 560, 420, False), ("huh_huh_cat", 1.0, 1100, 560, 400, True)],
-           "中道改革連合　議員1人で政党交付金を受け取り", "5.8億円")
+    type_c("24_chudo_ref_c.png", "p2_hashina_talk",
+           [("surprise_big_pupils_cat", 0.6, 130, 560, 330, False), ("huh_huh_cat", 1.0, 1170, 560, 330, True)],
+           "中道改革連合　議員1人で政党交付金を受け取り", "5.8億円", zoom=1.3, cy=1.0, cx=0.45)
 
 
 if __name__ == "__main__" and os.environ.get("THUMB") == "24":

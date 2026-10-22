@@ -69,6 +69,7 @@
   - 素材置き場: 動画ごとの素材は `provided/docNNN/{video,image}`、どの動画でも使える汎用素材は `provided/general/{video,image}`（10/21 ユーザー指定）。ほかに `../catmeme/assets_video` と `../catmeme/backgrounds` も使える
   - 背景の動きは台本の行の `move` で指定できる（in / out / left / right / up / down、横長の画像を端から端まで速めに流すときは sweep_left / sweep_right）
   - 読み上げ速度は speedScale 1.25（10/21 ユーザー指定。参考動画2本の読み上げ時間を VOICEVOX で再現して求めた値で、1.24〜1.29 だった）。抑揚 intonationScale 1.2
+  - 通常ショート（DOC）は、渡された素材とこれまでの素材（catmeme・library・provided）だけで作る。Gemini では作らない（10/22 ユーザー指定）
   - 人物は「男性」「女性」と書く（「男」「女」は使わない。10/20 ユーザー指定）
   - 冒頭のタイトル画面の背景は静止画だけ。動画は使わない（10/20 ユーザー指定。動画を指定するとエラーで止まる）
   - 冒頭チリンの音量は -6dB（10/21 ユーザー指定で -3 から少し弱く）。台本の `intro_se_volume` で変更可

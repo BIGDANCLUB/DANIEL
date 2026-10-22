@@ -21,7 +21,7 @@
    "subs": [
     "「{日本の銅線が}\n{狙われている}」\n金属盗が\n4年で\n<4倍近くに急増>"
    ],
-   "scene": "s00",
+   "scene": "c00",
    "kana": "ニッポ'ンノ/ドオセンガ'/ネラワ'レテイル、キンゾ_クトオガ'/ヨ'ネンデ/ヨン'バイ/チ'カクニ/キュウゾオ'"
   },
   {
@@ -29,7 +29,7 @@
    "subs": [
     "銅線などの金属を\n狙った<金属盗>"
    ],
-   "scene": "s01"
+   "scene": "c01"
   },
   {
    "say": "2020年は約5500件だったが、2024年には約2万700件。4倍近くに膨れ上がった。",
@@ -39,7 +39,7 @@
     "2024年には\n約<2万700件>",
     "4倍近くに\n<膨れ上がった>"
    ],
-   "scene": "s02",
+   "scene": "c02",
    "kana": "ニセ'ン/ニジュウ'ネンワ/ヤ'ク/ゴセ'ン/ゴヒャッ'ケンダッタガ、ニセ'ン/ニ'ジュウ/ヨ'ネンニワ/ヤ'ク/ニマ'ン/ナナヒャッ'ケン、ヨン'バイ/チ'カクニ/_フクレアガ'ッタ"
   },
   {
@@ -48,7 +48,7 @@
     "被害額は1年で\n約<140億円>",
     "にのぼる"
    ],
-   "scene": "s03"
+   "scene": "c03"
   },
   {
    "say": "特に狙われたのが太陽光発電所の送電ケーブルだ。",
@@ -56,7 +56,7 @@
     "特に狙われたのが\n{太陽光発電所}の",
     "送電ケーブルだ"
    ],
-   "scene": "s04"
+   "scene": "c04"
   },
   {
    "say": "人目のない郊外に夜中に侵入し、ケーブルを切断して持ち去る。",
@@ -64,7 +64,7 @@
     "人目のない郊外に\n夜中に侵入し",
     "ケーブルを切断して\n<持ち去る>"
    ],
-   "scene": "s05",
+   "scene": "c05",
    "kana": "_ヒトメノ'/ナ'イ/コ'オガイニ/ヨナカ'ニ/シンニュウ'_シ、ケエブルオ'/セツダン'_シテ/モ_チサ'ル"
   },
   {
@@ -75,7 +75,7 @@
     "被害も出た"
    ],
    "say": "2024年には群馬県の養鶏場で銅線が盗まれ停電。エアコンが止まり、ニワトリが死ぬ被害も出た。",
-   "scene": "g01"
+   "scene": "c06"
   },
   {
    "say": "警察庁によると、太陽光発電所でのケーブル窃盗は、外国人による犯行が6割以上を占めるという。検挙された中で最も多かったのはカンボジア人だった。",
@@ -86,7 +86,7 @@
     "検挙された中で\n最も多かったのは",
     "{カンボジア人}だった"
    ],
-   "scene": "s07"
+   "scene": "c07"
   },
   {
    "subs": [
@@ -95,7 +95,7 @@
     "<不法残留>の疑いで\n逮捕されていた"
    ],
    "say": "三重県の発電所から銅線を盗んだとして逮捕された1人は、不法残留の疑いで逮捕されていた。",
-   "scene": "g02",
+   "scene": "c08",
    "kana": "ミエ'ケンノ/ハツデンショ'カラ/ドオセンオ'/ヌス'ンダト/_シテ'/タ'イホ/サレタ'/_ヒト'リワ、フホオ'/ザンリュウノ'/ウタガイデ'/タ'イホサレテイタ"
   },
   {
@@ -103,7 +103,7 @@
    "subs": [
     "2025年に\n{金属盗対策法}が成立"
    ],
-   "scene": "s09",
+   "scene": "c09",
    "kana": "ニセ'ン/ニ'ジュウ/ゴ'ネンニ/キンゾクトオタイサ'クホオガ/セエリツ'"
   },
   {
@@ -112,7 +112,7 @@
     "今年6月からは\n買取業者に",
     "売り手の<本人確認>を\n義務付けた"
    ],
-   "scene": "s10"
+   "scene": "c10"
   },
   {
    "say": "2025年の件数は約1万5700件。24%減少した。",
@@ -120,7 +120,7 @@
     "2025年の件数は\n約{1万5700件}",
     "<24%減少>した"
    ],
-   "scene": "s11",
+   "scene": "c11",
    "kana": "ニセ'ン/ニ'ジュウ/ゴ'ネンノ/ケンス'ウワ/ヤ'ク/イチマ'ン/ゴセ'ン/ナナヒャッ'ケン、ニ'ジュウ/ヨンパアセ'ント/ゲンショオ'_シタ"
   },
   {
@@ -129,7 +129,7 @@
     "しかし\n静岡や愛知など",
     "警戒の薄い地方へ\n<被害が広がる>"
    ],
-   "scene": "s12"
+   "scene": "c12"
   },
   {
    "say": "日本のインフラを守るため、監視の目を緩めてはならないのである。",
@@ -138,52 +138,52 @@
     "監視の目を\n<緩めてはならない>",
     "のである"
    ],
-   "scene": "s13",
+   "scene": "c13",
    "kana": "ニッポ'ンノ/インフラオ'/マモ'ル/タメ'、カンシノ'/メ'オ/ユルメ'テワ/ナラ'ナイノデアル"
   }
  ],
  "scenes": {
-  "s00": {
-   "file": "../catmeme/backgrounds/14_japan/bg43_award_stage.png"
+  "c00": {
+   "file": "provided/doc009/image/ahmedalmaslamani-technology-10529253_1920.jpg"
   },
-  "s01": {
-   "file": "../catmeme/backgrounds/14_japan/bg44_world_map.png"
-  },
-  "s02": {
-   "file": "../catmeme/backgrounds/14_japan/bg45_airport_arrival.png"
-  },
-  "s03": {
-   "file": "../catmeme/backgrounds/14_japan/bg46_sushi_counter.png"
-  },
-  "s04": {
-   "file": "../catmeme/backgrounds/14_japan/bg47_ramen_shop.png"
-  },
-  "s05": {
-   "file": "../catmeme/backgrounds/14_japan/bg48_clean_street.png"
-  },
-  "g01": {
-   "file": "../catmeme/backgrounds/14_japan/bg49_public_toilet.png"
-  },
-  "s07": {
+  "c01": {
    "file": "../catmeme/backgrounds/14_japan/bg51_night_street.png"
   },
-  "g02": {
-   "file": "../catmeme/backgrounds/14_japan/bg52_koban.png"
+  "c02": {
+   "file": "../catmeme/assets_video/wide/v11_stock_chart_blue.mp4"
   },
-  "s09": {
-   "file": "../catmeme/backgrounds/14_japan/bg53_shinkansen.png"
+  "c03": {
+   "file": "../catmeme/assets_video/wide/v06_cash_counting.mp4"
   },
-  "s10": {
-   "file": "../catmeme/backgrounds/14_japan/bg54_station_crowd_map.png"
+  "c04": {
+   "file": "provided/doc009/video/42388-431511474_medium.mp4"
   },
-  "s11": {
-   "file": "../catmeme/backgrounds/14_japan/bg55_ryokan.png"
+  "c05": {
+   "file": "../catmeme/assets_video/wide/v10_hooded_figure_mystery.mp4"
   },
-  "s12": {
-   "file": "../catmeme/backgrounds/14_japan/bg56_kyoto_temple.png"
+  "c06": {
+   "file": "../catmeme/backgrounds/14_japan/bg63_hokkaido_field.png"
   },
-  "s13": {
-   "file": "../catmeme/backgrounds/14_japan/bg57_tokyo_skyline.png"
+  "c07": {
+   "file": "../catmeme/assets_video/wide/v16_police_car_lights.mp4"
+  },
+  "c08": {
+   "file": "../catmeme/backgrounds/15_vambi/bg77_police_station.png"
+  },
+  "c09": {
+   "file": "../catmeme/backgrounds/16_tenchim/bg88_contract_papers.png"
+  },
+  "c10": {
+   "file": "../catmeme/backgrounds/13_yard/bg41_yard_scrap.png"
+  },
+  "c11": {
+   "file": "provided/doc009/video/11051-227807749_medium.mp4"
+  },
+  "c12": {
+   "file": "../catmeme/assets_video/tall/t04_police_car_night.mp4"
+  },
+  "c13": {
+   "file": "provided/doc009/video/42388-431511474_medium.mp4"
   }
  }
 }

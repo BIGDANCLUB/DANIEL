@@ -2,10 +2,10 @@
 """動画引用シリーズ（10/22 ユーザー指定）: 参考動画（YouTube「世界から見たスゴイ日本」の新幹線の回）の作りをそのまま真似る。
 
 画面（1080x1920、参考動画を実測）
-  - 背景は黒。上の黒帯に2行のタイトル（1行目 白、2行目 黄 #F7FA14）。丸ゴシック極太 108px、縁取りなし
+  - 背景は黒。上の黒帯に2行のタイトル（1行目 白、2行目 黄 #F7FA14）。Noto Sans JP Black 108px、縁取りなし
   - 中央 y=479〜1593 に引用した動画（横幅いっぱい、はみ出しは上下を切る）
   - 下の黒帯に引用元の表示（「@アカウント名」白、y≈1717）
-  - 字幕は丸ゴシック極太 92px、白文字＋黒縁、2行まで、ブロックの中心 y≈1271。出入りはパッと切り替え（動きなし）
+  - 字幕はNoto Sans JP Black 92px、白文字＋黒縁、2行まで、ブロックの中心 y≈1271。出入りはパッと切り替え（動きなし）
     ナレーションは白、動画の中の人のセリフは水色 #50C4EF
 声
   - VOICEVOX ずんだもん（ノーマル）、速さ 1.25（参考動画の字幕の表示時間から逆算）。字幕どおりに読む
@@ -36,7 +36,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 FF = doc.FF
 W, H, FPS = 1080, 1920, 30
 SR = doc.SR
-FONT = os.environ.get("QUOTE_FONT", os.path.join(HERE, "fonts", "MPLUSRounded1c-Black.ttf"))
+FONT = os.environ.get("QUOTE_FONT", os.path.join(HERE, "fonts", "NotoSansJP[wght].ttf"))   # Noto Sans JP Black（10/22 ユーザー指定）
 TITLE_SIZE, TITLE_Y = 108, (272, 403)
 VIDEO_TOP, VIDEO_BOTTOM = 479, 1593
 CREDIT_SIZE, CREDIT_Y = 70, 1717

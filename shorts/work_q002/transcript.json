@@ -1,0 +1,33 @@
+{
+  "segments": [
+    {
+      "start": 2.2,
+      "end": 10.5,
+      "speaker": "Reporter",
+      "text": "Man, so again, the the fans, the Japan fans, the Samurai Blue faithful, cleaning up in their sections after...",
+      "ja": "いやあ、またしてもファンたちが、日本のサポーター、熱烈なサムライブルーのファンたちが試合後に自分たちのエリアを清掃しています…"
+    },
+    {
+      "start": 10.8,
+      "end": 18.2,
+      "speaker": "Reporter",
+      "text": "And we also saw, you know, Jameis Winston, who is working for the Fox crew, he also joined in, wearing a Samurai Blue jersey...",
+      "ja": "そしてFOXのスタッフとして参加しているジェイミス・ウィンストンも、サムライブルーのユニフォームを着て清掃に加わっているのが見られました…"
+    },
+    {
+      "start": 25.5,
+      "end": 27.0,
+      "speaker": "Jameis Winston",
+      "text": "Thank you.",
+      "ja": "ありがとう。"
+    },
+    {
+      "start": 27.5,
+      "end": 29.0,
+      "speaker": "Japanese fan",
+      "text": "Thank you.",
+      "ja": "ありがとうございます。"
+    }
+  ],
+  "other_sounds": "Stadium ambient chatter, PA system echo, rustling of blue plastic trash bags."
+}

@@ -92,7 +92,8 @@ def subtitle(text, color):
             size -= 2
         f = font(size)
         x = (W - f.getlength(doc.plain(r))) / 2
-        for seg, col in doc.runs(r):
+        parts = [(doc.plain(r), "#ffffff")] if color == BLUE else doc.runs(r)   # 本人の発言（水色）は色分けしない（10/22 ユーザー指定）
+        for seg, col in parts:
             d.text((x, y0 + i * SUB_PITCH), seg, font=f, anchor="lm", stroke_width=SUB_STROKE, stroke_fill="#000000",
                    fill=color if col == "#ffffff" else col)
             x += f.getlength(seg)

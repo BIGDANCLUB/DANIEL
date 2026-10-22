@@ -66,6 +66,17 @@ def org(b, who, sub, **kw):
     return dict(bg=bg(b), cats=[cat(ORG_CAT[who], who, 960, h=720)], say=sub, text_top=True, **kw)
 
 
+PH = os.path.join(HERE, "backgrounds", "24_chudo", "photos")   # ユーザー提供の報道写真（別のセッションで用意したもの・10/22）。
+# 笑顔の写真は批判の言葉と並べない（からかっているように見えないように）
+
+
+def pic(name, text, b=PRESS, **kw):
+    """ユーザー提供の写真を上に枠つきで大きく、説明は下の帯。猫は右に小さく（写真の人の顔にかけない）。"""
+    return dict(bg=bg(b), inset={"card": os.path.join(PH, name + "_framed.png"), "box": (140, 16, 1640, 672)}, say="",
+                explain=text, no_pop=True, text_top=True, dur=kw.pop("dur", 4.4),
+                cats=[cat("@calm", "博識な猫", 1760, h=380, bottom=660, float=True)], **kw)
+
+
 def card(c, sub, b=BOARD, **kw):
     return dia(c, sub, b, right=S, dur=kw.pop("dur", 5.0), se=kw.pop("se", "card_flip"), **kw)
 
@@ -92,6 +103,7 @@ def cuts_all():
         ss("党の説明と批判\n両方を\n順番に見ていこう", TL, se="tv_professional_poon"),
         # ---- 2. 中道改革連合ってどんな党？ ----
         chap("中道改革連合って\nどんな党？", se="doon_heavy", bgm={"file": NORA, "gain": -4, "fade": 0.6}),
+        pic("p1_party_handshake", "中道改革連合の会見（2026年）", dur=4.0),
         card("e02_timeline", "2026年1月　立憲民主党と公明党が合流してできた新党", dur=5.4),
         nn("立憲と公明が\nひとつの党に！？", TL, se="pikon"),
         ss("“中道”を掲げて\n衆院選に挑んだ", VOTE, se="page_turn_01"),
@@ -159,8 +171,9 @@ def cuts_all():
         nn("でもさ\n選挙で負けたのに\nそんなに使ってたの？", PAPERS, se="question_mark_pop_confused_huh"),
         ss("選挙の経費は\n勝っても負けても\nかかる", PAPERS, se="kon"),
         ss("候補者が多い党ほど\nポスターや宣伝の\nお金もふくらむ", PAPERS, se="pi"),
-        org(PRESS, "民主改革の会", "階猛 幹事長（要旨）\n“負い目を感じなくては\nいけないものではない”", se="page_turn_01", dur=4.4),
-        org(PRESS, "民主改革の会", "“最善策だったと考えているが\n批判は甘んじて\n受けざるを得ない”", se="page_turn_01", dur=4.4),
+        pic("p3_hashina_pose", "中道で幹事長を務めた　階猛氏（いまは民主改革の会の幹事長）", dur=4.2, se="page_turn_01"),
+        pic("p2_hashina_talk", "階氏（要旨）「残務整理を進めるうえで必要」\n「負い目を感じなくてはいけないものではない」", dur=5.0),
+        pic("p2_hashina_talk", "「最善策だったと考えているが\n批判は甘んじて受けざるを得ない」（要旨）", dur=5.0, se="page_turn_01"),
         # ---- 6. 批判の声 ----
         chap("批判の声", se="doon_heavy", bgm={"file": PURPLE, "gain": -4, "fade": 0.6}),
         org(MEETING, "公明党", "西田 幹事長（要旨）\n“国民の血税\n使い道をしっかり示して”", se="page_turn_01", dur=4.4),

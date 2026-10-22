@@ -1,0 +1,47 @@
+{
+  "language": "Hindi",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 2.5,
+      "text": "next to the parking. Main police station gaya.",
+      "ja": "駐車場の隣の交番（警察署）に行ったんだ。"
+    },
+    {
+      "start": 2.5,
+      "end": 7.0,
+      "text": "Police station gaya, usne itne acche se greet kiya, itne acche se baat kiya,",
+      "ja": "警察署に行ったら、すごく愛想よく挨拶してくれて親切に対応してくれたんだけど、"
+    },
+    {
+      "start": 7.0,
+      "end": 10.5,
+      "text": "usko English itni nahi aati thi, toh usne Utsav ko phone laga ke diya.",
+      "ja": "向こうがあまり英語を話せなくて、ウツァブに電話を繋いでくれたんだ。"
+    },
+    {
+      "start": 10.5,
+      "end": 13.8,
+      "text": "Usne mujhe ek form bharne diya, maine sab write down kiya.",
+      "ja": "書類を1枚渡されて、全部記入したんだよ。"
+    },
+    {
+      "start": 13.8,
+      "end": 16.8,
+      "text": "Usne bola, 'Tum baitho, baitho baitho, 10-15 minute baitho.'",
+      "ja": "そしたら「座ってて、10〜15分くらい座って待ってて」と言われて。"
+    },
+    {
+      "start": 16.8,
+      "end": 20.0,
+      "text": "Maine bola, 'Theek hai, baith jaate hain.' Maine socha shayad aise hi baithne bol raha hoga,",
+      "ja": "「はい、座ってます」って。どうせ適当に待たされてるだけで、"
+    },
+    {
+      "start": 20.0,
+      "end": 22.5,
+      "text": "phone vone karega, baad mein bolega chale jao.",
+      "ja": "どこかに電話した後に「もう帰っていいよ」って言われるんだろうなと思ってたんだ。"
+    }
+  ]
+}

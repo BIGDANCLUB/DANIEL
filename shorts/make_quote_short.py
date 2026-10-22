@@ -81,15 +81,21 @@ def base_frame(title, credit):
 
 
 def subtitle(text, color):
+    """字幕。{黄色} <赤> で大事な言葉に色を付ける（通常のショートと同じ。黄 #FFFF00、赤 #FF0000）。"""
     im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
     rows = text.split("\n")
     y0 = SUB_CY - SUB_PITCH * (len(rows) - 1) / 2
     for i, r in enumerate(rows):
         size = SUB_SIZE
-        while font(size).getlength(r) > W - 60:
+        while font(size).getlength(doc.plain(r)) > W - 60:
             size -= 2
-        centered(d, r, y0 + i * SUB_PITCH, size, color, SUB_STROKE)
+        f = font(size)
+        x = (W - f.getlength(doc.plain(r))) / 2
+        for seg, col in doc.runs(r):
+            d.text((x, y0 + i * SUB_PITCH), seg, font=f, anchor="lm", stroke_width=SUB_STROKE, stroke_fill="#000000",
+                   fill=color if col == "#ffffff" else col)
+            x += f.getlength(seg)
     return im
 
 
@@ -275,7 +281,7 @@ def main(story_path, out):
         if cur:
             k = (cur[-1][2], cur[-1][3])
             if k not in cache:
-                cache[k] = subtitle(k[0].replace("{", "").replace("}", "").replace("<", "").replace(">", ""), k[1])
+                cache[k] = subtitle(k[0], k[1])
             frame.alpha_composite(cache[k])
         enc.stdin.write(frame.convert("RGB").tobytes())
     if reader:

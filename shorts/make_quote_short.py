@@ -36,7 +36,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 FF = doc.FF
 W, H, FPS = 1080, 1920, 30
 SR = doc.SR
-FONT = os.path.join(HERE, "fonts", "MPLUSRounded1c-Black.ttf")
+FONT = os.environ.get("QUOTE_FONT", os.path.join(HERE, "fonts", "MPLUSRounded1c-Black.ttf"))
 TITLE_SIZE, TITLE_Y = 108, (272, 403)
 VIDEO_TOP, VIDEO_BOTTOM = 479, 1593
 CREDIT_SIZE, CREDIT_Y = 70, 1717
@@ -47,7 +47,10 @@ LEAD, GAP, DUCK_DB, LUFS = 0.2, 0.1, -10, -9.6
 
 
 def font(size):
-    return ImageFont.truetype(FONT, size)
+    f = ImageFont.truetype(FONT, size)
+    if "NotoSans" in FONT:
+        f.set_variation_by_name("Black")
+    return f
 
 
 def centered(d, text, y, size, fill, stroke=0):

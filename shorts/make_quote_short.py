@@ -19,7 +19,10 @@ usage: python3 make_quote_short.py story_q001.json out/Q-001.mp4
   clip: 引用する動画ファイル（台本からの相対パス）
   clip_ss: 動画の開始秒（省略で0）
   lines: [{"say": 読み, "subs": ["1行目\n2行目", ...], "color": "white"|"blue", "kana": 任意,
-           "pause": 任意（このあと元の音だけ流す秒数）}]
+           "pause": 任意（このあと元の音だけ流す秒数）,
+           "show": 任意（この行から動画の代わりに出す画像。Xの投稿など）, "credit": 任意（この行からの引用元表示）}]
+  clip_crop: 任意（ffmpeg の crop。画面録画から動画の部分だけ切り出すとき）
+  尺は 45〜59 秒（短いときは最後を引用動画のまま伸ばす）
 """
 import json
 import os
@@ -44,6 +47,7 @@ SUB_SIZE, SUB_CY, SUB_PITCH, SUB_STROKE = 92, 1271, 106, 8
 WHITE, YELLOW, BLUE = "#ffffff", "#f7fa14", "#50c4ef"
 VOICE = {"speaker": "ずんだもん", "style": "ノーマル", "speedScale": 1.25}
 LEAD, GAP, DUCK_DB, LUFS = 0.2, 0.1, -10, -9.6
+MIN_LEN, MAX_LEN = 45.0, 59.0          # 動画引用シリーズの尺（10/22 ユーザー指定）
 
 
 def font(size):
@@ -130,15 +134,19 @@ def main(story_path, out):
     clips = voice(lines, os.path.join(base, cfg.get("voice_dir", work + "/voice")))
 
     # タイムライン: 行ごとに読み、"pause" があれば元の音だけ流す
-    t, subs, narr = LEAD, [], []
+    t, subs, narr, shows = LEAD, [], [], []
     for l, (a, bounds) in zip(lines, clips):
         st, dur = t, len(a) / SR
+        prev = shows[-1] if shows else [0, None, cfg["credit"]]   # 書いていない行は前の行のまま
+        shows.append([st, l["show"] if "show" in l else prev[1], l.get("credit", prev[2])])
         edges = [st] + [st + b for b in bounds] + [st + dur]
         for p, (s0, s1) in zip(l["subs"], zip(edges, edges[1:])):
             subs.append([s0, s1, p, BLUE if l.get("color") == "blue" else WHITE])
         narr.append((st, a))
         t = st + dur + GAP + l.get("pause", 0)
-    total = cfg.get("duration") or t + cfg.get("tail", 0.3)
+    total = cfg.get("duration") or max(MIN_LEN, t + cfg.get("tail", 0.3))
+    if total > MAX_LEN:
+        sys.exit(f"{total:.1f} 秒になります。動画引用シリーズは {MIN_LEN}〜{MAX_LEN} 秒（原稿を削ってください）")
     for i in range(len(subs) - 1):       # 次の字幕までは前の字幕を出しておく（参考動画と同じ）
         subs[i][1] = subs[i + 1][0]
     subs[-1][1] = min(total, subs[-1][1] + 0.3)
@@ -147,10 +155,14 @@ def main(story_path, out):
     # 音: 引用した動画の音（ナレーション中は下げる）＋ずんだもん
     clip = os.path.join(base, cfg["clip"])
     ss = cfg.get("clip_ss", 0)
-    orig = np.frombuffer(subprocess.run([FF, "-v", "error", "-ss", str(ss), "-i", clip, "-t", f"{total:.3f}",
+    orig = np.frombuffer(subprocess.run([FF, "-v", "error", "-stream_loop", "-1", "-ss", str(ss), "-i", clip, "-t", f"{total:.3f}",
                                          "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"],
                                         capture_output=True).stdout, np.float32).copy()
     orig = np.pad(orig, (0, max(0, n - len(orig))))[:n] * 10 ** (cfg.get("clip_volume", 0) / 20)
+    for k, (st, show, _) in enumerate(shows):     # 画像を出している間は引用動画の音を消す
+        if show:
+            en = shows[k + 1][0] if k + 1 < len(shows) else total
+            orig[int(st * SR):int(en * SR)] = 0
     vo = np.zeros(n, np.float32)
     gain = np.ones(n, np.float32)
     for st, a in narr:
@@ -168,7 +180,7 @@ def main(story_path, out):
                         "-af", "ebur128", "-f", "null", "-"], capture_output=True, text=True).stderr
     now = float([x for x in r.splitlines() if x.strip().startswith("I:")][-1].split()[1])
     gain_db = LUFS - now
-    for _ in range(3):
+    for _ in range(8):
         subprocess.run([FF, "-loglevel", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", raw,
                         "-af", f"volume={gain_db:.2f}dB,alimiter=limit=0.97:attack=5:release=50:level=false",
                         "-ar", str(SR), "-t", f"{total:.3f}", wav], check=True)
@@ -180,10 +192,21 @@ def main(story_path, out):
         gain_db += LUFS - got
 
     # 映像
-    over = base_frame(cfg["title"], cfg["credit"])
+    overs = {}
+    stills = {}
+
+    def still(path):
+        """引用する画像（Xの投稿など）を動画の枠に収める（はみ出さないように縮め、余白は黒）。"""
+        if path not in stills:
+            im = Image.open(os.path.join(base, path)).convert("RGB")
+            im.thumbnail((W, VIDEO_BOTTOM - VIDEO_TOP), Image.LANCZOS)
+            box = Image.new("RGB", (W, VIDEO_BOTTOM - VIDEO_TOP), (0, 0, 0))
+            box.paste(im, ((W - im.width) // 2, (box.height - im.height) // 2))
+            stills[path] = box
+        return stills[path]
     vh = VIDEO_BOTTOM - VIDEO_TOP
-    reader = subprocess.Popen([FF, "-v", "error", "-ss", str(ss), "-stream_loop", "-1", "-i", clip,
-                               "-vf", f"scale={W}:{vh}:force_original_aspect_ratio=increase,crop={W}:{vh},fps={FPS}",
+    reader = subprocess.Popen([FF, "-v", "error", "-stream_loop", "-1", "-ss", str(ss), "-i", clip,
+                               "-vf", f"{cfg.get('clip_crop', 'null')},scale={W}:{vh}:force_original_aspect_ratio=increase,crop={W}:{vh},fps={FPS}",
                                "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
     enc = subprocess.Popen([FF, "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}",
                             "-r", str(FPS), "-i", "-", "-i", wav, "-c:v", "libx264", "-preset", "medium", "-crf", "18",
@@ -194,9 +217,15 @@ def main(story_path, out):
         tt = fi / FPS
         buf = reader.stdout.read(W * vh * 3)
         frame = Image.new("RGBA", (W, H), (0, 0, 0, 255))
-        if len(buf) == W * vh * 3:
+        sh = [x for x in shows if x[0] <= tt] or shows[:1]
+        _, show, credit = sh[-1]
+        if show:
+            frame.paste(still(show), (0, VIDEO_TOP))
+        elif len(buf) == W * vh * 3:
             frame.paste(Image.frombytes("RGB", (W, vh), buf), (0, VIDEO_TOP))
-        frame.alpha_composite(over)
+        if credit not in overs:
+            overs[credit] = base_frame(cfg["title"], credit)
+        frame.alpha_composite(overs[credit])
         cur = [s for s in subs if s[0] <= tt < s[1]]
         if cur:
             k = (cur[-1][2], cur[-1][3])

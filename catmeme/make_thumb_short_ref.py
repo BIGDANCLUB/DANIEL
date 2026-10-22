@@ -29,7 +29,7 @@ BAND_H = 560            # 黒い帯の下端（2行とも横いっぱいの大�
 WHITE, BLACK = (255, 255, 255), (0, 0, 0)
 RED, YELLOW, ORANGE, PINK, BLUE = (232, 28, 36), (255, 228, 0), (255, 108, 24), (240, 56, 120), (24, 84, 200)
 DEEP_YELLOW = (255, 190, 0)   # 白い縁の明るい黄色は見にくい（10/14 ユーザー指定）→ 濃い黄色＋黒い縁
-BGS = [os.path.join(HERE, "backgrounds", d) for d in ("added", "13_yard", "14_japan", "15_vambi", "16_tenchim", "17_imamori", "17_imamori/photos", "18_semicon", "18_story", "19_inawashiro", "22_terakoya", "02_october", "01_todai", "04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
+BGS = [os.path.join(HERE, "backgrounds", d) for d in ("added", "13_yard", "14_japan", "15_vambi", "16_tenchim", "17_imamori", "17_imamori/photos", "18_semicon", "18_story", "19_inawashiro", "22_terakoya", "24_chudo/photos", "02_october", "01_todai", "04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
 
 
 def bg_path(n):
@@ -193,6 +193,16 @@ def terakoya():
     img.convert("RGB").save(p)
 
 
+def chudo():
+    """24本目（中道改革連合の政党交付金）のショート2本。政治家の写真は使わない（党のロゴも出さない）。悪口は書かない。"""
+    make("short_24_chudo_ref.png", "議員1人の党に", DEEP_YELLOW, "交付金5.8億円", RED,
+         "bg87_refund_money", [("surprise_big_pupils_cat", 0.6, 830, 1250, 380, True)],
+         "なぜ受け取れる!?", "b", cap_y=1420, cap_col=DEEP_YELLOW)
+    make("short_24b_chudo_ref.png", "党は解体、議員は1人", DEEP_YELLOW, "なぜ税金が入る？", RED,
+         "bg25_office_desk", [("huh_huh_cat", 1.0, 830, 1250, 400, True)],
+         "1月1日のルール!?", "b", cap_y=1420, cap_col=DEEP_YELLOW)
+
+
 if __name__ == "__main__":
     import sys
-    {"12": akaihane, "13": yard, "16": tenchim, "17": imamori, "19": inawashiro, "18": semicon, "22": terakoya}[sys.argv[1] if len(sys.argv) > 1 else "13"]()
+    {"12": akaihane, "13": yard, "16": tenchim, "17": imamori, "19": inawashiro, "18": semicon, "22": terakoya, "24": chudo}[sys.argv[1] if len(sys.argv) > 1 else "13"]()

@@ -507,3 +507,27 @@ def passport():
 
 if __name__ == "__main__" and os.environ.get("THUMB") == "23":
     passport()
+
+
+def chudo():
+    """24本目（中道改革連合の政党交付金）で3案。実在の政治家の写真・似顔絵は使わない。党のロゴは描かない。悪口・あだ名は書かない。"""
+    type_a("24_chudo_ref_a.png", "bg25_office_desk", "bg87_refund_money",
+           ("surprise_big_pupils_cat", 0.6, 250, 470, 460, False),
+           [("huh_huh_cat", 1.0, 1100, 410, 300, True)],
+           "中道改革連合の政党交付金",
+           [("議員1人の党に", BLACK)], [("交付金5.8億円", RED)], split=600, size=112)
+    type_b("24_chudo_ref_b.png",
+           [("bg04_voting", [("sad_banana_cat_cry", 1.0, 160, 470, 330, False)]),
+            ("bg05_meeting", [("glare_disgusted_cat", 1.0, 160, 470, 330, False)]),
+            ("bg25_office_desk", [("blank_black_cat_zoning_out", 1.0, 160, 470, 330, False)]),
+            ("bg87_refund_money", [("surprise_big_pupils_cat", 0.6, 160, 470, 330, False)])],
+           [("txt", "衆院選で49議席", 160, 60, 40, YELLOW, -6), ("txt", "9月 事実上解体", 480, 60, 40, YELLOW, 4),
+            ("txt", "残ったのは1人", 800, 60, 42, YELLOW, -4), ("txt", "交付金5.8億円!?", 1130, 60, 40, RED, 6)],
+           [("議員1人の党に交付金", RED)], [("あなたは納得できる？", NAVY)])
+    type_c("24_chudo_ref_c.png", "bg87_refund_money",
+           [("surprise_big_pupils_cat", 0.6, 200, 560, 420, False), ("huh_huh_cat", 1.0, 1100, 560, 400, True)],
+           "中道改革連合　議員1人で政党交付金を受け取り", "5.8億円")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "24":
+    chudo()

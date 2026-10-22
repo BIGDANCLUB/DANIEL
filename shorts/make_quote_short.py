@@ -21,6 +21,9 @@ usage: python3 make_quote_short.py story_q001.json out/Q-001.mp4
   lines: [{"say": 読み, "subs": ["1行目\n2行目", ...], "color": "white"|"blue", "kana": 任意,
            "pause": 任意（このあと元の音だけ流す秒数）,
            "show": 任意（この行から動画の代わりに出す画像。Xの投稿など）, "credit": 任意（この行からの引用元表示）}]
+  lines の "orig": [開始秒, 終了秒] … 本人のコメントの行。ずんだもんは読まず、元動画のその部分を元の音で流し、
+           "subs" に翻訳字幕（水色）を書く。"times" に行の頭からの切り替え秒を書けば字幕を音声に合わせられる
+  clip_volume: 普段の元動画の音（dB、既定 -120＝なし。10/22 ユーザー指定）
   clip_crop: 任意（ffmpeg の crop。画面録画から動画の部分だけ切り出すとき）
   尺は 45〜59 秒（短いときは最後を引用動画のまま伸ばす）
 """
@@ -101,6 +104,9 @@ def voice(lines, vdir):
     os.makedirs(vdir, exist_ok=True)
     out = []
     for i, l in enumerate(lines):
+        if l.get("orig"):           # 本人のコメントの行: ずんだもんは読まない（元の音声を流す）
+            out.append((None, []))
+            continue
         q = doc.vv_query(l["say"], sid)
         if l.get("kana"):
             q["accent_phrases"] = json.loads(doc.vv_post("/accent_phrases?" + urllib.parse.urlencode(
@@ -134,16 +140,33 @@ def main(story_path, out):
     clips = voice(lines, os.path.join(base, cfg.get("voice_dir", work + "/voice")))
 
     # タイムライン: 行ごとに読み、"pause" があれば元の音だけ流す
-    t, subs, narr, shows = LEAD, [], [], []
+    ss = cfg.get("clip_ss", 0)
+    t, subs, narr, shows, segs, cp = LEAD, [], [], [], [], ss   # segs: (出力の開始秒, 元動画の秒, 元の音を出すか)
+    segs.append((0.0, max(0.0, ss - LEAD), False))
     for l, (a, bounds) in zip(lines, clips):
-        st, dur = t, len(a) / SR
+        st = t
         prev = shows[-1] if shows else [0, None, cfg["credit"]]   # 書いていない行は前の行のまま
         shows.append([st, l["show"] if "show" in l else prev[1], l.get("credit", prev[2])])
-        edges = [st] + [st + b for b in bounds] + [st + dur]
+        if l.get("orig"):
+            o0, o1 = l["orig"]
+            dur = o1 - o0
+            segs.append((st, o0, True))
+            # 翻訳字幕: "times"（行の頭からの秒）があればそれ、なければ均等に割る
+            pages = l["subs"]
+            rel = l.get("times") or [dur * k / len(pages) for k in range(len(pages))]
+            edges = [st + x for x in rel] + [st + dur]
+            cp = o1
+        else:
+            dur = len(a) / SR
+            segs.append((st, cp, False))
+            edges = [st] + [st + b for b in bounds] + [st + dur]
+            narr.append((st, a))
+            cp += dur + GAP + l.get("pause", 0)
         for p, (s0, s1) in zip(l["subs"], zip(edges, edges[1:])):
-            subs.append([s0, s1, p, BLUE if l.get("color") == "blue" else WHITE])
-        narr.append((st, a))
+            subs.append([s0, s1, p, BLUE if l.get("color") == "blue" or l.get("orig") else WHITE])
         t = st + dur + GAP + l.get("pause", 0)
+        if l.get("orig"):
+            segs.append((t - GAP - l.get("pause", 0), cp, False))
     total = cfg.get("duration") or max(MIN_LEN, t + cfg.get("tail", 0.3))
     if total > MAX_LEN:
         sys.exit(f"{total:.1f} 秒になります。動画引用シリーズは {MIN_LEN}〜{MAX_LEN} 秒（原稿を削ってください）")
@@ -152,13 +175,19 @@ def main(story_path, out):
     subs[-1][1] = min(total, subs[-1][1] + 0.3)
     n = int(round(total * SR))
 
-    # 音: 引用した動画の音（ナレーション中は下げる）＋ずんだもん
+    # 音: 引用した動画の音＋ずんだもん。元の音は普段は出さず（10/22 ユーザー指定）、"orig" の行だけ元の大きさで流す
     clip = os.path.join(base, cfg["clip"])
-    ss = cfg.get("clip_ss", 0)
-    orig = np.frombuffer(subprocess.run([FF, "-v", "error", "-stream_loop", "-1", "-ss", str(ss), "-i", clip, "-t", f"{total:.3f}",
-                                         "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"],
-                                        capture_output=True).stdout, np.float32).copy()
-    orig = np.pad(orig, (0, max(0, n - len(orig))))[:n] * 10 ** (cfg.get("clip_volume", 0) / 20)
+    src = np.frombuffer(subprocess.run([FF, "-v", "error", "-i", clip, "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"],
+                                       capture_output=True).stdout, np.float32)
+    normal = 10 ** (cfg.get("clip_volume", -120) / 20)
+    orig = np.zeros(n, np.float32)
+    bounds_t = [x[0] for x in segs[1:]] + [total]
+    for (o_st, c_st, loud), o_en in zip(segs, bounds_t):
+        i0, i1 = int(o_st * SR), min(n, int(o_en * SR))
+        if i1 <= i0:
+            continue
+        idx = (int(c_st * SR) + np.arange(i1 - i0)) % len(src)
+        orig[i0:i1] = src[idx] * (1.0 if loud else normal)
     for k, (st, show, _) in enumerate(shows):     # 画像を出している間は引用動画の音を消す
         if show:
             en = shows[k + 1][0] if k + 1 < len(shows) else total
@@ -170,6 +199,9 @@ def main(story_path, out):
         seg = a[:max(0, n - i)]
         vo[i:i + len(seg)] += seg
         gain[max(0, i - int(0.1 * SR)):i + len(seg) + int(0.1 * SR)] = 10 ** (DUCK_DB / 20)
+    for (o_st, c_st, loud), o_en in zip(segs, bounds_t):     # 本人のコメント中は下げない
+        if loud:
+            gain[int(o_st * SR):int(o_en * SR)] = 1.0
     gain = np.convolve(gain, np.ones(int(0.1 * SR)) / (0.1 * SR), "same").astype(np.float32)
     mix = np.clip(vo + orig * gain, -0.99, 0.99).astype(np.float32)
     raw = os.path.join(work, "mix.f32")
@@ -205,9 +237,16 @@ def main(story_path, out):
             stills[path] = box
         return stills[path]
     vh = VIDEO_BOTTOM - VIDEO_TOP
-    reader = subprocess.Popen([FF, "-v", "error", "-stream_loop", "-1", "-ss", str(ss), "-i", clip,
-                               "-vf", f"{cfg.get('clip_crop', 'null')},scale={W}:{vh}:force_original_aspect_ratio=increase,crop={W}:{vh},fps={FPS}",
-                               "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
+    vf = f"{cfg.get('clip_crop', 'null')},scale={W}:{vh}:force_original_aspect_ratio=increase,crop={W}:{vh},fps={FPS}"
+
+    def open_reader(at):
+        return subprocess.Popen([FF, "-v", "error", "-stream_loop", "-1", "-ss", f"{at:.3f}", "-i", clip, "-vf", vf,
+                                 "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
+
+    def clip_time(tt):
+        k = max(i for i, x in enumerate(segs) if x[0] <= tt + 1e-6)
+        return segs[k][1] + (tt - segs[k][0]), k
+    reader, cur_seg = None, None
     enc = subprocess.Popen([FF, "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}",
                             "-r", str(FPS), "-i", "-", "-i", wav, "-c:v", "libx264", "-preset", "medium", "-crf", "18",
                             "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-t", f"{total:.3f}",
@@ -215,6 +254,12 @@ def main(story_path, out):
     cache = {}
     for fi in range(int(round(total * FPS))):
         tt = fi / FPS
+        ct, k = clip_time(tt)
+        if reader is None or (k != cur_seg and abs(ct - expect) > 1.5 / FPS):   # 元動画の別の場所へ飛ぶときは開き直す
+            if reader:
+                reader.kill()
+            reader = open_reader(ct)
+        cur_seg, expect = k, ct + 1 / FPS
         buf = reader.stdout.read(W * vh * 3)
         frame = Image.new("RGBA", (W, H), (0, 0, 0, 255))
         sh = [x for x in shows if x[0] <= tt] or shows[:1]
@@ -233,7 +278,8 @@ def main(story_path, out):
                 cache[k] = subtitle(k[0].replace("{", "").replace("}", "").replace("<", "").replace(">", ""), k[1])
             frame.alpha_composite(cache[k])
         enc.stdin.write(frame.convert("RGB").tobytes())
-    reader.kill()
+    if reader:
+        reader.kill()
     enc.stdin.close()
     enc.wait()
     with open(os.path.splitext(out)[0] + ".srt", "w") as f:

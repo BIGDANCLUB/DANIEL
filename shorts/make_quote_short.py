@@ -8,7 +8,7 @@
   - 字幕はNoto Sans JP Black 92px、白文字＋黒縁、2行まで、ブロックの中心 y≈1271。出入りはパッと切り替え（動きなし）
     ナレーションは白、動画の中の人のセリフは水色 #50C4EF
 声
-  - VOICEVOX ずんだもん（ノーマル）、速さ 1.25（参考動画の字幕の表示時間から逆算）。字幕どおりに読む
+  - VOICEVOX 四国めたん（ノーマル）、速さ 1.25（参考動画の字幕の表示時間から逆算）。字幕どおりに読む
   - 引用した動画の音は、ナレーション中は下げ、ナレーションのない間は元の大きさで流す
   - 仕上がりの音量は参考動画と同じ -9.6 LUFS 前後
 
@@ -48,7 +48,7 @@ VIDEO_TOP, VIDEO_BOTTOM = 479, 1593
 CREDIT_SIZE, CREDIT_Y = 70, 1717
 SUB_SIZE, SUB_CY, SUB_PITCH, SUB_STROKE = 92, 1271, 106, 8
 WHITE, YELLOW, BLUE = "#ffffff", "#f7fa14", "#50c4ef"
-VOICE = {"speaker": "ずんだもん", "style": "ノーマル", "speedScale": 1.25}
+VOICE = {"speaker": "四国めたん", "style": "ノーマル", "speedScale": 1.25}   # 参考動画2本の声（10/22 声の高さ・音色・速さを比べて特定）
 LEAD, GAP, DUCK_DB, LUFS = 0.2, 0.1, -10, -9.6
 MIN_LEN, MAX_LEN = 45.0, 59.0          # 動画引用シリーズの尺（10/22 ユーザー指定）
 

@@ -138,7 +138,7 @@ def name_tag(t):
 
 def intro(bg, tag, say, cat, dur=2.4, bgm=None, se="don_hit"):
     """区切りの頭：主役の猫1匹を真ん中に大きく＋白い集中線＋大きなセリフ。"""
-    c = dict(kind="intro", bg=bg, tag=tag, say=say, cats=[dict(a=cat, mute=False, x=540, h=860, bottom=1700)], dur=dur, fixed=True,
+    c = dict(kind="intro", bg=bg, tag=tag, say=say, cats=[dict(a=cat, mute=False, x=540, h=720, w=760, bottom=1640)], dur=dur, fixed=True,
              no_pop=True, se=se)
     if bgm:
         c["bgm"] = bgm
@@ -147,8 +147,8 @@ def intro(bg, tag, say, cat, dur=2.4, bgm=None, se="don_hit"):
 
 def talk(bg, tag, say, left, right, who="R", dur=2.5, label="友達", se=None):
     """会話：左に相手（札つき）、右に主役。しゃべる側の猫だけ音を出す。left/right は素材名。"""
-    cats = [dict(a=left, mute=who != "L", x=300, h=760, bottom=1500, label=label),
-            dict(a=right, mute=who != "R", x=790, h=760, bottom=1500)]
+    cats = [dict(a=left, mute=who != "L", x=290, h=600, w=470, bottom=1500, label=label),   # 左右それぞれ半分の幅に収める
+            dict(a=right, mute=who != "R", x=790, h=600, w=470, bottom=1500)]
     c = dict(kind="talk", bg=bg, tag=tag, say=say, cats=cats, dur=dur, fixed=True, no_pop=True)
     if se:
         c["se"] = se
@@ -183,7 +183,7 @@ class Renderer:
                 self.bbox[i] = (0, fr.shape[0], 0, fr.shape[1])
         y0, y1, x0, x1 = self.bbox[i]
         fr, a = fr[y0:y1, x0:x1], a[y0:y1, x0:x1]
-        s = k["h"] / fr.shape[0]
+        s = min(k["h"] / fr.shape[0], k.get("w", 10 ** 6) / fr.shape[1])   # 高さと幅の両方に収める（重なり・はみ出しを防ぐ・10/23）
         w, h = max(1, int(fr.shape[1] * s)), max(1, int(fr.shape[0] * s))
         img = cv2.resize(fr, (w, h), interpolation=cv2.INTER_AREA).astype(np.float32) / 255
         al = cv2.resize(a.astype(np.float32), (w, h), interpolation=cv2.INTER_AREA)
@@ -207,7 +207,7 @@ class Renderer:
                 al = cv2.resize(al, None, fx=s, fy=s)
             h, w = al.shape
             x0 = int(k["x"] - w / 2)
-            x0 = min(max(x0, -w // 4), W - w + w // 4)
+            x0 = min(max(x0, 20), W - w - 20)   # 画面からはみ出さない
             over(out, img, al, x0, int(k["bottom"] - h))
             if self.labels[i] is not None:
                 put(out, self.labels[i], max(self.labels[i].width / 2 + 40, k["x"] - 60), k["bottom"])

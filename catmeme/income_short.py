@@ -145,11 +145,13 @@ def intro(bg, tag, say, cat, dur=2.4, bgm=None, se="don_hit"):
     return c
 
 
-def talk(bg, tag, say, left, right, who="R", dur=2.5, label="友達", se=None):
+def talk(bg, tag, say, left, right, who="R", dur=2.5, label="友達", se=None, lscale=1.0, rscale=1.0):
     """会話：左に相手（札つき）、右に主役。しゃべる側の猫だけ音を出す。left/right は素材名。"""
     # 左右とも幅600まで（中心は480ずつ離す → 重なっても120くらいまで。大きく重ならない・10/23）
     cats = [dict(a=left, mute=who != "L", x=300, h=780, w=600, bottom=1560, label=label),
             dict(a=right, mute=who != "R", x=780, h=780, w=600, bottom=1560)]
+    for k, sc in zip(cats, (lscale, rscale)):   # この場面だけ猫を大きく（多少の重なりはOK・10/23）
+        k["h"], k["w"] = k["h"] * sc, k["w"] * sc
     c = dict(kind="talk", bg=bg, tag=tag, say=say, cats=cats, dur=dur, fixed=True, no_pop=True)
     if se:
         c["se"] = se

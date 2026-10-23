@@ -88,11 +88,11 @@ def subtitle(text, color):
     d = ImageDraw.Draw(im)
     rows = text.split("\n")
     y0 = SUB_CY - SUB_PITCH * (len(rows) - 1) / 2
+    size = SUB_SIZE           # 1ページの中は同じ大きさにそろえる
+    while max(font(size).getlength(doc.plain(r)) for r in rows) > SAFE_W:
+        size -= 2
+    f = font(size)
     for i, r in enumerate(rows):
-        size = SUB_SIZE
-        while font(size).getlength(doc.plain(r)) > SAFE_W:
-            size -= 2
-        f = font(size)
         x = (W - f.getlength(doc.plain(r))) / 2
         parts = [(doc.plain(r), "#ffffff")] if color == BLUE else doc.runs(r)   # 本人の発言（水色）は色分けしない（10/22 ユーザー指定）
         for seg, col in parts:
@@ -100,6 +100,59 @@ def subtitle(text, color):
                    fill=color if col == "#ffffff" else col)
             x += f.getlength(seg)
     return im
+
+
+def reflow(pages):
+    """字幕のページを、どの行も同じ大きさ（92px）のまま横幅に収まるように組み直す（10/23 ユーザー指定）。
+    はみ出す行は助詞のあとなどで折り返し、1ページ2行までにして、あふれた分は次のページへ送る。"""
+    f = font(SUB_SIZE)
+    out = []
+    for page in pages:
+        rows = []
+        for r in page.split("\n"):
+            rows += split_row(r, f)
+        for k in range(0, len(rows), 2):
+            out.append("\n".join(rows[k:k + 2]))
+    return out
+
+
+def split_row(row, f):
+    if f.getlength(doc.plain(row)) <= SAFE_W * 1.06:   # ほんの少しのはみ出しは、折り返さずに少し小さくして収める
+        return [row]
+    # 文字ごとの色（{ } < >）を覚えておき、折り返したあとも付け直す
+    chars, mode = [], None
+    for c in row:
+        if c in "{<":
+            mode = c
+        elif c in "}>":
+            mode = None
+        else:
+            chars.append((c, mode))
+    text = "".join(c for c, _ in chars)
+    fit = max(i for i in range(1, len(text) + 1) if f.getlength(text[:i]) <= SAFE_W)
+    # 区切りの候補: 助詞・読点のあと、「った」「した」のあと、カタカナ語の切れ目（・）のあと
+    good = [i for i in range(2, fit + 1)
+            if text[i - 1] in "はがをにでともへのや、・" or text[i - 2:i] in ("った", "した", "って", "して", "から", "まで", "より", "ので")]
+    if not good:   # 助詞などがなければ色の切れ目で
+        good = [i for i in range(2, fit + 1) if i < len(chars) and chars[i - 1][1] != chars[i][1]]
+    good = [i for i in good if len(text) - i >= 2] or good
+    # 前後の長さがなるべくそろう所で切る（後ろが1〜2文字だけ残るのを避ける）
+    def cost(i):
+        if f.getlength(text[i:]) > SAFE_W:
+            return 99 - i
+        inside = i < len(chars) and chars[i - 1][1] and chars[i - 1][1] == chars[i][1]   # 色付きの言葉の途中で切らない
+        return abs((len(text) - i) - i) + (6 if inside else 0)
+    cut = min(good, key=cost) if good else fit
+    def wrap(part):
+        s, m = "", None
+        for c, md in part:
+            if md != m:
+                s += {"{": "}", "<": ">"}.get(m, "")
+                s += md or ""
+                m = md
+            s += c
+        return s + {"{": "}", "<": ">"}.get(m, "")
+    return [wrap(chars[:cut])] + split_row(wrap(chars[cut:]), f)
 
 
 def voice(lines, vdir):
@@ -146,6 +199,8 @@ def main(story_path, out):
     work = os.path.splitext(out)[0] + "_work"
     os.makedirs(work, exist_ok=True)
     lines = cfg["lines"]
+    for l in lines:
+        l["subs"] = reflow(l["subs"])
     clips = voice(lines, os.path.join(base, cfg.get("voice_dir", work + "/voice")))
 
     # タイムライン: 行ごとに読み、"pause" があれば元の音だけ流す

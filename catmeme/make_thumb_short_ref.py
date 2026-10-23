@@ -205,7 +205,7 @@ def chudo():
 
 def income():
     """年収別ショート（お試し）。参考どおり上の帯「年収別／リアルな生活の違い」。オチ（年収0円）が気になるひとこと。"""
-    make("short_income_demo_ref.png", "年収別", RED, "リアルな生活の違い", DEEP_YELLOW,
+    make("short_income_demo_ref.png", "手取りでわかる", RED, "年収ごとの暮らし事情", DEEP_YELLOW,
          "bg16_food_aisle", [("money_counting_orange_cat", 1.0, 260, 1250, 420, False), ("huh_huh_cat", 1.0, 830, 1250, 420, True)],
          "年収0円の正体!?", "b", cap_y=1420, cap_col=DEEP_YELLOW, stroke1=WHITE)
 

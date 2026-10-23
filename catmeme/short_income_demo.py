@@ -51,5 +51,5 @@ def cuts():
 
 
 if __name__ == "__main__":
-    I.run(cuts(), "年収別", "リアルな生活の違い", os.path.join(I.HERE, "out", "short_income_demo.mp4"),
+    I.run(cuts(), "手取りでわかる", "年収ごとの暮らし事情", os.path.join(I.HERE, "out", "short_income_demo.mp4"),
           os.path.join(I.HERE, "out", "short_income_demo_preview"))

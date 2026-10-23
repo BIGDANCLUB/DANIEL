@@ -203,6 +203,13 @@ def chudo():
          "1月1日のルール!?", "b", cap_y=1420, cap_col=DEEP_YELLOW)
 
 
+def income():
+    """年収別ショート（お試し）。参考どおり上の帯「年収別／リアルな生活の違い」。オチ（年収0円）が気になるひとこと。"""
+    make("short_income_demo_ref.png", "年収別", RED, "リアルな生活の違い", DEEP_YELLOW,
+         "bg16_food_aisle", [("money_counting_orange_cat", 1.0, 260, 1250, 420, False), ("huh_huh_cat", 1.0, 830, 1250, 420, True)],
+         "年収0円の正体!?", "b", cap_y=1420, cap_col=DEEP_YELLOW, stroke1=WHITE)
+
+
 if __name__ == "__main__":
     import sys
-    {"12": akaihane, "13": yard, "16": tenchim, "17": imamori, "19": inawashiro, "18": semicon, "22": terakoya, "24": chudo}[sys.argv[1] if len(sys.argv) > 1 else "13"]()
+    {"12": akaihane, "13": yard, "16": tenchim, "17": imamori, "19": inawashiro, "18": semicon, "22": terakoya, "24": chudo, "income": income}[sys.argv[1] if len(sys.argv) > 1 else "13"]()

@@ -23,6 +23,7 @@ usage: python3 make_quote_short.py story_q001.json out/Q-001.mp4
            "show": 任意（この行から引用動画の代わりに出す画像や動画素材。Xの投稿、イメージ映像など）, "credit": 任意（この行からの引用元表示）}]
   lines の "orig": [開始秒, 終了秒] … 本人のコメントの行。ずんだもんは読まず、元動画のその部分を元の音で流し、
            "subs" に翻訳字幕（水色）を書く。"times" に行の頭からの切り替え秒を書けば字幕を音声に合わせられる
+  lines の "at": 秒 … その行（ナレーション）の間に映す元動画の位置。冒頭で山場を先に見せるときに使う
   clip_volume: 普段の元動画の音（dB、既定 -120＝なし。10/22 ユーザー指定）
   sweep: {"画像のパス": "left"|"right"} … その写真を縦いっぱいにして、出している間に横へ流す
   scroll: {"画像のパス": true} … その画像を横幅いっぱいにして、出している間に上から下へ流す
@@ -207,7 +208,7 @@ def main(story_path, out):
     # タイムライン: 行ごとに読み、"pause" があれば元の音だけ流す
     ss = cfg.get("clip_ss", 0)
     t, subs, narr, shows, segs, cp = LEAD, [], [], [], [], ss   # segs: (出力の開始秒, 元動画の秒, 元の音を出すか)
-    segs.append((0.0, max(0.0, ss - LEAD), False))
+    segs.append((0.0, max(0.0, lines[0].get("at", ss) - LEAD), False))
     for l, (a, bounds) in zip(lines, clips):
         st = t
         prev = shows[-1] if shows else [0, None, cfg["credit"]]   # 書いていない行は前の行のまま
@@ -223,6 +224,7 @@ def main(story_path, out):
             cp = o1
         else:
             dur = len(a) / SR
+            cp = l.get("at", cp)        # "at": この行の間に映す元動画の位置（秒）
             segs.append((st, cp, False))
             edges = [st] + [st + b for b in bounds] + [st + dur]
             narr.append((st, a))

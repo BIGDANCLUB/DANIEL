@@ -28,6 +28,7 @@ usage: python3 make_quote_short.py story_q001.json out/Q-001.mp4
   sweep: {"画像のパス": "left"|"right"} … その写真を縦いっぱいにして、出している間に横へ流す
   scroll: {"画像のパス": true} … その画像を横幅いっぱいにして、出している間に上から下へ流す
   clip_hide: [[開始秒, 終了秒], ...] … 元動画のその間（再生ボタンやカーソルが映る所）は映さず、直後のコマで止める
+  lines の "video_at": 秒 … 本人の行で、音はそのまま映像だけこの位置から（再生ボタンなどを避けるとき。映像を止めないので clip_hide より自然）
   clip_crop: 任意（ffmpeg の crop。画面録画から動画の部分だけ切り出すとき）
   尺は 45〜59 秒（短いときは最後を引用動画のまま伸ばす）
 """
@@ -219,6 +220,7 @@ def main(story_path, out):
     # タイムライン: 行ごとに読み、"pause" があれば元の音だけ流す
     ss = cfg.get("clip_ss", 0)
     t, subs, narr, shows, segs, cp = LEAD, [], [], [], [], ss   # segs: (出力の開始秒, 元動画の秒, 元の音を出すか)
+    vshift = {}   # segs の番号 → 映像だけずらす秒（本人の行の "video_at"）
     # 1行目に "at" があるときは、その位置から映し始める（手前の別の場面が一瞬映らないように）
     segs.append((0.0, lines[0]["at"] if "at" in lines[0] else max(0.0, ss - LEAD), False))
     if "at" in lines[0]:
@@ -231,11 +233,14 @@ def main(story_path, out):
             o0, o1 = l["orig"]
             dur = o1 - o0
             segs.append((st, o0, True))
+            # "video_at": 音はそのまま、映像だけこの位置から（画面録画の再生ボタンなどを避けるとき）
+            shift = l["video_at"] - o0 if "video_at" in l else 0
+            vshift[len(segs) - 1] = shift
             # 翻訳字幕: "times"（行の頭からの秒）があればそれ、なければ均等に割る
             pages = l["subs"]
             rel = l.get("times") or [dur * k / len(pages) for k in range(len(pages))]
             edges = [st + x for x in rel] + [st + dur]
-            cp = o1
+            cp = o1 + shift
         else:
             dur = len(a) / SR
             cp = l.get("at", cp)        # "at": この行の間に映す元動画の位置（秒）
@@ -326,7 +331,7 @@ def main(story_path, out):
 
     def clip_time(tt):
         k = max(i for i, x in enumerate(segs) if x[0] <= tt + 1e-6)
-        return segs[k][1] + (tt - segs[k][0]), k
+        return segs[k][1] + vshift.get(k, 0) + (tt - segs[k][0]), k
     reader, cur_seg = None, None
     vreader = {}
     enc = subprocess.Popen([FF, "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}",

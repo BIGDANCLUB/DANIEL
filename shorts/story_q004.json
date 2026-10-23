@@ -1,5 +1,5 @@
 {
- "_comment": "動画引用シリーズ Q-004 インド人の日本の初めての朝（10/23）。引用: Instagram @thefilmychhora_（Dev Vijay Vargiya さん。6/24 投稿、いいね751.4万・コメント2.5万＝ユーザー提供の投稿画面）。動画はユーザー提供の画面録画4本をつないで切り出し（provided/q004/video/all.mp4。clip1 0-8.97s、clip2 -32.0s、clip3 -46.23s、clip4 -69.8s）。本人の発言はヒンディー語、Gemini で書き起こし・翻訳（work_q004/transcript.json）。報道（Asianet Newsable）では日本の初日を『地球のプレミアム会員』と表現。",
+ "_comment": "動画引用シリーズ Q-004 インド人の日本の初めての朝（10/23）。引用: Instagram @thefilmychhora_（Dev Vijay Vargiya さん。6/24 投稿、いいね751.4万・コメント2.5万＝ユーザー提供の投稿画面＝provided/q004/image/instagram_post.png）。動画はユーザー提供の画面録画4本をつないで切り出し（provided/q004/video/all.mp4。clip1 0-8.97s、clip2 -32.0s、clip3 -46.23s、clip4 -69.8s）。本人の発言はヒンディー語、Gemini で書き起こし・翻訳（work_q004/transcript.json）。報道（Asianet Newsable）では日本の初日を『地球のプレミアム会員』と表現。",
  "title": [
   "インド人が驚いた",
   "日本の初めての朝"
@@ -118,14 +118,19 @@
    "subs": [
     "この動画は\n{インスタグラム}で",
     "<750万>以上の\nいいねを集めた"
-   ]
+   ],
+   "show": "provided/q004/image/instagram_post.png"
   },
   {
    "say": "当たり前の日本の朝が、また世界を驚かせたようです",
    "subs": [
     "当たり前の\n{日本の朝}が",
     "また世界を\n驚かせたようです"
-   ]
+   ],
+   "show": null
   }
- ]
+ ],
+ "sweep": {
+  "provided/q004/image/instagram_post.png": "left"
+ }
 }

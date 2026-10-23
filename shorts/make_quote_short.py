@@ -51,6 +51,7 @@ WHITE, YELLOW, BLUE = "#ffffff", "#f7fa14", "#50c4ef"
 VOICE = {"speaker": "四国めたん", "style": "ノーマル", "speedScale": 1.25}   # 参考動画2本の声（10/22 声の高さ・音色・速さを比べて特定）
 LEAD, GAP, DUCK_DB, LUFS = 0.2, 0.1, -10, -9.6
 MIN_LEN, MAX_LEN = 45.0, 59.0          # 動画引用シリーズの尺（10/22 ユーザー指定）
+SAFE_W = 880                           # スマホ全画面では左右が約95pxずつ切れるので、タイトル・字幕はこの幅に収める（10/23 ユーザー指定）
 
 
 def font(size):
@@ -72,7 +73,7 @@ def base_frame(title, credit):
     d = ImageDraw.Draw(im)
     for text, y, col in zip(title, TITLE_Y, (WHITE, YELLOW)):
         size = TITLE_SIZE
-        while font(size).getlength(text) > W - 40:
+        while font(size).getlength(text) > SAFE_W:
             size -= 2
         centered(d, text, y, size, col)
     centered(d, credit, CREDIT_Y, CREDIT_SIZE, WHITE)
@@ -88,7 +89,7 @@ def subtitle(text, color):
     y0 = SUB_CY - SUB_PITCH * (len(rows) - 1) / 2
     for i, r in enumerate(rows):
         size = SUB_SIZE
-        while font(size).getlength(doc.plain(r)) > W - 60:
+        while font(size).getlength(doc.plain(r)) > SAFE_W:
             size -= 2
         f = font(size)
         x = (W - f.getlength(doc.plain(r))) / 2

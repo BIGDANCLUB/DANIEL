@@ -24,6 +24,7 @@ usage: python3 make_quote_short.py story_q001.json out/Q-001.mp4
   lines の "orig": [開始秒, 終了秒] … 本人のコメントの行。ずんだもんは読まず、元動画のその部分を元の音で流し、
            "subs" に翻訳字幕（水色）を書く。"times" に行の頭からの切り替え秒を書けば字幕を音声に合わせられる
   clip_volume: 普段の元動画の音（dB、既定 -120＝なし。10/22 ユーザー指定）
+  sweep: {"画像のパス": "left"|"right"} … その写真を縦いっぱいにして、出している間に横へ流す
   scroll: {"画像のパス": true} … その画像を横幅いっぱいにして、出している間に上から下へ流す
   clip_crop: 任意（ffmpeg の crop。画面録画から動画の部分だけ切り出すとき）
   尺は 45〜59 秒（短いときは最後を引用動画のまま伸ばす）
@@ -341,6 +342,22 @@ def main(story_path, out):
             vb = vreader["proc"].stdout.read(W * vh * 3)
             if len(vb) == W * vh * 3:
                 frame.paste(Image.frombytes("RGB", (W, vh), vb), (0, VIDEO_TOP))
+        elif show and cfg.get("sweep", {}).get(show):
+            # 写真を縦いっぱいにして、横に流す（"left"＝絵が左へ流れる、"right"＝右へ。10/23 ユーザー指定）
+            if ("sweep", show) not in stills:
+                im = Image.open(os.path.join(base, show)).convert("RGB")
+                stills[("sweep", show)] = im.resize((max(W + 200, int(im.width * vh / im.height)), vh), Image.LANCZOS)
+            wide = stills[("sweep", show)]
+            ki = max(i for i, x in enumerate(shows) if x[0] <= tt)
+            while ki > 0 and shows[ki - 1][1] == show:
+                ki -= 1
+            s0 = shows[ki][0]
+            s1 = next((x[0] for x in shows[ki:] if x[1] != show), total)
+            q = min(1, max(0, (tt - s0) / max(0.1, s1 - s0)))
+            if cfg["sweep"][show] == "right":
+                q = 1 - q
+            x = int((wide.width - W) * q)
+            frame.paste(wide.crop((x, 0, x + W, vh)), (0, VIDEO_TOP))
         elif show and cfg.get("scroll", {}).get(show):
             # 画像を横幅いっぱいにして、上から下へゆっくり流す（10/23 ユーザー指定）
             if ("scroll", show) not in stills:

@@ -138,7 +138,7 @@ def name_tag(t):
 
 def intro(bg, tag, say, cat, dur=2.4, bgm=None, se="don_hit"):
     """区切りの頭：主役の猫1匹を真ん中に大きく＋白い集中線＋大きなセリフ。"""
-    c = dict(kind="intro", bg=bg, tag=tag, say=say, cats=[dict(a=cat, mute=False, x=540, h=720, w=760, bottom=1640)], dur=dur, fixed=True,
+    c = dict(kind="intro", bg=bg, tag=tag, say=say, cats=[dict(a=cat, mute=False, x=540, h=820, w=920, bottom=1680)], dur=dur, fixed=True,
              no_pop=True, se=se)
     if bgm:
         c["bgm"] = bgm
@@ -147,8 +147,9 @@ def intro(bg, tag, say, cat, dur=2.4, bgm=None, se="don_hit"):
 
 def talk(bg, tag, say, left, right, who="R", dur=2.5, label="友達", se=None):
     """会話：左に相手（札つき）、右に主役。しゃべる側の猫だけ音を出す。left/right は素材名。"""
-    cats = [dict(a=left, mute=who != "L", x=290, h=600, w=470, bottom=1500, label=label),   # 左右それぞれ半分の幅に収める
-            dict(a=right, mute=who != "R", x=790, h=600, w=470, bottom=1500)]
+    # 左右とも幅600まで（中心は480ずつ離す → 重なっても120くらいまで。大きく重ならない・10/23）
+    cats = [dict(a=left, mute=who != "L", x=300, h=780, w=600, bottom=1560, label=label),
+            dict(a=right, mute=who != "R", x=780, h=780, w=600, bottom=1560)]
     c = dict(kind="talk", bg=bg, tag=tag, say=say, cats=cats, dur=dur, fixed=True, no_pop=True)
     if se:
         c["se"] = se

@@ -148,14 +148,41 @@ def intro(bg, tag, say, cat, dur=2.4, bgm=None, se="don_hit"):
 def talk(bg, tag, say, left, right, who="R", dur=2.5, label="友達", se=None, lscale=1.0, rscale=1.0):
     """会話：左に相手（札つき）、右に主役。しゃべる側の猫だけ音を出す。left/right は素材名。"""
     # 左右とも幅600まで（中心は480ずつ離す → 重なっても120くらいまで。大きく重ならない・10/23）
-    cats = [dict(a=left, mute=who != "L", x=300, h=780, w=600, bottom=1560, label=label),
-            dict(a=right, mute=who != "R", x=780, h=780, w=600, bottom=1560)]
+    cats = [dict(a=left, mute=who != "L", x=300, h=860, w=640, bottom=1580, label=label),
+            dict(a=right, mute=who != "R", x=780, h=860, w=640, bottom=1580)]
     for k, sc in zip(cats, (lscale, rscale)):   # この場面だけ猫を大きく（多少の重なりはOK・10/23）
         k["h"], k["w"] = k["h"] * sc, k["w"] * sc
     c = dict(kind="talk", bg=bg, tag=tag, say=say, cats=cats, dur=dur, fixed=True, no_pop=True)
     if se:
         c["se"] = se
     return c
+
+
+_BBOX = {}
+
+
+def clip_bbox(name):
+    """素材の中で猫が見えている範囲（数枚のフレームの中央値）。最初の1枚だけで決めると、ノイズや動きで猫が小さくなるため。"""
+    if name not in _BBOX:
+        cl = R.Clip(name)
+        n = max(1, int(cl.n / cl.fps))
+        boxes = []
+        for t in np.linspace(0.2, max(0.3, n - 0.3), 8):
+            fr, a = cl.frame(float(t))
+            ys, xs = np.nonzero(a > 0.5)
+            if len(ys) < 200:
+                continue
+            ya, yb = np.percentile(ys, [1, 99.5])
+            xa, xb = np.percentile(xs, [1, 99])
+            boxes.append((ya, yb, xa, xb))
+        if getattr(cl, "cap", None) is not None:
+            cl.cap.release()
+        if boxes:
+            b = np.median(np.array(boxes), 0).astype(int)
+            _BBOX[name] = (b[0], b[1] + 1, b[2], b[3] + 1)
+        else:
+            _BBOX[name] = (0, fr.shape[0], 0, fr.shape[1])
+    return _BBOX[name]
 
 
 class Renderer:
@@ -175,15 +202,9 @@ class Renderer:
         self.bbox = {}
 
     def cat_img(self, i, k, t):
-        fr, a = self.clips[i].frame(t)
-        if i not in self.bbox:   # 余白を落として、見えている猫の高さで大きさを決める
-            ys, xs = np.nonzero(a > 0.5)
-            if len(ys):
-                ya, yb = np.percentile(ys, [0.5, 99.8]).astype(int)
-                xa, xb = np.percentile(xs, [0.3, 99.7]).astype(int)
-                self.bbox[i] = (ya, yb + 1, xa, xb + 1)
-            else:
-                self.bbox[i] = (0, fr.shape[0], 0, fr.shape[1])
+        fr, a = self.clips[i].frame(t + 0.25)   # 素材の最初の1枚が真っ黒なものがある（huh_huh_cat など）ので少し先から
+        if i not in self.bbox:   # 余白を落として、見えている猫の大きさで決める（素材全体から1回だけ計算・どの場面でも同じ大きさ）
+            self.bbox[i] = clip_bbox(k["a"])
         y0, y1, x0, x1 = self.bbox[i]
         fr, a = fr[y0:y1, x0:x1], a[y0:y1, x0:x1]
         s = min(k["h"] / fr.shape[0], k.get("w", 10 ** 6) / fr.shape[1])   # 高さと幅の両方に収める（重なり・はみ出しを防ぐ・10/23）

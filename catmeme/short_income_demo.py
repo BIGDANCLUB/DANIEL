@@ -21,7 +21,7 @@ def cuts():
         I.intro(SUPER, "300万", "手取り約20万！", "meow_ragdoll_chubby_cat", bgm=BGM),
         t(SUPER, "300万", "今日パフェ\n食べに行こ！", "excited_hodomoe_city_cat", "meow_ragdoll_chubby_cat", who="L"),
         t(SUPER, "300万", "いや、半額シール\n待ってるから…", "excited_hodomoe_city_cat", "sulk_hungry_cat"),
-        t(SUPER, "300万", "7時に2割引、\n8時に半額なんよ", "huh_huh_cat", "think_bike_front_seat_cat", lscale=1.08),
+        t(SUPER, "300万", "7時に2割引、\n8時に半額なんよ", "huh_huh_cat", "think_bike_front_seat_cat"),
         # ---- 500万 ----
         I.intro(IZAKAYA, "500万", "手取り約32万！", "happy_hamster_open_arms"),
         t(IZAKAYA, "500万", "週末キャンプ\n行こうぜ！", "dance_trending_cat", "happy_hamster_open_arms", who="L"),

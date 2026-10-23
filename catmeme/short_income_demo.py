@@ -9,7 +9,7 @@ import os
 
 import income_short as I
 
-BGM = {"file": os.path.join(I.HERE, "bgm", "野良猫は宇宙を目指した.mp3"), "gain": -6}
+# BGM は入れない（10/23 ユーザー指定：ショートは猫の音と効果音だけ）
 SUPER, IZAKAYA, RAMEN, ROOM, OFFICE, HOME = ("bg16_food_aisle", "bg13_izakaya", "bg47_ramen_shop", "bg02_room", "bg25_office_desk",
                                              "bg14_home_night")
 
@@ -18,7 +18,7 @@ def cuts():
     t = I.talk
     return [
         # ---- 300万 ----
-        I.intro(SUPER, "300万", "手取り約20万！", "meow_ragdoll_chubby_cat", bgm=BGM),
+        I.intro(SUPER, "300万", "手取り約20万！", "meow_ragdoll_chubby_cat"),
         t(SUPER, "300万", "今日パフェ\n食べに行こ！", "excited_hodomoe_city_cat", "meow_ragdoll_chubby_cat", who="L"),
         t(SUPER, "300万", "いや、半額シール\n待ってるから…", "excited_hodomoe_city_cat", "sulk_hungry_cat"),
         t(SUPER, "300万", "7時に2割引、\n8時に半額なんよ", "huh_huh_cat", "think_bike_front_seat_cat"),

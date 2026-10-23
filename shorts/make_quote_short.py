@@ -208,7 +208,10 @@ def main(story_path, out):
     # タイムライン: 行ごとに読み、"pause" があれば元の音だけ流す
     ss = cfg.get("clip_ss", 0)
     t, subs, narr, shows, segs, cp = LEAD, [], [], [], [], ss   # segs: (出力の開始秒, 元動画の秒, 元の音を出すか)
-    segs.append((0.0, max(0.0, lines[0].get("at", ss) - LEAD), False))
+    # 1行目に "at" があるときは、その位置から映し始める（手前の別の場面が一瞬映らないように）
+    segs.append((0.0, lines[0]["at"] if "at" in lines[0] else max(0.0, ss - LEAD), False))
+    if "at" in lines[0]:
+        lines[0] = {**lines[0], "at": lines[0]["at"] + LEAD}
     for l, (a, bounds) in zip(lines, clips):
         st = t
         prev = shows[-1] if shows else [0, None, cfg["credit"]]   # 書いていない行は前の行のまま

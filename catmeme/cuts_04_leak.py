@@ -352,6 +352,10 @@ POOLS["hack"] = ["angry_aiming_cat", "angry_shooting_cat", "cocky_dj_cat", "taun
 POOLS["react"] += ["stare_big_eyes_tabby_kitten", "yell_orange_fat_cat", "meow_ragdoll_chubby_cat", "punch_tabby_cat_reach"]
 POOLS["calm"] += ["stare_interviewer_cat", "talk_orange_white_sitting_cat", "meow_gray_white_kitten"]
 POOLS["papa"] += ["dance_three_kittens", "dance_tabby_standing_cat"]
+# 10/23 ユーザー追加の素材（TikTok保存→変換・最後のTikTok画面は切り落とし）
+POOLS["react"] += ["stare_tabby_wide_eyes_cat", "punch_boxing_white_cat"]
+POOLS["calm"] += ["money_counting_orange_cat", "read_book_orange_kitten"]
+POOLS["papa"] += ["happy_hamster_open_arms", "dance_orange_gray_cats"]
 FALLBACK = {"react": ["papa", "calm"], "calm": ["papa", "react"], "papa": ["calm", "react"], "hack": ["papa", "calm"]}
 
 

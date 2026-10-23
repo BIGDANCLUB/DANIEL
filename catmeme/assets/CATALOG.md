@@ -82,6 +82,12 @@
 | dance_three_kittens.mp4 | 3匹そろって踊る子猫（浮かれる・お祝い） | 5-8（TikTok保存・10/15 ユーザー追加） | ⚠ |
 | dance_tabby_standing_cat.mp4 | 二本足で踊るキジトラ（ノリノリ） | 5-15（TikTok保存・10/15 ユーザー追加） | ⚠ |
 
+| happy_hamster_open_arms.mp4 | 両手を広げて笑うハムスター（大喜び・ようこそ） | TikTok保存・10/23 ユーザー追加 | |
+| stare_tabby_wide_eyes_cat.mp4 | 目を見開いて固まるキジトラ（驚き・ドン引き）。音なし | TikTok保存・10/23 ユーザー追加 | |
+| money_counting_orange_cat.mp4 | お札を数える茶トラ（お金・計算・ケチ） | TikTok保存・10/23 ユーザー追加 | |
+| punch_boxing_white_cat.mp4 | パンチをくり出す白茶の猫（怒る・ツッコミ）。画質低め | TikTok保存・10/23 ユーザー追加 | |
+| read_book_orange_kitten.mp4 | 本を読む茶トラの子猫（勉強・調べる・説明）。縦長 | TikTok保存・10/23 ユーザー追加 | |
+| dance_orange_gray_cats.mp4 | 二本足で踊る茶トラと灰色の猫（2匹でノリノリ） | TikTok保存・10/23 ユーザー追加 | ⚠ |
 - ⚠ は曲名がついている、または曲で有名なミーム。届いたら実際に聞いて確認し、表を更新する
 
 ## 届いた素材の確認メモ（2026-10-02）
@@ -92,3 +98,5 @@
 - 解像度が低め（640x360 前後）: wave_waving_cat, mock_swinging_cat, excited_hodomoe_city_cat, itchy_kitten_butt。画面の小さめの位置で使う
 - TikTok保存の素材（10/15 追加の9本）は、左右の黒い帯を切り、TikTokのロゴ・ユーザー名を消してから入れた（変換スクリプト: `tools/clean_tiktok_greenscreen.py`）。小さな点が残ることがあるので、大きく映すときは確認する
 - 10/15 追加分の「音」は聞いて確認していない。踊る2本は曲が入っている可能性が高いので ⚠（音を消す）にした
+- 10/23 追加の6本：最後のTikTokの画面を切り落とし、左右の黒い帯とロゴを消した。猫に重なったロゴは `tools/wipe_tiktok_logo.py` で周りの色で埋めた。
+  音は聞いて確認していない。踊る2匹（dance_orange_gray_cats）は曲が入っている可能性が高いので ⚠（音を消す）にした。stare_tabby_wide_eyes_cat は音なし

@@ -27,6 +27,7 @@ usage: python3 make_quote_short.py story_q001.json out/Q-001.mp4
   clip_volume: 普段の元動画の音（dB、既定 -120＝なし。10/22 ユーザー指定）
   sweep: {"画像のパス": "left"|"right"} … その写真を縦いっぱいにして、出している間に横へ流す
   scroll: {"画像のパス": true} … その画像を横幅いっぱいにして、出している間に上から下へ流す
+  clip_hide: [[開始秒, 終了秒], ...] … 元動画のその間（再生ボタンやカーソルが映る所）は映さず、直後のコマで止める
   clip_crop: 任意（ffmpeg の crop。画面録画から動画の部分だけ切り出すとき）
   尺は 45〜59 秒（短いときは最後を引用動画のまま伸ばす）
 """
@@ -49,7 +50,7 @@ FONT = os.environ.get("QUOTE_FONT", os.path.join(HERE, "fonts", "NotoSansJP[wght
 TITLE_SIZE, TITLE_Y = 108, (272, 403)
 VIDEO_TOP, VIDEO_BOTTOM = 479, 1593
 CREDIT_SIZE, CREDIT_Y = 70, 1717
-SUB_SIZE, SUB_CY, SUB_PITCH, SUB_STROKE = 92, 1271, 106, 8
+SUB_SIZE, SUB_CY, SUB_PITCH, SUB_STROKE, SUB_OUTER = 92, 1271, 106, 11, 3
 WHITE, YELLOW, BLUE = "#ffffff", "#f7fa14", "#50c4ef"
 VOICE = {"speaker": "四国めたん", "style": "ノーマル", "speedScale": 1.25}   # 参考動画2本の声（10/22 声の高さ・音色・速さを比べて特定）
 LEAD, GAP, DUCK_DB, LUFS = 0.2, 0.1, -10, -9.6
@@ -94,13 +95,23 @@ def subtitle(text, color):
     while max(font(size).getlength(doc.plain(r)) for r in rows) > SAFE_W:
         size -= 2
     f = font(size)
-    for i, r in enumerate(rows):
-        x = (W - f.getlength(doc.plain(r))) / 2
-        parts = [(doc.plain(r), "#ffffff")] if color == BLUE else doc.runs(r)   # 本人の発言（水色）は色分けしない（10/22 ユーザー指定）
-        for seg, col in parts:
-            d.text((x, y0 + i * SUB_PITCH), seg, font=f, anchor="lm", stroke_width=SUB_STROKE, stroke_fill="#000000",
-                   fill=color if col == "#ffffff" else col)
-            x += f.getlength(seg)
+    # 文字枠: 太い黒ふちの外側に細い白ふち（10/23 ユーザー指定の見本どおり）。
+    # 外の白→黒→文字の順に全行を重ねて、行どうしの縁が上に乗らないようにする
+    for layer in ("outer", "black", "fill"):
+        for i, r in enumerate(rows):
+            x = (W - f.getlength(doc.plain(r))) / 2
+            parts = [(doc.plain(r), "#ffffff")] if color == BLUE else doc.runs(r)   # 本人の発言（水色）は色分けしない（10/22 ユーザー指定）
+            for seg, col in parts:
+                pos = (x, y0 + i * SUB_PITCH)
+                if layer == "outer":
+                    d.text(pos, seg, font=f, anchor="lm", fill="#ffffff",
+                           stroke_width=SUB_STROKE + SUB_OUTER, stroke_fill="#ffffff")
+                elif layer == "black":
+                    d.text(pos, seg, font=f, anchor="lm", fill="#000000",
+                           stroke_width=SUB_STROKE, stroke_fill="#000000")
+                else:
+                    d.text(pos, seg, font=f, anchor="lm", fill=color if col == "#ffffff" else col)
+                x += f.getlength(seg)
     return im
 
 
@@ -326,12 +337,24 @@ def main(story_path, out):
     for fi in range(int(round(total * FPS))):
         tt = fi / FPS
         ct, k = clip_time(tt)
-        if reader is None or (k != cur_seg and abs(ct - expect) > 1.5 / FPS):   # 元動画の別の場所へ飛ぶときは開き直す
+        hide = next((h for h in cfg.get("clip_hide", []) if h[0] <= ct < h[1]), None)
+        if hide:
+            # 画面録画の再生ボタンなどが映る所は、その直後のきれいなコマで止めておく（音はそのまま）
+            if (tuple(hide)) not in cache:
+                r = open_reader(hide[1])
+                cache[tuple(hide)] = r.stdout.read(W * vh * 3)
+                r.kill()
+            buf = cache[tuple(hide)]
             if reader:
                 reader.kill()
-            reader = open_reader(ct)
+            reader = None
+        else:
+            if reader is None or (k != cur_seg and abs(ct - expect) > 1.5 / FPS):   # 元動画の別の場所へ飛ぶときは開き直す
+                if reader:
+                    reader.kill()
+                reader = open_reader(ct)
+            buf = reader.stdout.read(W * vh * 3)
         cur_seg, expect = k, ct + 1 / FPS
-        buf = reader.stdout.read(W * vh * 3)
         frame = Image.new("RGBA", (W, H), (0, 0, 0, 255))
         sh = [x for x in shows if x[0] <= tt] or shows[:1]
         _, show, credit = sh[-1]

@@ -143,5 +143,11 @@
  ],
  "sweep": {
   "provided/q004/image/instagram_post.png": "left"
- }
+ },
+ "clip_hide": [
+  [
+   0.0,
+   1.1
+  ]
+ ]
 }

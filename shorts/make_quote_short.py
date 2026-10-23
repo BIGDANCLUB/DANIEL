@@ -117,7 +117,7 @@ def reflow(pages):
 
 
 def split_row(row, f):
-    if f.getlength(doc.plain(row)) <= SAFE_W * 1.06:   # ほんの少しのはみ出しは、折り返さずに少し小さくして収める
+    if f.getlength(doc.plain(row)) <= SAFE_W:
         return [row]
     # 文字ごとの色（{ } < >）を覚えておき、折り返したあとも付け直す
     chars, mode = [], None
@@ -347,8 +347,12 @@ def main(story_path, out):
                 im = Image.open(os.path.join(base, show)).convert("RGB")
                 stills[("scroll", show)] = im.resize((W, max(vh, int(im.height * W / im.width))), Image.LANCZOS)
             tall = stills[("scroll", show)]
-            s0 = next(x[0] for x in shows if x[1] == show)
-            s1 = next((x[0] for x in shows if x[0] > s0 and x[1] != show), total)
+            # 同じ画像がまた出てきたときも、そのたびに上から下へ流す
+            ki = max(i for i, x in enumerate(shows) if x[0] <= tt)
+            while ki > 0 and shows[ki - 1][1] == show:
+                ki -= 1
+            s0 = shows[ki][0]
+            s1 = next((x[0] for x in shows[ki:] if x[1] != show), total)
             y = int((tall.height - vh) * min(1, max(0, (tt - s0) / max(0.1, s1 - s0))))
             frame.paste(tall.crop((0, y, W, y + vh)), (0, VIDEO_TOP))
         elif show:

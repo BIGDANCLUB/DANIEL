@@ -210,6 +210,20 @@ def income():
          "年収0円の正体!?", "b", cap_y=1420, cap_col=DEEP_YELLOW, stroke1=WHITE)
 
 
+def tax_couple():
+    """世帯年収1000万の夫婦比べ。結果は書かず「どの夫婦!?」で気にさせる。"""
+    make("short_tax_couple_ref.png", "世帯年収1000万", RED, "手取りが1番多い夫婦は？", DEEP_YELLOW,
+         "bg25_office_desk", [("money_counting_orange_cat", 1.0, 260, 1250, 420, False), ("stare_tabby_wide_eyes_cat", 1.0, 830, 1250, 420, True)],
+         "40万以上の差!?", "b", cap_y=1420, cap_col=DEEP_YELLOW, stroke1=WHITE)
+
+
+def quake():
+    """震度で違う。強い揺れの場面は笑いにしない。"""
+    make("short_quake_demo_ref.png", "震度で違う", RED, "揺れたときのリアル", DEEP_YELLOW,
+         "bg14_home_night", [("stare_tabby_wide_eyes_cat", 1.0, 260, 1250, 420, False), ("calm_black_face_sheep", 1.0, 830, 1250, 420, True)],
+         "震度5強でどうする!?", "b", cap_y=1420, cap_col=DEEP_YELLOW, stroke1=WHITE)
+
+
 if __name__ == "__main__":
     import sys
-    {"12": akaihane, "13": yard, "16": tenchim, "17": imamori, "19": inawashiro, "18": semicon, "22": terakoya, "24": chudo, "income": income}[sys.argv[1] if len(sys.argv) > 1 else "13"]()
+    {"12": akaihane, "13": yard, "16": tenchim, "17": imamori, "19": inawashiro, "18": semicon, "22": terakoya, "24": chudo, "income": income, "tax": tax_couple, "quake": quake}[sys.argv[1] if len(sys.argv) > 1 else "13"]()

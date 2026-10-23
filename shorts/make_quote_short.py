@@ -20,10 +20,11 @@ usage: python3 make_quote_short.py story_q001.json out/Q-001.mp4
   clip_ss: 動画の開始秒（省略で0）
   lines: [{"say": 読み, "subs": ["1行目\n2行目", ...], "color": "white"|"blue", "kana": 任意,
            "pause": 任意（このあと元の音だけ流す秒数）,
-           "show": 任意（この行から動画の代わりに出す画像。Xの投稿など）, "credit": 任意（この行からの引用元表示）}]
+           "show": 任意（この行から引用動画の代わりに出す画像や動画素材。Xの投稿、イメージ映像など）, "credit": 任意（この行からの引用元表示）}]
   lines の "orig": [開始秒, 終了秒] … 本人のコメントの行。ずんだもんは読まず、元動画のその部分を元の音で流し、
            "subs" に翻訳字幕（水色）を書く。"times" に行の頭からの切り替え秒を書けば字幕を音声に合わせられる
   clip_volume: 普段の元動画の音（dB、既定 -120＝なし。10/22 ユーザー指定）
+  scroll: {"画像のパス": true} … その画像を横幅いっぱいにして、出している間に上から下へ流す
   clip_crop: 任意（ffmpeg の crop。画面録画から動画の部分だけ切り出すとき）
   尺は 45〜59 秒（短いときは最後を引用動画のまま伸ばす）
 """
@@ -255,6 +256,7 @@ def main(story_path, out):
         k = max(i for i, x in enumerate(segs) if x[0] <= tt + 1e-6)
         return segs[k][1] + (tt - segs[k][0]), k
     reader, cur_seg = None, None
+    vreader = {}
     enc = subprocess.Popen([FF, "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}",
                             "-r", str(FPS), "-i", "-", "-i", wav, "-c:v", "libx264", "-preset", "medium", "-crf", "18",
                             "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-t", f"{total:.3f}",
@@ -272,7 +274,29 @@ def main(story_path, out):
         frame = Image.new("RGBA", (W, H), (0, 0, 0, 255))
         sh = [x for x in shows if x[0] <= tt] or shows[:1]
         _, show, credit = sh[-1]
-        if show:
+        if show and show.lower().endswith((".mp4", ".mov", ".webm", ".m4v")):
+            # 別の動画素材を流す（行の "show" に動画のパス）。出し始めから再生し、短ければくり返す
+            if vreader.get("path") != show:
+                if vreader.get("proc"):
+                    vreader["proc"].kill()
+                vreader.update(path=show, proc=subprocess.Popen(
+                    [FF, "-v", "error", "-stream_loop", "-1", "-i", os.path.join(base, show), "-vf",
+                     f"scale={W}:{vh}:force_original_aspect_ratio=increase,crop={W}:{vh},fps={FPS}",
+                     "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE))
+            vb = vreader["proc"].stdout.read(W * vh * 3)
+            if len(vb) == W * vh * 3:
+                frame.paste(Image.frombytes("RGB", (W, vh), vb), (0, VIDEO_TOP))
+        elif show and cfg.get("scroll", {}).get(show):
+            # 画像を横幅いっぱいにして、上から下へゆっくり流す（10/23 ユーザー指定）
+            if ("scroll", show) not in stills:
+                im = Image.open(os.path.join(base, show)).convert("RGB")
+                stills[("scroll", show)] = im.resize((W, max(vh, int(im.height * W / im.width))), Image.LANCZOS)
+            tall = stills[("scroll", show)]
+            s0 = next(x[0] for x in shows if x[1] == show)
+            s1 = next((x[0] for x in shows if x[0] > s0 and x[1] != show), total)
+            y = int((tall.height - vh) * min(1, max(0, (tt - s0) / max(0.1, s1 - s0))))
+            frame.paste(tall.crop((0, y, W, y + vh)), (0, VIDEO_TOP))
+        elif show:
             frame.paste(still(show), (0, VIDEO_TOP))
         elif len(buf) == W * vh * 3:
             frame.paste(Image.frombytes("RGB", (W, vh), buf), (0, VIDEO_TOP))
@@ -288,6 +312,8 @@ def main(story_path, out):
         enc.stdin.write(frame.convert("RGB").tobytes())
     if reader:
         reader.kill()
+    if vreader.get("proc"):
+        vreader["proc"].kill()
     enc.stdin.close()
     enc.wait()
     with open(os.path.splitext(out)[0] + ".srt", "w") as f:

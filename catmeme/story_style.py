@@ -138,6 +138,9 @@ def flag_img(code, h=46):
         for i in range(5):
             a = -math.pi / 2 + 2 * math.pi * i / 5
             _star(d, W4 * 0.31 + math.cos(a) * H4 * 0.08, cy + math.sin(a) * H4 * 0.08, H4 * 0.028, WHITE)
+    elif code == "fr":
+        d.rectangle((0, 0, W4 / 3, H4), fill=(0, 35, 149))
+        d.rectangle((W4 * 2 / 3, 0, W4, H4), fill=(237, 41, 57))
     elif code == "kr":
         cx, cy, r = W4 / 2, H4 / 2, H4 * 0.25
         d.pieslice((cx - r, cy - r, cx + r, cy + r), 180, 360, fill=(205, 46, 58))
@@ -157,7 +160,7 @@ def flag_img(code, h=46):
 
 
 FLAG_OF = {"日本": "jp", "アメリカ": "us", "台湾": "tw", "ヨーロッパ": "eu", "イギリスの旅行者": "gb", "江戸の子ども": "jp",
-           "寺子屋の師匠": "jp", "八百屋のおかみ": "jp", "シンガポール": "sg", "韓国": "kr", "日本の会社員": "jp"}
+           "寺子屋の師匠": "jp", "八百屋のおかみ": "jp", "シンガポール": "sg", "韓国": "kr", "日本の会社員": "jp", "フランス": "fr"}
 FLAGS = False   # 国どうしの寸劇で True（役名の札に国旗）
 
 

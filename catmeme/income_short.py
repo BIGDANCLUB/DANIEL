@@ -272,7 +272,7 @@ class Renderer:
                 cl.cap.release()
 
 
-def run(cs, top, sub, out_path, prev=None):
+def run(cs, top, sub, out_path, prev=None, band=None, renderer=None):
     durs = [c["dur"] for c in cs]
     total = sum(durs)
     if abs(total - TOTAL) > 1e-6:   # 厳密に 59.9 秒（最後のカットで合わせる・最大±3秒）
@@ -282,7 +282,8 @@ def run(cs, top, sub, out_path, prev=None):
         durs[-1] += diff
         cs[-1]["dur"] = durs[-1]
     starts = list(np.cumsum([0] + durs[:-1]))
-    band = title_band(top, sub)
+    band = band or title_band(top, sub)
+    renderer = renderer or Renderer
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     wav = out_path + ".audio.f32"
     R.build_audio(cs, starts, durs, TOTAL).tofile(wav)
@@ -296,7 +297,7 @@ def run(cs, top, sub, out_path, prev=None):
     nframes = int(round(TOTAL * R.FPS))
     fno = 0
     for i, c in enumerate(cs):
-        rd = Renderer(c, band)
+        rd = renderer(c, band)
         end = min(nframes, int(round((starts[i] + durs[i]) * R.FPS)))
         shot = False
         while fno < end:

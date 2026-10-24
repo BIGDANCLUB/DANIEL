@@ -381,7 +381,7 @@ def main(story_path, out):
                 im = Image.open(os.path.join(base, show)).convert("RGB")
                 stills[("sweep", show)] = im.resize((max(W + 200, int(im.width * vh / im.height)), vh), Image.LANCZOS)
             wide = stills[("sweep", show)]
-            ki = max(i for i, x in enumerate(shows) if x[0] <= tt)
+            ki = max((i for i, x in enumerate(shows) if x[0] <= tt), default=0)
             while ki > 0 and shows[ki - 1][1] == show:
                 ki -= 1
             s0 = shows[ki][0]
@@ -398,7 +398,7 @@ def main(story_path, out):
                 stills[("scroll", show)] = im.resize((W, max(vh, int(im.height * W / im.width))), Image.LANCZOS)
             tall = stills[("scroll", show)]
             # 同じ画像がまた出てきたときも、そのたびに上から下へ流す
-            ki = max(i for i, x in enumerate(shows) if x[0] <= tt)
+            ki = max((i for i, x in enumerate(shows) if x[0] <= tt), default=0)
             while ki > 0 and shows[ki - 1][1] == show:
                 ki -= 1
             s0 = shows[ki][0]

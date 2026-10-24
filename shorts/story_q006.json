@@ -1,0 +1,132 @@
+{
+ "_comment": "動画引用シリーズ Q-006 W杯で日本代表がロッカールームをきれいにして去った・海外の反応集（10/24）。引用: X @historyinmemes の投稿（2026/6/20 午前7:06、13.5万表示。投稿画面と写真3枚はユーザー提供）。事実: 2026年6月14日、ダラス・スタジアムでオランダと2-2。椅子を重ね、ゴミをまとめ、タオルを部屋の中央にたたんで置いた（Yahoo Sports、Sportskeeda）。お礼のメモと折り鶴は1社（433経由）の報道のみなので触れない。反応は実在の投稿だけを訳して使う: @Complex『They folded the towels & everything』、Reddit のユーザー（Yahoo Sports が紹介）『I love that this has become their World Cup tradition. They probably leave areas tidier than when they arrived.』、@WorldCupMedia_『A tradition built on respect, discipline, and responsibility』（約140万表示）、@Footballtweet『Japan continue to earn admiration at every World Cup for their incredible respect, discipline…』。反応の行は下のクレジットをその投稿者にする。素材は写真のみなので clip は廊下の写真の静止動画（provided/q006/video/still.mp4）、各行は show で写真を出す。 追加: @footballontnt『Japan left their World Cup dressing room spotless after their draw against the Netherlands』（約120万表示）。2022年カタール大会のドイツ戦後も FIFA が整った更衣室の写真を投稿（AOL ほか）。冒頭は答え（ビブス）が映らないよう、壁の上部だけを切り出した wall_top.png。",
+ "title": [
+  "W杯で日本代表が",
+  "残したロッカールーム"
+ ],
+ "credit": "@historyinmemes",
+ "clip": "provided/q006/video/still.mp4",
+ "voice_dir": "work_q006/voice",
+ "scroll": {
+  "provided/q006/image/corridor.png": true,
+  "provided/q006/image/bibs_wall.png": true,
+  "provided/q006/image/x_post_historyinmemes.png": true,
+  "provided/q006/image/wall_top.png": true
+ },
+ "sweep": {
+  "provided/q006/image/locker_towels.png": "left"
+ },
+ "lines": [
+  {
+   "say": "W杯の試合のあと、日本代表が去ったロッカールーム。海外が驚いたその光景とは",
+   "show": "provided/q006/image/wall_top.png",
+   "subs": [
+    "{W杯}の試合のあと",
+    "日本代表が去った\nロッカールーム",
+    "海外が<驚いた>\nその光景とは"
+   ]
+  },
+  {
+   "say": "6月14日、アメリカのダラスで行われたオランダ戦。結果は2対2の引き分けだった",
+   "subs": [
+    "6月14日\n{アメリカ}・ダラス",
+    "オランダ戦は\n2対2の引き分け"
+   ],
+   "show": "provided/q006/image/corridor.png"
+  },
+  {
+   "say": "試合後の部屋には、たたまれたタオルと、ひとつにまとめられたゴミ",
+   "show": "provided/q006/image/locker_towels.png",
+   "subs": [
+    "試合後の部屋には",
+    "<たたまれたタオル>と",
+    "ひとつにまとめられた\nゴミ"
+   ]
+  },
+  {
+   "say": "通路には、色ごとに重ねられたビブスが並んでいた",
+   "show": "provided/q006/image/bibs_wall.png",
+   "subs": [
+    "通路には",
+    "{色ごと}に重ねられた\nビブスが並んでいた"
+   ]
+  },
+  {
+   "say": "この写真は海外のSNSで広く紹介され、こんな声が寄せられた",
+   "show": "provided/q006/image/x_post_historyinmemes.png",
+   "subs": [
+    "この写真は\n{海外のSNS}で",
+    "広く紹介され\nこんな声が"
+   ]
+  },
+  {
+   "say": "タオルまでたたんでる",
+   "color": "blue",
+   "show": "provided/q006/image/locker_towels.png",
+   "credit": "@Complex",
+   "subs": [
+    "タオルまで\nたたんでる！"
+   ]
+  },
+  {
+   "say": "これがW杯の伝統になっているのが大好き。来た時よりきれいにして帰ってそう",
+   "color": "blue",
+   "show": "provided/q006/image/corridor.png",
+   "credit": "Reddit のユーザー",
+   "subs": [
+    "これがW杯の伝統に\nなってるのが大好き",
+    "来た時より\nきれいにして帰ってそう"
+   ]
+  },
+  {
+   "say": "敬意と規律と責任感で築かれた伝統",
+   "color": "blue",
+   "show": "provided/q006/image/bibs_wall.png",
+   "credit": "@WorldCupMedia_",
+   "subs": [
+    "敬意と規律と\n責任感で",
+    "築かれた伝統"
+   ]
+  },
+  {
+   "say": "日本はW杯のたびに、その敬意と規律で称賛を集め続けている",
+   "color": "blue",
+   "show": "provided/q006/image/locker_towels.png",
+   "credit": "@Footballtweet",
+   "subs": [
+    "日本はW杯のたびに",
+    "その敬意と規律で\n称賛を集め続けている"
+   ]
+  },
+  {
+   "say": "日本はW杯の更衣室を、ピカピカにして去った",
+   "color": "blue",
+   "show": "provided/q006/image/corridor.png",
+   "credit": "@footballontnt",
+   "subs": [
+    "日本はW杯の更衣室を",
+    "ピカピカにして去った"
+   ]
+  },
+  {
+   "say": "実は前回のカタール大会でも、日本代表はロッカールームをきれいにして去り、FIFAがその写真を紹介していた",
+   "show": "provided/q006/image/bibs_wall.png",
+   "credit": "@historyinmemes",
+   "subs": [
+    "実は前回の\n{カタール大会}でも",
+    "日本代表は\nロッカールームを",
+    "きれいにして去り",
+    "<FIFA>が\nその写真を紹介していた"
+   ]
+  },
+  {
+   "say": "勝っても負けても、来た時よりきれいにして去る。その姿が、世界の心をつかんでいます",
+   "show": "provided/q006/image/corridor.png",
+   "subs": [
+    "勝っても\n負けても",
+    "来た時より\n{きれい}にして去る",
+    "その姿が\n<世界の心>をつかんでいます"
+   ]
+  }
+ ]
+}

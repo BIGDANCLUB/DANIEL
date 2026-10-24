@@ -136,23 +136,23 @@ def name_tag(t):
 
 # ---- カット ----
 
-def intro(bg, tag, say, cat, dur=2.4, bgm=None, se="don_hit"):
+def intro(bg, tag, say, cat, dur=2.4, bgm=None, se="don_hit", quake=0):
     """区切りの頭：主役の猫1匹を真ん中に大きく＋白い集中線＋大きなセリフ。"""
     c = dict(kind="intro", bg=bg, tag=tag, say=say, cats=[dict(a=cat, mute=False, x=540, h=820, w=920, bottom=1680)], dur=dur, fixed=True,
-             no_pop=True, se=se)
+             no_pop=True, se=se, quake=quake)
     if bgm:
         c["bgm"] = bgm
     return c
 
 
-def talk(bg, tag, say, left, right, who="R", dur=2.5, label="友達", se=None, lscale=1.0, rscale=1.0):
+def talk(bg, tag, say, left, right, who="R", dur=2.5, label="友達", se=None, lscale=1.0, rscale=1.0, quake=0):
     """会話：左に相手（札つき）、右に主役。しゃべる側の猫だけ音を出す。left/right は素材名。"""
     # 左右とも幅600まで（中心は480ずつ離す → 重なっても120くらいまで。大きく重ならない・10/23）
     cats = [dict(a=left, mute=who != "L", x=300, h=860, w=640, bottom=1580, label=label),
             dict(a=right, mute=who != "R", x=780, h=860, w=640, bottom=1580)]
     for k, sc in zip(cats, (lscale, rscale)):   # この場面だけ猫を大きく（多少の重なりはOK・10/23）
         k["h"], k["w"] = k["h"] * sc, k["w"] * sc
-    c = dict(kind="talk", bg=bg, tag=tag, say=say, cats=cats, dur=dur, fixed=True, no_pop=True)
+    c = dict(kind="talk", bg=bg, tag=tag, say=say, cats=cats, quake=quake, dur=dur, fixed=True, no_pop=True)
     if se:
         c["se"] = se
     return c
@@ -200,6 +200,12 @@ class Renderer:
         self.clips = [R.Clip(k["a"]) for k in c["cats"]]
         self.labels = [name_tag(k["label"]) if k.get("label") else None for k in c["cats"]]
         self.bbox = {}
+        if c.get("quake", 0) >= 2:
+            yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+            d = np.sqrt(((xx - W / 2) / (W / 2)) ** 2 + ((yy - H / 2) / (H / 2)) ** 2)
+            self.vignette = np.clip((d - 0.75) / 0.5, 0, 1).astype(np.float32)
+            g = text("ゴゴゴゴ", 120, (120, 30, 160), stroke=8, stroke_col=WHITE)
+            self.gogo = [g.rotate(a_, expand=True, resample=Image.BICUBIC) for a_ in (-18, 14, -10, 20)]
 
     def cat_img(self, i, k, t):
         fr, a = self.clips[i].frame(t + 0.25)   # 素材の最初の1枚が真っ黒なものがある（huh_huh_cat など）ので少し先から
@@ -235,6 +241,25 @@ class Renderer:
             over(out, img, al, x0, int(k["bottom"] - h))
             if self.labels[i] is not None:
                 put(out, self.labels[i], max(self.labels[i].width / 2 + 40, k["x"] - 60), k["bottom"])
+        q = c.get("quake", 0)
+        if q:   # 揺れの演出（10/24 ユーザー指定：震度が大きいほど派手に）
+            amp = (8, 22, 46, 70)[min(q, 3)]
+            dx = amp * (math.sin(t * 47) + 0.5 * math.sin(t * 113))
+            dy = amp * 0.6 * (math.cos(t * 59) + 0.5 * math.sin(t * 97))
+            rot = (0, 0.6, 1.6, 2.8)[min(q, 3)] * math.sin(t * 31)
+            M_ = cv2.getRotationMatrix2D((W / 2, H / 2), rot, 1.04 if q >= 2 else 1.0)
+            M_[0, 2] += dx
+            M_[1, 2] += dy
+            out = cv2.warpAffine(out, M_, (W, H), borderMode=cv2.BORDER_REFLECT)
+            if q >= 2:   # 赤く点滅するふち
+                pulse = 0.5 + 0.5 * math.sin(t * 14)
+                vig = self.vignette * (0.35 + 0.45 * pulse) * (1.0 if q >= 3 else 0.6)
+                out = out * (1 - vig[..., None]) + vig[..., None] * np.array([0.05, 0.05, 0.95], np.float32)
+            if q >= 2:   # 「ゴゴゴゴ」の文字が画面のはしでふるえる
+                for (gx, gy), im in zip(((150, 980), (930, 1150), (160, 1420), (920, 1700)), self.gogo):
+                    put(out, im, gx + 10 * math.sin(t * 40 + gx), gy + 8 * math.cos(t * 37 + gy))
+            if q >= 3 and int(t * 6) % 2 == 0:   # 白いフラッシュ（強い揺れ）
+                out = out * 0.82 + 0.18
         b = R.to_np(self.band)
         over(out, b[0], b[1], 0, BAND[0])
         put(out, self.tag, W / 2, 600)

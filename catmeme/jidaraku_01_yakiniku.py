@@ -40,7 +40,7 @@ def cuts():
         s(WAIT, "stare_interviewer_cat", "入口には\n家族連れが並んでいる。"),
         s(WAIT, "blank_black_cat_zoning_out", "ひとりなのは\nたぶん俺だけ。"),
         s(WAIT, "calmdown_dancing_cat", "でも気にしない。\n今日は肉が主役だ。"),
-        s(WAIT, "meow_gray_white_kitten", "「1名で\nお願いします。」"),
+        s(WAIT, "stare_interviewer_cat", "「1名で\nお願いします。」"),
         s(WAIT, "surprise_big_pupils_cat", "意外とすぐ\n席に案内された。"),
         # ---- コース選び ----
         s(TABLE, "read_book_orange_kitten", "席に着いて\nメニューを開く。"),
@@ -69,7 +69,7 @@ def cuts():
         s(TABLE, "dance_wop_cat", "壺漬けハラミ。\n大判の上ロース。"),
         s(TABLE, "showoff_gojo_cosplay_cat", "「俺の胃袋は\nまだ20代だ。」"),
         s(GRILL, "happy_girlfriend_dance_cat", "炙りすき焼カルビは\n卵にくぐらせて食べる。"),
-        s(GRILL, "joy_happy_happy_happy_cat", "「甘じょっぱい……\nこれはご飯が消える。」"),
+        s(GRILL, "happy_hamster_open_arms", "「甘じょっぱい……\nこれはご飯が消える。」"),
         s(GRILL, "eat_pop_cat", "厚切りタンは\n口コミどおりの分厚さ。"),
         s(GRILL, "laugh_laughing_dog", "「タンなのに\nステーキじゃん！」"),
         s(GRILL, "dance_edm_cat", "ご飯もおかわり。\nビビンバも頼む。"),
@@ -105,7 +105,7 @@ def cuts():
         s(REGI, "money_counting_orange_cat", "会計をすませる。",
           bgm={"file": os.path.join(L.BGM, "手紙のさよなら.mp3"), "gain": -14, "fade": 1.0}),
         s(REGI, "stare_tabby_wide_eyes_cat", "ひとりで払うには\nなかなかの金額だ。"),
-        s(REGI, "meow_gray_white_kitten", "「ごちそうさまでした……」"),
+        s(REGI, "stare_interviewer_cat", "「ごちそうさまでした……」"),
         # ---- 帰り道 ----
         s(ROAD, "leave_cat_leaves_home", "外はもう暗い。", se="whoosh_shu"),
         s(ROAD, "sleepy_sleepy_cat", "ベルトの穴を\nひとつゆるめる。"),

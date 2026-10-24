@@ -10,11 +10,11 @@
  "scroll": {
   "provided/q006/image/corridor.png": true,
   "provided/q006/image/bibs_wall.png": true,
-  "provided/q006/image/x_post_historyinmemes.png": true,
-  "provided/q006/image/wall_top.png": true
+  "provided/q006/image/x_post_historyinmemes.png": true
  },
  "sweep": {
-  "provided/q006/image/locker_towels.png": "left"
+  "provided/q006/image/locker_towels.png": "left",
+  "provided/q006/image/wall_top.png": "left"
  },
  "lines": [
   {

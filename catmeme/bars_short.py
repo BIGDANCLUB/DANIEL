@@ -70,6 +70,25 @@ def banner(name, word, big, cat):
     return im
 
 
+def weight_img(name):
+    """上から落ちてくる「重り」（黒い鉄のかたまり・上に持ち手の輪）に項目名。10/24 ユーザー指定：のしかかる演出。"""
+    w, h = 820, 430
+    im = Image.new("RGBA", (w, h + 130), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    d.ellipse((w / 2 - 110, 0, w / 2 + 110, 190), outline=(25, 25, 30), width=44)          # 持ち手
+    d.polygon([(110, 130), (w - 110, 130), (w - 10, h + 120), (10, h + 120)], fill=(30, 30, 36))   # 台形の重り
+    d.polygon([(130, 150), (w - 130, 150), (w - 100, 200), (100, 200)], fill=(80, 80, 92))        # てかり
+    d.line([(10, h + 120), (w - 10, h + 120)], fill=(0, 0, 0), width=10)
+    t = I.text(name, 150, WHITE, stroke=8, stroke_col=(150, 0, 0), max_w=w - 120)
+    im.alpha_composite(t, ((w - t.width) // 2, 130 + (h - 10 - t.height) // 2))
+    return im
+
+
+def thud_text(t):
+    im = I.text(t, 210, (255, 40, 40), stroke=12, stroke_col=WHITE)
+    return im.rotate(-8, expand=True, resample=Image.BICUBIC)
+
+
 def finish_text(t):
     im = I.text(t, 260, (220, 255, 120), stroke=14, stroke_col=(20, 90, 30))
     return im.rotate(6, expand=True, resample=Image.BICUBIC)
@@ -81,7 +100,8 @@ class Renderer:
         self.clips = [R.Clip(a) if a else None for a in c["cats3"]]
         self.say = I.text(c["say"], 78, WHITE, stroke=8, max_w=W - 120) if c.get("say") else None
         self.box = c.get("box", False)
-        self.ban = banner(*c["banner"]) if c.get("banner") else None
+        self.ban = weight_img(c["banner"][1]) if c.get("banner") else None
+        self.thud = thud_text(c["banner"][2]) if c.get("banner") else None
         self.ban_cat = R.Clip(c["banner"][3]) if c.get("banner") else None
         self.fin = finish_text(c["finish"]) if c.get("finish") else None
         self.bbox = {}
@@ -153,13 +173,31 @@ class Renderer:
                 I.put(out, bx, W / 2, c.get("say_y", 640))
             else:
                 I.put(out, self.say, W / 2, c.get("say_y", 640))
-        if self.ban is not None:
-            k = min(1.0, t / 0.18)
-            b = R.to_np(self.ban)
-            xoff = int((1 - k) * W)
-            I.over(out, b[0], b[1] * k, xoff, 300)
-            img, al = self._cat(self.ban_cat, self.c["banner"][3], t, 560, 520)
-            I.over(out, img, al * k, 30 + xoff, 1060 - al.shape[0])
+        if self.ban is not None:   # 重りが上から落ちてきて、棒にのしかかる（ドスン→画面がゆれる）
+            land = 0.38
+            u = min(1.0, t / land)
+            y_land = 480
+            y = -self.ban.height + (y_land + self.ban.height) * u * u          # だんだん速く落ちる
+            if t > land:                                                     # 着地のあと少し沈んで戻る
+                y = y_land + 26 * math.exp(-(t - land) * 9) * math.sin((t - land) * 30)
+            img, al = self._cat(self.ban_cat, self.c["banner"][3], t, 330, 330)   # 重りの上（右の肩）に猫が乗っている
+            I.over(out, img, al, int(W / 2 + 230 - al.shape[1] / 2), int(y + 170 - al.shape[0]))
+            I.put(out, self.ban, W / 2, y + self.ban.height / 2)
+            if t > land:
+                # 着地の土ぼこり（白い線）と、効果のひとこと
+                if t - land < 0.5:
+                    for side in (-1, 1):
+                        for k in range(3):
+                            x0 = W / 2 + side * (420 + k * 30)
+                            y0 = y_land + self.ban.height - 20 - k * 40
+                            cv2.line(out, (int(x0), int(y0)), (int(x0 + side * 90), int(y0 - 50)), (1, 1, 1), 9, cv2.LINE_AA)
+                kk = min(1.0, (t - land) / 0.15)
+                th = self.thud.resize((max(1, int(self.thud.width * (0.5 + 0.5 * kk))), max(1, int(self.thud.height * (0.5 + 0.5 * kk)))))
+                I.put(out, th, W / 2, y_land + self.ban.height + 120)
+                if t - land < 0.35:   # 画面がゆれる
+                    a_ = 22 * (1 - (t - land) / 0.35)
+                    M_ = np.float32([[1, 0, a_ * math.sin(t * 90)], [0, 1, a_ * math.cos(t * 70)]])
+                    out = cv2.warpAffine(out, M_, (W, H), borderMode=cv2.BORDER_REPLICATE)
         if self.fin is not None:
             k = 1.0 if t > 0.2 else 0.3 + 0.7 * t / 0.2
             f = self.fin if k == 1.0 else self.fin.resize((int(self.fin.width * k), int(self.fin.height * k)))

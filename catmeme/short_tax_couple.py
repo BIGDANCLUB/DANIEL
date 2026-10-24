@@ -41,14 +41,14 @@ def cuts():
         cut(2.6, "じゃあ手取りも\n同じでしょ？", trio, voice=0, se="pi"),
         cut(2.4, "……本当に？", ("sleepy_sleepy_cat", "huh_huh_cat", "sleepy_sleepy_cat"), voice=1, big=1),
         # 社会保険料
-        cut(2.2, None, same, banner=("社会保険料", "社会保険料", "乱入!!", "money_counting_orange_cat"), se="explosion_chudoon"),
+        cut(2.2, None, same, banner=("社会保険料", "社会保険料", "ズシッ!!", "money_counting_orange_cat"), se="explosion_chudoon"),
         cut(2.6, None, same, shown=1, grow=True, se="card_place"),
         cut(2.8, "共働きの2組は\n2人とも払うから\n高くなる", ("blank_black_cat_zoning_out", "sad_banana_cat_cry", "sulk_hungry_cat"),
             shown=1, voice=1),
         cut(2.8, "妻が扶養だと\n妻の分は0円！", ("excited_hodomoe_city_cat", "glare_disgusted_cat", "glare_disgusted_cat"),
             shown=1, voice=0),
         # 所得税
-        cut(2.2, None, same, shown=1, banner=("所得税", "所得税", "乱入!!", "punch_boxing_white_cat"), se="explosion_chudoon"),
+        cut(2.2, None, same, shown=1, banner=("所得税", "所得税", "ドスン!!", "punch_boxing_white_cat"), se="explosion_chudoon"),
         cut(2.6, None, same, shown=2, grow=True, se="card_place"),
         cut(3.0, "ちょっと待って\n1人で稼ぐほうが\n税率が上がるの！？", ("stare_tabby_wide_eyes_cat", "think_bike_front_seat_cat",
                                                     "think_bike_front_seat_cat"), shown=2, voice=0, big=0, box=True),
@@ -57,14 +57,14 @@ def cuts():
         cut(2.4, "半分ずつの\n私たちが有利！", ("realize_wet_cat_stare", "stare_interviewer_cat", "dance_orange_gray_cats"),
             shown=2, voice=2),
         # 住民税
-        cut(2.2, None, same, shown=2, banner=("住民税", "住民税", "乱入!!", "angry_aiming_cat"), se="explosion_chudoon"),
+        cut(2.2, None, same, shown=2, banner=("住民税", "住民税", "ドンッ!!", "angry_aiming_cat"), se="explosion_chudoon"),
         cut(2.6, None, same, shown=3, grow=True, se="card_place"),
         cut(2.8, "住民税は\nだいたい同じくらい\n…と思ったら", ("think_bike_front_seat_cat", "stare_interviewer_cat",
                                                "meow_gray_white_kitten"), shown=3, voice=1),
         cut(2.6, "やっぱり\n1人で稼ぐと多い…", ("despair_dramatic_kitten", "stare_interviewer_cat", "stare_interviewer_cat"),
             shown=3, voice=0),
         # 手取り
-        cut(2.2, None, same, shown=3, banner=("手取り", "手取り", "発表!!", "dance_tabby_standing_cat"), se="explosion_chudoon"),
+        cut(2.2, None, same, shown=3, banner=("手取り", "のこった手取り", "ジャン!!", "dance_tabby_standing_cat"), se="explosion_chudoon"),
         cut(3.0, None, ("sad_banana_cat_cry", "excited_hodomoe_city_cat", "happy_girlfriend_dance_cat"), shown=3, take=True,
             se="price_display"),
         cut(3.0, "同じ1000万なのに\n40万以上も違う…", ("stare_tabby_wide_eyes_cat", None, None), shown=3, take=True, voice=0, big=0,

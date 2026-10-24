@@ -89,6 +89,32 @@ def thud_text(t):
     return im.rotate(-8, expand=True, resample=Image.BICUBIC)
 
 
+def crown_img(w=300):
+    """金色の王冠。"""
+    h = int(w * 0.72)
+    im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    pts = [(10, h - 50), (10, 60), (w * 0.27, h * 0.45), (w / 2, 10), (w * 0.73, h * 0.45), (w - 10, 60), (w - 10, h - 50)]
+    d.polygon(pts, fill=(255, 205, 30), outline=(150, 90, 0))
+    d.line(pts + [pts[0]], fill=(150, 90, 0), width=10)
+    d.rectangle((10, h - 60, w - 10, h - 10), fill=(240, 175, 20), outline=(150, 90, 0), width=8)
+    for x, y in ((10, 60), (w / 2, 10), (w - 10, 60)):
+        d.ellipse((x - 22, y - 22, x + 22, y + 22), fill=(230, 30, 60), outline=(120, 0, 20), width=5)
+    return im
+
+
+def stamp_img(text):
+    """赤いはんこ（丸の中に文字）。"""
+    r = 200
+    im = Image.new("RGBA", (r * 2, r * 2), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    d.ellipse((8, 8, r * 2 - 8, r * 2 - 8), outline=(220, 20, 20), width=22)
+    d.ellipse((40, 40, r * 2 - 40, r * 2 - 40), outline=(220, 20, 20), width=8)
+    t = I.text(text, 170, (220, 20, 20), max_w=r * 2 - 120)
+    im.alpha_composite(t, (r - t.width // 2, r - t.height // 2))
+    return im.rotate(-14, expand=True, resample=Image.BICUBIC)
+
+
 def finish_text(t):
     im = I.text(t, 260, (220, 255, 120), stroke=14, stroke_col=(20, 90, 30))
     return im.rotate(6, expand=True, resample=Image.BICUBIC)
@@ -103,7 +129,9 @@ class Renderer:
         self.ban = weight_img(c["banner"][1]) if c.get("banner") else None
         self.thud = thud_text(c["banner"][2]) if c.get("banner") else None
         self.ban_cat = R.Clip(c["banner"][3]) if c.get("banner") else None
-        self.fin = finish_text(c["finish"]) if c.get("finish") else None
+        self.fin = c.get("finish")   # 1位の列（0〜2）。10/24：「勝負あり!!」の文字はやめて、王冠とはんこの演出
+        if self.fin is not None:
+            self.crown, self.stamp = crown_img(), stamp_img(c.get("finish_word", "1位"))
         self.bbox = {}
 
     def _cat(self, clip, name, t, h, w):
@@ -198,10 +226,27 @@ class Renderer:
                     a_ = 22 * (1 - (t - land) / 0.35)
                     M_ = np.float32([[1, 0, a_ * math.sin(t * 90)], [0, 1, a_ * math.cos(t * 70)]])
                     out = cv2.warpAffine(out, M_, (W, H), borderMode=cv2.BORDER_REPLICATE)
-        if self.fin is not None:
-            k = 1.0 if t > 0.2 else 0.3 + 0.7 * t / 0.2
-            f = self.fin if k == 1.0 else self.fin.resize((int(self.fin.width * k), int(self.fin.height * k)))
-            I.put(out, f, W / 2, 820)
+        if self.fin is not None:   # 1位以外の列を暗くして、1位にスポットライト＋王冠が落ちてきて、はんこがポン
+            j = self.fin
+            dim = np.ones((H, W, 1), np.float32) * 0.45
+            x0, x1 = int(COLX[j] - COLW / 2 - 40), int(COLX[j] + COLW / 2 + 40)
+            dim[:, x0:x1] = 1.0
+            dim[:310] = 1.0
+            k = min(1.0, t / 0.3)
+            out = out * (1 - (1 - dim) * k)
+            cone = np.zeros((H, W), np.float32)   # スポットライト（上から広がる光）
+            pts = np.array([(COLX[j] - 60, 300), (COLX[j] + 60, 300), (x1 + 60, 1500), (x0 - 60, 1500)], np.int32)
+            cv2.fillConvexPoly(cone, pts, 0.22 * k)
+            cone = cv2.GaussianBlur(cone, (61, 61), 0)
+            out = out + cone[..., None] * np.array([0.6, 0.95, 1.0], np.float32)
+            u = min(1.0, max(0.0, (t - 0.25) / 0.35))
+            cy = -200 + (390 + 200) * (1 - (1 - u) ** 3)
+            I.put(out, self.crown, COLX[j], cy)
+            if t > 0.7:
+                s_ = min(1.0, (t - 0.7) / 0.12)
+                sc = 1.8 - 0.8 * s_
+                st_ = self.stamp.resize((int(self.stamp.width * sc), int(self.stamp.height * sc)))
+                I.put(out, st_, COLX[j], 880)
         return out
 
     def close(self):

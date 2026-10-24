@@ -24,9 +24,9 @@ A, B2, C3 = "夫1000万", "夫700万", "夫500万"
 
 
 def cut(dur, say=None, cats=(None, None, None), shown=0, grow=False, banner=None, take=False, voice=None, box=False, big=None,
-        finish=None, se=None, say_y=640):
+        finish=None, se=None, say_y=640, finish_word=None):
     c = dict(dur=dur, say=say, cats3=list(cats), shown=shown, grow=grow, banner=banner, take=take, voice=voice, box=box, big=big,
-             finish=finish, say_y=say_y)
+             finish=finish, say_y=say_y, finish_word=finish_word or "1位")
     if se:
         c["se"] = se
     return c
@@ -73,8 +73,8 @@ def cuts():
             take=True, voice=1, say_y=1000),
         cut(2.6, "でも家事と子育ても\n2人で分けてね", ("talk_orange_white_sitting_cat", "huh_huh_cat", "huh_huh_cat"), shown=3,
             take=True, voice=0, box=True, say_y=1000),
-        cut(2.4, None, ("sad_banana_cat_cry", "excited_hodomoe_city_cat", "happy_girlfriend_dance_cat"), shown=3, take=True, finish="勝負あり!!",
-            se="game_smash_finish"),
+        cut(2.4, None, ("sad_banana_cat_cry", "excited_hodomoe_city_cat", "happy_girlfriend_dance_cat"), shown=3, take=True, finish=2, finish_word="1位",
+            se="fanfare_pararappara"),
     ]
 
 

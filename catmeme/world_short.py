@@ -137,30 +137,32 @@ def _cat(a, x, h, w, bottom, label=None, mute=True):
     return dict(a=a, x=x, h=h, w=w, bottom=bottom, label=label, mute=mute)
 
 
-def solo(bg, tag, say, cat, label=None, lines=False, dur=2.5, se=None, scale=1.0, tag_style="red", flag=None, big_say=False):
+def solo(bg, tag, say, cat, label=None, lines=False, dur=2.5, se=None, scale=1.0, tag_style="red", flag=None, big_say=False, **extra):
     """1匹だけ（真ん中に大きく）。lines=True で白い集中線。"""
     c = dict(kind="solo", bg=bg, tag=tag, say=say, tag_style=tag_style, flag=flag, lines=lines, big_say=big_say, dur=dur,
-             fixed=True, no_pop=True, cats=[_cat(cat, 540, 860 * scale, 900 * scale, 1600, label, mute=False)])
+             fixed=True, no_pop=True, cats=[_cat(cat, 540, 860 * scale, 900 * scale, 1600, label, mute=False)], **extra)
     if se:
         c["se"] = se
     return c
 
 
 def talk(bg, tag, say, left, right, who="R", llabel=None, rlabel=None, dur=2.5, se=None, lscale=1.0, rscale=1.0,
-         tag_style="red", flag=None):
+         tag_style="red", flag=None, **extra):
     """2匹の会話。しゃべる側（who）の猫だけ音を出す。役名は左右どちらにも付けられる。"""
     cats = [_cat(left, 300, 860 * lscale, 640 * lscale, 1580, llabel, mute=who != "L"),
             _cat(right, 780, 860 * rscale, 640 * rscale, 1580, rlabel, mute=who != "R")]
-    c = dict(kind="talk", bg=bg, tag=tag, say=say, tag_style=tag_style, flag=flag, cats=cats, dur=dur, fixed=True, no_pop=True)
+    c = dict(kind="talk", bg=bg, tag=tag, say=say, tag_style=tag_style, flag=flag, cats=cats, dur=dur, fixed=True, no_pop=True, **extra)
     if se:
         c["se"] = se
     return c
 
 
-def phone(bg, tag, msgs, cat, say=None, dur=3.0, se="pikon", friend_icon="meow_gray_white_kitten", me_icon="huh_huh_cat"):
+def phone(bg, tag, msgs, cat=None, say=None, dur=3.0, se="pikon", friend_icon="meow_gray_white_kitten", me_icon="huh_huh_cat"):
     """スマホのトーク画面（水色の画面・緑の枠のふきだし）。msgs = [(\"friend\"|\"me\", 文, 時刻), ...]。手前に猫。"""
     return dict(kind="phone", bg=bg, tag=tag, msgs=msgs, say=say, tag_style="red", flag=None, dur=dur, fixed=True, no_pop=True,
-                se=se, icons=dict(friend=friend_icon, me=me_icon), cats=[_cat(cat, 300, 560, 520, 1590, None, mute=False)])
+                se=se, icons=dict(friend=friend_icon, me=me_icon), say_y=1010,
+                cats=[_cat(cat, 360, 640, 620, 1590, None, mute=False)] if cat else [],
+                props=[("phone", 610, 1220, 190)] if cat else [])
 
 
 def split(bg, tag, left=None, right=None, cap=None, cap_side="R", sound="R", dur=3.2, se=None):
@@ -242,6 +244,53 @@ def phone_img(c):
     return im
 
 
+def prop_img(kind, w):
+    """小道具（絵で描く）：desk 机／tv テレビ／phone スマホ（手に持つ）。"""
+    if kind == "desk":
+        h = int(w * 0.62)
+        im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        for x in (int(w * 0.08), int(w * 0.86)):
+            d.rectangle((x, int(h * 0.2), x + int(w * 0.06), h), fill=(150, 150, 160, 255), outline=BLACK + (255,), width=4)
+        d.rectangle((0, 0, w - 1, int(h * 0.24)), fill=(230, 180, 60, 255), outline=BLACK + (255,), width=5)
+        return im
+    if kind == "tv":
+        h = int(w * 0.8)
+        im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        d.rounded_rectangle((0, 0, w - 1, int(h * 0.86)), 18, fill=(70, 70, 76, 255), outline=BLACK + (255,), width=5)
+        d.rectangle((int(w * 0.08), int(h * 0.08), int(w * 0.92), int(h * 0.74)), fill=(120, 200, 255, 255))
+        d.rectangle((int(w * 0.35), int(h * 0.86), int(w * 0.65), h - 1), fill=(60, 60, 60, 255))
+        return im
+    if kind == "phone":
+        h = int(w * 1.9)
+        im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        d.rounded_rectangle((0, 0, w - 1, h - 1), int(w * 0.16), fill=(235, 215, 190, 255), outline=(120, 100, 80, 255), width=4)
+        for i, (cx, cy) in enumerate(((0.3, 0.12), (0.3, 0.27), (0.6, 0.2))):
+            r = w * 0.11
+            d.ellipse((w * cx - r, h * cy - r, w * cx + r, h * cy + r), fill=(40, 40, 50, 255))
+        return im
+    raise ValueError(kind)
+
+
+def bubble_img(t, size=60):
+    """緑の枠の白いふきだし（黒い字）。"""
+    tx = rich([[(ln, BLACK)] for ln in t.split("\n")], size, max_w=720, lh=1.12)
+    b = Image.new("RGBA", (tx.width + 48, tx.height + 40), GREEN + (255,))
+    ImageDraw.Draw(b).rectangle((8, 8, b.width - 9, b.height - 9), fill=WHITE)
+    b.alpha_composite(tx, (24, 20))
+    return b
+
+
+def subscribe_img(done):
+    """チャンネル登録ボタン（参考の最後と同じ。赤→「登録済み」の灰色）。"""
+    tx = rich([[("登録済み" if done else "チャンネル登録", WHITE)]], 84)
+    im = rounded(tx.width + 90, tx.height + 50, 22, ((140, 140, 140, 255) if done else (220, 0, 20, 255)))
+    im.alpha_composite(tx, ((im.width - tx.width) // 2, (im.height - tx.height) // 2))
+    return im
+
+
 class Renderer(I.Renderer):
     def __init__(self, c, band):
         self.c, self.band = c, band
@@ -253,12 +302,17 @@ class Renderer(I.Renderer):
         self.tag_y = c.get("tag_y", 600)
         self.say = None
         if c.get("say"):
-            self.say = say_img(c["say"], 104 if c.get("big_say") else 80, stroke=8 if c.get("big_say") else 7)
+            big = c.get("big_say")
+            size = c.get("say_size") or (104 if big else 80)
+            self.say = say_img(c["say"], size, stroke=12 if size >= 150 else (8 if big else 7))
         self.say_y = c.get("say_y", 690)
         self.clips = [R.Clip(q["a"]) for q in c["cats"]]
         self.labels = [I.name_tag(q["label"]) if q.get("label") else None for q in c["cats"]]
         self.bbox = {}
         self.phone = phone_img(c) if k == "phone" else None
+        self.props = [(prop_img(kd, int(w)), x, y) for kd, x, y, w in c.get("props", [])]
+        self.bubbles = [(bubble_img(t_), x, y, at) for t_, x, y, at in c.get("bubbles", [])]
+        self.subs = (subscribe_img(False), subscribe_img(True)) if c.get("subscribe") else None
         if k == "split":
             self.heads = (rich([[("日本", BLUE)]], 140, stroke=6, stroke_col=WHITE), rich([[("世界", RED)]], 140, stroke=6, stroke_col=WHITE))
             self.cap = cap_box(c["cap"]) if c.get("cap") else None
@@ -284,6 +338,11 @@ class Renderer(I.Renderer):
                 lx = q["x"] - 60 if q["x"] < W / 2 else q["x"] + 40
                 lw = self.labels[i].width / 2
                 I.put(out, self.labels[i], min(max(lx, lw + 40), W - lw - 60), q["bottom"])
+        for im, x, y in self.props:   # 小道具は猫の手前
+            I.put(out, im, x, y)
+        for im, x, y, at in self.bubbles:
+            if t >= at:
+                I.put(out, im, x, y)
         if c["kind"] == "split":   # 「日本」「世界」は猫より手前
             I.put(out, self.heads[0], 275, 600)
             I.put(out, self.heads[1], 805, 600)
@@ -297,6 +356,8 @@ class Renderer(I.Renderer):
         I.put(out, self.tag, W / 2, self.tag_y)
         if self.say is not None:
             I.put(out, self.say, W / 2, self.say_y + self.say.height / 2)
+        if self.subs is not None:   # 参考の最後：ボタンが出て、少しあとに「登録済み」
+            I.put(out, self.subs[1 if t > 1.3 else 0], W / 2, 1180)
         return out
 
 

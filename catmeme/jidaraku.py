@@ -74,7 +74,7 @@ def sub_img(t, size=84):
     return im.crop(im.getbbox())
 
 
-def line(bg, cat, text, dur=2.8, h=760, x=960, bottom=1010, se=None, bgm=None, mute=False, flip=False):
+def line(bg, cat, text, dur=3.0, h=760, x=960, bottom=1010, se=None, bgm=None, mute=False, flip=False):
     """字幕1つ＝1カット。猫は1匹。"""
     c = dict(bg=bg, text=text, dur=dur, fixed=True, no_pop=True, cats=[dict(a=cat, h=h, x=x, bottom=bottom, mute=mute, flip=flip)])
     if se:

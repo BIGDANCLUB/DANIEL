@@ -14,7 +14,8 @@ import jidaraku as J
 ROOM, FRONT, WAIT, TABLE, GRILL, DESSERT, REGI, ROAD, ROOM_N, ROOM_M = (
     "j01_room", "j02_store_front", "j03_entrance", "j04_table", "j05_grill", "j06_dessert", "j07_register", "j08_night_road",
     "j09_room_night", "j10_room_morning")
-J.STANDIN.update({ROOM: "bg02_room", FRONT: "bg51_night_street", WAIT: "bg13_izakaya", TABLE: "bg22_yakiniku",
+MENU = "j11_menu_tontoro"
+J.STANDIN.update({ROOM: "bg02_room", FRONT: "bg51_night_street", WAIT: "j04_table", TABLE: "bg22_yakiniku",
                   GRILL: "bg22_yakiniku", DESSERT: "bg22_yakiniku", REGI: "bg15_convenience", ROAD: "bg51_night_street",
                   ROOM_N: "bg14_home_night", ROOM_M: "bg02_room"})
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
@@ -36,8 +37,8 @@ def cuts():
         s(ROOM, "slack_nail_filing_cat", "昼ごはんは抜くことにした。"),
         s(ROOM, "sulk_hungry_cat", "3時。\nもう腹がうるさい。"),
         s(ROOM, "angry_aiming_cat", "これは作戦だ。\n空腹は最高の調味料。"),
-        s(ROOM, "read_book_orange_kitten", "ついでに\nメニューを予習しておく。"),
-        s(ROOM, "stare_big_eyes_tabby_kitten", "口コミには\n「きんぐカルビがデカい」の声。"),
+        s(MENU, "read_book_orange_kitten", "ついでに\nメニューを予習しておく。"),
+        s(MENU, "stare_big_eyes_tabby_kitten", "口コミには\n「きんぐカルビがデカい」の声。"),
         s(ROOM, "excited_hodomoe_city_cat", "「デカい肉……\n食うしかない。」"),
         s(ROOM, "dance_tabby_standing_cat", "決めたら早い。\n上着だけ羽織る。"),
         # ---- 店へ ----
@@ -121,11 +122,12 @@ def cuts():
         s(GRILL, "blank_black_cat_zoning_out", "ベルトがきつい。\nお腹がパンパンだ。"),
         s(GRILL, "sulk_hungry_cat", "背もたれに\n体をあずける。"),
         # ---- デザート ----
-        s(DESSERT, "stare_big_eyes_tabby_kitten", "ふとタッチパネルの\nデザートが目に入る。"),
-        s(DESSERT, "rizz_cat_rizz", "黒蜜きなこソフト。\n口コミでも大人気らしい。"),
-        s(DESSERT, "think_bike_front_seat_cat", "「アイスは\n別腹って言うしな。」"),
+        s(TABLE, "stare_big_eyes_tabby_kitten", "ふとタッチパネルの\nデザートが目に入る。"),
+        s(TABLE, "rizz_cat_rizz", "口コミで人気なのは\n黒蜜きなこソフト。"),
+        s(TABLE, "think_bike_front_seat_cat", "でも今日の気分は\nチョコソースのソフトだ。"),
+        s(TABLE, "glare_disgusted_cat", "「アイスは\n別腹って言うしな。」"),
         s(DESSERT, "happy_chipi_chapa_cat", "頼んでしまった。", se="pikon"),
-        s(DESSERT, "eat_pop_cat", "「黒蜜ときなこ、\n合いすぎだろ……」"),
+        s(DESSERT, "eat_pop_cat", "「チョコとソフト、\n合いすぎだろ……」"),
         s(DESSERT, "sleepy_old_memories_cat", "口の中はさっぱり。\nでも胃袋はさっぱりしない。"),
         s(DESSERT, "call_customer_service_cat", "「ラストオーダーの\nお時間です。」", se="chime_announce"),
         s(DESSERT, "sad_black_dog", "もう何も\n頼めない体だ。"),
@@ -179,5 +181,14 @@ def cuts():
     ]
 
 
+def place(cs):
+    """食べ物の写真が見えるよう、デザートとメニューの場面だけ猫を右によせる。"""
+    for c in cs:
+        if c.get("bg") in (DESSERT, MENU):
+            for k in c["cats"]:
+                k["x"], k["h"] = 1450, 700
+    return cs
+
+
 if __name__ == "__main__":
-    J.run(cuts(), os.path.join(J.HERE, "out", "jidaraku_01_yakiniku.mp4"), os.path.join(J.HERE, "out", "jidaraku_01_yakiniku_preview"))
+    J.run(place(cuts()), os.path.join(J.HERE, "out", "jidaraku_01_yakiniku.mp4"), os.path.join(J.HERE, "out", "jidaraku_01_yakiniku_preview"))

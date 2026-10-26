@@ -28,7 +28,7 @@ def cuts():
         ("育休", "dance_three_kittens", "スウェーデン\n夫婦で480日", "talk_orange_white_sitting_cat", "原則1歳まで\n延長で2歳まで"),
         ("パパの育休", "dance_orange_gray_cats", "スウェーデン\nパパの9割が取る", "confused_i_dont_know_cat", "パパの取得は\n約4割"),
         ("児童手当", "happy_girlfriend_dance_cat", "ドイツ\n月約4万円", "sulk_hungry_cat", "月1万〜1.5万円\n高校生まで"),
-        ("保育料", "think_bike_front_seat_cat", "フランス\n収入に応じて負担", "dance_tabby_standing_cat", "3〜5歳は保育料無料\n給食費などは別"),
+        ("保育料", "think_bike_front_seat_cat", "フランス\n収入に応じて負担", "dance_tabby_standing_cat", "3〜5歳は\n保育料無料\n※給食費は別"),
         ("子どもの医療費", "realize_wet_cat_stare", "スウェーデン\n18歳までほぼ無料", "showoff_gojo_cosplay_cat", "高校生まで\n無料の自治体も"),
         ("大学の学費", "dance_wop_cat", "ドイツ\n授業料ほぼ無料", "despair_dramatic_kitten", "国立でも\n年約54万円"),
         ("生まれた時のお祝い", "yell_orange_fat_cat", "シンガポール\n約120万円", "sad_banana_cat_cry", "妊婦支援給付\n計10万円"),

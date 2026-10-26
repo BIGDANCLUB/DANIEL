@@ -30,8 +30,8 @@ def cuts():
         s(ROOM, say="今月も\nもやし生活", cat="scream_standing_marmot", dur=2.3, se="don_hit", **tm("5日前")),
         s(CONBINI, say="財布の中\n小銭しかない", cat="scream_standing_marmot", dur=2.0, **tm("3日前")),
         s(OFFICE, say="お昼は\nカップ麺", cat="scream_standing_marmot", dur=2.0, **tm("1日前")),
-        s(NIGHT, say="もう寝る時間なのに\n目がさえてる", cat="think_bike_front_seat_cat", dur=2.4, **tm("1日前 23:50")),
-        s(NIGHT, say="あと3分で\n日付が変わる…", cat="sleepy_old_memories_cat", dur=2.4, **tm("1日前 23:57")),
+        s(NIGHT, say="もう寝る時間なのに\n目がさえてる", cat="scream_standing_marmot", dur=2.4, **tm("1日前 23:50")),
+        s(NIGHT, say="あと3分で\n日付が変わる…", cat="scream_standing_marmot", dur=2.4, **tm("1日前 23:57")),
         dict(s(NIGHT, say="振りこまれてる！！", cat="dance_tabby_standing_cat", dur=2.4, lines=True, se="pinpoon_correct",
                **tm("給料日 0:00")), props=ph("残高\n増えた", 300, 1200)),
         # ---- 明細を見る ----
@@ -60,6 +60,7 @@ def cuts():
         dict(s(ROOM, say="家賃\n引き落とし", cat="scream_standing_marmot", dur=2.2, se="pi", **tm("4日後"))),
         dict(s(ROOM, say="スマホ代と\n電気代も", cat="scream_standing_marmot", dur=2.0, **tm("5日後"))),
         dict(s(ROOM, say="サブスク4つ\n全部引き落とし", cat="scream_standing_marmot", dur=2.2, **tm("6日後"))),
+        s(ROOM, say="焼肉のカードも\n引き落とし", cat="scream_standing_marmot", dur=2.2, **tm("6日後")),
         dict(s(ROOM_M, say="……え\nなんで", cat="surprise_big_pupils_cat", dur=2.4, se="question_mark_pop_confused_huh", **tm("7日後")),
              props=ph("残高\n3万", 300, 1200)),
         dict(s(ROOM_M, say="給料日から\nまだ1週間なのに", cat="despair_dramatic_kitten", dur=2.6, **tm("7日後")), props=ph("残高\n3万", 300, 1200)),

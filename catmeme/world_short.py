@@ -459,6 +459,9 @@ MOODS = [
 ]
 
 
+KEEP = {"scream_standing_marmot"}   # 続けて使ってよい素材（マーモットのくり返しは演出・10/26 ユーザー指定）
+
+
 def dedupe(cs, key="cats"):
     """前のカットと同じ素材があれば、同じ気持ちのグループの別の素材にかえる。"""
     def names(c):
@@ -468,7 +471,7 @@ def dedupe(cs, key="cats"):
         nxt = names(cs[i + 1]) if i + 1 < len(cs) else set()
         for q in cs[i].get(key, []):
             a = q.get("a")
-            if not a or a not in prev:
+            if not a or a not in prev or a in KEEP:
                 continue
             group = next((g for g in MOODS if a in g), MOODS[3])
             used = prev | nxt | names(cs[i])

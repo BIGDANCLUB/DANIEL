@@ -62,6 +62,7 @@ def cover(name):
 def sub_img(t, size=84):
     """字幕：明朝体の太字・白・黒い縁（参考どおり）。"""
     f = font(size)
+    t = t.replace("。", "").replace("、", " ")   # 自堕落シリーズの字幕は句読点なし（10/26 ユーザー指定）
     d0 = ImageDraw.Draw(Image.new("RGBA", (8, 8)))
     lines = t.split("\n")
     ws = [d0.textlength(ln, font=f) for ln in lines]

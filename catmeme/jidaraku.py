@@ -101,6 +101,8 @@ class Renderer:
             self.base = np.asarray(im)[:, :, ::-1].astype(np.float32) / 255
         else:
             self.base = cover(c["bg"])
+            if c.get("dark"):   # 同じ絵を夜っぽく暗くして使いまわす
+                self.base = self.base * (1 - c["dark"]) + np.array([0.25, 0.08, 0.05], np.float32) * c["dark"] * 0.4
         self.sub = sub_img(c["text"]) if c.get("text") else None
         self.clips = [R.Clip(k["a"]) for k in c["cats"]]
 

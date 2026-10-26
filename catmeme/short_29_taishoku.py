@@ -21,21 +21,16 @@ BLACK_, GREEN_, BLUE_, RED_ = (20, 20, 20), (40, 200, 40), (20, 40, 220), (220, 
 
 
 def band():
-    im = Image.new("RGBA", (Wd.W, 220), (0, 0, 0, 0))
-    box = Image.new("RGBA", (980, 200), (220, 20, 20, 255))
-    for i, t in enumerate(("退職日は月末か前日か", "特に最後の点は要注意")):
-        tx = Wd.rich([[(t, Wd.WHITE)]], 74, stroke=4, stroke_col=(120, 0, 0), max_w=940)
-        box.alpha_composite(tx, ((box.width - tx.width) // 2, 14 + i * 92))
-    im.alpha_composite(box, ((Wd.W - box.width) // 2, 10))
-    return im
+    """上の黒い帯（いつものショートと同じ形・10/26 ユーザー指定）。"""
+    return Wd.rich_band([("{r}退職日は月末か前日か", 110, Wd.WHITE, 300), ("{y}特に最後の点は要注意", 96, Wd.BLACK, 440)], *Wd.I.BAND)
 
 
 def sc(say, left, right, ll="社長", rl="正社員", who=None, col=BLACK_, think=None, table=None, dur=2.5, se=None, subscribe=False):
     cats = []
     if left:
-        cats.append(dict(a=left, x=300, h=780, w=560, bottom=1440, label=ll, mute=who != "L"))
+        cats.append(dict(a=left, x=300, h=680, w=520, bottom=1460, label=ll, mute=who != "L"))
     if right:
-        cats.append(dict(a=right, x=780, h=780, w=560, bottom=1440, label=rl, mute=who != "R"))
+        cats.append(dict(a=right, x=780, h=680, w=520, bottom=1460, label=rl, mute=who != "R"))
     c = dict(kind="solo", bg=OFF, tag=" ", say=None, cats=cats, dur=dur, fixed=True, no_pop=True, say3=(say, col), think=think,
              table=table, subscribe=subscribe)
     if se:
@@ -78,14 +73,14 @@ class R29(Wd.Renderer):
             Wd.I.over(out, img, al, min(max(int(q["x"] - w / 2), 20), Wd.W - w - 20), int(q["bottom"] - h))
             Wd.I.put(out, self.roles[i], q["x"], 1470)
         if self.tb is not None:
-            Wd.I.put(out, self.tb, Wd.W / 2, 330 + self.tb.height / 2)
+            Wd.I.put(out, self.tb, Wd.W / 2, 560 + self.tb.height / 2)
         if self.s3 is not None:
-            y = 330 + (self.tb.height + 20 if self.tb is not None else 0)
+            y = 560 + (self.tb.height + 20 if self.tb is not None else 0)
             Wd.I.put(out, self.s3, Wd.W / 2, y + self.s3.height / 2)
         if self.th is not None:
             Wd.I.put(out, self.th, 760, 1200)
         b = Wd.R.to_np(self.band)
-        Wd.I.over(out, b[0], b[1], 0, 90)
+        Wd.I.over(out, b[0], b[1], 0, Wd.I.BAND[0])
         if self.subs is not None:
             Wd.I.put(out, self.subs[1 if t > 1.3 else 0], Wd.W / 2, 1300)
         return out

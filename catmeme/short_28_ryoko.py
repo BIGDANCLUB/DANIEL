@@ -77,8 +77,10 @@ class R28(Wd.Renderer):
             h, w = al.shape
             x0 = min(max(int(q["x"] - w / 2), 20), Wd.W - w - 20)
             Wd.I.over(out, img, al, x0, int(q["bottom"] - h))
+            q["_h"] = h
+        for i, q in enumerate(c["cats"]):   # 札は猫より手前
             if self.labels[i] is not None:
-                Wd.I.put(out, self.labels[i], min(q["x"] + 150, Wd.W - self.labels[i].width / 2 - 40), q["bottom"] - h * 0.55)
+                Wd.I.put(out, self.labels[i], min(q["x"] + 150, Wd.W - self.labels[i].width / 2 - 40), q["bottom"] - q["_h"] * 0.55)
         if c.get("intro"):
             Wd.I.put(out, self.say2, Wd.W / 2, 560)
             return out

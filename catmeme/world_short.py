@@ -165,14 +165,14 @@ def phone(bg, tag, msgs, cat=None, say=None, dur=3.0, se="pikon", friend_icon="m
                 props=[("phone", 610, 1220, 190)] if cat else [])
 
 
-def split(bg, tag, left=None, right=None, cap=None, cap_side="R", sound="R", dur=3.2, se=None):
+def split(bg, tag, left=None, right=None, cap=None, cap_side="R", sound="R", dur=3.2, se=None, cap_full=False):
     """左右くらべ：左「日本」右「世界」。cap は下の緑の枠の説明（cap_side の側に出す）。sound の側の猫だけ鳴く。"""
     cats = []
     if left:
         cats.append(_cat(left, 275, 600, 500, 1290, None, mute=sound != "L"))
     if right:
         cats.append(_cat(right, 805, 600, 500, 1290, None, mute=sound != "R"))
-    c = dict(kind="split", bg=bg, tag=tag, cap=cap, cap_side=cap_side, tag_style="shindo", flag=None, cats=cats, dur=dur,
+    c = dict(kind="split", bg=bg, tag=tag, cap=cap, cap_side=cap_side, cap_full=cap_full, tag_style="shindo", flag=None, cats=cats, dur=dur,
              fixed=True, no_pop=True, say=None)
     if se:
         c["se"] = se
@@ -181,10 +181,11 @@ def split(bg, tag, left=None, right=None, cap=None, cap_side="R", sound="R", dur
 
 # ---- 描画 ----
 
-def cap_box(t):
-    """下の説明：白地・緑の太い枠・青い太字。"""
-    tx = rich([[(ln, BLUE)] for ln in t.split("\n")], 76, stroke=3, stroke_col=WHITE, max_w=450, lh=1.12)
-    im = Image.new("RGBA", (max(tx.width + 50, 300), tx.height + 44), GREEN + (255,))
+def cap_box(t, full=False):
+    """下の説明：白地・緑の太い枠・青い太字。full=True は横いっぱい（まとめ用・10/26）。"""
+    tx = rich([[(ln, BLUE)] for ln in t.split("\n")], 96 if full else 76, stroke=3, stroke_col=WHITE, max_w=960 if full else 450,
+              lh=1.12)
+    im = Image.new("RGBA", (W - 60 if full else max(tx.width + 50, 300), tx.height + 44), GREEN + (255,))
     ImageDraw.Draw(im).rectangle((9, 9, im.width - 10, im.height - 10), fill=WHITE)
     im.alpha_composite(tx, ((im.width - tx.width) // 2, (im.height - tx.height) // 2))
     return im
@@ -348,7 +349,7 @@ class Renderer(I.Renderer):
         if k == "split":
             hl, hr = c.get("heads", ("日本", "世界"))
             self.heads = (rich([[(hl, BLUE)]], 140, stroke=6, stroke_col=WHITE), rich([[(hr, RED)]], 140, stroke=6, stroke_col=WHITE))
-            self.cap = cap_box(c["cap"]) if c.get("cap") else None
+            self.cap = cap_box(c["cap"], c.get("cap_full", False)) if c.get("cap") else None
 
     def side_layout(self):
         """字幕が猫とかさなるときは、猫を左によせて字幕を猫の右どなりに出す（10/26 ユーザー指定）。1匹だけの場面で使う。"""
@@ -413,8 +414,8 @@ class Renderer(I.Renderer):
             I.put(out, self.heads[0], 275, 600)
             I.put(out, self.heads[1], 805, 600)
         if c["kind"] == "split" and self.cap is not None:
-            cx = 275 if c["cap_side"] == "L" else 805
-            cx = min(max(cx, self.cap.width / 2 + 20), W - self.cap.width / 2 - 40)
+            cx = W / 2 if c.get("cap_full") else (275 if c["cap_side"] == "L" else 805)
+            cx = min(max(cx, self.cap.width / 2 + 20), W - self.cap.width / 2 - 20)
             cy = min(1310 + self.cap.height / 2, SAFE_BOTTOM - self.cap.height / 2)
             I.put(out, self.cap, cx, cy)
         b = R.to_np(self.band)

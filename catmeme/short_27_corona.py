@@ -70,11 +70,11 @@ def cuts():
             banner=("残り", "のこったお金", "ジャン!!", "dance_tabby_standing_cat"), se="explosion_chudoon"),
         cut(2.8, None, ("happy_chipi_chapa_cat", "sad_black_dog"), shown=4, take=True, se="price_display"),
         cut(2.8, "同じ給料なのに\n毎月2.5万も少ない…", (None, "stare_tabby_wide_eyes_cat"), shown=4, take=True, voice=1, big=1,
-            box=True, say_y=1000),
+            box=True, say_y=420),
         cut(2.6, "給料より\n物の値段が先に上がった", ("realize_wet_cat_stare", "sulk_hungry_cat"), shown=4, take=True, voice=0,
-            say_y=1000),
-        cut(2.4, None, ("happy_girlfriend_dance_cat", "sad_banana_cat_cry"), shown=4, take=True, finish=0, finish_word="1位",
-            se="fanfare_pararappara"),
+            say_y=420),
+        dict(cut(3.0, None, ("sad_banana_cat_cry", "despair_dramatic_kitten"), shown=4, take=True, se="explosion_chudoon"),
+             minus=("毎月 −2.5万円", "1年で −30万円…")),
     ]
 
 

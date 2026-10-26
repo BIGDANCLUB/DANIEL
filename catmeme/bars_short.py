@@ -134,6 +134,9 @@ class Renderer:
         if self.fin is not None:
             self.crown, self.stamp = crown_img(), stamp_img(c.get("finish_word", "1位"))
         self.bbox = {}
+        if c.get("minus"):
+            big = I.text(c["minus"][0], 210, (255, 30, 30), stroke=14, stroke_col=WHITE, max_w=W - 170)
+            self.minus = (big.rotate(-5, expand=True, resample=Image.BICUBIC), I.text(c["minus"][1], 96, WHITE, stroke=8, max_w=W - 60))
 
     def _cat(self, clip, name, t, h, w):
         fr, a = clip.frame(t + 0.25)
@@ -167,13 +170,13 @@ class Renderer:
                     break
                 v = st["values"][name][j]
                 grow = 1.0 if (k < c["shown"] - 1 or not c.get("grow")) else min(1.0, t / 0.5)
-                hpx = max(v * scale, 58) * grow   # 小さい額も札が読めるように最低の高さ
+                hpx = (v * scale if CATX else max(v * scale, 58)) * grow   # 2列のときは金額どおりの長さ（10/26）
                 col, tc = SEG_COL[kind]
                 out[int(y):int(y + hpx), x0:x1] = np.array(col[::-1], np.float32) / 255
                 cv2.rectangle(out, (x0, int(y)), (x1, int(y + hpx)), (0, 0, 0), 4)
                 if grow > 0.6:
                     lab = st["seglab"][(name, j)]
-                    I.put(out, lab, x0 + lab.width / 2 + 14, y + min(hpx, 120) / 2 + 4)
+                    I.put(out, lab, (x0 + x1) / 2 if CATX else x0 + lab.width / 2 + 14, y + min(hpx, 120) / 2 + 4)
                 y += hpx
             if c.get("take"):
                 I.put(out, st["takelab"][j], cx, y + 90)
@@ -185,6 +188,12 @@ class Renderer:
             if clip is None:
                 continue
             big = c.get("big") == j
+            if CATX:   # 棒の外側（左の列は左、右の列は右）
+                img, al = self._cat(clip, name, t, 460 if big else 380, 250)
+                hh, ww = al.shape
+                x0 = int(min(max(CATX[j] - ww / 2, 10), W - ww - 10))
+                I.over(out, img, al, x0, int(1300 - hh))
+                continue
             img, al = self._cat(clip, name, t, 520 if big else 400, 440 if big else 330)
             hh, ww = al.shape
             x0 = int(min(max(COLX[j] - ww / 2, 10), W - ww - 10))
@@ -227,6 +236,16 @@ class Renderer:
                     a_ = 22 * (1 - (t - land) / 0.35)
                     M_ = np.float32([[1, 0, a_ * math.sin(t * 90)], [0, 1, a_ * math.cos(t * 70)]])
                     out = cv2.warpAffine(out, M_, (W, H), borderMode=cv2.BORDER_REPLICATE)
+        if c.get("minus"):   # 最後：「マイナス○○円」を画面いっぱいに強く出す（10/26 ユーザー指定）
+            k = min(1.0, t / 0.25)
+            out = out * (1 - 0.55 * k)
+            big, sub = self.minus
+            sc = 2.2 - 1.2 * min(1.0, t / 0.18)
+            im = big.resize((max(1, int(big.width * sc)), max(1, int(big.height * sc))))
+            sx = 14 * math.sin(t * 80) * max(0.0, 1 - t / 0.6)
+            I.put(out, im, W / 2 + sx, 820)
+            if t > 0.5:
+                I.put(out, sub, W / 2, 1060)
         if self.fin is not None:   # 1位以外の列を暗くして、1位にスポットライト＋王冠が落ちてきて、はんこがポン
             j = self.fin
             dim = np.ones((H, W, 1), np.float32) * 0.45
@@ -256,10 +275,16 @@ class Renderer:
                 cl.cap.release()
 
 
+CATX = None   # 猫の位置（None なら棒の下のほう）。2列のときは棒の外側に置いて、残りのお金を隠さない（10/26）
+
+
 def set_cols(n):
     """列の数（2 か 3）に合わせて、棒の位置と太さを決める。"""
-    global COLX, COLW
-    COLX, COLW = ((300, 780), 330) if n == 2 else ((205, 540, 875), 250)
+    global COLX, COLW, CATX
+    if n == 2:
+        COLX, COLW, CATX = (395, 685), 210, (150, 930)
+    else:
+        COLX, COLW, CATX = (205, 540, 875), 250, None
 
 
 def make_static(spec):

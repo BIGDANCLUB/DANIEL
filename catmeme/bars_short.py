@@ -29,7 +29,8 @@ PANEL = (30, 60, 1050, 1620)
 COLX = (205, 540, 875)
 COLW = 250
 BAR_TOP, BAR_BOT = 300, 1250
-SEG_COL = {"red": ((230, 20, 20), WHITE), "gray": ((205, 205, 205), BLACK), "dark": ((140, 140, 140), BLACK)}
+SEG_COL = {"red": ((230, 20, 20), WHITE), "gray": ((205, 205, 205), BLACK), "dark": ((140, 140, 140), BLACK),
+           "green": ((40, 210, 60), BLACK), "purple": ((170, 40, 200), WHITE), "orange": ((255, 140, 0), BLACK)}
 
 
 def label_card(lines, col):
@@ -270,7 +271,8 @@ def make_static(spec):
     st["seglab"] = {(name, j): I.text(f"△{spec['values'][name][j]}万", 50, SEG_COL[kind][1], stroke=0)
                     for name, kind in spec["items"] for j in range(3)}
     take = [spec["incomes"][j] - sum(spec["values"][n][j] for n, _ in spec["items"]) for j in range(3)]
-    st["takelab"] = [I.text(f"手取り\n約{v}万", 70, RED, stroke=5, stroke_col=WHITE) for v in take]
+    word = spec.get("take_word", "手取り")
+    st["takelab"] = [I.text(f"{word}\n約{round(v, 1):g}万", 70, RED, stroke=5, stroke_col=WHITE) for v in take]
     return st
 
 

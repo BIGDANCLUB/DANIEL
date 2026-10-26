@@ -271,6 +271,23 @@ def prop_img(kind, w):
             r = w * 0.11
             d.ellipse((w * cx - r, h * cy - r, w * cx + r, h * cy + r), fill=(40, 40, 50, 255))
         return im
+    if kind.startswith("phone:"):   # スマホの画面に赤い文字（「給料明細」「残高」など）
+        im = prop_img("phone", w)
+        tx = rich([[(ln, RED)] for ln in kind[6:].split("\n")], int(w * 0.42), stroke=5, stroke_col=WHITE, max_w=int(w * 2.2), lh=1.1)
+        out = Image.new("RGBA", (max(im.width, tx.width) + 20, im.height), (0, 0, 0, 0))
+        out.alpha_composite(im, ((out.width - im.width) // 2, 0))
+        out.alpha_composite(tx, ((out.width - tx.width) // 2, int(im.height * 0.55 - tx.height / 2)))
+        return out
+    if kind.startswith("cloud:"):   # 考えごとの雲（白い楕円＋黒い字）
+        tx = rich([[(ln, BLACK)] for ln in kind[6:].split("\n")], 64, max_w=int(w * 0.8), lh=1.15)
+        h = max(int(w * 0.55), tx.height + 90)
+        im = Image.new("RGBA", (w, h + 70), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        d.ellipse((0, 0, w - 1, h - 1), fill=WHITE + (255,), outline=(60, 60, 60, 255), width=5)
+        for cx, cy, r in ((w * 0.3, h + 18, 22), (w * 0.22, h + 52, 13)):
+            d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=WHITE + (255,), outline=(60, 60, 60, 255), width=4)
+        im.alpha_composite(tx, ((w - tx.width) // 2, (h - tx.height) // 2))
+        return im
     raise ValueError(kind)
 
 
@@ -296,6 +313,19 @@ class Renderer(I.Renderer):
         self.c, self.band = c, band
         k = c["kind"]
         self.base = cover(c["bg"], blur=c.get("blur", 0), dark=c.get("dark", 0.0))
+        if c.get("letterbox") is not None:   # 横長の絵を黒い画面のまん中に（参考「社会人1年目と2年目」の作り）
+            y0 = c["letterbox"]
+            im = Image.open(I.bg_path(bg_name(c["bg"]))).convert("RGB")
+            k = max(W / im.width, 608 / im.height)
+            im = im.resize((int(im.width * k + 0.5), int(im.height * k + 0.5)), Image.LANCZOS)
+            x_, y_ = (im.width - W) // 2, (im.height - 608) // 2
+            self.base = np.zeros((H, W, 3), np.float32)
+            self.base[y0:y0 + 608] = np.asarray(im.crop((x_, y_, x_ + W, y_ + 608)))[:, :, ::-1].astype(np.float32) / 255
+        self.foot = None
+        if c.get("foot"):   # 下の白い四角の文字（「これが現実」など）
+            tx = rich([[(c["foot"], BLACK)]], 84)
+            self.foot = Image.new("RGBA", (tx.width + 60, tx.height + 40), (255, 255, 255, 255))
+            self.foot.alpha_composite(tx, (30, 20))
         if c.get("lines"):
             I.speed_lines(self.base, W / 2, 1150)
         self.tag = tag_img(c["tag"], c.get("tag_style", "red"), c.get("flag"))
@@ -356,6 +386,8 @@ class Renderer(I.Renderer):
         I.put(out, self.tag, W / 2, self.tag_y)
         if self.say is not None:
             I.put(out, self.say, W / 2, self.say_y + self.say.height / 2)
+        if self.foot is not None:
+            I.put(out, self.foot, W / 2, c.get("foot_y", 1330))
         if self.subs is not None:   # 参考の最後：ボタンが出て、少しあとに「登録済み」
             I.put(out, self.subs[1 if t > 1.3 else 0], W / 2, 1180)
         return out

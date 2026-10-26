@@ -18,7 +18,7 @@ MENU = "j11_menu_tontoro"
 # 絵は最低限（10/26 ユーザー指定）：新しく作るのは部屋の1枚だけ。夜・次の日は同じ部屋の絵を使いまわす（夜は暗くする）。
 # レジは店内の絵、帰り道は店の外観を使いまわす
 J.STANDIN.update({ROOM: "bg02_room", WAIT: "j04_table", REGI: "j04_table", ROAD: "j02_store_front", ROOM_N: ROOM, ROOM_M: ROOM})
-NIGHT = {ROOM_N: 0.55, ROAD: 0.25}
+NIGHT = {ROOM_N: 0.72, ROAD: 0.25}
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
 CATLIFE = os.path.join(L.BGM, "nc102462_Cat_life.mp3")
 

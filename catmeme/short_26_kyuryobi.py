@@ -27,9 +27,9 @@ def cuts():
 
     return [
         # ---- 給料日前 ----
-        s(ROOM, say="今月も\nもやし生活", cat="stare_standing_marmot", dur=2.3, se="don_hit", **tm("5日前")),
-        s(CONBINI, say="財布の中\n小銭しかない", cat="stare_standing_marmot", dur=2.0, **tm("3日前")),
-        s(OFFICE, say="お昼は\nカップ麺", cat="stare_standing_marmot", dur=2.0, **tm("前日")),
+        s(ROOM, say="今月も\nもやし生活", cat="scream_standing_marmot", dur=2.3, se="don_hit", **tm("5日前")),
+        s(CONBINI, say="財布の中\n小銭しかない", cat="scream_standing_marmot", dur=2.0, **tm("3日前")),
+        s(OFFICE, say="お昼は\nカップ麺", cat="scream_standing_marmot", dur=2.0, **tm("前日")),
         s(NIGHT, say="あと3分で\n日付が変わる…", cat="sleepy_old_memories_cat", dur=2.4, **tm("前日の夜")),
         dict(s(NIGHT, say="振りこまれてる！！", cat="dance_tabby_standing_cat", dur=2.4, lines=True, se="pinpoon_correct",
                **tm("給料日 0:00")), props=ph("残高\n増えた", 300, 1200)),
@@ -47,25 +47,32 @@ def cuts():
           llabel="同僚", dur=2.4, **tm("給料日")),
         # ---- 浮かれる ----
         dict(s(TRAIN, say="手取りは減ったけど\n何に使おうかな", cat="laugh_laughing_dog", dur=2.4, **tm("給料日")),
-             props=[("cloud:新しい\nスニーカー", 560, 830, 560)]),
-        dict(s(TRAIN, say="あとは\n焼肉と…", cat="eat_pop_cat", dur=2.2, **tm("給料日")), props=[("cloud:焼肉\n温泉旅行", 560, 830, 560)]),
+             props=[("cloud:新しい\nスニーカー", 300, 1000, 480)], cat_x=790),
+        dict(s(TRAIN, say="あとは\n焼肉と…", cat="eat_pop_cat", dur=2.2, **tm("給料日")), props=[("cloud:焼肉\n温泉旅行", 300, 1000, 480)], cat_x=790),
         s(TRAIN, say="考えてる時がいちばん\nお金持ちなんだよなww", cat="yell_orange_fat_cat", dur=2.6, **tm("給料日")),
         dict(s(YAKI, say="上カルビ\nもう1皿！！", cat="happy_chipi_chapa_cat", dur=2.4, lines=True, se="jan", **tm("1日後"))),
         s(YAKI, say="会計は\nカードで！", cat="showoff_gojo_cosplay_cat", dur=2.2, **tm("1日後")),
         s(YAKI, say="今だけは\nお金持ち！", cat="happy_hamster_open_arms", dur=2.2, **tm("2日後")),
         dict(s(ROOM, say="スニーカーと\nゲームもポチった！", cat="dance_wop_cat", dur=2.4, **tm("3日後")), props=ph("注文確定", 300, 1200)),
         # ---- 引き落とし ----
-        dict(s(ROOM, say="家賃\n引き落とし", cat="stare_standing_marmot", dur=2.2, se="pi", **tm("27日"))),
-        dict(s(ROOM, say="スマホ代と\n電気代も", cat="stare_standing_marmot", dur=2.0, **tm("28日"))),
-        dict(s(ROOM, say="サブスク4つ\n全部引き落とし", cat="stare_standing_marmot", dur=2.2, **tm("月末"))),
+        dict(s(ROOM, say="家賃\n引き落とし", cat="scream_standing_marmot", dur=2.2, se="pi", **tm("27日"))),
+        dict(s(ROOM, say="スマホ代と\n電気代も", cat="scream_standing_marmot", dur=2.0, **tm("28日"))),
+        dict(s(ROOM, say="サブスク4つ\n全部引き落とし", cat="scream_standing_marmot", dur=2.2, **tm("月末"))),
         dict(s(ROOM_M, say="……え\nなんで", cat="surprise_big_pupils_cat", dur=2.4, se="question_mark_pop_confused_huh", **tm("5日後")),
              props=ph("残高\n3万", 300, 1200)),
         dict(s(ROOM_M, say="給料日から\nまだ5日なのに", cat="despair_dramatic_kitten", dur=2.6, **tm("5日後")), props=ph("残高\n3万", 300, 1200)),
         dict(s(ROOM_M, say="次の給料日まで\nあと24日…", cat="sad_black_dog", dur=2.8, se="chin_bell_failure_sad_ending", **tm("5日後"))),
-        s(CONBINI, say="今月も\nもやし生活", cat="stare_standing_marmot", dur=2.6, **tm("6日後")),
+        s(CONBINI, say="今月も\nもやし生活", cat="scream_standing_marmot", dur=2.6, **tm("6日後")),
     ]
 
 
+def fix(cs):
+    for c in cs:   # 雲の場面は猫を右に（雲・字幕とかさならない）
+        if c.get("cat_x"):
+            c["cats"][0]["x"], c["cats"][0]["h"], c["cats"][0]["w"] = c["cat_x"], 680, 520
+    return cs
+
+
 if __name__ == "__main__":
-    Wd.run(cuts(), Wd.rich_band([("{r}給料日の前と後", 150, Wd.WHITE, 300), ("{y}これ自分だけ？", 104, Wd.BLACK, 440)], *I.BAND),
+    Wd.run(fix(cuts()), Wd.rich_band([("{r}給料日の前と後", 150, Wd.WHITE, 300), ("{y}これ自分だけ？", 104, Wd.BLACK, 440)], *I.BAND),
            os.path.join(Wd.HERE, "out", "short_26_kyuryobi.mp4"), os.path.join(Wd.HERE, "out", "short_26_kyuryobi_preview"))

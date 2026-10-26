@@ -347,9 +347,42 @@ class Renderer(I.Renderer):
             self.heads = (rich([[("日本", BLUE)]], 140, stroke=6, stroke_col=WHITE), rich([[("世界", RED)]], 140, stroke=6, stroke_col=WHITE))
             self.cap = cap_box(c["cap"]) if c.get("cap") else None
 
+    def side_layout(self):
+        """字幕が猫とかさなるときは、猫を左によせて字幕を猫の右どなりに出す（10/26 ユーザー指定）。1匹だけの場面で使う。"""
+        c = self.c
+        self.say_xy = None
+        if c["kind"] != "solo" or self.say is None or len(c["cats"]) != 1 or c.get("big_say"):
+            return
+        q = c["cats"][0]
+        y0, y1, x0, x1 = I.clip_bbox(q["a"])
+        sc = min(q["h"] / (y1 - y0), q.get("w", 10 ** 6) / (x1 - x0))
+        w, h = int((x1 - x0) * sc) + 28, int((y1 - y0) * sc) + 28
+        top = q["bottom"] - h
+        say_top, say_bot = self.say_y, self.say_y + self.say.height
+        if say_bot < top + 10:   # かさならない
+            return
+        if self.props:   # 小道具（スマホ・雲）がある場面は、猫を字幕の下まで小さくする
+            k = (q["bottom"] - say_bot - 20) / h
+            q["h"], q["w"] = q["h"] * k, q.get("w", 10 ** 6) * k
+            return
+        need = max(self.say.width + 30, 380)   # 字幕は小さくしない。足りなければ猫のほうを小さくする
+        if W - w - 90 < need:
+            k = (W - 90 - need) / w
+            if k < 0.45:
+                return
+            q["h"], q["w"] = q["h"] * k, q.get("w", 10 ** 6) * k
+            w, h = int(w * k), int(h * k)
+            top = q["bottom"] - h
+        q["x"] = 20 + w / 2
+        cx = 20 + w + (W - 20 - w) / 2
+        cy = max(top + h * 0.3, self.tag_y + 120 + self.say.height / 2)
+        self.say_xy = (cx, cy)
+
     def frame(self, t):
         out = self.base.copy()
         c = self.c
+        if not hasattr(self, "say_xy"):
+            self.side_layout()
         if self.phone is not None:
             I.put(out, self.phone, W / 2 + 20, 1010)
         if c["kind"] == "split":
@@ -385,7 +418,10 @@ class Renderer(I.Renderer):
         I.over(out, b[0], b[1], 0, c.get("band_y", I.BAND[0]))
         I.put(out, self.tag, W / 2, self.tag_y)
         if self.say is not None:
-            I.put(out, self.say, W / 2, self.say_y + self.say.height / 2)
+            if self.say_xy:
+                I.put(out, self.say, *self.say_xy)
+            else:
+                I.put(out, self.say, W / 2, self.say_y + self.say.height / 2)
         if self.foot is not None:
             I.put(out, self.foot, W / 2, c.get("foot_y", 1330))
         if self.subs is not None:   # 参考の最後：ボタンが出て、少しあとに「登録済み」

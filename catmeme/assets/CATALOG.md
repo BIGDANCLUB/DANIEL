@@ -69,6 +69,7 @@
 | rizz_cat_rizz.mp4 | キメ顔で迫る猫（ドヤ・口説く・悪役） | Green Screen Cat Rizz Meme.mp4 | あり |
 | flip_emo_cat_hair.mp4 | 髪をかき上げる猫（キザ・すまし顔） | Emo Cat Hair Flip _ Green Screen.mp4 | あり |
 | stare_standing_marmot.mp4 | 立ってじっと見るマーモット（無言の圧・様子見） | Cat meme green screen.mp4 | あり |
+| scream_standing_marmot.mp4 | 立って叫ぶマーモット（stare_standing_marmot の 2.85〜4.05秒の叫ぶところだけ切り出し・10/26 ユーザー指定：マーモットは叫ぶ場面だけ使う） | stare_standing_marmot.mp4 から | あり |
 | dance_cute_dog.mp4 | 二本足で踊る犬（喜ぶ・浮かれる） | Cute dog dance green screen.mp4 | あり |
 | eat_chips_cat.mp4 | ポテチを食べる猫（観戦・他人事） | Cat eating chips on a green screen.mp4 | あり |
 | surprise_big_pupils_cat.mp4 | 驚く（目がまんまる） | 驚く　Cute Cat With Big Dilated Pupils Meme Green Screen Chroma Key Template 猫ミーム素材.mp4 | |

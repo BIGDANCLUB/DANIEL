@@ -27,7 +27,7 @@ def cuts():
         return Wd.talk(bg, tm, say, left, right, who=who, llabel="友人", rlabel=ME, tag_style="time", **kw)
 
     return [
-        s(HOTEL, "深夜1:00", "……ハッ\n明日仕事だ", "stare_tabby_wide_eyes_cat", lines=True, se="question_mark_pop_confused_huh"),
+        s(HOTEL, "深夜1:00", "あれ\n明日仕事じゃね…？", "stare_tabby_wide_eyes_cat", lines=True, se="question_mark_pop_confused_huh"),
         s(HOTEL, "深夜1:00", "ここは札幌のホテル\n会社は東京", "sleepy_old_memories_cat"),
         s(HOTEL, "深夜1:02", "始発の飛行機でも\n着くのは朝9時すぎ", "despair_dramatic_kitten"),
         t(HOTEL, "深夜1:05", "有給使えば\nええやん", "eat_chips_cat", "sad_banana_cat_cry", who="L"),

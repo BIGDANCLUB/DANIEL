@@ -107,7 +107,7 @@ def rich_band(rows, y0, y1):
                 txt = part
             if txt:
                 segs.append((txt, col))
-        t = rich([segs], size, stroke=4, stroke_col=sc, max_w=W - 30)
+        t = rich([segs], size, stroke=4, stroke_col=sc, max_w=W - 170)   # スマホで左右が少し切れるので余白をとる（10/26）
         im.alpha_composite(t, ((W - t.width) // 2, int(cy - y0 - t.height / 2)))
     return im
 

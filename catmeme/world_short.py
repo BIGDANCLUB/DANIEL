@@ -279,12 +279,14 @@ def prop_img(kind, w):
         out.alpha_composite(tx, ((out.width - tx.width) // 2, int(im.height * 0.55 - tx.height / 2)))
         return out
     if kind.startswith("cloud:"):   # 考えごとの雲（白い楕円＋黒い字）
-        tx = rich([[(ln, BLACK)] for ln in kind[6:].split("\n")], 64, max_w=int(w * 0.8), lh=1.15)
+        tx = rich([[(ln, BLACK)] for ln in kind[6:].replace("@R", "").split("\n")], 64, max_w=int(w * 0.8), lh=1.15)
         h = max(int(w * 0.55), tx.height + 90)
         im = Image.new("RGBA", (w, h + 70), (0, 0, 0, 0))
         d = ImageDraw.Draw(im)
         d.ellipse((0, 0, w - 1, h - 1), fill=WHITE + (255,), outline=(60, 60, 60, 255), width=5)
-        for cx, cy, r in ((w * 0.3, h + 18, 22), (w * 0.22, h + 52, 13)):
+        tail = ((w * 0.7, h + 18, 22), (w * 0.78, h + 52, 13)) if kind.startswith("cloud:") and "@R" in kind else \
+            ((w * 0.3, h + 18, 22), (w * 0.22, h + 52, 13))
+        for cx, cy, r in tail:
             d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=WHITE + (255,), outline=(60, 60, 60, 255), width=4)
         im.alpha_composite(tx, ((w - tx.width) // 2, (h - tx.height) // 2))
         return im
@@ -434,6 +436,7 @@ def over_cat(out, img, al, x, y, split_mode):
 
 
 def run(cs, band, out_path, prev=None):
+    dedupe(cs)
     I.run(cs, None, None, out_path, prev, band=band, renderer=Renderer)
 
 
@@ -441,3 +444,34 @@ def run(cs, band, out_path, prev=None):
 def band_vs(line1, line2):
     """「日本vs海外」型：1行目 {r}日本{w}vs{c}海外、2行目 黄色（一部の色を変えてもよい）。"""
     return rich_band([(line1, 150, WHITE, 300), (line2, 104, BLACK, 440)], *I.BAND)
+
+
+# ---- 同じ素材が続かないようにする（10/26 ユーザー指定：同じ素材が連続で使われがち） ----
+MOODS = [
+    ["stare_tabby_wide_eyes_cat", "surprise_big_pupils_cat", "stare_big_eyes_tabby_kitten", "peek_what_happen_cat", "huh_huh_cat"],
+    ["dance_tabby_standing_cat", "happy_hamster_open_arms", "happy_girlfriend_dance_cat", "happy_chipi_chapa_cat", "dance_wop_cat",
+     "dance_three_kittens", "dance_orange_gray_cats", "laugh_laughing_dog", "yell_orange_fat_cat", "excited_hodomoe_city_cat"],
+    ["sad_banana_cat_cry", "despair_dramatic_kitten", "sad_black_dog", "sulk_hungry_cat", "sleepy_old_memories_cat",
+     "blank_black_cat_zoning_out"],
+    ["talk_orange_white_sitting_cat", "stare_interviewer_cat", "realize_wet_cat_stare", "read_book_orange_kitten", "rizz_cat_rizz",
+     "cocky_dj_cat", "showoff_gojo_cosplay_cat", "money_counting_orange_cat", "think_bike_front_seat_cat", "calmdown_dancing_cat"],
+    ["rage_talking_cat", "glare_disgusted_cat", "angry_aiming_cat", "meow_ragdoll_chubby_cat", "punch_boxing_white_cat"],
+]
+
+
+def dedupe(cs, key="cats"):
+    """前のカットと同じ素材があれば、同じ気持ちのグループの別の素材にかえる。"""
+    def names(c):
+        return {q["a"] for q in c.get(key, []) if q.get("a")}
+    for i in range(1, len(cs)):
+        prev = names(cs[i - 1])
+        nxt = names(cs[i + 1]) if i + 1 < len(cs) else set()
+        for q in cs[i].get(key, []):
+            a = q.get("a")
+            if not a or a not in prev:
+                continue
+            group = next((g for g in MOODS if a in g), MOODS[3])
+            used = prev | nxt | names(cs[i])
+            alt = [x for x in group if x not in used] or [x for x in MOODS[3] if x not in used]
+            q["a"] = alt[(i * 7 + len(a)) % len(alt)]
+    return cs

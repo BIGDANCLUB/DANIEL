@@ -256,7 +256,14 @@ class Renderer:
                 cl.cap.release()
 
 
+def set_cols(n):
+    """列の数（2 か 3）に合わせて、棒の位置と太さを決める。"""
+    global COLX, COLW
+    COLX, COLW = ((300, 780), 330) if n == 2 else ((205, 540, 875), 250)
+
+
 def make_static(spec):
+    set_cols(len(spec["incomes"]))
     base = I.cover(spec["bg"])
     x0, y0, x1, y1 = PANEL
     base[y0:y1, x0:x1] = base[y0:y1, x0:x1] * 0.25 + np.array(TEAL[::-1], np.float32) / 255 * 0.75
@@ -269,8 +276,8 @@ def make_static(spec):
               values=spec["values"])
     st["cards"] = [label_card(lines, col) for lines, col in zip(spec["cards"], spec["card_cols"])]
     st["seglab"] = {(name, j): I.text(f"△{spec['values'][name][j]}万", 50, SEG_COL[kind][1], stroke=0)
-                    for name, kind in spec["items"] for j in range(3)}
-    take = [spec["incomes"][j] - sum(spec["values"][n][j] for n, _ in spec["items"]) for j in range(3)]
+                    for name, kind in spec["items"] for j in range(len(spec["incomes"]))}
+    take = [spec["incomes"][j] - sum(spec["values"][n][j] for n, _ in spec["items"]) for j in range(len(spec["incomes"]))]
     word = spec.get("take_word", "手取り")
     st["takelab"] = [I.text(f"{word}\n約{round(v, 1):g}万", 70, RED, stroke=5, stroke_col=WHITE) for v in take]
     return st

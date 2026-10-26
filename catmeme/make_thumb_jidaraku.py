@@ -59,5 +59,26 @@ def yakiniku_b():
     T.save(img, "jidaraku_01_yakiniku_thumb.png")
 
 
+def yakiniku_abc():
+    """長尺のサムネ3候補（A・B・C）の形式（10/26 ユーザー指定）。"""
+    R, BK = T.RED, T.BLACK
+    T.type_a("jidaraku_01_yakiniku_thumb_a.png", "j02_store_front", "j05_grill",
+             ("stare_big_eyes_tabby_kitten", 0.6, 300, 410, 330, False),
+             [("stare_tabby_wide_eyes_cat", 0.6, 1100, 410, 300, True)],
+             "30代独身の休日",
+             [("休日に", BK), ("1人焼肉きんぐ", R)], [("きんぐカルビ", BK), ("3皿", R), ("の末路", BK)], split=620, size=118)
+    T.type_b("jidaraku_01_yakiniku_thumb_b.png",
+             [("j01_room", [("sleep_sleeping_cat", 1.0, 160, 470, 300, False)]),
+              ("j05_grill", [("yell_orange_fat_cat", 1.0, 160, 470, 330, False)]),
+              ("j05_grill", [("despair_dramatic_kitten", 1.0, 160, 470, 330, False)]),
+              ("j01_room", [("sad_banana_cat_cry", 1.0, 160, 470, 330, False)])],
+             [("txt", "昼1時に起床", 160, 60, 40, T.YELLOW, -6), ("txt", "肉うめぇ!!", 480, 60, 44, T.YELLOW, 4),
+              ("txt", "3皿きた…", 800, 60, 44, T.YELLOW, -4), ("txt", "体重+2kg", 1130, 60, 44, R, 6)],
+             [("30代独身　1人焼肉きんぐで", R)], [("調子に乗った結果", T.NAVY)])
+    T.type_c("jidaraku_01_yakiniku_thumb_c.png", "j05_grill",
+             [("stare_big_eyes_tabby_kitten", 0.6, 1060, 600, 460, False)],
+             "30代独身　休日に1人焼肉きんぐ", "食べすぎた…", zoom=1.05)
+
+
 if __name__ == "__main__":
-    yakiniku_b()
+    yakiniku_abc()

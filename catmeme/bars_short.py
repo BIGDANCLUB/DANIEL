@@ -135,8 +135,16 @@ class Renderer:
             self.crown, self.stamp = crown_img(), stamp_img(c.get("finish_word", "1位"))
         self.bbox = {}
         if c.get("minus"):
-            big = I.text(c["minus"][0], 210, (255, 30, 30), stroke=14, stroke_col=WHITE, max_w=W - 170)
-            self.minus = (big.rotate(-5, expand=True, resample=Image.BICUBIC), I.text(c["minus"][1], 96, WHITE, stroke=8, max_w=W - 60))
+            big = I.text(c["minus"][0], 210, YELLOW, stroke=16, stroke_col=(180, 0, 0), max_w=W - 150)
+            band_ = Image.new("RGBA", (W + 200, big.height + 80), (0, 0, 0, 235))
+            band_.alpha_composite(big, ((band_.width - big.width) // 2, 40))
+            self.minus = (band_.rotate(-6, expand=True, resample=Image.BICUBIC),
+                          I.text(c["minus"][1], 110, WHITE, stroke=10, stroke_col=(200, 0, 0), max_w=W - 60))
+            bill = Image.new("RGBA", (170, 86), (0, 0, 0, 0))
+            d_ = ImageDraw.Draw(bill)
+            d_.rectangle((0, 0, 169, 85), fill=(225, 205, 160, 255), outline=(120, 90, 40, 255), width=4)
+            d_.ellipse((60, 18, 110, 68), outline=(120, 90, 40, 255), width=4)
+            self.bill = bill
 
     def _cat(self, clip, name, t, h, w):
         fr, a = clip.frame(t + 0.25)
@@ -236,16 +244,45 @@ class Renderer:
                     a_ = 22 * (1 - (t - land) / 0.35)
                     M_ = np.float32([[1, 0, a_ * math.sin(t * 90)], [0, 1, a_ * math.cos(t * 70)]])
                     out = cv2.warpAffine(out, M_, (W, H), borderMode=cv2.BORDER_REPLICATE)
-        if c.get("minus"):   # 最後：「マイナス○○円」を画面いっぱいに強く出す（10/26 ユーザー指定）
-            k = min(1.0, t / 0.25)
-            out = out * (1 - 0.55 * k)
+        if c.get("minus"):   # 最後：「マイナス○○円」を画面いっぱいに強く出す（10/26 ユーザー指定：もっと派手に）
+            k = min(1.0, t / 0.2)
+            out = out * (1 - 0.6 * k)
+            # 赤い集中線（回る）と、赤く点滅する画面
+            ov = np.zeros((H, W), np.float32)
+            cx, cy = W / 2, 820
+            for i in range(48):
+                a = 2 * math.pi * i / 48 + t * 0.6
+                d = 0.035
+                pts = np.array([(cx, cy), (cx + 2400 * math.cos(a - d), cy + 2400 * math.sin(a - d)),
+                                (cx + 2400 * math.cos(a + d), cy + 2400 * math.sin(a + d))], np.int32)
+                cv2.fillConvexPoly(ov, pts, 1.0)
+            flash = 0.45 + 0.35 * (int(t * 8) % 2)
+            out = out * (1 - ov[..., None] * flash * k) + ov[..., None] * flash * k * np.array([0.05, 0.05, 0.85], np.float32)
+            # お札が上から降って、下へ落ちていく（お金が出ていく）
+            for i in range(14):
+                x = (i * 157 + 60) % W
+                y = -200 + ((t * 900 + i * 230) % (H + 400))
+                bill = self.bill.rotate((i * 37 + t * 200) % 360, expand=True)
+                I.put(out, bill, x, y)
+            # 大きな文字：ドン！と縮みながら出て、着地で画面がゆれる
             big, sub = self.minus
-            sc = 2.2 - 1.2 * min(1.0, t / 0.18)
+            u = min(1.0, t / 0.18)
+            sc = 3.0 - 2.0 * u
             im = big.resize((max(1, int(big.width * sc)), max(1, int(big.height * sc))))
-            sx = 14 * math.sin(t * 80) * max(0.0, 1 - t / 0.6)
-            I.put(out, im, W / 2 + sx, 820)
-            if t > 0.5:
-                I.put(out, sub, W / 2, 1060)
+            pul = 1.0 + 0.04 * math.sin(t * 18) if t > 0.3 else 1.0
+            if pul != 1.0:
+                im = im.resize((int(im.width * pul), int(im.height * pul)))
+            I.put(out, im, W / 2, cy)
+            if t > 0.55:
+                v = min(1.0, (t - 0.55) / 0.15)
+                sb = sub.resize((max(1, int(sub.width * (1.6 - 0.6 * v))), max(1, int(sub.height * (1.6 - 0.6 * v)))))
+                I.put(out, sb, W / 2, 1110)
+            if 0.18 < t < 0.75:   # 着地のゆれ
+                a_ = 34 * (1 - (t - 0.18) / 0.57)
+                M_ = np.float32([[1, 0, a_ * math.sin(t * 95)], [0, 1, a_ * math.cos(t * 77)]])
+                out = cv2.warpAffine(out, M_, (W, H), borderMode=cv2.BORDER_REPLICATE)
+            if t < 0.12:   # 出た瞬間に白く光る
+                out = out * 0.4 + 0.6
         if self.fin is not None:   # 1位以外の列を暗くして、1位にスポットライト＋王冠が落ちてきて、はんこがポン
             j = self.fin
             dim = np.ones((H, W, 1), np.float32) * 0.45

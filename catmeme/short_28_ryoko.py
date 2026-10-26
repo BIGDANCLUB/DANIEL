@@ -21,7 +21,9 @@ ME = "イッチ"
 def cuts():
     """10/26 ユーザー指定：台本だけ参考にして、作り（黒い帯・赤い札・白い字幕・ステッカーの猫）はいつものショート風にする。"""
     def s(bg, tm, say, cat, me=True, **kw):
-        return Wd.solo(bg, tm, say, cat, label=ME if me else None, tag_style="time", **kw)
+        c = Wd.solo(bg, tm, say, cat, label=ME if me else None, tag_style="time", **kw)
+        c["under"] = True   # 猫は字幕の下に大きく（10/26 ユーザー指定）
+        return c
 
     def t(bg, tm, say, left, right, who="R", **kw):
         return Wd.talk(bg, tm, say, left, right, who=who, llabel="友人", rlabel=ME, tag_style="time", **kw)

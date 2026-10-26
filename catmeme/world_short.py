@@ -372,7 +372,11 @@ class Renderer(I.Renderer):
         need = max(self.say.width + 30, 380)   # 字幕は小さくしない。足りなければ猫のほうを小さくする
         if W - w - 90 < need:
             k = (W - 90 - need) / w
-            if k < 0.45:
+            if k < (0.8 if c.get("under") else 0.45):   # 横に置くと猫が小さくなりすぎる → 字幕を上、猫をその下に大きく（10/26 ユーザー指定）
+                if not c.get("under"):
+                    return
+                k2 = (q["bottom"] - say_bot - 20) / h
+                q["h"], q["w"] = q["h"] * k2, q.get("w", 10 ** 6) * k2 * 1.3
                 return
             q["h"], q["w"] = q["h"] * k, q.get("w", 10 ** 6) * k
             w, h = int(w * k), int(h * k)

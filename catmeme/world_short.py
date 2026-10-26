@@ -346,7 +346,8 @@ class Renderer(I.Renderer):
         self.bubbles = [(bubble_img(t_), x, y, at) for t_, x, y, at in c.get("bubbles", [])]
         self.subs = (subscribe_img(False), subscribe_img(True)) if c.get("subscribe") else None
         if k == "split":
-            self.heads = (rich([[("日本", BLUE)]], 140, stroke=6, stroke_col=WHITE), rich([[("世界", RED)]], 140, stroke=6, stroke_col=WHITE))
+            hl, hr = c.get("heads", ("日本", "世界"))
+            self.heads = (rich([[(hl, BLUE)]], 140, stroke=6, stroke_col=WHITE), rich([[(hr, RED)]], 140, stroke=6, stroke_col=WHITE))
             self.cap = cap_box(c["cap"]) if c.get("cap") else None
 
     def side_layout(self):
@@ -467,6 +468,8 @@ def dedupe(cs, key="cats"):
     def names(c):
         return {q["a"] for q in c.get(key, []) if q.get("a")}
     for i in range(1, len(cs)):
+        if cs[i].get("kind") == "split":   # 左右くらべは同じ猫が残るのが演出
+            continue
         prev = names(cs[i - 1])
         nxt = names(cs[i + 1]) if i + 1 < len(cs) else set()
         for q in cs[i].get(key, []):

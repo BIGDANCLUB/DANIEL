@@ -30,8 +30,31 @@ PANEL = (30, 60, 1050, 1620)
 COLX = (205, 540, 875)
 COLW = 250
 BAR_TOP, BAR_BOT = 300, 1250
-SEG_COL = {"red": ((230, 20, 20), WHITE), "gray": ((205, 205, 205), BLACK), "dark": ((140, 140, 140), BLACK),
+# 10/27 ユーザー指定：黄色をやめて、きれいで見やすい配色に（もとの色はエメラルドのグラデーション＋うすい斜めじま）
+SEG_COL_OLD = {"red": ((230, 20, 20), WHITE), "gray": ((205, 205, 205), BLACK), "dark": ((140, 140, 140), BLACK),
            "green": ((40, 210, 60), BLACK), "purple": ((170, 40, 200), WHITE), "orange": ((255, 140, 0), BLACK)}
+
+
+SEG_COL = {"red": ((236, 84, 84), WHITE), "green": ((66, 145, 235), WHITE), "purple": ((150, 90, 210), WHITE),
+           "orange": ((247, 140, 60), WHITE), "dark": ((96, 112, 132), WHITE), "gray": ((150, 162, 178), WHITE)}
+BASE_TOP, BASE_BOT = (40, 205, 150), (10, 140, 120)   # 残りのお金（エメラルド）
+NAVY_PANEL = (22, 30, 58)
+
+
+def grad_fill(h, w, top, bot, stripes=False):
+    """上から下へのグラデーション（BGR 0〜1）。stripes=True でうすい斜めじま。"""
+    h, w = max(1, int(h)), max(1, int(w))
+    u = np.linspace(0, 1, h, dtype=np.float32)[:, None, None]
+    a = np.array(top[::-1], np.float32) / 255
+    b = np.array(bot[::-1], np.float32) / 255
+    g = np.repeat(a * (1 - u) + b * u, w, axis=1)
+    if stripes:
+        yy, xx = np.mgrid[0:h, 0:w]
+        m = (((xx + yy) // 18) % 2 == 0).astype(np.float32)[..., None]
+        g = g * (1 - 0.08 * m) + 0.08 * m
+    # 左に光（立体感）
+    sh = np.linspace(1.12, 0.92, w, dtype=np.float32)[None, :, None]
+    return np.clip(g * sh, 0, 1)
 
 
 def label_card(lines, col):
@@ -139,11 +162,14 @@ class Renderer:
             self.shout_im = I.text("＼" + c["shout"][0] + "／", 76, YELLOW, stroke=9, stroke_col=BLACK, max_w=520).rotate(
                 8, expand=True, resample=Image.BICUBIC)
         if c.get("result"):
-            tx = I.text(c["result"], 170, WHITE, stroke=12, stroke_col=(150, 0, 60), max_w=W - 200)
-            rb = Image.new("RGBA", (tx.width + 160, tx.height + 70), BASE + (255,))
-            ImageDraw.Draw(rb).rectangle((0, 0, rb.width - 1, rb.height - 1), outline=YELLOW, width=12)
-            rb.alpha_composite(tx, (80, 35))
-            self.res = rb.rotate(-4, expand=True, resample=Image.BICUBIC)
+            tx = I.text(c["result"], 180, (255, 220, 110), stroke=10, stroke_col=(80, 50, 0), max_w=W - 200)
+            rb = Image.new("RGBA", (W - 60, tx.height + 90), (0, 0, 0, 0))
+            d_ = ImageDraw.Draw(rb)
+            d_.rectangle((0, 0, rb.width - 1, rb.height - 1), fill=(12, 14, 30, 235))
+            for k_, y_ in enumerate((10, rb.height - 22)):
+                d_.rectangle((0, y_, rb.width - 1, y_ + 12), fill=(220, 180, 80, 255))
+            rb.alpha_composite(tx, ((rb.width - tx.width) // 2, 45))
+            self.res = rb
         if c.get("minus"):
             good = c.get("good")   # True なら「プラス（貯金できる）」の色（10/27）
             sc_ = (0, 110, 40) if good else (180, 0, 0)
@@ -178,8 +204,9 @@ class Renderer:
             total = st["incomes"][j]
             scale = (BAR_BOT - BAR_TOP) / st["max_income"]
             top = BAR_BOT - total * scale
-            cv2.rectangle(out, (x0 - 6, int(top) - 6), (x1 + 6, BAR_BOT + 6), (0, 0, 0), -1)
-            out[int(top):BAR_BOT, x0:x1] = np.array(BASE[::-1], np.float32) / 255
+            sh = out[int(top) + 10:BAR_BOT + 10, x0 + 10:x1 + 10]   # 影
+            sh *= 0.55
+            out[int(top):BAR_BOT, x0:x1] = grad_fill(BAR_BOT - int(top), x1 - x0, BASE_TOP, BASE_BOT, stripes=True)
             y = top
             for k, (name, kind) in enumerate(st["items"]):
                 if k >= c["shown"]:
@@ -190,8 +217,11 @@ class Renderer:
                 grow = 1.0 if (k < c["shown"] - 1 or not c.get("grow")) else min(1.0, t / 0.5)
                 hpx = v * scale * grow   # 2列のときは金額どおりの長さ（10/26）
                 col, tc = SEG_COL[kind]
-                out[int(y):int(y + hpx), x0:x1] = np.array(col[::-1], np.float32) / 255
-                cv2.rectangle(out, (x0, int(y)), (x1, int(y + hpx)), (0, 0, 0), 4)
+                if int(y + hpx) > int(y):
+                    lt = tuple(min(255, int(v_ * 1.15)) for v_ in col)
+                    dk = tuple(int(v_ * 0.82) for v_ in col)
+                    out[int(y):int(y + hpx), x0:x1] = grad_fill(int(y + hpx) - int(y), x1 - x0, lt, dk)
+                cv2.line(out, (x0, int(y + hpx)), (x1, int(y + hpx)), (1, 1, 1), 3, cv2.LINE_AA)
                 if grow > 0.6:
                     lab = st["seglab"][(name, j)]
                     if lab.height > hpx - 6:   # 細い段は札を小さくして段の中におさめる（10/27）
@@ -199,6 +229,7 @@ class Renderer:
                         lab = lab.resize((max(1, int(lab.width * k_)), max(1, int(lab.height * k_))), Image.LANCZOS)
                     I.put(out, lab, (x0 + x1) / 2 if CATX else x0 + lab.width / 2 + 14, y + min(hpx, 120) / 2 + 4)
                 y += hpx
+            cv2.rectangle(out, (x0, int(top)), (x1, BAR_BOT), (1, 1, 1), 3, cv2.LINE_AA)   # 白い細いふち
             if c.get("take"):
                 I.put(out, st["takelab"][j], cx, y + 90)
         for j, cx in enumerate(COLX):   # 下の札
@@ -238,25 +269,32 @@ class Renderer:
             x = (CATX[j] if CATX else COLX[j])
             x = min(max(x, sh.width / 2 + 10), W - sh.width / 2 - 10)
             I.put(out, sh, x + 6 * math.sin(t * 30), 860)
-        if c.get("result"):   # 結果発表：ピンクの帯がズームで出て、キラキラ（10/27 ユーザー指定：重りではない表現）
-            u = min(1.0, t / 0.22)
-            ov = np.zeros((H, W), np.float32)
-            for i in range(36):
-                a = 2 * math.pi * i / 36 + t * 1.2
-                pts = np.array([(W / 2, 820), (W / 2 + 2400 * math.cos(a - 0.04), 820 + 2400 * math.sin(a - 0.04)),
-                                (W / 2 + 2400 * math.cos(a + 0.04), 820 + 2400 * math.sin(a + 0.04))], np.int32)
-                cv2.fillConvexPoly(ov, pts, 1.0)
-            out = out * (1 - 0.35 * u) + ov[..., None] * 0.5 * u * np.array([0.6, 0.95, 1.0], np.float32)
-            sc = 0.3 + 0.7 * (1 - (1 - u) ** 3) + (0.03 * math.sin(t * 16) if t > 0.3 else 0)
-            im = self.res.resize((max(1, int(self.res.width * sc)), max(1, int(self.res.height * sc))))
-            I.put(out, im, W / 2, 820)
-            for i in range(10):   # キラキラ
-                ph = (t * 3 + i * 0.37) % 1.0
-                x = W / 2 + math.cos(i * 2.3) * (300 + 180 * ph)
-                y = 820 + math.sin(i * 2.3) * (200 + 120 * ph)
-                r_ = int(26 * (1 - ph)) + 4
-                cv2.line(out, (int(x - r_), int(y)), (int(x + r_), int(y)), (1, 1, 1), 5, cv2.LINE_AA)
-                cv2.line(out, (int(x), int(y - r_)), (int(x), int(y + r_)), (1, 1, 1), 5, cv2.LINE_AA)
+        if c.get("result"):   # 結果発表：暗転→上からスポットライト2本が交差→金色の文字が光って出る→紙吹雪（10/27 作り直し）
+            u = min(1.0, t / 0.25)
+            out = out * (1 - 0.6 * u)
+            cone = np.zeros((H, W), np.float32)
+            for side in (-1, 1):
+                ang = side * (0.35 - 0.25 * math.sin(min(1.0, t / 0.6) * math.pi / 2))
+                tx_ = W / 2 + side * 520
+                pts = np.array([(tx_ - 40, -50), (tx_ + 40, -50),
+                                (W / 2 + 300 + math.tan(ang) * 300, 1000), (W / 2 - 300 + math.tan(ang) * 300, 1000)], np.int32)
+                cv2.fillConvexPoly(cone, pts, 0.35 * u)
+            cone = cv2.GaussianBlur(cone, (81, 81), 0)
+            out = out + cone[..., None] * np.array([0.75, 0.92, 1.0], np.float32)
+            if t > 0.3:
+                v_ = min(1.0, (t - 0.3) / 0.2)
+                sc = 1.25 - 0.25 * v_
+                im = self.res.resize((max(1, int(self.res.width * sc)), max(1, int(self.res.height * sc))))
+                I.put(out, im, W / 2, 820)
+                if t < 0.55:   # 出た瞬間のきらめき
+                    out = out + (0.55 - t) * 1.2
+            for i in range(40):   # 紙吹雪
+                ph = (t * 0.7 + i * 0.137) % 1.0
+                x = (i * 97 + 40 * math.sin(t * 3 + i)) % W
+                y = -40 + ph * (H + 80)
+                col = ((0.3, 0.8, 1.0), (1.0, 0.6, 0.3), (0.5, 1.0, 0.6), (1.0, 1.0, 1.0), (0.9, 0.5, 1.0))[i % 5]
+                ww = 8 + 18 * abs(math.sin(t * 8 + i))   # くるくる回って見える
+                cv2.rectangle(out, (int(x), int(y)), (int(x + ww), int(y + 28)), col, -1)
         if self.ban is not None:   # 重りが上から落ちてきて、棒にのしかかる（ドスン→画面がゆれる）
             land = 0.38
             u = min(1.0, t / land)
@@ -354,31 +392,44 @@ class Renderer:
 CATX = None   # 猫の位置（None なら棒の下のほう）。2列のときは棒の外側に置いて、残りのお金を隠さない（10/26）
 
 
-def bill_img(w=230):
-    """お札（リアルに見えるよう、地紋・すかし・数字・枠を描く。本物の紙幣のまねはしない・10/27）。"""
+def bill_img(w=240):
+    """お札（10/27 作り直し：地紋のロゼット・ホログラムの帯・すかし・記番号で本物らしく。実在の紙幣の図柄はまねない）。"""
     h = int(w * 0.5)
     S_ = 3
-    im = Image.new("RGBA", (w * S_, h * S_), (0, 0, 0, 0))
+    W_, H_ = w * S_, h * S_
+    im = Image.new("RGBA", (W_, H_), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
-    W_, H_ = im.size
-    for y in range(H_):   # うすい茶色のグラデーション
+    for y in range(H_):   # 紙の色（あわい茶〜クリーム）
         u = y / H_
-        d.line((0, y, W_, y), fill=(int(214 - 20 * u), int(196 - 22 * u), int(150 - 20 * u), 255))
-    for i in range(0, W_, 9):   # 細かい地紋（波線）
-        pts = [(i + 18 * math.sin(yy / 22), yy) for yy in range(0, H_, 6)]
-        d.line(pts, fill=(190, 160, 110, 120), width=2)
-    d.rectangle((10, 10, W_ - 11, H_ - 11), outline=(110, 80, 40, 255), width=8)
-    d.rectangle((26, 26, W_ - 27, H_ - 27), outline=(140, 105, 60, 255), width=3)
-    cx, cy, r = W_ * 0.72, H_ * 0.5, H_ * 0.32   # 右のすかし（だ円）
-    d.ellipse((cx - r * 0.8, cy - r, cx + r * 0.8, cy + r), fill=(235, 222, 190, 255), outline=(130, 95, 50, 255), width=4)
-    d.ellipse((cx - r * 0.45, cy - r * 0.55, cx + r * 0.45, cy + r * 0.35), fill=(205, 185, 140, 255))
-    f = I.font(int(H_ * 0.26))
-    d.text((W_ * 0.08, H_ * 0.12), "10000", font=f, fill=(90, 60, 25, 255))
-    f2 = I.font(int(H_ * 0.34))
-    d.text((W_ * 0.12, H_ * 0.45), "壱万", font=f2, fill=(110, 75, 35, 255))
+        d.line((0, y, W_, y), fill=(int(222 - 14 * u), int(208 - 16 * u), int(170 - 18 * u), 255))
+    for cx, cy, rr in ((W_ * 0.3, H_ * 0.5, H_ * 0.42), (W_ * 0.62, H_ * 0.55, H_ * 0.3)):   # ロゼット（細い線のうず模様）
+        for k in range(36):
+            a0 = 2 * math.pi * k / 36
+            pts = []
+            for q in range(0, 361, 6):
+                th = math.radians(q)
+                r_ = rr * (0.55 + 0.45 * math.cos(5 * th + a0))
+                pts.append((cx + r_ * math.cos(th + a0), cy + r_ * math.sin(th + a0)))
+            d.line(pts, fill=(170, 140, 95, 70), width=2)
+    for i in range(0, W_, 7):   # 細い地紋
+        d.line([(i + 10 * math.sin(yy / 15), yy) for yy in range(0, H_, 5)], fill=(185, 155, 110, 55), width=1)
+    hx = int(W_ * 0.47)   # ホログラムの帯（虹色）
+    for x in range(hx, hx + int(W_ * 0.07)):
+        u = (x - hx) / (W_ * 0.07)
+        col = (int(200 + 55 * math.sin(u * 6)), int(200 + 55 * math.sin(u * 6 + 2)), int(200 + 55 * math.sin(u * 6 + 4)), 200)
+        d.line((x, 0, x, H_), fill=col)
+    cx, cy, r = W_ * 0.8, H_ * 0.5, H_ * 0.3   # すかし
+    d.ellipse((cx - r * 0.75, cy - r, cx + r * 0.75, cy + r), fill=(238, 228, 200, 255), outline=(150, 115, 70, 255), width=3)
+    d.rectangle((14, 14, W_ - 15, H_ - 15), outline=(105, 75, 40, 255), width=7)
+    d.rectangle((30, 30, W_ - 31, H_ - 31), outline=(150, 115, 70, 255), width=2)
+    f = I.font(int(H_ * 0.24))
+    d.text((W_ * 0.06, H_ * 0.08), "10000", font=f, fill=(95, 62, 28, 255))
+    d.text((W_ * 0.06, H_ * 0.62), "壱万円", font=f, fill=(95, 62, 28, 255))
+    f3 = I.font(int(H_ * 0.1))
+    d.text((W_ * 0.55, H_ * 0.08), "ZZ 000000 Z", font=f3, fill=(140, 60, 40, 255))   # ありえない記番号（作りもの）
     im = im.resize((w, h), Image.LANCZOS)
-    sh = Image.new("RGBA", (w + 8, h + 8), (0, 0, 0, 0))
-    ImageDraw.Draw(sh).rectangle((6, 6, w + 6, h + 6), fill=(0, 0, 0, 90))
+    sh = Image.new("RGBA", (w + 10, h + 10), (0, 0, 0, 0))
+    ImageDraw.Draw(sh).rectangle((7, 7, w + 7, h + 7), fill=(0, 0, 0, 90))
     sh.alpha_composite(im, (0, 0))
     return sh
 
@@ -396,10 +447,12 @@ def make_static(spec):
     set_cols(len(spec["incomes"]))
     base = I.cover(spec["bg"])
     x0, y0, x1, y1 = PANEL
-    base[y0:y1, x0:x1] = base[y0:y1, x0:x1] * 0.25 + np.array(TEAL[::-1], np.float32) / 255 * 0.75
+    pn = grad_fill(y1 - y0, x1 - x0, (30, 40, 78), (14, 18, 38))   # 紺のすりガラス
+    base[y0:y1, x0:x1] = base[y0:y1, x0:x1] * 0.18 + pn * 0.82
+    cv2.rectangle(base, (x0, y0), (x1 - 1, y1 - 1), (0.85, 0.75, 0.45), 3, cv2.LINE_AA)   # 金の細い枠
     title = Image.new("RGBA", (W, 230), (0, 0, 0, 0))
-    t1 = I.text(spec["title"][0], 92, RED, stroke=5, stroke_col=WHITE)
-    t2 = I.text(spec["title"][1], 92, RED, stroke=5, stroke_col=WHITE)
+    t1 = I.text(spec["title"][0], 92, WHITE, stroke=6, stroke_col=(200, 40, 60))
+    t2 = I.text(spec["title"][1], 92, (255, 215, 100), stroke=6, stroke_col=(60, 40, 10))
     title.alpha_composite(t1, ((W - t1.width) // 2, 8))
     title.alpha_composite(t2, ((W - t2.width) // 2, 118))
     st = dict(base=base, title=title, incomes=spec["incomes"], max_income=max(spec["incomes"]), items=spec["items"],
@@ -412,7 +465,7 @@ def make_static(spec):
     take = [spec["incomes"][j] - sum(spec["values"][n][j] for n, _ in spec["items"]) for j in range(len(spec["incomes"]))]
     word = spec.get("take_word", "手取り")
     st["takelab"] = [I.text(f"{word}\n{round(v):,}{unit}" if unit == "円" else f"{word}\n約{round(v, 1):g}{unit}", 70, WHITE, stroke=7,
-                              stroke_col=(120, 0, 50)) for v in take]
+                              stroke_col=(0, 90, 70)) for v in take]
     return st
 
 

@@ -246,7 +246,7 @@ class Renderer:
                 x0 = int(min(max(CATX[j] - ww / 2, 10), W - ww - 10))
                 I.over(out, img, al, x0, int(1300 - hh))
                 continue
-            img, al = self._cat(clip, name, t, 330 if big else 290, 330 if big else 300)
+            img, al = self._cat(clip, name, t, 440 if big else 400, 340 if big else 320)   # 少し棒にかかってもよい（10/27）
             hh, ww = al.shape
             x0 = int(min(max(COLX[j] - ww / 2, 10), W - ww - 10))
             I.over(out, img, al, x0, int(1310 - hh))
@@ -307,14 +307,27 @@ class Renderer:
             I.put(out, self.ban, W / 2, y + self.ban.height / 2)
             if t > land:
                 # 着地の土ぼこり（白い線）と、効果のひとこと
-                if t - land < 0.5:
-                    for side in (-1, 1):
-                        for k in range(3):
-                            x0 = W / 2 + side * (420 + k * 30)
-                            y0 = y_land + self.ban.height - 20 - k * 40
-                            p0, p1 = (int(x0), int(y0)), (int(x0 + side * 90), int(y0 - 50))   # 明るい背景でも見えるよう黒ふち＋うすい黄色（10/27）
-                            cv2.line(out, p0, p1, (0.05, 0.05, 0.1), 17, cv2.LINE_AA)
-                            cv2.line(out, p0, p1, (0.6, 0.95, 1.0), 9, cv2.LINE_AA)   # うすい黄色（10/27）
+                dt = t - land
+                if dt < 0.6:   # 衝撃波：着地点から広がる輪（2重）＋放射状の線（10/27 ユーザー指定）
+                    gy = int(y_land + self.ban.height - 40)
+                    for delay, base_r in ((0.0, 1.0), (0.12, 0.8)):
+                        u_ = (dt - delay) / 0.45
+                        if 0 < u_ < 1:
+                            rx, ry = int((400 + 700 * u_) * base_r), int((60 + 170 * u_) * base_r)
+                            th_ = max(2, int(26 * (1 - u_)))
+                            cv2.ellipse(out, (W // 2, gy), (rx, ry), 0, 0, 360, (0.05, 0.05, 0.1), th_ + 8, cv2.LINE_AA)
+                            cv2.ellipse(out, (W // 2, gy), (rx, ry), 0, 0, 360, (0.6, 0.95, 1.0), th_, cv2.LINE_AA)
+                    if dt < 0.35:
+                        u_ = dt / 0.35
+                        for i in range(14):   # 放射状に飛ぶ線
+                            a_ = math.pi + math.pi * i / 13
+                            r0, r1 = 440 + 300 * u_, 520 + 500 * u_
+                            p0 = (int(W / 2 + r0 * math.cos(a_)), int(gy + r0 * 0.45 * math.sin(a_)))
+                            p1 = (int(W / 2 + r1 * math.cos(a_)), int(gy + r1 * 0.45 * math.sin(a_)))
+                            cv2.line(out, p0, p1, (0.05, 0.05, 0.1), 15, cv2.LINE_AA)
+                            cv2.line(out, p0, p1, (0.6, 0.95, 1.0), 7, cv2.LINE_AA)
+                    if dt < 0.08:   # 一瞬白く光る
+                        out = out * 0.6 + 0.4
                 kk = min(1.0, (t - land) / 0.15)
                 th = self.thud.resize((max(1, int(self.thud.width * (0.5 + 0.5 * kk))), max(1, int(self.thud.height * (0.5 + 0.5 * kk)))))
                 I.put(out, th, W / 2, y_land + self.ban.height + 120)

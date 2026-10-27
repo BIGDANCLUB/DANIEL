@@ -254,7 +254,8 @@ class Renderer:
                 continue
             big = c.get("big") == j
             if CATX:   # 棒の外側（左の列は左、右の列は右）
-                img, al = self._cat(clip, name, t, 460 if big else 380, 250)
+                allv = isinstance(c.get("voice"), tuple) and len(c["voice"]) >= 2   # 冒頭（全員）は大きく
+                img, al = self._cat(clip, name, t, 600 if allv else (460 if big else 380), 330 if allv else 250)
                 hh, ww = al.shape
                 x0 = int(min(max(CATX[j] - ww / 2, 10), W - ww - 10))
                 I.over(out, img, al, x0, int(1300 - hh))

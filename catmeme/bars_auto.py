@@ -24,20 +24,22 @@ def build(spec, intro, items, after, minus):
     same = SAME[:n]
     out = []
     for i, (d, say, cats, v) in enumerate(intro):
-        out.append(cut(d, say, cats, voice=v, se="jan" if i == 0 else None, big=v if "？" in (say or "") else None))
+        out.append(cut(d, say, cats, voice=v, se="jan" if i == 0 and v != "all" else None, big=v if "？" in (say or "") else None))
     for k, ((name, _), lines) in enumerate(zip(spec["items"], items)):
-        out.append(cut(2.0, None, same, shown=k, banner=(name, name, THUDS[k % 5], WEIGHT_CATS[k % 5]), se="explosion_chudoon"))
+        label = spec.get("wlabel", {}).get(name, name)   # 重りの文字（2行にしたいときなど）
+        out.append(cut(2.0, None, same, shown=k, banner=(name, label, THUDS[k % 5], WEIGHT_CATS[k % 5]), se="explosion_chudoon"))
         grow = (("realize_wet_cat_stare", "eat_chips_cat", "peek_what_happen_cat"), ("calmdown_dancing_cat", "glare_disgusted_cat",
                  "confused_i_dont_know_cat"))[k % 2][:n]
         out.append(cut(2.4, None, grow, shown=k + 1, grow=True, se="card_place"))
         for d, say, cats, v in lines:
             out.append(cut(d, say, cats, shown=k + 1, voice=v))
     last = len(spec["items"])
-    out.append(cut(2.0, None, same, shown=last, banner=("残り", spec.get("left_word", "のこったお金"), "ジャン!!", "dance_tabby_standing_cat"),
-                   se="explosion_chudoon"))
+    res = cut(2.0, None, same, shown=last, take=True, se="game_mario_1up")   # 結果発表（重りではなく・1UPの音・10/27）
+    res["result"] = "結果発表"
+    out.append(res)
     for i, (d, say, cats, v) in enumerate(after):
         out.append(cut(d, say, cats, shown=last, take=True, voice=v, box=i == 0, say_y=420, se="price_display" if i == 0 else None))
-    out.append(cut(3.0, None, minus[2], shown=last, take=True, se="explosion_chudoon", minus=minus[:2]))
+    out.append(cut(3.0, None, minus[2], shown=last, take=True, se="gong_dora_jaan", minus=minus[:2]))   # じゃーん（10/27）
     k = B.TOTAL / sum(c["dur"] for c in out)   # 全体をのばして 59.9 秒ちょうどに
     for c in out:
         c["dur"] *= k

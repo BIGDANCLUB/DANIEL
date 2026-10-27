@@ -24,6 +24,7 @@ HERE = I.HERE
 W, H = 1080, 1920
 TOTAL = 59.9
 WHITE, BLACK, RED, YELLOW = (255, 255, 255), (0, 0, 0), (225, 20, 20), (255, 245, 0)
+BASE = (255, 60, 170)   # 棒のもとの色（10/27 ユーザー指定：他チャンネルと被らないよう黄色をやめて目立つピンクに）
 TEAL = (130, 235, 215)
 PANEL = (30, 60, 1050, 1620)
 COLX = (205, 540, 875)
@@ -134,6 +135,12 @@ class Renderer:
         if self.fin is not None:
             self.crown, self.stamp = crown_img(), stamp_img(c.get("finish_word", "1位"))
         self.bbox = {}
+        if c.get("result"):
+            tx = I.text(c["result"], 170, WHITE, stroke=12, stroke_col=(150, 0, 60), max_w=W - 200)
+            rb = Image.new("RGBA", (tx.width + 160, tx.height + 70), BASE + (255,))
+            ImageDraw.Draw(rb).rectangle((0, 0, rb.width - 1, rb.height - 1), outline=YELLOW, width=12)
+            rb.alpha_composite(tx, (80, 35))
+            self.res = rb.rotate(-4, expand=True, resample=Image.BICUBIC)
         if c.get("minus"):
             big = I.text(c["minus"][0], 210, YELLOW, stroke=16, stroke_col=(180, 0, 0), max_w=W - 150)
             band_ = Image.new("RGBA", (W + 200, big.height + 80), (0, 0, 0, 235))
@@ -171,7 +178,7 @@ class Renderer:
             scale = (BAR_BOT - BAR_TOP) / st["max_income"]
             top = BAR_BOT - total * scale
             cv2.rectangle(out, (x0 - 6, int(top) - 6), (x1 + 6, BAR_BOT + 6), (0, 0, 0), -1)
-            out[int(top):BAR_BOT, x0:x1] = np.array(YELLOW[::-1], np.float32) / 255
+            out[int(top):BAR_BOT, x0:x1] = np.array(BASE[::-1], np.float32) / 255
             y = top
             for k, (name, kind) in enumerate(st["items"]):
                 if k >= c["shown"]:
@@ -224,6 +231,25 @@ class Renderer:
                 I.put(out, bx, W / 2, c.get("say_y", 640))
             else:
                 I.put(out, self.say, W / 2, c.get("say_y", 640))
+        if c.get("result"):   # 結果発表：ピンクの帯がズームで出て、キラキラ（10/27 ユーザー指定：重りではない表現）
+            u = min(1.0, t / 0.22)
+            ov = np.zeros((H, W), np.float32)
+            for i in range(36):
+                a = 2 * math.pi * i / 36 + t * 1.2
+                pts = np.array([(W / 2, 820), (W / 2 + 2400 * math.cos(a - 0.04), 820 + 2400 * math.sin(a - 0.04)),
+                                (W / 2 + 2400 * math.cos(a + 0.04), 820 + 2400 * math.sin(a + 0.04))], np.int32)
+                cv2.fillConvexPoly(ov, pts, 1.0)
+            out = out * (1 - 0.35 * u) + ov[..., None] * 0.5 * u * np.array([0.6, 0.95, 1.0], np.float32)
+            sc = 0.3 + 0.7 * (1 - (1 - u) ** 3) + (0.03 * math.sin(t * 16) if t > 0.3 else 0)
+            im = self.res.resize((max(1, int(self.res.width * sc)), max(1, int(self.res.height * sc))))
+            I.put(out, im, W / 2, 820)
+            for i in range(10):   # キラキラ
+                ph = (t * 3 + i * 0.37) % 1.0
+                x = W / 2 + math.cos(i * 2.3) * (300 + 180 * ph)
+                y = 820 + math.sin(i * 2.3) * (200 + 120 * ph)
+                r_ = int(26 * (1 - ph)) + 4
+                cv2.line(out, (int(x - r_), int(y)), (int(x + r_), int(y)), (1, 1, 1), 5, cv2.LINE_AA)
+                cv2.line(out, (int(x), int(y - r_)), (int(x), int(y + r_)), (1, 1, 1), 5, cv2.LINE_AA)
         if self.ban is not None:   # 重りが上から落ちてきて、棒にのしかかる（ドスン→画面がゆれる）
             land = 0.38
             u = min(1.0, t / land)
@@ -348,8 +374,8 @@ def make_static(spec):
                     for name, kind in spec["items"] for j in range(len(spec["incomes"]))}
     take = [spec["incomes"][j] - sum(spec["values"][n][j] for n, _ in spec["items"]) for j in range(len(spec["incomes"]))]
     word = spec.get("take_word", "手取り")
-    st["takelab"] = [I.text(f"{word}\n{round(v):,}{unit}" if unit == "円" else f"{word}\n約{round(v, 1):g}{unit}", 70, RED, stroke=5,
-                              stroke_col=WHITE) for v in take]
+    st["takelab"] = [I.text(f"{word}\n{round(v):,}{unit}" if unit == "円" else f"{word}\n約{round(v, 1):g}{unit}", 70, WHITE, stroke=7,
+                              stroke_col=(120, 0, 50)) for v in take]
     return st
 
 

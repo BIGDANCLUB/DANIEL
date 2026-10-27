@@ -12,11 +12,14 @@ SPEC = dict(
     items=[("家賃", "green"), ("車・交通", "purple"), ("食費", "orange"), ("光熱費・スマホ", "dark")],
     values={"家賃": (9.5, 6.5, 4.5), "車・交通": (1.0, 1.0, 4.0), "食費": (4.8, 4.3, 4.0), "光熱費・スマホ": (1.2, 1.2, 1.5)},
     take_word="残り",
+    wlabel={"車・交通": "自動車\n交通費"},   # 重りの文字は2行（10/27 ユーザー指定）
 )
 
 
 def cuts():
+    M = "scream_standing_marmot_fast"   # 冒頭は3匹ともマーモットで高速に「オイ！オイ！オイ！」（10/27 ユーザー指定）
     return A.build(SPEC, [
+        (2.9, "オイ！オイ！オイ！", (M, M, M), 1),
         (3.0, "東京・大阪・地方\n手取りはみんな26万！", ("cocky_dj_cat", "happy_hamster_open_arms", "sleepy_old_memories_cat"), 0),
         (2.6, "地方は家賃が安いから\n勝ちでしょ？", ("stare_big_eyes_tabby_kitten", "dance_three_kittens", "showoff_gojo_cosplay_cat"), 2),
         (2.2, "……本当に？", ("sleepy_sleepy_cat", "huh_huh_cat", "sleepy_sleepy_cat"), 1),
@@ -29,7 +32,7 @@ def cuts():
          (2.6, "大阪は安いお店が\nいっぱい！", ("blank_black_cat_zoning_out", "happy_girlfriend_dance_cat", "realize_wet_cat_stare"), 1)],
         [(2.8, "地方は冬の暖房代が\nちょっと高い", ("talk_orange_white_sitting_cat", "stare_interviewer_cat", "sad_black_dog"), 2)],
     ], [
-        (2.8, "いちばん残るのは\nまさかの大阪！", (None, "dance_orange_gray_cats", None), 1),
+        (2.8, "いちばん残るのは\nまさかの大阪！", ("sad_banana_cat_cry", "dance_orange_gray_cats", "despair_dramatic_kitten"), 1),
         (2.6, "地方は車で\n家賃の安さが消える", ("realize_wet_cat_stare", None, "sulk_hungry_cat"), 2),
         (2.4, "東京は家賃が\nぜんぶ持っていく…", ("despair_dramatic_kitten", None, None), 0),
     ], ("東京は 毎月 −3.5万円", "大阪より1年で −42万円…", ("sad_banana_cat_cry", "happy_hamster_open_arms", "stare_tabby_wide_eyes_cat")))

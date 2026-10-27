@@ -158,6 +158,19 @@ class Renderer:
         if self.fin is not None:
             self.crown, self.stamp = crown_img(), stamp_img(c.get("finish_word", "1位"))
         self.bbox = {}
+        if c.get("callout"):
+            lines = c["callout"]
+            rows = [I.text(lines[0], 110, WHITE, stroke=10, stroke_col=(20, 30, 80), max_w=W - 160),
+                    I.text(lines[1], 150, (255, 225, 60), stroke=14, stroke_col=(170, 20, 40), max_w=W - 140)]
+            bw = max(r.width for r in rows) + 90
+            bh = sum(r.height for r in rows) + 90
+            box = Image.new("RGBA", (bw, bh), (0, 0, 0, 0))
+            ImageDraw.Draw(box).rounded_rectangle((0, 0, bw - 1, bh - 1), 40, fill=(230, 40, 70, 240), outline=WHITE, width=10)
+            y = 35
+            for r in rows:
+                box.alpha_composite(r, ((bw - r.width) // 2, y))
+                y += r.height + 20
+            self.call_im = box.rotate(-3, expand=True, resample=Image.BICUBIC)
         if c.get("shout"):
             self.shout_im = I.text("＼" + c["shout"][0] + "／", 76, YELLOW, stroke=9, stroke_col=BLACK, max_w=520).rotate(
                 8, expand=True, resample=Image.BICUBIC)
@@ -265,6 +278,12 @@ class Renderer:
                 I.put(out, bx, W / 2, c.get("say_y", 640))
             else:
                 I.put(out, self.say, W / 2, c.get("say_y", 640))
+        if c.get("callout"):   # 冒頭のタイトルコール（画面の上半分・10/27 ユーザー指定）
+            u = min(1.0, t / 0.2)
+            im = self.call_im
+            sc = 1.6 - 0.6 * (1 - (1 - u) ** 3)
+            im2 = im.resize((max(1, int(im.width * sc)), max(1, int(im.height * sc))))
+            I.put(out, im2, W / 2 + 8 * math.sin(t * 40) * max(0.0, 1 - t / 0.5), 560)
         if c.get("shout"):   # 「＼もっと入れろや／」のような掛け声（猫の上・10/27）
             text_, j = c["shout"]
             sh = self.shout_im

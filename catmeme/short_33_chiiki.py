@@ -19,7 +19,7 @@ SPEC = dict(
 
 def cuts():
     M = "scream_standing_marmot_fast"   # 冒頭は3匹ともマーモットで高速に「オイ！オイ！オイ！」（10/27 ユーザー指定）
-    return A.build(SPEC, [
+    cs = A.build(SPEC, [
         (2.9, None, (M, M, M), (0, 1, 2)),   # 字幕なし（10/27）・3匹とも鳴く
         (3.0, "東京・大阪・地方\n手取りはみんな26万！", ("cocky_dj_cat", "happy_hamster_open_arms", "sleepy_old_memories_cat"), 0),
         (2.6, "地方は家賃が安いから\n勝ちでしょ？", ("stare_big_eyes_tabby_kitten", "dance_three_kittens", "showoff_gojo_cosplay_cat"), 2),
@@ -37,6 +37,8 @@ def cuts():
         (2.6, "地方は車で\n家賃の安さが消える", ("realize_wet_cat_stare", None, "sulk_hungry_cat"), 2),
         (2.4, "東京は家賃が\nぜんぶ持っていく…", ("despair_dramatic_kitten", None, None), 0),
     ], ("東京は 毎月 −3.5万円", "大阪より1年で −42万円…", ("sad_banana_cat_cry", "happy_hamster_open_arms", "stare_tabby_wide_eyes_cat")))
+    cs[0]["callout"] = ("住むならどこがおトク？", "都会vs地方 お金バトル")   # タイトルコール（10/27）
+    return cs
 
 
 if __name__ == "__main__":

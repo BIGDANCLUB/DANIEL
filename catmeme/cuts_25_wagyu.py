@@ -14,7 +14,7 @@ import sys
 import cuts_04_leak as L
 import render as R
 
-R.TEMPO = getattr(R, "TEMPO", 1.0) * 1.12   # 約7分に（1カットを少しゆっくり）
+R.TEMPO = getattr(R, "TEMPO", 1.0) * 0.74   # 10/28 ユーザー指定：スピード感・テンポよく4〜5分に
 HERE = L.HERE
 L.BGS = [os.path.join(HERE, "backgrounds", d) for d in ("25_wagyu", "14_japan", "16_tenchim", "15_vambi", "04_leak", "02_october",
                                                          "01_todai", "jidaraku/01_yakiniku", "18_semicon")]
@@ -67,7 +67,9 @@ def ex(b, text, **kw):
 def cuts_all():
     return [
         # ---- 0. 注意書き ----
-        dict(card=None, layers=[pt("e00_notice")], dur=5.2, se={"f": "chime_announce", "len": 3.0, "gain": -2}),
+        # 背景で猫ミームが動いている上に、画面を半分暗くして注意書き（音なし・10/28 ユーザー指定）
+        dict(bg=bg(STEAK), cats=[{"a": "dance_tabby_standing_cat", "x": 960, "h": 760, "bottom": 1060, "mute": True}], fx=["dim"],
+             layers_top=[pt("e00_notice")], dur=6.0, no_pop=True, notice=True),
         # ---- ① つかみ ----
         ss("2018年6月\n大阪から上海へ向かう\n1隻のフェリー", FERRY, se="page_turn_01", bgm={"file": PURPLE, "gain": -4}),
         nn("フェリーの旅？\nいいねぇ", FERRY, se="pikon"),
@@ -197,8 +199,31 @@ def cuts_all():
     ]
 
 
+FLASHY = ("explosion", "shock", "dokaan", "desk_slam", "siren", "jan", "power_up", "doon_heavy", "glass_break")
+
+
+def hype(cuts):
+    """見にくくならない程度に、どのカットにも派手な演出（10/28 ユーザー指定）。"""
+    for i, c in enumerate(cuts):
+        if c.get("notice"):
+            continue
+        fx = list(c.get("fx", []))
+        se = c.get("se")
+        ses = " ".join((x if isinstance(x, str) else x.get("f", "")) for x in ([se] if isinstance(se, (str, dict)) else (se or [])))
+        big = c.get("say_style") == "red" or any(k in ses for k in FLASHY) or c.get("chapter")
+        fx.append("punch")
+        if big:
+            fx += ["flash", "shake", "lines"]
+        if c.get("card") or c.get("inset") or "sparkle" in ses or "chirin" in ses or "pinpoon" in ses:
+            fx.append("spark")
+        if c.get("say_style") != "red" and not big and i % 3 == 0:
+            fx.append("zoom")
+        c["fx"] = list(dict.fromkeys(fx))
+    return cuts
+
+
 def cuts_full():
-    return L.apply_fx(L.allocate(cuts_all(), max_use=4))
+    return hype(L.apply_fx(L.allocate(cuts_all(), max_use=2)))   # 猫ミームの素材を増やす（同じ素材は1本で2回まで）
 
 
 if __name__ == "__main__":

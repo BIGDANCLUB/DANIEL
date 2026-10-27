@@ -12,11 +12,10 @@ from make_parts_04_leak import glossary, table3
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "parts", "25_wagyu")
 PREV = os.path.join(OUT, "preview")
-TODAY = "※今日の一言：（ユーザーにもらう）"   # 今日の一言（長尺の注意書きの最後の行）
+TODAY = "※外国牛の赤身も美味いよね"   # 今日の一言（10/28 ユーザー指定）
 
 ITEMS = {
-    "e00_notice": P.message(["※事件の内容は報道・判決をもとにした要旨です", "※登場する人物の名前は出しません",
-                             "※猫は演出です　※背景の一部はAIで作っています", TODAY], opaque=True, size=56),
+    "e00_notice": None,   # 下の notice() で作る（半暗転の画面に白い文字だけ）
     "e01_title": P.message(["和牛を狙った男たち", "日本の宝はなぜ守られなかったのか"], sub="2018年　和牛の精液・受精卵 持ち出し事件", size=78),
     "e02_wagyu": glossary("和牛とは？", [
         ("和牛", "次の4品種と\nその交配種だけ"),
@@ -58,6 +57,25 @@ ITEMS = {
     ], size=52),
     "e10_ending": P.message(["次に和牛を食べるとき", "その裏の歴史を少し思い出してほしい"], size=84),
 }
+
+
+def notice():
+    """注意書き：白い太字＋黒いふちだけ（箱なし）。動く背景を半分暗くした上に重ねる（10/28 ユーザー指定）。"""
+    from PIL import ImageDraw
+    lines = ["※事件の内容は報道・判決をもとにした要旨です", "※登場する人物の名前は出しません",
+             "※猫は演出です　※背景の一部はAIで作っています", TODAY]
+    img = Image.new("RGBA", (P.W, P.H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    f = P.font("black", 64)
+    y = (P.H - len(lines) * 100) // 2
+    for ln in lines:
+        w = d.textlength(ln, font=f)
+        d.text(((P.W - w) / 2, y), ln, font=f, fill=(255, 255, 255), stroke_width=7, stroke_fill=(0, 0, 0))
+        y += 100
+    return img
+
+
+ITEMS["e00_notice"] = notice()
 
 
 def main():

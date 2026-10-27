@@ -18,7 +18,8 @@
 参考動画（ニャースインフォ）ふうの追加オプション（03_kodomo_nisa から）:
   cats の各猫に label（足元の役名札）、label_color（札の色。None は白地に黒字）
   say_style "red"   … セリフを赤い文字＋白い縁取りに（強調）
-  fx       ["lines"] 集中線、["shake"] 頭で画面を揺らす、["zoom"] ゆっくり寄る
+  fx       ["lines"] 集中線、["shake"] 頭で画面を揺らす、["zoom"] ゆっくり寄る、["punch"] 頭でグッと寄る、["flash"] 頭で白く光る、
+           ["spark"] キラキラ、["dim"] 画面を半分暗く（その上に layers_top を重ねる）
   pop_in   True で文字がポンと飛び出す（既定は NYAS_STYLE）
   inset    {"card": 解説カードPNG, "box": (x0,y0,x1,y1)} … 図だけ切り出して画面の中ほどに置く
   place    画面左上の小さな地名・場所の字幕
@@ -536,6 +537,12 @@ class CutRenderer:
         self.txt = self._crop(tc)
         if AVOID_TEXT and self.style == "meme" and not cut.get("keep_overlap"):
             self._avoid_text([ly.convert("RGBA").getbbox() for ly in txt], cut)
+        self.top = None
+        if cut.get("layers_top"):
+            tc2 = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+            for ly in cut["layers_top"]:
+                tc2.alpha_composite((Image.open(ly) if isinstance(ly, str) else ly).convert("RGBA"))
+            self.top = trim(to_np(tc2))
         self.explain = None
         if cut.get("explain"):
             self.explain = to_np(P.plain_text(cut["explain"], (60, 695, 1860, 1070), size=cut.get("explain_size", 100), gap=1.22))
@@ -698,6 +705,28 @@ class CutRenderer:
             amp = 18 * (1 - t / 0.35)
             dx, dy = amp * np.sin(t * 90), amp * np.cos(t * 70)
             out = cv2.warpAffine(out, np.float32([[1, 0, dx], [0, 1, dy]]), (W, H), borderMode=cv2.BORDER_REPLICATE)
+        if "punch" in self.fx and t < 0.16:   # 頭でグッと寄って戻る（テンポを出す・10/28）
+            z = 1.0 + 0.09 * (1 - t / 0.16) ** 2
+            bw, bh = int(W * z), int(H * z)
+            big = cv2.resize(out, (bw, bh), interpolation=cv2.INTER_LINEAR)
+            ox, oy = (bw - W) // 2, (bh - H) // 2
+            out = big[oy:oy + H, ox:ox + W].copy()
+        if "flash" in self.fx and t < 0.12:   # 頭で白く光る
+            a_ = 0.65 * (1 - t / 0.12)
+            out = out * (1 - a_) + a_
+        if "spark" in self.fx:   # キラキラが飛ぶ
+            for i in range(14):
+                ph = (t * 1.4 + i * 0.173) % 1.0
+                x_ = int((i * 271 + 90) % W)
+                y_ = int(H * (0.95 - 0.9 * ph))
+                r_ = int(22 * (1 - abs(ph - 0.5) * 2)) + 4
+                col = ((0.4, 0.95, 1.0), (1.0, 1.0, 1.0), (0.6, 0.8, 1.0))[i % 3]
+                cv2.line(out, (x_ - r_, y_), (x_ + r_, y_), col, 5, cv2.LINE_AA)
+                cv2.line(out, (x_, y_ - r_), (x_, y_ + r_), col, 5, cv2.LINE_AA)
+        if "dim" in self.fx:   # 半分暗くする（注意書きを読みやすく）
+            out *= 0.45
+        if self.top is not None:   # 暗くしたあとに重ねる部品（注意書きなど）
+            over_t(out, self.top)
         if self.explain is not None:   # 説明モード：画面はそのまま、下に半透明の黒い帯を敷いて説明文
             k = min(1.0, t / 0.15)
             out[EXPLAIN_TOP:] *= 1 - 0.62 * k

@@ -19,7 +19,7 @@ SPEC = dict(
 
 
 def cuts():
-    M = "scream_standing_marmot_fast"   # 冒頭は同じ素材を列の数だけ（叫ぶマーモット）
+    M = "dance_tabby_standing_cat"   # 冒頭は二本足で踊る猫2匹（10/27 ユーザー指定）
     cs = A.build(SPEC, [
         (2.9, None, (M, M), (0, 1)),
         (3.0, "コロナ前と今\n月給は同じ30万！", ("sleepy_old_memories_cat", "showoff_gojo_cosplay_cat"), 1),

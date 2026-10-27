@@ -255,9 +255,14 @@ class Renderer:
             big = c.get("big") == j
             if CATX:   # 棒の外側（左の列は左、右の列は右）
                 allv = isinstance(c.get("voice"), tuple) and len(c["voice"]) >= 2   # 冒頭（全員）は大きく
-                img, al = self._cat(clip, name, t, 600 if allv else (460 if big else 380), 330 if allv else 250)
+                if c.get("take"):   # 結果のあとは今までどおり（棒にかかりすぎないように）
+                    img, al = self._cat(clip, name, t, 460 if big else 380, 250)
+                    cx_ = CATX[j]
+                else:   # それ以外は大きく、棒に少しかかってよい（10/27 ユーザー指定）
+                    img, al = self._cat(clip, name, t, 640 if (allv or big) else 560, 400 if (allv or big) else 360)
+                    cx_ = CATX[j] + (60 if j == 0 else -60)
                 hh, ww = al.shape
-                x0 = int(min(max(CATX[j] - ww / 2, 10), W - ww - 10))
+                x0 = int(min(max(cx_ - ww / 2, 10), W - ww - 10))
                 I.over(out, img, al, x0, int(1300 - hh))
                 continue
             if isinstance(c.get("big"), int) and isinstance(c.get("voice"), tuple):   # 3匹とも大きく（冒頭のマーモット）

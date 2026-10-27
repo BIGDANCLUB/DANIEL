@@ -443,16 +443,31 @@ def set_cols(n):
         COLX, COLW, CATX, BAR_BOT = (205, 540, 875), 250, None, 990
 
 
+BRIGHT = dict(   # 明るい版（10/27 ユーザー指定：もっと明るい色で）
+    seg={"red": ((255, 104, 104), WHITE), "green": ((70, 172, 255), WHITE), "purple": ((178, 120, 255), WHITE),
+         "orange": ((255, 158, 64), WHITE), "dark": ((118, 140, 170), WHITE), "gray": ((160, 175, 195), WHITE)},
+    base=((110, 240, 190), (40, 205, 175)), panel=((250, 252, 255), (225, 238, 252)), frame=(0.95, 0.65, 0.35))   # frame は BGR
+DARK = dict(seg=dict(SEG_COL), base=(BASE_TOP, BASE_BOT), panel=((30, 40, 78), (14, 18, 38)), frame=(0.85, 0.75, 0.45))
+
+
 def make_static(spec):
+    global SEG_COL, BASE_TOP, BASE_BOT
+    sty = BRIGHT if spec.get("style") == "bright" else DARK
+    SEG_COL = sty["seg"]
+    BASE_TOP, BASE_BOT = sty["base"]
     set_cols(len(spec["incomes"]))
     base = I.cover(spec["bg"])
     x0, y0, x1, y1 = PANEL
-    pn = grad_fill(y1 - y0, x1 - x0, (30, 40, 78), (14, 18, 38))   # 紺のすりガラス
+    pn = grad_fill(y1 - y0, x1 - x0, *sty["panel"])   # 紺（明るい版は白〜水色）のすりガラス
     base[y0:y1, x0:x1] = base[y0:y1, x0:x1] * 0.18 + pn * 0.82
-    cv2.rectangle(base, (x0, y0), (x1 - 1, y1 - 1), (0.85, 0.75, 0.45), 3, cv2.LINE_AA)   # 金の細い枠
+    cv2.rectangle(base, (x0, y0), (x1 - 1, y1 - 1), sty["frame"], 4, cv2.LINE_AA)
     title = Image.new("RGBA", (W, 230), (0, 0, 0, 0))
-    t1 = I.text(spec["title"][0], 92, WHITE, stroke=6, stroke_col=(200, 40, 60))
-    t2 = I.text(spec["title"][1], 92, (255, 215, 100), stroke=6, stroke_col=(60, 40, 10))
+    if spec.get("style") == "bright":
+        t1 = I.text(spec["title"][0], 92, (230, 40, 70), stroke=6, stroke_col=WHITE)
+        t2 = I.text(spec["title"][1], 92, (25, 70, 170), stroke=6, stroke_col=WHITE)
+    else:
+        t1 = I.text(spec["title"][0], 92, WHITE, stroke=6, stroke_col=(200, 40, 60))
+        t2 = I.text(spec["title"][1], 92, (255, 215, 100), stroke=6, stroke_col=(60, 40, 10))
     title.alpha_composite(t1, ((W - t1.width) // 2, 8))
     title.alpha_composite(t2, ((W - t2.width) // 2, 118))
     st = dict(base=base, title=title, incomes=spec["incomes"], max_income=max(spec["incomes"]), items=spec["items"],

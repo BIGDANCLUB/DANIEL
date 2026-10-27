@@ -27,7 +27,7 @@ def cuts():
     ], [
         [(2.8, "東京のワンルームは\n大阪の1.5倍", ("despair_dramatic_kitten", "talk_orange_white_sitting_cat", "dance_tabby_standing_cat"), 0),   # 地方は踊る
          (2.6, "地方は\n半分以下！", ("sad_banana_cat_cry", "read_book_orange_kitten", "dance_wop_cat"), 2)],
-        [(2.8, "地方は車がないと\n生活できない", ("stare_interviewer_cat", "think_bike_front_seat_cat", "stare_tabby_wide_eyes_cat"), 2),
+        [(2.8, "地方は車がないと\n生活できない", ("stare_interviewer_cat", "think_bike_front_seat_cat", "stare_tabby_wide_eyes_cat"), (0, 2)),   # 左の猫も鳴らす（10/27）
          (2.6, "ローン・ガソリン・保険で\n月4万！？", ("eat_chips_cat", "calmdown_dancing_cat", "despair_dramatic_kitten"), 2)],
         [(2.8, "東京は外食も\nスーパーも高め", ("sulk_hungry_cat", "laugh_laughing_dog", "realize_wet_cat_stare"), 0),
          (2.6, "大阪は安いお店が\nいっぱい！", ("blank_black_cat_zoning_out", "happy_girlfriend_dance_cat", "realize_wet_cat_stare"), 1)],

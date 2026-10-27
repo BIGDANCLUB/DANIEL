@@ -13,7 +13,7 @@ import os
 import world_short as Wd
 
 JP_GOV, JP_OFF = "bg115_japan_diet", "bg25_office_desk"
-DE_GOV, DE_OFF = "bg116_paris_assembly", "bg78_agency_office"
+DE_GOV, DE_OFF = "bg84_courthouse", "bg78_agency_office"   # パリの写真はドイツに合わないので使わない
 US_GOV, US_OFF = "bg118_us_capitol", "bg119_us_office"
 ME = "laugh_laughing_dog"
 

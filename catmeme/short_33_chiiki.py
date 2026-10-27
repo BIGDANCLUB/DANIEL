@@ -34,8 +34,8 @@ def cuts():
         [(2.8, "地方は冬の暖房代が\nちょっと高い", ("talk_orange_white_sitting_cat", "stare_interviewer_cat", "sad_black_dog"), 2)],
     ], [
         (2.8, "いちばん残るのは\nまさかの大阪！", ("sad_banana_cat_cry", "dance_orange_gray_cats", "blank_black_cat_zoning_out"), 1),   # 地方はぼーっと
-        (2.6, "地方は車で\n家賃の安さが消える", ("realize_wet_cat_stare", None, "sulk_hungry_cat"), 2),
-        (2.4, "東京は家賃が\nぜんぶ持っていく…", ("despair_dramatic_kitten", None, None), 0),
+        (2.6, "地方は車で\n家賃の安さが消える", ("realize_wet_cat_stare", "stare_interviewer_cat", "sulk_hungry_cat"), 2),
+        (2.4, "東京は家賃が\nぜんぶ持っていく…", ("despair_dramatic_kitten", "eat_chips_cat", "think_bike_front_seat_cat"), 0),
     ], ("東京は 毎月 −3.5万円", "大阪より1年で −42万円…", ("sad_banana_cat_cry", "happy_hamster_open_arms", "stare_tabby_wide_eyes_cat")))
     cs[0]["callout"] = ("住むならどこがおトク？", "都会vs地方 お金バトル")   # タイトルコール（10/27）
     return cs

@@ -51,6 +51,9 @@ def build(spec, intro, items, after, minus):
     if len(minus) > 3 and minus[3] == "good":
         fin["good"] = True
     out.append(fin)
+    FILL = ("stare_interviewer_cat", "think_bike_front_seat_cat", "realize_wet_cat_stare", "eat_chips_cat")
+    for c in out:   # どの場面も猫は列の数だけ（空いている列は聞き役の猫でうめる・10/27 ユーザー指定）
+        c["cats3"] = [a or FILL[(j + i_) % len(FILL)] for i_, (j, a) in enumerate(enumerate(c["cats3"][:n]))] + [None] * (3 - n)
     k = B.TOTAL / sum(c["dur"] for c in out)   # 全体をのばして 59.9 秒ちょうどに
     for c in out:
         c["dur"] *= k

@@ -295,7 +295,7 @@ class Renderer:
             sh = self.shout_im
             x = (CATX[j] if CATX else COLX[j])
             x = min(max(x, sh.width / 2 + 10), W - sh.width / 2 - 10)
-            I.put(out, sh, x + 6 * math.sin(t * 30), 860)
+            I.put(out, sh, x + 6 * math.sin(t * 30), 470)   # 字幕より上・猫にかからない高さ（10/27）
         if c.get("result"):   # 結果発表：暗転→上からスポットライト2本が交差→金色の文字が光って出る→紙吹雪（10/27 作り直し）
             u = min(1.0, t / 0.25)
             out = out * (1 - 0.6 * u)

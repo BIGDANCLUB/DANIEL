@@ -3,6 +3,9 @@
 import bars_short as B
 
 SAME = ("confused_i_dont_know_cat",) * 3   # 重りが落ちる場面は3匹とも戸惑う猫（10/27 ユーザー指定）
+# ときどき別の素材3匹でそろえる（楽しそうな素材は使わない・10/27 ユーザー指定）。重りの順番ごとに 戸惑う→驚く→戸惑う→不安→戸惑う…
+SAME_ALT = ("confused_i_dont_know_cat", "stare_tabby_wide_eyes_cat", "confused_i_dont_know_cat", "sulk_hungry_cat",
+            "confused_i_dont_know_cat", "surprise_big_pupils_cat")
 THUDS = ("ズシッ!!", "ドスン!!", "ドンッ!!", "ズドン!!", "ドカッ!!")
 WEIGHT_CATS = ("money_counting_orange_cat", "punch_boxing_white_cat", "angry_aiming_cat", "eat_pop_cat", "rage_talking_cat")
 
@@ -28,7 +31,8 @@ def build(spec, intro, items, after, minus):
         out.append(cut(d, say, cats, voice=v, se="jan" if i == 0 and say else None, big=big))
     for k, ((name, _), lines) in enumerate(zip(spec["items"], items)):
         label = spec.get("wlabel", {}).get(name, name)   # 重りの文字（2行にしたいときなど）
-        out.append(cut(2.0, None, same, shown=k, banner=(name, label, THUDS[k % 5], WEIGHT_CATS[k % 5]), se="explosion_chudoon"))
+        same_k = (SAME_ALT[k % len(SAME_ALT)],) * n
+        out.append(cut(2.0, None, same_k, shown=k, banner=(name, label, THUDS[k % 5], WEIGHT_CATS[k % 5]), se="explosion_chudoon"))
         grow = (("realize_wet_cat_stare", "eat_chips_cat", "peek_what_happen_cat"), ("calmdown_dancing_cat", "glare_disgusted_cat",
                  "confused_i_dont_know_cat"))[k % 2][:n]
         out.append(cut(2.4, None, grow, shown=k + 1, grow=True, se="card_place"))

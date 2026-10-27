@@ -20,12 +20,12 @@ SPEC = dict(
 def cuts():
     M = "scream_standing_marmot_fast"   # 冒頭は3匹ともマーモットで高速に「オイ！オイ！オイ！」（10/27 ユーザー指定）
     return A.build(SPEC, [
-        (2.9, "オイ！オイ！オイ！", (M, M, M), 1),
+        (2.9, None, (M, M, M), (0, 1, 2)),   # 字幕なし（10/27）・3匹とも鳴く
         (3.0, "東京・大阪・地方\n手取りはみんな26万！", ("cocky_dj_cat", "happy_hamster_open_arms", "sleepy_old_memories_cat"), 0),
         (2.6, "地方は家賃が安いから\n勝ちでしょ？", ("stare_big_eyes_tabby_kitten", "dance_three_kittens", "showoff_gojo_cosplay_cat"), 2),
         (2.2, "……本当に？", ("sleepy_sleepy_cat", "huh_huh_cat", "sleepy_sleepy_cat"), 1),
     ], [
-        [(2.8, "東京のワンルームは\n大阪の1.5倍", ("despair_dramatic_kitten", "talk_orange_white_sitting_cat", "rizz_cat_rizz"), 0),
+        [(2.8, "東京のワンルームは\n大阪の1.5倍", ("despair_dramatic_kitten", "talk_orange_white_sitting_cat", "dance_tabby_standing_cat"), 0),   # 地方は踊る
          (2.6, "地方は\n半分以下！", ("sad_banana_cat_cry", "read_book_orange_kitten", "dance_wop_cat"), 2)],
         [(2.8, "地方は車がないと\n生活できない", ("stare_interviewer_cat", "think_bike_front_seat_cat", "stare_tabby_wide_eyes_cat"), 2),
          (2.6, "ローン・ガソリン・保険で\n月4万！？", ("eat_chips_cat", "calmdown_dancing_cat", "despair_dramatic_kitten"), 2)],
@@ -33,7 +33,7 @@ def cuts():
          (2.6, "大阪は安いお店が\nいっぱい！", ("blank_black_cat_zoning_out", "happy_girlfriend_dance_cat", "realize_wet_cat_stare"), 1)],
         [(2.8, "地方は冬の暖房代が\nちょっと高い", ("talk_orange_white_sitting_cat", "stare_interviewer_cat", "sad_black_dog"), 2)],
     ], [
-        (2.8, "いちばん残るのは\nまさかの大阪！", ("sad_banana_cat_cry", "dance_orange_gray_cats", "despair_dramatic_kitten"), 1),
+        (2.8, "いちばん残るのは\nまさかの大阪！", ("sad_banana_cat_cry", "dance_orange_gray_cats", "blank_black_cat_zoning_out"), 1),   # 地方はぼーっと
         (2.6, "地方は車で\n家賃の安さが消える", ("realize_wet_cat_stare", None, "sulk_hungry_cat"), 2),
         (2.4, "東京は家賃が\nぜんぶ持っていく…", ("despair_dramatic_kitten", None, None), 0),
     ], ("東京は 毎月 −3.5万円", "大阪より1年で −42万円…", ("sad_banana_cat_cry", "happy_hamster_open_arms", "stare_tabby_wide_eyes_cat")))

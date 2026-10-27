@@ -2,7 +2,7 @@
 つかみ → 項目ごとに「重りが落ちる → 棒がのびる → セリフ2つ」→ 残り → セリフ → 最後に「マイナス○○」をドン。"""
 import bars_short as B
 
-SAME = ("think_bike_front_seat_cat", "stare_interviewer_cat", "meow_ragdoll_chubby_cat")
+SAME = ("confused_i_dont_know_cat",) * 3   # 重りが落ちる場面は3匹とも戸惑う猫（10/27 ユーザー指定）
 THUDS = ("ズシッ!!", "ドスン!!", "ドンッ!!", "ズドン!!", "ドカッ!!")
 WEIGHT_CATS = ("money_counting_orange_cat", "punch_boxing_white_cat", "angry_aiming_cat", "eat_pop_cat", "rage_talking_cat")
 
@@ -24,7 +24,8 @@ def build(spec, intro, items, after, minus):
     same = SAME[:n]
     out = []
     for i, (d, say, cats, v) in enumerate(intro):
-        out.append(cut(d, say, cats, voice=v, se="jan" if i == 0 and v != "all" else None, big=v if "？" in (say or "") else None))
+        big = v if isinstance(v, int) and "？" in (say or "") else (1 if isinstance(v, tuple) else None)
+        out.append(cut(d, say, cats, voice=v, se="jan" if i == 0 and say else None, big=big))
     for k, ((name, _), lines) in enumerate(zip(spec["items"], items)):
         label = spec.get("wlabel", {}).get(name, name)   # 重りの文字（2行にしたいときなど）
         out.append(cut(2.0, None, same, shown=k, banner=(name, label, THUDS[k % 5], WEIGHT_CATS[k % 5]), se="explosion_chudoon"))

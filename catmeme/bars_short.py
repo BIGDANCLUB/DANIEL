@@ -246,7 +246,9 @@ class Renderer:
                 x0 = int(min(max(CATX[j] - ww / 2, 10), W - ww - 10))
                 I.over(out, img, al, x0, int(1300 - hh))
                 continue
-            img, al = self._cat(clip, name, t, 440 if big else 400, 340 if big else 320)   # 少し棒にかかってもよい（10/27）
+            if isinstance(c.get("big"), int) and isinstance(c.get("voice"), tuple):   # 3匹とも大きく（冒頭のマーモット）
+                big = True
+            img, al = self._cat(clip, name, t, 520 if big else 460, 350 if big else 340)   # もう少し棒にかかってもよい（10/27）
             hh, ww = al.shape
             x0 = int(min(max(COLX[j] - ww / 2, 10), W - ww - 10))
             I.over(out, img, al, x0, int(1310 - hh))

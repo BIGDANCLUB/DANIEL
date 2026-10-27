@@ -42,14 +42,23 @@ def cuts():
         t(ROPPONGI, "家賃25万", "コンシェルジュって\n何してくれるの？", "peek_what_happen_cat", "happy_girlfriend_dance_cat", who="L"),
         t(ROPPONGI, "家賃25万", "あいさつ\nしてくれる", "peek_what_happen_cat", "slack_nail_filing_cat"),
         t(ROPPONGI, "家賃25万", "近くのスーパーが\n高すぎて買えない…", "eat_pop_cat", "despair_dramatic_kitten"),
-        # ---- オチ：家賃0円 ----
+        # ---- オチ：家賃0円（会社の寮）10/27 ユーザー指定：寮ならではの面白エピソードで強く ----
         I.intro(DORM, "家賃0円", "会社の寮！", "sleepy_sleepy_cat"),
         t(DORM, "家賃0円", "家賃タダは\n最強じゃん！", "excited_hodomoe_city_cat", "sleepy_sleepy_cat", who="L"),
-        t(DORM, "家賃0円", "となりの部屋が\n上司", "excited_hodomoe_city_cat", "stare_interviewer_cat"),
-        t(DORM, "家賃0円", "休みの日も\n会社にいる気分…", "realize_wet_cat_stare", "sad_black_dog", who="R"),
+        t(DORM, "家賃0円", "朝6時に寮長の\nラジオ体操で起こされる", "excited_hodomoe_city_cat", "despair_dramatic_kitten"),
+        t(DORM, "家賃0円", "大浴場に入ったら\n社長と2人きり", "stare_tabby_wide_eyes_cat", "blank_black_cat_zoning_out"),
+        t(DORM, "家賃0円", "風邪で休んだら\n上司がおかゆ持ってきた", "huh_huh_cat", "sad_banana_cat_cry"),
+        t(DORM, "家賃0円", "……家賃より\n高いものを払ってる", "realize_wet_cat_stare", "sad_black_dog", who="R"),
     ]
 
 
+def fit(cs):
+    k = I.TOTAL / sum(c["dur"] for c in cs)   # 59.9秒ちょうどに
+    for c in cs:
+        c["dur"] *= k
+    return cs
+
+
 if __name__ == "__main__":
-    I.run(Wd.dedupe(cuts()), "家賃でわかる", "ひとり暮らし事情", os.path.join(I.HERE, "out", "short_32_yachin.mp4"),
+    I.run(fit(Wd.dedupe(cuts())), "家賃でわかる", "ひとり暮らし事情", os.path.join(I.HERE, "out", "short_32_yachin.mp4"),
           os.path.join(I.HERE, "out", "short_32_yachin_preview"))

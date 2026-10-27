@@ -177,13 +177,18 @@ class Renderer:
                 if k >= c["shown"]:
                     break
                 v = st["values"][name][j]
+                if not v:   # 0 の項目は描かない
+                    continue
                 grow = 1.0 if (k < c["shown"] - 1 or not c.get("grow")) else min(1.0, t / 0.5)
-                hpx = (v * scale if CATX else max(v * scale, 58)) * grow   # 2列のときは金額どおりの長さ（10/26）
+                hpx = v * scale * grow   # 2列のときは金額どおりの長さ（10/26）
                 col, tc = SEG_COL[kind]
                 out[int(y):int(y + hpx), x0:x1] = np.array(col[::-1], np.float32) / 255
                 cv2.rectangle(out, (x0, int(y)), (x1, int(y + hpx)), (0, 0, 0), 4)
                 if grow > 0.6:
                     lab = st["seglab"][(name, j)]
+                    if lab.height > hpx - 6:   # 細い段は札を小さくして段の中におさめる（10/27）
+                        k_ = max(hpx - 6, 20) / lab.height
+                        lab = lab.resize((max(1, int(lab.width * k_)), max(1, int(lab.height * k_))), Image.LANCZOS)
                     I.put(out, lab, (x0 + x1) / 2 if CATX else x0 + lab.width / 2 + 14, y + min(hpx, 120) / 2 + 4)
                 y += hpx
             if c.get("take"):
@@ -202,7 +207,7 @@ class Renderer:
                 x0 = int(min(max(CATX[j] - ww / 2, 10), W - ww - 10))
                 I.over(out, img, al, x0, int(1300 - hh))
                 continue
-            img, al = self._cat(clip, name, t, 520 if big else 400, 440 if big else 330)
+            img, al = self._cat(clip, name, t, 330 if big else 290, 330 if big else 300)
             hh, ww = al.shape
             x0 = int(min(max(COLX[j] - ww / 2, 10), W - ww - 10))
             I.over(out, img, al, x0, int(1310 - hh))
@@ -317,11 +322,11 @@ CATX = None   # 猫の位置（None なら棒の下のほう）。2列のとき�
 
 def set_cols(n):
     """列の数（2 か 3）に合わせて、棒の位置と太さを決める。"""
-    global COLX, COLW, CATX
+    global COLX, COLW, CATX, BAR_BOT
     if n == 2:
-        COLX, COLW, CATX = (395, 685), 210, (150, 930)
-    else:
-        COLX, COLW, CATX = (205, 540, 875), 250, None
+        COLX, COLW, CATX, BAR_BOT = (395, 685), 210, (150, 930), 1250
+    else:   # 3列：棒を短くして、猫は棒の下に置く（残りのお金を隠さない・10/27）
+        COLX, COLW, CATX, BAR_BOT = (205, 540, 875), 250, None, 990
 
 
 def make_static(spec):
@@ -337,11 +342,14 @@ def make_static(spec):
     st = dict(base=base, title=title, incomes=spec["incomes"], max_income=max(spec["incomes"]), items=spec["items"],
               values=spec["values"])
     st["cards"] = [label_card(lines, col) for lines, col in zip(spec["cards"], spec["card_cols"])]
-    st["seglab"] = {(name, j): I.text(f"△{spec['values'][name][j]}万", 50, SEG_COL[kind][1], stroke=0)
+    unit = spec.get("unit", "万")
+    st["seglab"] = {(name, j): I.text(f"△{spec['values'][name][j]:,}{unit}" if unit == "円" else f"△{spec['values'][name][j]}{unit}",
+                                      50, SEG_COL[kind][1], stroke=0)
                     for name, kind in spec["items"] for j in range(len(spec["incomes"]))}
     take = [spec["incomes"][j] - sum(spec["values"][n][j] for n, _ in spec["items"]) for j in range(len(spec["incomes"]))]
     word = spec.get("take_word", "手取り")
-    st["takelab"] = [I.text(f"{word}\n約{round(v, 1):g}万", 70, RED, stroke=5, stroke_col=WHITE) for v in take]
+    st["takelab"] = [I.text(f"{word}\n{round(v):,}{unit}" if unit == "円" else f"{word}\n約{round(v, 1):g}{unit}", 70, RED, stroke=5,
+                              stroke_col=WHITE) for v in take]
     return st
 
 

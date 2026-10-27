@@ -135,6 +135,9 @@ class Renderer:
         if self.fin is not None:
             self.crown, self.stamp = crown_img(), stamp_img(c.get("finish_word", "1位"))
         self.bbox = {}
+        if c.get("shout"):
+            self.shout_im = I.text("＼" + c["shout"][0] + "／", 76, YELLOW, stroke=9, stroke_col=BLACK, max_w=520).rotate(
+                8, expand=True, resample=Image.BICUBIC)
         if c.get("result"):
             tx = I.text(c["result"], 170, WHITE, stroke=12, stroke_col=(150, 0, 60), max_w=W - 200)
             rb = Image.new("RGBA", (tx.width + 160, tx.height + 70), BASE + (255,))
@@ -142,16 +145,14 @@ class Renderer:
             rb.alpha_composite(tx, (80, 35))
             self.res = rb.rotate(-4, expand=True, resample=Image.BICUBIC)
         if c.get("minus"):
-            big = I.text(c["minus"][0], 210, YELLOW, stroke=16, stroke_col=(180, 0, 0), max_w=W - 150)
-            band_ = Image.new("RGBA", (W + 200, big.height + 80), (0, 0, 0, 235))
+            good = c.get("good")   # True なら「プラス（貯金できる）」の色（10/27）
+            sc_ = (0, 110, 40) if good else (180, 0, 0)
+            big = I.text(c["minus"][0], 210, YELLOW, stroke=16, stroke_col=sc_, max_w=W - 150)
+            band_ = Image.new("RGBA", (W + 200, big.height + 80), ((0, 70, 30, 235) if good else (0, 0, 0, 235)))
             band_.alpha_composite(big, ((band_.width - big.width) // 2, 40))
             self.minus = (band_.rotate(-6, expand=True, resample=Image.BICUBIC),
-                          I.text(c["minus"][1], 110, WHITE, stroke=10, stroke_col=(200, 0, 0), max_w=W - 60))
-            bill = Image.new("RGBA", (170, 86), (0, 0, 0, 0))
-            d_ = ImageDraw.Draw(bill)
-            d_.rectangle((0, 0, 169, 85), fill=(225, 205, 160, 255), outline=(120, 90, 40, 255), width=4)
-            d_.ellipse((60, 18, 110, 68), outline=(120, 90, 40, 255), width=4)
-            self.bill = bill
+                          I.text(c["minus"][1], 96, WHITE, stroke=10, stroke_col=sc_, max_w=W - 170))
+            self.bill = bill_img()
 
     def _cat(self, clip, name, t, h, w):
         fr, a = clip.frame(t + 0.25)
@@ -231,6 +232,12 @@ class Renderer:
                 I.put(out, bx, W / 2, c.get("say_y", 640))
             else:
                 I.put(out, self.say, W / 2, c.get("say_y", 640))
+        if c.get("shout"):   # 「＼もっと入れろや／」のような掛け声（猫の上・10/27）
+            text_, j = c["shout"]
+            sh = self.shout_im
+            x = (CATX[j] if CATX else COLX[j])
+            x = min(max(x, sh.width / 2 + 10), W - sh.width / 2 - 10)
+            I.put(out, sh, x + 6 * math.sin(t * 30), 860)
         if c.get("result"):   # 結果発表：ピンクの帯がズームで出て、キラキラ（10/27 ユーザー指定：重りではない表現）
             u = min(1.0, t / 0.22)
             ov = np.zeros((H, W), np.float32)
@@ -288,7 +295,8 @@ class Renderer:
                                 (cx + 2400 * math.cos(a + d), cy + 2400 * math.sin(a + d))], np.int32)
                 cv2.fillConvexPoly(ov, pts, 1.0)
             flash = 0.45 + 0.35 * (int(t * 8) % 2)
-            out = out * (1 - ov[..., None] * flash * k) + ov[..., None] * flash * k * np.array([0.05, 0.05, 0.85], np.float32)
+            rc = np.array([0.1, 0.8, 1.0] if c.get("good") else [0.05, 0.05, 0.85], np.float32)   # 金色／赤
+            out = out * (1 - ov[..., None] * flash * k) + ov[..., None] * flash * k * rc
             # お札が上から降って、下へ落ちていく（お金が出ていく）
             for i in range(14):
                 x = (i * 157 + 60) % W
@@ -346,6 +354,35 @@ class Renderer:
 CATX = None   # 猫の位置（None なら棒の下のほう）。2列のときは棒の外側に置いて、残りのお金を隠さない（10/26）
 
 
+def bill_img(w=230):
+    """お札（リアルに見えるよう、地紋・すかし・数字・枠を描く。本物の紙幣のまねはしない・10/27）。"""
+    h = int(w * 0.5)
+    S_ = 3
+    im = Image.new("RGBA", (w * S_, h * S_), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    W_, H_ = im.size
+    for y in range(H_):   # うすい茶色のグラデーション
+        u = y / H_
+        d.line((0, y, W_, y), fill=(int(214 - 20 * u), int(196 - 22 * u), int(150 - 20 * u), 255))
+    for i in range(0, W_, 9):   # 細かい地紋（波線）
+        pts = [(i + 18 * math.sin(yy / 22), yy) for yy in range(0, H_, 6)]
+        d.line(pts, fill=(190, 160, 110, 120), width=2)
+    d.rectangle((10, 10, W_ - 11, H_ - 11), outline=(110, 80, 40, 255), width=8)
+    d.rectangle((26, 26, W_ - 27, H_ - 27), outline=(140, 105, 60, 255), width=3)
+    cx, cy, r = W_ * 0.72, H_ * 0.5, H_ * 0.32   # 右のすかし（だ円）
+    d.ellipse((cx - r * 0.8, cy - r, cx + r * 0.8, cy + r), fill=(235, 222, 190, 255), outline=(130, 95, 50, 255), width=4)
+    d.ellipse((cx - r * 0.45, cy - r * 0.55, cx + r * 0.45, cy + r * 0.35), fill=(205, 185, 140, 255))
+    f = I.font(int(H_ * 0.26))
+    d.text((W_ * 0.08, H_ * 0.12), "10000", font=f, fill=(90, 60, 25, 255))
+    f2 = I.font(int(H_ * 0.34))
+    d.text((W_ * 0.12, H_ * 0.45), "壱万", font=f2, fill=(110, 75, 35, 255))
+    im = im.resize((w, h), Image.LANCZOS)
+    sh = Image.new("RGBA", (w + 8, h + 8), (0, 0, 0, 0))
+    ImageDraw.Draw(sh).rectangle((6, 6, w + 6, h + 6), fill=(0, 0, 0, 90))
+    sh.alpha_composite(im, (0, 0))
+    return sh
+
+
 def set_cols(n):
     """列の数（2 か 3）に合わせて、棒の位置と太さを決める。"""
     global COLX, COLW, CATX, BAR_BOT
@@ -388,7 +425,9 @@ def run(spec, cs, out_path, prev=None):
     durs[-1] += diff
     cs[-1]["dur"] = durs[-1]
     for c in cs:   # 音（BGMなし）：しゃべる猫だけ鳴らす
-        c["cats"] = [dict(a=a, mute=(j != c.get("voice"))) for j, a in enumerate(c["cats3"]) if a]
+        v_ = c.get("voice")
+        voices = v_ if isinstance(v_, (list, tuple)) else [v_]   # 両方の猫を鳴らすときはリストで（10/27）
+        c["cats"] = [dict(a=a, mute=(j not in voices)) for j, a in enumerate(c["cats3"]) if a]
         c.update(fixed=True, no_pop=True)
     starts = list(np.cumsum([0] + durs[:-1]))
     st = make_static(spec)

@@ -31,15 +31,21 @@ def build(spec, intro, items, after, minus):
         grow = (("realize_wet_cat_stare", "eat_chips_cat", "peek_what_happen_cat"), ("calmdown_dancing_cat", "glare_disgusted_cat",
                  "confused_i_dont_know_cat"))[k % 2][:n]
         out.append(cut(2.4, None, grow, shown=k + 1, grow=True, se="card_place"))
-        for d, say, cats, v in lines:
-            out.append(cut(d, say, cats, shown=k + 1, voice=v))
+        for d, say, cats, v, *opt in lines:
+            c = cut(d, say, cats, shown=k + 1, voice=v)
+            if opt:   # 5つ目は掛け声（右の列から）
+                c["shout"] = (opt[0], n - 1)
+            out.append(c)
     last = len(spec["items"])
     res = cut(2.0, None, same, shown=last, take=True, se="game_mario_1up")   # 結果発表（重りではなく・1UPの音・10/27）
     res["result"] = "結果発表"
     out.append(res)
     for i, (d, say, cats, v) in enumerate(after):
         out.append(cut(d, say, cats, shown=last, take=True, voice=v, box=i == 0, say_y=420, se="price_display" if i == 0 else None))
-    out.append(cut(3.0, None, minus[2], shown=last, take=True, se="gong_dora_jaan", minus=minus[:2]))   # じゃーん（10/27）
+    fin = cut(3.0, None, minus[2], shown=last, take=True, se="gong_dora_jaan", minus=minus[:2])   # じゃーん（10/27）
+    if len(minus) > 3 and minus[3] == "good":
+        fin["good"] = True
+    out.append(fin)
     k = B.TOTAL / sum(c["dur"] for c in out)   # 全体をのばして 59.9 秒ちょうどに
     for c in out:
         c["dur"] *= k

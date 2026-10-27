@@ -312,9 +312,9 @@ class Renderer:
                         for k in range(3):
                             x0 = W / 2 + side * (420 + k * 30)
                             y0 = y_land + self.ban.height - 20 - k * 40
-                            p0, p1 = (int(x0), int(y0)), (int(x0 + side * 90), int(y0 - 50))   # 明るい背景でも見えるよう黒ふち＋赤（10/27）
+                            p0, p1 = (int(x0), int(y0)), (int(x0 + side * 90), int(y0 - 50))   # 明るい背景でも見えるよう黒ふち＋うすい黄色（10/27）
                             cv2.line(out, p0, p1, (0.05, 0.05, 0.1), 17, cv2.LINE_AA)
-                            cv2.line(out, p0, p1, (0.15, 0.25, 1.0), 9, cv2.LINE_AA)
+                            cv2.line(out, p0, p1, (0.6, 0.95, 1.0), 9, cv2.LINE_AA)   # うすい黄色（10/27）
                 kk = min(1.0, (t - land) / 0.15)
                 th = self.thud.resize((max(1, int(self.thud.width * (0.5 + 0.5 * kk))), max(1, int(self.thud.height * (0.5 + 0.5 * kk)))))
                 I.put(out, th, W / 2, y_land + self.ban.height + 120)

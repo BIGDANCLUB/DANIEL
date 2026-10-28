@@ -821,7 +821,28 @@ def conan_confusion(cs, seed=0):
             c["no_pop"] = True
         n += 1
         c["se"] = [s for s in lst if name(s) != HUH_SE] + [{"f": f, "len": 2.4}]
+        conan_say(c)
     return cs
+
+
+def conan_say(c):
+    """コナンの音の場面の字幕は「！？」を多めに・大きく（10/28 ユーザー指定：「……え」→「！？！？！？！？！？」、「40分たってた！？」）。"""
+    say = c.get("say")
+    if not say or c.get("kind") != "solo":   # 会話の場面（だれかのセリフ）は変えない
+        return
+    plain = say.replace("*", "").replace("\n", "")
+    if len(plain.strip("…。、 ").rstrip("？！?!")) <= 2:   # 「……え」「……は？」など短い声は、全部「！？」にする
+        c["say"], c["say_size"] = "!?!?!?!?!?", 150   # 全角だとすき間が空くので半角
+    else:
+        if len(plain) <= 8:
+            say = say.replace("\n", "")
+        if not say.rstrip("*").endswith(("？", "?")):
+            say = say.rstrip("…。") + "!?"
+        c["say"] = say
+        if "\n" not in say:   # 1行なら大きく（画面からはみ出さない大きさまで）
+            wid = sum(1 if ord(ch) > 255 else 0.55 for ch in say.replace("*", ""))
+            c["say_size"] = int(min(120, 960 / wid))
+    c["big_say"] = True
 
 
 def synth(kind):

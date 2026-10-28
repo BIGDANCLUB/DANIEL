@@ -434,6 +434,25 @@ class VideoBG:
         self.cap.release()
 
 
+QM_COLS = [(255, 60, 90), (255, 205, 0), (40, 200, 255), (150, 90, 255), (60, 225, 120), (255, 120, 210), (255, 140, 30)]
+
+
+def qmark_img(ch, size, j):
+    """色つきの「？」1文字：まわりに同じ色の光（ぼかし）・黒いふち・白いふち。"""
+    from PIL import ImageFilter, ImageDraw
+    col = QM_COLS[j % len(QM_COLS)]
+    f = P.font("black", size)
+    pad = size // 3
+    im = Image.new("RGBA", (int(size * 1.1) + pad * 2, int(size * 1.3) + pad * 2), (0, 0, 0, 0))
+    glow = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    ImageDraw.Draw(glow).text((pad, pad // 2), ch, font=f, fill=col + (255,), stroke_width=26, stroke_fill=col + (255,))
+    im.alpha_composite(glow.filter(ImageFilter.GaussianBlur(14)))
+    d = ImageDraw.Draw(im)
+    d.text((pad, pad // 2), ch, font=f, fill=(20, 20, 30, 255), stroke_width=20, stroke_fill=(20, 20, 30, 255))
+    d.text((pad, pad // 2), ch, font=f, fill=col + (255,), stroke_width=9, stroke_fill=(255, 255, 255, 255))
+    return im.crop(im.getbbox())
+
+
 class CutRenderer:
     def __init__(self, cut):
         self.cut = cut
@@ -543,6 +562,10 @@ class CutRenderer:
             for ly in cut["layers_top"]:
                 tc2.alpha_composite((Image.open(ly) if isinstance(ly, str) else ly).convert("RGBA"))
             self.top = trim(to_np(tc2))
+        self.qm = None
+        if cut.get("qmarks"):   # 「？？？？？？」をいろいろな色とエフェクトで飾る（コナンの連打の場面・10/28 ユーザー指定）
+            self.qm = [qmark_img(cut.get("qmark_char", "？"), cut.get("qmark_size", 230), j) for j in range(cut["qmarks"])]
+            self.qm_y = cut.get("qmark_y", 250)
         self.explain = None
         if cut.get("explain"):
             self.explain = to_np(P.plain_text(cut["explain"], (60, 695, 1860, 1070), size=cut.get("explain_size", 100), gap=1.22))
@@ -692,6 +715,20 @@ class CutRenderer:
             over(out, im, ia, x, y)
         over_t(out, self.ov_t, k)
         self._pop(out, self.txt, t)
+        if self.qm:
+            n = len(self.qm)
+            for j, im in enumerate(self.qm):
+                u = t - 0.06 * j
+                if u < 0:
+                    break
+                k = (1.7 - 0.7 * min(1.0, u / 0.12)) * (1 + 0.07 * np.sin(t * 18 + j * 1.7))   # 大きく出て縮む・脈打つ
+                ang = (-14, 10, -6, 15, -10, 7, -15, 12)[j % 8] + 9 * np.sin(t * 11 + j)   # ゆらゆら
+                pim = im.resize((max(1, int(im.width * k)), max(1, int(im.height * k))), Image.BILINEAR).rotate(
+                    ang, expand=True, resample=Image.BILINEAR)
+                cx = 150 + (W - 300) * (j + 0.5) / n + 8 * np.sin(t * 23 + j * 3)
+                cy = self.qm_y + 45 * np.sin(j * 1.3) + 8 * np.cos(t * 19 + j)
+                img, al = to_np(pim)
+                over(out, img, al, int(cx - pim.width / 2), int(cy - pim.height / 2))
         for t0, t1, item in self.pops:
             if t0 <= t < t1:
                 self._pop(out, item, t, t0)

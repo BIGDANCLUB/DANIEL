@@ -159,6 +159,16 @@ def boom(say, b=STREET, who="N", **kw):
                 say_style="red", fx=["lines", "shake"], keep_overlap=True, se=se, **kw)
 
 
+CONAN = "anime_conan_hirameki_idea_realize_truth"
+
+
+def qq(b, remix, who="N"):
+    """コナンの連打の場面：字幕のかわりに、いろいろな色とエフェクトの「？？？？？？」。猫はまん中に大きく（声は消す）。"""
+    role = ("@react", "ニュース猫") if who == "N" else ("@calm", "博識な猫")
+    return dict(bg=bg(b), cats=[cat(role[0], role[1], 960, h=760, bottom=1075, float=True, mute=True)], qmarks=6,
+                text_top=True, fx=["lines", "flash", "ring"], keep_overlap=True, no_pop=True, dur=2.0, se=[remix])
+
+
 def card(c, sub, b=BOARD, **kw):
     return L.dia(c, sub, b, right=("@calm", "博識な猫"), dur=kw.pop("dur", 4.4), se=kw.pop("se", "card_flip"), **kw)
 
@@ -175,8 +185,10 @@ def cuts_all():
         nn("車って\n1年でいくら\nかかると思う？", STREET, se="question_hatena_maou", bgm={"file": PURPLE, "gain": -4}),
         ss("ガソリン代くらい\nでしょ？\n月1万とか", STREET, se="pikon"),
         boom("ぜんぶ足すと\n年 約89万円", STREET, who="S", se=["explosion_dokaan"]),
+        boom("年89万!?\nガソリン代だけじゃ\nないの!?", STREET, se=[CONAN]),   # 早めにコナン（10/28 ユーザー指定）
         g("k0_preview", "ローン・税金・保険・ガソリン……\n積み上げるとこうなる", dur=5.6),
         boom("月になおすと\n7万4000円！？", MONEY, se=["shock_piano"]),
+        qq(MONEY, "anime_conan_hirameki_remix_b"),   # コナンの連打＋色とりどりの「？？？？？？」（10/28 ユーザー指定）
         nn("家賃もう1個\n払ってるじゃん……", MONEY, se="deflate_hyororo"),
         dict(bg=bg(STREET), card=pt("e01_title"), dur=4.0, se="jan",
              cats=[{"a": "drive_driving_cat", "x": 300, "h": 440, "bottom": 1050, "float": True},
@@ -191,7 +203,7 @@ def cuts_all():
         g("k1_loan", "1年あたり\n54万円", dur=3.4),
         g("k1_loan", "いちばん大きいのが\nこのローン", who="N", still=True),
         nn("でもローンが\n終われば\nタダでしょ？", DEALER, se="question_mark_pop_confused_huh"),
-        ss("ここからが\n本番!?", DEALER, se="anime_conan_hirameki_idea_realize_truth", red=True),   # !? とコナン（10/28）
+        ss("ここからが\n本番!?", DEALER, se="anime_conan_hirameki_remix_c", red=True),   # !? とコナン（2回目からは連打・10/28）
         # ---- ③ 税金 ----
         chap("② 乗らなくても\n取られるお金", se="doon_heavy", bgm={"file": COCOA, "gain": -4, "fade": 0.6}),
         ss("車は持ってる\nだけで\n税金がかかる", PARK, se="pi"),

@@ -16,7 +16,7 @@ from make_se_conan_remix import piece
 SR = R.SR
 SRC = os.path.join(R.SE_DIR, "tv_professional_poon.mp3")
 ON = 0.68   # 「ポーン」の鳴り始め（秒）
-PO, QUICK, PAUSE, LONG = 0.09, 0.035, 0.17, 1.4   # 「ポ」の長さ、続けて打つときのすき間、「、」の間、最後の「ポーン」
+PO, QUICK, PAUSE, LONG = 0.072, 0.028, 0.136, 1.4   # 「ポ」の長さ、続けて打つときのすき間、「、」の間、最後の「ポーン」（10/28 ユーザー指定：20%速く）
 
 
 def build(src, rhythm):

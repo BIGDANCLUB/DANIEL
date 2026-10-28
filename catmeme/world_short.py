@@ -336,8 +336,9 @@ class Renderer(I.Renderer):
         self.say = None
         if c.get("say"):
             big = c.get("big_say")
-            size = c.get("say_size") or (104 if big else 80)
-            self.say = say_img(c["say"], size, stroke=12 if size >= 150 else (8 if big else 7))
+            longest = max(len(ln.replace("*", "")) for ln in c["say"].split("\n"))
+            size = c.get("say_size") or (120 if big else (128 if longest <= 5 else (110 if longest <= 8 else 96)))   # 字幕は大きめ。短い字幕はもっと大きく（10/28 ユーザー指定）
+            self.say = say_img(c["say"], size, stroke=12 if size >= 150 else 8)
         self.say_y = c.get("say_y", 690)
         self.huh = None
         if c.get("say_fx") == "huh":   # 「!?!?!?」：1つずつポンと出る・赤と黄色・少し傾けて震える（10/28 ユーザー指定）
@@ -376,7 +377,7 @@ class Renderer(I.Renderer):
             k = (q["bottom"] - say_bot - 20) / h
             q["h"], q["w"] = q["h"] * k, q.get("w", 10 ** 6) * k
             return
-        need = max(self.say.width + 30, 380)   # 字幕は小さくしない。足りなければ猫のほうを小さくする
+        need = min(max(self.say.width * 0.5, 300), W - 90 - 0.6 * W)   # 字幕は小さくしない。猫と少しかさなってよい（10/28 ユーザー指定）。猫は画面の幅の6割より小さくしない
         if W - w - 90 < need:
             k = (W - 90 - need) / w
             if k < (0.8 if c.get("under") else 0.45):   # 横に置くと猫が小さくなりすぎる → 字幕を上、猫をその下に大きく（10/26 ユーザー指定）
@@ -389,7 +390,7 @@ class Renderer(I.Renderer):
             w, h = int(w * k), int(h * k)
             top = q["bottom"] - h
         q["x"] = 20 + w / 2
-        cx = 20 + w + (W - 20 - w) / 2
+        cx = min(20 + w + (W - 20 - w) / 2, W - 25 - self.say.width / 2)   # 入りきらない分は猫にかぶせる
         cy = max(top + h * 0.3, self.tag_y + 120 + self.say.height / 2)
         self.say_xy = (cx, cy)
 
@@ -442,7 +443,7 @@ class Renderer(I.Renderer):
                 k = 1.0 + 0.5 * max(0.0, 1 - (t - t0) / 0.1)   # 大きく出て縮む
                 if k != 1.0:
                     im = im.resize((int(im.width * k), int(im.height * k)), Image.BILINEAR)
-                cx = 90 + (W - 180) * (j + 0.5) / n + rng.integers(-6, 7)
+                cx = 30 + (W - 60) * (j + 0.5) / n + rng.integers(-6, 7)   # 少し画面からはみ出てもよい（10/28 ユーザー指定）
                 cy = self.say_y + 90 + (-18 if j % 2 else 12) + rng.integers(-6, 7)
                 I.put(out, im, cx, cy)
         if self.say is not None:

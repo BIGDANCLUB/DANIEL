@@ -190,6 +190,25 @@ def rainbow_band(img, y0, h):
     img.alpha_composite(band, (0, y0))
 
 
+def explosion2(rows, w, h, fill=(255, 230, 0), tcol=RED, angle=-8):
+    """2行の爆発の吹き出し（2行目を特大に）。rows = [(文字, 大きさ), ...]"""
+    im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    pts = []
+    for i in range(28):
+        a = 2 * math.pi * i / 28
+        r = (0.5 if i % 2 == 0 else 0.42)
+        pts.append((w / 2 + w * r * math.cos(a), h / 2 + h * r * math.sin(a)))
+    d.polygon(pts, fill=BLACK)
+    d.polygon([(w / 2 + (x - w / 2) * 0.93, h / 2 + (y - h / 2) * 0.93) for x, y in pts], fill=fill)
+    ts = [T.runs([(t_, (tcol, WHITE))], sz, 10, int(w * 0.78)) for t_, sz in rows]
+    y = (h - sum(t_.height for t_ in ts) - 4) // 2
+    for t_ in ts:
+        im.alpha_composite(t_, ((w - t_.width) // 2, y))
+        y += t_.height + 4
+    return im.rotate(angle, expand=True, resample=Image.BICUBIC)
+
+
 def b_plus(name, variant):
     img = punchy("bg25_wagyu_sashi", zoom=1.1)
     rainbow_rays(img, 640, 330, alpha=140, rot=0.04 * variant)
@@ -204,7 +223,7 @@ def b_plus(name, variant):
     }[variant]
     for c_ in cats:
         T.put_cat(img, *c_)
-    ex = explosion("和牛が海外へ密輸!?", 700, 380, fill=(255, 230, 0), size=120, angle=6)
+    ex = explosion2([("和牛が海外へ", 96), ("密輸!?", 190)], 720, 440, angle=6)
     put(img, glow(ex, (255, 255, 255), r=22), 620, 225)
     l1 = T.runs([("見つけたのは", (WHITE, BLACK))], 128, 16, 700, shadow=True)
     l2 = gold_text("中国!?", 150, 520) if variant != 2 else rainbow_text("中国!?", 150, 520)

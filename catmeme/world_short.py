@@ -464,7 +464,34 @@ class Renderer(I.Renderer):
             I.put(out, self.foot, W / 2, c.get("foot_y", 1330))
         if self.subs is not None:   # 参考の最後：ボタンが出て、少しあとに「登録済み」
             I.put(out, self.subs[1 if t > 1.3 else 0], W / 2, 1180)
+        if c.get("hype"):
+            out = hype_fx(out, t)
         return out
+
+
+_VIG = None
+
+
+def hype_fx(out, t):
+    """エフェクト全力（10/28 ユーザー指定：前日深夜の暴飲暴食＆ゲームの場面）。
+    ドンと寄る＋リズムで脈打つ・画面が揺れる・まわりがパーティーの光（ピンク→水色→黄色）で点滅・頭に白い光。"""
+    global _VIG
+    if _VIG is None:
+        yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+        d = np.sqrt(((xx - W / 2) / (W / 2)) ** 2 + ((yy - H / 2) / (H / 2)) ** 2)
+        _VIG = np.clip((d - 0.55) / 0.6, 0, 1)[..., None] ** 1.5
+    z = 1.0 + 0.14 * max(0.0, 1 - t / 0.18) + 0.03 * abs(math.sin(t * 9))
+    big = cv2.resize(out, None, fx=z, fy=z, interpolation=cv2.INTER_LINEAR)
+    rng = np.random.default_rng(int(t * R.FPS))
+    dx, dy = int(rng.integers(-14, 15)), int(rng.integers(-14, 15))
+    y0 = min(max((big.shape[0] - H) // 2 + dy, 0), big.shape[0] - H)
+    x0 = min(max((big.shape[1] - W) // 2 + dx, 0), big.shape[1] - W)
+    out = big[y0:y0 + H, x0:x0 + W]
+    col = np.array([(0.85, 0.25, 1.0), (1.0, 0.9, 0.2), (0.2, 0.95, 1.0)][int(t / 0.12) % 3], np.float32)   # BGR：ピンク・水色・黄色
+    out = out * (1 - _VIG * 0.55) + col * _VIG * 0.55
+    if t < 0.1:
+        out = out * 0.35 + 0.65 * (1 - t / 0.1) + out * 0.65 * (t / 0.1)
+    return out
 
 
 def over_cat(out, img, al, x, y, split_mode):

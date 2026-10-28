@@ -3,6 +3,12 @@ import salary_short as S
 from salary_short import s, t, ROOM, NIGHT
 
 cs = [
+    # 10/28 ユーザー指定：冒頭に、エフェクト全力で前日深夜まで暴飲暴食＆ゲームしている場面
+    s(NIGHT, "前日 23:00", "明日はリモート\n*夜ふかし*し放題！", "dance_edm_cat", lines=True, hype=True, se=["air_horn"]),
+    s(NIGHT, "前日 0:30", "ピザ・ポテチ・コーラ\n*暴飲暴食*", "eat_crunchy_cat_luna", lines=True, hype=True,
+      se=["eat_paku", {"f": "drink_gulp_gokugoku_thirsty_chug", "at": 0.8}]),
+    s(NIGHT, "前日 2:00", "ゲームも\n*あと1戦だけ*", "angry_shooting_cat", lines=True, hype=True, se=["boot_game_like"]),
+    s(NIGHT, "前日 4:00", "気づけば\n*朝の4時*", "stare_big_eyes_tabby_kitten", lines=True, hype=True, se=["shock_piano"]),
     s(ROOM, "8:58", "始業2分前に\n*起床*", "sleep_sleeping_cat", lines=True, se="cuckoo_pappo"),
     s(ROOM, "8:59", "パジャマのまま\nパソコンを開く", "work_typing_cat"),
     s(ROOM, "9:00", "朝会は\n*カメラオフ*で参加", "slack_nail_filing_cat", se="pikon"),

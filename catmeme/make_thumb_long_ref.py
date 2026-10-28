@@ -532,3 +532,30 @@ def chudo():
 
 if __name__ == "__main__" and os.environ.get("THUMB") == "24":
     chudo()
+
+
+def wagyu():
+    """25本目（和牛を狙った男たち）で3案。運んだ人・牧場の人は描かない。ユーザー提供の写真を使う。"""
+    import sys as _s
+    import make_thumb_short_ref as _S
+    _S.BGS.insert(0, os.path.join(HERE, "backgrounds", "25_wagyu"))
+    type_a("25_wagyu_ref_a.png", "bg25_wagyu_sashi", "bg25_frozen_straws",
+           ("surprise_big_pupils_cat", 0.6, 120, 470, 280, False),
+           [("huh_huh_cat", 1.0, 1150, 410, 300, True)],
+           "2018年 和牛の精液持ち出し事件",
+           [("和牛の宝が", BLACK), ("ストロー1本", RED), ("で", BLACK)], [("海を渡りかけた", RED)], split=700, size=112)
+    type_b("25_wagyu_ref_b.png",
+           [("bg25_wagyu_ranch", [("think_bike_front_seat_cat", 1.0, 160, 470, 300, False)]),
+            ("bg25_straws_color", [("surprise_big_pupils_cat", 0.6, 160, 470, 300, False)]),
+            ("bg45_airport_arrival", [("stare_tabby_wide_eyes_cat", 0.6, 160, 470, 300, False)]),
+            ("bg85_courtroom", [("huh_huh_cat", 1.0, 160, 470, 330, False)])],
+           [("txt", "何十年もの改良", 160, 60, 38, YELLOW, -6), ("txt", "ストロー365本", 480, 60, 40, YELLOW, 4),
+            ("txt", "見つけたのは中国", 800, 60, 38, YELLOW, -4), ("txt", "法律がなかった!?", 1130, 60, 40, RED, 6)],
+           [("和牛を狙った男たち", RED)], [("日本の宝はなぜ守られなかった？", NAVY)])
+    type_c("25_wagyu_ref_c.png", "bg25_wagyu_steak",
+           [("surprise_big_pupils_cat", 0.6, 1130, 600, 380, True)],
+           "和牛の精液・受精卵 持ち出し事件", "和牛を狙った男たち", zoom=1.1)
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "25":
+    wagyu()

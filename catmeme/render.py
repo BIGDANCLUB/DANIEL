@@ -791,82 +791,87 @@ def cat_audio(name):
 
 SE_DIR = os.path.join(HERE, "se")
 
-# ---- ショートの戸惑いの場面：1回目はふつうのコナンのひらめき、2回目からはまね3種類をランダムに（10/28 ユーザー指定） ----
+# ---- ショートの「!?」と「え…」の場面の音（10/28 ユーザー指定のルール） ----
+# ・コナンの音／連打：「!?」となる場面（字幕に !? がある）
+# ・ポーンの音／連打：「え…」となる戸惑いの場面（「はてな」の音・戸惑う猫・「……え」「えっ」「は？」などの字幕）
+# どちらも、そのショートで1回目はふつうの音、2回目からは連打3種類をランダムに（同じものは続けない）
 CONAN = "anime_conan_hirameki_idea_realize_truth"
 CONAN_REMIX = ["anime_conan_hirameki_remix_a", "anime_conan_hirameki_remix_b", "anime_conan_hirameki_remix_c"]
+POON = "tv_professional_poon"
+POON_REMIX = ["tv_professional_poon_remix_a", "tv_professional_poon_remix_b", "tv_professional_poon_remix_c"]
 HUH_SE = "question_mark_pop_confused_huh"
 HUH_CATS = {"huh_huh_cat", "confused_i_dont_know_cat"}
+BANG = ("!?", "！？", "?!", "？！")
+DOUBT = ("……え", "……は", "……あれ", "あれ", "え…", "えっ", "え？", "は？", "……本当", "……どこ", "……？")   # 「え…」となる字幕の出だし
+
+
+def _se_list(c):
+    ses = c.get("se")
+    return [] if not ses else [ses] if isinstance(ses, (str, dict)) else list(ses)
+
+
+def _se_name(s):
+    return s if isinstance(s, str) else s.get("f")
+
+
+def scene_kind(c):
+    """"bang"（!? の場面）／"doubt"（え… の戸惑いの場面）／None。"""
+    if c.get("banner") or c.get("kind") == "split":
+        return None
+    plain = (c.get("say") or "").replace("*", "").replace("\n", "")
+    if any(b in plain for b in BANG):
+        return "bang"
+    names = [_se_name(s) for s in _se_list(c)]
+    if HUH_SE in names or POON in names:
+        return "doubt"
+    if c.get("kind") == "solo" and (plain.startswith(DOUBT) or plain in ("え", "……")):   # 字幕だけで決めるのは1匹の場面（会話は相手のセリフのことがある）
+        return "doubt"
+    if not names and any(k.get("a") in HUH_CATS and sounding(k) for k in c.get("cats", [])):
+        return "doubt"
+    return None
 
 
 def conan_confusion(cs, seed=0):
-    """戸惑いの場面（「はてな」の音がついた場面、または戸惑う猫がしゃべるだけの場面）の音をコナンのひらめきにかえる。"""
+    """ショートの「!?」の場面はコナン、「え…」の場面はポーン（どちらも1回目はふつう、2回目から連打）。"""
     import random
-    rnd = random.Random(seed)
-    n, last = 0, None
+    rnd = {"bang": random.Random(seed), "doubt": random.Random(seed + 1)}
+    n, last = {"bang": 0, "doubt": 0}, {"bang": None, "doubt": None}
     for c in cs:
-        ses = c.get("se")
-        lst = [] if not ses else [ses] if isinstance(ses, (str, dict)) else list(ses)
-        name = lambda s: s if isinstance(s, str) else s.get("f")
-        huh = any(name(s) == HUH_SE for s in lst)
-        if not huh and (lst or c.get("banner") or c.get("kind") == "split"
-                        or not any(k.get("a") in HUH_CATS and sounding(k) for k in c.get("cats", []))):
+        k = scene_kind(c)
+        if not k:
             continue
-        if n == 0:
-            f = CONAN
+        base, remix = (CONAN, CONAN_REMIX) if k == "bang" else (POON, POON_REMIX)
+        if n[k] == 0:
+            f = base
         else:
-            f = rnd.choice([x for x in CONAN_REMIX if x != last])
-            last = f
-            for k in c.get("cats", []):   # 連打の場面は猫の声を消す（「は？」猫の声が高い音に聞こえる・10/28 ユーザー指摘）
-                k["mute"] = True
-            c["no_pop"] = True
-        n += 1
-        c["se"] = [s for s in lst if name(s) != HUH_SE] + [{"f": f, "len": 2.4}]
-        conan_say(c)
-    poon_series(cs, seed)
+            f = rnd[k].choice([x for x in remix if x != last[k]])
+            last[k] = f
+            if k == "bang":
+                for q in c.get("cats", []):   # コナンの連打の場面は猫の声を消す（「は？」猫の声が高い音に聞こえる・10/28 ユーザー指摘）
+                    q["mute"] = True
+                c["no_pop"] = True
+        n[k] += 1
+        c["se"] = [s for s in _se_list(c) if _se_name(s) not in (HUH_SE, POON, CONAN)] + [{"f": f, "len": 2.4}]
+        if k == "bang":
+            conan_say(c)
     return cs
 
 
-# ---- プロフェッショナルの「ポーン」も同じ：1回目はふつうのポーン、2回目からは連打3種類をランダムに（10/28 ユーザー指定） ----
-POON = "tv_professional_poon"
-POON_REMIX = ["tv_professional_poon_remix_a", "tv_professional_poon_remix_b", "tv_professional_poon_remix_c"]
-
-
-def poon_series(cs, seed=0):
-    """台本で se="tv_professional_poon" を付けた場面。2回目からは「ポポポポーン」「ポポ、ポ、ポーン」「ポ、ポポポ、ポ、ポーン」のどれか。"""
-    import random
-    rnd = random.Random(seed + 1)
-    n, last = 0, None
-    for c in cs:
-        ses = c.get("se")
-        lst = [] if not ses else [ses] if isinstance(ses, (str, dict)) else list(ses)
-        idx = [i for i, s in enumerate(lst) if (s if isinstance(s, str) else s.get("f")) == POON]
-        if not idx:
-            continue
-        if n:
-            f = rnd.choice([x for x in POON_REMIX if x != last])
-            last = f
-            sp = lst[idx[0]]
-            lst[idx[0]] = dict(sp, f=f) if isinstance(sp, dict) else f
-            c["se"] = lst
-        n += 1
-
-
 def conan_say(c):
-    """コナンの音の場面の字幕は「！？」を多めに・大きく（10/28 ユーザー指定：「……え」→「！？！？！？！？！？」、「40分たってた！？」）。"""
+    """「!?」の場面の字幕は大きく（10/28 ユーザー指定：「40分たってた!?」）。!? だけの字幕は1つずつポンと出るエフェクト。"""
     say = c.get("say")
     if not say or c.get("kind") != "solo":   # 会話の場面（だれかのセリフ）は変えない
         return
     plain = say.replace("*", "").replace("\n", "")
-    if len(plain.strip("…。、 ").rstrip("？！?!")) <= 2:   # 「……え」「……は？」など短い声は、全部「！？」にする
-        c["say"], c["say_size"], c["say_fx"] = "!?!?!?!?!?", 190, "huh"   # 全角だとすき間が空くので半角。ポンと出るエフェクト
+    if set(plain) <= set("!?！？"):
+        n = max(1, plain.count("?") + plain.count("？"))
+        c["say"], c["say_size"], c["say_fx"] = "!?" * n, 190, "huh"   # 全角だとすき間が空くので半角
     else:
         if len(plain) <= 8:
             say = say.replace("\n", "")
-        if not say.rstrip("*").endswith(("？", "?")):
-            say = say.rstrip("…。") + "!?"
-        c["say"] = say
+        c["say"] = say.replace("！？", "!?")
         if "\n" not in say:   # 1行なら大きく（画面からはみ出さない大きさまで）
-            wid = sum(1 if ord(ch) > 255 else 0.55 for ch in say.replace("*", ""))
+            wid = sum(1 if ord(ch) > 255 else 0.55 for ch in c["say"].replace("*", ""))
             c["say_size"] = int(min(135, 960 / wid))
     c["big_say"] = True
 

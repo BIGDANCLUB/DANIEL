@@ -1,4 +1,5 @@
-"""ショート41：年末調整の時期のリアル（salary_short.py）。保険の控除証明書が見つからない・毎年同じ書類で迷う。59.9秒。"""
+"""ショート41：年末調整の時期のリアル（salary_short.py）。保険の控除証明書が見つからない・毎年同じ書類で迷う。59.9秒。
+10/28 リモートワークと同じルール：「!?」の場面はコナン、「え…」の場面はポーン。字幕は上まん中・猫はその下に大きく。"""
 import salary_short as S
 from salary_short import s, t, OFF, OFF2, ROOM, NIGHT
 
@@ -12,14 +13,14 @@ cs = [
     s(ROOM, "11月20日", "……どこ？", "huh_huh_cat", big_say=True, d=2.0, se="question_mark_pop_confused_huh"),
     s(ROOM, "11月21日", "郵便物の山を\nぜんぶひっくり返す", "fight_cat_fight", se="explosion_doon"),
     s(ROOM, "11月21日", "チラシ・チラシ\nピザのメニュー", "blank_black_cat_zoning_out"),
-    s(ROOM, "11月22日", "まさか\n*捨てた*…？", "despair_dramatic_kitten"),
+    s(ROOM, "11月22日", "まさか\n*捨てた*!?", "despair_dramatic_kitten"),
     t(OFF, "11月28日", "書類まだの人\n*あと2日*です", "rage_talking_cat", "sad_banana_cat_cry", who="L", ll="総務"),
     s(ROOM, "11月28日", "保険会社に電話して\n*再発行*をお願い", "call_customer_service_cat", se="pi"),
     s(ROOM, "11月30日", "とどいた！\n*ギリギリ*間に合う", "happy_chipi_chapa_cat", se="pinpoon_correct"),
     t(OFF2, "11月30日", "はい受け取りました\n…あ ここ*ハンコ*がない", "stare_interviewer_cat", "stare_tabby_wide_eyes_cat", who="L", ll="総務"),
     s(OFF2, "11月30日", "……", "sad_black_dog", d=1.8),
     s(NIGHT, "12月", "引き出しを片づけたら", "peek_what_happen_cat", dark=0.3),
-    s(NIGHT, "12月", "*控除証明書*\n出てきた", "surprise_big_pupils_cat", se="question_mark_pop_confused_huh", dark=0.3),
+    s(NIGHT, "12月", "*控除証明書*\n出てきた!?", "surprise_big_pupils_cat", dark=0.3),
     s(NIGHT, "12月", "みんなも\n大事な書類は\n*1か所にまとめよう*", "realize_wet_cat_stare", dark=0.3),
 ]
 

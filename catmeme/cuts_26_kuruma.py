@@ -160,6 +160,7 @@ def boom(say, b=STREET, who="N", **kw):
 
 
 CONAN = "anime_conan_hirameki_idea_realize_truth"
+POON = "tv_professional_poon"
 
 
 def qq(b, remix, who="N"):
@@ -189,7 +190,7 @@ def cuts_all():
         g("k0_preview", "ローン・税金・保険・ガソリン……\n積み上げるとこうなる", dur=5.6),
         boom("月になおすと\n7万4000円！？", MONEY, se=["shock_piano"]),
         qq(MONEY, "anime_conan_hirameki_remix_b"),   # コナンの連打＋色とりどりの「？？？？？？」（10/28 ユーザー指定）
-        nn("家賃もう1個\n払ってるじゃん……", MONEY, se="deflate_hyororo"),
+        nn("え……\n家賃もう1個\n払ってるじゃん", MONEY, se=POON),   # 「え…」の場面はポーン（1回目はふつう・10/28）
         dict(bg=bg(STREET), card=pt("e01_title"), dur=4.0, se="jan",
              cats=[{"a": "drive_driving_cat", "x": 300, "h": 440, "bottom": 1050, "float": True},
                    {"a": "dance_three_kittens", "x": 1640, "h": 400, "bottom": 1050, "float": True, "mute": True}]),
@@ -210,7 +211,7 @@ def cuts_all():
         g("d1_tax3", "自動車税・重量税・自賠責\nこの3つは必ず払う", dur=4.4),
         nn("自動車税だけで\n3万円！？", PARK, red=True, se=["explosion_dokaan"]),
         ss("毎年5月に\n通知が来る", PARK, se="pinpon_notice"),
-        nn("5月って\n連休でお金ないのに……", PARK, se="deflate_hyororo"),
+        nn("え……\n5月って連休で\nお金ないのに", PARK, se="tv_professional_poon_remix_a"),   # 2回目からはポーン連打
         g("k2_tax", "税金と自賠責で\n年 約5万", dur=3.6),
         # ---- ④ 保険と車検 ----
         chap("③ 保険と車検", se="whoosh_shu"),
@@ -244,9 +245,9 @@ def cuts_all():
         g("k5_vs", "車なしは\n年 約15万", dur=4.6),
         boom("差は\n年74万円！？", STATION, se=["shock_piano"]),
         g("d4_10y", "10年で\nくらべると……", dur=5.4),
-        nn("ローンが終わっても\n年35万は\nかかり続けるのか", MONEY, se="kon"),
+        nn("え……ローンが終わっても\n年35万は\nかかり続けるの？", MONEY, se="tv_professional_poon_remix_b"),
         boom("10年で\n470万の差！？", MONEY, se=["explosion_chudoon"]),
-        nn("新車もう1台\n買えるじゃん……", MONEY, se="deflate_hyororo"),
+        nn("え……\n新車もう1台\n買えるじゃん", MONEY, se="tv_professional_poon_remix_c"),
         # ---- ⑦ 安くするなら ----
         chap("⑥ 安くするなら", se="whoosh_shu"),
         nn("でも地方は\n車がないと\n生活できない", ROAD, se="kon"),
@@ -255,12 +256,12 @@ def cuts_all():
         ss("軽自動車税は\n年1万800円\n燃費もいい", ROAD, se="pi"),
         ss("保険の見直し\n中古車を選ぶ\nこれも効く", ROAD, se="pi"),
         nn("たまにしか\n乗らない人は？", CITY, se="question_hatena_maou"),
-        ss("カーシェアや\nレンタカーのほうが\n安いことも", CITY, se="tv_professional_poon"),
+        ss("カーシェアや\nレンタカーのほうが\n安いことも", CITY, se="pinpon_notice"),   # ポーンは「え…」の場面だけ（10/28 ルール）
         # ---- ⑧ まとめ ----
         chap("まとめ", se="doon_heavy", bgm={"file": NORA, "gain": -4, "fade": 0.6}),
         card("e07_points", "持っているだけでかかるお金を知っておこう", dur=5.6),
         nn("車は便利だけど\nお金も\nしっかりかかる", STREET, se="kon"),
-        ss("必要かどうか\n1年の合計で\n考えてみよう", STREET, se="tv_professional_poon"),
+        ss("必要かどうか\n1年の合計で\n考えてみよう", STREET, se="kon"),
         dict(bg=bg(STREET), card=pt("e10_ending"), dur=3.6, se="chirin",
              cats=[{"a": "wave_waving_cat", "x": 300, "h": 420, "bottom": 1040, "float": True}]),
         dict(bg=None, card=os.path.join(HERE, "parts", "common", "subscribe.png"), dur=3.4, se="chirin",

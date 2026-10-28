@@ -215,19 +215,28 @@ def hype(cuts):
         se = c.get("se")
         ses = " ".join((x if isinstance(x, str) else x.get("f", "")) for x in ([se] if isinstance(se, (str, dict)) else (se or [])))
         big = c.get("say_style") == "red" or any(k in ses for k in FLASHY) or c.get("chapter")
-        fx += ["punch", "spark"]   # すべてのカット：グッと寄る＋キラキラ
+        fx += ["punch"]   # すべてのカット：グッと寄る（上下に流れるキラキラ・紙吹雪はなし・10/28 ユーザー指定）
         if i % 2 == 0:
             fx.append("lines")   # 2カットに1回 集中線
         if i % 4 == 1:
             fx.append("border")   # ときどき光るふち
         if big:
             fx += ["flash", "shake", "lines", "ring", "border"]
-        if c.get("card") or c.get("inset") or c.get("chapter") or any(k in ses for k in ("jan", "pinpoon", "power_up", "chirin")):
-            fx.append("confetti")
         if not big:
             fx.append("zoom")
-        c["fx"] = list(dict.fromkeys(fx))
+        c["fx"] = list(dict.fromkeys(f for f in fx if f not in ("spark", "confetti")))
+        # SE をもっと（10/28 ユーザー指定）：どのカットにも頭の小さな音、驚きの場面には追加の音
+        lst = [] if not se else ([se] if isinstance(se, (str, dict)) else list(se))
+        lst.append({"f": POP_SE[i % len(POP_SE)], "gain": -7})
+        if big:
+            lst.append({"f": BIG_SE[i % len(BIG_SE)], "gain": -4, "at": 0.25})
+        c["se"] = lst
     return cuts
+
+
+POP_SE = ("pikon", "spo", "puni", "kote", "pa", "papa", "peta", "suupo", "button_13", "cursor_move_01")   # 頭の小さな音
+BIG_SE = ("voice_uuwaa", "boing_02", "tsukkomi_bashi", "anime_dbz_punch", "game_pokemon_super_effective_hit_big_damage", "kaan",
+          "hit_dogo_maou", "shock_piano")   # 驚きの場面に重ねる音
 
 
 def cuts_full():

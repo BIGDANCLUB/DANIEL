@@ -37,6 +37,7 @@ FERRY, RANCH, STEAK, STRAW, US_RANCH, WORLD, POLICE, COURT, DIET, BOARD, SNS, GR
     "bg25_ferry_port", "bg25_wagyu_ranch", "bg25_wagyu_steak", "bg25_frozen_straws", "bg25_us_ranch", "bg44_world_map",
     "bg77_police_station", "bg85_courtroom", "bg115_japan_diet", "bg03_blackboard", "bg09_sns", "j05_grill")
 CUSTOMS = "bg25_customs_gate"
+SASHI, STRAW2 = "bg25_wagyu_sashi", "bg25_straws_color"   # 10/28 ユーザー提供の写真
 STANDIN = {FERRY: "bg45_airport_arrival", RANCH: "bg63_hokkaido_field", STEAK: "j05_grill", STRAW: "bg03_jp_material_plant",
            US_RANCH: "bg63_hokkaido_field", DIET: "bg84_courthouse", CUSTOMS: "bg45_airport_arrival"}
 _bg = L.bg
@@ -104,11 +105,11 @@ def cuts_all():
         ss("種牛1頭ごとに\n子どもの肉の質まで\n調べてきた", RANCH, se="page_turn_01"),
         nn("牛の家系図が\nずっと続いてるのか", RANCH, se="kon"),
         ss("その一頭一頭が\n地域の宝として\n大切に育てられてる", RANCH, se="sparkle_kirakira_01"),
-        ss("そう\nあのサシの入り方は\n農家の努力の結晶", STEAK, se="sparkle_kirakira_01"),
-        close(STEAK, "@react", "ニュース猫", "うまそう……\n（よだれ）", red=False, se=["drink_gulp_gokugoku_thirsty_chug"]),
+        ss("そう\nあのサシの入り方は\n農家の努力の結晶", SASHI, se="sparkle_kirakira_01"),
+        close(SASHI, "@react", "ニュース猫", "うまそう……\n（よだれ）", red=False, se=["drink_gulp_gokugoku_thirsty_chug"]),
         ss("でもその成果は\n凍らせた精液と受精卵の\nストロー1本で運べてしまう", STRAW, se="pi"),
         close(STRAW, "@react", "ニュース猫", "何十年の努力が\nストロー1本！？", se=["explosion_chudoon"]),
-        ss("細さは\nストローとほぼ同じ\nポケットにも入る", STRAW, se="kon"),
+        ss("細さは\nストローとほぼ同じ\nポケットにも入る", STRAW2, se="kon"),
         nn("それはヤバい……", STRAW, se="deflate_hyororo"),
         ss("しかも液体窒素で\n凍らせておけば\n何年でも使える", STRAW, se="freeze_kochiin"),
         nn("冷凍保存OKって\nますます危ない……", STRAW, se="kon"),
@@ -174,8 +175,8 @@ def cuts_all():
         close(BOARD, "@react", "ニュース猫", "執行猶予だったのが\n懲役10年に！？", se=["explosion_dokaan"]),
         card("e06_law", "ストローには　種牛の名前を書くことが義務に", dur=4.8),
         ss("どの種牛のものか\nすぐわかるように\nした", STRAW, se="pinpoon_note"),
-        org(STRAW, "農林水産省", "ストロー1本1本に\n名前つき", se="pikon"),
-        nn("ストローに\n名札をつけたのか", STRAW, se="pikon"),
+        org(STRAW2, "農林水産省", "ストロー1本1本に\n名前つき", se="pikon"),
+        nn("ストローに\n名札をつけたのか", STRAW2, se="pikon"),
         ss("事件があって\nやっと\nルールが追いついた", BOARD, se="kon"),
         nn("でも\n昔出ていった牛は\nもう戻らないよね", WORLD, se="kon"),
         ss("そう\n海外のWAGYUを\n止める方法はない", WORLD, se="pi"),

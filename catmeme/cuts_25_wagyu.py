@@ -230,6 +230,19 @@ def hype(cuts):
         lst.append({"f": POP_SE[i % len(POP_SE)], "gain": -7})
         if big:
             lst.append({"f": BIG_SE[i % len(BIG_SE)], "gain": -4, "at": 0.25})
+        # 10/28 ユーザーが追加した効果音：場面の音（環境音）と、ここぞの場面の音
+        if c.get("bg") == bg(FERRY):
+            lst.append({"f": "ambient_beach_waves", "gain": -18})
+        if c.get("bg") == bg(STEAK):
+            lst.append({"f": "meat_grilling_sizzle", "gain": -15})
+        say = c.get("say") or ""
+        if "うまそう" in say or "いただきます" in say:
+            lst.append({"f": "eat_taberu_01", "gain": -4, "at": 0.3})
+        if big and i % 3 == 0:
+            lst.append({"f": "armor_damage_hit", "gain": -5})
+        card_ = (c.get("inset") or {}).get("card") or c.get("card") or ""
+        if "e04_case" in str(card_) and not c.get("inset_still"):
+            lst.append({"f": "game_aceattorney_evidence_added", "gain": -6, "len": 1.6})   # ⚠ゲームの音なので1回だけ
         c["se"] = lst
     return cuts
 

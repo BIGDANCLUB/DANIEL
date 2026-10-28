@@ -236,3 +236,17 @@
 | anime_yugioh_summon_powerful_appearance.wav | 遊戯王の召喚音。強キャラ・切り札の登場 | ⚠テレビ・アニメ | 遊戯王_召喚音.wav | ニコニ・コモンズ nc87740 |
 
 すでに同じ音があったので入れなかったもの：スマブラSPズーム撃墜音（= game_smash_finish.wav）、ゴング（= gong_kaan.wav）、拳銃の音（= gunshot_bakyun.mp3）、骨が折れる音（= gugi.wav）
+
+## 10/28 追加（ユーザーがアップロード・ニコニ・コモンズ。使った動画はニコニ・コモンズで親作品登録をする）
+| ファイル名 | 中身 | 注意 | 元のファイル名 | 配布元 |
+|---|---|---|---|---|
+| armor_damage_hit.wav | 装甲に当たる重いダメージ音 |  | nc100273_装甲ダメージ音.wav | ニコニ・コモンズ nc100273 |
+| eat_taberu_01.mp3 | 食べる音（もぐもぐ） |  | nc110298_食べる０１－１.mp3 | ニコニ・コモンズ nc110298 |
+| anime_seed_beam_rifle.wav | ガンダムSEEDのビームライフル | ⚠テレビ・アニメ | nc129580_ビームライフル(SEED).wav | ニコニ・コモンズ nc129580 |
+| game_undertale_encounter_se.mp3 | UNDERTALE のエンカウント音 | ⚠ゲーム | nc222941_UNDERTALE_エンカウント【SE】.mp3 | ニコニ・コモンズ nc222941 |
+| ambient_beach_waves.mp3 | 夏の海岸の波の音（環境音・長い） |  | nc45708_夏の海岸１・波.mp3 | ニコニ・コモンズ nc45708 |
+| ambient_cafe_crowd.mp3 | 広い喫茶店のガヤガヤ（環境音・長い） |  | nc45915_ガヤガヤ１（広い喫茶店）.mp3 | ニコニ・コモンズ nc45915 |
+| meat_grilling_sizzle.mp3 | 肉を焼くジュージュー音（長い） |  | nc46297_肉を焼く音.mp3 | ニコニ・コモンズ nc46297 |
+| train_gatan_goton_loop.mp3 | 電車のガタンゴトン（ループできる） |  | nc80815_電車の音_ガタンゴトン（ループ対応）.mp3 | ニコニ・コモンズ nc80815 |
+| game_aceattorney_desk_slam_02.wav | 逆転裁判の机を叩く音 | ⚠ゲーム | nc89399_【逆転裁判】机を叩く音.wav | ニコニ・コモンズ nc89399 |
+| game_aceattorney_evidence_added.wav | 逆転裁判の「証拠品追加」 | ⚠ゲーム | nc89589_【逆転裁判】証拠品追加.wav | ニコニ・コモンズ nc89589 |

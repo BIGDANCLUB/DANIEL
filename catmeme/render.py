@@ -816,6 +816,9 @@ def conan_confusion(cs, seed=0):
         else:
             f = rnd.choice([x for x in CONAN_REMIX if x != last])
             last = f
+            for k in c.get("cats", []):   # 連打の場面は猫の声を消す（「は？」猫の声が高い音に聞こえる・10/28 ユーザー指摘）
+                k["mute"] = True
+            c["no_pop"] = True
         n += 1
         c["se"] = [s for s in lst if name(s) != HUH_SE] + [{"f": f, "len": 2.4}]
     return cs

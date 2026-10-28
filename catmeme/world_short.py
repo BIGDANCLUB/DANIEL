@@ -339,6 +339,13 @@ class Renderer(I.Renderer):
             size = c.get("say_size") or (104 if big else 80)
             self.say = say_img(c["say"], size, stroke=12 if size >= 150 else (8 if big else 7))
         self.say_y = c.get("say_y", 690)
+        self.huh = None
+        if c.get("say_fx") == "huh":   # 「!?!?!?」：1つずつポンと出る・赤と黄色・少し傾けて震える（10/28 ユーザー指定）
+            n = c["say"].count("!?")
+            size = c.get("say_size", 150)
+            self.huh = [rich([[("!?", (RED, YELLOW)[j % 2])]], size, stroke=10, stroke_col=BLACK).rotate(
+                (-12, 9, -6, 12, -9)[j % 5], expand=True, resample=Image.BICUBIC) for j in range(n)]
+            self.say = None
         self.clips = [R.Clip(q["a"]) for q in c["cats"]]
         self.labels = [I.name_tag(q["label"]) if q.get("label") else None for q in c["cats"]]
         self.bbox = {}
@@ -425,6 +432,19 @@ class Renderer(I.Renderer):
         b = R.to_np(self.band)
         I.over(out, b[0], b[1], 0, c.get("band_y", I.BAND[0]))
         I.put(out, self.tag, W / 2, self.tag_y)
+        if self.huh:
+            n = len(self.huh)
+            rng = np.random.default_rng(int(t * R.FPS))
+            for j, im in enumerate(self.huh):
+                t0 = 0.08 * j
+                if t < t0:
+                    break
+                k = 1.0 + 0.5 * max(0.0, 1 - (t - t0) / 0.1)   # 大きく出て縮む
+                if k != 1.0:
+                    im = im.resize((int(im.width * k), int(im.height * k)), Image.BILINEAR)
+                cx = 90 + (W - 180) * (j + 0.5) / n + rng.integers(-6, 7)
+                cy = self.say_y + 90 + (-18 if j % 2 else 12) + rng.integers(-6, 7)
+                I.put(out, im, cx, cy)
         if self.say is not None:
             if self.say_xy:
                 I.put(out, self.say, *self.say_xy)

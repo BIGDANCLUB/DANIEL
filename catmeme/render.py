@@ -832,7 +832,7 @@ def conan_say(c):
         return
     plain = say.replace("*", "").replace("\n", "")
     if len(plain.strip("…。、 ").rstrip("？！?!")) <= 2:   # 「……え」「……は？」など短い声は、全部「！？」にする
-        c["say"], c["say_size"] = "!?!?!?!?!?", 150   # 全角だとすき間が空くので半角
+        c["say"], c["say_size"], c["say_fx"] = "!?!?!?!?!?", 150, "huh"   # 全角だとすき間が空くので半角。ポンと出るエフェクト
     else:
         if len(plain) <= 8:
             say = say.replace("\n", "")
@@ -841,7 +841,7 @@ def conan_say(c):
         c["say"] = say
         if "\n" not in say:   # 1行なら大きく（画面からはみ出さない大きさまで）
             wid = sum(1 if ord(ch) > 255 else 0.55 for ch in say.replace("*", ""))
-            c["say_size"] = int(min(120, 960 / wid))
+            c["say_size"] = int(min(135, 960 / wid))
     c["big_say"] = True
 
 

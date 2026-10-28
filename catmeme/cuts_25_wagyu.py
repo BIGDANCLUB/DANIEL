@@ -16,7 +16,7 @@ import render as R
 
 R.TEMPO = getattr(R, "TEMPO", 1.0) * 0.74   # 10/28 ユーザー指定：スピード感・テンポよく4〜5分に
 HERE = L.HERE
-L.BGS = [os.path.join(HERE, "backgrounds", d) for d in ("25_wagyu", "14_japan", "16_tenchim", "15_vambi", "04_leak", "02_october",
+L.BGS = [os.path.join(HERE, "backgrounds", d) for d in ("25_wagyu", "25_world", "14_japan", "16_tenchim", "15_vambi", "04_leak", "02_october",
                                                          "01_todai", "jidaraku/01_yakiniku", "18_semicon")]
 L.PT = os.path.join(HERE, "parts", "25_wagyu")
 pt, cat, close, dia, expl, chap, net, nn, ss = L.pt, L.cat, L.close, L.dia, L.expl, L.chap, L.net, L.nn, L.ss
@@ -36,8 +36,9 @@ for _o in ORG_CAT:
 FERRY, RANCH, STEAK, STRAW, US_RANCH, WORLD, POLICE, COURT, DIET, BOARD, SNS, GRILL = (
     "bg25_ferry_port", "bg25_wagyu_ranch", "bg25_wagyu_steak", "bg25_frozen_straws", "bg25_us_ranch", "bg44_world_map",
     "bg77_police_station", "bg85_courtroom", "bg115_japan_diet", "bg03_blackboard", "bg09_sns", "j05_grill")
+CUSTOMS = "bg25_customs_gate"
 STANDIN = {FERRY: "bg45_airport_arrival", RANCH: "bg63_hokkaido_field", STEAK: "j05_grill", STRAW: "bg03_jp_material_plant",
-           US_RANCH: "bg63_hokkaido_field", DIET: "bg84_courthouse"}
+           US_RANCH: "bg63_hokkaido_field", DIET: "bg84_courthouse", CUSTOMS: "bg45_airport_arrival"}
 _bg = L.bg
 
 
@@ -68,8 +69,11 @@ def cuts_all():
     return [
         # ---- 0. 注意書き ----
         # 背景で猫ミームが動いている上に、画面を半分暗くして注意書き（音なし・10/28 ユーザー指定）
-        dict(bg=bg(STEAK), cats=[{"a": "dance_tabby_standing_cat", "x": 960, "h": 760, "bottom": 1060, "mute": True}], fx=["dim"],
-             layers_top=[pt("e00_notice")], dur=6.0, no_pop=True, notice=True),
+        dict(bg=bg(STEAK), cats=[{"a": a_, "x": x_, "h": h_, "bottom": 1070, "mute": True} for a_, x_, h_ in (
+                ("dance_tabby_standing_cat", 220, 620), ("dance_three_kittens", 640, 520), ("happy_hamster_open_arms", 1000, 560),
+                ("dance_orange_gray_cats", 1360, 600), ("happy_girlfriend_dance_cat", 1720, 600))],   # 素材をたくさん（10/28）
+             fx=["dim"], layers_top=[pt("e00_notice")], dur=6.0, no_pop=True, notice=True,
+             se={"f": "chime_announce", "len": 3.0, "gain": -2}),   # ピンポンパンポーン
         # ---- ① つかみ ----
         ss("2018年6月\n大阪から上海へ向かう\n1隻のフェリー", FERRY, se="page_turn_01", bgm={"file": PURPLE, "gain": -4}),
         nn("フェリーの旅？\nいいねぇ", FERRY, se="pikon"),
@@ -78,7 +82,7 @@ def cuts_all():
         close(STRAW, "@react", "ニュース猫", "365本！？\n1年分あるじゃん！", se=["explosion_dokaan"]),
         ss("見つけたのは\n日本じゃなくて\n中国の検疫当局", STRAW, se="kon"),
         nn("え\n日本はスルー\nしちゃったの？", STRAW, se="question_mark_pop_confused_huh"),
-        ss("日本の税関は\n気づかなかった\nと報じられている", STRAW, se="kon"),
+        ss("日本の税関は\n気づかなかった\nと報じられている", CUSTOMS, se="kon"),
         nn("ザル……\nいや、言っちゃダメか", STRAW, se="deflate_hyororo"),
         dict(bg=bg(STEAK), card=pt("e01_title"), dur=4.2, se="jan",
              cats=[{"a": "wave_waving_cat", "x": 300, "h": 420, "bottom": 1040, "float": True}]),
@@ -134,7 +138,7 @@ def cuts_all():
         # ---- ④ 事件の全容 ----
         chap("事件の全容", se="doon_heavy", bgm={"file": AM223, "gain": -4, "fade": 0.6}),
         card("e04_case", "男2人が　365本を検査を受けずに中国へ持ち込もうとした", dur=5.4, b=FERRY),
-        ss("日本を出るとき\n本当は検査を\n受けないといけない", FERRY, se="pi"),
+        ss("日本を出るとき\n本当は検査を\n受けないといけない", CUSTOMS, se="pi"),
         nn("それを受けずに\nフェリーに\n乗っちゃった……", FERRY, se="kon"),
         org(STRAW, "中国の検疫当局", "書類がない\n持ち込みは\n認めません", se="buzzer_wrong"),
         ss("中国の入国検査で\n拒否されて\n日本に戻ってきた", FERRY, se="pi"),
@@ -203,7 +207,7 @@ FLASHY = ("explosion", "shock", "dokaan", "desk_slam", "siren", "jan", "power_up
 
 
 def hype(cuts):
-    """見にくくならない程度に、どのカットにも派手な演出（10/28 ユーザー指定）。"""
+    """派手な演出を、見にくくならない範囲でとにかく多く（10/28 ユーザー指定：もっと派手に・もっと頻繁に）。"""
     for i, c in enumerate(cuts):
         if c.get("notice"):
             continue
@@ -211,12 +215,16 @@ def hype(cuts):
         se = c.get("se")
         ses = " ".join((x if isinstance(x, str) else x.get("f", "")) for x in ([se] if isinstance(se, (str, dict)) else (se or [])))
         big = c.get("say_style") == "red" or any(k in ses for k in FLASHY) or c.get("chapter")
-        fx.append("punch")
+        fx += ["punch", "spark"]   # すべてのカット：グッと寄る＋キラキラ
+        if i % 2 == 0:
+            fx.append("lines")   # 2カットに1回 集中線
+        if i % 4 == 1:
+            fx.append("border")   # ときどき光るふち
         if big:
-            fx += ["flash", "shake", "lines"]
-        if c.get("card") or c.get("inset") or "sparkle" in ses or "chirin" in ses or "pinpoon" in ses:
-            fx.append("spark")
-        if c.get("say_style") != "red" and not big and i % 3 == 0:
+            fx += ["flash", "shake", "lines", "ring", "border"]
+        if c.get("card") or c.get("inset") or c.get("chapter") or any(k in ses for k in ("jan", "pinpoon", "power_up", "chirin")):
+            fx.append("confetti")
+        if not big:
             fx.append("zoom")
         c["fx"] = list(dict.fromkeys(fx))
     return cuts

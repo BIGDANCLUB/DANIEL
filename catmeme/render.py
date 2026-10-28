@@ -723,6 +723,31 @@ class CutRenderer:
                 col = ((0.4, 0.95, 1.0), (1.0, 1.0, 1.0), (0.6, 0.8, 1.0))[i % 3]
                 cv2.line(out, (x_ - r_, y_), (x_ + r_, y_), col, 5, cv2.LINE_AA)
                 cv2.line(out, (x_, y_ - r_), (x_, y_ + r_), col, 5, cv2.LINE_AA)
+        if "ring" in self.fx and t < 0.4:   # 頭で衝撃波の輪が広がる
+            u_ = t / 0.4
+            for k_, col in ((0, (0.6, 0.95, 1.0)), (0.12, (1.0, 1.0, 1.0))):
+                v_ = u_ - k_
+                if 0 < v_ < 1:
+                    r_ = int(120 + 1100 * v_)
+                    th_ = max(2, int(30 * (1 - v_)))
+                    cv2.circle(out, (W // 2, H // 2), r_, (0.05, 0.05, 0.1), th_ + 8, cv2.LINE_AA)
+                    cv2.circle(out, (W // 2, H // 2), r_, col, th_, cv2.LINE_AA)
+        if "border" in self.fx:   # ふちが色をかえながら光る
+            hue = (t * 2.5) % 1.0
+            col = np.array([0.5 + 0.5 * np.sin(6.28 * (hue + k_ / 3)) for k_ in range(3)], np.float32)
+            b_ = 14
+            out[:b_] = col
+            out[-b_:] = col
+            out[:, :b_] = col
+            out[:, -b_:] = col
+        if "confetti" in self.fx:   # 紙吹雪
+            for i in range(26):
+                ph = (t * 0.8 + i * 0.137) % 1.0
+                x_ = int((i * 151 + 40 * np.sin(t * 3 + i)) % W)
+                y_ = int(-30 + ph * (H + 60))
+                col = ((0.3, 0.8, 1.0), (1.0, 0.6, 0.3), (0.5, 1.0, 0.6), (1.0, 1.0, 1.0), (0.9, 0.5, 1.0))[i % 5]
+                ww = int(8 + 16 * abs(np.sin(t * 8 + i)))
+                cv2.rectangle(out, (x_, y_), (x_ + ww, y_ + 22), col, -1)
         if "dim" in self.fx:   # 半分暗くする（注意書きを読みやすく）
             out *= 0.45
         if self.top is not None:   # 暗くしたあとに重ねる部品（注意書きなど）

@@ -6,6 +6,7 @@ python3 catmeme/make_se_conan_remix.py → se/anime_conan_hirameki_remix_a.mp3 /
 - b（5-18 まね）：長短バラバラに刻む・ため → 速い連打 → 最後だけ低い音で落とす
 - c（5-19 まね）：のばす → 機関銃のような超高速連打 → 上にしゃくり上げてブツッと止める
 - 低いゴーという音は参考どおり削る（150Hz より下を切る）。音量は元のコナン音とそろえる
+- 10/28 ユーザー指摘「連打のときに変な高音」：連打は「キ」のあとの部分を使い、高い音（2500Hz より上・1000Hz あたり）をおさえる
 """
 import os
 
@@ -16,6 +17,7 @@ import render as R
 SR = R.SR
 SRC = os.path.join(R.SE_DIR, "anime_conan_hirameki_idea_realize_truth.mp3")
 HIT = 0.205   # 「キーン」の始まり（秒）
+BODY = 0.30   # 「キーン」のあとの、のびている部分。連打はここを使う（始まりの「キ」をくり返すと耳につく高音になる・10/28）
 
 
 def piece(src, ln, st=0.0, glide=None, at=HIT):
@@ -29,7 +31,7 @@ def piece(src, ln, st=0.0, glide=None, at=HIT):
     i = pos.astype(int)
     f = (pos - i)[:, None]
     a = src[i] * (1 - f) + src[i + 1] * f
-    fi, fo = min(int(0.004 * SR), len(a) // 2), min(int(0.012 * SR), len(a) // 2)
+    fi, fo = min(int(0.008 * SR), len(a) // 3), min(int(0.02 * SR), len(a) // 2)   # 切れ目のプチッという音を消す
     a[:fi] *= np.linspace(0, 1, fi)[:, None]
     a[-fo:] *= np.linspace(1, 0, fo)[:, None]
     return a
@@ -40,7 +42,7 @@ def build(src, steps):
     out = []
     for k, (ln, st, gap) in enumerate(steps):
         g = st if isinstance(st, tuple) else None
-        a = piece(src, ln, 0 if g else st, glide=g)
+        a = piece(src, ln, 0 if g else st, glide=g, at=HIT if k == 0 else BODY)   # 最初の1発だけ「キ」から
         out += [a, np.zeros((int(gap * SR), 2), np.float32)]
     a = np.concatenate(out)
     return a / np.abs(a).max() * 0.9
@@ -68,6 +70,6 @@ if __name__ == "__main__":
         out = os.path.join(R.SE_DIR, f"anime_conan_hirameki_remix_{k}.mp3")
         raw = out + ".f32"
         a.astype(np.float32).tofile(raw)
-        os.system(f'ffmpeg -v error -y -f f32le -ar {SR} -ac 2 -i "{raw}" -af "highpass=f=150,highpass=f=150,loudnorm=I=-14:TP=-1" -ar {SR} -b:a 192k "{out}"')
+        os.system(f'ffmpeg -v error -y -f f32le -ar {SR} -ac 2 -i "{raw}" -af "highpass=f=150,highpass=f=150,lowpass=f=2500,equalizer=f=1000:t=q:w=1:g=-5,loudnorm=I=-14:TP=-1" -ar {SR} -b:a 192k "{out}"')
         os.remove(raw)
         print(out, f"{len(a) / SR:.2f}秒")

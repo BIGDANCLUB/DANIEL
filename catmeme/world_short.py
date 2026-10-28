@@ -338,6 +338,10 @@ class Renderer(I.Renderer):
             big = c.get("big_say")
             longest = max(len(ln.replace("*", "")) for ln in c["say"].split("\n"))
             size = c.get("say_size") or (120 if big else (128 if longest <= 5 else (110 if longest <= 8 else 96)))   # 字幕は大きめ。短い字幕はもっと大きく（10/28 ユーザー指定）
+            if c["kind"] == "solo" and not c.get("say_size") and len(c["cats"]) == 1 and not c.get("props"):
+                # 1匹の場面は「40分たってた!?」と同じ：時刻の下にまん中で大きく（画面からはみ出さない大きさまで・10/28 ユーザー指定）
+                wid = max(sum(1 if ord(ch) > 255 else 0.55 for ch in ln.replace("*", "")) for ln in c["say"].split("\n"))
+                size = int(min(135 if "\n" not in c["say"] else 118, 960 / wid))
             self.say = say_img(c["say"], size, stroke=12 if size >= 150 else 8)
         self.say_y = c.get("say_y", 690)
         self.huh = None
@@ -371,11 +375,16 @@ class Renderer(I.Renderer):
         w, h = int((x1 - x0) * sc) + 28, int((y1 - y0) * sc) + 28
         top = q["bottom"] - h
         say_top, say_bot = self.say_y, self.say_y + self.say.height
-        if say_bot < top + 10:   # かさならない
+        if say_bot < top + 10 and not UNDER:   # かさならない
             return
         if self.props:   # 小道具（スマホ・雲）がある場面は、猫を字幕の下まで小さくする
             k = (q["bottom"] - say_bot - 20) / h
             q["h"], q["w"] = q["h"] * k, q.get("w", 10 ** 6) * k
+            return
+        if UNDER:   # 字幕は時刻の下にまん中、猫はその下にまん中で大きく（字幕に少しかかってよい・10/28 ユーザー指定）
+            q["bottom"] = max(q["bottom"], 1680)
+            avail = q["bottom"] - (say_bot - 25)
+            q["h"], q["w"], q["x"] = avail - 28, W - 160, W / 2
             return
         need = min(max(self.say.width * 0.5, 300), W - 90 - 0.6 * W)   # 字幕は小さくしない。猫と少しかさなってよい（10/28 ユーザー指定）。猫は画面の幅の6割より小さくしない
         if W - w - 90 < need:
@@ -486,6 +495,7 @@ MOODS = [
 ]
 
 
+UNDER = True   # 1匹の場面の並べ方（10/28 ユーザー指定：「40分たってた!?」の場面を参考に、字幕は上まん中・猫はその下にまん中で大きく）
 KEEP = {"scream_standing_marmot"}   # 続けて使ってよい素材（マーモットのくり返しは演出・10/26 ユーザー指定）
 
 

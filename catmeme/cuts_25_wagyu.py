@@ -235,7 +235,7 @@ def hype(cuts):
 
 
 POP_SE = ("pikon", "spo", "puni", "kote", "pa", "papa", "peta", "suupo", "button_13", "cursor_move_01")   # 頭の小さな音
-BIG_SE = ("voice_uuwaa", "boing_02", "tsukkomi_bashi", "anime_dbz_punch", "game_pokemon_super_effective_hit_big_damage", "kaan",
+BIG_SE = ("voice_uuwaa", "boing_02", "tsukkomi_bashi", "punch", "frying_pan_kaan", "kaan",
           "hit_dogo_maou", "shock_piano")   # 驚きの場面に重ねる音
 
 

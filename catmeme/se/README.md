@@ -222,9 +222,9 @@
 | scream_woman_shock_horror.mp3 | 女性の悲鳴（だんだん大きく）。ショック・恐怖・とんでもない事実が発覚 |  | 女性の悲鳴.mp3 | ニコニ・コモンズ nc115457 |
 | question_mark_pop_confused_huh.mp3 | はてなマークが浮かぶ音。「え？」「どういうこと？」と首をかしげる場面 |  | はてなマークが頭上に浮かぶ.mp3 | ニコニ・コモンズ nc151327 |
 | anime_conan_hirameki_idea_realize_truth.mp3 | コナンのひらめき（短め1.5秒）。真相に気づく・名案を思いつく | ⚠テレビ・アニメ | 名探偵コナン_ひらめき音.mp3 | ニコニ・コモンズ nc166983 |
-| anime_conan_hirameki_remix_a.mp3 | コナンのひらめきを刻んで連打（2.2秒）：高さを上げながら刻む→同じ高さで連打。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
-| anime_conan_hirameki_remix_b.mp3 | コナンのひらめきを刻んで連打（2.1秒）：長短バラバラ→速い連打→最後だけ低く落とす。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
-| anime_conan_hirameki_remix_c.mp3 | コナンのひらめきを刻んで連打（1.8秒）：のばす→超高速連打→しゃくり上げて止める。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
+| anime_conan_hirameki_remix_a.mp3 | コナンのひらめきを刻んで連打（1.2秒）：刻む→同じ高さで超高速連打。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
+| anime_conan_hirameki_remix_b.mp3 | コナンのひらめきを刻んで連打（1.1秒）：長短バラバラ→速い連打→最後だけ低く落とす。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
+| anime_conan_hirameki_remix_c.mp3 | コナンのひらめきを刻んで連打（1.3秒）：のばす→超高速連打→低いところからしゃくって止める。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
 | store_famima_entry_chime_arrive_welcome.mp3 | ファミマの入店音（5.9秒）。コンビニに入る・ついつい寄り道 | ⚠お店の音 | ファミマ入店音.mp3 | ニコニ・コモンズ nc18763 |
 | game_yoshi_detteiu_so_what_bored.mp3 | 「でっていう」。だから何？・しらける・興味なしの返し | ⚠ゲーム | でっていう.mp3 | ニコニ・コモンズ nc191423 |
 | game_coin_get_money_gain_happy.wav | コインを取る音。お金が手に入る・得した・ちょっと嬉しい | ⚠ゲーム | コインを取る音.wav | ニコニ・コモンズ nc23750 |

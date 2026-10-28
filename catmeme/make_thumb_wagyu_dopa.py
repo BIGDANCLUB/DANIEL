@@ -204,9 +204,8 @@ def b_plus(name, variant):
     }[variant]
     for c_ in cats:
         T.put_cat(img, *c_)
-    ex = explosion("和牛が海外へ!?", 640, 360, fill=(255, 230, 0), size=120, angle=6)
+    ex = explosion("和牛が海外へ密輸!?", 700, 380, fill=(255, 230, 0), size=120, angle=6)
     put(img, glow(ex, (255, 255, 255), r=22), 620, 225)
-    sparkles(img, [(270, 80, 40), (960, 90, 34), (1180, 260, 28), (90, 330, 30), (760, 420, 26), (540, 60, 22)])
     l1 = T.runs([("見つけたのは", (WHITE, BLACK))], 128, 16, 700, shadow=True)
     l2 = gold_text("中国!?", 150, 520) if variant != 2 else rainbow_text("中国!?", 150, 520)
     x0 = (W - (l1.width + l2.width)) // 2

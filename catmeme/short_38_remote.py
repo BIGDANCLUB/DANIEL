@@ -32,7 +32,7 @@ cs = [
     t(ROOM, "14:07", "なんで\nフードかぶってるの？", "glare_disgusted_cat", "blank_black_cat_zoning_out", who="L", ll="上司"),
     t(ROOM, "14:07", "……寒くて", "glare_disgusted_cat", "sad_banana_cat_cry", ll="上司", d=2.0),
     s(NIGHT, "18:00", "明日から\n*ちゃんと着がえよう*", "realize_wet_cat_stare"),
-    s(NIGHT, "翌朝 8:58", "始業2分前に\n*起床*", "sleep_sleeping_cat", se="cuckoo_pappo"),
+    s(ROOM, "翌朝 8:58", "始業2分前に\n*起床*", "sleep_sleeping_cat", se="cuckoo_pappo"),
 ]
 
 if __name__ == "__main__":

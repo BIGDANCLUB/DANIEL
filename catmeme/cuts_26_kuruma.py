@@ -27,7 +27,7 @@ import cuts_04_leak as L
 import render as R
 import wide_bars as B
 
-R.TEMPO = getattr(R, "TEMPO", 1.0) * 0.74   # 和牛と同じテンポ
+R.TEMPO = getattr(R, "TEMPO", 1.0) * 0.84   # 掛け合いを2匹にしたら短くなったので、3分すぎになるよう少しゆっくり（10/28）
 HERE = L.HERE
 L.BGS = [os.path.join(HERE, "backgrounds", d) for d in ("26_kuruma", "14_japan", "13_yard", "16_tenchim", "04_leak", "02_october",
                                                          "01_todai", "25_wagyu", "18_semicon")]
@@ -104,7 +104,8 @@ def chart_path(name):
 
 
 # 項目が落ちるときの音（列ごと）。車なしは気の抜ける軽い音、駐車場の東京は1UP（10/28 ユーザー指定）
-DROP_SE = {"k0_preview": {1: "pafu"}, "k5_vs": {1: "pafu"}, "d4_10y": {1: "pafu"}, "d3_park": {1: "game_mario_1up"}}
+DROP_SE = {"k0_preview": {1: "pafu"}, "k5_vs": {1: "pafu"}, "d4_10y": {1: "pafu"}, "d3_park": {1: "game_mario_1up"},
+           "d5_kei": {1: "game_zelda_item_get"}}   # 軽自動車はゴマダレー
 
 
 def g(name, say, who="S", still=False, dur=None, red=False, se=None, **kw):

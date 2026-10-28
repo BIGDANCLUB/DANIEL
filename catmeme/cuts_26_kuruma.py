@@ -103,20 +103,26 @@ def chart_path(name):
     return B.make(name, CHARTS[name])
 
 
+# 項目が落ちるときの音（列ごと）。車なしは気の抜ける軽い音、駐車場の東京は1UP（10/28 ユーザー指定）
+DROP_SE = {"k0_preview": {1: "pafu"}, "k5_vs": {1: "pafu"}, "d4_10y": {1: "pafu"}, "d3_park": {1: "game_mario_1up"}}
+
+
 def g(name, say, who="S", still=False, dur=None, red=False, se=None, **kw):
-    """グラフの場面：グラフの動く背景＋しゃべる猫（左か右のはし）＋反対のはしに動く猫。字幕は上。
-    still=True はグラフが出来上がった絵のまま（同じグラフの2つ目以降の場面）。"""
+    """グラフの場面：グラフの動く背景＋左はしにニュース猫・右はしに博識な猫（しゃべる方だけ鳴らす）。字幕は上。
+    still=True はグラフが出来上がった絵のまま（同じグラフの2つ目以降の場面）。
+    「車なし」の列が0のあいだは、その列の上で小さな猫が踊る（10/28 ユーザー指定）。"""
     ch = CHARTS[name]
     ss = ch.still_from() + 0.5 if still else 0.0
-    role = ("@react", "ニュース猫") if who == "N" else ("@calm", "博識な猫")
-    x, ox = (150, 1775) if who == "N" else (1775, 150)
-    cats = [cat(role[0], role[1], x, h=560, bottom=1080, label_size=50),
-            {"a": "@papa", "x": ox, "h": 470, "bottom": 1080, "mute": True, "full": False, "float": True}]
+    cats = [cat("@react", "ニュース猫", 150, h=560, bottom=1080, label_size=50, mute=who != "N"),
+            cat("@calm", "博識な猫", 1775, h=560, bottom=1080, label_size=50, mute=who != "S")]
+    if ch.cols == VS and not any(st[1] == 1 for st in ch.steps):
+        cats.append({"a": "@papa", "x": ch.cx[1], "h": 190, "bottom": B.BASE_Y - 4, "mute": True, "full": False, "float": True})
     lst = [] if not se else ([se] if isinstance(se, (str, dict)) else list(se))
     if not still:
-        for t0, _i, _n, _v, _c in ch.steps:
+        for t0, col, _n, _v, _c in ch.steps:
             if t0 >= 0:
-                lst.append({"f": "explosion_chudoon", "at": t0 + 0.3, "gain": -6})
+                f = DROP_SE.get(name, {}).get(col, "explosion_chudoon")
+                lst.append({"f": f, "at": t0 + 0.3, "gain": -6 if f == "explosion_chudoon" else -3})
         if ch.result_at is not None:
             lst.append({"f": "game_mario_1up", "at": ch.result_at, "gain": -4})
         need = ch.still_from() - 0.6
@@ -125,17 +131,11 @@ def g(name, say, who="S", still=False, dur=None, red=False, se=None, **kw):
                 say_style="red" if red else None, keep_overlap=True, chart=True, dur=dur, se=lst, fixed=not still, **kw)
 
 
-# ---- 猫をたくさん出す掛け合い（1場面に4匹・しゃべる猫は大きく、ほかは動きの多い素材） ----
-SLOTS = [(250, 640), (735, 500), (1185, 500), (1670, 640)]
-
-
+# ---- 掛け合い：ニュース猫（左）と博識な猫（右）の2匹だけ、大きく（10/28 ユーザー指定：2匹の会話なので素材は2つ・その代わり大きめ） ----
 def m(say, b, who="S", red=False, **kw):
-    """who="N"：ニュース猫（左はし）がしゃべる。who="S"：博識な猫（右はし）がしゃべる。まん中の2匹と反対のはしは聞き役（音なし・動きの多い素材）。"""
-    me = 0 if who == "N" else 3
-    role = ("@react", "ニュース猫") if who == "N" else ("@calm", "博識な猫")
-    cats = [cat(role[0], role[1], x, h=h, bottom=1075, label_size=52) if k == me else
-            {"a": "@papa", "x": x, "h": h - 40, "bottom": 1075, "mute": True, "full": False, "float": True}
-            for k, (x, h) in enumerate(SLOTS)]
+    """who="N"：ニュース猫（左）がしゃべる。who="S"：博識な猫（右）がしゃべる。しゃべる方だけ鳴らす。"""
+    cats = [cat("@react", "ニュース猫", 470, h=780, bottom=1075, label_size=56, mute=who != "N"),
+            cat("@calm", "博識な猫", 1450, h=780, bottom=1075, label_size=56, mute=who != "S")]
     out = dict(bg=bg(b), cats=cats, say=say, text_top=True, keep_overlap=True, **kw)
     if red:
         out.update(say_style="red", fx=["lines", "shake"])
@@ -151,13 +151,11 @@ def ss(say, b=STREET, **kw):
 
 
 def boom(say, b=STREET, who="N", **kw):
-    """驚きのアップ：まん中に大きく1匹＋左右に動く猫。赤い文字・集中線・揺れ。"""
+    """驚きのアップ：まん中に大きく1匹。赤い文字・集中線・揺れ。"""
     role = ("@react", "ニュース猫") if who == "N" else ("@calm", "博識な猫")
-    cats = [{"a": "@papa", "x": 260, "h": 520, "bottom": 1075, "mute": True, "full": False, "float": True},
-            cat(role[0], role[1], 960, h=700, bottom=1075, float=True),
-            {"a": "@papa", "x": 1660, "h": 520, "bottom": 1075, "mute": True, "full": False, "float": True}]
     se = kw.pop("se", ["explosion_chudoon"])
-    return dict(bg=bg(b), cats=cats, say=say, text_top=True, say_style="red", fx=["lines", "shake"], keep_overlap=True, se=se, **kw)
+    return dict(bg=bg(b), cats=[cat(role[0], role[1], 960, h=800, bottom=1075, float=True)], say=say, text_top=True,
+                say_style="red", fx=["lines", "shake"], keep_overlap=True, se=se, **kw)
 
 
 def card(c, sub, b=BOARD, **kw):
@@ -192,7 +190,7 @@ def cuts_all():
         g("k1_loan", "1年あたり\n54万円", dur=3.4),
         g("k1_loan", "いちばん大きいのが\nこのローン", who="N", still=True),
         nn("でもローンが\n終われば\nタダでしょ？", DEALER, se="question_mark_pop_confused_huh"),
-        ss("ここからが\n本番", DEALER, se="doon_heavy", red=True),
+        ss("ここからが\n本番!?", DEALER, se="anime_conan_hirameki_idea_realize_truth", red=True),   # !? とコナン（10/28）
         # ---- ③ 税金 ----
         chap("② 乗らなくても\n取られるお金", se="doon_heavy", bgm={"file": COCOA, "gain": -4, "fade": 0.6}),
         ss("車は持ってる\nだけで\n税金がかかる", PARK, se="pi"),

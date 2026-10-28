@@ -149,6 +149,9 @@
 | bravo_applause.mp3 | ブラボー＋拍手 |  | ブラボー拍手付.mp3 |  |
 | anime_broly_dedeen.wav | ブロリーのデデーン | ⚠テレビ・アニメ | ブロリー　デデーン.wav |  |
 | tv_professional_poon.mp3 | プロフェッショナルのポーン | ⚠テレビ・アニメ | プロフェ　ポーン.mp3 |  |
+| tv_professional_poon_remix_a.mp3 | プロフェッショナルのポーンを刻んで連打：ポポポポーン（1.8秒）。ショートの2回目以降のポーン用 | ⚠テレビ・アニメ | make_se_poon_remix.py で作成（元：上のポーン） |  |
+| tv_professional_poon_remix_b.mp3 | プロフェッショナルのポーンを刻んで連打：ポポ、ポ、ポーン（2.0秒）。ショートの2回目以降のポーン用 | ⚠テレビ・アニメ | make_se_poon_remix.py で作成（元：上のポーン） |  |
+| tv_professional_poon_remix_c.mp3 | プロフェッショナルのポーンを刻んで連打：ポ、ポポポ、ポ、ポーン（2.4秒）。ショートの2回目以降のポーン用 | ⚠テレビ・アニメ | make_se_poon_remix.py で作成（元：上のポーン） |  |
 | beben.mp3 | ベベン（三味線） |  | ベベン.mp3 |  |
 | peta.mp3 | ペタッ |  | ペタッ.mp3 |  |
 | game_smash_homerun_bat.wav | スマブラのホームランバット | ⚠ゲーム | ホームランバット.wav |  |

@@ -822,7 +822,33 @@ def conan_confusion(cs, seed=0):
         n += 1
         c["se"] = [s for s in lst if name(s) != HUH_SE] + [{"f": f, "len": 2.4}]
         conan_say(c)
+    poon_series(cs, seed)
     return cs
+
+
+# ---- プロフェッショナルの「ポーン」も同じ：1回目はふつうのポーン、2回目からは連打3種類をランダムに（10/28 ユーザー指定） ----
+POON = "tv_professional_poon"
+POON_REMIX = ["tv_professional_poon_remix_a", "tv_professional_poon_remix_b", "tv_professional_poon_remix_c"]
+
+
+def poon_series(cs, seed=0):
+    """台本で se="tv_professional_poon" を付けた場面。2回目からは「ポポポポーン」「ポポ、ポ、ポーン」「ポ、ポポポ、ポ、ポーン」のどれか。"""
+    import random
+    rnd = random.Random(seed + 1)
+    n, last = 0, None
+    for c in cs:
+        ses = c.get("se")
+        lst = [] if not ses else [ses] if isinstance(ses, (str, dict)) else list(ses)
+        idx = [i for i, s in enumerate(lst) if (s if isinstance(s, str) else s.get("f")) == POON]
+        if not idx:
+            continue
+        if n:
+            f = rnd.choice([x for x in POON_REMIX if x != last])
+            last = f
+            sp = lst[idx[0]]
+            lst[idx[0]] = dict(sp, f=f) if isinstance(sp, dict) else f
+            c["se"] = lst
+        n += 1
 
 
 def conan_say(c):

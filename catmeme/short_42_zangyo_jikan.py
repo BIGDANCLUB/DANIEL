@@ -37,7 +37,7 @@ def cuts():
 def fit(cs):
     k = I.TOTAL / sum(c["dur"] for c in cs)
     for c in cs:
-        c["dur"] = k
+        c["dur"] *= k
     return cs
 
 

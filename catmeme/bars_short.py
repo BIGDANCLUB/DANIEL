@@ -12,6 +12,7 @@
 import math
 import os
 import subprocess
+import zlib
 
 import cv2
 import numpy as np
@@ -539,6 +540,7 @@ def run(spec, cs, out_path, prev=None):
         voices = v_ if isinstance(v_, (list, tuple)) else [v_]   # 両方の猫を鳴らすときはリストで（10/27）
         c["cats"] = [dict(a=a, mute=(j not in voices)) for j, a in enumerate(c["cats3"]) if a]
         c.update(fixed=True, no_pop=True)
+    R.conan_confusion(cs, zlib.crc32(os.path.basename(out_path).encode()))   # 戸惑いの場面はコナンのひらめき（10/28）
     starts = list(np.cumsum([0] + durs[:-1]))
     st = make_static(spec)
     os.makedirs(os.path.dirname(out_path), exist_ok=True)

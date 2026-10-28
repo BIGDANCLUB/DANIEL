@@ -14,6 +14,7 @@
 import math
 import os
 import subprocess
+import zlib
 
 import cv2
 import numpy as np
@@ -282,6 +283,7 @@ def run(cs, top, sub, out_path, prev=None, band=None, renderer=None):
         durs[-1] += diff
         cs[-1]["dur"] = durs[-1]
     starts = list(np.cumsum([0] + durs[:-1]))
+    R.conan_confusion(cs, zlib.crc32(os.path.basename(out_path).encode()))   # 戸惑いの場面はコナンのひらめき（10/28）
     band = band or title_band(top, sub)
     renderer = renderer or Renderer
     os.makedirs(os.path.dirname(out_path), exist_ok=True)

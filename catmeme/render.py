@@ -791,6 +791,35 @@ def cat_audio(name):
 
 SE_DIR = os.path.join(HERE, "se")
 
+# ---- ショートの戸惑いの場面：1回目はふつうのコナンのひらめき、2回目からはまね3種類をランダムに（10/28 ユーザー指定） ----
+CONAN = "anime_conan_hirameki_idea_realize_truth"
+CONAN_REMIX = ["anime_conan_hirameki_remix_a", "anime_conan_hirameki_remix_b", "anime_conan_hirameki_remix_c"]
+HUH_SE = "question_mark_pop_confused_huh"
+HUH_CATS = {"huh_huh_cat", "confused_i_dont_know_cat"}
+
+
+def conan_confusion(cs, seed=0):
+    """戸惑いの場面（「はてな」の音がついた場面、または戸惑う猫がしゃべるだけの場面）の音をコナンのひらめきにかえる。"""
+    import random
+    rnd = random.Random(seed)
+    n, last = 0, None
+    for c in cs:
+        ses = c.get("se")
+        lst = [] if not ses else [ses] if isinstance(ses, (str, dict)) else list(ses)
+        name = lambda s: s if isinstance(s, str) else s.get("f")
+        huh = any(name(s) == HUH_SE for s in lst)
+        if not huh and (lst or c.get("banner") or c.get("kind") == "split"
+                        or not any(k.get("a") in HUH_CATS and sounding(k) for k in c.get("cats", []))):
+            continue
+        if n == 0:
+            f = CONAN
+        else:
+            f = rnd.choice([x for x in CONAN_REMIX if x != last])
+            last = f
+        n += 1
+        c["se"] = [s for s in lst if name(s) != HUH_SE] + [{"f": f, "len": 2.4}]
+    return cs
+
 
 def synth(kind):
     """効果音。se/ に同じ名前のファイル（例 se/don.mp3）があればそれを使い、無ければ合成する。"""

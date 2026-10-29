@@ -160,7 +160,7 @@ def fx(c, *names, **extra):
 CONAN = "anime_conan_hirameki_idea_realize_truth"
 CONAN_R = ["anime_conan_hirameki_remix_a", "anime_conan_hirameki_remix_b", "anime_conan_hirameki_remix_c"]
 POON = "tv_professional_poon"
-POON_R = ["tv_professional_poon_remix_a", "tv_professional_poon_remix_b", "tv_professional_poon_remix_c"]
+POON_R = ["tv_professional_poon_remix_a", "tv_professional_poon_remix_b"]   # c はボツ（10/29）
 
 
 def qq(who="L", lb=HOUSE, rb=APT, remix=CONAN_R[1]):

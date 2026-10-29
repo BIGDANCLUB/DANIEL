@@ -25,7 +25,7 @@ def cuts():
         ("2割", "punch_boxing_white_cat", "給料を上げろと\nストライキ", "ride_kitten_bike", "安いお店を\nはしごする"),
         ("3割", "slap_cat_slaps_kitten", "国に\n文句が殺到", "read_book_orange_kitten", "お弁当を\n作りはじめる"),
         ("5割", "fight_cat_fight", "国じゅうが\n大さわぎ", "work_typing_cat", "節約レシピが\n大人気"),
-        ("2倍", "dance_three_kittens", "踊る", "scream_phone_orange_cat", "SNSでスーパー玉手を\n褒め称える"),   # 10/29 ユーザー指定
+        ("2倍", "dance_three_kittens", "踊る", "scream_phone_orange_cat", "SNSで\nスーパー玉手を\n褒め称える"),   # 10/29 ユーザー指定
     ]
     for lv, wcat, wcap, jcat, jcap in rows:
         # 札が出た瞬間の音（10/29 ユーザー指定）：3割・5割はチュドーン、2倍は1UP、2割はコイン

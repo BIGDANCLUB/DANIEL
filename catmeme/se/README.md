@@ -149,9 +149,9 @@
 | bravo_applause.mp3 | ブラボー＋拍手 |  | ブラボー拍手付.mp3 |  |
 | anime_broly_dedeen.wav | ブロリーのデデーン | ⚠テレビ・アニメ | ブロリー　デデーン.wav |  |
 | tv_professional_poon.mp3 | プロフェッショナルのポーン | ⚠テレビ・アニメ | プロフェ　ポーン.mp3 |  |
-| tv_professional_poon_remix_a.mp3 | プロフェッショナルのポーンを刻んで連打：ポポポポーン（1.8秒）。ショートの2回目以降のポーン用 | ⚠テレビ・アニメ | make_se_poon_remix.py で作成（元：上のポーン） |  |
-| tv_professional_poon_remix_b.mp3 | プロフェッショナルのポーンを刻んで連打：ポポ、ポ、ポーン（2.0秒）。ショートの2回目以降のポーン用 | ⚠テレビ・アニメ | make_se_poon_remix.py で作成（元：上のポーン） |  |
-| tv_professional_poon_remix_c.mp3 | プロフェッショナルのポーンを刻んで連打：ポ、ポポポ、ポ、ポーン（2.4秒）。ショートの2回目以降のポーン用 | ⚠テレビ・アニメ | make_se_poon_remix.py で作成（元：上のポーン） |  |
+| tv_professional_poon_remix_a.mp3 | プロフェッショナルのポーンを刻んで連打：ポポポポーン（6.0秒・最後は単発と同じ長さ）。ショートの2回目以降のポーン用 | ⚠テレビ・アニメ | make_se_poon_remix.py で作成（元：上のポーン） |  |
+| tv_professional_poon_remix_b.mp3 | プロフェッショナルのポーンを刻んで連打：ポポ、ポ、ポーン（6.2秒）。ショートの2回目以降のポーン用 | ⚠テレビ・アニメ | make_se_poon_remix.py で作成（元：上のポーン） |  |
+| tv_professional_poon_remix_c.mp3 | プロフェッショナルのポーンを刻んで連打：ポ、ポポポ、ポ、ポーン（6.5秒）。ショートの2回目以降のポーン用 | ⚠テレビ・アニメ | make_se_poon_remix.py で作成（元：上のポーン） |  |
 | beben.mp3 | ベベン（三味線） |  | ベベン.mp3 |  |
 | peta.mp3 | ペタッ |  | ペタッ.mp3 |  |
 | game_smash_homerun_bat.wav | スマブラのホームランバット | ⚠ゲーム | ホームランバット.wav |  |
@@ -225,9 +225,9 @@
 | scream_woman_shock_horror.mp3 | 女性の悲鳴（だんだん大きく）。ショック・恐怖・とんでもない事実が発覚 |  | 女性の悲鳴.mp3 | ニコニ・コモンズ nc115457 |
 | question_mark_pop_confused_huh.mp3 | はてなマークが浮かぶ音。「え？」「どういうこと？」と首をかしげる場面 |  | はてなマークが頭上に浮かぶ.mp3 | ニコニ・コモンズ nc151327 |
 | anime_conan_hirameki_idea_realize_truth.mp3 | コナンのひらめき（短め1.5秒）。真相に気づく・名案を思いつく | ⚠テレビ・アニメ | 名探偵コナン_ひらめき音.mp3 | ニコニ・コモンズ nc166983 |
-| anime_conan_hirameki_remix_a.mp3 | コナンのひらめきを刻んで連打（1.0秒）：刻む→同じ高さで連打。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
-| anime_conan_hirameki_remix_b.mp3 | コナンのひらめきを刻んで連打（1.0秒）：長短バラバラ→速い連打→最後だけ低く落とす。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
-| anime_conan_hirameki_remix_c.mp3 | コナンのひらめきを刻んで連打（1.1秒）：のばす→超高速連打→低いところからしゃくって止める。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
+| anime_conan_hirameki_remix_a.mp3 | コナンのひらめきを刻んで連打（1.5秒）：刻む→同じ高さで連打。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
+| anime_conan_hirameki_remix_b.mp3 | コナンのひらめきを刻んで連打（1.6秒）：長短バラバラ→速い連打→最後だけ低く落とす。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
+| anime_conan_hirameki_remix_c.mp3 | コナンのひらめきを刻んで連打（1.7秒）：のばす→超高速連打→低いところからしゃくって止める。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
 | store_famima_entry_chime_arrive_welcome.mp3 | ファミマの入店音（5.9秒）。コンビニに入る・ついつい寄り道 | ⚠お店の音 | ファミマ入店音.mp3 | ニコニ・コモンズ nc18763 |
 | game_yoshi_detteiu_so_what_bored.mp3 | 「でっていう」。だから何？・しらける・興味なしの返し | ⚠ゲーム | でっていう.mp3 | ニコニ・コモンズ nc191423 |
 | game_coin_get_money_gain_happy.wav | コインを取る音。お金が手に入る・得した・ちょっと嬉しい | ⚠ゲーム | コインを取る音.wav | ニコニ・コモンズ nc23750 |

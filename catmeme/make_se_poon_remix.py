@@ -16,7 +16,7 @@ from make_se_conan_remix import piece
 SR = R.SR
 SRC = os.path.join(R.SE_DIR, "tv_professional_poon.mp3")
 ON = 0.68   # 「ポーン」の鳴り始め（秒）
-PO, QUICK, PAUSE, LONG = 0.072, 0.028, 0.136, 1.4   # 「ポ」の長さ、続けて打つときのすき間、「、」の間、最後の「ポーン」（10/28 ユーザー指定：20%速く）
+PO, QUICK, PAUSE, LONG = 0.072, 0.028, 0.136, 5.7   # 「ポ」の長さ、続けて打つときのすき間、「、」の間、最後の「ポーン」（10/28 ユーザー指定：20%速く。10/29：最後のポーンは単発と同じ長さまで自然にのばす）
 
 
 def build(src, rhythm):
@@ -29,9 +29,9 @@ def build(src, rhythm):
         elif ch == "ポ":
             last = hits[k + 1:k + 2] == "ー"
             a = piece(src, LONG if last else PO, at=ON)
-            if last:
-                fo = int(0.9 * SR)
-                a[-fo:] *= np.linspace(1, 0, fo)[:, None] ** 2
+            if last:   # 元の音の終わりまでそのまま響かせる（単発のポーンと同じ）。最後だけ小さく消す
+                fo = int(0.3 * SR)
+                a[-fo:] *= np.linspace(1, 0, fo)[:, None]
             out.append(a)
             if not last and hits[k + 1:k + 2] == "ポ":
                 out.append(np.zeros((int(QUICK * SR), 2), np.float32))

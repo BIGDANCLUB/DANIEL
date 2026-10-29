@@ -1,6 +1,7 @@
 """コナンのひらめき音を細かく切って連打する「まね」SE を3種類つくる（10/28 ユーザー指定・参考 5-17／5-18／5-19）。
 
-python3 catmeme/make_se_conan_remix.py → se/anime_conan_hirameki_remix_a.mp3 / _b.mp3 / _c.mp3
+python3 catmeme/make_se_conan_remix.py → se/anime_conan_hirameki_remix_a.mp3 / _b.mp3 / _c.mp3 / _d.mp3
+- 10/29：1発ずつ切らず、元のコナンの音を最後まで鳴らして重ねる（build_full）。d は5連打
 - 元の音：se/anime_conan_hirameki_idea_realize_truth.mp3 の「キーン」の部分を切って使う
 - a（5-17 まね）：刻む → 同じ高さで「キッキッキッ」と連打
 - b（5-18 まね）：長短バラバラに刻む・ため → 速い連打 → 最後だけ低い音で落とす
@@ -64,6 +65,8 @@ PATTERNS = {
     # 5-19：のばす → 速い連打 → のばして止める
     "c": [(0.12, 0, 0.02), (0.22, 0, 0.06)] + [(0.045, 0, 0.02)] * 6
          + [(0.30, 0, 0.13), (0.16, 0, 0.03), (0.22, 0, 0.0)],
+    # d（10/29 試し）：同じ間隔（参考の約0.12秒）で5連打だけ
+    "d": [(0.09, 0, 0.03)] * 5,
 }
 
 
@@ -83,7 +86,8 @@ def build_full(src, steps):
 
 if __name__ == "__main__":
     src = R.load_audio(SRC).astype(np.float32)
-    jobs = [(k, build(src, steps)) for k, steps in PATTERNS.items()] + [("a_full", build_full(src, PATTERNS["a"]))]
+    # 10/29 ユーザー指定「流しきるほうがいい」：a・b・c とも、刻まずに元の音を最後まで鳴らして重ねる形にする。d は試しの5連打
+    jobs = [(k, build_full(src, steps)) for k, steps in PATTERNS.items()]
     for k, a in jobs:
         a[-int(0.02 * SR):] *= np.linspace(1, 0, int(0.02 * SR))[:, None]
         out = os.path.join(R.SE_DIR, f"anime_conan_hirameki_remix_{k}.mp3")

@@ -839,6 +839,7 @@ POON_REMIX = ["tv_professional_poon_remix_a", "tv_professional_poon_remix_b", "t
 HUH_SE = "question_mark_pop_confused_huh"
 HUH_CATS = {"huh_huh_cat", "confused_i_dont_know_cat"}
 BANG = ("!?", "！？", "?!", "？！")
+REMIX_MAX = 2   # コナン連打・ポーン連打はそれぞれ1本で多くて2回まで（10/29 ユーザー指定）
 DOUBT = ("……え", "……は", "……あれ", "あれ", "え…", "えっ", "え？", "は？", "……本当", "……どこ", "……？")   # 「え…」となる字幕の出だし
 
 
@@ -878,7 +879,7 @@ def conan_confusion(cs, seed=0):
         if not k:
             continue
         base, remix = (CONAN, CONAN_REMIX) if k == "bang" else (POON, POON_REMIX)
-        if n[k] == 0:
+        if n[k] == 0 or n[k] > REMIX_MAX:   # 連打は1本で多くて2回まで（3回目からはふつうの音・10/29 ユーザー指定）
             f = base
         else:
             f = rnd[k].choice([x for x in remix if x != last[k]])

@@ -247,7 +247,7 @@ def cuts_all():
         g("d4_10y", "10年で\nくらべると……", dur=5.4),
         nn("え……ローンが終わっても\n年35万は\nかかり続けるの？", MONEY, se="tv_professional_poon_remix_b"),
         boom("10年で\n470万の差！？", MONEY, se=["explosion_chudoon"]),
-        nn("え……\n新車もう1台\n買えるじゃん", MONEY, se="tv_professional_poon_remix_c"),
+        nn("え……\n新車もう1台\n買えるじゃん", MONEY, se=POON),   # 連打は1本で2回まで（10/29）なのでふつうのポーン
         # ---- ⑦ 安くするなら ----
         chap("⑥ 安くするなら", se="whoosh_shu"),
         nn("でも地方は\n車がないと\n生活できない", ROAD, se="kon"),

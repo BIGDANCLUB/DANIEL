@@ -89,6 +89,14 @@
 | punch_boxing_white_cat.mp4 | パンチをくり出す白茶の猫（怒る・ツッコミ）。画質低め | TikTok保存・10/23 ユーザー追加 | |
 | read_book_orange_kitten.mp4 | 本を読む茶トラの子猫（勉強・調べる・説明）。縦長 | TikTok保存・10/23 ユーザー追加 | |
 | dance_orange_gray_cats.mp4 | 二本足で踊る茶トラと灰色の猫（2匹でノリノリ） | TikTok保存・10/23 ユーザー追加 | ⚠ |
+| slap_cat_slaps_kitten.mp4 | 立った猫が小さい猫を何度もはたく（ツッコミ・しつこい・おしおき）。2匹 | TikTok保存・10/29 ユーザー追加 |  |
+| dance_happy_banana_cat.mp4 | バナナの着ぐるみで楽しそうに歩く猫（ハッピーバナナ猫・浮かれる）。2.9秒ループ | TikTok保存・10/29 ユーザー追加 | ⚠ |
+| walk_white_duck.mp4 | てくてく歩く白いアヒル（マイペース・のんき・登場） | TikTok保存・10/29 ユーザー追加 | ⚠ |
+| ignore_orange_cat_sniffed.mp4 | においをかがれても無視する茶トラ（スルー・無関心・気まずい）。2匹 | TikTok保存・10/29 ユーザー追加 |  |
+| stare_lying_tabby_cat.mp4 | 寝そべってこちらを見るキジトラ（だらける・ジト目・様子見） | TikTok保存・10/29 ユーザー追加 |  |
+| sad_looking_away_tabby.mp4 | しょんぼり目をそらすキジトラ（悲しい・気まずい・反省） | TikTok保存・10/29 ユーザー追加 |  |
+| think_chin_paw_orange_cat.mp4 | ほおづえをついて考える茶トラ（考える・悩む・うーん） | TikTok保存・10/29 ユーザー追加 |  |
+| scream_phone_orange_cat.mp4 | スマホを持って叫んでのけぞる茶トラ（スマホを見て絶叫・通知にびっくり） | TikTok保存・10/29 ユーザー追加 |  |
 - ⚠ は曲名がついている、または曲で有名なミーム。届いたら実際に聞いて確認し、表を更新する
 
 ## 届いた素材の確認メモ（2026-10-02）

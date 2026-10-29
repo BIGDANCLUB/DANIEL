@@ -508,14 +508,16 @@ def band_vs(line1, line2):
 
 # ---- 同じ素材が続かないようにする（10/26 ユーザー指定：同じ素材が連続で使われがち） ----
 MOODS = [
-    ["stare_tabby_wide_eyes_cat", "surprise_big_pupils_cat", "stare_big_eyes_tabby_kitten", "peek_what_happen_cat", "huh_huh_cat"],
+    ["stare_tabby_wide_eyes_cat", "surprise_big_pupils_cat", "stare_big_eyes_tabby_kitten", "peek_what_happen_cat", "huh_huh_cat", "scream_phone_orange_cat"],
     ["dance_tabby_standing_cat", "happy_hamster_open_arms", "happy_girlfriend_dance_cat", "happy_chipi_chapa_cat", "dance_wop_cat",
-     "dance_three_kittens", "dance_orange_gray_cats", "laugh_laughing_dog", "yell_orange_fat_cat", "excited_hodomoe_city_cat"],
+     "dance_three_kittens", "dance_orange_gray_cats", "laugh_laughing_dog", "yell_orange_fat_cat", "excited_hodomoe_city_cat",
+     "dance_happy_banana_cat", "walk_white_duck"],
     ["sad_banana_cat_cry", "despair_dramatic_kitten", "sad_black_dog", "sulk_hungry_cat", "sleepy_old_memories_cat",
-     "blank_black_cat_zoning_out"],
+     "blank_black_cat_zoning_out", "sad_looking_away_tabby", "stare_lying_tabby_cat"],
     ["talk_orange_white_sitting_cat", "stare_interviewer_cat", "realize_wet_cat_stare", "read_book_orange_kitten", "rizz_cat_rizz",
-     "cocky_dj_cat", "showoff_gojo_cosplay_cat", "money_counting_orange_cat", "think_bike_front_seat_cat", "calmdown_dancing_cat"],
-    ["rage_talking_cat", "glare_disgusted_cat", "angry_aiming_cat", "meow_ragdoll_chubby_cat", "punch_boxing_white_cat"],
+     "cocky_dj_cat", "showoff_gojo_cosplay_cat", "money_counting_orange_cat", "think_bike_front_seat_cat", "calmdown_dancing_cat",
+     "think_chin_paw_orange_cat", "ignore_orange_cat_sniffed"],
+    ["rage_talking_cat", "glare_disgusted_cat", "angry_aiming_cat", "meow_ragdoll_chubby_cat", "punch_boxing_white_cat", "slap_cat_slaps_kitten"],
 ]
 
 

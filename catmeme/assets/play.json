@@ -32,5 +32,37 @@
       10.83
     ],
     "memo": "怒る猫と怒られる猫：最後まで。右の猫が鳴く秒"
+  },
+  "slap_cat_slaps_kitten": {
+    "until": 3.0,
+    "memo": "ビンタする猫：はたく所を3〜4回"
+  },
+  "dance_happy_banana_cat": {
+    "until": 2.87,
+    "memo": "ハッピーバナナ猫：1ループ（2.9秒）をくり返す"
+  },
+  "walk_white_duck": {
+    "until": 4.0,
+    "memo": "歩くアヒル：鳴き声のリズムが出る最初の4秒"
+  },
+  "ignore_orange_cat_sniffed": {
+    "until": 3.5,
+    "memo": "においをかがれても無視する茶トラ：最初の3.5秒"
+  },
+  "stare_lying_tabby_cat": {
+    "until": 4.0,
+    "memo": "寝そべって見つめるキジトラ：最初の4秒（最後に大きな音が入るので切ってある）"
+  },
+  "sad_looking_away_tabby": {
+    "until": 2.2,
+    "memo": "悲しげに目をそらすキジトラ：最初の鳴き声2回まで"
+  },
+  "think_chin_paw_orange_cat": {
+    "until": 4.0,
+    "memo": "ほおづえで考える茶トラ：最初の4秒"
+  },
+  "scream_phone_orange_cat": {
+    "until": 4.2,
+    "memo": "スマホを見て叫ぶ茶トラ：叫んでのけぞるまで"
   }
 }

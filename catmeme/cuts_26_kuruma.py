@@ -310,6 +310,14 @@ def hype(cuts):
                 fx.append("zoom")
         c["fx"] = list(dict.fromkeys(f for f in fx if f not in ("spark", "confetti")))
         lst = [] if not se else ([se] if isinstance(se, (str, dict)) else list(se))
+        names_ = [x if isinstance(x, str) else x.get("f", "") for x in lst]
+        if any("conan" in n_ or "poon" in n_ for n_ in names_):
+            # コナン・ポーンの場面は、その音がはっきり聞こえるように：猫の声とほかの音は入れず、少し大きく（10/29 ユーザー指摘：単発が聞こえない）
+            for q in c.get("cats", []):
+                q["mute"] = True
+            c["no_pop"] = True
+            c["se"] = [{"f": n_, "gain": 0} if ("conan" in n_ or "poon" in n_) else x for n_, x in zip(names_, lst)]
+            continue
         lst.append({"f": POP_SE[i % len(POP_SE)], "gain": -7})
         if big:
             lst.append({"f": BIG_SE[i % len(BIG_SE)], "gain": -4, "at": 0.25})

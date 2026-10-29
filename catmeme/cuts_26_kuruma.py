@@ -72,8 +72,9 @@ def _drop(names, t0=0.5, gap=1.1):
 
 CHARTS = {
     # つかみ：全部まとめてドドドッと落ちる
-    "k0_preview": B.Chart(VS, [(0.3 + 0.38 * k, 0, n, v, c) for k, (n, v, c) in enumerate(CAR)]
-                          + [(3.6 + 0.4 * k, 1, n, v, c) for k, (n, v, c) in enumerate(NOCAR)], 95, bg=STREET, head=HEAD,
+    # 10/29 ユーザー指定：最初のローンだけドーン、あとは速く積む（いろいろな音・最後は1UP）
+    "k0_preview": B.Chart(VS, [(0.3, 0, *CAR[0])] + [(1.0 + 0.22 * k, 0, n, v, c) for k, (n, v, c) in enumerate(CAR[1:])]
+                          + [(3.0 + 0.4 * k, 1, n, v, c) for k, (n, v, c) in enumerate(NOCAR)], 95, bg=STREET, head=HEAD,
                           highlight=0),
     "k1_loan": B.Chart(VS, _drop(["車のローン"]), 95, bg=DEALER, head=HEAD),
     "k2_tax": B.Chart(VS, _have(["車のローン"]) + _drop(["自動車税", "重量税・自賠責"]), 95, bg=PARK, head=HEAD),
@@ -104,6 +105,7 @@ def chart_path(name):
 
 
 # 項目が落ちるときの音（列ごと）。車なしは気の抜ける軽い音、駐車場の東京は1UP（10/28 ユーザー指定）
+STEP_SE = {"k0_preview": ["explosion_chudoon", "pikon", "kon", "pa", "tsukkomi_bashi", "boing_02", "puni", "game_mario_1up"]}   # 車ありの列：1つ目から順に
 DROP_SE = {"k0_preview": {1: "pafu"}, "k5_vs": {1: "pafu"}, "d4_10y": {1: "pafu"}, "d3_park": {1: "game_mario_1up"},
            "d5_kei": {1: "game_zelda_item_get"}}   # 軽自動車はゴマダレー
 
@@ -120,9 +122,13 @@ def g(name, say, who="S", still=False, dur=None, red=False, se=None, **kw):
         cats.append({"a": "@papa", "x": ch.cx[1], "h": 190, "bottom": B.BASE_Y - 4, "mute": True, "full": False, "float": True})
     lst = [] if not se else ([se] if isinstance(se, (str, dict)) else list(se))
     if not still:
+        car = 0
         for t0, col, _n, _v, _c in ch.steps:
             if t0 >= 0:
                 f = DROP_SE.get(name, {}).get(col, "explosion_chudoon")
+                if name in STEP_SE and col == 0:   # 項目ごとに音を変える
+                    f = STEP_SE[name][min(car, len(STEP_SE[name]) - 1)]
+                    car += 1
                 lst.append({"f": f, "at": t0 + 0.3, "gain": -6 if f == "explosion_chudoon" else -3})
         if ch.result_at is not None:
             lst.append({"f": "game_mario_1up", "at": ch.result_at, "gain": -4})

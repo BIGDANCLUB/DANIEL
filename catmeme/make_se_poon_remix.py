@@ -39,7 +39,7 @@ def build(src, rhythm):
     return a / np.abs(a).max() * 0.9
 
 
-PATTERNS = {"a": "ポポポポーン", "b": "ポポ、ポ、ポーン", "c": "ポ、ポポポ、ポ、ポーン"}
+PATTERNS = {"a": "ポポポポーン", "b": "ポポ、ポ、ポーン"}   # 10/29：c（ポ、ポポポ、ポ、ポーン）はボツ
 
 
 def build_full(src, rhythm):

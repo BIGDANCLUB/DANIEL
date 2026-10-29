@@ -226,8 +226,8 @@
 | question_mark_pop_confused_huh.mp3 | はてなマークが浮かぶ音。「え？」「どういうこと？」と首をかしげる場面 |  | はてなマークが頭上に浮かぶ.mp3 | ニコニ・コモンズ nc151327 |
 | anime_conan_hirameki_idea_realize_truth.mp3 | コナンのひらめき（短め1.5秒）。真相に気づく・名案を思いつく | ⚠テレビ・アニメ | 名探偵コナン_ひらめき音.mp3 | ニコニ・コモンズ nc166983 |
 | anime_conan_hirameki_remix_a.mp3 | コナンのひらめきを連打（切らずに最後まで鳴らして重ねる）（1.5秒）：刻む→同じ高さで連打。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
-| anime_conan_hirameki_remix_b.mp3 | コナンのひらめきを連打（切らずに最後まで鳴らして重ねる）（1.6秒）：長短バラバラ→速い連打→最後だけ低く落とす。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
-| anime_conan_hirameki_remix_c.mp3 | コナンのひらめきを連打（切らずに最後まで鳴らして重ねる）（1.7秒）：のばす→超高速連打→低いところからしゃくって止める。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
+| anime_conan_hirameki_remix_b.mp3 | コナンのひらめきを連打（切らずに最後まで鳴らして重ねる）（2.0秒）：長短バラバラ→速い連打→最後だけ低く落とす。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
+| anime_conan_hirameki_remix_c.mp3 | コナンのひらめきを連打（切らずに最後まで鳴らして重ねる）（2.0秒）：のばす→超高速連打→低いところからしゃくって止める。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
 | anime_conan_hirameki_remix_d.mp3 | コナンのひらめきを8連打・約0.10秒間隔（切らずに最後まで鳴らして重ねる・試し） | ⚠テレビ・アニメ | make_se_conan_remix.py で作成 |  |
 | anime_conan_hirameki_rapid.mp3 | コナンのひらめき連打の「キキキキキキ」だけ（0.4秒・6発）。remix_c の速い連打の部分を抜き出したもの | ⚠テレビ・アニメ | anime_conan_hirameki_remix_c.mp3 から |  |
 | store_famima_entry_chime_arrive_welcome.mp3 | ファミマの入店音（5.9秒）。コンビニに入る・ついつい寄り道 | ⚠お店の音 | ファミマ入店音.mp3 | ニコニ・コモンズ nc18763 |

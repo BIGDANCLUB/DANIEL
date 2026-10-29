@@ -228,7 +228,7 @@
 | anime_conan_hirameki_remix_a.mp3 | コナンのひらめきを連打（切らずに最後まで鳴らして重ねる）（1.5秒）：刻む→同じ高さで連打。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
 | anime_conan_hirameki_remix_b.mp3 | コナンのひらめきを連打（切らずに最後まで鳴らして重ねる）（1.6秒）：長短バラバラ→速い連打→最後だけ低く落とす。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
 | anime_conan_hirameki_remix_c.mp3 | コナンのひらめきを連打（切らずに最後まで鳴らして重ねる）（1.7秒）：のばす→超高速連打→低いところからしゃくって止める。ショートの2回目以降の戸惑い用 | ⚠テレビ・アニメ | make_se_conan_remix.py で作成（元：上のコナン音） |  |
-| anime_conan_hirameki_remix_d.mp3 | コナンのひらめきを6連打・約0.10秒間隔（切らずに最後まで鳴らして重ねる・試し） | ⚠テレビ・アニメ | make_se_conan_remix.py で作成 |  |
+| anime_conan_hirameki_remix_d.mp3 | コナンのひらめきを8連打・約0.10秒間隔（切らずに最後まで鳴らして重ねる・試し） | ⚠テレビ・アニメ | make_se_conan_remix.py で作成 |  |
 | anime_conan_hirameki_rapid.mp3 | コナンのひらめき連打の「キキキキキキ」だけ（0.4秒・6発）。remix_c の速い連打の部分を抜き出したもの | ⚠テレビ・アニメ | anime_conan_hirameki_remix_c.mp3 から |  |
 | store_famima_entry_chime_arrive_welcome.mp3 | ファミマの入店音（5.9秒）。コンビニに入る・ついつい寄り道 | ⚠お店の音 | ファミマ入店音.mp3 | ニコニ・コモンズ nc18763 |
 | game_yoshi_detteiu_so_what_bored.mp3 | 「でっていう」。だから何？・しらける・興味なしの返し | ⚠ゲーム | でっていう.mp3 | ニコニ・コモンズ nc191423 |

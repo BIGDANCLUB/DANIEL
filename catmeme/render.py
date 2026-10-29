@@ -917,7 +917,7 @@ SE_DIR = os.path.join(HERE, "se")
 # ・ポーンの音／連打：「え…」となる戸惑いの場面（「はてな」の音・戸惑う猫・「……え」「えっ」「は？」などの字幕）
 # どちらも、そのショートで1回目はふつうの音、2回目からは連打3種類をランダムに（同じものは続けない）
 CONAN = "anime_conan_hirameki_idea_realize_truth"
-CONAN_REMIX = ["anime_conan_hirameki_remix_a", "anime_conan_hirameki_remix_b", "anime_conan_hirameki_remix_c"]
+CONAN_REMIX = ["anime_conan_hirameki_remix_a", "anime_conan_hirameki_remix_b", "anime_conan_hirameki_remix_c"]   # 10/29 完成：切らずに流しきる a・b・c をランダムに（d は試し・使わない）
 POON = "tv_professional_poon"
 POON_REMIX = ["tv_professional_poon_remix_a", "tv_professional_poon_remix_b", "tv_professional_poon_remix_c"]
 HUH_SE = "question_mark_pop_confused_huh"

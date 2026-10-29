@@ -42,10 +42,28 @@ def build(src, rhythm):
 PATTERNS = {"a": "ポポポポーン", "b": "ポポ、ポ、ポーン", "c": "ポ、ポポポ、ポ、ポーン"}
 
 
+def build_full(src, rhythm):
+    """10/29 ユーザー指定「途中で切らないVer」（コナン連打と同じ）：ポのたびに元のポーンを最後まで鳴らして重ねる。間隔は今までと同じ。"""
+    starts, t = [], 0.0
+    hits = rhythm.replace("ン", "").replace("ー", "")
+    for k, ch in enumerate(hits):
+        if ch == "、":
+            t += PAUSE
+        elif ch == "ポ":
+            starts.append(t)
+            t += PO + (QUICK if hits[k + 1:k + 2] == "ポ" else 0)
+    one = src[int(ON * SR):].copy()
+    out = np.zeros((int((starts[-1] + len(one) / SR) * SR) + 10, 2), np.float32)
+    for st in starts:
+        i = int(st * SR)
+        out[i:i + len(one)] += one
+    return out / np.abs(out).max() * 0.9
+
+
 if __name__ == "__main__":
     src = R.load_audio(SRC).astype(np.float32)
     for k, rhythm in PATTERNS.items():
-        a = build(src, rhythm)
+        a = build_full(src, rhythm)   # 10/29：途中で切らない形に
         out = os.path.join(R.SE_DIR, f"tv_professional_poon_remix_{k}.mp3")
         raw = out + ".f32"
         a.astype(np.float32).tofile(raw)

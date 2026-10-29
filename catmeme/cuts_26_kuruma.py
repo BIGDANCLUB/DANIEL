@@ -105,7 +105,11 @@ def chart_path(name):
 
 
 # 項目が落ちるときの音（列ごと）。車なしは気の抜ける軽い音、駐車場の東京は1UP（10/28 ユーザー指定）
-STEP_SE = {"k0_preview": ["explosion_chudoon", "pikon", "kon", "pa", "tsukkomi_bashi", "boing_02", "puni", "game_mario_1up"]}   # 車ありの列：1つ目から順に
+# 費用が積み上がる途中の音は、ゲーム・アニメの音を優先（10/29 ユーザー指定）。つかみは最初のローンだけドーン・最後は1UP
+GAME_STEP = ["game_coin_get_money_gain_happy", "anime_dbz_punch", "game_mario_jump", "game_dq_attack_enemy", "game_aceattorney_ping",
+             "anime_shinchan_genkotsu", "game_smash_homerun_bat", "game_ff_cursor", "game_dq_miss", "anime_dbz_teleport"]
+STEP_SE = {"k0_preview": ["explosion_chudoon"] + GAME_STEP[:6] + ["game_mario_1up"],
+           "k2_tax": GAME_STEP[6:8], "k3_ins": GAME_STEP[1:3], "k4_run": [GAME_STEP[3], GAME_STEP[9], GAME_STEP[0]]}
 DROP_SE = {"k0_preview": {1: "pafu"}, "k5_vs": {1: "pafu"}, "d4_10y": {1: "pafu"}, "d3_park": {1: "game_mario_1up"},
            "d5_kei": {1: "game_zelda_item_get"}}   # 軽自動車はゴマダレー
 

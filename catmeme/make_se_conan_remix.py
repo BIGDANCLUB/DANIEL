@@ -67,10 +67,24 @@ PATTERNS = {
 }
 
 
+def build_full(src, steps):
+    """10/29 ユーザー指定「途中で切らず流しきる」：刻むかわりに、同じ間隔で元のコナンの音を最後まで鳴らして重ねる。"""
+    starts, t = [], 0.0
+    for ln, _st, gap in steps:
+        starts.append(t)
+        t += ln + gap
+    one = src[int(HIT * SR):].copy()
+    out = np.zeros((int((starts[-1] + len(one) / SR) * SR) + 10, 2), np.float32)
+    for st in starts:
+        i = int(st * SR)
+        out[i:i + len(one)] += one
+    return out / np.abs(out).max() * 0.9
+
+
 if __name__ == "__main__":
     src = R.load_audio(SRC).astype(np.float32)
-    for k, steps in PATTERNS.items():
-        a = build(src, steps)
+    jobs = [(k, build(src, steps)) for k, steps in PATTERNS.items()] + [("a_full", build_full(src, PATTERNS["a"]))]
+    for k, a in jobs:
         a[-int(0.02 * SR):] *= np.linspace(1, 0, int(0.02 * SR))[:, None]
         out = os.path.join(R.SE_DIR, f"anime_conan_hirameki_remix_{k}.mp3")
         raw = out + ".f32"

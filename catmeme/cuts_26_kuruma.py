@@ -162,7 +162,7 @@ def boom(say, b=STREET, who="N", **kw):
     role = ("@react", "ニュース猫") if who == "N" else ("@calm", "博識な猫")
     se = kw.pop("se", ["explosion_chudoon"])
     return dict(bg=bg(b), cats=[cat(role[0], role[1], 960, h=800, bottom=1075, float=True)], say=say, text_top=True,
-                say_style="red", fx=["lines", "shake"], keep_overlap=True, se=se, **kw)
+                say_style="red", fx=["shake"], keep_overlap=True, se=se, **kw)
 
 
 CONAN = "anime_conan_hirameki_idea_realize_truth"
@@ -174,6 +174,13 @@ def qq(b, remix, who="N"):
     role = ("@react", "ニュース猫") if who == "N" else ("@calm", "博識な猫")
     return dict(bg=bg(b), cats=[cat(role[0], role[1], 960, h=760, bottom=1075, float=True, mute=True)], qmarks=6,
                 text_top=True, fx=["lines", "flash", "ring"], keep_overlap=True, no_pop=True, dur=2.0, se=[remix])
+
+
+def fx(c, *names, **extra):
+    """場面にエフェクトを足す（10/29 採用：crack ヒビ・mono 一瞬白黒・money お札・swirl ぐるぐる。どれも多用しない）。"""
+    c["fx"] = list(c.get("fx", [])) + list(names)
+    c.update(extra)
+    return c
 
 
 def card(c, sub, b=BOARD, **kw):
@@ -191,12 +198,12 @@ def cuts_all():
         # ---- ① つかみ ----
         nn("車って\n1年でいくら\nかかると思う？", STREET, se="question_hatena_maou", bgm={"file": PURPLE, "gain": -4}),
         ss("ガソリン代くらい\nでしょ？\n月1万とか", STREET, se="pikon"),
-        boom("ぜんぶ足すと\n年 約89万円", STREET, who="S", se=["explosion_dokaan"]),
+        fx(boom(None, STREET, who="S", se=["explosion_dokaan", {"f": "kaan", "at": 0.9}]), slot=("年 約", 89, "万円")),   # 金額のスロット（10/29）
         boom("年89万!?\nガソリン代だけじゃ\nないの!?", STREET, se=[CONAN]),   # 早めにコナン（10/28 ユーザー指定）
         g("k0_preview", "ローン・税金・保険・ガソリン……\n積み上げるとこうなる", dur=5.6),
         boom("月になおすと\n7万4000円！？", MONEY, se=["shock_piano"]),
         qq(MONEY, "anime_conan_hirameki_remix_b"),   # コナンの連打＋色とりどりの「？？？？？？」（10/28 ユーザー指定）
-        nn("え……\n家賃もう1個\n払ってるじゃん", MONEY, se=POON),   # 「え…」の場面はポーン（1回目はふつう・10/28）
+        fx(nn("え……\n家賃もう1個\n払ってるじゃん", MONEY, se=POON), "mono"),   # 「え…」の場面はポーン（1回目はふつう・10/28）
         dict(bg=bg(STREET), card=pt("e01_title"), dur=4.0, se="jan",
              cats=[{"a": "drive_driving_cat", "x": 300, "h": 440, "bottom": 1050, "float": True},
                    {"a": "dance_three_kittens", "x": 1640, "h": 400, "bottom": 1050, "float": True, "mute": True}]),
@@ -230,7 +237,7 @@ def cuts_all():
         nn("車検って\nいくらするの？", SHOP, se="question_hatena_maou"),
         ss("整備も入れて\n約10万\n1年あたり5万", SHOP, se="kon"),
         g("k3_ins", "保険と車検で\nさらに12万", dur=3.8),
-        boom("まだ1メートルも\n走ってないのに！？", GARAGE, se=["explosion_chudoon"]),
+        fx(boom("まだ1メートルも\n走ってないのに！？", GARAGE, se=["explosion_chudoon", {"f": "glass_break_01", "gain": -4}]), "crack"),
         # ---- ⑤ 走るお金（ガソリン・駐車場・メンテ） ----
         chap("④ 走るお金", se="whoosh_shu", bgm={"file": PURPLE, "gain": -4, "fade": 0.6}),
         ss("年8000km走ると\nガソリンは\n約500リットル", GAS, se="pi"),
@@ -243,17 +250,19 @@ def cuts_all():
         boom("駐車場だけで\n年40万！？", TPARK, se=["explosion_chudoon"]),
         ss("タイヤ交換\nオイル交換も\n年3万くらい", GARAGE, se="kon"),
         g("k4_run", "ぜんぶ積むと……", dur=4.6),
-        boom("1年で\n89万円！！", MONEY, se=["explosion_dokaan"]),
+        fx(boom("1年で\n89万円！！", MONEY, se=["explosion_dokaan"]), "money"),
         nn("毎月7万4000円が\n車に消えてる……", MONEY, se="deflate_hyororo"),
         # ---- ⑥ 車なしとくらべる ----
         chap("⑤ 車なしだと？", se="quiz_question_01", bgm={"file": MIRAI, "gain": -4, "fade": 0.6}),
-        ss("電車・バスに\nときどきタクシー\nカーシェア", STATION, se="pi"),
+        dict(bg=bg(STATION), split=("車あり", "車なし"), say="車なしは 電車・バス\nときどきタクシーやカーシェア", text_box=(140, 30, 1780, 400),
+             cats=[{"a": "drive_driving_cat", "x": 480, "h": 560, "bottom": 1075, "mute": True, "float": True},
+                   cat("@calm", "博識な猫", 1440, h=560, bottom=1075, label_size=52)], keep_overlap=True, se="pi"),   # 画面分割（10/29）
         g("k5_vs", "車なしは\n年 約15万", dur=4.6),
-        boom("差は\n年74万円！？", STATION, se=["shock_piano"]),
+        fx(boom("差は\n年74万円！？", STATION, se=["shock_piano", {"f": "glass_break_01", "gain": -4}]), "crack"),
         g("d4_10y", "10年で\nくらべると……", dur=5.4),
-        nn("え……ローンが終わっても\n年35万は\nかかり続けるの？", MONEY, se="tv_professional_poon_remix_b"),
-        boom("10年で\n470万の差！？", MONEY, se=["explosion_chudoon"]),
-        nn("え……\n新車もう1台\n買えるじゃん", MONEY, se=POON),   # 連打は1本で2回まで（10/29）なのでふつうのポーン
+        fx(nn("え……ローンが終わっても\n年35万は\nかかり続けるの？", MONEY, se="tv_professional_poon_remix_b"), "swirl"),
+        fx(boom("10年で\n470万の差！？", MONEY, se=["explosion_chudoon"]), "money"),
+        fx(nn("え……\n新車もう1台\n買えるじゃん", MONEY, se=POON), "mono"),   # 連打は1本で2回まで（10/29）なのでふつうのポーン
         # ---- ⑦ 安くするなら ----
         chap("⑥ 安くするなら", se="whoosh_shu"),
         nn("でも地方は\n車がないと\n生活できない", ROAD, se="kon"),
@@ -292,13 +301,11 @@ def hype(cuts):
         if c.get("chart"):
             fx += ["border"] + (["flash", "ring"] if big else [])
         else:
-            fx += ["punch"]
-            if i % 2 == 0:
-                fx.append("lines")
+            fx += ["punch"]   # 10/29 ユーザー指摘「集中線多用しすぎ」：集中線は驚きの場面の3回に1回だけ
             if i % 4 == 1:
                 fx.append("border")
             if big:
-                fx += ["flash", "shake", "lines", "ring", "border"]
+                fx += ["flash", "shake", "ring", "border"] + (["lines"] if i % 3 == 0 else [])
             else:
                 fx.append("zoom")
         c["fx"] = list(dict.fromkeys(f for f in fx if f not in ("spark", "confetti")))

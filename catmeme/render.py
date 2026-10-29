@@ -434,6 +434,28 @@ class VideoBG:
         self.cap.release()
 
 
+def crack_lines(c, seed=0):
+    """ガラスのヒビ：中心から放射状のギザギザの線＋それをつなぐ線。"""
+    rng = np.random.default_rng(seed)
+    cx, cy = c
+    rays, out = [], []
+    for k in range(11):
+        ang = k / 11 * 2 * np.pi + rng.uniform(-0.2, 0.2)
+        pts, r = [(cx, cy)], 0
+        while r < 1300:
+            r += rng.uniform(60, 140)
+            a_ = ang + rng.uniform(-0.12, 0.12)
+            pts.append((cx + r * np.cos(a_), cy + r * np.sin(a_)))
+        rays.append(np.array(pts))
+        out.append(np.array(pts, np.int32))
+    for ring in (1, 3):   # 放射の線どうしをつなぐ
+        for k in range(len(rays)):
+            p1, p2 = rays[k], rays[(k + 1) % len(rays)]
+            if len(p1) > ring and len(p2) > ring:
+                out.append(np.array([p1[ring], p2[ring]], np.int32))
+    return out
+
+
 QM_COLS = [(255, 60, 90), (255, 205, 0), (40, 200, 255), (150, 90, 255), (60, 225, 120), (255, 120, 210), (255, 140, 30)]
 
 
@@ -562,6 +584,15 @@ class CutRenderer:
             for ly in cut["layers_top"]:
                 tc2.alpha_composite((Image.open(ly) if isinstance(ly, str) else ly).convert("RGBA"))
             self.top = trim(to_np(tc2))
+        fxs = cut.get("fx", [])
+        self.crack = crack_lines(cut.get("crack_xy", (960, 560)), seed=len(cut.get("say") or "")) if "crack" in fxs else None
+        self.bills = [(np.random.default_rng(i).uniform(0, W), np.random.default_rng(i + 99).uniform(0, 1), i) for i in range(20)] \
+            if "money" in fxs else None
+        self.slot = cut.get("slot")
+        self.slot_cache = {}
+        self.split_heads = None
+        if cut.get("split"):   # 画面分割：左右の見出し
+            self.split_heads = [to_np(P.label_tag(t_, c_, size=64)) for t_, c_ in zip(cut["split"], ((200, 30, 30), (0, 110, 210)))]
         self.qm = None
         if cut.get("qmarks"):   # 「？？？？？？」をいろいろな色とエフェクトで飾る（コナンの連打の場面・10/28 ユーザー指定）
             self.qm = [qmark_img(cut.get("qmark_char", "？"), cut.get("qmark_size", 230), j) for j in range(cut["qmarks"])]
@@ -692,6 +723,14 @@ class CutRenderer:
             out = big[oy:oy + H, ox:ox + W].copy()
         else:
             out = self.bg.copy()
+        if "swirl" in self.fx:   # ぐるぐる：背景だけゆっくり回る（混乱の場面・10/29）
+            M = cv2.getRotationMatrix2D((W / 2, H / 2), 28 * t, 1.55)
+            out = cv2.warpAffine(out, M, (W, H), borderMode=cv2.BORDER_REFLECT)
+        if self.split_heads:   # 画面分割：左は赤み・右は青み、まん中に太い線
+            out[:, : W // 2] = out[:, : W // 2] * 0.8 + np.float32((0.25, 0.25, 0.9)) * 0.2
+            out[:, W // 2:] = out[:, W // 2:] * 0.8 + np.float32((0.9, 0.5, 0.2)) * 0.2
+            cv2.rectangle(out, (W // 2 - 9, 0), (W // 2 + 9, H), (0.05, 0.05, 0.05), -1)
+            cv2.rectangle(out, (W // 2 - 4, 0), (W // 2 + 4, H), (1, 1, 1), -1)
         k = 1.0 if self.style == "meme" else ease_out(t / 0.15)
         if self.lines:
             over_t(out, self.lines_t[int(t * FPS / 3) % len(self.lines_t)])
@@ -715,6 +754,31 @@ class CutRenderer:
             over(out, im, ia, x, y)
         over_t(out, self.ov_t, k)
         self._pop(out, self.txt, t)
+        if self.split_heads:
+            for (im, ia), cx in zip(self.split_heads, (W // 4, 3 * W // 4)):
+                over(out, im, ia, int(cx - im.shape[1] / 2), 440)
+        if self.slot:   # 金額がスロットのように回って止まる（10/29）
+            pre, val, post = self.slot
+            v = val if t > 0.9 else int(np.random.default_rng(int(t * FPS)).integers(10, 99))
+            key = f"{pre}{v}{post}"
+            if key not in self.slot_cache:
+                self.slot_cache[key] = trim(to_np(P.big_text(key, (140, 60, 1780, 420), max_size=230, max_lines=1,
+                                                              fill=P.RED_TEXT, stroke=P.WHITE)))
+            over_t(out, self.slot_cache[key])
+        if self.crack is not None and t > 0.05:   # 画面にヒビ（10/29）
+            for pts in self.crack:
+                cv2.polylines(out, [pts], False, (0.1, 0.1, 0.12), 9, cv2.LINE_AA)
+            for pts in self.crack:
+                cv2.polylines(out, [pts], False, (1, 1, 1), 3, cv2.LINE_AA)
+        if self.bills:   # お札が降る（10/29）
+            for x0, ph0, i in self.bills:
+                ph = (ph0 + t * 0.45) % 1.0
+                cx, cy = x0 + 60 * np.sin(t * 2 + i), -80 + ph * (H + 160)
+                ang = (t * 90 + i * 37) % 360
+                box = cv2.boxPoints(((cx, cy), (150, 72), ang)).astype(np.int32)
+                cv2.fillPoly(out, [box], (0.62, 0.78, 0.82), cv2.LINE_AA)
+                cv2.polylines(out, [box], True, (0.25, 0.4, 0.5), 3, cv2.LINE_AA)
+                cv2.circle(out, (int(cx), int(cy)), 16, (0.35, 0.5, 0.6), 3, cv2.LINE_AA)
         if self.qm:
             n = len(self.qm)
             for j, im in enumerate(self.qm):
@@ -789,6 +853,10 @@ class CutRenderer:
             out *= 0.45
         if self.top is not None:   # 暗くしたあとに重ねる部品（注意書きなど）
             over_t(out, self.top)
+        if "mono" in self.fx and t < 0.45:   # 一瞬白黒になって色が戻る（「え…」の場面・10/29）
+            a_ = 1.0 if t < 0.28 else 1 - (t - 0.28) / 0.17
+            g_ = out.mean(axis=2, keepdims=True)
+            out = out * (1 - a_) + g_ * a_
         if self.explain is not None:   # 説明モード：画面はそのまま、下に半透明の黒い帯を敷いて説明文
             k = min(1.0, t / 0.15)
             out[EXPLAIN_TOP:] *= 1 - 0.62 * k

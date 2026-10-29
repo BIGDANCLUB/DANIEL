@@ -493,6 +493,16 @@ class CutRenderer:
                                          interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
         else:
             self.bg = np.zeros((H, W, 3), np.float32)
+        if cut.get("bg2"):   # 画面を左右半分に分けて、左と右で別の背景（比べる動画・10/29）
+            halves = []
+            for pth in (cut["bg"], cut["bg2"]):
+                im_ = cv2.imread(pth, cv2.IMREAD_COLOR)
+                k_ = H / im_.shape[0]
+                im_ = cv2.resize(im_, (int(im_.shape[1] * k_), H))
+                x_ = (im_.shape[1] - W // 2) // 2
+                halves.append(im_[:, x_:x_ + W // 2].astype(np.float32) / 255.0)
+            self.bg = np.concatenate(halves, axis=1)
+            self.pan = None
         self.cats = []
         for c in cut.get("cats", []):
             clip = Clip(c["a"], c.get("ss", 0.0), c.get("still", False), c.get("flip", False))
@@ -567,6 +577,9 @@ class CutRenderer:
             layers.append(pl)
         if cut.get("chapter"):
             txt.append(P.plain_text(cut["chapter"], (160, 300, 1760, 780), size=cut.get("chapter_size", 64)))
+        for side_t, box in zip(cut.get("side_text") or (), ((40, 300, 920, 560), (1000, 300, 1880, 560))):   # 左右それぞれの金額など
+            if side_t:
+                layers.append(P.big_text(side_t, box, max_size=cut.get("side_size", 120), max_lines=2, fill=P.RED_TEXT, stroke=P.WHITE))
         comp = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         for ly in layers:
             comp.alpha_composite(ly.convert("RGBA"))
@@ -592,7 +605,9 @@ class CutRenderer:
         self.slot_cache = {}
         self.split_heads = None
         if cut.get("split"):   # 画面分割：左右の見出し
-            self.split_heads = [to_np(P.label_tag(t_, c_, size=64)) for t_, c_ in zip(cut["split"], ((200, 30, 30), (0, 110, 210)))]
+            self.split_heads = [to_np(P.label_tag(t_, c_, size=cut.get("split_size", 64)))
+                                for t_, c_ in zip(cut["split"], cut.get("split_cols", ((200, 30, 30), (0, 110, 210))))]
+            self.split_y = cut.get("split_y", 440)
         self.qm = None
         if cut.get("qmarks"):   # 「？？？？？？」をいろいろな色とエフェクトで飾る（コナンの連打の場面・10/28 ユーザー指定）
             self.qm = [qmark_img(cut.get("qmark_char", "？"), cut.get("qmark_size", 230), j) for j in range(cut["qmarks"])]
@@ -727,8 +742,9 @@ class CutRenderer:
             M = cv2.getRotationMatrix2D((W / 2, H / 2), 28 * t, 1.55)
             out = cv2.warpAffine(out, M, (W, H), borderMode=cv2.BORDER_REFLECT)
         if self.split_heads:   # 画面分割：左は赤み・右は青み、まん中に太い線
-            out[:, : W // 2] = out[:, : W // 2] * 0.8 + np.float32((0.25, 0.25, 0.9)) * 0.2
-            out[:, W // 2:] = out[:, W // 2:] * 0.8 + np.float32((0.9, 0.5, 0.2)) * 0.2
+            tint = self.cut.get("split_tint", 0.2)
+            out[:, : W // 2] = out[:, : W // 2] * (1 - tint) + np.float32((0.25, 0.25, 0.9)) * tint
+            out[:, W // 2:] = out[:, W // 2:] * (1 - tint) + np.float32((0.9, 0.5, 0.2)) * tint
             cv2.rectangle(out, (W // 2 - 9, 0), (W // 2 + 9, H), (0.05, 0.05, 0.05), -1)
             cv2.rectangle(out, (W // 2 - 4, 0), (W // 2 + 4, H), (1, 1, 1), -1)
         k = 1.0 if self.style == "meme" else ease_out(t / 0.15)
@@ -756,7 +772,7 @@ class CutRenderer:
         self._pop(out, self.txt, t)
         if self.split_heads:
             for (im, ia), cx in zip(self.split_heads, (W // 4, 3 * W // 4)):
-                over(out, im, ia, int(cx - im.shape[1] / 2), 440)
+                over(out, im, ia, int(cx - im.shape[1] / 2), self.split_y)
         if self.slot:   # 金額がスロットのように回って止まる（10/29）
             pre, val, post = self.slot
             v = val if t > 0.9 else int(np.random.default_rng(int(t * FPS)).integers(10, 99))

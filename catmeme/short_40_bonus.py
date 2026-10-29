@@ -7,20 +7,27 @@ from salary_short import s, t, OFF, ROOM, NIGHT, IZAKAYA
 M = "scream_standing_marmot"
 
 
+def cry(c):
+    """しゃべる猫ではなく、泣く猫（右）の音を鳴らす（10/29 ユーザー指定）。"""
+    for q in c["cats"]:
+        q["mute"] = q["a"] != "despair_dramatic_kitten"
+    return c
+
+
 def ph(label):
     return [("phone:" + label, 300, 1200, 230)]
 
 
 cs = [
     s(ROOM, "10日前", "ボーナスで\n*何買おう*", "dance_tabby_standing_cat", lines=True, se="jan"),
-    dict(s(ROOM, "7日前", "新しいテレビ\n旅行も行きたい", "laugh_laughing_dog"), props=[("cloud:テレビ\n温泉旅行@R", 300, 1000, 480)]),
+    s(ROOM, "7日前", "新しいテレビ\n旅行も行きたい", "laugh_laughing_dog"),   # 10/29 ユーザー指定：吹き出しはなし
     s(ROOM, "3日前", "ネットで\n*カートに入れまくる*", "work_typing_cat"),
     s(NIGHT, "1日前", "明日は\nボーナス日…！", "excited_hodomoe_city_cat"),
     dict(s(OFF, "ボーナス日", "明細が\nきた！", "money_counting_orange_cat", se="pikon"), props=ph("賞与明細")),
     dict(s(OFF, "ボーナス日", "……あれ？\n思ったより少ない", "stare_tabby_wide_eyes_cat"), props=ph("賞与明細")),
     t(OFF, "ボーナス日", "ボーナスからも\n*税金と社会保険料*\n引かれるからね", "talk_orange_white_sitting_cat", "stare_big_eyes_tabby_kitten", who="L",
       ll="先輩"),
-    t(OFF, "ボーナス日", "手取りは\n*2割*くらい減るよ", "talk_orange_white_sitting_cat", "despair_dramatic_kitten", who="L", ll="先輩"),
+    cry(t(OFF, "ボーナス日", "手取りは\n*2割*くらい減るよ", "talk_orange_white_sitting_cat", "despair_dramatic_kitten", who="L", ll="先輩")),
     s(IZAKAYA, "1日後", "でも今日は\n*ボーナス祝い*！", "yell_orange_fat_cat", se="jan"),
     s(IZAKAYA, "1日後", "全員分\n*おごっちゃう*", "showoff_gojo_cosplay_cat"),
     s(ROOM, "2日後", "カートの中身\n*全部ポチ*", "dance_wop_cat", se="pikon"),

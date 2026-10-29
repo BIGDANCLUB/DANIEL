@@ -19,7 +19,7 @@ def cuts():
     rows = [
         ("1分", "peek_what_happen_cat", "遅れた？\nだれも気づかない", "call_customer_service_cat", "おわびの放送が\n流れる", None),
         ("3分", "calm_black_face_sheep", "時間どおりの\nうちに入る", "sad_looking_away_tabby", "駅員さんが\n何度も頭を下げる", None),
-        ("5分", "slack_nail_filing_cat", "今日は\n早いほう", "stare_tabby_wide_eyes_cat", "遅延証明書を\nもらう列ができる", None),
+        ("5分", "slack_nail_filing_cat", "今日は\n早いほう", "slap_cat_slaps_kitten", "遅延証明書を\nもらう列ができる", "slap"),
         ("10分", "eat_chips_cat", "のんびり\nおやつタイム", "scream_phone_orange_cat", "会社に\n「遅れます」と連絡", None),
         ("15分", "walk_white_duck", "ホームを\nお散歩", "work_typing_cat", "SNSで\n「電車 遅延」と検索", None),
         ("30分", "stare_lying_tabby_cat", "ホームで\nごろ寝", "despair_dramatic_kitten", "振替輸送の\n案内に大行列", None),
@@ -29,9 +29,12 @@ def cuts():
     ]
     for lv, wcat, wcap, jcat, jcap, prop in rows:
         big = lv in ("30分", "1時間", "2時間", "半日")
-        out.append(Wd.split(ST, lv, dur=1.2 * K, se=["chime_announce"] if big else ["pi"]))
+        out.append(Wd.split(ST, lv, dur=1.2 * K, se=[{"f": "chime_announce", "len": 4.5}] if big else ["pi"]))   # ピンポンパンポーンは最後まで鳴らす（次の場面にかかってよい・10/29）
         out.append(Wd.split(ST, lv, right=wcat, cap=wcap, cap_side="R", sound="R", dur=2.3 * K, se="don_hit"))
-        c = Wd.split(ST, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K)
+        c = Wd.split(ST, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K,
+                     se=["explosion_chudoon"] if lv == "半日" else None)   # 半日：日本の猫が出た瞬間にチュドーン（10/29）
+        if prop == "slap":   # 10/29 ユーザー指定：叩かれている猫に「駅員」の札、手前に「遅延証明書」の紙
+            c["props"] = [("tag:駅員", 105, 955, 0), ("paper:遅延\n証明書", 300, 1150, 150)]
         if prop == "tv":   # テレビの前の猫
             c["props"] = [("tv", 200, 1150, 260)]
         out.append(c)

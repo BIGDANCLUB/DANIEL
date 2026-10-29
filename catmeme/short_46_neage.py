@@ -25,11 +25,12 @@ def cuts():
         ("2割", "punch_boxing_white_cat", "給料を上げろと\nストライキ", "ride_kitten_bike", "安いお店を\nはしごする"),
         ("3割", "slap_cat_slaps_kitten", "国に\n文句が殺到", "read_book_orange_kitten", "お弁当を\n作りはじめる"),
         ("5割", "fight_cat_fight", "国じゅうが\n大さわぎ", "work_typing_cat", "節約レシピが\n大人気"),
-        ("2倍", "scream_phone_orange_cat", "言葉を\n失う", "stare_lying_tabby_cat", "それでも\n「ちょっと高いね」"),
+        ("2倍", "dance_three_kittens", "踊る", "scream_phone_orange_cat", "SNSでスーパー玉手を\n褒め称える"),   # 10/29 ユーザー指定
     ]
     for lv, wcat, wcap, jcat, jcap in rows:
-        big = lv in ("2割", "3割", "5割", "2倍")
-        out.append(Wd.split(ST, lv, dur=1.2 * K, se=["game_coin_get_money_gain_happy"] if big else ["pi"]))
+        # 札が出た瞬間の音（10/29 ユーザー指定）：3割・5割はチュドーン、2倍は1UP、2割はコイン
+        tag_se = {"2割": "game_coin_get_money_gain_happy", "3割": "explosion_chudoon", "5割": "explosion_chudoon", "2倍": "game_mario_1up"}
+        out.append(Wd.split(ST, lv, dur=1.2 * K, se=[tag_se.get(lv, "pi")]))
         out.append(Wd.split(ST, lv, right=wcat, cap=wcap, cap_side="R", sound="R", dur=2.3 * K, se="don_hit"))
         out.append(Wd.split(ST, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K))
     for c in out:

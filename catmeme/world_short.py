@@ -291,6 +291,19 @@ def prop_img(kind, w):
             d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=WHITE + (255,), outline=(60, 60, 60, 255), width=4)
         im.alpha_composite(tx, ((w - tx.width) // 2, (h - tx.height) // 2))
         return im
+    if kind.startswith("paper:"):   # 白い紙（少し傾けて・黒い字。「遅延証明書」など・10/29）
+        tx = rich([[(ln, BLACK)] for ln in kind[6:].split("\n")], int(w * 0.24), max_w=int(w * 0.86), lh=1.1)
+        h = max(int(w * 1.3), tx.height + 60)
+        im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        d.rectangle((0, 0, w - 1, h - 1), fill=(252, 252, 246, 255), outline=(60, 60, 60, 255), width=4)
+        for k in range(3):   # うすい罫線
+            y_ = int(h * (0.72 + 0.08 * k))
+            d.line((int(w * 0.12), y_, int(w * 0.88), y_), fill=(170, 170, 170, 255), width=3)
+        im.alpha_composite(tx, ((w - tx.width) // 2, int(h * 0.12)))
+        return im.rotate(-8, expand=True, resample=Image.BICUBIC)
+    if kind.startswith("tag:"):   # 役名の札（叩かれている猫などに名前を付ける・10/29）
+        return I.name_tag(kind[4:])
     raise ValueError(kind)
 
 

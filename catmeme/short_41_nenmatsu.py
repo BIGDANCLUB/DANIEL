@@ -7,7 +7,7 @@ cs = [
     t(OFF, "11月1日", "年末調整の書類\n*今月中*に出してね", "work_typing_cat", "stare_big_eyes_tabby_kitten", who="L", ll="総務", se="pinpon_notice"),
     t(OFF, "11月1日", "はーい\n（まだ1か月ある）", "work_typing_cat", "slack_nail_filing_cat", ll="総務"),
     s(ROOM, "11月20日", "そろそろ\nやるか…", "think_bike_front_seat_cat", lines=True),
-    s(ROOM, "11月20日", "えっと…\n*扶養控除*ってなに？", "confused_i_dont_know_cat", se="question_mark_pop_confused_huh"),
+    s(ROOM, "11月20日", "えっと…\n*扶養控除*ってなに？", "confused_i_dont_know_cat", no_huh=True),   # 10/29 ユーザー指定：ここはポーンなし
     s(ROOM, "11月20日", "去年も\n同じところで迷った", "sleepy_old_memories_cat"),
     s(ROOM, "11月20日", "生命保険の\n*控除証明書*がいる", "read_book_orange_kitten"),
     s(ROOM, "11月20日", "……どこ？", "huh_huh_cat", big_say=True, d=2.0, se="question_mark_pop_confused_huh"),

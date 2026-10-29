@@ -938,7 +938,7 @@ def _se_name(s):
 
 def scene_kind(c):
     """"bang"（!? の場面）／"doubt"（え… の戸惑いの場面）／None。"""
-    if c.get("banner") or c.get("kind") == "split":
+    if c.get("banner") or c.get("kind") == "split" or c.get("no_huh"):   # no_huh=True：コナン・ポーンを鳴らさない場面（10/29）
         return None
     plain = (c.get("say") or "").replace("*", "").replace("\n", "")
     if any(b in plain for b in BANG):

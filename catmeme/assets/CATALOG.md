@@ -81,7 +81,7 @@
 | meow_ragdoll_chubby_cat.mp4 | にらんで鳴くぽっちゃり猫（不満・文句） | 5-11（TikTok保存・10/15 ユーザー追加） | |
 | punch_tabby_cat_reach.mp4 | 手を伸ばすキジトラ（ちょっかい・ツッコミ・止める） | 5-16（TikTok保存・10/15 ユーザー追加） | |
 | dance_three_kittens.mp4 | 3匹そろって踊る子猫（浮かれる・お祝い） | 5-8（TikTok保存・10/15 ユーザー追加） | ⚠ |
-| dance_tabby_standing_cat.mp4 | 二本足で踊るキジトラ（ノリノリ） | 5-15（TikTok保存・10/15 ユーザー追加） | ⚠ |
+| dance_tabby_standing_cat.mp4 | 二本足で踊るキジトラ（ノリノリ）。スターのBGM（10/29 ユーザー確認） | 5-15（TikTok保存・10/15 ユーザー追加） | ⚠ |
 
 | happy_hamster_open_arms.mp4 | 両手を広げて笑うハムスター（大喜び・ようこそ） | TikTok保存・10/23 ユーザー追加 | |
 | stare_tabby_wide_eyes_cat.mp4 | 目を見開いて固まるキジトラ（驚き・ドン引き）。音なし | TikTok保存・10/23 ユーザー追加 | |

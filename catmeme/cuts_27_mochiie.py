@@ -295,8 +295,26 @@ def hype(cuts):
     return cuts
 
 
+# 10/30 ユーザー指摘「右側の素材でグラフが見えない」：グラフの場面では横に広い素材（車・机など）を使わない
+WIDE = {"drive_monkey_golf_cart", "drive_driving_cat", "work_typing_cat", "fight_cat_fight", "dance_orange_gray_cats",
+        "slap_cat_slaps_kitten", "ignore_orange_cat_sniffed", "tense_two_cats_face_off", "scold_talking_cats"}
+NARROW = ["stare_interviewer_cat", "think_chin_paw_orange_cat", "meow_gray_white_kitten", "stare_big_eyes_tabby_kitten",
+          "talk_orange_white_sitting_cat", "sulk_hungry_cat"]
+
+
 def cuts_full():
-    return hype(L.apply_fx(L.allocate(cuts_all(), max_use=7, gap=1)))
+    cs = hype(L.apply_fx(L.allocate(cuts_all(), max_use=7, gap=1)))
+    k = 0
+    for c in cs:
+        if not c.get("chart"):
+            continue
+        used = {q["a"] for q in c["cats"]}
+        for q in c["cats"]:
+            if q["a"] in WIDE:
+                q["a"] = next(a for a in NARROW[k:] + NARROW[:k] if a not in used)
+                used.add(q["a"])
+                k += 1
+    return cs
 
 
 if __name__ == "__main__":

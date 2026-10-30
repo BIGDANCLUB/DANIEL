@@ -28,6 +28,7 @@ import cuts_26_kuruma as K
 import long_extras as LX
 import render as R
 
+R.WHITE_DIP = 0.08   # 10/30 ユーザー指定「スピード感ある場面転換」：白飛びを短く
 R.TEMPO = 0.86   # 10/30 ユーザー指定「テンポ良く・ぎゅっと」
 HERE = L.HERE
 L.BGS = [os.path.join(HERE, "backgrounds", "31_escon")] + sorted(
@@ -40,9 +41,11 @@ PURPLE, COCOA, MIRAI, NORA = L.PURPLE, L.COCOA, L.MIRAI, L.NORA
 ORG = {
     "日本ハム": ((0, 60, 140), {"話す": "talk_orange_white_sitting_cat", "こまる": "despair_dramatic_kitten",
                              "決意": "stare_tabby_wide_eyes_cat", "計算": "money_counting_orange_cat", "よろこぶ": "happy_hamster_open_arms",
-                             "おこる": "rage_talking_cat", "考える": "think_chin_paw_orange_cat"}),
+                             "おこる": "rage_talking_cat", "考える": "think_chin_paw_orange_cat",
+                             "言い返す": "punch_boxing_white_cat", "さけぶ": "scream_phone_orange_cat"}),
     "札幌ドーム": ((100, 100, 110), {"余裕": "cocky_dj_cat", "知らんぷり": "slack_nail_filing_cat", "さみしい": "sad_banana_cat_cry",
-                               "あせる": "scream_phone_orange_cat", "計算": "money_counting_orange_cat"}),
+                               "あせる": "scream_phone_orange_cat", "計算": "money_counting_orange_cat",
+                               "おこる": "glare_disgusted_cat", "言い返す": "yell_orange_fat_cat", "むっ": "spit_not_my_taste_cat"}),
     "札幌市": ((0, 120, 60), {"話す": "stare_interviewer_cat", "考える": "think_bike_front_seat_cat", "こまる": "sad_looking_away_tabby",
                            "見送る": "wave_waving_cat"}),
     "北広島市": ((200, 90, 0), {"よろこぶ": "happy_chipi_chapa_cat", "やる気": "excited_hodomoe_city_cat",
@@ -129,6 +132,20 @@ def vs(lw, ll, rw, rl, say, b, who="L", **kw):
     return dict(bg=bg(b), cats=cats, say=say, text_top=True, keep_overlap=True, **kw)
 
 
+def kk(ll, rl, say, who="L", rw="札幌ドーム", b=DOME_IN, se=None, **kw):
+    """10/30 ユーザー指定「日ハムと札幌ドーム側の言い合いを多く」：左＝日本ハム・右＝ドーム（市）。赤字・揺れ・ドン。"""
+    c = vs("日本ハム", ll, rw, rl, say, b, who=who, **kw)
+    c.update(say_style="red", fx=["shake"] + (["lines"] if who == "L" else []))
+    c["se"] = se or ["tsukkomi_bashi" if who == "L" else "punch"]
+    return c
+
+
+def faceoff(say, b=DOME_IN):
+    """にらみ合い（向かい合う2匹の素材を大きく）。"""
+    return dict(bg=bg(b), cats=[dict(a="tense_two_cats_face_off", x=960, h=820, bottom=1075, mute=True)], say=say, text_top=True,
+                say_style="red", fx=["shake", "lines", "flash"], keep_overlap=True, se=["gong_match_start", "explosion_dokaan"])
+
+
 def sp(say, who="L", side=None, red=False, **kw):
     """画面半分：左＝札幌ドーム・右＝エスコン。しゃべる側の上に字幕。side は左右の短い言葉。"""
     big, small = (700, 600) if not side else (600, 520)
@@ -182,14 +199,22 @@ def cuts_all():
         nn("家賃20億って\nどういう世界!?", MONEY, red=True, se=["anime_conan_hirameki_remix_a"]),
         ss("しかも球場の看板や\n飲食の売上は\nおもにドーム側の収入", DOME_IN, who=[("札幌ドーム", "計算")], se=DRUM),
         o("札幌ドーム", "計算", "看板とお弁当の\nお金は\nこちらに", DOME_IN, se="price_display"),
+        kk("言い返す", "余裕", "お客さんを呼んでるのは\nうちなのに!?", "L", se=["tsukkomi_bashi", "hit_dogo_maou"]),
+        kk("言い返す", "おこる", "ここは市の施設\n決まりは決まりです", "R"),
+        kk("さけぶ", "むっ", "せめて使用料を\n下げてほしい！", "L", se=["kaan"]),
+        kk("こまる", "言い返す", "サッカーもコンサートも\nあるんです！", "R", se=["punch", "kaan"]),
         fx(nn("え……\nお客さんを呼んでも\n球団はもうからない？", DOME_IN, se=POON), "mono"),
         ss("サッカーと共用だから\n野球のときは人工芝", DOME_IN, se="pi"),
         ss("サッカーの天然芝は\n外から出し入れする\nめずらしいしくみ", DOME_IN, who=[("札幌ドーム", "計算")], se=HERO),
         ss("球団の思いどおりに\n作りかえるのも\nむずかしかった", DOME_IN, se="kon"),
         # ---- ③ 交渉 ----
         chap("③ 話し合いは平行線", se=SLASH),
+        faceoff("日本ハム vs 札幌ドーム"),
         vs("日本ハム", "話す", "札幌市", "考える", "運営を\n球団にまかせて\nもらえませんか", CITY, who="L", se="pikon"),
         vs("日本ハム", "考える", "札幌市", "こまる", "うーん……\n大きくは\n変えられない", CITY, who="R", se="deflate_hyororo"),
+        kk("言い返す", "おこる", "芝もフェンスも\n変えられないの!?", "L", se=["tsukkomi_bashi", "glass_break_01"]),
+        kk("おこる", "言い返す", "共用の球場\nですから！", "R"),
+        kk("さけぶ", "むっ", "これじゃ\nらちがあかない！", "L", se=["rock_split"]),
         fx(sp("球団が使うのに\n自由がきかない", "L", side=("借りもの", "自分の物"), se="pi"), "swirl"),
         o("日本ハム", "おこる", "それなら\n自分たちで\n球場を建てる！", CITY, red=True, se=["explosion_bokaan", "rock_split"]),
         boom("球場を\n自分で建てる!?", CITY, se=["explosion_dokaan", "air_horn"]),
@@ -233,6 +258,8 @@ def cuts_all():
         ss("近くに新しい駅を\nつくる計画もある", ESCON, se=DASH),
         # ---- ⑧ 残された札幌ドーム ----
         chap("⑧ 残された札幌ドーム", se=SLASH, bgm={"file": COCOA, "gain": -4, "fade": 0.6}),
+        kk("決意", "あせる", "本当に\n出ていくの!?", "R", b=DOME, se=["punch", "explosion_dokaan"]),
+        kk("決意", "おこる", "新しい球場で\n勝負します！", "L", b=DOME, se=["sword_shakiin"]),
         o("札幌ドーム", "あせる", "いちばんの\nお客さんが\nいなくなった……", DOME, red=True, se=["explosion_dokaan", "glass_break_01"]),
         ss("イベントがへって\n赤字になったと\n報道された", DOME, who=[("札幌ドーム", "さみしい")], se="shock_piano"),
         fx(ss("2024年からは\n名前を売る\n命名権も", DOME, who=[("札幌ドーム", "あせる")], se=GONG), "swirl"),
@@ -262,6 +289,8 @@ def more(cuts):
         if any("conan" in n_ or "poon" in n_ for n_ in names):
             continue
         lst = list(c.get("se") or [])
+        if i and c.get("bg") != cuts[i - 1].get("bg"):   # 場所が変わる時はシュッ（スピード感・10/30）
+            lst.append({"f": ("whoosh_shu", "dash_super_fast")[i % 2], "gain": -5})
         if c.get("side_text"):
             lst.append({"f": "kaan", "gain": -3, "at": 0.03})
         if c.get("say_style") == "red":

@@ -89,6 +89,9 @@ K.STANDIN.update({KOSHIEN: "bg63_hokkaido_field", TOWN: "ph06_kumamoto_fields", 
                   LOSS: "bg63_hokkaido_field", WORLD: "bg28_ny_street", SCOUT: "bg28_ny_street", OFFICE: "bg78_agency_office",
                   DOC: "bg97_tabloid_desk", CEREMONY: "bg43_award_stage", LOCKER: "bg68_coin_lockers", WBC: "bg28_ny_street",
                   LA: "bg76_roppongi_night"})
+# 10/30 ユーザー指定（同日2回目）「画像もう少し使い回す」：近い場面は同じ背景にまとめる（全10枚）
+HOME, CLEAN, SPRING, HR, MOUND, LOSS = TOWN, NOTE, KOSHIEN, KOSHIEN, KOSHIEN, KOSHIEN
+WORLD, SCOUT, OFFICE, DOC, CEREMONY, LOCKER, WBC = US, US, DRAFT, NEGO, PRESS, DOME, LA
 bg, fx = K.bg, K.fx
 NAR = (60, 830, 1860, 1070)   # 10/30 ユーザー指定：字幕を大きく（2行にして大きな字）
 

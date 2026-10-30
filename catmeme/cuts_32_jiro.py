@@ -36,7 +36,7 @@ HERO_NAME = "チャレンジ猫"
 L.ROLE[HERO_NAME] = (220, 120, 0)
 L.ROLE["友だち猫"] = (0, 110, 210)
 LOOK = {"食べる": "eat_pop_cat", "がっつく": "eat_crunchy_cat_luna", "ポリポリ": "eat_chips_cat", "よろこぶ": "happy_chipi_chapa_cat",
-        "ワクワク": "excited_hodomoe_city_cat", "のむ": "drink_gulp_gokugoku_thirsty_chug", "ねむい": "sleepy_sleepy_cat",
+        "ワクワク": "excited_hodomoe_city_cat", "のむ": "eat_crunchy_cat_luna", "ねむい": "sleepy_sleepy_cat",
         "ぼー": "blank_black_cat_zoning_out", "おどろく": "stare_tabby_wide_eyes_cat", "ぜつぼう": "despair_dramatic_kitten",
         "なく": "sad_banana_cat_cry", "いじける": "sulk_hungry_cat", "考える": "think_chin_paw_orange_cat", "さけぶ": "scream_phone_orange_cat",
         "ならぶ": "walk_white_duck", "走る": "dance_white_dog", "気づく": "realize_wet_cat_stare", "おどる": "dance_happy_banana_cat"}

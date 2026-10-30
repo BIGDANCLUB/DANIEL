@@ -179,7 +179,7 @@ def flood(cuts):
             continue
         d = R.cut_dur(c)
         lst = list(c.get("se") or [])
-        ats = [0.12, 0.3] + [round(d * r, 2) for r in (0.45, 0.65, 0.85) if d * r > 0.5]
+        ats = [0.12, 0.3]   # 10/30 ユーザー指定「細かいポップやめて」：途中の跳ねる動きとその音はやめ、場面の頭だけ
         if c.get("chart"):
             ats = [round(d * r, 2) for r in (0.75, 0.9)]   # グラフは落ちる音のあと、結果のところに重ねる
         for at in ats:
@@ -187,7 +187,7 @@ def flood(cuts):
             n += 1
         # 10/30 ユーザー指摘「動きのないところにSEをつけない」：SEを鳴らすところには必ず動きを足す
         # （猫がぴょんと跳ねて、画面が小さくグッと寄る）。場面の頭（0.3秒まで）は登場の動きがあるので足さない
-        c["beats"] = [at for at in ats if at > 0.25]
+        c["beats"] = []
         if c.get("say_style") == "red":
             lst += [{"f": "explosion_dokaan", "gain": -5, "at": 0.05}, {"f": "kaan", "gain": -5, "at": 0.4}]
         c["se"] = lst

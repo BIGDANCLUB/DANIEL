@@ -760,7 +760,11 @@ class CutRenderer:
             w, h = max(1, int(fr.shape[1] * s)), max(1, int(fr.shape[0] * s))
             img = cv2.resize(fr, (w, h), interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
             al = cv2.resize(a, (w, h), interpolation=cv2.INTER_AREA)
-            over(out, img, al, int(cx - w / 2), int(bottom - h))
+            hop = 0
+            for bt in self.cut.get("beats", ()):   # 拍のところで猫がぴょんと跳ねる（SEに合わせた動き・10/30）
+                if bt <= t < bt + 0.22:
+                    hop = 55 * np.sin(np.pi * (t - bt) / 0.22)
+            over(out, img, al, int(cx - w / 2), int(bottom - h - hop))
         for (im, ia), x, y in self.labels:
             over(out, im, ia, x, y)
         over_t(out, self.ov_t, k)
@@ -814,6 +818,13 @@ class CutRenderer:
             amp = 18 * (1 - t / 0.35)
             dx, dy = amp * np.sin(t * 90), amp * np.cos(t * 70)
             out = cv2.warpAffine(out, np.float32([[1, 0, dx], [0, 1, dy]]), (W, H), borderMode=cv2.BORDER_REPLICATE)
+        for bt in self.cut.get("beats", ()):   # 拍のところで画面が小さくグッと寄る（SEに合わせた動き・10/30）
+            if bt <= t < bt + 0.14:
+                z = 1.0 + 0.05 * (1 - (t - bt) / 0.14) ** 2
+                bw, bh = int(W * z), int(H * z)
+                big = cv2.resize(out, (bw, bh), interpolation=cv2.INTER_LINEAR)
+                ox, oy = (bw - W) // 2, (bh - H) // 2
+                out = big[oy:oy + H, ox:ox + W].copy()
         if "punch" in self.fx and t < 0.16:   # 頭でグッと寄って戻る（テンポを出す・10/28）
             z = 1.0 + 0.09 * (1 - t / 0.16) ** 2
             bw, bh = int(W * z), int(H * z)

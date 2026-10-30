@@ -185,6 +185,9 @@ def flood(cuts):
         for at in ats:
             lst.append({"f": FLOOD[n % len(FLOOD)], "gain": -7 if at > 0.3 else -5, "at": at})
             n += 1
+        # 10/30 ユーザー指摘「動きのないところにSEをつけない」：SEを鳴らすところには必ず動きを足す
+        # （猫がぴょんと跳ねて、画面が小さくグッと寄る）。場面の頭（0.3秒まで）は登場の動きがあるので足さない
+        c["beats"] = [at for at in ats if at > 0.25]
         if c.get("say_style") == "red":
             lst += [{"f": "explosion_dokaan", "gain": -5, "at": 0.05}, {"f": "kaan", "gain": -5, "at": 0.4}]
         c["se"] = lst

@@ -19,9 +19,10 @@ import sys
 
 import cuts_04_leak as L
 import cuts_26_kuruma as K
+import long_extras as LX
 import render as R
 
-R.TEMPO = 1.32
+R.TEMPO = 1.05   # 10/30 ユーザー指定「テンポ良く・ぎゅっと」
 HERE = L.HERE
 L.BGS = [os.path.join(HERE, "backgrounds", "33_ha")] + sorted(
     d for d in glob.glob(os.path.join(HERE, "backgrounds", "*")) if os.path.isdir(d))
@@ -127,9 +128,11 @@ def cuts_all():
         n("食べかすと細菌で\n歯の表面に歯垢がたまる", MOUTH, se="kon"),
         h("いや", "なんか歯が\nネバネバする……", SINK, se="puni"),
         d("説明", "歯垢は\nただの汚れではなく\n細菌のかたまり", CLINIC, se=KIRA),
+        n("歯垢1mgには\n細菌が約1億個とも", MOUTH, who="おどろく", se=[BOOM]),
         # ---- ② 3日〜1週間 ----
         day("", 3, "日目", ROOM, "ぼー", se=GONG),
         n("細菌がふえて\n口のにおいが強くなる", MOUTH, se="pi"),
+        n("寝ている間は唾液がへって\n細菌がふえやすい", ROOM, se="pi"),
         h("おどろく", "えっ……\n口がくさい!?", SINK, red=True, se=[CONAN]),
         day("", 1, "週間", SINK, "しょんぼり", se=BOOM),
         n("歯ぐきが赤くはれて\nみがくと血が出る", MOUTH, se="shock_piano"),
@@ -143,6 +146,7 @@ def cuts_all():
         chap("③ むし歯が進む", se=SLASH, bgm={"file": COCOA, "gain": -4, "fade": 0.6}),
         card("e03_mushiba", "むし歯の進み方（目安）", dur=4.6),
         n("最初は痛くないから\n気づきにくい", MOUTH, se="pi"),
+        n("甘い飲み物をちびちび飲むと\n口の中がずっと酸っぱい状態に", MOUTH, who="ポリポリ", se="kon"),
         day("", 6, "か月", ROOM, "ポリポリ", se=GONG),
         fx(h("さけぶ", "アイスが\nしみる!!", SINK, red=True, se=["freeze_kochiin", BOOM]), "mono"),
         fx(h("いたい", "夜中に\nズキズキ激痛!!", ROOM, red=True, se=["explosion_dokaan", "hit_dogo_maou"]), "lines"),
@@ -176,6 +180,8 @@ def cuts_all():
         # ---- ⑧ 今日からできること ----
         chap("⑥ 今日からできること", se=SLASH),
         n("寝る前の歯みがきは\nとくにていねいに", SINK, who="気づく", se=KIRA),
+        n("歯ブラシは\n1か月に1回とりかえる", SINK, who="考える", se="pikon"),
+        n("フッ素入りの歯みがき粉で\nむし歯を予防", SINK, who="よろこぶ", se=KIRA),
         n("歯と歯のすき間は\nフロスや歯間ブラシで", SINK, who="考える", se="pikon"),
         fx(h("よろこぶ", "今日から\nちゃんとみがく！", SINK, se=[UP, "cheer_applause"]), "lines"),
         n("「80歳で20本」\n自分の歯を残そう", SINK, who="よろこぶ", se=GONG),
@@ -215,6 +221,7 @@ def more(cuts):
 
 def cuts_full():
     cs = more(K.hype(L.apply_fx(cuts_all())))
+    LX.add(cs, NAR)   # 10/30 ユーザー指定「素材もっと使って」：まわりで反応する猫をふやす
     for c in cs:   # テンポ優先：猫の音に合わせて場面をのばさない・素材を最後まで流さない
         if not c.get("notice") and not c.get("card"):
             c["fixed"] = True

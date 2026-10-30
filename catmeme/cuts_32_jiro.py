@@ -21,10 +21,11 @@ import sys
 
 import cuts_04_leak as L
 import cuts_26_kuruma as K
+import long_extras as LX
 import render as R
 import wide_bars as B
 
-R.TEMPO = 1.22
+R.TEMPO = 0.95   # 10/30 ユーザー指定「テンポ良く・ぎゅっと」
 HERE = L.HERE
 L.BGS = [os.path.join(HERE, "backgrounds", "32_jiro")] + sorted(
     d for d in glob.glob(os.path.join(HERE, "backgrounds", "*")) if os.path.isdir(d))
@@ -163,6 +164,8 @@ def cuts_all():
         h("ワクワク", "ヤサイ\nマシマシで！", COUNTER, red=True, se=["air_horn", BOOM]),
         ss("トッピングを増やす\n「コール」の文化", COUNTER, se=HERO),
         ss("麺だけで\nふつうのラーメンの\n2倍以上あることも", BOWL, se=UP),
+        ss("一度に作る杯数は\n「ロット」と呼ばれる", COUNTER, se="pikon"),
+        ss("麺を下から引き出す\n「天地返し」", BOWL, se=["sword_shakiin"]),
         # ---- ② 1杯のカロリー ----
         chap("② 1杯でどれくらい？", se=SLASH),
         g("j1_kcal", "1杯で\n大人の1日分の\n半分以上!?", who="N", red=True, dur=4.0),
@@ -173,6 +176,7 @@ def cuts_all():
         day(("", 1, "日目"), COUNTER, "食べる"),
         fx(h("がっつく", "うまーい!!\n最高!!", BOWL, red=True, se=[CYM, "cheer_applause"]), "lines"),
         h("のむ", "スープも\n全部いっちゃう！", BOWL, se="drink_gulp_gokugoku_thirsty_chug"),
+        nn("次の日も\nにんにくの\nにおいが……", ROOM, se="question_hatena_maou"),
         ss("食べたあとは\nのどがかわいて\n眠くなりやすい", ROOM, se="pi"),
         h("ねむい", "おなかいっぱいで\n動けない……", ROOM, se="deflate_hyororo"),
         # ---- ④ 1週間 ----
@@ -186,6 +190,7 @@ def cuts_all():
         day(("", 1, "か月"), COUNTER, "ポリポリ", se=GONG),
         fx(ss("計算上は\n体重 約+3kg", SCALE, se=["drumroll", {"f": BOOM, "at": 0.9}], dur=2.2), slot=("体重 +", 3, "kg")),
         h("いじける", "ズボンが\nきつい……", ROOM, se="gugi"),
+        ss("食べる量がふえて\n胃が大きくなる\nような気がしてくる", ROOM, se="pi"),
         nn("でも野菜は\nたっぷり食べてるよね？", BOWL, se="question_hatena_maou"),
         ss("もやしとキャベツと\n豚のたんぱく質は\nたしかにいい所", BOWL, se=KIRA),
         ss("ただ脂と塩分と\n麺の量が\nそれ以上に多い", BOWL, se="shock_piano"),
@@ -214,6 +219,7 @@ def cuts_all():
         ss("スープは\n飲み干さない", BOWL, se=KIRA),
         ss("麺は「少なめ」で\nたのむこともできる", COUNTER, se="pikon"),
         ss("次の食事は\n軽めにして\n野菜と水分を", ROOM, se="pi"),
+        ss("食べきれる量を\nたのむのも\nお店へのマナー", COUNTER, se=KIRA),
         fx(h("走る", "食べたぶん\n歩く！走る！", PARK, se=[DASH, UP]), "lines"),
         h("気づく", "毎日じゃなくて\nごほうびの日に\nしよう", COUNTER, se=HERO),
         # ---- まとめ ----
@@ -253,6 +259,7 @@ def more(cuts):
 
 def cuts_full():
     cs = more(K.hype(L.apply_fx(L.allocate(cuts_all(), max_use=7, gap=1))))
+    LX.add(cs, NAR)   # 10/30 ユーザー指定「素材もっと使って」：まわりで反応する猫をふやす
     for c in cs:   # テンポ優先：猫の音に合わせて場面をのばさない・素材を最後まで流さない
         if not c.get("notice") and not c.get("card") and not c.get("chart"):
             c["fixed"] = True

@@ -25,9 +25,10 @@ import sys
 
 import cuts_04_leak as L
 import cuts_26_kuruma as K
+import long_extras as LX
 import render as R
 
-R.TEMPO = 1.07
+R.TEMPO = 0.86   # 10/30 ユーザー指定「テンポ良く・ぎゅっと」
 HERE = L.HERE
 L.BGS = [os.path.join(HERE, "backgrounds", "31_escon")] + sorted(
     d for d in glob.glob(os.path.join(HERE, "backgrounds", "*")) if os.path.isdir(d))
@@ -169,6 +170,7 @@ def cuts_all():
         ss("2004年に\n北海道の札幌へ\n引っ越してきた", DOME, se=UP),
         o("日本ハム", "決意", "北海道の球団として\nがんばります！", DOME, se=HERO),
         ss("本拠地は\n札幌ドーム", DOME, who=[("札幌ドーム", "余裕")], se=KIRA),
+        ss("2002年には\nサッカーW杯の\n会場にもなった", DOME, who=[("札幌ドーム", "余裕")], se=["cheer_applause"]),
         o("札幌ドーム", "余裕", "札幌市が建てた\n大きなドームです", DOME_IN, se=CYM),
         nn("じゃあ日本ハムは\n借りて使ってたの？", DOME_IN, se="question_hatena_maou"),
         ss("いわば家賃をはらう\n「借りぐらし」", DOME_IN, se="kon"),
@@ -182,6 +184,7 @@ def cuts_all():
         o("札幌ドーム", "計算", "看板とお弁当の\nお金は\nこちらに", DOME_IN, se="price_display"),
         fx(nn("え……\nお客さんを呼んでも\n球団はもうからない？", DOME_IN, se=POON), "mono"),
         ss("サッカーと共用だから\n野球のときは人工芝", DOME_IN, se="pi"),
+        ss("サッカーの天然芝は\n外から出し入れする\nめずらしいしくみ", DOME_IN, who=[("札幌ドーム", "計算")], se=HERO),
         ss("球団の思いどおりに\n作りかえるのも\nむずかしかった", DOME_IN, se="kon"),
         # ---- ③ 交渉 ----
         chap("③ 話し合いは平行線", se=SLASH),
@@ -211,9 +214,11 @@ def cuts_all():
         # ---- ⑥ エスコン誕生 ----
         chap("⑥ エスコン誕生", se=SLASH, bgm={"file": NORA, "gain": -4, "fade": 0.6}),
         ss("2023年3月\nエスコンフィールド\nHOKKAIDO 開業", ESCON, se=["fanfare_pararappara", BOOM]),
+        ss("開幕戦は\n2023年3月30日", ESCON, se=["cheer_applause", KIRA]),
         card("e02_compare", "ドームとエスコンのちがい", dur=4.2),
         fx(sp("屋根は\n開け閉めできる", "R", side=("閉じたまま", "開け閉め"), se=["sword_shakiin"]), "lines"),
         sp("芝は\n本物の天然芝", "R", side=("人工芝", "天然芝"), se=KIRA),
+        ss("天然芝を育てるため\n屋根とガラスの壁から\n日の光を入れる", PARK, se=KIRA),
         o("日本ハム", "よろこぶ", "外野の向こうには\n温泉とサウナ!!", ONSEN, red=True, se=["explosion_bokaan", "shine_kira_01"]),
         boom("球場で\n温泉!?", ONSEN, se=["explosion_dokaan", "cymbal_maou"]),
         ss("ホテルに\nビール工房のレストラン\n子どもの遊び場まで", PARK, se=HERO),
@@ -224,6 +229,7 @@ def cuts_all():
         fx(nn("え……\n600億の球場で\nサイズちがい？", PARK, se="tv_professional_poon_remix_a"), "crack"),
         ss("話し合いのうえ\nそのまま開業して\n話題になった", PARK, se="kon"),
         ss("駅から歩いて\n約20分と少し遠い", ESCON, se="pi"),
+        ss("試合の日は\nシャトルバスも走る", ESCON, se=DASH),
         ss("近くに新しい駅を\nつくる計画もある", ESCON, se=DASH),
         # ---- ⑧ 残された札幌ドーム ----
         chap("⑧ 残された札幌ドーム", se=SLASH, bgm={"file": COCOA, "gain": -4, "fade": 0.6}),
@@ -274,6 +280,7 @@ def more(cuts):
 
 def cuts_full():
     cs = more(K.hype(L.apply_fx(L.allocate(cuts_all(), max_use=7, gap=1))))
+    LX.add(cs, NAR)   # 10/30 ユーザー指定「素材もっと使って」：まわりで反応する猫をふやす
     for c in cs:   # テンポ優先：猫の音に合わせて場面をのばさない・素材を最後まで流さない（大谷の動画と同じ）
         if not c.get("notice") and not c.get("card"):
             c["fixed"] = True

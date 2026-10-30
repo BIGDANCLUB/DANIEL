@@ -764,10 +764,6 @@ class CutRenderer:
         for (im, ia), x, y in self.labels:
             over(out, im, ia, x, y)
         over_t(out, self.ov_t, k)
-        self._pop(out, self.txt, t)
-        if self.split_heads:
-            for (im, ia), cx in zip(self.split_heads, (W // 4, 3 * W // 4)):
-                over(out, im, ia, int(cx - im.shape[1] / 2), self.split_y)
         if self.slot:   # 金額がスロットのように回って止まる（10/29）
             pre, val, post = self.slot
             v = val if t > 0.9 else int(np.random.default_rng(int(t * FPS)).integers(10, 99))
@@ -824,6 +820,11 @@ class CutRenderer:
             big = cv2.resize(out, (bw, bh), interpolation=cv2.INTER_LINEAR)
             ox, oy = (bw - W) // 2, (bh - H) // 2
             out = big[oy:oy + H, ox:ox + W].copy()
+        # 上の字幕と左右の見出しは、寄る・揺れるの動きのあとに重ねる（画面の外に見切れないように・10/30 ユーザー指摘）
+        self._pop(out, self.txt, t)
+        if self.split_heads:
+            for (im, ia), cx in zip(self.split_heads, (W // 4, 3 * W // 4)):
+                over(out, im, ia, int(cx - im.shape[1] / 2), self.split_y)
         if "flash" in self.fx and t < 0.12:   # 頭で白く光る
             a_ = 0.65 * (1 - t / 0.12)
             out = out * (1 - a_) + a_

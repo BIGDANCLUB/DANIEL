@@ -204,12 +204,10 @@ def more(cuts):
         names = [x if isinstance(x, str) else x.get("f", "") for x in (c.get("se") or [])]
         if any("conan" in n_ or "poon" in n_ for n_ in names):   # コナン・ポーンの場面はその音だけ（ルールどおり）
             continue
-        d = R.cut_dur(c)
         lst = list(c.get("se") or [])
-        if c.get("side_text"):   # 左右の金額が出るところで、チャリン・カーンなど
-            lst.append({"f": NUM_SE[i % len(NUM_SE)], "gain": -3, "at": 0.25})
-        if d > 1.6:   # 場面のなかほどにもう1つ（ゲーム・アニメの音）
-            lst.append({"f": MID_SE[i % len(MID_SE)], "gain": -6, "at": round(d * 0.55, 2)})
+        # 10/30 ユーザー指摘「何も動きがないところにSEを入れない」：なかほどの音はやめ、金額が出る瞬間（場面の頭）だけに
+        if c.get("side_text"):   # 左右の金額が出る瞬間に、チャリン・カーンなど
+            lst.append({"f": NUM_SE[i % len(NUM_SE)], "gain": -3, "at": 0.03})
         if c.get("say_style") == "red":   # 赤字の驚きはドンと重ねる
             lst.append({"f": "explosion_dokaan", "gain": -6, "at": 0.05})
         c["se"] = lst

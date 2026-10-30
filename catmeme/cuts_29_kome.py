@@ -160,8 +160,49 @@ def cuts_all():
     ]
 
 
+# ---- 10/30 ユーザー指定「エフェクト多く・1場面のSEをもっと増やして、SE洪水くらいに」 ----
+FLOOD = ["game_coin_get_money_gain_happy", "anime_dbz_punch", "game_mario_jump", "game_dq_attack_enemy", "game_aceattorney_ping",
+         "anime_shinchan_genkotsu", "game_ff_cursor", "anime_dbz_teleport", "kaan", "tsukkomi_bashi", "boing_02", "puni",
+         "game_smash_homerun_bat", "game_mario_jump_bao", "pa", "pikon", "spo", "frying_pan_kaan", "game_dq_miss", "eat_paku"]
+EXTRA_FX = {7: "crack", 20: "crack", 25: "money", 29: "money", 38: "crack", 49: "money"}   # 1人1袋・猛暑・観光客・買い集め・新米も高い・ふるさと納税
+
+
+def flood(cuts):
+    """どの場面も：頭・字幕が出るところ・なかほど・終わりぎわに、ゲーム・アニメの音を4〜6個。エフェクトも1場面に3〜4個。
+    コナン・ポーンの場面はルールどおりその音だけ。説明画面（表・まとめ）は読みやすさ優先。"""
+    n = 0
+    for i, c in enumerate(cuts):
+        if c.get("notice") or c.get("chapter") or c.get("card") or c.get("inset"):
+            continue
+        names = [x if isinstance(x, str) else x.get("f", "") for x in (c.get("se") or [])]
+        if any("conan" in n_ or "poon" in n_ for n_ in names):
+            continue
+        d = R.cut_dur(c)
+        lst = list(c.get("se") or [])
+        ats = [0.12, 0.3] + [round(d * r, 2) for r in (0.45, 0.65, 0.85) if d * r > 0.5]
+        if c.get("chart"):
+            ats = [round(d * r, 2) for r in (0.75, 0.9)]   # グラフは落ちる音のあと、結果のところに重ねる
+        for at in ats:
+            lst.append({"f": FLOOD[n % len(FLOOD)], "gain": -7 if at > 0.3 else -5, "at": at})
+            n += 1
+        if c.get("say_style") == "red":
+            lst += [{"f": "explosion_dokaan", "gain": -5, "at": 0.05}, {"f": "kaan", "gain": -5, "at": 0.4}]
+        c["se"] = lst
+        fx_ = list(c.get("fx", [])) + ["punch", "border"]
+        if i % 2 == 0:
+            fx_.append("ring")
+        if i % 3 == 1 and not c.get("chart"):
+            fx_ += ["flash", "zoom"]
+        if i % 4 == 3 and not c.get("chart"):
+            fx_ += ["lines", "shake"]
+        if i in EXTRA_FX and not c.get("chart") and not set(fx_) & {"mono", "swirl", "money", "crack"}:
+            fx_.append(EXTRA_FX[i])
+        c["fx"] = list(dict.fromkeys(fx_))
+    return cuts
+
+
 def cuts_full():
-    return K.hype(L.apply_fx(L.allocate(cuts_all(), max_use=7, gap=1)))
+    return flood(K.hype(L.apply_fx(L.allocate(cuts_all(), max_use=7, gap=1))))
 
 
 if __name__ == "__main__":

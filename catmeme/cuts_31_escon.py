@@ -31,7 +31,7 @@ import render as R
 R.WHITE_DIP = 0.08   # 10/30 ユーザー指定「スピード感ある場面転換」：白飛びを短く
 R.TEMPO = 0.86   # 10/30 ユーザー指定「テンポ良く・ぎゅっと」
 HERE = L.HERE
-L.BGS = [os.path.join(HERE, "backgrounds", "31_escon")] + sorted(
+L.BGS = [os.path.join(HERE, "backgrounds", "31_escon_photos"), os.path.join(HERE, "backgrounds", "31_escon")] + sorted(   # 10/30 ユーザー提供の写真（権利表記あり・リポジトリには入れない）
     d for d in glob.glob(os.path.join(HERE, "backgrounds", "*")) if os.path.isdir(d))
 L.PT = os.path.join(HERE, "parts", "31_escon")
 pt, cat, chap, fx, CONAN, POON = L.pt, L.cat, L.chap, K.fx, K.CONAN, K.POON

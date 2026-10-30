@@ -26,7 +26,7 @@ def cuts():
         ("月45時間", "scream_phone_orange_cat", "ニュースに\nなる", "think_chin_paw_orange_cat", "残業の上限に\nとどく"),
         ("月60時間", "fight_cat_fight", "会社じゅうが\n大さわぎ", "stare_lying_tabby_cat", "栄養ドリンクが\n手ばなせない"),
         ("月80時間", "stare_tabby_wide_eyes_cat", "言葉を\n失う", "sad_looking_away_tabby", "体が限界\n休むサイン"),
-        ("月100時間", "despair_dramatic_kitten", "信じられない", "realize_wet_cat_stare", "みんなも\nむりせず休もう"),
+        ("月100時間", None, "（既にボイコット済み）", "dance_tabby_standing_cat", "ヘブン状態！"),   # 世界は猫なし・日本はスターのBGMで踊る猫（10/30 ユーザー指定）
     ]
     for lv, wcat, wcap, jcat, jcap in rows:
         tag_se = {"月45時間": "explosion_chudoon", "月60時間": "explosion_chudoon", "月80時間": "game_mgs_alert", "月100時間": "game_mgs_alert"}
@@ -35,6 +35,9 @@ def cuts():
         out.append(Wd.split(ST, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K))
     for c in out:
         c.update(blur=9, band_y=0, tag_y=460)
+        for q in c["cats"]:   # スターのBGMで踊る猫は曲も鳴らす（値上げのショートと同じ）
+            if q["a"] == "dance_tabby_standing_cat" and not q.get("mute"):
+                q["sound"] = True
     return out
 
 

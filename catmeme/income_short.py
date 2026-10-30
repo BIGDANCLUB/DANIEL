@@ -162,6 +162,9 @@ def talk(bg, tag, say, left, right, who="R", dur=2.5, label="友達", se=None, l
 _BBOX = {}
 
 
+WIDE_MOVES = {"dance_tabby_standing_cat"}   # 10/30 踊る猫の腕が切れていたため
+
+
 def clip_bbox(name):
     """素材の中で猫が見えている範囲（数枚のフレームの中央値）。最初の1枚だけで決めると、ノイズや動きで猫が小さくなるため。"""
     if name not in _BBOX:
@@ -180,6 +183,9 @@ def clip_bbox(name):
             cl.cap.release()
         if boxes:
             b = np.median(np.array(boxes), 0).astype(int)
+            if name in WIDE_MOVES:   # 大きく動く猫は、どのフレームでも手足が切れないよう全部を含む範囲にする
+                bx = np.array(boxes)
+                b = np.array([bx[:, 0].min(), bx[:, 1].max(), bx[:, 2].min(), bx[:, 3].max()]).astype(int)
             _BBOX[name] = (b[0], b[1] + 1, b[2], b[3] + 1)
         else:
             _BBOX[name] = (0, fr.shape[0], 0, fr.shape[1])

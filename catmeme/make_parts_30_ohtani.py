@@ -11,7 +11,7 @@ import parts as P
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "parts", "30_ohtani")
 PREV = os.path.join(OUT, "preview")
-TODAY = "※夢への道はひとつじゃない"   # 今日の一言（仮・ユーザーの指定があれば差しかえる）
+TODAY = "※デコピンの方が自分より良い暮らししています"   # 今日の一言（10/30 ユーザー指定）
 
 ITEMS = {
     "e01_title": P.message(["メジャー直行宣言から", "日本ハム入団まで"], sub="2012年　大谷翔平と「強行指名」の舞台裏", size=92),

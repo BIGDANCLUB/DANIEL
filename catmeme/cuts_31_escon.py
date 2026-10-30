@@ -3,7 +3,7 @@
 python3 catmeme/cuts_31_escon.py → out/31_escon_full.mp4
 
 10/30 ユーザー指定：8分ぶんの原稿量を、テンポよく3分ほどに凝縮。SE・演出は大盛り。
-- いつもの2匹（ニュース猫・博識な猫）が進める。球団・ドーム・市は名札つきの猫（実在の人は出さない・名前も出さない）
+- 10/30 ユーザー指定：ニュース猫・博識な猫は出さない。ナレーションと登場する猫（道民ファンは架空）だけで進める。球団・ドーム・市は名札つきの猫（実在の人は出さない・名前も出さない）
 - 演出・音のルールは車の動画と同じ（コナン＝「!?」・ポーン＝「え…」、連打は2回まで）
 
 事実（報道・球団や市の発表より。金額はざっくりの目安）：
@@ -57,7 +57,46 @@ DOME, DOME_IN, CITY, LAND, BUILD, ESCON, PARK, ONSEN, MONEY, BOARD = (
 K.STANDIN.update({DOME: "bg63_hokkaido_field", DOME_IN: "bg43_award_stage", CITY: "bg05_meeting", LAND: "bg63_hokkaido_field",
                   BUILD: "bg26_rural_road", ESCON: "ph06_kumamoto_fields", PARK: "bg63_hokkaido_field", ONSEN: "bg100_lounge_night"})
 bg = K.bg
-m, nn, ss, boom, qq = K.m, K.nn, K.ss, K.boom, K.qq
+# 10/30 ユーザー指定：ニュース猫・博識な猫は出さない。ナレーション（下の大きな字）と登場する猫だけで進める（大谷の動画と同じ）
+NAR = (60, 830, 1860, 1070)
+FAN = "道民ファン"   # 架空の北海道のファン（実在の人ではない）
+L.ROLE[FAN] = (200, 30, 30)
+FAN_LOOK = ["stare_big_eyes_tabby_kitten", "surprise_big_pupils_cat", "huh_huh_cat", "excited_hodomoe_city_cat", "glare_disgusted_cat",
+            "stare_tabby_wide_eyes_cat"]
+BACK = [("日本ハム", "考える"), ("札幌ドーム", "余裕"), ("日本ハム", "計算"), ("北広島市", "やる気"), ("札幌市", "考える"), ("日本ハム", "決意")]
+_k = {"fan": 0, "back": 0}
+
+
+def n(text, b, who=None, **kw):
+    """ナレーション：画面の下に白い大きな字。後ろに登場する猫を小さめに（声は出さない）。"""
+    if who is None:
+        who = [BACK[_k["back"] % len(BACK)]]
+        _k["back"] += 1
+    xs = {1: (960,), 2: (560, 1360)}.get(len(who), ())
+    cats = [cat(ORG[w][1][lk], w, x, h=560, bottom=790, label_size=50, mute=True, float=True) for (w, lk), x in zip(who, xs)]
+    return dict(bg=bg(b), cats=cats, sub=text, sub_box=NAR, sub_size=110, keep_overlap=True, se=kw.pop("se", "page_turn_01"), **kw)
+
+
+def fan(say, b, red=False, **kw):
+    """道民ファンの猫がおどろく・つっこむ（まん中に大きく1匹）。"""
+    a = FAN_LOOK[_k["fan"] % len(FAN_LOOK)]
+    _k["fan"] += 1
+    c = dict(bg=bg(b), cats=[cat(a, FAN, 960, h=780, bottom=1075, label_size=60)], say=say, text_top=True, keep_overlap=True, **kw)
+    if red:
+        c.update(say_style="red", fx=["shake", "lines"])
+    return c
+
+
+def ss(say, b, **kw):
+    return n(say, b, **kw)
+
+
+def nn(say, b, red=False, **kw):
+    return fan(say, b, red=red, **kw)
+
+
+def boom(say, b, se=None, **kw):
+    return fan(say, b, red=True, se=se or ["explosion_chudoon"], **kw)
 
 # 10/30 ユーザー指定「SE・演出は大盛り」：場面の頭の派手な音（どれも配布サイトの音）
 BOOM, GONG, SLASH, DRUM, CYM, DASH, KIRA, HERO, UP = ("explosion_dokaan", "gong_dora_jaan", "sword_shakiin", "taiko_dodon_01",
@@ -83,8 +122,8 @@ def vs(lw, ll, rw, rl, say, b, who="L", **kw):
 def sp(say, who="L", side=None, red=False, **kw):
     """画面半分：左＝札幌ドーム・右＝エスコン。しゃべる側の上に字幕。side は左右の短い言葉。"""
     big, small = (700, 600) if not side else (600, 520)
-    cats = [cat("@react", "ニュース猫", 480, h=big if who == "L" else small, bottom=1075, label_size=54, mute=who != "L"),
-            cat("@calm", "博識な猫", 1440, h=big if who == "R" else small, bottom=1075, label_size=54, mute=who != "R")]
+    cats = [cat(ORG["札幌ドーム"][1]["余裕"], "札幌ドーム", 480, h=big if who == "L" else small, bottom=1075, label_size=54, mute=who != "L"),
+            cat(ORG["日本ハム"][1]["よろこぶ"], "日本ハム", 1440, h=big if who == "R" else small, bottom=1075, label_size=54, mute=who != "R")]
     out = dict(bg=bg(DOME_IN), bg2=bg(PARK), split=("札幌ドーム", "エスコン"), split_cols=((90, 90, 100), (0, 60, 140)), split_y=232,
                split_tint=0.1, split_size=58, cats=cats, say=say,
                text_box=(30, 10, 930, 225) if who == "L" else (990, 10, 1890, 225), say_size=100, keep_overlap=True,
@@ -95,7 +134,7 @@ def sp(say, who="L", side=None, red=False, **kw):
 
 
 def card(c, sub, **kw):
-    return L.dia(c, sub, BOARD, right=("@calm", "博識な猫"), dur=kw.pop("dur", 4.4), se=kw.pop("se", "card_flip"), **kw)
+    return L.dia(c, sub, BOARD, dur=kw.pop("dur", 4.4), se=kw.pop("se", "card_flip"), **kw)
 
 
 def cuts_all():
@@ -123,7 +162,7 @@ def cuts_all():
         ss("本拠地は\n札幌ドーム", DOME, se=KIRA),
         o("札幌ドーム", "余裕", "札幌市が建てた\n大きなドームです", DOME_IN, se=CYM),
         nn("じゃあ日本ハムは\n借りて使ってたの？", DOME_IN, se="question_hatena_maou"),
-        ss("そう\nいわば家賃をはらう\n「借りぐらし」", DOME_IN, se="kon"),
+        ss("いわば家賃をはらう\n「借りぐらし」", DOME_IN, se="kon"),
         ss("人気も出て\n2006年と2016年には\n日本一にも", DOME_IN, se=["cheer_applause", BOOM]),
         # ---- ② 高すぎる家賃 ----
         chap("② 高すぎる家賃", se=SLASH, bgm={"file": COCOA, "gain": -4, "fade": 0.6}),

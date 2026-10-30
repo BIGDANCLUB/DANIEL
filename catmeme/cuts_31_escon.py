@@ -63,8 +63,17 @@ FAN = "道民ファン"   # 架空の北海道のファン（実在の人では�
 L.ROLE[FAN] = (200, 30, 30)
 FAN_LOOK = ["stare_big_eyes_tabby_kitten", "surprise_big_pupils_cat", "huh_huh_cat", "excited_hodomoe_city_cat", "glare_disgusted_cat",
             "stare_tabby_wide_eyes_cat"]
-BACK = [("日本ハム", "考える"), ("札幌ドーム", "余裕"), ("日本ハム", "計算"), ("北広島市", "やる気"), ("札幌市", "考える"), ("日本ハム", "決意")]
+BACK = [("日本ハム", "考える"), ("日本ハム", "話す"), ("日本ハム", "計算"), ("日本ハム", "決意")]   # 後ろの猫は話の主役の日本ハム（ほかの組織は話に出てくる所だけ）
 _k = {"fan": 0, "back": 0}
+
+
+def two_lines(text):
+    """10/30 ユーザー指定「字幕を大きく」：ナレーションは2行まで。3行以上は、長さがそろう所で2行にまとめる。"""
+    ls = text.split("\n")
+    if len(ls) <= 2:
+        return text
+    k = min(range(1, len(ls)), key=lambda i: abs(len("".join(ls[:i])) - len("".join(ls[i:]))))
+    return "　".join(ls[:k]) + "\n" + "　".join(ls[k:])
 
 
 def n(text, b, who=None, **kw):
@@ -74,7 +83,7 @@ def n(text, b, who=None, **kw):
         _k["back"] += 1
     xs = {1: (960,), 2: (560, 1360)}.get(len(who), ())
     cats = [cat(ORG[w][1][lk], w, x, h=560, bottom=790, label_size=50, mute=True, float=True) for (w, lk), x in zip(who, xs)]
-    return dict(bg=bg(b), cats=cats, sub=text, sub_box=NAR, sub_size=110, keep_overlap=True, se=kw.pop("se", "page_turn_01"), **kw)
+    return dict(bg=bg(b), cats=cats, sub=two_lines(text), sub_box=NAR, sub_size=110, keep_overlap=True, se=kw.pop("se", "page_turn_01"), **kw)
 
 
 def fan(say, b, red=False, **kw):
@@ -159,7 +168,7 @@ def cuts_all():
         ss("日本ハムは\nもともと東京の球団", DOME, se=DASH),
         ss("2004年に\n北海道の札幌へ\n引っ越してきた", DOME, se=UP),
         o("日本ハム", "決意", "北海道の球団として\nがんばります！", DOME, se=HERO),
-        ss("本拠地は\n札幌ドーム", DOME, se=KIRA),
+        ss("本拠地は\n札幌ドーム", DOME, who=[("札幌ドーム", "余裕")], se=KIRA),
         o("札幌ドーム", "余裕", "札幌市が建てた\n大きなドームです", DOME_IN, se=CYM),
         nn("じゃあ日本ハムは\n借りて使ってたの？", DOME_IN, se="question_hatena_maou"),
         ss("いわば家賃をはらう\n「借りぐらし」", DOME_IN, se="kon"),
@@ -169,7 +178,7 @@ def cuts_all():
         o("日本ハム", "計算", "使用料に\n警備に清掃……", MONEY, se="price_display"),
         fx(o("日本ハム", "こまる", "ぜんぶで\n年20億円以上!?", MONEY, red=True, se=["explosion_dokaan"]), "money"),
         nn("家賃20億って\nどういう世界!?", MONEY, red=True, se=["anime_conan_hirameki_remix_a"]),
-        ss("しかも球場の看板や\n飲食の売上は\nおもにドーム側の収入", DOME_IN, se=DRUM),
+        ss("しかも球場の看板や\n飲食の売上は\nおもにドーム側の収入", DOME_IN, who=[("札幌ドーム", "計算")], se=DRUM),
         o("札幌ドーム", "計算", "看板とお弁当の\nお金は\nこちらに", DOME_IN, se="price_display"),
         fx(nn("え……\nお客さんを呼んでも\n球団はもうからない？", DOME_IN, se=POON), "mono"),
         ss("サッカーと共用だから\n野球のときは人工芝", DOME_IN, se="pi"),
@@ -184,11 +193,11 @@ def cuts_all():
         ss("2016年ごろ\n新しい球場の計画が\n表に出た", CITY, se=GONG),
         # ---- ④ 引っ越し先 ----
         chap("④ 引っ越し先はどこ？", se=SLASH, bgm={"file": MIRAI, "gain": -4, "fade": 0.6}),
-        ss("候補は\n札幌市の中と\nとなりの北広島市", LAND, se=DRUM),
+        ss("候補は\n札幌市の中と\nとなりの北広島市", LAND, who=[("札幌市", "考える"), ("北広島市", "やる気")], se=DRUM),
         o("北広島市", "手をあげる", "ぜひうちに\n来てください！", LAND, se=UP),
         nn("北広島市って\nどんな所？", LAND, se="question_hatena_maou"),
-        ss("札幌のとなりの\n人口5万人ほどの町\n空港にも近い", LAND, se="pi"),
-        fx(ss("2018年\n北広島市に決定", LAND, se=["drumroll", {"f": GONG, "at": 0.9}], dur=2.4), "mono"),
+        ss("札幌のとなりの\n人口5万人ほどの町\n空港にも近い", LAND, who=[("北広島市", "やる気")], se="pi"),
+        fx(ss("2018年\n北広島市に決定", LAND, who=[("北広島市", "よろこぶ")], se=["drumroll", {"f": GONG, "at": 0.9}], dur=2.4), "mono"),
         o("北広島市", "おどる", "やったー！", LAND, se=["cheer_applause", "fanfare_pararappara"]),
         o("札幌市", "見送る", "……\n行ってしまうのか", CITY, se="chin_bell_failure_sad_ending"),
         # ---- ⑤ 600億円の球場 ----
@@ -219,8 +228,8 @@ def cuts_all():
         # ---- ⑧ 残された札幌ドーム ----
         chap("⑧ 残された札幌ドーム", se=SLASH, bgm={"file": COCOA, "gain": -4, "fade": 0.6}),
         o("札幌ドーム", "あせる", "いちばんの\nお客さんが\nいなくなった……", DOME, red=True, se=["explosion_dokaan", "glass_break_01"]),
-        ss("イベントがへって\n赤字になったと\n報道された", DOME, se="shock_piano"),
-        fx(ss("2024年からは\n名前を売る\n命名権も", DOME, se=GONG), "swirl"),
+        ss("イベントがへって\n赤字になったと\n報道された", DOME, who=[("札幌ドーム", "さみしい")], se="shock_piano"),
+        fx(ss("2024年からは\n名前を売る\n命名権も", DOME, who=[("札幌ドーム", "あせる")], se=GONG), "swirl"),
         o("札幌ドーム", "さみしい", "コンサートや\nサッカーで\nがんばります", DOME_IN, se="deflate_hyororo"),
         # ---- まとめ ----
         chap("まとめ", se=SLASH, bgm={"file": MIRAI, "gain": -4, "fade": 0.6}),

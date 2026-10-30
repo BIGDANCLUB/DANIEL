@@ -67,12 +67,21 @@ BACK = ["考える", "食べる", "ポリポリ", "ぼー", "気づく", "ねむ
 _k = {"f": 0, "b": 0}
 
 
+def two_lines(text):
+    """10/30 ユーザー指定「字幕を大きく」：ナレーションは2行まで。3行以上は、長さがそろう所で2行にまとめる。"""
+    ls = text.split("\n")
+    if len(ls) <= 2:
+        return text
+    k = min(range(1, len(ls)), key=lambda i: abs(len("".join(ls[:i])) - len("".join(ls[i:]))))
+    return "　".join(ls[:k]) + "\n" + "　".join(ls[k:])
+
+
 def n(text, b, who=None, **kw):
     """ナレーション：画面の下に白い大きな字。後ろにチャレンジ猫を小さめに（声は出さない）。"""
     lk = who or BACK[_k["b"] % len(BACK)]
     _k["b"] += 1
     cats = [cat(LOOK[lk], HERO_NAME, 960, h=560, bottom=790, label_size=50, mute=True, float=True)]
-    return dict(bg=bg(b), cats=cats, sub=text, sub_box=NAR, sub_size=110, keep_overlap=True, se=kw.pop("se", "page_turn_01"), **kw)
+    return dict(bg=bg(b), cats=cats, sub=two_lines(text), sub_box=NAR, sub_size=110, keep_overlap=True, se=kw.pop("se", "page_turn_01"), **kw)
 
 
 def ss(say, b, **kw):

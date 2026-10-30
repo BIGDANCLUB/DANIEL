@@ -29,7 +29,7 @@ def cuts():
     ]
     for lv, wcat, wcap, jcat, jcap in rows:
         # 札が出た瞬間の音（10/29 ユーザー指定）：3割・5割はチュドーン、2倍はパワーアップ、2割は金額表示（10/30：版権の心配がない音に差し替え）
-        tag_se = {"2割": "price_display", "3割": "explosion_chudoon", "5割": "explosion_chudoon", "2倍": "power_up"}
+        tag_se = {"2割": "explosion_chudoon", "3割": "explosion_chudoon", "5割": "explosion_chudoon", "2倍": "explosion_chudoon"}   # 差し替えた所はチュドーン（10/30）
         out.append(Wd.split(ST, lv, dur=1.2 * K, se=[tag_se.get(lv, "pi")]))
         out.append(Wd.split(ST, lv, right=wcat, cap=wcap, cap_side="R", sound="R", dur=2.3 * K, se="don_hit"))
         out.append(Wd.split(ST, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K))

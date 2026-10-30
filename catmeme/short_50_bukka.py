@@ -39,13 +39,13 @@ def cuts():
         bar_o = ("bar:%d:yellow:%s" % (ho, old), 275, 1290 - ho / 2, 300)   # 棒の中に値段
         bar_n = ("bar:%d:cred:%s" % (hn, new), 805, 1290 - hn / 2, 300)
         times = 1 / r
-        out.append(Wd.split(ST, item, dur=1.2 * K, se=["power_up"] if last else ["pi"]))
+        out.append(Wd.split(ST, item, dur=1.2 * K, se=["explosion_chudoon"] if last else ["pi"]))
         c = Wd.split(ST, item, left=ocat, cap="2000年ごろ", cap_side="L", sound="L", dur=2.3 * K,
-                     se=["price_display"])
+                     se=["explosion_chudoon"])
         c["props"] = [bar_o]
         out.append(c)
         c = Wd.split(ST, item, left=ocat, right=ncat, cap="今は\n約%.1f倍" % times, cap_side="R", sound="R", dur=3.0 * K,
-                     se=["shock_piano" if last else "explosion_chudoon"])
+                     se=["explosion_chudoon"])
         c["props"] = [bar_o, bar_n]
         out.append(c)
     for c in out:

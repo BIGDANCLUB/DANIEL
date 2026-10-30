@@ -29,7 +29,7 @@ def cuts():
         ("月100時間", None, "（既にボイコット済み）", "dance_filmed_by_gray_cat", "ヘブン状態！"),   # 世界は猫なし・日本は踊る猫をスマホで撮る猫（10/30：スターのBGMは流さない）
     ]
     for lv, wcat, wcap, jcat, jcap in rows:
-        tag_se = {"月45時間": "explosion_chudoon", "月60時間": "explosion_chudoon", "月80時間": "pc_warning", "月100時間": "pc_warning"}   # 10/30：版権の心配がない警告音に
+        tag_se = {"月45時間": "explosion_chudoon", "月60時間": "explosion_chudoon", "月80時間": "explosion_chudoon", "月100時間": "explosion_chudoon"}   # 差し替えた所はチュドーン（10/30）
         out.append(Wd.split(ST, lv, dur=1.2 * K, se=[tag_se.get(lv, "pi")]))
         out.append(Wd.split(ST, lv, right=wcat, cap=wcap, cap_side="R", sound="R", dur=2.3 * K, se="don_hit"))
         out.append(Wd.split(ST, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K))

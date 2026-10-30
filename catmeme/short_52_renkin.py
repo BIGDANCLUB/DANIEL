@@ -14,7 +14,7 @@ cs = [
     s(OFF, "7連勤目", "あれ\n*土日*ってなんだっけ", "sleepy_old_memories_cat", se="question_mark_pop_confused_huh"),
     s(OFF, "10連勤目", "コーヒー\n*5杯目*", "blank_black_cat_zoning_out", se="drink_gulp_gokugoku_thirsty_chug"),
     s(NIGHT, "14連勤目", "もう\n*限界*……", "despair_dramatic_kitten", se="chin_bell_failure_sad_ending", dark=0.3),
-    s(OFF, "30連勤目", "なんか\n*楽しくなってきた!!*", "dance_filmed_by_gray_cat", lines=True, se="power_up"),
+    s(OFF, "30連勤目", "なんか\n*楽しくなってきた!!*", "dance_filmed_by_gray_cat", lines=True, se="explosion_chudoon"),
     s(OFF, "30連勤目", "コピー機に\n*話しかける*", "spin_spinning_cat", se="boing_02"),
     s(OFF, "60連勤目", "会議中に\n*踊りだす*", "dance_edm_cat", lines=True, se="air_horn"),
     s(OFF, "60連勤目", "上司に\n*ハイタッチ*", "happy_hamster_open_arms", se="tsukkomi_bashi"),

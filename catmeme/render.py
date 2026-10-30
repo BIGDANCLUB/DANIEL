@@ -957,7 +957,7 @@ def scene_kind(c):
     if any(b in plain for b in BANG):
         return "bang"
     names = [_se_name(s) for s in _se_list(c)]
-    if HUH_SE in names or POON in names or SHORT_DOUBT in names:
+    if HUH_SE in names or POON in names:
         return "doubt"
     if c.get("kind") == "solo" and (plain.startswith(DOUBT) or plain in ("え", "……")):   # 字幕だけで決めるのは1匹の場面（会話は相手のセリフのことがある）
         return "doubt"
@@ -968,8 +968,10 @@ def scene_kind(c):
 
 # 10/30 ユーザー指定：ショートでは版権の心配がある SE（ゲーム・アニメ・テレビの音）は使わない。コナン・ポーンも差し替え
 # 「!?」＝ショック（ピアノ）、「え…」＝ハテナ？（魔王魂）。連打は make_se_free_remix.py でつくったもの（作りはポーン連打と同じ）
-SHORT_BANG, SHORT_BANG_REMIX = "shock_piano", ["free_bang_remix_a", "free_bang_remix_b"]
-SHORT_DOUBT, SHORT_DOUBT_REMIX = "question_hatena_maou", ["free_doubt_remix_a", "free_doubt_remix_b"]
+# 10/30 ユーザー指定（同日の2回目）：差し替えた所はぜんぶ「チュドーン」に。1回目も2回目以降も同じ音
+CHUDOON = "explosion_chudoon"
+SHORT_BANG, SHORT_BANG_REMIX = CHUDOON, [CHUDOON]
+SHORT_DOUBT, SHORT_DOUBT_REMIX = CHUDOON, [CHUDOON]
 RISKY_PREFIX = ("anime_", "game_", "tv_", "meme_", "news_", "store_", "app_")
 
 
@@ -1005,7 +1007,7 @@ def conan_confusion(cs, seed=0):
         if n[k] == 0 or n[k] > REMIX_MAX:   # 連打は1本で多くて2回まで（3回目からはふつうの音・10/29 ユーザー指定）
             f = base
         else:
-            f = rnd[k].choice([x for x in remix if x != last[k]])
+            f = rnd[k].choice([x for x in remix if x != last[k]] or remix)
             last[k] = f
             if k == "bang":
                 for q in c.get("cats", []):   # コナンの連打の場面は猫の声を消す（「は？」猫の声が高い音に聞こえる・10/28 ユーザー指摘）

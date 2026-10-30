@@ -4,9 +4,9 @@
 
 ## 長さ・音
 - 厳密に 59.9 秒（`bars_auto.build` が全体をのばして合わせる）。BGM なし。猫の声と効果音だけ
-- 重りが落ちる音：explosion_chudoon。結果発表：cymbal_maou（10/30：1UP は版権の心配があるので使わない）。最後のマイナス（プラス）表示：gong_dora_jaan（じゃーん）
+- 重りが落ちる音：explosion_chudoon。結果発表：explosion_chudoon（10/30：1UP は版権の心配があるので使わない）。最後のマイナス（プラス）表示：gong_dora_jaan（じゃーん）
 - **ショートでは版権の心配がある SE（se/README.md の ⚠・✕、名前が game_ / anime_ / tv_ などで始まるもの）は使わない**（10/30 ユーザー指定）。入っているとレンダーが止まる
-  - 「!?」の場面：shock_piano（2回目から free_bang_remix_a/b）。「え…」の場面：question_hatena_maou（2回目から free_doubt_remix_a/b）
+  - 「!?」の場面も「え…」の場面も explosion_chudoon（チュドーン）。2回目以降も同じ（10/30 ユーザー指定）
 - スターの踊る猫（dance_tabby_standing_cat）は使ってよいが曲は流さない（自動で消える）。その猫の音しかない場面は dance_filmed_by_gray_cat（踊る猫をスマホで撮る猫）に差し替え
 
 ## 見た目

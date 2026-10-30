@@ -9,7 +9,7 @@
 
 ## ショートのルール（10/30 ユーザー指定）
 - ショートでは下の表で ⚠・✕ の音と、名前が game_ / anime_ / tv_ / meme_ / news_ / store_ / app_ で始まる音は使わない（render.short_se_check が止める）
-- 「!?」の場面：shock_piano → 2回目から free_bang_remix_a/b。「え…」の場面：question_hatena_maou → 2回目から free_doubt_remix_a/b
+- 「!?」の場面も「え…」の場面も explosion_chudoon（チュドーン）。2回目以降も同じ（同日にユーザー指定で変更。free_*_remix は今は使っていない）
 
 ## 一覧（2026-10 にファイル名を英語化）
 「注意」欄の意味

@@ -302,6 +302,23 @@ def prop_img(kind, w):
             d.line((int(w * 0.12), y_, int(w * 0.88), y_), fill=(170, 170, 170, 255), width=3)
         im.alpha_composite(tx, ((w - tx.width) // 2, int(h * 0.12)))
         return im.rotate(-8, expand=True, resample=Image.BICUBIC)
+    if kind.startswith("bar:"):   # 棒グラフの棒（"bar:高さpx:色:棒の中の文字"）。猫はこの上に立つ（10/30 昔と今の物価）
+        _, hh, col, lab = kind.split(":", 3)
+        hh = max(int(float(hh)), 40)
+        c0 = {"blue": (70, 140, 235), "red": (235, 80, 90)}[col]
+        im = Image.new("RGBA", (w, hh), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        for y in range(hh):   # 上が明るいグラデーション
+            k = y / max(hh - 1, 1)
+            d.line((0, y, w, y), fill=tuple(int(min(255, c_ + 70) * (1 - k) + max(0, c_ - 30) * k) for c_ in c0) + (255,))
+        mask = Image.new("L", (w, hh), 0)
+        ImageDraw.Draw(mask).rounded_rectangle((0, 0, w - 1, hh - 1), radius=min(22, hh // 2), fill=255)
+        im.putalpha(mask)
+        ImageDraw.Draw(im).rounded_rectangle((0, 0, w - 1, hh - 1), radius=min(22, hh // 2), outline=WHITE + (255,), width=5)
+        if lab and hh >= 90:
+            tx = rich([[(lab, WHITE)]], min(64, hh - 20), stroke=6, stroke_col=BLACK, max_w=w - 20)
+            im.alpha_composite(tx, ((w - tx.width) // 2, hh - tx.height - 12))
+        return im
     if kind.startswith("tag:"):   # 役名の札（叩かれている猫などに名前を付ける・10/29）
         return I.name_tag(kind[4:])
     raise ValueError(kind)

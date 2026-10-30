@@ -166,7 +166,7 @@ POON_R = ["tv_professional_poon_remix_a", "tv_professional_poon_remix_b"]   # c 
 def qq(who="L", lb=HOUSE, rb=APT, remix=CONAN_R[1]):
     """コナンの連打の場面：字幕のかわりに、いろいろな色とエフェクトの「？？？？？？」。画面半分のまま。"""
     c = sp(None, who, lb, rb)
-    c.update(qmarks=6, qmark_y=420, se=[remix], dur=2.0, no_pop=True, fx=["flash", "ring"])
+    c.update(qmarks=8, qmark_size=660, qmark_y=430, se=[remix], dur=2.0, no_pop=True, fx=["flash", "ring"])
     return c
 
 

@@ -460,18 +460,13 @@ QM_COLS = [(255, 60, 90), (255, 205, 0), (40, 200, 255), (150, 90, 255), (60, 22
 
 
 def qmark_img(ch, size, j):
-    """色つきの「？」1文字：まわりに同じ色の光（ぼかし）・黒いふち・白いふち。"""
-    from PIL import ImageFilter, ImageDraw
-    col = QM_COLS[j % len(QM_COLS)]
+    """コナン連打の「？」1文字（10/30 ユーザー指定：カラフルではなく、画面からはみ出す特大の白い「？」・黒い太いふち）。"""
+    from PIL import ImageDraw
     f = P.font("black", size)
-    pad = size // 3
+    pad = size // 4
     im = Image.new("RGBA", (int(size * 1.1) + pad * 2, int(size * 1.3) + pad * 2), (0, 0, 0, 0))
-    glow = Image.new("RGBA", im.size, (0, 0, 0, 0))
-    ImageDraw.Draw(glow).text((pad, pad // 2), ch, font=f, fill=col + (255,), stroke_width=26, stroke_fill=col + (255,))
-    im.alpha_composite(glow.filter(ImageFilter.GaussianBlur(14)))
     d = ImageDraw.Draw(im)
-    d.text((pad, pad // 2), ch, font=f, fill=(20, 20, 30, 255), stroke_width=20, stroke_fill=(20, 20, 30, 255))
-    d.text((pad, pad // 2), ch, font=f, fill=col + (255,), stroke_width=9, stroke_fill=(255, 255, 255, 255))
+    d.text((pad, pad // 2), ch, font=f, fill=(255, 255, 255, 255), stroke_width=max(14, size // 16), stroke_fill=(10, 10, 15, 255))
     return im.crop(im.getbbox())
 
 
@@ -610,8 +605,8 @@ class CutRenderer:
             self.split_y = cut.get("split_y", 440)
         self.qm = None
         if cut.get("qmarks"):   # 「？？？？？？」をいろいろな色とエフェクトで飾る（コナンの連打の場面・10/28 ユーザー指定）
-            self.qm = [qmark_img(cut.get("qmark_char", "？"), cut.get("qmark_size", 230), j) for j in range(cut["qmarks"])]
-            self.qm_y = cut.get("qmark_y", 250)
+            self.qm = [qmark_img(cut.get("qmark_char", "？"), cut.get("qmark_size", 520), j) for j in range(cut["qmarks"])]
+            self.qm_y = cut.get("qmark_y", 400)
         self.explain = None
         if cut.get("explain"):
             self.explain = to_np(P.plain_text(cut["explain"], (60, 695, 1860, 1070), size=cut.get("explain_size", 100), gap=1.22))
@@ -795,18 +790,19 @@ class CutRenderer:
                 cv2.fillPoly(out, [box], (0.62, 0.78, 0.82), cv2.LINE_AA)
                 cv2.polylines(out, [box], True, (0.25, 0.4, 0.5), 3, cv2.LINE_AA)
                 cv2.circle(out, (int(cx), int(cy)), 16, (0.35, 0.5, 0.6), 3, cv2.LINE_AA)
-        if self.qm:
+        if self.qm:   # 特大の「？」が左から1つずつドンと並んでいく（はみ出してよい・10/30）
             n = len(self.qm)
+            step = (W + 260) / n
             for j, im in enumerate(self.qm):
-                u = t - 0.06 * j
+                u = t - 0.11 * j
                 if u < 0:
                     break
-                k = (1.7 - 0.7 * min(1.0, u / 0.12)) * (1 + 0.07 * np.sin(t * 18 + j * 1.7))   # 大きく出て縮む・脈打つ
-                ang = (-14, 10, -6, 15, -10, 7, -15, 12)[j % 8] + 9 * np.sin(t * 11 + j)   # ゆらゆら
+                k = 1.35 - 0.35 * min(1.0, u / 0.09)   # ドンと出て少し縮む
+                ang = (-8, 6, -4, 8, -6, 4)[j % 6]
                 pim = im.resize((max(1, int(im.width * k)), max(1, int(im.height * k))), Image.BILINEAR).rotate(
                     ang, expand=True, resample=Image.BILINEAR)
-                cx = 150 + (W - 300) * (j + 0.5) / n + 8 * np.sin(t * 23 + j * 3)
-                cy = self.qm_y + 45 * np.sin(j * 1.3) + 8 * np.cos(t * 19 + j)
+                cx = -130 + step * (j + 0.5)
+                cy = self.qm_y + (25 if j % 2 else -25)
                 img, al = to_np(pim)
                 over(out, img, al, int(cx - pim.width / 2), int(cy - pim.height / 2))
         for t0, t1, item in self.pops:

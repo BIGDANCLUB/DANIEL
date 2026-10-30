@@ -26,21 +26,18 @@ def cuts():
         ("月45時間", "scream_phone_orange_cat", "ニュースに\nなる", "think_chin_paw_orange_cat", "残業の上限に\nとどく"),
         ("月60時間", "fight_cat_fight", "会社じゅうが\n大さわぎ", "stare_lying_tabby_cat", "栄養ドリンクが\n手ばなせない"),
         ("月80時間", "stare_tabby_wide_eyes_cat", "言葉を\n失う", "sad_looking_away_tabby", "体が限界\n休むサイン"),
-        ("月100時間", None, "（既にボイコット済み）", "dance_tabby_standing_cat", "ヘブン状態！"),   # 世界は猫なし・日本はスターのBGMで踊る猫（10/30 ユーザー指定）
+        ("月100時間", None, "（既にボイコット済み）", "dance_filmed_by_gray_cat", "ヘブン状態！"),   # 世界は猫なし・日本は踊る猫をスマホで撮る猫（10/30：スターのBGMは流さない）
     ]
     for lv, wcat, wcap, jcat, jcap in rows:
-        tag_se = {"月45時間": "explosion_chudoon", "月60時間": "explosion_chudoon", "月80時間": "game_mgs_alert", "月100時間": "game_mgs_alert"}
+        tag_se = {"月45時間": "explosion_chudoon", "月60時間": "explosion_chudoon", "月80時間": "pc_warning", "月100時間": "pc_warning"}   # 10/30：版権の心配がない警告音に
         out.append(Wd.split(ST, lv, dur=1.2 * K, se=[tag_se.get(lv, "pi")]))
         out.append(Wd.split(ST, lv, right=wcat, cap=wcap, cap_side="R", sound="R", dur=2.3 * K, se="don_hit"))
         out.append(Wd.split(ST, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K))
     for c in out:
         c.update(blur=9, band_y=0, tag_y=460)
-        for q in c["cats"]:   # スターのBGMで踊る猫は曲も鳴らす（値上げのショートと同じ）
-            if q["a"] == "dance_tabby_standing_cat" and not q.get("mute"):
-                q["sound"] = True
     return out
 
 
 if __name__ == "__main__":
-    Wd.run(cuts(), Wd.rich_band([("{y}日本vs世界", 120, Wd.BLACK, 95), ("{y}残業への反応", 120, Wd.BLACK, 245)], 0, 330),
+    Wd.run(cuts(), Wd.rich_band([("{y}日本vs世界", 96, Wd.BLACK, 95), ("{y}残業への反応", 96, Wd.BLACK, 245)], 0, 330),
            os.path.join(Wd.HERE, "out", "short_48_zangyo_vs.mp4"), os.path.join(Wd.HERE, "out", "short_48_zangyo_vs_preview"))

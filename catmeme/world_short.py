@@ -305,6 +305,14 @@ def prop_img(kind, w):
     if kind.startswith("bar:"):   # 棒グラフの棒（"bar:高さpx:色:棒の中の文字"）。猫はこの上に立つ（10/30 昔と今の物価）
         _, hh, col, lab = kind.split(":", 3)
         hh = max(int(float(hh)), 40)
+        if col in ("yellow", "cred"):   # 世帯年収のショートと同じ基調（10/30）：平らな色＋黒い太いふち。黄色に赤い字・赤に白い字
+            c0, tc, sc = {"yellow": ((255, 236, 36), (228, 24, 30), WHITE), "cred": ((232, 32, 40), WHITE, BLACK)}[col]
+            im = Image.new("RGBA", (w, hh), BLACK + (255,))
+            ImageDraw.Draw(im).rectangle((6, 6, w - 7, hh - 7), fill=c0 + (255,))
+            if lab and hh >= 90:
+                tx = rich([[(lab, tc)]], min(64, hh - 20), stroke=6, stroke_col=sc, max_w=w - 24)
+                im.alpha_composite(tx, ((w - tx.width) // 2, hh - tx.height - 14))
+            return im
         c0 = {"blue": (70, 140, 235), "red": (235, 80, 90)}[col]
         im = Image.new("RGBA", (w, hh), (0, 0, 0, 0))
         d = ImageDraw.Draw(im)

@@ -42,7 +42,7 @@ def build(spec, intro, items, after, minus):
                 c["shout"] = (opt[0], n - 1)
             out.append(c)
     last = len(spec["items"])
-    res = cut(2.0, None, same, shown=last, take=True, se="game_mario_1up")   # 結果発表（重りではなく・1UPの音・10/27）
+    res = cut(2.0, None, same, shown=last, take=True, se="cymbal_maou")   # 結果発表（10/30：1UPの音は版権の心配があるのでシンバルに）
     res["result"] = "結果発表"
     out.append(res)
     for i, (d, say, cats, v) in enumerate(after):

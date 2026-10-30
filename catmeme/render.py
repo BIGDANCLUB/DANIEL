@@ -79,9 +79,14 @@ FG_THRESHOLD = -45         # これより大きい音（dBFS）が鳴ってい�
 SE_GAIN = -4               # 効果音の基本の音量（dB、ピーク0.6にそろえた後）           # 曲つき素材が鳴っている間の BGM の下げ幅（dB）
 
 
+NO_SOUND = {"dance_tabby_standing_cat"}   # 10/30 ユーザー指定：スターのBGMは流さない（素材は使ってよい）
+
+
 def sounding(k):
     """このカットの猫 k の元の音を鳴らすか。"""
     if k.get("still") or k.get("mute"):
+        return False
+    if k["a"] in NO_SOUND:
         return False
     return PLAY_MUSIC_ASSETS or k["a"] not in MUSIC or k.get("sound")
 
@@ -952,7 +957,7 @@ def scene_kind(c):
     if any(b in plain for b in BANG):
         return "bang"
     names = [_se_name(s) for s in _se_list(c)]
-    if HUH_SE in names or POON in names:
+    if HUH_SE in names or POON in names or SHORT_DOUBT in names:
         return "doubt"
     if c.get("kind") == "solo" and (plain.startswith(DOUBT) or plain in ("え", "……")):   # 字幕だけで決めるのは1匹の場面（会話は相手のセリフのことがある）
         return "doubt"
@@ -961,8 +966,34 @@ def scene_kind(c):
     return None
 
 
+# 10/30 ユーザー指定：ショートでは版権の心配がある SE（ゲーム・アニメ・テレビの音）は使わない。コナン・ポーンも差し替え
+# 「!?」＝ショック（ピアノ）、「え…」＝ハテナ？（魔王魂）。連打は make_se_free_remix.py でつくったもの（作りはポーン連打と同じ）
+SHORT_BANG, SHORT_BANG_REMIX = "shock_piano", ["free_bang_remix_a", "free_bang_remix_b"]
+SHORT_DOUBT, SHORT_DOUBT_REMIX = "question_hatena_maou", ["free_doubt_remix_a", "free_doubt_remix_b"]
+RISKY_PREFIX = ("anime_", "game_", "tv_", "meme_", "news_", "store_", "app_")
+
+
+def risky_se():
+    """se/README.md で ⚠・✕ がついている SE と、名前がゲーム・アニメ・テレビなどで始まる SE。"""
+    out = set()
+    for ln in open(os.path.join(SE_DIR, "README.md"), encoding="utf-8"):
+        if ln.startswith("| ") and ("⚠" in ln or "✕" in ln):
+            out.add(ln.split("|")[1].strip().rsplit(".", 1)[0])
+    out |= {os.path.splitext(f)[0] for f in os.listdir(SE_DIR) if f.startswith(RISKY_PREFIX)}
+    return out
+
+
+def short_se_check(cs):
+    """ショートに版権の心配がある SE が入っていたら止める（10/30 ユーザー指定のルール）。"""
+    bad = risky_se()
+    found = sorted({_se_name(s) for c in cs for s in _se_list(c) if _se_name(s) in bad})
+    if found:
+        raise SystemExit("ショートでは使わない SE（版権の心配）：" + "、".join(found))
+
+
 def conan_confusion(cs, seed=0):
-    """ショートの「!?」の場面はコナン、「え…」の場面はポーン（どちらも1回目はふつう、2回目から連打）。"""
+    """ショートの「!?」の場面と「え…」の場面の音（どちらも1回目はふつう、2回目から連打）。
+    10/30 から：コナン→ショック（ピアノ）、ポーン→ハテナ？（魔王魂）。最後に版権の心配がある SE がないか確かめる。"""
     import random
     rnd = {"bang": random.Random(seed), "doubt": random.Random(seed + 1)}
     n, last = {"bang": 0, "doubt": 0}, {"bang": None, "doubt": None}
@@ -970,7 +1001,7 @@ def conan_confusion(cs, seed=0):
         k = scene_kind(c)
         if not k:
             continue
-        base, remix = (CONAN, CONAN_REMIX) if k == "bang" else (POON, POON_REMIX)
+        base, remix = (SHORT_BANG, SHORT_BANG_REMIX) if k == "bang" else (SHORT_DOUBT, SHORT_DOUBT_REMIX)
         if n[k] == 0 or n[k] > REMIX_MAX:   # 連打は1本で多くて2回まで（3回目からはふつうの音・10/29 ユーザー指定）
             f = base
         else:
@@ -981,9 +1012,10 @@ def conan_confusion(cs, seed=0):
                     q["mute"] = True
                 c["no_pop"] = True
         n[k] += 1
-        c["se"] = [s for s in _se_list(c) if _se_name(s) not in (HUH_SE, POON, CONAN)] + [{"f": f, "len": 2.4}]
+        c["se"] = [s for s in _se_list(c) if _se_name(s) not in (HUH_SE, POON, CONAN, SHORT_BANG, SHORT_DOUBT)] + [{"f": f, "len": 2.4}]
         if k == "bang":
             conan_say(c)
+    short_se_check(cs)
     return cs
 
 

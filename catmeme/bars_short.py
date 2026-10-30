@@ -218,9 +218,13 @@ class Renderer:
             total = st["incomes"][j]
             scale = (BAR_BOT - BAR_TOP) / st["max_income"]
             top = BAR_BOT - total * scale
-            sh = out[int(top) + 10:BAR_BOT + 10, x0 + 10:x1 + 10]   # 影
-            sh *= 0.55
-            out[int(top):BAR_BOT, x0:x1] = grad_fill(BAR_BOT - int(top), x1 - x0, BASE_TOP, BASE_BOT, stripes=True)
+            if LINE == (0, 0, 0):   # 世帯年収と同じ：黒い太いふちの黄色の棒（影・しまなし）
+                cv2.rectangle(out, (x0 - 6, int(top) - 6), (x1 + 6, BAR_BOT + 6), (0, 0, 0), -1)
+                out[int(top):BAR_BOT, x0:x1] = grad_fill(BAR_BOT - int(top), x1 - x0, BASE_TOP, BASE_BOT)
+            else:
+                sh = out[int(top) + 10:BAR_BOT + 10, x0 + 10:x1 + 10]   # 影
+                sh *= 0.55
+                out[int(top):BAR_BOT, x0:x1] = grad_fill(BAR_BOT - int(top), x1 - x0, BASE_TOP, BASE_BOT, stripes=True)
             y = top
             for k, (name, kind) in enumerate(st["items"]):
                 if k >= c["shown"]:
@@ -232,10 +236,13 @@ class Renderer:
                 hpx = v * scale * grow   # 2列のときは金額どおりの長さ（10/26）
                 col, tc = SEG_COL[kind]
                 if int(y + hpx) > int(y):
-                    lt = tuple(min(255, int(v_ * 1.15)) for v_ in col)
-                    dk = tuple(int(v_ * 0.82) for v_ in col)
+                    if LINE == (0, 0, 0):   # 世帯年収と同じ：ほぼ平らな色
+                        lt, dk = tuple(min(255, int(v_ * 1.03)) for v_ in col), tuple(int(v_ * 0.96) for v_ in col)
+                    else:
+                        lt = tuple(min(255, int(v_ * 1.15)) for v_ in col)
+                        dk = tuple(int(v_ * 0.82) for v_ in col)
                     out[int(y):int(y + hpx), x0:x1] = grad_fill(int(y + hpx) - int(y), x1 - x0, lt, dk)
-                cv2.line(out, (x0, int(y + hpx)), (x1, int(y + hpx)), (1, 1, 1), 3, cv2.LINE_AA)
+                cv2.line(out, (x0, int(y + hpx)), (x1, int(y + hpx)), LINE, 4 if LINE == (0, 0, 0) else 3, cv2.LINE_AA)
                 if grow > 0.6:
                     lab = st["seglab"][(name, j)]
                     if lab.height > hpx - 6:   # 細い段は札を小さくして段の中におさめる（10/27）
@@ -243,7 +250,8 @@ class Renderer:
                         lab = lab.resize((max(1, int(lab.width * k_)), max(1, int(lab.height * k_))), Image.LANCZOS)
                     I.put(out, lab, (x0 + x1) / 2 if CATX else x0 + lab.width / 2 + 14, y + min(hpx, 120) / 2 + 4)
                 y += hpx
-            cv2.rectangle(out, (x0, int(top)), (x1, BAR_BOT), (1, 1, 1), 3, cv2.LINE_AA)   # 白い細いふち
+            if LINE != (0, 0, 0):
+                cv2.rectangle(out, (x0, int(top)), (x1, BAR_BOT), (1, 1, 1), 3, cv2.LINE_AA)   # 白い細いふち
             if c.get("take"):
                 I.put(out, st["takelab"][j], cx, y + 90)
         for j, cx in enumerate(COLX):   # 下の札
@@ -490,22 +498,36 @@ BRIGHT = dict(   # 明るい版（10/27 ユーザー指定：もっと明るい�
     seg={"red": ((255, 104, 104), WHITE), "green": ((70, 172, 255), WHITE), "purple": ((178, 120, 255), WHITE),
          "orange": ((255, 158, 64), WHITE), "dark": ((118, 140, 170), WHITE), "gray": ((160, 175, 195), WHITE)},
     base=((110, 240, 190), (40, 205, 175)), panel=((250, 252, 255), (225, 238, 252)), frame=(0.95, 0.65, 0.35))   # frame は BGR
+# 世帯年収のショート（short_tax_couple）と同じ基調で、色だけ少し変えた版（10/30 ユーザー指定）：
+# ミントのパネル・黄色の棒・黒いふち・灰／赤／濃い灰の段・赤い題名
+CLASSIC = dict(
+    seg={"gray": ((212, 212, 216), BLACK), "red": ((232, 32, 40), WHITE), "dark": ((136, 139, 146), BLACK),
+         "orange": ((250, 150, 30), BLACK), "purple": ((176, 52, 196), WHITE), "green": ((52, 196, 84), BLACK)},
+    base=((255, 238, 36), (255, 230, 24)), panel=((142, 236, 220), (128, 228, 210)), frame=None, classic=True)
+LINE = (1, 1, 1)   # 棒のふちの色（BGR 0〜1）。CLASSIC は黒
 DARK = dict(seg=dict(SEG_COL), base=(BASE_TOP, BASE_BOT), panel=((30, 40, 78), (14, 18, 38)), frame=(0.85, 0.75, 0.45))
 
 
 def make_static(spec):
-    global SEG_COL, BASE_TOP, BASE_BOT
-    sty = BRIGHT if spec.get("style") == "bright" else DARK
+    global SEG_COL, BASE_TOP, BASE_BOT, LINE
+    sty = {"bright": BRIGHT, "classic": CLASSIC}.get(spec.get("style"), DARK)
+    LINE = (0, 0, 0) if sty.get("classic") else (1, 1, 1)
     SEG_COL = sty["seg"]
     BASE_TOP, BASE_BOT = sty["base"]
     set_cols(len(spec["incomes"]))
     base = I.cover(spec["bg"])
     x0, y0, x1, y1 = PANEL
     pn = grad_fill(y1 - y0, x1 - x0, *sty["panel"])   # 紺（明るい版は白〜水色）のすりガラス
-    base[y0:y1, x0:x1] = base[y0:y1, x0:x1] * 0.18 + pn * 0.82
-    cv2.rectangle(base, (x0, y0), (x1 - 1, y1 - 1), sty["frame"], 4, cv2.LINE_AA)
+    if sty.get("classic"):   # 世帯年収と同じ：背景が少し透けるミント
+        base[y0:y1, x0:x1] = base[y0:y1, x0:x1] * 0.25 + pn * 0.75
+    else:
+        base[y0:y1, x0:x1] = base[y0:y1, x0:x1] * 0.18 + pn * 0.82
+        cv2.rectangle(base, (x0, y0), (x1 - 1, y1 - 1), sty["frame"], 4, cv2.LINE_AA)
     title = Image.new("RGBA", (W, 230), (0, 0, 0, 0))
-    if spec.get("style") == "bright":
+    if sty.get("classic"):
+        t1 = I.text(spec["title"][0], 92, (228, 24, 30), stroke=5, stroke_col=WHITE)
+        t2 = I.text(spec["title"][1], 92, (205, 16, 48), stroke=5, stroke_col=WHITE)
+    elif spec.get("style") == "bright":
         t1 = I.text(spec["title"][0], 92, (230, 40, 70), stroke=6, stroke_col=WHITE)
         t2 = I.text(spec["title"][1], 92, (25, 70, 170), stroke=6, stroke_col=WHITE)
     else:
@@ -524,6 +546,9 @@ def make_static(spec):
     word = spec.get("take_word", "手取り")
     st["takelab"] = [I.text(f"{word}\n{round(v):,}{unit}" if unit == "円" else f"{word}\n約{round(v, 1):g}{unit}", 70, WHITE, stroke=7,
                               stroke_col=(0, 90, 70)) for v in take]
+    if sty.get("classic"):   # 世帯年収と同じ：黄色の上に赤い文字
+        st["takelab"] = [I.text(f"{word}\n{round(v):,}{unit}" if unit == "円" else f"{word}\n約{round(v, 1):g}{unit}", 70, (228, 24, 30),
+                                stroke=5, stroke_col=WHITE) for v in take]
     return st
 
 

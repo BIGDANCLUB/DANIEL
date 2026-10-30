@@ -7,6 +7,10 @@
 - ここに `don` / `pop` / `drum` / `chime` と同じ名前のファイルを置くと、合成の効果音の代わりにそれが使われる
 - 配布元が分かるよう、下の表に1行書き足す（概要欄のクレジット用）
 
+## ショートのルール（10/30 ユーザー指定）
+- ショートでは下の表で ⚠・✕ の音と、名前が game_ / anime_ / tv_ / meme_ / news_ / store_ / app_ で始まる音は使わない（render.short_se_check が止める）
+- 「!?」の場面：shock_piano → 2回目から free_bang_remix_a/b。「え…」の場面：question_hatena_maou → 2回目から free_doubt_remix_a/b
+
 ## 一覧（2026-10 にファイル名を英語化）
 「注意」欄の意味
 - **⚠ゲーム / ⚠テレビ・アニメ** … ゲーム・番組・アニメから取った音。権利は各社にあり、収益化動画では申し立てを受けることがある。使うなら短く・少なめに
@@ -257,3 +261,7 @@
 | train_gatan_goton_loop.mp3 | 電車のガタンゴトン（ループできる） |  | nc80815_電車の音_ガタンゴトン（ループ対応）.mp3 | ニコニ・コモンズ nc80815 |
 | game_aceattorney_desk_slam_02.wav | 逆転裁判の机を叩く音 | ⚠ゲーム | nc89399_【逆転裁判】机を叩く音.wav | ニコニ・コモンズ nc89399 |
 | game_aceattorney_evidence_added.wav | 逆転裁判の「証拠品追加」 | ⚠ゲーム | nc89589_【逆転裁判】証拠品追加.wav | ニコニ・コモンズ nc89589 |
+| free_bang_remix_a.mp3 | ショック（ピアノ）の連打：ジャジャジャジャーン（切らずに重ねる）。ショートの2回目以降の「!?」用 |  | make_se_free_remix.py で作成（元：shock_piano） |  |
+| free_bang_remix_b.mp3 | ショック（ピアノ）の連打：ジャジャ、ジャ、ジャーン。ショートの2回目以降の「!?」用 |  | make_se_free_remix.py で作成（元：shock_piano） |  |
+| free_doubt_remix_a.mp3 | ハテナ？（魔王魂）の連打。ショートの2回目以降の「え…」用 |  | make_se_free_remix.py で作成（元：question_hatena_maou） | 魔王魂 |
+| free_doubt_remix_b.mp3 | ハテナ？（魔王魂）の連打（間をあけて）。ショートの2回目以降の「え…」用 |  | make_se_free_remix.py で作成（元：question_hatena_maou） | 魔王魂 |

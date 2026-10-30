@@ -21,26 +21,23 @@ def cuts():
         ("30円", "meow_ragdoll_chubby_cat", "SNSで\n文句の嵐", "think_chin_paw_orange_cat", "まあ\nしかたないか"),
         ("50円", "glare_disgusted_cat", "買うのを\nやめる", "talk_orange_white_sitting_cat", "「ちょっと高いね」\nと言って買う"),
         ("100円", "rage_talking_cat", "お店の前で\n抗議する", "money_counting_orange_cat", "ポイントで\n取り返す"),
-        ("1割", "dance_tabby_standing_cat", "街で\nデモ行進", "ignore_orange_cat_sniffed", "量が減っても\n気づかない"),
+        ("1割", "dance_filmed_by_gray_cat", "街で\nデモ行進", "ignore_orange_cat_sniffed", "量が減っても\n気づかない"),
         ("2割", "punch_boxing_white_cat", "給料を上げろと\nストライキ", "ride_kitten_bike", "安いお店を\nはしごする"),
         ("3割", "slap_cat_slaps_kitten", "国に\n文句が殺到", "read_book_orange_kitten", "お弁当を\n作りはじめる"),
         ("5割", "fight_cat_fight", "国じゅうが\n大さわぎ", "work_typing_cat", "節約レシピが\n大人気"),
         ("2倍", "dance_three_kittens", "踊る", "scream_phone_orange_cat", "SNSで\nスーパー玉手を\n褒め称える"),   # 10/29 ユーザー指定
     ]
     for lv, wcat, wcap, jcat, jcap in rows:
-        # 札が出た瞬間の音（10/29 ユーザー指定）：3割・5割はチュドーン、2倍は1UP、2割はコイン
-        tag_se = {"2割": "game_coin_get_money_gain_happy", "3割": "explosion_chudoon", "5割": "explosion_chudoon", "2倍": "game_mario_1up"}
+        # 札が出た瞬間の音（10/29 ユーザー指定）：3割・5割はチュドーン、2倍はパワーアップ、2割は金額表示（10/30：版権の心配がない音に差し替え）
+        tag_se = {"2割": "price_display", "3割": "explosion_chudoon", "5割": "explosion_chudoon", "2倍": "power_up"}
         out.append(Wd.split(ST, lv, dur=1.2 * K, se=[tag_se.get(lv, "pi")]))
         out.append(Wd.split(ST, lv, right=wcat, cap=wcap, cap_side="R", sound="R", dur=2.3 * K, se="don_hit"))
         out.append(Wd.split(ST, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K))
     for c in out:
         c.update(blur=9, band_y=0, tag_y=460)
-        for q in c["cats"]:   # 1割の世界側：スターのBGMで踊る猫は曲も鳴らす（10/29 ユーザー指定）
-            if q["a"] == "dance_tabby_standing_cat" and not q.get("mute"):
-                q["sound"] = True
     return out
 
 
 if __name__ == "__main__":
-    Wd.run(cuts(), Wd.rich_band([("{y}日本vs世界", 120, Wd.BLACK, 95), ("{y}値上げへの反応", 120, Wd.BLACK, 245)], 0, 330),
+    Wd.run(cuts(), Wd.rich_band([("{y}日本vs世界", 96, Wd.BLACK, 95), ("{y}値上げへの反応", 96, Wd.BLACK, 245)], 0, 330),
            os.path.join(Wd.HERE, "out", "short_46_neage.mp4"), os.path.join(Wd.HERE, "out", "short_46_neage_preview"))

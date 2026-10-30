@@ -21,7 +21,7 @@ def cuts():
         ("風速15m", "peek_what_happen_cat", "外出を\nとりやめる", "talk_orange_white_sitting_cat", "「風つよいね」\nで終わり", None),
         ("風速20m", "dance_three_kittens", "学校が\nお休みに", "happy_chipi_chapa_cat", "洗濯物を\n部屋に入れる", None),   # 10/29 ユーザー指定
         ("風速25m", "glare_disgusted_cat", "スーパーが\n空っぽに", "eat_pop_cat", "コンビニで\nカップ麺を買う", None),
-        ("風速30m", "dance_tabby_standing_cat", "街じゅうが\n大パニック",   # 世界側はスターのBGMで踊る猫（10/29）
+        ("風速30m", "dance_filmed_by_gray_cat", "街じゅうが\n大パニック",   # 世界側は踊る猫をスマホで撮る猫（10/30：スターのBGMは流さない）
          "slack_nail_filing_cat", "ベランダの物を\n片づける", None),
         ("風速35m", "stare_tabby_wide_eyes_cat", "国じゅうで\n緊急ニュース", "think_chin_paw_orange_cat", "テレビで\n進路をチェック", "tv"),
         ("風速40m", "fight_cat_fight", "外出\n禁止令", "read_book_orange_kitten", "電車の\n計画運休を確認", None),
@@ -38,12 +38,9 @@ def cuts():
         out.append(c)
     for c in out:
         c.update(blur=9, band_y=0, tag_y=460)
-        for q in c["cats"]:   # スターのBGMで踊る猫は曲も鳴らす（値上げのショートと同じ・10/29）
-            if q["a"] == "dance_tabby_standing_cat" and not q.get("mute"):
-                q["sound"] = True
     return out
 
 
 if __name__ == "__main__":
-    Wd.run(cuts(), Wd.rich_band([("{y}日本vs世界", 120, Wd.BLACK, 95), ("{y}台風への反応", 120, Wd.BLACK, 245)], 0, 330),
+    Wd.run(cuts(), Wd.rich_band([("{y}日本vs世界", 96, Wd.BLACK, 95), ("{y}台風への反応", 96, Wd.BLACK, 245)], 0, 330),
            os.path.join(Wd.HERE, "out", "short_47_taifu.mp4"), os.path.join(Wd.HERE, "out", "short_47_taifu_preview"))

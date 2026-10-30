@@ -189,8 +189,46 @@ def cuts_all():
     ]
 
 
+# ---- 10/30 ユーザー指定「エフェクトを増やし、SEの入るタイミング・数を増やす」 ----
+MID_SE = ["game_coin_get_money_gain_happy", "anime_dbz_punch", "game_mario_jump", "game_dq_attack_enemy", "game_aceattorney_ping",
+          "anime_shinchan_genkotsu", "game_ff_cursor", "anime_dbz_teleport", "kaan", "tsukkomi_bashi", "boing_02", "puni"]
+NUM_SE = ["game_coin_get_money_gain_happy", "kaan", "game_aceattorney_ping", "frying_pan_kaan"]
+EXTRA_FX = {9: "crack", 14: "money", 22: "money", 31: "money", 40: "crack", 46: "money"}   # ヒビ・お札をところどころに足す
+
+
+def more(cuts):
+    """どの場面も：頭の音に加えて、字幕・金額が出るところと場面のなかほどにも音。エフェクトも1場面に2〜3個。"""
+    for i, c in enumerate(cuts):
+        if c.get("notice") or c.get("chapter") or c.get("card") or c.get("inset"):   # 説明の画面は読みやすさ優先
+            continue
+        names = [x if isinstance(x, str) else x.get("f", "") for x in (c.get("se") or [])]
+        if any("conan" in n_ or "poon" in n_ for n_ in names):   # コナン・ポーンの場面はその音だけ（ルールどおり）
+            continue
+        d = R.cut_dur(c)
+        lst = list(c.get("se") or [])
+        if c.get("side_text"):   # 左右の金額が出るところで、チャリン・カーンなど
+            lst.append({"f": NUM_SE[i % len(NUM_SE)], "gain": -3, "at": 0.25})
+        if d > 1.6:   # 場面のなかほどにもう1つ（ゲーム・アニメの音）
+            lst.append({"f": MID_SE[i % len(MID_SE)], "gain": -6, "at": round(d * 0.55, 2)})
+        if c.get("say_style") == "red":   # 赤字の驚きはドンと重ねる
+            lst.append({"f": "explosion_dokaan", "gain": -6, "at": 0.05})
+        c["se"] = lst
+        fx_ = list(c.get("fx", []))
+        fx_ += ["punch", "border"]
+        if i % 3 == 0:
+            fx_.append("ring")
+        if i % 4 == 2 and not c.get("chart"):
+            fx_ += ["flash", "zoom"]
+        if i % 5 == 1 and not c.get("chart"):
+            fx_.append("lines")
+        if i in EXTRA_FX and not c.get("chart") and "mono" not in fx_ and "swirl" not in fx_:
+            fx_.append(EXTRA_FX[i])
+        c["fx"] = list(dict.fromkeys(fx_))
+    return cuts
+
+
 def cuts_full():
-    return K.hype(L.apply_fx(L.allocate(cuts_all(), max_use=7, gap=1)))
+    return more(K.hype(L.apply_fx(L.allocate(cuts_all(), max_use=7, gap=1))))
 
 
 if __name__ == "__main__":

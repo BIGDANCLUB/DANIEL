@@ -245,8 +245,8 @@ def cuts_all():
         o("札幌市", "見送る", "……\n行ってしまうのか", CITY, se="chin_bell_failure_sad_ending"),
         # ---- ⑤ 600億円の球場 ----
         chap("⑤ 600億円の球場", se=SLASH),
-        ss("2020年に\n工事がスタート", AERIAL, se="hit_dogo_maou"),
-        fx(ss("かかったお金は", AERIAL, se=["drumroll", {"f": "explosion_bokaan", "at": 0.9}], dur=2.2), slot=("約", 600, "億円")),
+        ss("2020年に\n工事がスタート", BUILD, se="hit_dogo_maou"),
+        fx(ss("かかったお金は", BUILD, se=["drumroll", {"f": "explosion_bokaan", "at": 0.9}], dur=2.2), slot=("約", 600, "億円")),
         nn("600億!?\n球団が自分で!?", AERIAL, red=True, se=["anime_conan_hirameki_remix_b"]),
         ss("球団の会社が建てて\n自分たちで持つ", BUILD, se="kon"),
         ss("家賃をはらうのではなく\nもうけは自分たちに", MONEY, se="price_display"),

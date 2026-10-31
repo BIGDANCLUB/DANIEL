@@ -48,7 +48,7 @@ def sushiro():
              ("stare_big_eyes_tabby_kitten", 0.6, 300, 410, 330, False),
              [("surprise_big_pupils_cat", 1.0, 1100, 410, 300, True)],
              "30代独身の休日",
-             [("休日に", BK), ("1人スシロー", R)], [("会計", BK), ("8000円", R), ("の末路", BK)], split=620, size=118)
+             [("休日に", BK), ("1人スシロー", R)], [("寿司と", BK), ("異種格闘技", R), ("した結果", BK)], split=620, size=118)   # 10/31 ユーザー指定
     T.type_b("jidaraku_04_sushiro_thumb_b.png",
              [("j01_room", [("angry_aiming_cat", 1.0, 160, 470, 300, False)]),
               ("f_kanimiso", [("happy_hamster_open_arms", 1.0, 160, 470, 300, False)]),

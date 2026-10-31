@@ -166,6 +166,67 @@ def r2_rows(t, style, BW):
     return out
 
 
+def flat_band(lines, style):
+    """10/31 ユーザー指定：帯は傾けず、画面の上のほうに横いっぱい（タイトルのすぐ下）。上下に警告じま。
+    "b1" 黒と黄色のしま＋黒い地＋白と金の文字／"b2" 赤と白のしま＋紺の地＋黄色い文字／"b3" 黒と黄色のしま＋金属っぽい地＋左右に「！」＋赤い文字"""
+    import make_thumb_wagyu_dopa as D
+    BW, BH, SH = W, 700, 64
+    im = Image.new("RGBA", (BW, BH), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    stripe = {"b1": ((255, 210, 0), (15, 15, 20)), "b2": ((225, 25, 40), (255, 255, 255)), "b3": ((255, 205, 0), (20, 20, 20))}[style]
+    if style == "b1":
+        d.rectangle((0, SH, BW, BH - SH), fill=(18, 18, 26, 245))
+    elif style == "b2":
+        for y in range(SH, BH - SH):
+            k = (y - SH) / (BH - 2 * SH)
+            d.line((0, y, BW, y), fill=(int(20 + 20 * k), int(30 + 15 * k), int(90 - 30 * k), 248))
+    else:
+        for y in range(SH, BH - SH):
+            k = abs((y - SH) / (BH - 2 * SH) - 0.35)
+            v = int(95 - 70 * k)
+            d.line((0, y, BW, y), fill=(v, v, v + 6, 250))
+    for y0 in (0, BH - SH):
+        d.rectangle((0, y0, BW, y0 + SH), fill=stripe[1] + (255,))
+        for k in range(-2, BW // 60 + 3):
+            x = k * 60
+            d.polygon([(x, y0), (x + 30, y0), (x + 30 + SH, y0 + SH), (x + SH, y0 + SH)], fill=stripe[0] + (255,))
+    if style == "b3":   # 左右に「！」の三角（光る）
+        for cx in (95, BW - 95):
+            tri = Image.new("RGBA", (200, 190), (0, 0, 0, 0))
+            td = ImageDraw.Draw(tri)
+            td.polygon([(100, 12), (188, 178), (12, 178)], fill=(255, 200, 0, 255), outline=(30, 20, 0, 255))
+            td.line((100, 70, 100, 130), fill=(20, 20, 20, 255), width=20)
+            td.ellipse((89, 145, 111, 167), fill=(20, 20, 20, 255))
+            tri = D.glow(tri, (255, 190, 40), r=16)
+            im.alpha_composite(tri, (cx - tri.width // 2, SH + 40))
+    t = lines[1]
+    subs = [t]
+    if len(t) > 7:   # 2行目が長いときは「は・が・を」のあとで分けて大きな字のまま
+        for k in range(2, len(t) - 2):
+            if t[k - 1] in "はがをにで":
+                subs = [t[:k], t[k:]]
+                break
+    rows = []
+    for i, ln in enumerate([lines[0]] + subs):
+        size = 150 if i == 0 else 165
+        if style == "b1":
+            rows.append(I.text(ln, size, WHITE, stroke=12, stroke_col=(0, 0, 0), max_w=BW - 120) if i == 0
+                        else D.glow(D.gold_text(ln, size, BW - 100), (255, 210, 60), r=18))
+        elif style == "b2":
+            rows.append(I.text(ln, size, WHITE if i == 0 else (255, 230, 40), stroke=14,
+                               stroke_col=(200, 20, 40) if i == 0 else (120, 0, 20), max_w=BW - 100))
+        else:
+            rows.append(I.text(ln, size, (235, 25, 35), stroke=14, stroke_col=WHITE, max_w=BW - (400 if i == 0 else 100)))
+    top, gap = SH + 25, 12
+    avail = BH - 2 * SH - 50
+    tot = sum(x.height for x in rows) + gap * (len(rows) - 1)
+    y = top + max(0, (avail - tot) // 2)
+    for x in rows:
+        im.alpha_composite(x, ((BW - x.width) // 2, y))
+        y += x.height + gap
+    return im
+
+
 def callout_img(lines, style=None):
     """冒頭のタイトルコール。style=None は前の赤い角丸の板。
     10/31 ユーザー指定「サムネに使う場面なので、画面の上半分をおおうくらい大きく・目を引く帯・文字も大きく」：
@@ -184,6 +245,8 @@ def callout_img(lines, style=None):
             box.alpha_composite(r, ((bw - r.width) // 2, y))
             y += r.height + 20
         return box.rotate(-3, expand=True, resample=Image.BICUBIC)
+    if style in ("b1", "b2", "b3"):
+        return flat_band(lines, style)
     BW, BH = W + 40, 780
     im = Image.new("RGBA", (BW, BH), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
@@ -381,7 +444,11 @@ class Renderer:
             im = self.call_im
             sc = 1.6 - 0.6 * (1 - (1 - u) ** 3)
             im2 = im.resize((max(1, int(im.width * sc)), max(1, int(im.height * sc))))
-            if c.get("callout_style"):   # 大きな帯：ドンと出たあと、ゆっくり脈打つ（10/31）
+            if (c.get("callout_style") or "").startswith("b") and len(c["callout_style"]) == 2:   # 横いっぱいの帯：上から少しだけ縮んで止まる
+                k_ = 1.12 - 0.12 * (1 - (1 - u) ** 3)
+                im2 = im.resize((max(1, int(im.width * k_)), max(1, int(im.height * k_))))
+                I.put(out, im2, W / 2, 295 + im.height / 2)   # タイトルの2行のすぐ下
+            elif c.get("callout_style"):   # 大きな帯：ドンと出たあと、ゆっくり脈打つ（10/31）
                 sc *= 1 + 0.025 * math.sin(t * 7)
                 im2 = im.resize((max(1, int(im.width * sc)), max(1, int(im.height * sc))))
                 I.put(out, im2, W / 2 + 10 * math.sin(t * 40) * max(0.0, 1 - t / 0.5), 690)

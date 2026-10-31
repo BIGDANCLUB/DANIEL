@@ -227,6 +227,98 @@ def flat_band(lines, style):
     return im
 
 
+def own_band(lines, style):
+    """10/31 ユーザー指定：置き方だけ見本どおり（タイトルのすぐ下に横いっぱい）、中身はこのチャンネル独自のデザイン。
+    "c1" レシート（ギザギザの白い紙・点線・赤いはんこ風）／"c2" ネオン看板（紺の地にピンクと水色の光る線）／
+    "c3" ポップアート（オレンジ→ピンクのグラデーション＋水玉の網点＋白い文字に黒い太ふち）"""
+    import make_thumb_wagyu_dopa as D
+    from PIL import ImageFilter
+    BW, BH = W, 700
+    im = Image.new("RGBA", (BW, BH), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    if style == "c1":   # レシート
+        tooth, top, bot = 34, 18, BH - 18
+        pts = [(0, top)]
+        for x in range(0, BW + tooth, tooth):
+            pts += [(x + tooth / 2, top - 18), (x + tooth, top)]
+        pts += [(BW, bot)]
+        for x in range(BW, -tooth, -tooth):
+            pts += [(x - tooth / 2, bot + 18), (x - tooth, bot)]
+        sh = Image.new("RGBA", (BW, BH), (0, 0, 0, 0))
+        ImageDraw.Draw(sh).polygon([(x + 10, y + 14) for x, y in pts], fill=(0, 0, 0, 110))
+        im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(6)))
+        d.polygon(pts, fill=(255, 253, 245, 255))
+        for y in (top + 70, bot - 70):
+            for x in range(40, BW - 40, 28):
+                d.line((x, y, x + 14, y), fill=(120, 120, 120, 255), width=5)
+        st = I.text("税", 70, (220, 30, 40), stroke=0, max_w=200)
+        stamp = Image.new("RGBA", (150, 150), (0, 0, 0, 0))
+        ImageDraw.Draw(stamp).ellipse((6, 6, 144, 144), outline=(220, 30, 40, 230), width=10)
+        stamp.alpha_composite(st, ((150 - st.width) // 2, (150 - st.height) // 2))
+        stamp = stamp.rotate(14, expand=True, resample=Image.BICUBIC)
+        stamp = stamp.resize((stamp.width * 3 // 4, stamp.height * 3 // 4), Image.LANCZOS)
+        im.alpha_composite(stamp, (BW - stamp.width - 16, bot - stamp.height - 8))
+        cols = [((30, 40, 70), WHITE), ((220, 30, 40), WHITE), ((220, 30, 40), WHITE)]
+    elif style == "c2":   # ネオン看板
+        d.rounded_rectangle((10, 10, BW - 10, BH - 10), 40, fill=(16, 10, 40, 250))
+        glow = Image.new("RGBA", (BW, BH), (0, 0, 0, 0))
+        gd = ImageDraw.Draw(glow)
+        gd.rounded_rectangle((34, 34, BW - 34, BH - 34), 30, outline=(255, 60, 200, 255), width=14)
+        gd.rounded_rectangle((60, 60, BW - 60, BH - 60), 22, outline=(60, 230, 255, 255), width=8)
+        im.alpha_composite(glow.filter(ImageFilter.GaussianBlur(14)))
+        im.alpha_composite(glow.filter(ImageFilter.GaussianBlur(5)))
+        thin = Image.new("RGBA", (BW, BH), (0, 0, 0, 0))
+        td = ImageDraw.Draw(thin)
+        td.rounded_rectangle((34, 34, BW - 34, BH - 34), 30, outline=(255, 210, 245, 255), width=5)
+        td.rounded_rectangle((60, 60, BW - 60, BH - 60), 22, outline=(210, 250, 255, 255), width=3)
+        im.alpha_composite(thin)
+        cols = [((210, 250, 255), (40, 200, 255)), ((255, 230, 250), (255, 50, 190)), ((255, 230, 250), (255, 50, 190))]
+    else:   # ポップアート
+        for x in range(BW):
+            k = x / BW
+            d.line((x, 0, x, BH), fill=(255, int(150 - 90 * k), int(30 + 150 * k), 255))
+        dots = Image.new("RGBA", (BW, BH), (0, 0, 0, 0))
+        dd = ImageDraw.Draw(dots)
+        for yy in range(0, BH, 34):
+            for xx in range((yy // 34) % 2 * 17, BW, 34):
+                rr = 4 + 7 * (1 - abs(yy - BH / 2) / (BH / 2))
+                dd.ellipse((xx - rr, yy - rr, xx + rr, yy + rr), fill=(255, 255, 255, 70))
+        im.alpha_composite(dots)
+        d.rectangle((0, 0, BW - 1, BH - 1), outline=(0, 0, 0, 255), width=14)
+        d.rectangle((22, 22, BW - 23, BH - 23), outline=(255, 255, 255, 255), width=6)
+        cols = [(WHITE, (0, 0, 0)), ((255, 240, 60), (0, 0, 0)), ((255, 240, 60), (0, 0, 0))]
+    t = lines[1]
+    subs = [t]
+    if len(t) > 7:
+        for k in range(2, len(t) - 2):
+            if t[k - 1] in "はがをにで":
+                subs = [t[:k], t[k:]]
+                break
+    rows = []
+    for i, ln in enumerate([lines[0]] + subs):
+        fill, sc = cols[min(i, 2)]
+        size = 150 if i == 0 else 165
+        tx = I.text(ln, size, fill, stroke=14, stroke_col=sc, max_w=BW - 120)
+        if style == "c2":   # 文字の形にそって光らせる
+            a_ = tx.split()[-1].filter(ImageFilter.GaussianBlur(22))
+            g_ = Image.new("RGBA", tx.size, sc + (0,))
+            g_.putalpha(a_.point(lambda v: int(v * 0.75)))
+            pad = Image.new("RGBA", (tx.width + 40, tx.height + 40), (0, 0, 0, 0))
+            pad.alpha_composite(g_, (20, 20))
+            pad.alpha_composite(tx, (20, 20))
+            tx = pad
+        if style == "c3" and i > 0:
+            tx = tx.rotate(-3, expand=True, resample=Image.BICUBIC)
+        rows.append(tx)
+    gap = 6
+    tot = sum(x.height for x in rows) + gap * (len(rows) - 1)
+    y = (BH - tot) // 2
+    for x in rows:
+        im.alpha_composite(x, ((BW - x.width) // 2, y))
+        y += x.height + gap
+    return im
+
+
 def callout_img(lines, style=None):
     """冒頭のタイトルコール。style=None は前の赤い角丸の板。
     10/31 ユーザー指定「サムネに使う場面なので、画面の上半分をおおうくらい大きく・目を引く帯・文字も大きく」：
@@ -247,6 +339,8 @@ def callout_img(lines, style=None):
         return box.rotate(-3, expand=True, resample=Image.BICUBIC)
     if style in ("b1", "b2", "b3"):
         return flat_band(lines, style)
+    if style in ("c1", "c2", "c3"):
+        return own_band(lines, style)
     BW, BH = W + 40, 780
     im = Image.new("RGBA", (BW, BH), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
@@ -444,7 +538,7 @@ class Renderer:
             im = self.call_im
             sc = 1.6 - 0.6 * (1 - (1 - u) ** 3)
             im2 = im.resize((max(1, int(im.width * sc)), max(1, int(im.height * sc))))
-            if (c.get("callout_style") or "").startswith("b") and len(c["callout_style"]) == 2:   # 横いっぱいの帯：上から少しだけ縮んで止まる
+            if (c.get("callout_style") or "")[:1] in ("b", "c") and len(c["callout_style"]) == 2:   # 横いっぱいの帯：上から少しだけ縮んで止まる
                 k_ = 1.12 - 0.12 * (1 - (1 - u) ** 3)
                 im2 = im.resize((max(1, int(im.width * k_)), max(1, int(im.height * k_))))
                 I.put(out, im2, W / 2, 295 + im.height / 2)   # タイトルの2行のすぐ下

@@ -284,26 +284,27 @@ def flow(title, steps, tag="", hsize=46, ssize=38):
 
 
 def message(lines, sub="", opaque=False, size=86):
-    """大きな1〜2行の文字（タイトル・まとめ・締め・注意書き）。"""
+    """大きな1〜2行の文字（タイトル・まとめ・締め・注意書き）。sub は "\n" で2行にできる（10/31：はみ出し対策・箱も sub の幅に合わせる）。"""
     img = Image.new("RGBA", (W, H), NAVY + (255,)) if opaque else canvas()
     d = ImageDraw.Draw(img)
     f = font("round", size)
+    subs = sub.split("\n") if sub else []
+    sf = font("round_b", 40)
     if not opaque:
-        tw = max(text_w(d, ln, f) for ln in lines)
-        hh = f.size * 1.35 * len(lines) + (90 if sub else 0) + 120
+        tw = max([text_w(d, ln, f) for ln in lines] + [text_w(d, ln, sf) for ln in subs])
+        sh = 40 + 52 * len(subs) if subs else 0
+        hh = f.size * 1.35 * len(lines) + sh + 120
         box = (int(W / 2 - tw / 2 - 90), int(450 - hh / 2), int(W / 2 + tw / 2 + 90), int(450 + hh / 2))
         shadow(img, box, 40, offset=12, alpha=80)
         d.rounded_rectangle(box, 40, fill=CREAM + (250,), outline=NAVY, width=8)
-        cy = 450 - (45 if sub else 0)
+        cy = 450 - sh / 2
         draw_lines(d, lines, f, W / 2, cy, INK, gap=1.35)
-        if sub:
-            sf = font("round_b", 40)
-            d.text((W / 2 - text_w(d, sub, sf) / 2, box[3] - 100), sub, font=sf, fill=MUTED)
+        for i, ln in enumerate(subs):
+            d.text((W / 2 - text_w(d, ln, sf) / 2, box[3] - 50 - 52 * (len(subs) - i)), ln, font=sf, fill=MUTED)
     else:
         draw_lines(d, lines, f, W / 2, H / 2 - (40 if sub else 0), WHITE, gap=1.6)
-        if sub:
-            sf = font("round_b", 40)
-            d.text((W / 2 - text_w(d, sub, sf) / 2, H / 2 + f.size * len(lines) * 0.8), sub, font=sf, fill=YELLOW)
+        for i, ln in enumerate(subs):
+            d.text((W / 2 - text_w(d, ln, sf) / 2, H / 2 + f.size * len(lines) * 0.8 + 52 * i), ln, font=sf, fill=YELLOW)
     return img
 
 

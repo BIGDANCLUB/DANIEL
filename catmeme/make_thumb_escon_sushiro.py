@@ -37,7 +37,7 @@ def escon():
               ("bg31_escon_inside", [("excited_hodomoe_city_cat", 1.0, 160, 470, 330, False)])],
              [("txt", "家賃20億!?", 160, 60, 42, Y, -6), ("txt", "何度頼んでも…", 480, 60, 38, Y, 4),
               ("txt", "600億で建設", 800, 60, 40, Y, -4), ("txt", "温泉つき!", 1130, 60, 44, R, 6)],
-             [("日本ハムが札幌ドームを", R)], [("出ていった本当の理由", NV)])
+             [("年20億の家賃収入最高！", R)], [("⇒交渉にも応じなかった結果…", NV)])   # 10/31 ユーザー指定
     T.type_c("31_escon_thumb_c.png", "bg31_escon_inside",
              [("surprise_big_pupils_cat", 1.0, 1040, 620, 470, False), ("money_counting_orange_cat", 1.0, 250, 640, 360, False)],
              "家賃が高すぎて球場を建てた球団", "600億!?", zoom=1.05)

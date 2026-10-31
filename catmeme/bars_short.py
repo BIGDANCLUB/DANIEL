@@ -146,6 +146,100 @@ def finish_text(t):
     return im.rotate(6, expand=True, resample=Image.BICUBIC)
 
 
+def r2_rows(t, style, BW):
+    """2行目が長いときは「は・が・を」のあとで2つに分けて、大きな字のまま出す。"""
+    import make_thumb_wagyu_dopa as D
+    parts = [t]
+    if len(t) > 7:
+        for k in range(2, len(t) - 2):
+            if t[k - 1] in "はがをにで":
+                parts = [t[:k], t[k:]]
+                break
+    out = []
+    for p_ in parts:
+        if style == "a":
+            out.append(I.text(p_, 175, (230, 20, 40), stroke=16, stroke_col=WHITE, max_w=BW - 200))
+        elif style == "b":
+            out.append(D.glow(D.gold_text(p_, 175, BW - 200), (255, 210, 60), r=20))
+        else:
+            out.append(I.text(p_, 175, (225, 25, 45), stroke=12, stroke_col=(255, 230, 120), max_w=BW - 280))
+    return out
+
+
+def callout_img(lines, style=None):
+    """冒頭のタイトルコール。style=None は前の赤い角丸の板。
+    10/31 ユーザー指定「サムネに使う場面なので、画面の上半分をおおうくらい大きく・目を引く帯・文字も大きく」：
+    "a" 爆発（黄色いギザギザ＋虹色の光）／"b" 黒と金の斜め帯（上下に警告しま）／"c" 集中線＋白い板（赤い太枠）"""
+    import make_thumb_wagyu_dopa as D
+    from PIL import ImageFilter
+    if not style:
+        rows = [I.text(lines[0], 110, WHITE, stroke=10, stroke_col=(20, 30, 80), max_w=W - 160),
+                I.text(lines[1], 150, (255, 225, 60), stroke=14, stroke_col=(170, 20, 40), max_w=W - 140)]
+        bw = max(r.width for r in rows) + 90
+        bh = sum(r.height for r in rows) + 90
+        box = Image.new("RGBA", (bw, bh), (0, 0, 0, 0))
+        ImageDraw.Draw(box).rounded_rectangle((0, 0, bw - 1, bh - 1), 40, fill=(230, 40, 70, 240), outline=WHITE, width=10)
+        y = 35
+        for r in rows:
+            box.alpha_composite(r, ((bw - r.width) // 2, y))
+            y += r.height + 20
+        return box.rotate(-3, expand=True, resample=Image.BICUBIC)
+    BW, BH = W + 40, 780
+    im = Image.new("RGBA", (BW, BH), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    cx, cy = BW // 2, BH // 2
+    if style == "a":
+        D.rainbow_rays(im, cx, cy, n=40, alpha=200)
+        pts = []
+        for i in range(32):
+            a = 2 * math.pi * i / 32
+            r = (1.0 if i % 2 == 0 else 0.80)
+            pts.append((cx + math.cos(a) * BW * 0.50 * r, cy + math.sin(a) * BH * 0.47 * r))
+        d.polygon(pts, fill=(200, 0, 30, 255))
+        pts2 = [(cx + (x - cx) * 0.93, cy + (y - cy) * 0.90) for x, y in pts]
+        d.polygon(pts2, fill=(255, 232, 20, 255))
+        r1 = I.text(lines[0], 140, WHITE, stroke=14, stroke_col=(20, 30, 90), max_w=BW - 220)
+        r2 = I.text(lines[1], 170, (230, 20, 40), stroke=16, stroke_col=WHITE, max_w=BW - 200)
+    elif style == "b":
+        band = Image.new("RGBA", (BW + 200, 600), (0, 0, 0, 0))
+        bd = ImageDraw.Draw(band)
+        bd.rectangle((0, 70, band.width, 530), fill=(14, 14, 22, 245))
+        for y0 in (0, 530):
+            for k in range(-2, band.width // 70 + 3):
+                x = k * 70
+                bd.polygon([(x, y0), (x + 35, y0), (x + 105, y0 + 70), (x + 70, y0 + 70)], fill=(255, 215, 0, 255))
+            bd.rectangle((0, y0, band.width, y0 + 70), outline=(14, 14, 22, 255), width=6)
+        bd.line((0, 82, band.width, 82), fill=(255, 205, 60, 255), width=8)
+        bd.line((0, 518, band.width, 518), fill=(255, 205, 60, 255), width=8)
+        band = band.rotate(-6, expand=True, resample=Image.BICUBIC)
+        im.alpha_composite(band, ((BW - band.width) // 2, (BH - band.height) // 2))
+        r1 = I.text(lines[0], 140, WHITE, stroke=12, stroke_col=(0, 0, 0), max_w=BW - 220)
+        r2 = D.gold_text(lines[1], 165, BW - 200)
+        r2 = D.glow(r2, (255, 210, 60), r=20)
+    else:   # "c"
+        ov = ImageDraw.Draw(im)
+        for i in range(90):
+            a = 2 * math.pi * i / 90
+            w_ = 0.012 + 0.010 * ((i * 37) % 5) / 4
+            ov.polygon([(cx + math.cos(a - w_) * 2000, cy + math.sin(a - w_) * 2000), (cx + math.cos(a + w_) * 2000, cy + math.sin(a + w_) * 2000),
+                        (cx + math.cos(a) * 380, cy + math.sin(a) * 260)], fill=(255, 255, 255, 210))
+        bx = (70, 110, BW - 70, BH - 110)
+        sh = Image.new("RGBA", (BW, BH), (0, 0, 0, 0))
+        ImageDraw.Draw(sh).rounded_rectangle((bx[0] + 18, bx[1] + 22, bx[2] + 18, bx[3] + 22), 50, fill=(150, 0, 20, 230))
+        im.alpha_composite(sh)
+        d.rounded_rectangle(bx, 50, fill=(255, 255, 255, 255), outline=(225, 25, 45, 255), width=22)
+        d.rounded_rectangle((bx[0] + 30, bx[1] + 30, bx[2] - 30, bx[3] - 30), 34, outline=(255, 200, 0, 255), width=8)
+        r1 = I.text(lines[0], 140, (25, 45, 140), stroke=10, stroke_col=WHITE, max_w=BW - 300)
+        r2 = I.text(lines[1], 170, (225, 25, 45), stroke=12, stroke_col=(255, 230, 120), max_w=BW - 280)
+    rows = [r1] + r2_rows(lines[1], style, BW)
+    tot = sum(x.height for x in rows) + 24 * (len(rows) - 1)
+    y = (BH - tot) // 2
+    for x in rows:
+        im.alpha_composite(x, ((BW - x.width) // 2, y))
+        y += x.height + 24
+    return im.rotate(-3 if style != "b" else 0, expand=False, resample=Image.BICUBIC)
+
+
 class Renderer:
     def __init__(self, c, static):
         self.c, self.st = c, static
@@ -160,18 +254,7 @@ class Renderer:
             self.crown, self.stamp = crown_img(), stamp_img(c.get("finish_word", "1位"))
         self.bbox = {}
         if c.get("callout"):
-            lines = c["callout"]
-            rows = [I.text(lines[0], 110, WHITE, stroke=10, stroke_col=(20, 30, 80), max_w=W - 160),
-                    I.text(lines[1], 150, (255, 225, 60), stroke=14, stroke_col=(170, 20, 40), max_w=W - 140)]
-            bw = max(r.width for r in rows) + 90
-            bh = sum(r.height for r in rows) + 90
-            box = Image.new("RGBA", (bw, bh), (0, 0, 0, 0))
-            ImageDraw.Draw(box).rounded_rectangle((0, 0, bw - 1, bh - 1), 40, fill=(230, 40, 70, 240), outline=WHITE, width=10)
-            y = 35
-            for r in rows:
-                box.alpha_composite(r, ((bw - r.width) // 2, y))
-                y += r.height + 20
-            self.call_im = box.rotate(-3, expand=True, resample=Image.BICUBIC)
+            self.call_im = callout_img(c["callout"], c.get("callout_style"))
         if c.get("shout"):
             self.shout_im = I.text("＼" + c["shout"][0] + "／", 76, YELLOW, stroke=9, stroke_col=BLACK, max_w=520).rotate(
                 8, expand=True, resample=Image.BICUBIC)
@@ -298,7 +381,12 @@ class Renderer:
             im = self.call_im
             sc = 1.6 - 0.6 * (1 - (1 - u) ** 3)
             im2 = im.resize((max(1, int(im.width * sc)), max(1, int(im.height * sc))))
-            I.put(out, im2, W / 2 + 8 * math.sin(t * 40) * max(0.0, 1 - t / 0.5), 560)
+            if c.get("callout_style"):   # 大きな帯：ドンと出たあと、ゆっくり脈打つ（10/31）
+                sc *= 1 + 0.025 * math.sin(t * 7)
+                im2 = im.resize((max(1, int(im.width * sc)), max(1, int(im.height * sc))))
+                I.put(out, im2, W / 2 + 10 * math.sin(t * 40) * max(0.0, 1 - t / 0.5), 690)
+            else:
+                I.put(out, im2, W / 2 + 8 * math.sin(t * 40) * max(0.0, 1 - t / 0.5), 560)
         if c.get("shout"):   # 「＼もっと入れろや／」のような掛け声（猫の上・10/27）
             text_, j = c["shout"]
             sh = self.shout_im

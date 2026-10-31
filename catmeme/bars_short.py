@@ -509,8 +509,12 @@ class Renderer:
                 y += hpx
             if LINE != (0, 0, 0):
                 cv2.rectangle(out, (x0, int(top)), (x1, BAR_BOT), (1, 1, 1), 3, cv2.LINE_AA)   # 白い細いふち
-            if c.get("take"):
-                I.put(out, st["takelab"][j], cx, y + 90)
+            if c.get("take"):   # 手取りの札：残りの部分におさまらないときは棒の上に出す（猫に隠れないように・10/31）
+                lab = st["takelab"][j]
+                cy_ = min(y + 90, BAR_BOT - (170 if not CATX else 0) - lab.height / 2 - 12)   # 3列は棒の下の部分に猫がかぶる
+                if cy_ - lab.height / 2 < y - 4:
+                    cy_ = top - lab.height / 2 - 14
+                I.put(out, lab, cx, cy_)
         for j, cx in enumerate(COLX):   # 下の札
             lab = st["cards"][j]
             I.put(out, lab, cx, 1420)

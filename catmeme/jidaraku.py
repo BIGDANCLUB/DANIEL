@@ -75,9 +75,13 @@ def sub_img(t, size=84):
     return im.crop(im.getbbox())
 
 
-def line(bg, cat, text, dur=3.0, h=760, x=960, bottom=1010, se=None, bgm=None, mute=False, flip=False):
-    """字幕1つ＝1カット。猫は1匹。"""
+def line(bg, cat, text, dur=3.0, h=760, x=960, bottom=1010, se=None, bgm=None, mute=False, flip=False, item=None):
+    """字幕1つ＝1カット。猫は1匹。item＝料理の写真の名前（右上に白いふちの写真を出し、猫は左によせる・10/31 スシロー）。"""
+    if item:
+        x, h = 600, min(h, 700)
     c = dict(bg=bg, text=text, dur=dur, fixed=True, no_pop=True, cats=[dict(a=cat, h=h, x=x, bottom=bottom, mute=mute, flip=flip)])
+    if item:
+        c["item"] = item
     if se:
         c["se"] = se
     if bgm:
@@ -104,6 +108,23 @@ class Renderer:
             if c.get("dark"):   # 同じ絵を夜っぽく暗くして使いまわす
                 self.base = self.base * (1 - c["dark"]) + np.array([0.25, 0.08, 0.05], np.float32) * c["dark"] * 0.4
         self.sub = sub_img(c["text"]) if c.get("text") else None
+        self.item = None
+        if c.get("item"):
+            try:
+                src = Image.open(bg_path(c["item"])).convert("RGBA")   # 背景が透明な写真は白で埋める
+                im = Image.new("RGB", src.size, (255, 255, 255))
+                im.paste(src, (0, 0), src)
+            except FileNotFoundError:   # 写真がまだ届いていない料理は出さない
+                im = None
+            if im is not None:
+                k = min(760 / im.width, 560 / im.height)
+                im = im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
+                fr = Image.new("RGBA", (im.width + 28, im.height + 28), (255, 255, 255, 255))
+                fr.paste(im, (14, 14))
+                sh = Image.new("RGBA", (fr.width + 16, fr.height + 16), (0, 0, 0, 0))
+                ImageDraw.Draw(sh).rectangle((10, 10, sh.width - 1, sh.height - 1), fill=(0, 0, 0, 110))
+                sh.alpha_composite(fr, (0, 0))
+                self.item = sh.rotate(-3, expand=True, resample=Image.BICUBIC)
         self.clips = [R.Clip(k["a"]) for k in c["cats"]]
 
     def frame(self, t):
@@ -120,6 +141,11 @@ class Renderer:
             al = cv2.resize(a.astype(np.float32), (w, h), interpolation=cv2.INTER_AREA)
             xx = min(max(int(k["x"] - w / 2), 0), W - w)
             I.over(out, img, al, xx, int(k["bottom"] - h))
+        if self.item is not None:   # 料理の写真：ポンと出て少し縮む
+            k = 1.18 - 0.18 * min(1.0, t / 0.18)
+            it = self.item.resize((int(self.item.width * k), int(self.item.height * k)), Image.BILINEAR)
+            img, a = R.to_np(it)
+            I.over(out, img, a, int(1390 - it.width / 2), int(max(10, 400 - it.height / 2)))
         if self.sub is not None:
             img, a = R.to_np(self.sub)
             I.over(out, img, a, int(W / 2 - self.sub.width / 2), int(1040 - self.sub.height))

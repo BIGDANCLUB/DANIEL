@@ -159,8 +159,12 @@ def r2_rows(t, style, BW):
     for p_ in parts:
         if style == "a":
             out.append(I.text(p_, 175, (230, 20, 40), stroke=16, stroke_col=WHITE, max_w=BW - 200))
-        elif style == "b":
+        elif style in ("b", "d2"):
             out.append(D.glow(D.gold_text(p_, 175, BW - 200), (255, 210, 60), r=20))
+        elif style == "d1":
+            out.append(I.text(p_, 175, (255, 235, 40), stroke=16, stroke_col=(90, 0, 10), max_w=BW - 200))
+        elif style == "d3":
+            out.append(D.glow(D.rainbow_text(p_, 175, BW - 200), (255, 120, 220), r=18))
         else:
             out.append(I.text(p_, 175, (225, 25, 45), stroke=12, stroke_col=(255, 230, 120), max_w=BW - 280))
     return out
@@ -357,20 +361,33 @@ def callout_img(lines, style=None):
         d.polygon(pts2, fill=(255, 232, 20, 255))
         r1 = I.text(lines[0], 140, WHITE, stroke=14, stroke_col=(20, 30, 90), max_w=BW - 220)
         r2 = I.text(lines[1], 170, (230, 20, 40), stroke=16, stroke_col=WHITE, max_w=BW - 200)
-    elif style == "b":
+    elif style in ("b", "d1", "d2", "d3"):
+        # 10/31 ユーザー指定「この感じで3案」：斜めの帯（上下にしま）の色ちがい。
+        # b 黒×黄（元）／d1 赤×白・逆向き／d2 紺×水色・金の文字／d3 黒紫のグラデ×ピンクと金・虹色の文字
+        band_col, st_col, st_bg, line_col, ang = {
+            "b": ((14, 14, 22), (255, 215, 0), (14, 14, 22), (255, 205, 60), -6),
+            "d1": ((200, 15, 35), (255, 255, 255), (200, 15, 35), (255, 255, 255), 6),
+            "d2": ((15, 30, 80), (80, 220, 255), (15, 30, 80), (255, 215, 80), -6),
+            "d3": ((40, 10, 60), (255, 80, 200), (255, 210, 60), (255, 80, 200), 5)}[style]
         band = Image.new("RGBA", (BW + 200, 600), (0, 0, 0, 0))
         bd = ImageDraw.Draw(band)
-        bd.rectangle((0, 70, band.width, 530), fill=(14, 14, 22, 245))
+        if style == "d3":
+            for y in range(70, 530):
+                k = (y - 70) / 460
+                bd.line((0, y, band.width, y), fill=(int(40 + 60 * k), int(10 + 5 * k), int(60 + 70 * k), 245))
+        else:
+            bd.rectangle((0, 70, band.width, 530), fill=band_col + (245,))
         for y0 in (0, 530):
+            bd.rectangle((0, y0, band.width, y0 + 70), fill=st_bg + (255,))
             for k in range(-2, band.width // 70 + 3):
                 x = k * 70
-                bd.polygon([(x, y0), (x + 35, y0), (x + 105, y0 + 70), (x + 70, y0 + 70)], fill=(255, 215, 0, 255))
+                bd.polygon([(x, y0), (x + 35, y0), (x + 105, y0 + 70), (x + 70, y0 + 70)], fill=st_col + (255,))
             bd.rectangle((0, y0, band.width, y0 + 70), outline=(14, 14, 22, 255), width=6)
-        bd.line((0, 82, band.width, 82), fill=(255, 205, 60, 255), width=8)
-        bd.line((0, 518, band.width, 518), fill=(255, 205, 60, 255), width=8)
-        band = band.rotate(-6, expand=True, resample=Image.BICUBIC)
+        bd.line((0, 82, band.width, 82), fill=line_col + (255,), width=8)
+        bd.line((0, 518, band.width, 518), fill=line_col + (255,), width=8)
+        band = band.rotate(ang, expand=True, resample=Image.BICUBIC)
         im.alpha_composite(band, ((BW - band.width) // 2, (BH - band.height) // 2))
-        r1 = I.text(lines[0], 140, WHITE, stroke=12, stroke_col=(0, 0, 0), max_w=BW - 220)
+        r1 = I.text(lines[0], 140, WHITE, stroke=12, stroke_col=(0, 0, 0) if style != "d1" else (90, 0, 10), max_w=BW - 220)
         r2 = D.gold_text(lines[1], 165, BW - 200)
         r2 = D.glow(r2, (255, 210, 60), r=20)
     else:   # "c"
@@ -394,7 +411,7 @@ def callout_img(lines, style=None):
     for x in rows:
         im.alpha_composite(x, ((BW - x.width) // 2, y))
         y += x.height + 24
-    return im.rotate(-3 if style != "b" else 0, expand=False, resample=Image.BICUBIC)
+    return im.rotate(0 if style in ("b", "d1", "d2", "d3") else -3, expand=False, resample=Image.BICUBIC)
 
 
 class Renderer:

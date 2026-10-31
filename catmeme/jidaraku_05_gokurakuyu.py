@@ -16,12 +16,12 @@ import cuts_04_leak as L
 import jidaraku as J
 
 J.BGS.insert(0, os.path.join(J.HERE, "backgrounds", "jidaraku", "05_gokurakuyu"))
-J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in ("31_escon_photos", "17_imamori", "24_chudo", "25_world")]
+J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in ("17_imamori", "24_chudo", "25_world")]
 ROOM, FRONT, LOBBY, BATH, ROTEN, SAUNA, DINING, MANGA, REST, ROAD, ROOM_N = (
     "j01_room", "g01_front", "g02_lobby", "g03_bath", "g04_roten", "g05_sauna", "g06_dining", "g07_manga", "g08_rest", "g09_road",
     "g10_room_night")
 J.STANDIN.update({FRONT: "bg61_snow_onsen", LOBBY: "bg100_lounge_night", BATH: "bg61_snow_onsen", ROTEN: "bg61_snow_onsen",
-                  SAUNA: "bg31_onsen_seats", DINING: "bg98_izakaya_night", MANGA: "bg100_lounge_night", REST: "bg100_lounge_night",
+                  SAUNA: "bg61_snow_onsen", DINING: "bg98_izakaya_night", MANGA: "bg100_lounge_night", REST: "bg100_lounge_night",
                   ROAD: "bg51_night_street", ROOM_N: ROOM})
 NIGHT = {ROOM_N: 0.72}
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")

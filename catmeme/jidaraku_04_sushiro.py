@@ -40,7 +40,7 @@ def cuts():
         s(ROOM, "realize_wet_cat_stare", "朝ごはんは抜く\n胃袋は空にしておく"),
         s(ROOM, "slack_nail_filing_cat", "スマホで\nスシローのメニューを開く"),
         s(ROOM, "read_book_orange_kitten", "期間限定のフェアも\nしっかり予習する"),
-        s(ROOM, "stare_big_eyes_tabby_kitten", "口コミには\n「まぐろがうまい」\n「茶碗蒸しがとろとろ」"),
+        s(ROOM, "scream_phone_orange_cat", "口コミには\n「まぐろがうまい」\n「茶碗蒸しがとろとろ」"),
         s(ROOM, "think_bike_front_seat_cat", "ネットの人気ランキングも\n上から順に読む"),
         s(ROOM, "excited_hodomoe_city_cat", "仕事の資料より\nよっぽど真剣だ"),
         s(ROOM, "showoff_gojo_cosplay_cat", "アプリで受付\n11時に予約した", se="pikon"),
@@ -65,7 +65,7 @@ def cuts():
         # ---- 開戦 ----
         s(COUNTER, "cocky_dj_cat", "まずは\nアルコールを頼む", bgm={"file": L.PURPLE, "gain": -12, "fade": 0.8}),
         s(COUNTER, "yell_orange_fat_cat", "昼の11時に\nビール", item=BEER),
-        s(COUNTER, "happy_hamster_open_arms", "休日の特権だ"),
+        s(COUNTER, "happy_hamster_open_arms", "休日の独身リーマンを\nなめるな"),
         s(COUNTER, "eat_crunchy_cat_luna", "ゴクッ……\n「くぅ〜！」", se="drink_gulp_gokugoku_thirsty_chug"),
         s(COUNTER, "work_typing_cat", "1皿目は\n本日の海鮮漬け軍艦", item=ZUKE),
         s(COUNTER, "stare_big_eyes_tabby_kitten", "タレにつかった\n切り落としの海鮮が\nこれでもかと乗っている", item=ZUKE),
@@ -187,6 +187,8 @@ def cuts():
 
 def place(cs):
     for c in cs:
+        if c.get("text"):   # 10/31 ユーザー指定：スシローの字幕にカギかっこはつけない
+            c["text"] = c["text"].replace("「", "").replace("」", "")
         if c.get("bg") in NIGHT:
             c["dark"] = NIGHT[c["bg"]]
     return cs

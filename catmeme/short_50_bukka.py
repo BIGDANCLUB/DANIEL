@@ -51,8 +51,10 @@ def cuts():
     for c in out:
         c.update(blur=9, band_y=0, tag_y=460, heads=("昔", "今"))
         for q, hb in zip(c["cats"], [p_ for p_ in c.get("props", [])]):   # 猫は棒の上に立つ（少し小さめ）
-            q["h"], q["w"] = 300, 300
-            q["bottom"] = int(hb[2] - (1290 - hb[2]) + 40)
+            q["h"], q["w"] = 380, 380   # 10/31 ユーザー指定：少し大きく。棒に少しかかってよい（棒の中の値段にはかからない）
+            top_ = hb[2] - (1290 - hb[2])
+            # 上の「昔」「今」の文字にかからない高さ（猫の頭は y=690 より下）まで、棒に少し深くかかってよい
+            q["bottom"] = int(min(1290 - 100, max(top_ + 90, 690 + 380)))
     return out
 
 

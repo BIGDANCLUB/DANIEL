@@ -36,7 +36,8 @@ def cuts():
     ], [
         (2.8, "年収1000万の手取りは\n約710万……", ("happy_chipi_chapa_cat", "realize_wet_cat_stare", "despair_dramatic_kitten"), 2),
         (2.6, "年収が3倍でも\n手取りは3倍にならない", ("think_chin_paw_orange_cat", "stare_interviewer_cat", "sulk_hungry_cat"), 1),
-        (2.4, "みんなも\n手取りで考えよう", ("talk_orange_white_sitting_cat", "happy_hamster_open_arms", "dance_happy_banana_cat"), 0),
+        (2.4, "それでもやっぱり\n年収高い方がいいけどな",   # 10/31 ユーザー指定
+         ("talk_orange_white_sitting_cat", "happy_hamster_open_arms", "dance_happy_banana_cat"), 0),
     ], ("1000万は 毎年 −290万円", "税金と社会保険だけで…", ("dance_happy_banana_cat", "think_chin_paw_orange_cat", "despair_dramatic_kitten")))
     cs[0]["callout"] = ("年収が上がると", "税金はどれだけふえる？")
     cs[0]["callout_style"] = "b"   # 10/31 ユーザー採用：黒と黄の斜めの帯（サムネに使う場面）

@@ -41,7 +41,7 @@ def cuts():
         times = 1 / r
         out.append(Wd.split(ST, item, dur=1.2 * K, se=["explosion_chudoon"] if last else ["pi"]))
         c = Wd.split(ST, item, left=ocat, cap="2000年ごろ", cap_side="L", sound="L", dur=2.3 * K,
-                     se=["explosion_chudoon"])
+                     se=["pafu"])   # 左（昔）が出る音はぱふっ（10/31 ユーザー指定）
         c["props"] = [bar_o]
         out.append(c)
         c = Wd.split(ST, item, left=ocat, right=ncat, cap="今は\n約%.1f倍" % times, cap_side="R", sound="R", dur=3.0 * K,

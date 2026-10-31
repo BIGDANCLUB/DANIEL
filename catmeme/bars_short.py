@@ -559,6 +559,27 @@ class Renderer:
                 k_ = 1.12 - 0.12 * (1 - (1 - u) ** 3)
                 im2 = im.resize((max(1, int(im.width * k_)), max(1, int(im.height * k_))))
                 I.put(out, im2, W / 2, 295 + im.height / 2)   # タイトルの2行のすぐ下
+            elif c.get("callout_style") == "b":   # 10/31 採用の帯：右から滑りこむ→ドンと揺れる→光が横切る→脈打つ
+                slide = max(0.0, 1 - t / 0.22)
+                x0 = W / 2 + W * 1.1 * slide ** 2
+                shake = 14 * math.sin(t * 55) * max(0.0, 1 - (t - 0.22) / 0.35) if t > 0.22 else 0
+                pulse = 1 + 0.03 * math.sin(max(0.0, t - 0.6) * 6)
+                im2 = im.resize((max(1, int(im.width * pulse)), max(1, int(im.height * pulse))))
+                ph = ((t - 0.4) % 1.6) / 1.6   # 光の帯が左から右へ横切る（1.6秒ごと）
+                if t > 0.4:
+                    im2 = im2.copy()
+                    sw = Image.new("L", im2.size, 0)
+                    sx = int(-300 + (im2.width + 600) * ph)
+                    ImageDraw.Draw(sw).polygon([(sx, 0), (sx + 120, 0), (sx - 80, im2.height), (sx - 200, im2.height)], fill=150)
+                    a_ = im2.split()[-1]
+                    from PIL import ImageChops, ImageFilter
+                    sw = ImageChops.multiply(sw.filter(ImageFilter.GaussianBlur(20)), a_)
+                    wl = Image.new("RGBA", im2.size, (255, 255, 240, 0))
+                    wl.putalpha(sw)
+                    im2.alpha_composite(wl)
+                I.put(out, im2, x0 + shake, 690 + shake * 0.4)
+                if 0.22 < t < 0.5:   # 着地の白いフラッシュ
+                    out = out + (0.5 - t) * 1.2
             elif c.get("callout_style"):   # 大きな帯：ドンと出たあと、ゆっくり脈打つ（10/31）
                 sc *= 1 + 0.025 * math.sin(t * 7)
                 im2 = im.resize((max(1, int(im.width * sc)), max(1, int(im.height * sc))))

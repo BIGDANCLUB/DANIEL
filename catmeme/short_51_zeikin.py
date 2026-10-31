@@ -39,6 +39,8 @@ def cuts():
         (2.4, "みんなも\n手取りで考えよう", ("talk_orange_white_sitting_cat", "happy_hamster_open_arms", "dance_happy_banana_cat"), 0),
     ], ("1000万は 毎年 −290万円", "税金と社会保険だけで…", ("dance_happy_banana_cat", "think_chin_paw_orange_cat", "despair_dramatic_kitten")))
     cs[0]["callout"] = ("年収が上がると", "税金はどれだけふえる？")
+    cs[0]["callout_style"] = "b"   # 10/31 ユーザー採用：黒と黄の斜めの帯（サムネに使う場面）
+    cs[0]["se"] = ["whoosh_shu", {"f": "explosion_chudoon", "at": 0.22}, {"f": "shine_kiraan_maou", "at": 0.45}]
     return cs
 
 

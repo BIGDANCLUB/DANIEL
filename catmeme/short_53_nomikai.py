@@ -39,7 +39,7 @@ cs = [
     s(STATION, "5:30", "始発で\n*全員爆睡*", "sleepy_sleepy_cat"),
     s(STATION, "6:00", "……え\nここ終点？", "sad_looking_away_tabby", label="後輩"),
     s(STREET, "6:30", "今日\n*月曜日*!?", "scream_phone_orange_cat", label="同期"),
-    s(STREET, "6:30", "みんなも\n*飲みすぎに気をつけよう*", "realize_wet_cat_stare"),
+    s(STREET, "6:30", "・・・今後は気を付けよう\n*（オールできる俺\nまだ若ェェェ‼）*", "realize_wet_cat_stare"),   # 10/31 ユーザー指定
 ]
 
 if __name__ == "__main__":

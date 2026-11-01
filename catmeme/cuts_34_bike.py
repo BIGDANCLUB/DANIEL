@@ -96,6 +96,11 @@ K.STEP_SE.update({"b0_preview": ["explosion_chudoon"] + K.GAME_STEP[:6] + ["game
                   "b2_tax": K.GAME_STEP[6:9], "b4_run": [K.GAME_STEP[3], K.GAME_STEP[9], K.GAME_STEP[0]]})
 
 
+# 11/1 ユーザー指定：つかみのグラフの右（バイク）は、気の抜けたゲームの音を1つずつちがう音で積み、いちばん上（最後）だけパフ
+K.DROP_SE["b0_preview"] = {1: ["game_dq_miss", "game_smash_zannen", "game_yoshi_detteiu_so_what_bored", "game_touhou_pichuun_miss_defeat",
+                               "game_rockman_death_tiun_fail_game_over", "boing_fail", "pafu"]}
+
+
 def card(c, sub, **kw):
     return L.dia(c, sub, BOARD, right=("@calm", "博識な猫"), dur=kw.pop("dur", 4.4), se=kw.pop("se", "card_flip"), **kw)
 
@@ -151,7 +156,7 @@ def cuts_all():
         ss("オイルもタイヤも\n安くて小さい", BPARK, se="pi"),
         g("b4_run", "ぜんぶ積むと……", dur=6.4),
         fx(boom("車89万\nバイク18万!!", MONEY, se=["explosion_dokaan"]), "money"),
-        qq(MONEY, "anime_conan_hirameki_remix_b"),
+        qq(MONEY, "tv_professional_poon_remix_b"),   # 11/1 ユーザー指定：ここはポーン連打
         fx(nn("え……\n年71万も\nちがうの？", MONEY, se="tv_professional_poon_remix_a"), "swirl"),
         g("b7_10y", "10年で\nくらべると……", dur=5.4),
         fx(boom("10年で\n440万の差!?", MONEY, se=["explosion_chudoon"]), "money"),

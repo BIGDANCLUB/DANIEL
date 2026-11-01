@@ -23,8 +23,7 @@ ROOM, FRONT, LOBBY, BATH, ROTEN, SAUNA, DINING, MANGA, REST, ROAD, ROOM_N = (
 J.STANDIN.update({FRONT: "bg61_snow_onsen", LOBBY: "bg100_lounge_night", BATH: "bg61_snow_onsen", ROTEN: "bg61_snow_onsen",
                   SAUNA: "bg61_snow_onsen", DINING: "bg98_izakaya_night", MANGA: "bg100_lounge_night", REST: "bg100_lounge_night",
                   ROAD: "bg51_night_street", ROOM_N: ROOM})
-NIGHT = {ROOM_N: 0.72, ROAD: 0.62}   # 帰り道：車のとまった外観の絵を夜っぽく暗くして使う（11/1）
-J.STANDIN[ROAD] = "g01_front_cars"
+NIGHT = {ROOM_N: 0.72}
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
 CATLIFE = os.path.join(L.BGM, "nc102462_Cat_life.mp3")
 # 料理などの写真（届いたら backgrounds/jidaraku/05_gokurakuyu に同じ名前で置く）

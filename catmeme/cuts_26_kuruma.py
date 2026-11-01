@@ -110,6 +110,7 @@ GAME_STEP = ["game_coin_get_money_gain_happy", "anime_dbz_punch", "game_mario_ju
              "anime_shinchan_genkotsu", "game_smash_homerun_bat", "game_ff_cursor", "game_dq_miss", "anime_dbz_teleport"]
 STEP_SE = {"k0_preview": ["explosion_chudoon"] + GAME_STEP[:6] + ["game_mario_1up"],
            "k2_tax": GAME_STEP[6:8], "k3_ins": GAME_STEP[1:3], "k4_run": [GAME_STEP[3], GAME_STEP[9], GAME_STEP[0]]}
+RESULT_SE = {}   # グラフの結果の音（ふつうは1UP）。11/1：タワマンの「売ったら」はゴマダレ
 DROP_SE = {"k0_preview": {1: "pafu"}, "k5_vs": {1: "pafu"}, "d4_10y": {1: "pafu"}, "d3_park": {1: "game_mario_1up"},
            "d5_kei": {1: "game_zelda_item_get"}}   # 軽自動車はゴマダレー
 
@@ -126,16 +127,19 @@ def g(name, say, who="S", still=False, dur=None, red=False, se=None, **kw):
         cats.append({"a": "@papa", "x": ch.cx[1], "h": 190, "bottom": B.BASE_Y - 4, "mute": True, "full": False, "float": True})
     lst = [] if not se else ([se] if isinstance(se, (str, dict)) else list(se))
     if not still:
-        car = 0
+        car, cnt = 0, {}
         for t0, col, _n, _v, _c in ch.steps:
             if t0 >= 0:
                 f = DROP_SE.get(name, {}).get(col, "explosion_chudoon")
+                if isinstance(f, list):   # 列ごとに順番で音を変える（11/1：右の列の最後だけ別の音など）
+                    f = f[min(cnt.get(col, 0), len(f) - 1)]
+                    cnt[col] = cnt.get(col, 0) + 1
                 if name in STEP_SE and col == 0:   # 項目ごとに音を変える
                     f = STEP_SE[name][min(car, len(STEP_SE[name]) - 1)]
                     car += 1
                 lst.append({"f": f, "at": t0 + 0.3, "gain": -6 if f == "explosion_chudoon" else -3})
         if ch.result_at is not None:
-            lst.append({"f": "game_mario_1up", "at": ch.result_at, "gain": -4})
+            lst.append({"f": RESULT_SE.get(name, "game_mario_1up"), "at": ch.result_at, "gain": -4})
         need = ch.still_from() - 0.6
         dur = max(dur or 0, need / R.TEMPO)
     return dict(bg=chart_path(name), bg_ss=ss, cats=cats, say=say, text_box=(60, 6, 1860, 226), say_size=104,

@@ -60,6 +60,13 @@ C.charts({
 })
 
 
+# 11/1 ユーザー指定：つかみのグラフは左（タワマン）の最後を1UP、右（一戸建て）の最後をパフではなく気の抜けたゲームの音に。
+# 「30年後に売ったら」の結果はゴマダレ
+C.K.STEP_SE["t0_preview"] = C.K.GAME_STEP[:len(TW) - 1] + ["game_mario_1up"]
+C.K.DROP_SE["t0_preview"] = {1: ["pafu"] * (len(HS) - 1) + ["game_dq_miss"]}
+C.K.RESULT_SE["t7_sell"] = "game_zelda_item_get"
+
+
 def cuts_all():
     return [
         C.notice(TOWER, (("cocky_dj_cat", 220, 600), ("dance_three_kittens", 640, 520), ("happy_hamster_open_arms", 1000, 560),

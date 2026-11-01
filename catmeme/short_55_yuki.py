@@ -23,7 +23,7 @@ def cuts():
         ("積雪30cm", "cocky_dj_cat", "学校も\nふつうにある", "confused_i_dont_know_cat", "長ぐつが\n売り切れ"),
         ("積雪50cm", "happy_chipi_chapa_cat", "雪かきは\nいい運動", "sulk_hungry_cat", "家から\n出られない"),
         ("積雪1m", "dance_three_kittens", "朝から\n雪かきして出勤", "blank_black_cat_zoning_out", "見たことがない"),
-        ("積雪2m", "happy_hamster_open_arms", "冬が\n来たね", "realize_wet_cat_stare", "みんなも\n雪の日は\n気をつけよう"),
+        ("積雪2m", "happy_hamster_open_arms", "冬が\n来たね", "dance_filmed_by_gray_cat", "踊る"),   # 11/1 ユーザー指定：首都圏はスマホで撮る猫と踊る猫
     ]
     for lv, wcat, wcap, jcat, jcap in rows:
         big = lv in ("積雪20cm", "積雪30cm", "積雪50cm", "積雪1m", "積雪2m")

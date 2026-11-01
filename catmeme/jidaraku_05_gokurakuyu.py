@@ -186,8 +186,17 @@ def cuts():
     ]
 
 
+CROWD = "g06_dining_crowd"   # 11/1 ユーザー指定：料理の写真のかわりに、にぎわう食事処の絵を使う
+
+
 def place(cs):
     for c in cs:
+        if c.get("item") in (KARAAGE, KARAI, SOBA, MILK, ICE):   # 料理の写真は出さず、食事処の場面はにぎわう絵に
+            c.pop("item")
+            if c.get("bg") == DINING:
+                c["bg"] = CROWD
+            for k in c["cats"]:
+                k["x"], k["h"] = 960, 760
         if c.get("text"):   # スシローと同じ：字幕にカギかっこはつけない
             c["text"] = c["text"].replace("「", "").replace("」", "")
         if c.get("bg") in NIGHT:

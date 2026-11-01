@@ -26,17 +26,21 @@ def cuts():
     cs = A.build(SPEC, [
         (2.9, None, (M, M, M), (0, 1, 2)),
         (3.0, "日本の給料って\n世界ではどのくらい？", ("think_chin_paw_orange_cat", "talk_orange_white_sitting_cat", "stare_big_eyes_tabby_kitten"), 2),
-        (2.6, "……韓国にも\nぬかれてる？", ("stare_interviewer_cat", "huh_huh_cat", "despair_dramatic_kitten"), 1),
+        (2.6, "……韓国にも\nぬかれてる？", ("stare_interviewer_cat", "huh_huh_cat", "despair_dramatic_kitten"), -1),   # 11/1：泣いている猫の音
     ], [
         [(2.8, "まずは社会保険\n年金と健康保険", ("sulk_hungry_cat", "read_book_orange_kitten", "stare_tabby_wide_eyes_cat"), 0),
          (2.4, "日本は\n年68万", ("blank_black_cat_zoning_out", "eat_chips_cat", "sad_looking_away_tabby"), 2)],
         [(2.8, "アメリカは税金が\n州によってちがう", ("talk_orange_white_sitting_cat", "think_bike_front_seat_cat", "scream_phone_orange_cat"), 0),
-         (2.4, "それでも手取りは\n日本の2倍以上！？", ("cocky_dj_cat", "realize_wet_cat_stare", "stare_tabby_wide_eyes_cat"), 2)],
+         (2.4, "それでも手取りは\n日本の2倍以上！？", ("cocky_dj_cat", "realize_wet_cat_stare", "stare_tabby_wide_eyes_cat"), 0)],
     ], [
         (2.8, "日本の手取りは\n約357万……", ("happy_chipi_chapa_cat", "realize_wet_cat_stare", "despair_dramatic_kitten"), 2),
         (2.6, "アメリカは物価も高い\n家賃もランチも", ("calm_black_face_sheep", "think_chin_paw_orange_cat", "sulk_hungry_cat"), 0),
-        (2.4, "みんなも\n手取りと物価で考えよう", ("talk_orange_white_sitting_cat", "happy_hamster_open_arms", "dance_happy_banana_cat"), 0),
+        (2.4, "みんなはこの金額\nどう思いますか？", ("talk_orange_white_sitting_cat", "happy_hamster_open_arms", "dance_happy_banana_cat"), 0),
     ], ("アメリカとの差 年 −478万円", "手取りで比べても…", ("cocky_dj_cat", "think_chin_paw_orange_cat", "despair_dramatic_kitten")))
+    for c in cs:   # 11/1：「韓国にもぬかれてる？」は泣いている猫の音（猫の声のかわり）
+        if (c.get("say") or "").startswith("……韓国にも"):
+            c["se"] = [{"f": "cat_crying_sad", "gain": 0}]
+            c["no_huh"] = True
     cs[0]["callout"] = ("日本の給料は", "世界で何番目？")
     cs[0]["callout_style"] = "b"
     cs[0]["se"] = ["whoosh_shu", {"f": "explosion_chudoon", "at": 0.22}, {"f": "shine_kiraan_maou", "at": 0.45}]

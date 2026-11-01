@@ -265,3 +265,4 @@
 | free_bang_remix_b.mp3 | ショック（ピアノ）の連打：ジャジャ、ジャ、ジャーン。ショートの2回目以降の「!?」用 |  | make_se_free_remix.py で作成（元：shock_piano） |  |
 | free_doubt_remix_a.mp3 | ハテナ？（魔王魂）の連打。ショートの2回目以降の「え…」用 |  | make_se_free_remix.py で作成（元：question_hatena_maou） | 魔王魂 |
 | free_doubt_remix_b.mp3 | ハテナ？（魔王魂）の連打（間をあけて）。ショートの2回目以降の「え…」用 |  | make_se_free_remix.py で作成（元：question_hatena_maou） | 魔王魂 |
+| cat_crying_sad.mp3 | 泣いている猫の声（バナナ猫の素材から切り出し・3秒） |  | sad_banana_cat_cry.mp4 |  |

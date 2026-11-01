@@ -398,7 +398,8 @@ class Renderer(I.Renderer):
         self.subs = (subscribe_img(False), subscribe_img(True)) if c.get("subscribe") else None
         if k == "split":
             hl, hr = c.get("heads", ("日本", "世界"))
-            self.heads = (rich([[(hl, BLUE)]], 140, stroke=6, stroke_col=WHITE), rich([[(hr, RED)]], 140, stroke=6, stroke_col=WHITE))
+            sz = c.get("heads_size") or (140 if max(len(hl), len(hr)) <= 2 else int(min(140, 480 / max(len(hl), len(hr)))))   # 長い見出しは片側におさまる大きさに（11/1）
+            self.heads = (rich([[(hl, BLUE)]], sz, stroke=6, stroke_col=WHITE, max_w=500), rich([[(hr, RED)]], sz, stroke=6, stroke_col=WHITE, max_w=500))
             self.cap = cap_box(c["cap"], c.get("cap_full", False)) if c.get("cap") else None
 
     def side_layout(self):

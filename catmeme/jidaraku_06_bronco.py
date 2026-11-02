@@ -23,13 +23,14 @@ OFFICE, ROOM, FRONT, IN, TABLE, BAR, ROAD, ROOM_N = ("b01_office_night", "j01_ro
 # 絵が届くまでの代わり
 J.STANDIN.update({OFFICE: "bg25_office_desk", FRONT: "j02_store_front", IN: "s02_inside", TABLE: "j04_table",
                   BAR: "j06_dessert", ROAD: "g09_road", ROOM_N: "j01_room"})
-NIGHT = {ROOM_N: 0.72, OFFICE: 0.85}
+NIGHT = {OFFICE: 0.85}   # 夜の部屋・帰り道はユーザーの夜の絵なので暗くしない
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
 CATLIFE = os.path.join(L.BGM, "nc102462_Cat_life.mp3")
 # 料理の写真（届いた順に backgrounds/jidaraku/06_bronco に置く）
 SALAD1, SALAD2, POTESARA, CURRY, IMO, SOUP, RICE, HAMBURG, STEAK, BEER, DESSERT, CURRYSALAD = (
     "f_salad_first", "f_salad_tower", "f_potesara", "f_curry", "f_yakiimo", "f_soup", "f_rice", "f_hamburg", "f_steak",
     "f_beer", "f_dessert", "f_curry_salad")
+GARLIC = "f_garlic_rice"   # こぼれるビーフガーリックライス（11/2 ユーザー指定：最初のごはんをこれにグレードアップ）
 
 
 def cuts():
@@ -78,7 +79,10 @@ def cuts():
         s(TABLE, "surprise_big_pupils_cat", "夜はカリーと焼き芋まで\n食べ放題に入っている", se="pikon"),
         s(TABLE, "dance_three_kittens", "森が広がっていた"),
         s(TABLE, "work_typing_cat", "炭焼きハンバーグと\nブロンコビュッフェのセット"),
-        s(TABLE, "showoff_gojo_cosplay_cat", "ごはんは\n魚沼産コシヒカリにする"),
+        s(TABLE, "think_chin_paw_orange_cat", "ごはんは\n魚沼産コシヒカリ……", item=GARLIC),
+        s(TABLE, "stare_tabby_wide_eyes_cat", "……をグレードアップして", item=GARLIC),
+        s(TABLE, "showoff_gojo_cosplay_cat", "こぼれる\nビーフガーリックライス", item=GARLIC, se="gong_dora_jaan"),
+        s(TABLE, "rizz_cat_rizz", "野菜を食べに来た男の\n最初の選択がこれだ", item=GARLIC),
         s(TABLE, "cocky_dj_cat", "そしてビール", item=BEER),
         s(TABLE, "happy_girlfriend_dance_cat", "金曜の夜だ\n許してほしい"),
         s(TABLE, "eat_crunchy_cat_luna", "ゴクッ……\nくぅ〜！", item=BEER, se="drink_gulp_gokugoku_thirsty_chug"),
@@ -103,6 +107,11 @@ def cuts():
         s(TABLE, "think_chin_paw_orange_cat", "でも冷めたら\nもったいない", item=HAMBURG),
         s(TABLE, "eat_crunchy_cat_luna", "ひと口だけ", item=HAMBURG),
         s(TABLE, "realize_wet_cat_stare", "……肉々しい", item=HAMBURG),
+        s(TABLE, "surprise_big_pupils_cat", "続けて\nビーフガーリックライス", item=GARLIC),
+        s(TABLE, "stare_big_eyes_tabby_kitten", "鉄板の上で\n牛そぼろと卵黄が\nごはんからこぼれている", item=GARLIC),
+        s(TABLE, "work_typing_cat", "まぜると\nジュウウウ……", item=GARLIC, se="explosion_bokaan"),
+        s(TABLE, "eat_crunchy_cat_luna", "ガーリックの香りが\n一気に立ちのぼる", item=GARLIC),
+        s(TABLE, "sad_banana_cat_cry", "……うまい\n野菜はどこへ行った", item=GARLIC),
         s(TABLE, "read_book_orange_kitten", "口コミでは\nつなぎを使わない\n牛肉100％らしい", item=HAMBURG),
         s(TABLE, "happy_hamster_open_arms", "炭火の香りが\n鼻にぬける", item=HAMBURG),
         s(TABLE, "angry_aiming_cat", "……あぶない\n今日は野菜の日だ"),
@@ -118,7 +127,7 @@ def cuts():
         s(BAR, "stare_big_eyes_tabby_kitten", "その3\nカリー", item=CURRY),
         s(BAR, "confused_i_dont_know_cat", "カリーは\n野菜なのか？", item=CURRY),
         s(BAR, "showoff_gojo_cosplay_cat", "玉ねぎもにんじんも\nとけているはずだ\nつまり野菜だ", item=CURRY),
-        s(TABLE, "work_typing_cat", "魚沼産コシヒカリに\nカリーをかける", item=CURRY),
+        s(TABLE, "work_typing_cat", "白いごはんを少しもらって\nカリーをかける", item=CURRY),
         s(TABLE, "eat_crunchy_cat_luna", "……うまい", item=CURRY),
         s(TABLE, "surprise_big_pupils_cat", "その4\nカリーの上に\nサラダをのせる", item=CURRYSALAD, se="question_mark_pop_confused_huh"),
         s(TABLE, "dance_wop_cat", "ポテサラカリー\nキャベツの食感", item=CURRYSALAD),
@@ -158,7 +167,7 @@ def cuts():
         s(TABLE, "sleepy_old_memories_cat", "1時間半がたった", se="pi", bgm={"file": LOFI, "gain": -14, "fade": 1.0}),
         s(TABLE, "sulk_hungry_cat", "お腹が\nパンパンだ"),
         s(TABLE, "confused_i_dont_know_cat", "サラダで\n満腹になったのか"),
-        s(TABLE, "realize_wet_cat_stare", "ごはん3杯の\nせいなのか"),
+        s(TABLE, "realize_wet_cat_stare", "ガーリックライスと\nごはん2杯の\nせいなのか"),
         s(TABLE, "blank_black_cat_zoning_out", "考えるのを\nやめた"),
         s(BAR, "stare_big_eyes_tabby_kitten", "でも\nデザートも\nビュッフェに入っている", item=DESSERT),
         s(BAR, "glare_disgusted_cat", "デザートは\n別腹って言うしな", item=DESSERT),
@@ -175,7 +184,7 @@ def cuts():
         s(ROAD, "think_bike_front_seat_cat", "今日食べたものを\n思い出してみる"),
         s(ROAD, "read_book_orange_kitten", "サラダ2皿\nかぼちゃとポテサラ\n焼き芋"),
         s(ROAD, "stare_big_eyes_tabby_kitten", "カリー\nスープ2杯\nデザート"),
-        s(ROAD, "realize_wet_cat_stare", "ごはん3杯\nハンバーグ\nステーキ"),
+        s(ROAD, "realize_wet_cat_stare", "ガーリックライス\nごはん2杯\nハンバーグ ステーキ"),
         s(ROAD, "despair_dramatic_kitten", "……"),
         s(ROOM_N, "sleep_sleeping_cat", "家に着いて\nベッドに倒れこむ", se="whoosh_shu"),
         s(ROOM_N, "slack_nail_filing_cat", "今日の感想を\nひとことで言うなら"),

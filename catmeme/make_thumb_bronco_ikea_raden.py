@@ -84,6 +84,14 @@ def raden_a2():
     k = 400 / r.height
     r = r.resize((int(r.width * k), 400), Image.LANCZOS)
     img.alpha_composite(r, ((T.W - r.width) // 2, 6))
+    # 「VTuberの美術館ガイド」の札が画像に隠れないよう、札をもう一度いちばん上に重ねる（11/2 ユーザー指摘）
+    from PIL import ImageDraw
+    t = T.runs([("VTuberの美術館ガイド", (R, T.WHITE))], 52, 2, 640)
+    box = Image.new("RGBA", (t.width + 50, t.height + 34), T.WHITE + (255,))
+    ImageDraw.Draw(box).rectangle((0, 0, box.width - 1, box.height - 1), outline=T.BLACK, width=5)
+    box.alpha_composite(t, (25, 17))
+    box = box.rotate(2, expand=True, resample=Image.BICUBIC)
+    img.alpha_composite(box, (14, 410 - box.height + 40))
     img.convert("RGB").save(p)
     print("->", p)
 

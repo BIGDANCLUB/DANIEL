@@ -5,7 +5,10 @@ python3 catmeme/make_parts_39.py → catmeme/parts/39_raden/*.png
 import os
 
 import make_parts_35_38 as M
+import notice_styles as NS
 import parts as P
+
+NOTES = ["※金額は報道・県の公開資料をもとにした目安", "※猫は演出です", "※背景の一部はAIで作っています"]
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 V = dict(
@@ -33,7 +36,7 @@ def main():
     out = os.path.join(HERE, "parts", "39_raden")
     os.makedirs(out, exist_ok=True)
     items = {
-        "e00_notice": today_only(V["today"]),   # 11/2 ユーザー指定：冒頭は今日の一言だけ
+        "e00_notice": NS.make("a", V["today"], NOTES),   # 11/2 ユーザー指定：今日のひとこと＋下に小さく注意書き（A案）
         "e01_title": P.message(V["title"][0], sub=V["title"][1], size=88),
         "e02_premise": P.bullets(V["premise"][0], V["premise"][1], size=50),
         "e07_points": P.bullets(V["points"][0], V["points"][1], size=50),

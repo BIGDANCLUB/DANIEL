@@ -21,7 +21,7 @@ ROOM, FRONT, LIVING, KITCHEN, BEDROOM, MARKET, REST, WARE, BISTRO, ROAD, ROOM_N 
     "j01_room", "i01_front", "i02_living", "i03_kitchen", "i04_bedroom", "i05_market", "i06_restaurant", "i07_warehouse",
     "i08_bistro", "b06_road_night", "j07_room_night")
 # 絵が届くまでの代わり
-J.STANDIN.update({FRONT: "g01_front", LIVING: "bg02_room", KITCHEN: "st02_home_kitchen", BEDROOM: "bg02_room",
+J.STANDIN.update({FRONT: "g01_front", LIVING: "bg02_room", KITCHEN: "j01_room", BEDROOM: "bg02_room",
                   MARKET: "s02_inside", REST: "g06_dining", WARE: "bg24_server_room", BISTRO: "b03_inside"})
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
 CATLIFE = os.path.join(L.BGM, "nc102462_Cat_life.mp3")

@@ -247,22 +247,8 @@ def cuts():
     ]
 
 
-CONT = tuple("にがをはでとてどもへやずばの") + ("から", "けど", "……", "ひと口", "そこへ")
-
-
-def tempo(c, nxt):
-    """字幕の文字数で長さを決める。文が次の字幕に続くときは短く（中だるみをなくす・11/2）。"""
-    t = c["text"].replace("\n", "")
-    n = len(t)
-    if t.endswith(CONT) and nxt is not None and nxt.get("text"):
-        return min(max(0.9 + 0.08 * n, 1.4), 2.2)
-    return min(max(1.2 + 0.1 * n, 1.8), 3.0)
-
-
 def place(cs):
-    for i, c in enumerate(cs):
-        if c.pop("auto", False) and c.get("text"):
-            c["dur"] = tempo(c, cs[i + 1] if i + 1 < len(cs) else None)
+    J.auto_tempo(cs)
     for c in cs:
         if c.get("text"):   # スシローと同じ：字幕にカギかっこはつけない
             c["text"] = c["text"].replace("「", "").replace("」", "")

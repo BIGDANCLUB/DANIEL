@@ -92,6 +92,25 @@ def line(bg, cat, text, dur=3.0, h=760, x=960, bottom=1010, se=None, bgm=None, m
 END_BGM = {"file": os.path.join(HERE, "bgm", "野良猫は宇宙を目指した.mp3"), "from": 9.0, "gain": 2, "fade": 0.3}   # 盛り上がる所から
 
 
+CONT = tuple("にがをはでとてどもへやずばの") + ("から", "けど", "……", "ひと口", "そこへ")
+
+
+def tempo(c, nxt):
+    """字幕の文字数で長さを決める。文が次の字幕に続くときは短く（中だるみをなくす・11/2 ユーザー指定）。"""
+    t = c["text"].replace("\n", "")
+    n = len(t)
+    if t.endswith(CONT) and nxt is not None and nxt.get("text"):
+        return min(max(0.9 + 0.08 * n, 1.4), 2.2)
+    return min(max(1.2 + 0.1 * n, 1.8), 3.0)
+
+
+def auto_tempo(cs):
+    for i, c in enumerate(cs):
+        if c.pop("auto", False) and c.get("text"):
+            c["dur"] = tempo(c, cs[i + 1] if i + 1 < len(cs) else None)
+    return cs
+
+
 def end_card(dur=4.0, bgm=END_BGM):
     """長尺の決まり：最後は subscribe.png。チャンネル登録の画面では決まった曲を流す（11/2 ユーザー指定）。"""
     c = dict(bg=None, end=True, text=None, dur=dur, fixed=True, no_pop=True, cats=[])

@@ -21,8 +21,9 @@ ROOM, FRONT, LIVING, KITCHEN, BEDROOM, MARKET, REST, WARE, BISTRO, ROAD, ROOM_N 
     "j01_room", "i01_front", "i02_living", "i03_kitchen", "i04_bedroom", "i05_market", "i06_restaurant", "i07_warehouse",
     "i08_bistro", "b06_road_night", "j07_room_night")
 # 絵が届くまでの代わり
-J.STANDIN.update({FRONT: "g01_front", LIVING: "bg02_room", KITCHEN: "j01_room", BEDROOM: "bg02_room",
-                  MARKET: "s02_inside", REST: "g06_dining", WARE: "bg24_server_room", BISTRO: "b03_inside"})
+# 11/2 ユーザーの写真：外観・矢印の床・ショールーム・売り場・マットレス。キッチン・寝室はショールームの写真、倉庫は売り場の写真で代用
+ARROW = "i09_arrow"
+J.STANDIN.update({KITCHEN: LIVING, BEDROOM: LIVING, WARE: MARKET, REST: "g06_dining", BISTRO: "b03_inside"})
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
 CATLIFE = os.path.join(L.BGM, "nc102462_Cat_life.mp3")
 # 写真（届いた順に backgrounds/jidaraku/07_ikea に置く）
@@ -62,9 +63,9 @@ def cuts():
         s(FRONT, "angry_aiming_cat", "大きな青い袋を\n肩にかけて"),
         s(FRONT, "excited_hodomoe_city_cat", "いざ\n入店", item=BAG),
         s(LIVING, "stare_interviewer_cat", "エスカレーターを上がると\nショールーム"),
-        s(LIVING, "read_book_orange_kitten", "床には\n矢印が書いてある"),
-        s(LIVING, "stare_big_eyes_tabby_kitten", "人生にも\nこの矢印がほしい"),
-        s(LIVING, "think_bike_front_seat_cat", "この矢印の\nルートに沿って進むだけで"),
+        s(ARROW, "read_book_orange_kitten", "床には\n矢印が書いてある"),
+        s(ARROW, "stare_big_eyes_tabby_kitten", "人生にも\nこの矢印がほしい"),
+        s(ARROW, "think_bike_front_seat_cat", "この矢印の\nルートに沿って進むだけで"),
         s(LIVING, "showoff_gojo_cosplay_cat", "建物を\nぐるっと一周できる"),
         s(LIVING, "happy_chipi_chapa_cat", "分かりやすい\n構造だ"),
         s(LIVING, "rizz_cat_rizz", "迷子にならない\nひとり客にやさしい"),

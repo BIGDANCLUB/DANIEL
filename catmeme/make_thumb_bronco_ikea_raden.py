@@ -70,7 +70,26 @@ def raden():
              "154万円の音声ガイドが生んだお金", "約23倍!?", zoom=1.05)
 
 
+def raden_a2():
+    """11/2 ユーザー指定：Aをもとに「Vtuberに154万円で依頼／⇒23倍の費用対効果!?」＋らでんさんの画像（前にもらった画像）。"""
+    from PIL import Image
+    T.type_a("39_raden_thumb_a.png", "bg39_museum", "bg39_rodin",
+             ("money_counting_orange_cat", 1.0, 230, 410, 300, False),
+             [("surprise_big_pupils_cat", 1.0, 1090, 410, 300, True)],
+             "VTuberの美術館ガイド",
+             [("Vtuberに", BK), ("154万円", R), ("で依頼", BK)], [("⇒", BK), ("23倍", R), ("の費用対効果!?", BK)], split=640, size=104)
+    p = os.path.join(T.HERE, "thumbs", "39_raden_thumb_a.png")
+    img = Image.open(p).convert("RGBA")
+    r = Image.open(os.path.join(T.HERE, "parts", "39_raden", "p_raden.png")).convert("RGBA")
+    k = 400 / r.height
+    r = r.resize((int(r.width * k), 400), Image.LANCZOS)
+    img.alpha_composite(r, ((T.W - r.width) // 2, 6))
+    img.convert("RGB").save(p)
+    print("->", p)
+
+
 if __name__ == "__main__":
     bronco()
     ikea()
     raden()
+    raden_a2()

@@ -71,7 +71,7 @@ def cuts_all():
         nn("たしかに\n県のお仕事にしては\n安く感じる", PHONE, se="pikon"),
         # ---- 経済効果 ----
         chap("③ 経済効果は？", se="quiz_question_01", bgm={"file": C.MIRAI, "gain": -4, "fade": 0.6}),
-        ss("報道によると\n美術館のまわりで\n使われたお金は", CITY, se="pi"),
+        ss("報道によると\nこのコラボの影響で\n増えたと見られる\n地域で使われたお金は", CITY, se="pi"),
         ss("推計で\n約3600万円", MONEY, se="kon"),
         g("r0_vs", "費用と経済効果を\nくらべると……", dur=5.0),
         qq(MONEY, "anime_conan_hirameki_remix_b"),

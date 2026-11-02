@@ -20,11 +20,11 @@ def cuts():
         ('20分', 'calm_black_face_sheep', '近いね', 'stare_tabby_wide_eyes_cat', '満員電車で\nぎゅうぎゅう'),
         ('30分', 'leave_cat_leaves_home', '遠いから\n引っ越す', 'slack_nail_filing_cat', 'ふつう'),
         ('45分', 'think_chin_paw_orange_cat', '転職を\n考える', 'sleepy_sleepy_cat', '立ったまま\n寝られる'),
-        ('1時間', 'glare_disgusted_cat', 'ありえない', 'read_book_orange_kitten', '本が1冊\n読み終わる'),
+        ('1時間', 'glare_disgusted_cat', 'ありえない', 'read_book_orange_kitten', 'ソシャゲの\nスタミナ消費に\nピッタリ'),
         ('1時間半', 'work_typing_cat', '在宅勤務に\nする', 'stare_lying_tabby_cat', '座るために\n始発に並ぶ'),
-        ('2時間', 'drive_driving_cat', 'もう別の国に\n行ける', 'blank_black_cat_zoning_out', '新幹線通勤を\nはじめる'),
-        ('2時間半', 'scream_standing_marmot', 'それは\n旅行', 'dance_filmed_by_gray_cat', '通勤が\n趣味になる'),
-        ('結果', 'happy_chipi_chapa_cat', '家族との時間が\nふえる', 'despair_dramatic_kitten', '片道1時間で\n1年に約20日\n電車の中'),
+        ('2時間', 'drive_driving_cat', 'もう別の国に\n行ける', 'blank_black_cat_zoning_out', '睡眠時間に\nカウントする'),
+        ('2時間半', 'scream_standing_marmot', 'それは\n旅行', 'dance_filmed_by_gray_cat', '逆に家で\n寝なくなる'),
+        ('3時間', 'happy_chipi_chapa_cat', '旅行中に\n仕事が終わる', 'despair_dramatic_kitten', '職場が\n家になる'),   # 11/2 ユーザー指定：結果はなし
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4
@@ -37,5 +37,5 @@ def cuts():
 
 
 if __name__ == "__main__":
-    Wd.run(cuts(), Wd.rich_band([("{y}日本vs世界", 96, Wd.BLACK, 95), ("{y}通勤時間（片道）", 90, Wd.BLACK, 245)], 0, 330),
+    Wd.run(cuts(), Wd.rich_band([("{y}日本vs世界", 96, Wd.BLACK, 95), ("{y}電車通勤時間", 90, Wd.BLACK, 245)], 0, 330),
            os.path.join(Wd.HERE, "out", "short_60_tsukin.mp4"), os.path.join(Wd.HERE, "out", "short_60_tsukin_preview"))

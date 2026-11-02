@@ -42,7 +42,15 @@ def bg_name(n):
         I.bg_path(n)
         return n
     except FileNotFoundError:
-        return STANDIN[n]
+        if n in STANDIN:
+            return STANDIN[n]
+        # ほかの動画用に届いた背景も使えるように（11/2）
+        import glob
+        for d in sorted(glob.glob(os.path.join(HERE, "backgrounds", "*"))):
+            if os.path.isdir(d) and d not in I.BGS and glob.glob(os.path.join(d, n + ".*")):
+                I.BGS.append(d)
+                return n
+        raise
 
 
 def cover(name, blur=0, dark=0.0):

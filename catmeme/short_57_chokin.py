@@ -35,7 +35,7 @@ def cuts():
         c = Wd.split(ST, item, left=acat, cap="平均", cap_side="L", sound="L", dur=3.8, se=["pafu"])
         c["props"] = [bar_a]
         out.append(c)
-        cap = "みんなも\n平均の数字に\n気をつけよう" if last else "平均の\n約%d分の1" % round(1 / r)
+        cap = "平均って\nなんだよ・・・" if last else "平均の\n約%d分の1" % round(1 / r)
         c = Wd.split(ST, item, left=acat, right=mcat, cap=cap, cap_side="R", sound="R", dur=D - 5.2, se=["explosion_chudoon"])
         c["props"] = [bar_a, bar_m]
         out.append(c)

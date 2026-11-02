@@ -123,6 +123,8 @@ def g(name, say, who="S", still=False, dur=None, red=False, se=None, **kw):
     ss = ch.still_from() + 0.5 if still else 0.0
     cats = [cat("@react", "ニュース猫", 150, h=560, bottom=1080, label_size=50, mute=who != "N"),
             cat("@calm", "博識な猫", 1775, h=560, bottom=1080, label_size=50, mute=who != "S")]
+    for q in cats:   # 11/2 ユーザー指摘：猫の素材の長さで場面が切られ、グラフが積み上がる前に次へ進んでいた
+        q["full"] = False
     if ch.cols == VS and not any(st[1] == 1 for st in ch.steps):
         cats.append({"a": "@papa", "x": ch.cx[1], "h": 190, "bottom": B.BASE_Y - 4, "mute": True, "full": False, "float": True})
     lst = [] if not se else ([se] if isinstance(se, (str, dict)) else list(se))

@@ -62,6 +62,7 @@ def cuts_all():
         nn("地方に移住したら\n家賃が安くて\nお金が貯まるよね？", LOCAL, se="question_hatena_maou", bgm={"file": C.PURPLE, "gain": -4}),
         ss("家賃だけ見ると\nそうだけど……", LOCAL, se="pi"),
         C.slot(TOKYO, "残るお金 東京のほうが 年", 34, "万多い"),
+        C.hatena(TOKYO),
         boom("東京のほうが\n貯まる!?", TOKYO, se=[CONAN]),
         fx(nn("え……\n家賃は高いのに？", MONEY, se=POON), "mono"),
         C.title(LOCAL, "ride_kitten_bike", "talk_orange_white_sitting_cat"),

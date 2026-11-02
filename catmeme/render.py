@@ -278,6 +278,8 @@ def cut_dur(cut):
 
 def _cut_dur(cut):
     """カットの長さ。猫ミームの音が鳴るカットは、音が途中で切れないよう、近くの「音の切れ目」まで伸び縮みさせる。"""
+    if cut.get("hatena"):   # 参考動画と同じ長さで固定
+        return cut.get("dur", 1.55)
     for k in cut.get("cats", []):
         cfg = ASSET_PLAY.get(k["a"])
         if AUTO_PLAY and cfg and not k.get("still") and not k.get("small") and "full" not in k:
@@ -1097,9 +1099,9 @@ def build_audio(cuts, starts, durs, total):
     duck = np.ones(n, np.float32)
     ramp = int(0.25 * SR)
     for i, c in enumerate(cuts):
-        if any(sounding(k) and k["a"] in MUSIC for k in c.get("cats", [])):
+        if c.get("duck_bgm") or any(sounding(k) and k["a"] in MUSIC for k in c.get("cats", [])):
             a0, a1 = int(starts[i] * SR), int((starts[i] + durs[i]) * SR)
-            g = db(MUSIC_DUCK)
+            g = db(c.get("duck_bgm", MUSIC_DUCK))
             duck[a0:a1] = np.minimum(duck[a0:a1], g)
             r0 = np.linspace(1, g, ramp)
             seg = duck[max(0, a0 - ramp):a0]
@@ -1191,6 +1193,40 @@ def build_audio(cuts, starts, durs, total):
 
 # ---------- 書き出し ----------
 
+_HATENA = {}
+
+
+def hatena_frame(base, t):
+    """白黒＋画面が左に傾く＋大きな「？」が上から降りてくる（驚きの間・11/2 ユーザー参考動画と同じ作り・約1.55秒）。
+    直前の場面の最後の絵をそのまま止めて使う。"""
+    if "q" not in _HATENA:
+        from PIL import ImageDraw
+        f = P.font("black", 900)
+        im = Image.new("RGBA", (760, 1060), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        d.text((380, 530), "?", font=f, fill=(255, 255, 255, 255), anchor="mm", stroke_width=26, stroke_fill=(20, 20, 20, 255))
+        _HATENA["q"] = np.asarray(im).astype(np.float32) / 255.0
+    g = base.mean(axis=2, keepdims=True).repeat(3, axis=2)
+    g = np.clip((g - 0.5) * 1.15 + 0.5, 0, 1) * 0.92   # 白黒・少しコントラスト強め
+    z = 1.2 + 0.03 * min(t / 1.5, 1.0)                    # 傾けて寄る（ふちの黒が見えないように）
+    M = cv2.getRotationMatrix2D((W / 2, H / 2), 10, z)
+    out = cv2.warpAffine(g, M, (W, H), borderMode=cv2.BORDER_REFLECT)
+    q = _HATENA["q"]
+    k = min(1.0, t / 0.5)
+    e = 1 - (1 - k) ** 3                                   # 上からすっと降りて止まる
+    s = 0.85 + 0.15 * e
+    qh, qw = int(q.shape[0] * s), int(q.shape[1] * s)
+    qs = cv2.resize(q, (qw, qh), interpolation=cv2.INTER_AREA)
+    cx, cy = int(W * 0.63), int(H * 0.55 - 260 * (1 - e))
+    x0, y0 = cx - qw // 2, cy - qh // 2
+    xa, ya, xb, yb = max(0, x0), max(0, y0), min(W, x0 + qw), min(H, y0 + qh)
+    if xb > xa and yb > ya:
+        part = qs[ya - y0:yb - y0, xa - x0:xb - x0]
+        a = part[..., 3:4] * (0.25 + 0.75 * e)
+        out[ya:yb, xa:xb] = out[ya:yb, xa:xb] * (1 - a) + part[..., :3] * a
+    return out
+
+
 def render(cuts, out_path, preview_dir=None):
     starts, t = [], 0.0
     durs = []
@@ -1214,15 +1250,18 @@ def render(cuts, out_path, preview_dir=None):
         stdin=subprocess.PIPE)
     frame_no = 0
     bgs = [c.get("bg") for c in cuts]
+    last_img = np.zeros((H, W, 3), np.float32)
     for i, c in enumerate(cuts):
-        r = CutRenderer(c)
+        base_img = last_img
+        r = CutRenderer(c) if not c.get("hatena") else None
         dip_in = WHITE_DIP > 0 and i > 0 and bgs[i] != bgs[i - 1] and c.get("dip", True)
         dip_out = WHITE_DIP > 0 and i + 1 < len(cuts) and bgs[i + 1] != bgs[i] and cuts[i + 1].get("dip", True)
         end = int(round((starts[i] + durs[i]) * FPS))
         first = True
         while frame_no < end:
             tt = frame_no / FPS - starts[i]
-            img = r.frame(tt)
+            img = hatena_frame(base_img, tt) if r is None else r.frame(tt)
+            last_img = img
             w = 0.0
             if dip_in and tt < WHITE_DIP:
                 w = 1 - tt / WHITE_DIP
@@ -1234,12 +1273,14 @@ def render(cuts, out_path, preview_dir=None):
             proc.stdin.write(u8.tobytes())
             if preview_dir and first:
                 os.makedirs(preview_dir, exist_ok=True)
-                mid = r.frame(min(durs[i] * 0.6, durs[i] - 0.05))
+                tm = min(durs[i] * 0.6, durs[i] - 0.05)
+                mid = hatena_frame(base_img, tm) if r is None else r.frame(tm)
                 cv2.imwrite(os.path.join(preview_dir, f"{i:03d}.jpg"),
                             (np.clip(mid, 0, 1) * 255).astype(np.uint8), [cv2.IMWRITE_JPEG_QUALITY, 80])
                 first = False
             frame_no += 1
-        r.close()
+        if r is not None:
+            r.close()
         print(f"\r{i + 1}/{len(cuts)} cuts  {frame_no / FPS:6.1f}s / {total:.1f}s", end="", flush=True)
     proc.stdin.close()
     proc.wait()

@@ -78,6 +78,12 @@ def slot(b, pre, v, post):
     return fx(boom(None, b, who="S", se=["explosion_dokaan", {"f": "kaan", "at": 0.9}]), slot=(pre, v, post))
 
 
+def hatena(b):
+    """直前の画面が止まって白黒になり、左に傾いて大きな「？」が降りてくる（驚きの間・約1.55秒）。BGMは止めて専用の曲だけ。"""
+    return dict(bg=bg(b), hatena=True, dur=1.55, dip=False, duck_bgm=-60, no_pop=True,
+                se={"f": "hatena_mono_tilt", "gain": 4, "len": 1.6})
+
+
 def main(name, cuts_all, chart_names):
     out = os.path.join(HERE, "out", name + "_full.mp4")
     os.makedirs(os.path.dirname(out), exist_ok=True)

@@ -300,7 +300,7 @@ BIG_SE = ("voice_uuwaa", "boing_02", "tsukkomi_bashi", "punch", "frying_pan_kaan
 def hype(cuts):
     """和牛と同じ：派手な演出と効果音を多めに（キラキラ・紙吹雪はなし）。グラフの場面は見やすさ優先で集中線・寄りはしない。"""
     for i, c in enumerate(cuts):
-        if c.get("notice"):
+        if c.get("notice") or c.get("hatena"):
             continue
         fx = list(c.get("fx", []))
         se = c.get("se")

@@ -37,7 +37,7 @@ def cuts():
         return c
     return [
         # ---- 丁寧な暮らしがしたい ----
-        s(ROOM, "sleep_sleeping_cat", "日曜の朝10時\n目が覚めた", bgm={"file": L.NORA, "gain": -12}),
+        s(ROOM, "sleep_sleeping_cat", "日曜の朝10時\n目が覚めた", bgm={"file": os.path.join(L.BGM, "Morning.mp3"), "gain": -12}),
         s(ROOM, "blank_black_cat_zoning_out", "部屋を見わたす\n生活感しかない"),
         s(ROOM, "sulk_hungry_cat", "脱ぎっぱなしの服\nコンビニの袋"),
         s(ROOM, "realize_wet_cat_stare", "床の靴下は\nもはやインテリアの一部だ"),
@@ -128,7 +128,7 @@ def cuts():
         s(REST, "stare_interviewer_cat", "となりのテーブルでは\n家族が子どもの机を相談している"),
         s(REST, "blank_black_cat_zoning_out", "俺は\nミートボールを数えている\n数えるたびに減っていく"),
         # ---- 物色再開 ----
-        s(MARKET, "cocky_dj_cat", "物色\n再開", se="gong_match_start"),
+        s(MARKET, "cocky_dj_cat", "物色\n再開", se="gong_match_start", bgm={"file": os.path.join(L.BGM, "なんでしょう？.mp3"), "gain": -6, "fade": 0.8}),
         s(MARKET, "stare_tabby_wide_eyes_cat", "1階は\n生活雑貨の売り場"),
         s(MARKET, "surprise_big_pupils_cat", "他の店では\n見ないようなものが多い", item=GOODS),
         s(MARKET, "read_book_orange_kitten", "キャンドル\n保存容器\nカラフルなまな板", item=GOODS),

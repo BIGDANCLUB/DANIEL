@@ -174,7 +174,7 @@ def cuts():
         s(BAR, "dance_koto_nai_cat", "ドレッシングを\n3種類かけ分ける", item=SALAD2),
         s(TABLE, "happy_hamster_open_arms", "1皿で3回楽しめる\nサラダのテーマパーク", item=SALAD2),
         # ---- ごはんおかわり ----
-        s(TABLE, "stare_big_eyes_tabby_kitten", "……あれ\nごはんがない", se="pi"),
+        s(TABLE, "stare_big_eyes_tabby_kitten", "……あれ\nごはんがない", se="pi", bgm={"file": os.path.join(L.BGM, "候補_a658b05f.mp3"), "gain": -15, "fade": 0.8}),
         s(TABLE, "think_bike_front_seat_cat", "ハンバーグを\nもうひと口"),
         s(TABLE, "realize_wet_cat_stare", "肉汁と炭火の香りが\nごはんを呼んでいる"),
         s(TABLE, "work_typing_cat", "ごはんを\nおかわりする", item=RICE, se="pikon"),

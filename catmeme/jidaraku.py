@@ -8,6 +8,7 @@
 - 最後にチャンネル登録の画面は入れない（参考どおり）。長尺のルールで最後に subscribe.png を付ける
 使い方は jidaraku_01_yakiniku.py
 """
+import math
 import os
 import subprocess
 import urllib.request
@@ -111,6 +112,108 @@ def auto_tempo(cs):
     return cs
 
 
+ARRIVE_T = 1.2   # 料理が届いた演出の長さ
+ARRIVE_SE = "jan"   # 版権の心配がない音（se/README.md で無印）
+IMPACT_SE = "explosion_chudoon"
+_LINES = {}
+
+
+def _lines(out, p):
+    """集中線（画面のふちから中心へ向かう黒と白の線）。p＝0〜1（だんだん消える）。"""
+    if "ov" not in _LINES:
+        rng = np.random.default_rng(3)
+        ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        d = ImageDraw.Draw(ov)
+        cx, cy, R0 = W / 2, H / 2 - 40, 1300
+        for j in range(110):
+            ang = rng.uniform(0, 2 * math.pi)
+            r1 = rng.uniform(330, 520)
+            wd = rng.uniform(0.006, 0.02)
+            col = (255, 255, 255, 230) if j % 3 else (20, 20, 20, 200)
+            d.polygon([(cx + math.cos(ang) * r1, cy + math.sin(ang) * r1),
+                       (cx + math.cos(ang - wd) * R0, cy + math.sin(ang - wd) * R0),
+                       (cx + math.cos(ang + wd) * R0, cy + math.sin(ang + wd) * R0)], fill=col)
+        _LINES["ov"] = R.to_np(ov)
+    img, a = _LINES["ov"]
+    a = a * max(0.0, 1 - max(0.0, p - 0.6) / 0.4)
+    I.over(out, img, a, 0, 0)
+    return out
+
+
+def _cat_len(a):
+    """素材の使える長さ（play.json の until があればそれ＝1回分：チピチピ猫など）。"""
+    cfg = R.ASSET_PLAY.get(a, {})
+    au = R.cat_audio(a)
+    n = len(au) / R.SR if au is not None else R.Clip(a).n / R.Clip(a).fps
+    return min(n, cfg["until"]) if cfg.get("until") else n
+
+
+def chain(cs):
+    """1つの文を何行かに分けて出す所は、文が終わるまで同じ素材を流し続ける（11/2 ユーザー指定）。
+    素材の長さ（くり返す素材は1回分）が足りなくなったら、そこからは次の行の素材にもどす。"""
+    i = 0
+    while i < len(cs):
+        c = cs[i]
+        grp = [c]
+        while (grp[-1].get("text") and grp[-1]["text"].replace("\n", "").endswith(CONT) and i + len(grp) < len(cs)
+               and cs[i + len(grp)].get("text") and cs[i + len(grp)].get("bg") == c.get("bg") and c.get("cats")):
+            nxt = cs[i + len(grp)]
+            used = sum(x["dur"] for x in grp) + nxt["dur"] + 0.25
+            if used > _cat_len(c["cats"][0]["a"]):
+                break
+            grp.append(nxt)
+        if len(grp) > 1:
+            head = c["cats"][0]
+            item = any(x.get("item") for x in grp)
+            off = 0.0
+            for x in grp:
+                q = dict(head, ss=off)
+                if item:
+                    q.update(x=600, h=min(head["h"], 700))
+                x["cats"] = [q]
+                off += x["dur"]
+        i += len(grp)
+    return cs
+
+
+def effects(cs):
+    """演出と SE（11/2 ユーザー指定）：料理が初めて出る所は「届いた」演出＋ジャン！／「!」「!?」の所は集中線＋ゆれ＋チュドーン。
+    最後に、版権の心配がある SE（se/README.md の ⚠・✕、game_ などで始まる音）が入っていないか確かめる。"""
+    seen = set()
+    for c in cs:
+        se = c.get("se")
+        lst = [] if not se else ([se] if isinstance(se, (str, dict)) else list(se))
+        it = c.get("item")
+        try:
+            has = bool(it) and bool(bg_path(it))
+        except FileNotFoundError:   # 写真がまだない料理は演出しない
+            has = False
+        if has and it not in seen:
+            seen.add(it)
+            c["arrive"] = True
+            lst.append({"f": ARRIVE_SE, "gain": -2})
+        t = (c.get("text") or "").replace("\n", "")
+        names = [x if isinstance(x, str) else x.get("f", "") for x in lst]
+        big = any(n.startswith(("explosion", "gong")) for n in names)
+        if ("!" in t or "！" in t or big) and not c.get("arrive"):
+            c["impact"] = True
+            if not lst:
+                lst.append({"f": IMPACT_SE, "gain": -4})
+        if lst:
+            c["se"] = lst
+    prev = None
+    for c in cs:   # 場所が変わる所はシュッ（ほかの音がないときだけ）
+        if prev is not None and c.get("bg") != prev and not c.get("se") and c.get("text"):
+            c["se"] = [{"f": "whoosh_shu", "gain": -8}]
+        prev = c.get("bg")
+    bad = R.risky_se()
+    found = sorted({(s if isinstance(s, str) else s.get("f")) for c in cs for s in
+                    ([c["se"]] if isinstance(c.get("se"), (str, dict)) else (c.get("se") or []))} & bad)
+    if found:
+        raise SystemExit("自堕落シリーズでは使わない SE（版権の心配）：" + "、".join(found))
+    return cs
+
+
 def end_card(dur=4.0, bgm=END_BGM):
     """長尺の決まり：最後は subscribe.png。チャンネル登録の画面では決まった曲を流す（11/2 ユーザー指定）。"""
     c = dict(bg=None, end=True, text=None, dur=dur, fixed=True, no_pop=True, cats=[])
@@ -152,7 +255,7 @@ class Renderer:
     def frame(self, t):
         out = self.base.copy()
         for cl, k in zip(self.clips, self.c["cats"]):
-            fr, a = cl.frame(t + 0.25)
+            fr, a = cl.frame(t + 0.25 + k.get("ss", 0.0))
             y0, y1, x0, x1 = I.clip_bbox(k["a"])
             fr, a = fr[y0:y1, x0:x1], a[y0:y1, x0:x1]
             if k.get("flip"):
@@ -163,7 +266,23 @@ class Renderer:
             al = cv2.resize(a.astype(np.float32), (w, h), interpolation=cv2.INTER_AREA)
             xx = min(max(int(k["x"] - w / 2), 0), W - w)
             I.over(out, img, al, xx, int(k["bottom"] - h))
-        if self.item is not None:   # 料理の写真：ポンと出て少し縮む
+        arr = self.c.get("arrive") and self.item is not None and t < ARRIVE_T
+        if self.c.get("impact") and t < 0.6:   # 驚き：集中線＋ゆれ＋白く光る
+            out = _lines(out, t / 0.6)
+        if arr:   # 注文した料理が届いた：画面のまん中に大きく＋集中線（11/2 ユーザー指定）
+            out = out * 0.6
+            out = _lines(out, t / ARRIVE_T)
+            u = min(1.0, t / 0.16)
+            k = (0.6 + 0.5 * (1 - (1 - u) ** 3)) * (1 if t < ARRIVE_T - 0.25 else 1 - 0.45 * (t - ARRIVE_T + 0.25) / 0.25)
+            big = self.item.resize((int(self.item.width * 1.25 * k), int(self.item.height * 1.25 * k)), Image.BILINEAR)
+            img, a = R.to_np(big)
+            I.over(out, img, a, int(W / 2 - big.width / 2), int(H / 2 - 40 - big.height / 2))
+        if self.c.get("impact") and t < 0.3:
+            dx, dy = int(16 * math.sin(t * 90) * (1 - t / 0.3)), int(10 * math.cos(t * 70) * (1 - t / 0.3))
+            out = np.roll(np.roll(out, dx, axis=1), dy, axis=0)
+        if (self.c.get("impact") or arr) and t < 0.1:
+            out = out + (1 - out) * (0.55 * (1 - t / 0.1))
+        if self.item is not None and not arr:   # 料理の写真：ポンと出て少し縮む
             k = 1.18 - 0.18 * min(1.0, t / 0.18)
             it = self.item.resize((int(self.item.width * k), int(self.item.height * k)), Image.BILINEAR)
             img, a = R.to_np(it)
@@ -180,6 +299,7 @@ class Renderer:
 
 
 def run(cs, out_path, prev=None, only=None):
+    cs = effects(chain(cs))
     durs = [c["dur"] for c in cs]
     total = float(sum(durs))
     starts = list(np.cumsum([0] + durs[:-1]))

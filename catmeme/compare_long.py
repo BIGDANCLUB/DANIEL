@@ -68,6 +68,14 @@ def title(b, a1, a2):
                       {"a": a2, "x": 1640, "h": 400, "bottom": 1050, "float": True, "mute": True}])
 
 
+def end_today(b, cats):
+    """11/2 ユーザー指定（A案）：最後の画面＝上に「チャンネル登録お願いします！」・まん中に今日のひとこと・下に注意書き。
+    冒頭の今日のひとこと画面と subscribe.png の代わりに使う。"""
+    c = notice(b, cats)
+    c.update(layers_top=[pt("e11_end_today")], dur=6.0, notice=True, se={"f": "chirin", "gain": -2})
+    return c
+
+
 def ending(b):
     return [dict(bg=bg(b), card=pt("e10_ending"), dur=3.6, se="chirin",
                  cats=[{"a": "wave_waving_cat", "x": 300, "h": 420, "bottom": 1040, "float": True}]),

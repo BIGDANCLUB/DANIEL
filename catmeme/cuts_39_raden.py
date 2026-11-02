@@ -41,8 +41,6 @@ K.STEP_SE.pop("r1_stack", None)
 
 def cuts_all():
     return [
-        C.notice(MUSEUM, (("read_book_orange_kitten", 220, 560), ("dance_three_kittens", 640, 520), ("calm_black_face_sheep", 1000, 560),
-                          ("money_counting_orange_cat", 1360, 560), ("dance_happy_banana_cat", 1720, 600))),
         # ---- つかみ ----
         nn("VTuberに\n県のお仕事を頼むと\nいくらかかるの？", STREAM, se="question_hatena_maou", bgm={"file": C.PURPLE, "gain": -4}),
         ss("それが\n県の公開資料に\n書いてあった", DOCS, se="pi"),
@@ -105,7 +103,10 @@ def cuts_all():
         C.card("e07_points", "154万円で 約3600万円の消費", dur=5.6),
         nn("次は\nどこの美術館と\nコラボするんだろう", LOBBY, se="kon"),
         ss("推しに会いに\n美術館へ\n行ってみよう", MUSEUM, se="kon"),
-    ] + C.ending(MUSEUM)
+        C.ending(MUSEUM)[0],
+        C.end_today(MUSEUM, (("read_book_orange_kitten", 220, 560), ("dance_three_kittens", 640, 520), ("calm_black_face_sheep", 1000, 560),
+                          ("money_counting_orange_cat", 1360, 560), ("dance_happy_banana_cat", 1720, 600))),   # 11/2 ユーザー指定：冒頭の画面を最後へ（subscribe.png の代わり）
+    ]
 
 
 if __name__ == "__main__":

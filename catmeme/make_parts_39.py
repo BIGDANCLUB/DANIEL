@@ -41,6 +41,7 @@ def main():
         "e02_premise": P.bullets(V["premise"][0], V["premise"][1], size=50),
         "e07_points": P.bullets(V["points"][0], V["points"][1], size=50),
         "e10_ending": P.message(V["ending"], size=96),
+        "e11_end_today": NS.make_end("a", V["today"], NOTES),   # 11/2 ユーザー指定：最後のエンディング画面（A案）
     }
     for n, img in items.items():
         img.save(os.path.join(out, n + ".png"))

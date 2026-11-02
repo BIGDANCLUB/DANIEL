@@ -24,7 +24,7 @@ def cuts():
         ('4時間', 'glare_disgusted_cat', 'ありえない', 'showoff_gojo_cosplay_cat', '寝てない\nアピール'),
         ('3時間', 'fight_cat_fight', '大さわぎ', 'snore_snoring_dog', '電車で座ったら\n一瞬で寝る'),
         ('2時間', 'surprise_big_pupils_cat', '医者に\n止められる', 'blank_black_cat_zoning_out', '会議の記憶が\nない'),
-        ('結果', 'happy_hamster_open_arms', '毎日\n元気いっぱい', 'realize_wet_cat_stare', 'みんなも\nしっかり\n寝よう'),
+        ('徹夜', 'blank_black_cat_zoning_out', '（失神）', 'dance_filmed_by_gray_cat', 'うおｗ'),   # 11/2 ユーザー指定：結果はなし
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

@@ -43,6 +43,7 @@ def cuts():
         c.update(blur=9, band_y=0, tag_y=460, heads=("平均", "中央値"))
         # 11/2 ユーザー指定：見出しの下に平均と中央値のちがいを最初から最後まで出す（最初にピンポーン）
         c["note"] = [[("平均", Wd.BLUE), ("＝みんなの貯金の合計÷人数", Wd.BLACK)], [("中央値", Wd.RED), ("＝少ない順に並べたまん中の人", Wd.BLACK)]]
+        c.update(note_y=1580, note_size=40)   # 11/2 ユーザー指定：字幕枠の下に
         for q, hb in zip(c["cats"], [p_ for p_ in c.get("props", [])]):   # 猫は棒の上に立つ
             q["h"], q["w"] = 300, 300
             q["bottom"] = int(hb[2] - (1290 - hb[2]) + 40)

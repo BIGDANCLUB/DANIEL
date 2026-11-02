@@ -17,8 +17,8 @@ def bronco():
     T.type_a("jidaraku_06_bronco_thumb_a.png", "b05_salad_bar", "b04_table",
              ("happy_hamster_open_arms", 1.0, 300, 410, 330, False),
              [("eat_crunchy_cat_luna", 1.0, 1100, 410, 320, True)],
-             "30代独身　1週間カップ麺",
-             [("ステーキハウスに", BK), ("野菜を食べに", R)], [("行った結果", BK), ("肉が美味かった", R)], split=620, size=104)
+             "30代独身　一人メシ",   # 11/2 ユーザー指定
+             [("ブロンコビリー", R), ("とは", BK)], [("⇒", BK), ("野菜", R), ("を食べに行く場所", BK)], split=620, size=112)
     T.type_b("jidaraku_06_bronco_thumb_b.png",
              [("bg25_office_desk", [("despair_dramatic_kitten", 0.8, 160, 470, 320, False)]),
               ("b05_salad_bar", [("happy_hamster_open_arms", 1.0, 160, 470, 300, False)]),

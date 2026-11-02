@@ -44,8 +44,8 @@ def cuts_all():
         # ---- つかみ ----
         nn("VTuberに\n県のお仕事を頼むと\nいくらかかるの？", STREAM, se="question_hatena_maou", bgm={"file": C.PURPLE, "gain": -4}),
         ss("それが\n県の公開資料に\n書いてあった", DOCS, se="pi"),
-        C.slot(MUSEUM, "美術館の音声ガイド 委託料", 154, "万円"),
-        C.hatena(MUSEUM),
+        # 11/2 ユーザー指定：154万円はそんなに高くないので白黒「？」はなし・音はお金のチャリーン
+        fx(boom(None, MUSEUM, who="S", se=[{"f": "coin_chariin", "at": 0.9, "gain": -2}]), slot=("美術館の音声ガイド 委託料", 154, "万円")),
         boom("154万円!?", MUSEUM, se=[CONAN]),
         ss("しかも\nその効果は\nもっとすごかった", MONEY, se="pikon"),
         C.title(MUSEUM, "read_book_orange_kitten", "talk_orange_white_sitting_cat"),

@@ -55,8 +55,9 @@ def card(c, sub, **kw):
 
 
 def notice(b, cats):
+    # full=False：猫の素材の長さで画面が短く切られないように（11/2：2.9秒しか出ていなかった）
     # 11/2 ユーザー指定（A案）：真ん中に今日のひとこと・下に注意書きの帯。猫は小さくして帯の上に立たせる
-    return dict(bg=bg(b), cats=[{"a": a_, "x": x_, "h": min(h_, 300), "bottom": 956, "mute": True} for a_, x_, h_ in cats],
+    return dict(bg=bg(b), cats=[{"a": a_, "x": x_, "h": min(h_, 300), "bottom": 956, "mute": True, "full": False} for a_, x_, h_ in cats],
                 fx=["dim"], layers_top=[pt("e00_notice")], dur=6.0, no_pop=True, notice=True,
                 se={"f": "chime_announce", "len": 3.0, "gain": -2})
 

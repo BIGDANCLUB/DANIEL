@@ -9,7 +9,7 @@ import parts as P
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 V = dict(
-    today="※推しの声は地域を動かす",
+    today="推しは推せる時に推せ‼",
     notice2="※数字は報道・県の公開資料をもとにした目安",
     title=(["VTuberの音声ガイド", "154万円で何が起きた？"], "県の資料でわかった費用と\n地域の経済効果をくらべてみた"),
     premise=("今回の話", ["静岡県立美術館の音声ガイド", "担当はホロライブの儒烏風亭らでんさん",
@@ -19,11 +19,21 @@ V = dict(
     ending=["推しの力は", "地域も動かす"])
 
 
+def today_only(text):
+    from PIL import Image, ImageDraw
+    img = Image.new("RGBA", (P.W, P.H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    f = P.font("black", 120)
+    w = d.textlength(text, font=f)
+    d.text(((P.W - w) / 2, P.H / 2 - 75), text, font=f, fill=(255, 255, 255), stroke_width=10, stroke_fill=(0, 0, 0))
+    return img
+
+
 def main():
     out = os.path.join(HERE, "parts", "39_raden")
     os.makedirs(out, exist_ok=True)
     items = {
-        "e00_notice": M.notice(V["today"], V["notice2"]),
+        "e00_notice": today_only(V["today"]),   # 11/2 ユーザー指定：冒頭は今日の一言だけ
         "e01_title": P.message(V["title"][0], sub=V["title"][1], size=88),
         "e02_premise": P.bullets(V["premise"][0], V["premise"][1], size=50),
         "e07_points": P.bullets(V["points"][0], V["points"][1], size=50),

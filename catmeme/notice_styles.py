@@ -79,3 +79,50 @@ def make(style, text, notes):
         img.alpha_composite(txt, ((W - txt.width) // 2, 480 - txt.height // 2))
         _notes(img, notes, "band")
     return img
+
+
+def make_end(style, text, notes, top="チャンネル登録お願いします！"):
+    """エンディング画面（11/2 ユーザー指定）：上に「チャンネル登録お願いします！」（中くらい）・まん中に今日のひとこと（大きく）・下に注意書き（小さく）。3案。"""
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    f, s = _fit(text, W - 260, 150)
+    if style == "a":   # 赤い登録ボタン風の帯＋黄色の札＋白い大文字
+        tf = P.font("black", 78)
+        tw = d.textlength(top, font=tf)
+        d.rounded_rectangle(((W - tw) / 2 - 60, 90, (W + tw) / 2 + 60, 210), radius=60, fill=(230, 33, 23, 255),
+                            outline=(255, 255, 255, 255), width=6)
+        _ctext(d, 103, top, tf, (255, 255, 255))
+        tag = P.font("black", 56)
+        gw = d.textlength("今日のひとこと", font=tag)
+        d.rounded_rectangle(((W - gw) / 2 - 36, 330, (W + gw) / 2 + 36, 418), radius=22, fill=(255, 210, 40, 255),
+                            outline=(0, 0, 0, 255), width=6)
+        _ctext(d, 337, "今日のひとこと", tag, (30, 30, 30))
+        _ctext(d, 490, text, f, (255, 255, 255), 12)
+        _notes(img, notes, "band")
+    elif style == "b":   # 上は白文字＋黄色の下線、まん中は黄色の大文字
+        tf = P.font("black", 84)
+        tw = d.textlength(top, font=tf)
+        d.rectangle(((W - tw) / 2, 205, (W + tw) / 2, 228), fill=(255, 210, 40, 255))
+        _ctext(d, 100, top, tf, (255, 255, 255), 9)
+        _ctext(d, 350, "今日のひとこと", P.font("black", 56), (255, 230, 120), 7)
+        _ctext(d, 460, text, f, (255, 220, 50), 12)
+        _notes(img, notes, "band")
+    else:   # c：上は登録ボタン＋「お願いします！」、まん中は白いカード
+        bf = P.font("black", 70)
+        bt = "チャンネル登録"
+        bw = d.textlength(bt, font=bf)
+        rest = top.replace(bt, "")
+        rf = P.font("black", 70)
+        rw = d.textlength(rest, font=rf)
+        x0 = (W - (bw + 80 + 24 + rw)) / 2
+        d.rounded_rectangle((x0, 90, x0 + bw + 80, 200), radius=18, fill=(230, 33, 23, 255))
+        d.text((x0 + 40, 103), bt, font=bf, fill=(255, 255, 255))
+        d.text((x0 + bw + 104, 103), rest, font=rf, fill=(255, 255, 255), stroke_width=8, stroke_fill=(0, 0, 0))
+        x0, y0, x1, y1 = 170, 270, W - 170, 860
+        d.rounded_rectangle((x0 + 12, y0 + 14, x1 + 12, y1 + 14), radius=40, fill=(0, 0, 0, 110))
+        d.rounded_rectangle((x0, y0, x1, y1), radius=40, fill=(255, 253, 245, 250), outline=(40, 40, 40, 255), width=6)
+        _ctext(d, y0 + 40, "今日のひとこと", P.font("black", 64), (220, 50, 50))
+        f2, s2 = _fit(text, x1 - x0 - 120, 140)
+        _ctext(d, (y0 + 130 + y1) / 2 - s2 * 0.62, text, f2, (30, 30, 30))
+        _notes(img, notes, "band")
+    return img

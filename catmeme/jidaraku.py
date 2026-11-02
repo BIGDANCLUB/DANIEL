@@ -118,24 +118,26 @@ IMPACT_SE = "explosion_chudoon"
 _LINES = {}
 
 
-def _lines(out, p):
-    """集中線（画面のふちから中心へ向かう黒と白の線）。p＝0〜1（だんだん消える）。"""
+def _lines(out, t):
+    """集中線（画面のふちから中心へ向かう黒と白の線）。3通りの線を少しずつ入れかえて、ゆらゆら動かす。"""
     if "ov" not in _LINES:
-        rng = np.random.default_rng(3)
-        ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-        d = ImageDraw.Draw(ov)
-        cx, cy, R0 = W / 2, H / 2 - 40, 1300
-        for j in range(110):
-            ang = rng.uniform(0, 2 * math.pi)
-            r1 = rng.uniform(330, 520)
-            wd = rng.uniform(0.006, 0.02)
-            col = (255, 255, 255, 230) if j % 3 else (20, 20, 20, 200)
-            d.polygon([(cx + math.cos(ang) * r1, cy + math.sin(ang) * r1),
-                       (cx + math.cos(ang - wd) * R0, cy + math.sin(ang - wd) * R0),
-                       (cx + math.cos(ang + wd) * R0, cy + math.sin(ang + wd) * R0)], fill=col)
-        _LINES["ov"] = R.to_np(ov)
-    img, a = _LINES["ov"]
-    a = a * max(0.0, 1 - max(0.0, p - 0.6) / 0.4)
+        sets = []
+        for seed in (3, 5, 8):
+            rng = np.random.default_rng(seed)
+            ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+            d = ImageDraw.Draw(ov)
+            cx, cy, R0 = W / 2, H / 2 - 40, 1300
+            for j in range(110):
+                ang = rng.uniform(0, 2 * math.pi)
+                r1 = rng.uniform(330, 520)
+                wd = rng.uniform(0.006, 0.02)
+                col = (255, 255, 255, 230) if j % 3 else (20, 20, 20, 200)
+                d.polygon([(cx + math.cos(ang) * r1, cy + math.sin(ang) * r1),
+                           (cx + math.cos(ang - wd) * R0, cy + math.sin(ang - wd) * R0),
+                           (cx + math.cos(ang + wd) * R0, cy + math.sin(ang + wd) * R0)], fill=col)
+            sets.append(R.to_np(ov))
+        _LINES["ov"] = sets
+    img, a = _LINES["ov"][int(t * 12) % 3]
     I.over(out, img, a, 0, 0)
     return out
 
@@ -201,6 +203,15 @@ def effects(cs):
                 lst.append({"f": IMPACT_SE, "gain": -4})
         if lst:
             c["se"] = lst
+    on, t0 = False, 0.0
+    for i, c in enumerate(cs):   # 驚き・届いた所から、その文が終わるまで集中線を出す
+        if c.get("impact") or c.get("arrive"):
+            on, t0 = True, 0.0
+        if on:
+            c["lines_on"], c["lines_t0"] = True, t0
+            t0 += c["dur"]
+            if not (c.get("text") or "").replace("\n", "").endswith(CONT):
+                on = False
     prev = None
     for c in cs:   # 場所が変わる所はシュッ（ほかの音がないときだけ）
         if prev is not None and c.get("bg") != prev and not c.get("se") and c.get("text"):
@@ -267,11 +278,11 @@ class Renderer:
             xx = min(max(int(k["x"] - w / 2), 0), W - w)
             I.over(out, img, al, xx, int(k["bottom"] - h))
         arr = self.c.get("arrive") and self.item is not None and t < ARRIVE_T
-        if self.c.get("impact") and t < 0.6:   # 驚き：集中線＋ゆれ＋白く光る
-            out = _lines(out, t / 0.6)
+        if self.c.get("lines_on") and not self.c.get("arrive"):   # 集中線：文が終わるまで出しっぱなしで少しゆらす（11/2 ユーザー指定）
+            out = _lines(out, t + self.c.get("lines_t0", 0.0))
         if arr:   # 注文した料理が届いた：画面のまん中に大きく＋集中線（11/2 ユーザー指定）
             out = out * 0.6
-            out = _lines(out, t / ARRIVE_T)
+            out = _lines(out, t)
             u = min(1.0, t / 0.16)
             k = (0.6 + 0.5 * (1 - (1 - u) ** 3)) * (1 if t < ARRIVE_T - 0.25 else 1 - 0.45 * (t - ARRIVE_T + 0.25) / 0.25)
             big = self.item.resize((int(self.item.width * 1.25 * k), int(self.item.height * 1.25 * k)), Image.BILINEAR)
@@ -282,6 +293,8 @@ class Renderer:
             out = np.roll(np.roll(out, dx, axis=1), dy, axis=0)
         if (self.c.get("impact") or arr) and t < 0.1:
             out = out + (1 - out) * (0.55 * (1 - t / 0.1))
+        if self.c.get("arrive") and t >= ARRIVE_T:   # 届いたあとも文が終わるまで集中線
+            out = _lines(out, t)
         if self.item is not None and not arr:   # 料理の写真：ポンと出て少し縮む
             k = 1.18 - 0.18 * min(1.0, t / 0.18)
             it = self.item.resize((int(self.item.width * k), int(self.item.height * k)), Image.BILINEAR)

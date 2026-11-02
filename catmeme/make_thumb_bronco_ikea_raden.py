@@ -77,7 +77,7 @@ def raden_a2():
              ("money_counting_orange_cat", 1.0, 230, 410, 300, False),
              [("surprise_big_pupils_cat", 1.0, 1090, 410, 300, True)],
              "VTuberの美術館ガイド",
-             [("Vtuberに", BK), ("154万円", R), ("で依頼", BK)], [("⇒", BK), ("23倍", R), ("の費用対効果!?", BK)], split=640, size=104)
+             [("県がVtuberに", BK), ("154万円", R), ("で依頼", BK)], [("⇒", BK), ("23倍", R), ("の費用対効果!?", BK)], split=640, size=104)
     p = os.path.join(T.HERE, "thumbs", "39_raden_thumb_a.png")
     img = Image.open(p).convert("RGBA")
     r = Image.open(os.path.join(T.HERE, "parts", "39_raden", "p_raden.png")).convert("RGBA")

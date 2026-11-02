@@ -11,9 +11,9 @@ W, H = P.W, P.H
 NOTE_Y = 960   # 注意書きの帯の上はし
 
 
-def _fit(text, maxw, size, kind="black"):
+def _fit(text, maxw, size, kind="black", lo=40):
     d = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
-    while size > 40 and d.textlength(text, font=P.font(kind, size)) > maxw:
+    while size > lo and d.textlength(text, font=P.font(kind, size)) > maxw:
         size -= 4
     return P.font(kind, size), size
 
@@ -29,14 +29,14 @@ def _notes(img, notes, style):
         d.rectangle((0, NOTE_Y, W, H), fill=(0, 0, 0, 170))
     f = P.font("round", 34)
     line = "　".join(notes)
-    f, _ = _fit(line, W - 120, 34, "round")
+    f, _ = _fit(line, W - 120, 34, "round", lo=20)
     _ctext(d, NOTE_Y + (H - NOTE_Y) / 2 - 22, line, f, (235, 235, 235), 4 if style != "band" else 0)
 
 
 def make(style, text, notes):
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    f, s = _fit(text, W - 260, 150)
+    f, s = _fit(text.split("\n")[0], W - 260, 150)
     if style == "a":   # 黄色の札＋大きな白文字（シンプル）
         tag = P.font("black", 64)
         tw = d.textlength("今日のひとこと", font=tag)
@@ -85,7 +85,7 @@ def make_end(style, text, notes, top="チャンネル登録お願いします！
     """エンディング画面（11/2 ユーザー指定）：上に「チャンネル登録お願いします！」（中くらい）・まん中に今日のひとこと（大きく）・下に注意書き（小さく）。3案。"""
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    f, s = _fit(text, W - 260, 150)
+    f, s = _fit(text.split("\n")[0], W - 260, 150)
     if style == "a":   # 赤い登録ボタン風の帯＋黄色の札＋白い大文字
         tf = P.font("black", 78)
         tw = d.textlength(top, font=tf)
@@ -97,7 +97,14 @@ def make_end(style, text, notes, top="チャンネル登録お願いします！
         d.rounded_rectangle(((W - gw) / 2 - 36, 330, (W + gw) / 2 + 36, 418), radius=22, fill=(255, 210, 40, 255),
                             outline=(0, 0, 0, 255), width=6)
         _ctext(d, 337, "今日のひとこと", tag, (30, 30, 30))
-        _ctext(d, 490, text, f, (255, 255, 255), 12)
+        lines = text.split("\n")
+        if len(lines) == 1:
+            _ctext(d, 490, text, f, (255, 255, 255), 12)
+        else:   # 2行（2行目は少し小さく）
+            f1, s1 = _fit(lines[0], W - 220, 130)
+            f2, s2 = _fit(lines[1], W - 220, 130)
+            _ctext(d, 455, lines[0], f1, (255, 255, 255), 12)
+            _ctext(d, 455 + s1 * 1.25, lines[1], f2, (255, 255, 255), 12)
         _notes(img, notes, "band")
     elif style == "b":   # 上は白文字＋黄色の下線、まん中は黄色の大文字
         tf = P.font("black", 84)

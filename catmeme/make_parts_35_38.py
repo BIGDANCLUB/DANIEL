@@ -38,7 +38,8 @@ VIDEOS = {
                                        "実家暮らし：家に入れるお金 月4万", "遊び・交際・通信はどちらも同じ"]),
         points=("今回のポイント", ["ひとり暮らし年195万・実家年98万", "最初の引っ越しで約60万かかる",
                                  "実家は通勤時間や自由がコストになることも", "実家にいる間はしっかり貯めよう"]),
-        ending=["実家にいるあいだは", "貯めるチャンス"]),
+        ending=["実家にいるあいだは", "貯めるチャンス"],
+        end_today="親孝行はできるうちにしておけ\nマジで"),   # 11/2 ユーザー指定：39本目と同じエンディング
     "38_hybrid": dict(
         today="※給油の回数が少ないのは正義",
         notice2="※同じくらいの大きさのコンパクトカーで計算",
@@ -76,6 +77,10 @@ def main():
             "e07_points": P.bullets(v["points"][0], v["points"][1], size=50),
             "e10_ending": P.message(v["ending"], size=96),
         }
+        if v.get("end_today"):   # 11/2：今日のひとことは最後のエンディング画面に（A案）
+            import notice_styles as NS
+            items["e11_end_today"] = NS.make_end("a", v["end_today"], ["※金額は2026年ごろのざっくりの目安です", v["notice2"],
+                                                                     "※猫は演出です", "※背景の一部はAIで作っています"])
         for n, img in items.items():
             img.save(os.path.join(out, n + ".png"))
             b = P.placeholder_bg("背景")

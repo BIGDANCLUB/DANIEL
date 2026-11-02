@@ -55,8 +55,6 @@ C.charts({
 
 def cuts_all():
     return [
-        C.notice(ROOM, (("sleep_sleeping_cat", 220, 560), ("eat_pop_cat", 640, 520), ("happy_hamster_open_arms", 1000, 560),
-                        ("money_counting_orange_cat", 1360, 560), ("dance_happy_banana_cat", 1720, 600))),
         # ---- つかみ ----
         nn("実家暮らしって\nお金かからないん\nでしょ？", HOME, se="question_hatena_maou", bgm={"file": C.PURPLE, "gain": -4}),
         ss("家にお金を入れたり\n外で食べたり\nけっこうかかるよ", HOME, se="pi"),
@@ -123,7 +121,10 @@ def cuts_all():
         nn("実家にいる間は\n貯めるチャンス\nなんだね", HOME, se="kon"),
         ss("家に入れるお金は\nちゃんとはらって\n感謝も忘れずに", HOME, se="kon"),
         ss("ひとり暮らしは\n自由と経験を\nお金で買っている", ROOM, se="kon"),
-    ] + C.ending(HOME)
+        C.ending(HOME)[0],
+        C.end_today(HOME, (("sleep_sleeping_cat", 220, 560), ("eat_pop_cat", 640, 520), ("happy_hamster_open_arms", 1000, 560),
+                        ("money_counting_orange_cat", 1360, 560), ("dance_happy_banana_cat", 1720, 600))),   # 11/2 ユーザー指定：39本目と同じエンディング（冒頭の注意書きは最後へ）
+    ]
 
 
 if __name__ == "__main__":

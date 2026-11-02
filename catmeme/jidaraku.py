@@ -89,8 +89,11 @@ def line(bg, cat, text, dur=3.0, h=760, x=960, bottom=1010, se=None, bgm=None, m
     return c
 
 
-def end_card(dur=4.0, bgm=None):
-    """長尺の決まり：最後は subscribe.png。"""
+END_BGM = {"file": os.path.join(HERE, "bgm", "野良猫は宇宙を目指した.mp3"), "gain": -8, "fade": 0.3}
+
+
+def end_card(dur=4.0, bgm=END_BGM):
+    """長尺の決まり：最後は subscribe.png。チャンネル登録の画面では決まった曲を流す（11/2 ユーザー指定）。"""
     c = dict(bg=None, end=True, text=None, dur=dur, fixed=True, no_pop=True, cats=[])
     if bgm:
         c["bgm"] = bgm

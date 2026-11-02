@@ -34,9 +34,11 @@ GARLIC = "f_garlic_rice"   # こぼれるビーフガーリックライス（11/
 
 
 def cuts():
-    def s(*a, **k):   # 1つの字幕は3.4秒（8分前後にする）
-        k.setdefault("dur", 3.4)
-        return J.line(*a, **k)
+    def s(*a, **k):   # 長さは place() で字幕の文字数から決める（11/2 ユーザー指定：テンポよく）
+        auto = "dur" not in k
+        c = J.line(*a, **k)
+        c["auto"] = auto
+        return c
     return [
         # ---- 忙しかった ----
         s(OFFICE, "work_typing_cat", "金曜の夜7時\nやっと仕事が終わった", bgm={"file": LOFI, "gain": -12}),
@@ -75,10 +77,18 @@ def cuts():
         s(TABLE, "read_book_orange_kitten", "メニューを開く"),
         s(TABLE, "stare_tabby_wide_eyes_cat", "ステーキ\nハンバーグ\nステーキ"),
         s(TABLE, "glare_disgusted_cat", "……肉ばっかりだな"),
+        s(TABLE, "peek_what_happen_cat", "メニューのすみっこに\nサラダバーの文字"),
+        s(TABLE, "sad_banana_cat_cry", "肉の中で\n小さく咲く緑"),
+        s(TABLE, "happy_hamster_open_arms", "俺は\nお前に会いに来たんだ"),
         s(TABLE, "think_chin_paw_orange_cat", "サラダバーは\n今はブロンコビュッフェ\nという名前になったらしい"),
         s(TABLE, "surprise_big_pupils_cat", "夜はカリーと焼き芋まで\n食べ放題に入っている", se="pikon"),
         s(TABLE, "dance_three_kittens", "森が広がっていた"),
         s(TABLE, "work_typing_cat", "炭焼きハンバーグと\nブロンコビュッフェのセット"),
+        s(TABLE, "think_bike_front_seat_cat", "森に入る前に\n作戦を立てる"),
+        s(TABLE, "read_book_orange_kitten", "1皿目は\n葉物で胃を整える"),
+        s(TABLE, "stare_big_eyes_tabby_kitten", "2皿目は\n色の濃い野菜"),
+        s(TABLE, "confused_i_dont_know_cat", "3皿目は……\nその時の気分で決める"),
+        s(TABLE, "showoff_gojo_cosplay_cat", "完ぺきな\n作戦だ"),
         s(TABLE, "think_chin_paw_orange_cat", "ごはんは\n魚沼産コシヒカリ……", item=GARLIC),
         s(TABLE, "stare_tabby_wide_eyes_cat", "……をグレードアップして", item=GARLIC),
         s(TABLE, "showoff_gojo_cosplay_cat", "こぼれる\nビーフガーリックライス", item=GARLIC, se="gong_dora_jaan"),
@@ -94,12 +104,24 @@ def cuts():
         s(BAR, "excited_hodomoe_city_cat", "季節ごとに入れかわる\n期間限定のサラダもある"),
         s(BAR, "read_book_orange_kitten", "口コミでも\n来るたびに変わるのが楽しみ\nという声が多い"),
         s(BAR, "think_chin_paw_orange_cat", "ドレッシングも\n何種類も並んでいる"),
+        s(BAR, "sleepy_old_memories_cat", "野菜には\n不思議な力がある"),
+        s(BAR, "happy_hamster_open_arms", "見ているだけで\n健康になった気がする"),
+        s(BAR, "think_chin_paw_orange_cat", "ブロッコリーは\n森に生える小さな木"),
+        s(BAR, "stare_big_eyes_tabby_kitten", "ミニトマトは\n森に実る赤い宝石"),
+        s(BAR, "excited_hodomoe_city_cat", "コーンは\n森に落ちた金貨"),
+        s(BAR, "calmdown_dancing_cat", "レタスは\n森の地面をおおう\nやわらかいじゅうたん"),
+        s(BAR, "blank_black_cat_zoning_out", "……俺は何を\n言っているんだ"),
+        s(BAR, "sleepy_sleepy_cat", "やっぱり\n疲れているのかもしれない"),
         s(BAR, "showoff_gojo_cosplay_cat", "まずは基本から"),
         s(BAR, "work_typing_cat", "葉物を山にして\nトマトをのせる", item=SALAD1),
         s(TABLE, "eat_pop_cat", "シャキッ……", item=SALAD1, se="pikon"),
         s(TABLE, "realize_wet_cat_stare", "……みずみずしい", item=SALAD1),
         s(TABLE, "sad_banana_cat_cry", "1週間ぶりの緑が\n体にしみる", item=SALAD1),
         s(TABLE, "sleepy_old_memories_cat", "細胞が\nよろこんでいる"),
+        s(TABLE, "read_book_orange_kitten", "1日に食べたい野菜は\n350gと言われている"),
+        s(TABLE, "realize_wet_cat_stare", "今週の俺は\nたぶん20gくらい"),
+        s(TABLE, "angry_aiming_cat", "今日ここで\n1週間ぶんを取り返す"),
+        s(TABLE, "rizz_cat_rizz", "これは食事ではない\n修行だ"),
         # ---- 肉が来る ----
         s(TABLE, "stare_tabby_wide_eyes_cat", "そこへ……\nジュウウウ", se="explosion_dokaan", item=HAMBURG),
         s(TABLE, "surprise_big_pupils_cat", "炭焼きハンバーグが\n来てしまった", item=HAMBURG),
@@ -129,11 +151,21 @@ def cuts():
         s(BAR, "showoff_gojo_cosplay_cat", "玉ねぎもにんじんも\nとけているはずだ\nつまり野菜だ", item=CURRY),
         s(TABLE, "work_typing_cat", "白いごはんを少しもらって\nカリーをかける", item=CURRY),
         s(TABLE, "eat_crunchy_cat_luna", "……うまい", item=CURRY),
+        s(TABLE, "sleepy_old_memories_cat", "スパイスの奥に\n野菜のあまみがある", item=CURRY),
+        s(TABLE, "realize_wet_cat_stare", "やはりカリーは\n野菜料理だった", item=CURRY),
         s(TABLE, "surprise_big_pupils_cat", "その4\nカリーの上に\nサラダをのせる", item=CURRYSALAD, se="question_mark_pop_confused_huh"),
         s(TABLE, "dance_wop_cat", "ポテサラカリー\nキャベツの食感", item=CURRYSALAD),
         s(TABLE, "laugh_laughing_dog", "家では絶対に\nやらない食べ方", item=CURRYSALAD),
         s(TABLE, "happy_chipi_chapa_cat", "これが\n森の遊び方だ", item=CURRYSALAD),
-        s(BAR, "stare_tabby_wide_eyes_cat", "その5\n焼き芋", item=IMO),
+        s(BAR, "work_typing_cat", "その5\nドレッシングの食べくらべ"),
+        s(BAR, "eat_pop_cat", "ごまは\nなんでも美味しくする魔法"),
+        s(BAR, "think_chin_paw_orange_cat", "和風はさっぱり\n肉のあとに合う"),
+        s(BAR, "happy_girlfriend_dance_cat", "フレンチは\nトマトとの相性が最高"),
+        s(BAR, "stare_tabby_wide_eyes_cat", "その6\nブロッコリーに\nポテサラをのせる"),
+        s(BAR, "happy_chipi_chapa_cat", "緑と白の\nハーモニー"),
+        s(BAR, "surprise_big_pupils_cat", "その7\nスープにコーンを入れる"),
+        s(BAR, "showoff_gojo_cosplay_cat", "コーンスープ\n自作完成"),
+        s(BAR, "stare_tabby_wide_eyes_cat", "その8\n焼き芋", item=IMO),
         s(TABLE, "eat_pop_cat", "ねっとり甘い", item=IMO),
         s(TABLE, "think_chin_paw_orange_cat", "芋は野菜\nだから問題ない", item=IMO),
         s(TABLE, "realize_wet_cat_stare", "焼き芋とポテサラ\n芋が芋を呼ぶ", item=IMO),
@@ -151,9 +183,16 @@ def cuts():
         s(TABLE, "glare_disgusted_cat", "いや\nサラダも食べる"),
         s(TABLE, "dance_maxwell_cat", "サラダ\nごはん\nハンバーグ\nサラダ"),
         s(TABLE, "happy_girlfriend_dance_cat", "完ぺきな\nローテーション"),
+        s(TABLE, "think_bike_front_seat_cat", "白いごはんにも\nサラダは合う"),
+        s(TABLE, "work_typing_cat", "ごはんの上に\nキャベツをのせる"),
+        s(TABLE, "dance_wop_cat", "これはもう\nサラダ丼だ"),
         s(TABLE, "yell_orange_fat_cat", "ごはん\n2回目のおかわり", item=RICE),
         s(TABLE, "dance_edm_cat", "もう止まらない"),
         # ---- ステーキ追加 ----
+        s(TABLE, "sleepy_old_memories_cat", "不思議なことに"),
+        s(TABLE, "realize_wet_cat_stare", "野菜を食べるほど\n肉が食べたくなる"),
+        s(TABLE, "think_chin_paw_orange_cat", "これは体が\nバランスをとろうと\nしているのだ"),
+        s(TABLE, "showoff_gojo_cosplay_cat", "つまり肉を食べるのは\n健康のため"),
         s(TABLE, "stare_tabby_wide_eyes_cat", "となりのテーブルに\nステーキが運ばれていく", se="explosion_bokaan"),
         s(TABLE, "peek_what_happen_cat", "ジュウウウ……"),
         s(TABLE, "think_chin_paw_orange_cat", "……今日は\n野菜の日だ"),
@@ -172,6 +211,9 @@ def cuts():
         s(BAR, "stare_big_eyes_tabby_kitten", "でも\nデザートも\nビュッフェに入っている", item=DESSERT),
         s(BAR, "glare_disgusted_cat", "デザートは\n別腹って言うしな", item=DESSERT),
         s(TABLE, "eat_pop_cat", "ひんやり甘い\n口の中がさっぱりする", item=DESSERT),
+        s(TABLE, "think_chin_paw_orange_cat", "フルーツも\n野菜の親戚みたいなものだ"),
+        s(TABLE, "eat_crunchy_cat_luna", "オレンジ\nパイナップル\nゼリー"),
+        s(TABLE, "glare_disgusted_cat", "ゼリーは\n……野菜ではない"),
         s(TABLE, "sleepy_sleepy_cat", "胃袋は\nさっぱりしない"),
         s(TABLE, "stare_interviewer_cat", "最後に\n温かいスープをもう1杯", item=SOUP),
         s(TABLE, "calm_black_face_sheep", "……整った", item=SOUP, se="chiin_01"),
@@ -181,12 +223,17 @@ def cuts():
         s(ROAD, "leave_cat_leaves_home", "夜風が\n気持ちいい"),
         s(ROAD, "happy_hamster_open_arms", "大満足だ"),
         s(ROAD, "sleepy_old_memories_cat", "1週間ぶんの野菜を\n取り返した気がする"),
+        s(ROAD, "happy_hamster_open_arms", "サラダ2皿は\n人生で最多かもしれない"),
+        s(ROAD, "sleepy_old_memories_cat", "胃袋の中では\n野菜と肉が\n仲よく暮らしている"),
         s(ROAD, "think_bike_front_seat_cat", "今日食べたものを\n思い出してみる"),
         s(ROAD, "read_book_orange_kitten", "サラダ2皿\nかぼちゃとポテサラ\n焼き芋"),
         s(ROAD, "stare_big_eyes_tabby_kitten", "カリー\nスープ2杯\nデザート"),
         s(ROAD, "realize_wet_cat_stare", "ガーリックライス\nごはん2杯\nハンバーグ ステーキ"),
         s(ROAD, "despair_dramatic_kitten", "……"),
         s(ROOM_N, "sleep_sleeping_cat", "家に着いて\nベッドに倒れこむ", se="whoosh_shu"),
+        s(ROOM_N, "peek_what_happen_cat", "冷蔵庫を開ける"),
+        s(ROOM_N, "sad_looking_away_tabby", "野菜は\nひとつもない"),
+        s(ROOM_N, "rizz_cat_rizz", "……また来週\n森に行けばいい"),
         s(ROOM_N, "slack_nail_filing_cat", "今日の感想を\nひとことで言うなら"),
         s(ROOM_N, "stare_tabby_wide_eyes_cat", "野菜を食べに\nステーキハウスに行った"),
         s(ROOM_N, "think_chin_paw_orange_cat", "緑黄色の森は\n最高だった"),
@@ -197,7 +244,22 @@ def cuts():
     ]
 
 
+CONT = tuple("にがをはでとてどもへやずばの") + ("から", "けど", "……", "ひと口", "そこへ")
+
+
+def tempo(c, nxt):
+    """字幕の文字数で長さを決める。文が次の字幕に続くときは短く（中だるみをなくす・11/2）。"""
+    t = c["text"].replace("\n", "")
+    n = len(t)
+    if t.endswith(CONT) and nxt is not None and nxt.get("text"):
+        return min(max(0.9 + 0.08 * n, 1.4), 2.2)
+    return min(max(1.2 + 0.1 * n, 1.8), 3.0)
+
+
 def place(cs):
+    for i, c in enumerate(cs):
+        if c.pop("auto", False) and c.get("text"):
+            c["dur"] = tempo(c, cs[i + 1] if i + 1 < len(cs) else None)
     for c in cs:
         if c.get("text"):   # スシローと同じ：字幕にカギかっこはつけない
             c["text"] = c["text"].replace("「", "").replace("」", "")

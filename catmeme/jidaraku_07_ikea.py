@@ -23,7 +23,7 @@ ROOM, FRONT, LIVING, KITCHEN, BEDROOM, MARKET, REST, WARE, BISTRO, ROAD, ROOM_N 
 # 絵が届くまでの代わり
 # 11/2 ユーザーの写真：外観・矢印の床・ショールーム・売り場・マットレス。キッチン・寝室はショールームの写真、倉庫は売り場の写真で代用
 ARROW = "i09_arrow"
-J.STANDIN.update({KITCHEN: LIVING, BEDROOM: LIVING, WARE: MARKET, REST: "g06_dining", BISTRO: "b03_inside"})
+J.STANDIN.update({KITCHEN: LIVING, BEDROOM: LIVING, WARE: MARKET, BISTRO: "b03_inside"})
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
 CATLIFE = os.path.join(L.BGM, "nc102462_Cat_life.mp3")
 # 写真（届いた順に backgrounds/jidaraku/07_ikea に置く）

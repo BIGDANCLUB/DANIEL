@@ -89,7 +89,7 @@ def line(bg, cat, text, dur=3.0, h=760, x=960, bottom=1010, se=None, bgm=None, m
     return c
 
 
-END_BGM = {"file": os.path.join(HERE, "bgm", "野良猫は宇宙を目指した.mp3"), "gain": -8, "fade": 0.3}
+END_BGM = {"file": os.path.join(HERE, "bgm", "野良猫は宇宙を目指した.mp3"), "from": 9.0, "gain": 2, "fade": 0.3}   # 盛り上がる所から
 
 
 def end_card(dur=4.0, bgm=END_BGM):

@@ -409,6 +409,8 @@ class Renderer(I.Renderer):
             sz = c.get("heads_size") or (140 if max(len(hl), len(hr)) <= 2 else int(min(140, 480 / max(len(hl), len(hr)))))   # 長い見出しは片側におさまる大きさに（11/1）
             self.heads = (rich([[(hl, BLUE)]], sz, stroke=6, stroke_col=WHITE, max_w=500), rich([[(hr, RED)]], sz, stroke=6, stroke_col=WHITE, max_w=500))
             self.cap = cap_box(c["cap"], c.get("cap_full", False)) if c.get("cap") else None
+            # 見出しの下に出しっぱなしにする説明（11/2 ショート57：平均と中央値のちがい）
+            self.note = rich(c["note"], c.get("note_size", 46), stroke=6, stroke_col=WHITE, max_w=1040) if c.get("note") else None
 
     def side_layout(self):
         """字幕が猫とかさなるときは、猫を左によせて字幕を猫の右どなりに出す（10/26 ユーザー指定）。1匹だけの場面で使う。"""
@@ -481,6 +483,8 @@ class Renderer(I.Renderer):
         if c["kind"] == "split":   # 「日本」「世界」は猫より手前
             I.put(out, self.heads[0], 275, 600)
             I.put(out, self.heads[1], 805, 600)
+            if self.note is not None:
+                I.put(out, self.note, W / 2, c.get("note_y", 740))
         if c["kind"] == "split" and self.cap is not None:
             cx = W / 2 if c.get("cap_full") else (275 if c["cap_side"] == "L" else 805)
             cx = min(max(cx, self.cap.width / 2 + 20), W - self.cap.width / 2 - 20)

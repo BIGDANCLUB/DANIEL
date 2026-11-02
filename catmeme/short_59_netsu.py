@@ -18,13 +18,13 @@ def cuts():
     rows = [
         ('37.0℃', 'slack_nail_filing_cat', '念のため\n休む', 'work_typing_cat', 'ふつうに\n出社'),
         ('37.5℃', 'call_customer_service_cat', '病院へ\n行く', 'stare_big_eyes_tabby_kitten', 'マスクして\n出社'),
-        ('38.0℃', 'sleep_sleeping_cat', '1週間\n休む', 'think_chin_paw_orange_cat', '午後から\n出社'),
-        ('38.5℃', 'talk_orange_white_sitting_cat', '上司が\n「帰って」', 'scream_phone_orange_cat', '上司に\n電話であやまる'),
-        ('39.0℃', 'sleepy_old_memories_cat', '家族が\n看病', 'work_dog_staring_computer', 'リモートで\n会議に出る'),
-        ('39.5℃', 'eat_crunchy_cat_luna', 'スープを飲んで\n寝る', 'despair_dramatic_kitten', '仕事のメールを\n返す'),
+        ('38.0℃', 'talk_orange_white_sitting_cat', '上司が\n「帰って」', 'scream_phone_orange_cat', '上司に\n電話であやまる'),   # 11/2 ユーザー指定で入れかえ
+        ('38.5℃', 'sleep_sleeping_cat', '1週間\n休む', 'work_dog_staring_computer', 'リモートで\n会議に出る'),
+        ('39.0℃', 'sleepy_old_memories_cat', '家族が\n看病', 'think_chin_paw_orange_cat', '冷えピタ貼って\n在宅ワーク'),
+        ('39.5℃', 'eat_crunchy_cat_luna', 'スープを飲んで\n寝る', 'despair_dramatic_kitten', '寝ながら\nメールを返す'),
         ('40.0℃', 'fight_cat_fight', 'すぐに\n病院へ', 'sad_looking_away_tabby', '熱が下がったら\n休日出勤'),
         ('41.0℃', 'surprise_big_pupils_cat', '大さわぎ', 'huh_huh_cat', '体温計を\n疑う'),
-        ('結果', 'happy_hamster_open_arms', '早く\n治る', 'realize_wet_cat_stare', 'みんなも\n熱の日は\nしっかり休もう'),
+        ('結果', 'happy_hamster_open_arms', '早く\n治る', 'realize_wet_cat_stare', 'いのちを\nだいじに'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

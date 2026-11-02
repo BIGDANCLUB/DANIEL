@@ -15,12 +15,14 @@ import wide_bars as B
 
 MUSEUM, STREAM, DOCS, CITY, FOOD, HOTEL, PHONE = ("bg39_museum", "bg72_live_stream", "bg97_tabloid_desk", "bg31_city_meeting",
                                                   "bg47_ramen_shop", "bg66_hotel_price", "bg73_shorts_phone")
-C.setup("39_raden", {MUSEUM: "bg75_seminar_hall"}, tempo=1.0)
+LOBBY, RODIN = "bg39_lobby", "bg39_rodin"   # 11/2 ユーザーの写真（外観・ロビー・ロダン館）
+C.setup("39_raden", {}, tempo=1.0)
 bg, nn, ss, boom, qq, g, fx, chap = C.bg, C.nn, C.ss, C.boom, C.qq, C.g, C.fx, C.chap
 CONAN, POON, MONEY = C.CONAN, C.POON, C.MONEY
 
 VS = [("費用（委託料）", "red"), ("経済効果（推計）", "teal")]
 N = 23   # 3600 ÷ 154 ＝ 23.4
+RADEN = [C.pt("p_raden_top")]   # 11/2 ユーザー提供の画像（猫より手前に出す）
 
 C.charts({
     "r0_vs": B.Chart(VS, [(0.5, 0, "委託料", 154, "red"), (1.8, 1, "地域での消費", 3600, "teal")], 3900, bg=MUSEUM,
@@ -30,10 +32,10 @@ C.charts({
                         + [(0.6 + 0.16 * N + 0.3, 1, "", 3600 - 154 * N, "teal")], 3900, bg=MONEY,
                         head="154万円を積み上げると……", total_fmt="{v}万円", result_at=0.6 + 0.16 * N + 1.0, highlight=1),
     "r2_visit": B.Chart([("発信がきっかけ", "pink"), ("それ以外", "navy")],
-                        [(0.4, 0, "", 34, "pink"), (1.3, 1, "", 66, "navy")], 80, bg=MUSEUM,
+                        [(0.4, 0, "", 34, "pink"), (1.3, 1, "", 66, "navy")], 80, bg=LOBBY,
                         head="来館したきっかけ（報道より）", total_fmt="約{v}％", highlight=0),
 })
-K.DROP_SE["r1_stack"] = {1: "game_coin_get_money_gain_happy"}
+K.DROP_SE["r1_stack"] = {1: ["game_coin_get_money_gain_happy"] * N + ["game_zelda_item_get"]}   # 11/2 ユーザー指定：最後の1個はごまだれ
 K.STEP_SE.pop("r1_stack", None)
 
 
@@ -53,9 +55,9 @@ def cuts_all():
         # ---- 何があった ----
         chap("① 何があった？", se="quiz_question_01", bgm={"file": C.NORA, "gain": -4, "fade": 0.6}),
         ss("静岡県立美術館の\n音声ガイドを\nVTuberが担当", MUSEUM, se="pi"),
-        ss("ホロライブの\n儒烏風亭らでんさん", MUSEUM, se="pikon"),
-        ss("美術や博物館が大好きで\n博物館とのコラボも\nしてきたVTuber", MUSEUM, se="kon"),
-        ss("ロダン館や\n夜のナイトミュージアム\n4つの展示を案内", MUSEUM, se="kon"),
+        dict(ss("ホロライブの\n儒烏風亭らでんさん", MUSEUM, se="pikon"), layers_top=RADEN),
+        dict(ss("美術や博物館が大好きで\n博物館とのコラボも\nしてきたVTuber", MUSEUM, se="kon"), layers_top=RADEN),
+        ss("ロダン館や\n夜のナイトミュージアム\n4つの展示を案内", RODIN, se="kon"),
         ss("スマホで聞ける\n無料の音声ガイド", PHONE, se="pikon"),
         nn("推しの声で\n美術館をめぐれるの？", PHONE, se="question_hatena_maou"),
         nn("それは行く", PHONE, red=True, se=["explosion_dokaan"]),
@@ -85,8 +87,8 @@ def cuts_all():
         nn("3600万円を\n動かした声……", MONEY, se="shine_kiraan_maou"),
         # ---- なぜ ----
         chap("④ なぜそんなに効果が？", se="whoosh_shu", bgm={"file": C.COCOA, "gain": -4, "fade": 0.6}),
-        ss("ふだん美術館に\n行かない人が\n来るきっかけになった", MUSEUM, se="kon"),
-        ss("遠くから\n来るファンもいる", MUSEUM, se="kon"),
+        ss("ふだん美術館に\n行かない人が\n来るきっかけになった", LOBBY, se="kon"),
+        ss("遠くから\n来るファンもいる", LOBBY, se="kon"),
         ss("来たら\nごはんを食べる", FOOD, se="pikon"),
         ss("お土産も買う\n泊まる人もいる", HOTEL, se="pikon"),
         nn("聖地めぐりって\nやつだね", HOTEL, se="kon"),
@@ -97,11 +99,11 @@ def cuts_all():
         ss("3600万円は推計\n計算のしかたで\n数字は変わる", DOCS, se="pi"),
         ss("それでも\n費用の何倍ものお金が\n地域で使われた", MONEY, se="kon"),
         nn("税金の使い方として\nかなり上手なのでは", CITY, se="pikon"),
-        ss("文化とVTuber\n相性がいいのかも\nしれない", MUSEUM, se="sparkle_kirakira_01"),
+        ss("文化とVTuber\n相性がいいのかも\nしれない", RODIN, se="sparkle_kirakira_01"),
         # ---- まとめ ----
         chap("まとめ", se="doon_heavy", bgm={"file": C.NORA, "gain": -4, "fade": 0.6}),
         C.card("e07_points", "154万円で 約3600万円の消費", dur=5.6),
-        nn("次は\nどこの美術館と\nコラボするんだろう", MUSEUM, se="kon"),
+        nn("次は\nどこの美術館と\nコラボするんだろう", LOBBY, se="kon"),
         ss("推しに会いに\n美術館へ\n行ってみよう", MUSEUM, se="kon"),
     ] + C.ending(MUSEUM)
 

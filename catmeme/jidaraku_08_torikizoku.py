@@ -26,7 +26,7 @@ HIRU = os.path.join(L.BGM, "昼下がり気分.mp3")
 PASTEL = os.path.join(L.BGM, "パステルハウス.mp3")
 # 料理の写真（届いた順に backgrounds/jidaraku/08_torikizoku に置く）
 BEER, HORMON, MUNE, SESERI, HEART, HIGH, KIMO, PIMAN, YAMAIMO = (
-    "f_beer", "f_hormon", "f_mune_spice", "f_seseri", "f_heart", "f_highball", "f_kimo", "f_piman", "f_yamaimo")
+    "f_highball", "f_hormon", "f_mune_spice", "f_seseri", "f_heart", "f_highball", "f_kimo", "f_piman", "f_yamaimo")
 ZIMA = "f_zima"
 
 
@@ -99,6 +99,11 @@ def cuts():
         s(COUNTER, "sleepy_old_memories_cat", "会議で言えなかった\nあの一言も"),
         s(COUNTER, "realize_wet_cat_stare", "上司の\n月曜から元気ないねも"),
         s(COUNTER, "happy_hamster_open_arms", "全部\n泡になって消えた"),
+        s(COUNTER, "sleepy_old_memories_cat", "そういえば\nかなり前は"),
+        s(COUNTER, "think_chin_paw_orange_cat", "金麦ではなく\n淡麗の大ジョッキを\n出していた時期もあった"),
+        s(COUNTER, "read_book_orange_kitten", "とり平焼きという\nメニューもあった"),
+        s(COUNTER, "sad_banana_cat_cry", "好きだった"),
+        s(COUNTER, "realize_wet_cat_stare", "メニューが変わっても\nこの店に来ると\nなぜか落ち着く"),
         # ---- スピードメニュー ----
         s(COUNTER, "work_typing_cat", "そして\nスピードメニューだ"),
         s(COUNTER, "read_book_orange_kitten", "焼き鳥を待つあいだに\nすぐ出てくる\nおつまみ"),

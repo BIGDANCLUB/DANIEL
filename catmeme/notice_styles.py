@@ -100,11 +100,13 @@ def make_end(style, text, notes, top="チャンネル登録お願いします！
         lines = text.split("\n")
         if len(lines) == 1:
             _ctext(d, 490, text, f, (255, 255, 255), 12)
-        else:   # 2行（2行目は少し小さく）
-            f1, s1 = _fit(lines[0], W - 220, 130)
-            f2, s2 = _fit(lines[1], W - 220, 130)
-            _ctext(d, 455, lines[0], f1, (255, 255, 255), 12)
-            _ctext(d, 455 + s1 * 1.25, lines[1], f2, (255, 255, 255), 12)
+        else:   # 2行以上（3行は少し小さく・11/3）
+            sz = 130 if len(lines) == 2 else 104
+            y = 455 if len(lines) == 2 else 440
+            for ln in lines:
+                f1, s1 = _fit(ln, W - 220, sz)
+                _ctext(d, y, ln, f1, (255, 255, 255), 12)
+                y += s1 * 1.22
         _notes(img, notes, "band")
     elif style == "b":   # 上は白文字＋黄色の下線、まん中は黄色の大文字
         tf = P.font("black", 84)

@@ -54,7 +54,7 @@ def cuts_all():
         # ---- つかみ ----
         nn("中学から私立って\nやっぱり\nお金かかるの？", KIDS, se="question_hatena_maou", bgm={"file": C.PURPLE, "gain": -4}),
         ss("塾から大学まで\nぜんぶ足すと……", KIDS, se="pi"),
-        C.slot(MONEY, "大学まで国公立とくらべて 差は 約", 700, "万円"),
+        C.slot(MONEY, "大学まで国公立とくらべて 差は 約", 700, "万円", dur=3.6),
         boom("700万!?", MONEY, se=[CONAN]),
         fx(nn("え……\n家の頭金が\n払えるじゃん", MONEY, se=POON), "mono"),
         C.title(GATE, "read_book_orange_kitten", "money_counting_orange_cat"),
@@ -91,7 +91,7 @@ def cuts_all():
         ss("私立大学の文系は\n4年で約400万", CAMPUS, se="kon"),
         ss("理系や医学部は\nもっとかかる", CAMPUS, se="kon"),
         g("g4_dai", "ぜんぶ積むと……", dur=5.4),
-        qq(MONEY, "anime_conan_hirameki_remix_b"),
+        qq(MONEY, "tv_professional_poon_remix_a"),   # 11/3 ユーザー指定：ポーン連打
         fx(boom("1290万\nvs\n585万!!", MONEY, se=["explosion_chudoon"]), "money"),
         fx(nn("差は\n約700万……", MONEY, se="tv_professional_poon_remix_a"), "swirl"),
         nn("子ども2人なら\n1400万!?", MONEY, red=True, se=["explosion_dokaan"]),

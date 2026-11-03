@@ -64,5 +64,14 @@
   "scream_phone_orange_cat": {
     "until": 4.2,
     "memo": "スマホを見て叫ぶ茶トラ：叫んでのけぞるまで"
+  },
+  "scold_talking_cats_close": {
+    "full": true,
+    "hai": [
+      3.08,
+      8.88,
+      10.83
+    ],
+    "memo": "怒る猫と怒られる猫の、間の空白を切った版（11/3 ユーザー指定：ショートで小さすぎるため）"
   }
 }

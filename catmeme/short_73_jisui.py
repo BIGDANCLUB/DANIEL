@@ -17,14 +17,14 @@ def cuts():
     out = []
     # (札, 右の猫, 右の説明, 左の猫, 左の説明)
     rows = [
-        ('1日目', 'showoff_gojo_cosplay_cat', 'スパイスから\nカレー', 'happy_chipi_chapa_cat', '本当に\n作った'),
+        ('1日目', 'showoff_gojo_cosplay_cat', 'スパイスから\nカレー', 'happy_chipi_chapa_cat', 'まずは\nルーから'),
         ('2日目', 'cocky_dj_cat', 'パスタを\n手作り', 'eat_crunchy_cat_luna', 'カレーの\n残り'),
         ('3日目', 'happy_hamster_open_arms', '作り置き\n5品', 'eat_pop_cat', 'カレー\nうどん'),
-        ('1週間', 'read_book_orange_kitten', '栄養バランス\n完ぺき', 'think_chin_paw_orange_cat', '野菜炒め'),
-        ('2週間', 'calm_black_face_sheep', '週末に\nまとめて料理', 'sleepy_sleepy_cat', 'もやし\n炒め'),
+        ('1週間', 'read_book_orange_kitten', '栄養バランス\n完ぺき', 'dance_filmed_by_gray_cat', '飲み会\n最高ッ！'),
+        ('2週間', 'calm_black_face_sheep', '週末に\nまとめて料理', 'sleepy_sleepy_cat', 'もやし炒め\n(金欠)'),
         ('3週間', 'money_counting_orange_cat', '食費が\n半分に', 'sad_looking_away_tabby', '卵かけ\nごはん'),
-        ('1か月', 'dance_three_kittens', '料理が\n趣味に', 'despair_dramatic_kitten', '冷蔵庫に\nソースだけ'),
-        ('2か月', 'happy_girlfriend_dance_cat', '友だちを\n呼ぶ', 'scream_phone_orange_cat', '出前アプリ'),
+        ('1か月', 'dance_three_kittens', '料理が\n趣味に', 'despair_dramatic_kitten', '冷蔵庫に\nスパイスだけ\n(未使用)'),
+        ('2か月', 'happy_girlfriend_dance_cat', '友だちを\n呼ぶ', 'scream_phone_orange_cat', 'ウーバー\nサイコぉぉぉ‼'),
         ('半年', 'surprise_big_pupils_cat', '料理教室へ', 'blank_black_cat_zoning_out', 'スパイスが\n賞味期限切れ'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):

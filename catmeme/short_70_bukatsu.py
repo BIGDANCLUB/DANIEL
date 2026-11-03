@@ -25,7 +25,7 @@ def cuts():
         ('土曜日', 'happy_chipi_chapa_cat', '遊びに\n行く', 'stare_interviewer_cat', '練習試合'),
         ('日曜日', 'calm_black_face_sheep', 'のんびり', 'sad_looking_away_tabby', '大会'),
         ('夏休み', 'dance_three_kittens', '2か月\n休み', 'scream_phone_orange_cat', '合宿'),
-        ('引退', 'surprise_big_pupils_cat', '部活って\n何？', 'sad_banana_cat_cry', '青春\nだった'),
+        ('引退', 'surprise_big_pupils_cat', '何を？', 'sad_banana_cat_cry', 'あゝ\n青春'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

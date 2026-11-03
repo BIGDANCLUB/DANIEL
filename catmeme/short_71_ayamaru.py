@@ -23,9 +23,9 @@ def cuts():
         ('10回', 'surprise_big_pupils_cat', '大事件？', 'read_book_orange_kitten', 'メールの\n最初と最後に'),
         ('20回', 'rage_talking_cat', '弁護士を\n呼ぶ', 'sleepy_old_memories_cat', '電話で\nおじぎ'),
         ('30回', 'leave_cat_leaves_home', '心配に\nなる', 'happy_hamster_open_arms', 'ありがとうの\n意味でも使う'),
-        ('50回', 'scream_standing_marmot', 'ニュースに\nなる', 'blank_black_cat_zoning_out', 'ぶつかって\nきた人に謝る'),
-        ('100回', 'fight_cat_fight', '国際問題', 'despair_dramatic_kitten', 'すみませんが\n口ぐせ'),
-        ('寝言', 'sleep_sleeping_cat', 'すやすや', 'sleepy_sleepy_cat', '寝言でも\nすみません'),
+        ('50回', 'scream_standing_marmot', '教会に\n通う', 'blank_black_cat_zoning_out', 'ぶつかって\nきた人に謝る'),
+        ('100回', 'fight_cat_fight', '国際問題', 'despair_dramatic_kitten', '口ぐせ\nなんだもん'),
+        ('家では', 'sleep_sleeping_cat', 'すやすや', 'slap_cat_slaps_kitten', '家族にも\n謝る\n(許されない)'),   # 11/3 ユーザー指定
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

@@ -20,7 +20,7 @@ def cuts():
         ('1歳', 'dance_happy_banana_cat', '盛大な\nパーティー', 'happy_hamster_open_arms', '一升餅を\nせおう'),
         ('10歳', 'dance_three_kittens', '友だちを\n30人呼ぶ', 'eat_pop_cat', '家族で\nケーキ'),
         ('18歳', 'cocky_dj_cat', '大人の\n仲間入り', 'read_book_orange_kitten', '受験勉強'),
-        ('20歳', 'dance_edm_cat', '朝まで\nパーティー', 'stare_interviewer_cat', '成人式で\n地元の友だちと\n再会'),
+        ('20歳', 'dance_edm_cat', '朝まで\nパーティー', 'dance_filmed_by_gray_cat', '朝まで\n飲み明かす'),
         ('30歳', 'happy_chipi_chapa_cat', 'サプライズ\nパーティー', 'sad_looking_away_tabby', 'ひとりで\nコンビニケーキ'),
         ('40歳', 'calm_black_face_sheep', '盛大に\n祝う', 'blank_black_cat_zoning_out', '気づいたら\n過ぎていた'),
         ('50歳', 'showoff_gojo_cosplay_cat', '大きな\nパーティー', 'work_typing_cat', 'ふつうに\n仕事'),

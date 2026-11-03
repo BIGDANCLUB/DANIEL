@@ -24,8 +24,8 @@ def cuts():
         ('お花見', 'eat_crunchy_cat_luna', 'ピクニック', 'dance_three_kittens', '宴会'),
         ('花粉', 'slack_nail_filing_cat', '気にしない', 'despair_dramatic_kitten', '目と鼻が\n大変'),
         ('新学期', 'read_book_orange_kitten', '学校は\n9月から', 'stare_big_eyes_tabby_kitten', 'クラス替えに\nドキドキ'),
-        ('桜が散った', 'sleepy_sleepy_cat', 'ふつうの\n日', 'sad_looking_away_tabby', '葉桜で\n飲む'),
-        ('春の終わり', 'happy_hamster_open_arms', '夏休みの\n計画', 'blank_black_cat_zoning_out', 'なんだか\nやる気が出ない'),
+        ('花粉Part52', 'slack_nail_filing_cat', 'やはり\n何も無い', 'angry_shooting_cat', 'スギ根絶活動\n絶対に許さない'),   # 11/3 ユーザー指定
+        ('春の終わり', 'happy_hamster_open_arms', '夏休みの\n計画', 'dance_filmed_by_gray_cat', 'ゴールデン\nウィィィィィィク‼'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

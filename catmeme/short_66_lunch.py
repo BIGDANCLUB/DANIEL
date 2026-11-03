@@ -17,15 +17,15 @@ def cuts():
     out = []
     # (札, 右の猫, 右の説明, 左の猫, 左の説明)
     rows = [
-        ('300円', 'surprise_big_pupils_cat', '安すぎて\n不安', 'happy_chipi_chapa_cat', 'おにぎり\n2個'),
+        ('300円', 'surprise_big_pupils_cat', '何も\n買えない', 'happy_chipi_chapa_cat', 'おにぎり\n2個'),
         ('500円', 'stare_interviewer_cat', 'コーヒー\n1杯', 'eat_pop_cat', 'ワンコイン\n弁当'),
         ('800円', 'sad_looking_away_tabby', 'サンドイッチ\nだけ', 'eat_crunchy_cat_luna', '日替わり\n定食'),
-        ('1000円', 'think_chin_paw_orange_cat', 'ふつうの\nランチ', 'glare_disgusted_cat', 'ちょっと\n高い'),
+        ('1000円', 'think_chin_paw_orange_cat', '一番安い\n定食', 'glare_disgusted_cat', 'ちょっと\n高い'),
         ('1500円', 'calm_black_face_sheep', 'まだ\nふつう', 'despair_dramatic_kitten', 'ぜいたく\nすぎる'),
         ('2000円', 'money_counting_orange_cat', 'ハンバーガー\nセット', 'scream_phone_orange_cat', 'ボーナスの\n日だけ'),
         ('3000円', 'cocky_dj_cat', 'ちょっと\nいいランチ', 'blank_black_cat_zoning_out', '会社の\n経費'),
         ('5000円', 'dance_three_kittens', '記念日', 'sad_banana_cat_cry', '月の食費が\n消える'),
-        ('次の日', 'happy_hamster_open_arms', 'また\nランチ', 'sulk_hungry_cat', 'もやし\n生活'),
+        ('1万円', 'happy_hamster_open_arms', '割とある', 'laugh_laughing_dog', '逆に何も食べず\n飲み代に'),   # 11/3 ユーザー指定：次の日はなし
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

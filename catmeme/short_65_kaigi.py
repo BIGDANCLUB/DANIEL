@@ -18,13 +18,13 @@ def cuts():
     # (札, 右の猫, 右の説明, 左の猫, 左の説明)
     rows = [
         ('5分', 'slack_nail_filing_cat', 'もう\n終わり', 'stare_interviewer_cat', 'まだ\nあいさつ中'),
-        ('15分', 'money_counting_orange_cat', '決めて\n解散', 'read_book_orange_kitten', '資料の\n読み合わせ'),
+        ('15分', 'money_counting_orange_cat', '結論を決めて\n解散', 'read_book_orange_kitten', '資料の\n読み合わせ'),
         ('30分', 'glare_disgusted_cat', '長すぎる', 'sleepy_old_memories_cat', '前回の\nおさらい'),
-        ('1時間', 'leave_cat_leaves_home', '途中で\n帰る', 'think_chin_paw_orange_cat', '結論は\n次回へ'),
-        ('2時間', 'rage_talking_cat', '抗議する', 'sleepy_sleepy_cat', '目を開けたまま\n寝る'),
-        ('3時間', 'surprise_big_pupils_cat', '残業代を\n請求', 'work_dog_staring_computer', '内職を\nはじめる'),
+        ('1時間', 'leave_cat_leaves_home', '途中で\n抜ける', 'think_chin_paw_orange_cat', '結論は\n次回へ'),
+        ('2時間', 'rage_talking_cat', '長さに\n抗議する', 'sleepy_sleepy_cat', '目を開けたまま\n寝る'),
+        ('3時間', 'meow_ragdoll_chubby_cat', '残業代を\n請求', 'work_dog_staring_computer', '内職を\nはじめる'),
         ('半日', 'fight_cat_fight', 'ストライキ', 'despair_dramatic_kitten', '会議のための\n会議'),
-        ('1日', 'scream_standing_marmot', '会社が\nつぶれる', 'stare_tabby_wide_eyes_cat', '議事録が\n10ページ'),
+        ('1日', 'scream_standing_marmot', '会社が\nつぶれる', 'dance_filmed_by_gray_cat', 'なぜ会議が\n長いのかを\n会議する'),
         ('終わったら', 'happy_hamster_open_arms', 'すぐ\n実行', 'blank_black_cat_zoning_out', '何が決まったか\n誰も知らない'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):

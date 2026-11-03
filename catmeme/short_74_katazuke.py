@@ -33,7 +33,7 @@ def cuts():
         out.append(Wd.split(ST, lv, right=wcat, cap=wcap, cap_side="R", sound="R", dur=2.3 * K, se="don_hit"))
         out.append(Wd.split(ST, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K))
     for c in out:
-        c.update(blur=9, band_y=0, tag_y=460, heads=('予定', '実際'))
+        c.update(blur=9, band_y=0, tag_y=460, heads=('実際', '予定'))
     return out
 
 

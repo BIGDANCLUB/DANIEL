@@ -16,16 +16,16 @@ K = 59.9 / 58.5
 def cuts():
     out = []
     # (札, 右の猫, 右の説明, 左の猫, 左の説明)
-    rows = [
+    rows = [   # 11/3 ユーザー指定：12時以降の現実側を後ろへずらす
         ('11:55', 'slack_nail_filing_cat', 'ゆっくり\n選ぼう', 'work_typing_cat', '会議が\n長引く'),
-        ('12:00', 'happy_chipi_chapa_cat', 'チャイムと\n同時にダッシュ', 'stare_tabby_wide_eyes_cat', 'エレベーター\n待ち'),
-        ('12:03', 'eat_pop_cat', 'からあげ\n弁当', 'despair_dramatic_kitten', 'レジに\n20人'),
-        ('12:05', 'cocky_dj_cat', 'スイーツも\n買う', 'sad_looking_away_tabby', 'おにぎりの\n棚がからっぽ'),
-        ('12:10', 'happy_hamster_open_arms', '温めて\nもらう', 'think_chin_paw_orange_cat', 'サンドイッチ\n1個'),
-        ('12:15', 'calm_black_face_sheep', '公園で\n食べる', 'read_book_orange_kitten', 'デスクで\n食べる'),
-        ('12:30', 'sleepy_old_memories_cat', '食後の\nコーヒー', 'scream_phone_orange_cat', '電話が\n鳴る'),
-        ('12:55', 'sleep_sleeping_cat', '昼寝', 'blank_black_cat_zoning_out', 'まだ半分\n残っている'),
-        ('13:00', 'dance_three_kittens', '午後も\nがんばる', 'sulk_hungry_cat', 'おなかが\n鳴る'),
+        ('12:00', 'happy_chipi_chapa_cat', 'チャイムと\n同時にダッシュ', 'work_typing_cat', 'まだ\n会議中'),
+        ('12:03', 'eat_pop_cat', 'からあげ\n弁当', 'work_typing_cat', 'やっと結論を\nまとめる'),
+        ('12:05', 'cocky_dj_cat', 'スイーツも\n買う', 'stare_tabby_wide_eyes_cat', 'エレベーター\n待ち'),
+        ('12:10', 'happy_hamster_open_arms', '温めて\nもらう', 'sad_looking_away_tabby', 'おにぎりの\n棚がからっぽ'),
+        ('12:15', 'calm_black_face_sheep', '公園で\n食べる', 'sad_banana_cat_cry', 'サンドイッチを\n買って出る'),
+        ('12:30', 'sleepy_old_memories_cat', '食後の\nコーヒー', 'scream_phone_orange_cat', '食事中に\n電話が鳴る'),
+        ('12:55', 'sleep_sleeping_cat', '昼寝', 'scold_talking_cats', '上司から\n説教をくらう'),
+        ('13:00', 'dance_three_kittens', '午後も\nがんばる', 'scold_talking_cats', '上司の説教が\nサビを迎える'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

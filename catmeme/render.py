@@ -780,7 +780,9 @@ class CutRenderer:
             v = val if t > 0.9 else int(np.random.default_rng(int(t * FPS)).integers(10, 99))
             key = f"{pre}{v}{post}"
             if key not in self.slot_cache:
-                self.slot_cache[key] = trim(to_np(P.big_text(key, (140, 60, 1780, 420), max_size=230, max_lines=1,
+                nl = key.count("\n") + 1   # 11/3：改行があれば複数行で大きく
+                self.slot_cache[key] = trim(to_np(P.big_text(key, (140, 40, 1780, 40 + 150 * nl if nl > 1 else 420),
+                                                              max_size=230 if nl == 1 else 150, max_lines=nl,
                                                               fill=P.RED_TEXT, stroke=P.WHITE)))
             over_t(out, self.slot_cache[key])
         if self.crack is not None and t > 0.05:   # 画面にヒビ（10/29）

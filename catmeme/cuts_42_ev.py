@@ -58,7 +58,7 @@ def cuts_all():
         # ---- つかみ ----
         nn("EVって\n電気で走るから\nめちゃくちゃ安いんでしょ？", DEALER, se="question_hatena_maou", bgm={"file": C.PURPLE, "gain": -4}),
         ss("電気代は\nたしかに\nガソリン代の半分", DEALER, se="pi"),
-        C.slot(MONEY, "でも10年でくらべると ガソリン車のほうが 約", 40, "万円安い"),
+        C.slot(MONEY, "でも10年でくらべると\nガソリン車のほうが\n約", 40, "万円安い", dur=3.6),   # 11/3：3行で大きく
         boom("ガソリン車の\nほうが安い!?", MONEY, se=[CONAN]),
         fx(nn("え……\nEVって\nお得じゃないの？", MONEY, se=POON), "mono"),
         C.title(STREET, "drive_driving_cat", "money_counting_orange_cat"),
@@ -113,7 +113,7 @@ def cuts_all():
         ss("補助金は毎年変わるので\n買う前に\n確認しよう", NIGHT, se="pc_warning"),
         C.ending(STREET)[0],
         C.end_today(STREET, (("drive_driving_cat", 220, 560), ("dance_three_kittens", 640, 520), ("money_counting_orange_cat", 1000, 560),
-                             ("drive_monkey_golf_cart", 1360, 560), ("dance_happy_banana_cat", 1720, 600))),
+                             ("drive_monkey_golf_cart", 1360, 560), ("dance_happy_banana_cat", 1720, 600)), dur=9.0),   # 長いひとことなので長めに
     ]
 
 

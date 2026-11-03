@@ -101,8 +101,9 @@ def make_end(style, text, notes, top="チャンネル登録お願いします！
         if len(lines) == 1:
             _ctext(d, 490, text, f, (255, 255, 255), 12)
         else:   # 2行以上（3行は少し小さく・11/3）
-            sz = 130 if len(lines) == 2 else 104
-            y = 455 if len(lines) == 2 else 440
+            n = len(lines)
+            sz = 130 if n == 2 else 104 if n == 3 else max(44, int(500 / n / 1.22))   # 長い文は行を増やして小さく
+            y = 455 if n == 2 else 440 if n == 3 else 436
             for ln in lines:
                 f1, s1 = _fit(ln, W - 220, sz)
                 _ctext(d, y, ln, f1, (255, 255, 255), 12)

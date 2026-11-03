@@ -83,9 +83,12 @@ def ending(b):
                  cats=[{"a": "wave_waving_cat", "x": 1560, "h": 520, "bottom": 1040, "float": True}])]
 
 
-def slot(b, pre, v, post):
-    """金額がスロットのように回って止まる（博識な猫のアップ）。"""
-    return fx(boom(None, b, who="S", se=["explosion_dokaan", {"f": "kaan", "at": 0.9}]), slot=(pre, v, post))
+def slot(b, pre, v, post, dur=None):
+    """金額がスロットのように回って止まる（博識な猫のアップ）。dur：止まったあとも読めるように長めにする（11/3 ユーザー指摘）。"""
+    c = fx(boom(None, b, who="S", se=["explosion_dokaan", {"f": "kaan", "at": 0.9}]), slot=(pre, v, post))
+    if dur:
+        c.update(dur=dur, fixed=True)
+    return c
 
 
 def hatena(b):

@@ -526,7 +526,7 @@ class CutRenderer:
             if c.get("label"):
                 tag = P.label_tag(c["label"], c.get("label_color"), size=c.get("label_size", 58))
                 y = min(bottom, H) - tag.height - c.get("label_up", 40)
-                self.labels.append((to_np(tag), int(cx - tag.width / 2), int(y)))
+                self.labels.append((to_np(tag), int(min(max(cx - tag.width / 2, 10), W - tag.width - 10)), int(y)))   # 画面の外に出さない（11/3）
         # 集中線（数枚を切り替えてチラつかせる）
         fx = cut.get("fx", [])
         self.lines = [to_np(P.speed_lines(cut.get("lines_c", (960, 540)), cut.get("lines_color", (255, 255, 255)), seed=k))
@@ -665,7 +665,7 @@ class CutRenderer:
             if c.get("label"):
                 tag = P.label_tag(c["label"], c.get("label_color"), size=c.get("label_size", 58))
                 y = min(bottom, H) - tag.height - c.get("label_up", 40)
-                self.labels.append((to_np(tag), int(cx - tag.width / 2), int(y)))
+                self.labels.append((to_np(tag), int(min(max(cx - tag.width / 2, 10), W - tag.width - 10)), int(y)))   # 画面の外に出さない（11/3）
 
     @staticmethod
     def _crop(im):

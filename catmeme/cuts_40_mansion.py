@@ -1,7 +1,7 @@
 """40_mansion（新築マンションvs中古マンション＋リノベ 30年でいくら違う？）（11/3 ユーザー指定・タワマンと同じ作り）。3分ほど。
 
 python3 catmeme/cuts_40_mansion.py [--charts|--len]
-数字はざっくりの目安（2026年・首都圏・同じエリアの70㎡・35年ローン金利0.8%・30年住んで売る）：
+数字はざっくりの目安（2026年・首都圏・同じエリアの70平米・35年ローン金利0.8%・30年住んで売る）：
   買う値段：新築 6500万／中古（築20年）4000万＋リノベ800万＝4800万（差 1700万）
   買うときの諸費用：新築 約250万／中古 約350万（仲介手数料がかかる）
   ローンの利息（30年ぶん）：新築 約900万／中古 約650万
@@ -59,15 +59,15 @@ def cuts_all():
     return [
         # ---- つかみ ----
         nn("中古マンションを\nリノベしたら\nめちゃくちゃ得でしょ？", ROOM, se="question_hatena_maou", bgm={"file": C.PURPLE, "gain": -4}),
-        ss("買う値段は\nたしかに\n1700万安い", ROOM, se="pi"),
-        C.slot(MONEY, "でも30年でくらべると 差は 約", 190, "万円"),
+        dict(ss("買う値段は\nたしかに\n1700万安い", ROOM, se="pi"), layers_top=[C.pt("e03_basis")]),   # 11/3：根拠を小さく
+        C.slot(MONEY, "でも30年でくらべると 差は 約", 190, "万円", dur=3.6),
         boom("たった190万!?", MONEY, se=[CONAN]),
         fx(nn("え……\n1700万は\nどこへ消えたの？", MONEY, se=POON), "mono"),
         C.title(TOWER, "showoff_gojo_cosplay_cat", "money_counting_orange_cat"),
-        C.card("e02_premise", "首都圏・同じエリアの70㎡でくらべる", dur=5.2),
+        C.card("e02_premise", "首都圏・同じエリアの70平米でくらべる", dur=5.2),
         # ---- 買う値段 ----
         chap("① 買う値段", se="quiz_question_01", bgm={"file": C.NORA, "gain": -4, "fade": 0.6}),
-        ss("首都圏の新築マンションは\n70㎡で\n6500万くらい", TOWER, se="pi"),
+        ss("首都圏の新築マンションは\n70平米で\n6500万くらい", TOWER, se="pi"),
         ss("同じエリアの\n築20年の中古なら\n4000万くらい", STREET, se="kon"),
         ss("中古はキッチンや\nお風呂をリノベして\n800万", ROOM, se="kon"),
         nn("新品みたいに\nなるなら\n中古で十分じゃん", ROOM, se="pikon"),

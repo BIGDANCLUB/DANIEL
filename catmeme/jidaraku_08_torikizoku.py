@@ -27,6 +27,7 @@ PASTEL = os.path.join(L.BGM, "パステルハウス.mp3")
 # 料理の写真（届いた順に backgrounds/jidaraku/08_torikizoku に置く）
 BEER, HORMON, MUNE, SESERI, HEART, HIGH, KIMO, PIMAN, YAMAIMO = (
     "f_beer", "f_hormon", "f_mune_spice", "f_seseri", "f_heart", "f_highball", "f_kimo", "f_piman", "f_yamaimo")
+ZIMA = "f_zima"
 
 
 def cuts():
@@ -188,10 +189,10 @@ def cuts():
         # ---- ZIMA ----
         s(COUNTER, "stare_tabby_wide_eyes_cat", "いつの間にか\nハイボールも\nなくなっていた", se="pi", bgm={"file": PASTEL, "gain": -15, "fade": 0.8}),
         s(COUNTER, "think_chin_paw_orange_cat", "たまーに\n復刻しているが"),
-        s(COUNTER, "sleepy_old_memories_cat", "ZIMAがあれば\n迷わず頼んでいた"),
-        s(COUNTER, "showoff_gojo_cosplay_cat", "ハイボールの\nジョッキに\nあれを入れて"),
-        s(COUNTER, "work_typing_cat", "カットレモンを\nもらって\n絞るのが"),
-        s(COUNTER, "happy_chipi_chapa_cat", "最高に\n美味いんだ"),
+        s(COUNTER, "sleepy_old_memories_cat", "ZIMAがあれば\n迷わず頼んでいた", item=ZIMA),
+        s(COUNTER, "showoff_gojo_cosplay_cat", "ハイボールの\nジョッキに\nあれを入れて", item=ZIMA),
+        s(COUNTER, "work_typing_cat", "カットレモンを\nもらって\n絞るのが", item=ZIMA),
+        s(COUNTER, "happy_chipi_chapa_cat", "最高に\n美味いんだ", item=ZIMA),
         s(COUNTER, "despair_dramatic_kitten", "メニューを探す\nやはり今日は\nない"),
         s(COUNTER, "cocky_dj_cat", "かわりに\nもう1杯\nメガハイボール", item=HIGH),
         s(COUNTER, "sleepy_sleepy_cat", "ほろ酔いで\nメニューを見ると"),

@@ -546,7 +546,33 @@ def over_cat(out, img, al, x, y, split_mode):
     I.over(out, img, al, x, y)
 
 
+HAI_TAIL = 0.8   # 右の猫が鳴いてから、この秒数までは見せる
+
+
+def hai_extend(cs):
+    """11/3 ユーザー指定：「怒る猫と怒られる猫」などは、右の猫が鳴くまで場面をのばす（play.json の hai＝右の猫が鳴く秒）。
+    のばした分は、ほかの場面から少しずつ引いて合計の長さを変えない。"""
+    add = 0.0
+    longer = set()
+    for i, c in enumerate(cs):
+        hs = [R.ASSET_PLAY.get(q["a"], {}).get("hai") for q in c.get("cats", [])]
+        hs = [h[0] for h in hs if h]
+        if hs:
+            need = min(hs) - 0.25 + HAI_TAIL   # 素材は 0.25 秒先から流れる
+            if c["dur"] < need:
+                add += need - c["dur"]
+                c["dur"] = need
+                longer.add(i)
+    rest = [c for i, c in enumerate(cs) if i not in longer]
+    if add and rest:
+        tot = sum(c["dur"] for c in rest)
+        for c in rest:
+            c["dur"] -= add * c["dur"] / tot
+    return cs
+
+
 def run(cs, band, out_path, prev=None):
+    hai_extend(cs)
     dedupe(cs)
     I.run(cs, None, None, out_path, prev, band=band, renderer=Renderer)
 

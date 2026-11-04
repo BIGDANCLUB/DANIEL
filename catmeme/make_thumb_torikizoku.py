@@ -26,7 +26,7 @@ def emoji(ch, h):
 
 
 def main():
-    line1 = [("月曜の", BK), ("1人トリキ", R), ("は最高", BK), ("　 ", BK)]
+    line1 = [("月曜の", BK), ("1人トリキ", T.BLUE), ("は最高", BK), ("　 ", BK)]
     line2 = [("むねスパ", R), ("を", BK), ("金麦", R), ("で流し込む", BK)]
     name = "jidaraku_08_torikizoku_thumb_a.png"
     T.type_a(name, "t01_front", "f_mune_spice",

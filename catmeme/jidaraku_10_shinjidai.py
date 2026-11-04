@@ -20,6 +20,8 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku", d) for d in ("04_sushi
 OFFICE, FRONT, IN, COUNTER, ROAD, ROOM_N = ("bg25_office_desk", "n01_front", "n02_inside", "n03_counter", "b06_road_night", "j07_room_night")
 J.STANDIN.update({FRONT: "bg51_night_street", IN: "bg98_izakaya_night", COUNTER: "bg13_izakaya"})
 NIGHT = {OFFICE: 0.85}
+J.HOLD = 3   # 11/4：1つの素材を2〜3文つづけて使う
+J.SUB_STYLE = "glow"   # 11/4 ユーザー指定：黒い文字＋淡い黄緑の光
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
 HIRU = os.path.join(L.BGM, "昼下がり気分.mp3")
 PASTEL = os.path.join(L.BGM, "パステルハウス.mp3")

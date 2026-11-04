@@ -88,9 +88,12 @@ def sub_glow(t, size=100, ink=(25, 25, 30), glow_col=(255, 255, 255), glow_w=16,
     return g.crop(g.getbbox())
 
 
+GLOW_COL = (225, 255, 190)   # 光の色（11/4 ユーザー指定：A 淡い黄緑）
+
+
 def sub_img(t, size=84):
     if SUB_STYLE == "glow":
-        return sub_glow(t)
+        return sub_glow(t, glow_col=GLOW_COL)
     """字幕：明朝体の太字・白・黒い縁（参考どおり）。"""
     f = font(size)
     t = t.replace("。", "").replace("、", " ")   # 自堕落シリーズの字幕は句読点なし（10/26 ユーザー指定）

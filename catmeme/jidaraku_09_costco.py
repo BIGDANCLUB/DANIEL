@@ -30,6 +30,7 @@ JITAKU = os.path.join(L.BGM, "自宅にて.mp3")
 # 写真（届いた順に backgrounds/jidaraku/09_costco に置く）
 CARD, CART, TV, GAME, POKI, BULGOGI, ROLL, CHICKEN, MUFFIN, HOTDOG = (
     "f_card", "f_cart", "f_tv", "f_game", "f_poki", "f_bulgogi", "f_roll", "f_chicken", "f_muffin", "f_hotdog")
+TAN = "f_gyutan"   # 牛タンの塊（11/4 ユーザー指定）
 
 
 def cuts():
@@ -140,6 +141,14 @@ def cuts():
         s(DELI, "peek_what_happen_cat", "となりで\nステーキ肉を\n選んでいる夫婦"),
         s(DELI, "flip_emo_cat_hair", "肉が\nブロックで\n売っている"),
         s(DELI, "meow_gray_white_kitten", "フライパンに\n入るのか"),
+        s(DELI, "stare_tabby_wide_eyes_cat", "その奥に\nとんでもないものが"),
+        s(DELI, "surprise_big_pupils_cat", "牛タンの\n塊", item=TAN, se="explosion_dokaan"),
+        s(DELI, "huh_huh_cat", "1本まるごと\n牛の舌の形のまま", item=TAN),
+        s(DELI, "think_chin_paw_orange_cat", "焼肉屋では\n薄い1枚が\nあんなに高いのに", item=TAN),
+        s(DELI, "sleepy_old_memories_cat", "子どものころからの\n夢がある", item=TAN),
+        s(DELI, "excited_hodomoe_city_cat", "牛タンを\n丸かじりしたい", item=TAN),
+        s(DELI, "rizz_cat_rizz", "それが\n男の夢", item=TAN, se="shine_kiraan_maou"),
+        s(DELI, "angry_aiming_cat", "カートに入れる", item=TAN, se="pi"),
         # ---- サーモンポキ ----
         s(DELI, "stare_tabby_wide_eyes_cat", "となりの\nお惣菜コーナー"),
         s(DELI, "scream_phone_orange_cat", "サーモンポキ", item=POKI, se="explosion_dokaan"),
@@ -238,6 +247,21 @@ def cuts():
         s(ROOM_N, "dance_cute_dog", "うまい", item=POKI),
         s(ROOM_N, "weird_meowing_cat", "ロティサリーチキンを\nちぎる", item=CHICKEN),
         s(ROOM_N, "sad_banana_cat_cry", "まだ\n4分の3残っている", item=CHICKEN),
+        s(ROOM_N, "think_bike_front_seat_cat", "……いや\nまだ終わっていない", se="pi"),
+        s(ROOM_N, "stare_big_eyes_tabby_kitten", "冷蔵庫から\n牛タンの塊を\n取り出す", item=TAN),
+        s(ROOM_N, "work_typing_cat", "皮をむいて\n塩とこしょう", item=TAN),
+        s(ROOM_N, "calm_black_face_sheep", "切らない", item=TAN),
+        s(ROOM_N, "angry_shooting_cat", "切らずに\nそのまま焼く", item=TAN, se="explosion_chudoon"),
+        s(ROOM_N, "sleepy_sleepy_cat", "じっくり\n1時間", item=TAN),
+        s(ROOM_N, "showoff_gojo_cosplay_cat", "焼きあがった\n牛タンの丸焼き", item=TAN, se="gong_dora_jaan"),
+        s(ROOM_N, "yell_orange_fat_cat", "両手で持って\nかぶりつく", item=TAN, se="explosion_dokaan"),
+        s(ROOM_N, "eat_crunchy_cat_luna", "ザクッ……\n肉汁があふれる", item=TAN),
+        s(ROOM_N, "happy_hamster_open_arms", "厚い\n厚すぎる", item=TAN),
+        s(ROOM_N, "realize_wet_cat_stare", "焼肉屋の牛タンの\n100枚分を\nいっぺんに食べている", item=TAN),
+        s(ROOM_N, "sad_banana_cat_cry", "男の夢が\n今かなった", item=TAN),
+        s(ROOM_N, "blank_black_cat_zoning_out", "ふと思う", item=TAN),
+        s(ROOM_N, "excited_hodomoe_city_cat", "これもう\n牛とのキスだろ", item=TAN, se="explosion_dokaan"),
+        s(ROOM_N, "glare_disgusted_cat", "……何を\n言っているんだ俺は"),
         s(ROOM_N, "sulk_hungry_cat", "満腹だ"),
         s(ROOM_N, "dance_white_dog", "明日の朝は\nマフィンと\nディナーロール"),
         s(ROOM_N, "eat_chips_cat", "明日の昼は\nチキンサンド"),

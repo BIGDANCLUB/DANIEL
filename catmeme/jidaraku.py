@@ -60,7 +60,37 @@ def cover(name):
     return np.asarray(im.crop((x0, y0, x0 + W, y0 + H)))[:, :, ::-1].astype(np.float32) / 255
 
 
+SUB_STYLE = "outline"   # "glow"：黒い文字＋白いふわっとした光（11/4 ユーザーの参考画像をもとに）
+
+
+def sub_glow(t, size=100, ink=(25, 25, 30), glow_col=(255, 255, 255), glow_w=16, blur=9, crisp=5):
+    """字幕（光るタイプ）：黒い明朝の文字のまわりを、白い光でふわっと囲む。暗い背景でも明るい背景でも読める。"""
+    from PIL import ImageFilter
+    f = font(size)
+    t = t.replace("。", "").replace("、", " ")
+    lines = t.split("\n")
+    d0 = ImageDraw.Draw(Image.new("RGBA", (8, 8)))
+    ws = [d0.textlength(ln, font=f) for ln in lines]
+    lh = int(size * 1.22)
+    pad = glow_w + blur * 2 + 6
+    w_, h_ = int(max(ws)) + pad * 2, lh * len(lines) + pad * 2
+    g = Image.new("RGBA", (w_, h_), (0, 0, 0, 0))
+    d = ImageDraw.Draw(g)
+    for i, (ln, w) in enumerate(zip(lines, ws)):
+        d.text(((w_ - w) / 2, pad + i * lh), ln, font=f, fill=glow_col + (255,), stroke_width=glow_w, stroke_fill=glow_col + (255,))
+    g = g.filter(ImageFilter.GaussianBlur(blur))
+    a = np.asarray(g).copy()
+    a[..., 3] = np.clip(a[..., 3].astype(int) * 2, 0, 255)
+    g = Image.fromarray(a)
+    d = ImageDraw.Draw(g)
+    for i, (ln, w) in enumerate(zip(lines, ws)):
+        d.text(((w_ - w) / 2, pad + i * lh), ln, font=f, fill=ink + (255,), stroke_width=crisp, stroke_fill=glow_col + (255,))
+    return g.crop(g.getbbox())
+
+
 def sub_img(t, size=84):
+    if SUB_STYLE == "glow":
+        return sub_glow(t)
     """字幕：明朝体の太字・白・黒い縁（参考どおり）。"""
     f = font(size)
     t = t.replace("。", "").replace("、", " ")   # 自堕落シリーズの字幕は句読点なし（10/26 ユーザー指定）

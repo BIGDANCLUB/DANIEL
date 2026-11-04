@@ -111,3 +111,8 @@
 - 10/15 追加分の「音」は聞いて確認していない。踊る2本は曲が入っている可能性が高いので ⚠（音を消す）にした
 - 10/23 追加の6本：最後のTikTokの画面を切り落とし、左右の黒い帯とロゴを消した。猫に重なったロゴは `tools/wipe_tiktok_logo.py` で周りの色で埋めた。
   音は聞いて確認していない。踊る2匹（dance_orange_gray_cats）は曲が入っている可能性が高いので ⚠（音を消す）にした。stare_tabby_wide_eyes_cat は音なし
+| money_counting_cream_cat.mp4 | お札を数えるクリーム色の猫（スーツ姿・目を閉じてうっとり・お金持ち・ドヤ） | TikTok保存・11/4 ユーザー追加 |  |
+| walk_approaching_orange_cat.mp4 | こっちへ歩いてくる茶色の猫（だんだん近づく・じわじわ迫る・登場） | TikTok保存・11/4 ユーザー追加 |  |
+| film_phone_orange_white_cats.mp4 | 白い猫をスマホで撮る茶トラ（撮影・SNS・推し活） | TikTok保存・11/4 ユーザー追加 |  |
+| smug_squint_bicolor_cat.mp4 | 目を細めて横を見る白黒の猫（ジト目・あきれ・ドヤ・何か言いたげ） | TikTok保存・11/4 ユーザー追加 |  |
+| stare_aloha_gray_cat.mp4 | アロハシャツのグレーの猫（きょとん・休日・リゾート気分）。画質低め | TikTok保存・11/4 ユーザー追加 |  |

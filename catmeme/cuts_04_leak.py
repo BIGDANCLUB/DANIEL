@@ -360,6 +360,10 @@ POOLS["papa"] += ["happy_hamster_open_arms", "dance_orange_gray_cats"]
 POOLS["react"] += ["slap_cat_slaps_kitten", "sad_looking_away_tabby", "scream_phone_orange_cat", "ignore_orange_cat_sniffed"]
 POOLS["calm"] += ["think_chin_paw_orange_cat", "stare_lying_tabby_cat"]
 POOLS["papa"] += ["dance_happy_banana_cat", "walk_white_duck"]
+# 11/4 ユーザー追加の素材（TikTok保存→変換・最後のTikTok画面は切り落とし）
+POOLS["react"] += ["smug_squint_bicolor_cat", "walk_approaching_orange_cat"]
+POOLS["calm"] += ["money_counting_cream_cat", "stare_aloha_gray_cat"]
+POOLS["papa"] += ["film_phone_orange_white_cats"]
 FALLBACK = {"react": ["papa", "calm"], "calm": ["papa", "react"], "papa": ["calm", "react"], "hack": ["papa", "calm"]}
 
 

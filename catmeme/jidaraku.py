@@ -178,6 +178,47 @@ def chain(cs):
     return cs
 
 
+HOLD = 0   # 11/4 ユーザー指定：1つの素材を2〜3文つづけて使う（0＝使わない）。台本で J.HOLD = 3 にする
+
+
+def hold(cs, n=None):
+    """同じ素材を2〜3文（n文まで）つづけて流す。素材の長さ（くり返す素材は1回分）が足りなくなったら、そこで次の素材に替える。
+    文が次の字幕に続くときは n をこえても同じ素材のまま（素材の長さまで）。場所（背景）が変わったら替える。"""
+    n = n or HOLD
+    i = 0
+    while i < len(cs):
+        c = cs[i]
+        if not c.get("cats") or not c.get("text"):
+            i += 1
+            continue
+        head = c["cats"][0]
+        limit = _cat_len(head["a"])
+        grp = [c]
+        used = c["dur"] + 0.25
+        while i + len(grp) < len(cs):
+            nxt = cs[i + len(grp)]
+            if not nxt.get("text") or not nxt.get("cats") or nxt.get("bg") != c.get("bg"):
+                break
+            cont = grp[-1]["text"].replace("\n", "").endswith(CONT)
+            if len(grp) >= n and not cont:
+                break
+            if used + nxt["dur"] > limit:
+                break
+            grp.append(nxt)
+            used += nxt["dur"]
+        off = 0.0
+        for x in grp:
+            q = dict(head, ss=off)
+            if x.get("item"):
+                q.update(x=600, h=min(head["h"], 700))
+            else:
+                q.update(x=960, h=c["cats"][0]["h"] if not c.get("item") else 760)
+            x["cats"] = [q]
+            off += x["dur"]
+        i += len(grp)
+    return cs
+
+
 def effects(cs):
     """演出と SE（11/2 ユーザー指定）：料理が初めて出る所は「届いた」演出＋ジャン！／「!」「!?」の所は集中線＋ゆれ＋チュドーン。
     最後に、版権の心配がある SE（se/README.md の ⚠・✕、game_ などで始まる音）が入っていないか確かめる。"""
@@ -312,7 +353,7 @@ class Renderer:
 
 
 def run(cs, out_path, prev=None, only=None):
-    cs = effects(chain(cs))
+    cs = effects(hold(cs) if HOLD else chain(cs))
     durs = [c["dur"] for c in cs]
     total = float(sum(durs))
     starts = list(np.cumsum([0] + durs[:-1]))

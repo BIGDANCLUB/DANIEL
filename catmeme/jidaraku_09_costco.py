@@ -18,6 +18,7 @@ import jidaraku as J
 J.BGS.insert(0, os.path.join(J.HERE, "backgrounds", "jidaraku", "09_costco"))
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku", d) for d in ("04_sushiro", "05_gokurakuyu", "06_bronco", "07_ikea", "08_torikizoku")]
 J.BGS.append(os.path.join(J.HERE, "backgrounds", "26_kuruma"))
+J.HOLD = 3   # 11/4 ユーザー指定：1つの素材を2〜3文つづけて使う（目が疲れないように）
 ROOM, PARK, FRONT, ENTRY, ELEC, FOOD, DELI, COURT, REGI, ROOM_N = (
     "j01_room", "c01_parking", "c02_front", "c03_entrance", "c04_electronics", "c05_food", "c06_deli", "c07_foodcourt",
     "c08_register", "j07_room_night")

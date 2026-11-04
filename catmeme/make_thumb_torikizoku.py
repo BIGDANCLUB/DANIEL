@@ -31,7 +31,7 @@ def main():
     name = "jidaraku_08_torikizoku_thumb_a.png"
     T.type_a(name, "t01_front", "f_mune_spice",
              ("happy_hamster_open_arms", 1.0, 330, 410, 300, False),
-             [("dance_filmed_by_gray_cat", 1.0, 1080, 410, 320, False)],
+             [("excited_hodomoe_city_cat", 1.0, 1080, 410, 330, False)],
              "30代独身　一人飲み", line1, line2, split=640, size=SIZE)
     p = os.path.join(T.HERE, "thumbs", name)
     img = Image.open(p).convert("RGBA")

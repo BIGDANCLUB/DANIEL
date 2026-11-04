@@ -188,7 +188,7 @@ def hold(cs, n=None):
     i = 0
     while i < len(cs):
         c = cs[i]
-        if not c.get("cats") or not c.get("text"):
+        if not c.get("cats") or not c.get("text") or c.get("solo"):   # solo：まとめない場面（テンポよく切り替える所）
             i += 1
             continue
         head = c["cats"][0]
@@ -197,7 +197,7 @@ def hold(cs, n=None):
         used = c["dur"] + 0.25
         while i + len(grp) < len(cs):
             nxt = cs[i + len(grp)]
-            if not nxt.get("text") or not nxt.get("cats") or nxt.get("bg") != c.get("bg"):
+            if not nxt.get("text") or not nxt.get("cats") or nxt.get("bg") != c.get("bg") or nxt.get("solo"):
                 break
             cont = grp[-1]["text"].replace("\n", "").endswith(CONT)
             if len(grp) >= n and not cont:

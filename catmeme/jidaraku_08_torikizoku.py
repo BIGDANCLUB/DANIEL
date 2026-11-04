@@ -21,6 +21,7 @@ OFFICE, STREET, FRONT, IN, COUNTER, ROAD, ROOM_N = ("bg25_office_desk", "bg51_ni
                                                     "b06_road_night", "j07_room_night")
 J.STANDIN.update({FRONT: "bg51_night_street", IN: "bg98_izakaya_night", COUNTER: "bg13_izakaya"})
 NIGHT = {OFFICE: 0.85}
+J.HOLD = 3   # 11/4 ユーザー指定：1つの素材を2〜3文つづけて使う
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
 HIRU = os.path.join(L.BGM, "昼下がり気分.mp3")
 PASTEL = os.path.join(L.BGM, "パステルハウス.mp3")
@@ -272,6 +273,17 @@ def cuts():
 
 def place(cs):
     J.auto_tempo(cs)
+    # 「ゆっくり食べていくよー」〜「無限ループ」はテンポよく切り替える（ハイボールのへいへい猫はそのまま・11/3 ユーザー指定）
+    on = False
+    for c in cs:
+        t = c.get("text") or ""
+        if t.startswith("それじゃあ"):
+            on = True
+            continue
+        if on:
+            c["solo"] = True
+            if "無限ループ" in t:
+                on = False
     for c in cs:
         if c.get("text"):   # 字幕にカギかっこはつけない
             c["text"] = c["text"].replace("「", "").replace("」", "")

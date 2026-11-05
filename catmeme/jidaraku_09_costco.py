@@ -23,7 +23,7 @@ J.SUB_STYLE = "glow"   # 11/4 ユーザー指定：黒い文字＋淡い黄緑�
 ROOM, PARK, FRONT, ENTRY, ELEC, FOOD, DELI, COURT, REGI, ROOM_N = (
     "j01_room", "c01_parking", "c02_front", "c03_entrance", "c04_electronics", "c05_food", "c06_deli", "c07_foodcourt",
     "c08_register", "j07_room_night")
-J.STANDIN.update({FRONT: "c01_parking"})   # 外観の写真が届くまで駐車場（11/5 IKEAの写真は使わない）
+# 11/5 外観の写真が届いたので仮の背景はなし（IKEAの写真は使わない）
 MORNING = os.path.join(L.BGM, "Morning.mp3")
 NANDE = os.path.join(L.BGM, "なんでしょう？.mp3")
 HIRU = os.path.join(L.BGM, "昼下がり気分.mp3")

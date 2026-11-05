@@ -18,7 +18,7 @@ NAME = "jidaraku_09_costco_thumb_a.png"
 
 
 def left_photo():
-    for n in ("c02_front", "c03_entrance"):   # 外観の写真が届いたら c02_front を優先
+    for n in ("c02_front_thumb", "c02_front", "c03_entrance"):   # 外観の写真が届いたら c02_front を優先
         try:
             S.bg_path(n) if hasattr(S, "bg_path") else None
             T.fill_photo(n, 10, 10)
@@ -29,7 +29,7 @@ def left_photo():
 
 def main():
     T.type_a(NAME, left_photo(), "f_gyutan_yaki",
-             ("surprise_big_pupils_cat", 1.0, 330, 410, 300, False),
+             ("surprise_big_pupils_cat", 1.0, 150, 410, 260, False),
              [("excited_hodomoe_city_cat", 1.0, 1150, 410, 300, False)],
              "30代独身　ひとり買い物",
              [("休日の", BK), ("1人コストコ", T.BLUE), ("は危険", BK)],

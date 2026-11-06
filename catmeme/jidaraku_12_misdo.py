@@ -15,7 +15,9 @@ import jidaraku as J
 
 J.BGS.insert(0, os.path.join(J.HERE, "backgrounds", "jidaraku", "12_misdo"))
 ROOM, FRONT, CASE, SEAT, STREET, ROOM_N = ("j01_room", "m01_front", "m02_showcase", "m03_seat", "bg48_clean_street", "j07_room_night")
-J.STANDIN.update({FRONT: "bg48_clean_street", CASE: "bg86_product_shelf", SEAT: "bg31_lounge"})
+J.STANDIN.update({FRONT: "bg48_clean_street", CASE: "bg86_product_shelf", SEAT: "bg20_counter"})
+# 仮の背景のある場所（ほかの店の写真は使わない。j01_room は自堕落シリーズの部屋）
+J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in (os.path.join("jidaraku", "01_yakiniku"), "03_kodomo_nisa", "14_japan", "16_tenchim")]
 J.HOLD = 3
 J.SUB_STYLE = "glow"
 MORNING = os.path.join(L.BGM, "Morning.mp3")

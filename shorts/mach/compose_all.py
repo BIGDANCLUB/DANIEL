@@ -21,6 +21,7 @@ from grade import grade  # noqa: E402
 root, out = sys.argv[1], sys.argv[2]
 bgm = sys.argv[3] if len(sys.argv) > 3 else None
 FPS, SR = TL.FPS, 44100
+REWIND_PREFIX = "s03"     # 巻き戻しに使う場面（実際の速さの場面）
 WHITE, OR = (255, 255, 255), O.ORANGE
 
 
@@ -254,14 +255,14 @@ def main():
                 enc.stdin.write(g.convert("RGB").tobytes())
             cache = []
             continue
-        name = "s01_open" if s.get("kind") == "open" else s["name"]
+        name = s["name"]
         paths, suns = load_frames(name, s["frames"])
         prev_p, prev_img = None, None
         for i, (p, sun) in enumerate(zip(paths, suns)):
             if p != prev_p:
                 prev_img, prev_p = Image.open(p).convert("RGB"), p
             g = draw_shot(s, i, prev_img, sun)
-            if s["name"].startswith("s03"):
+            if s["name"].startswith(REWIND_PREFIX):
                 cache.append(g.convert("RGB").resize((540, 960)).resize((O.W, O.H)))
             enc.stdin.write(g.convert("RGB").tobytes())
         print("composed", s["name"], flush=True)

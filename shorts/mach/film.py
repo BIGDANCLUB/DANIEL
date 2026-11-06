@@ -230,7 +230,7 @@ def flames(train, n_frames, n=50, speed=0.35, seed=5, length=22.0):
     r = random.Random(seed)
     m = W.mat("flame", (1, 0.5, 0.1), emit=(1.0, 0.45, 0.08), emit_strength=25)
     for i in range(n):
-        o = W.box((0, 0, 0), (0.12, 1.2, 0.3), m, bevel=0)
+        o = W.box((0, 0, 0), (0.06, 2.0, 0.12), m, bevel=0)
         o.visible_shadow = False
         o.parent = train
         ph = r.random()
@@ -553,10 +553,10 @@ def s08_streak(tm):
     hot_nose(16.0)
     flames(train, len(tm), n=50, speed=0.8)
     cone(train, 200, 20, start=-1.0, alpha=0.06, name="shock")
-    pts = [(sx, y, 0.8, 0.0, 0) for y in range(760, 1700, 8) for sx in (-3, 3)]
-    pts = [(x, y, z, (y / 1700.0) ** 0.5, s) for (x, y, z, _, s) in pts]   # 先頭が通った t（pos=1700t²）
-    puffs(pts, tm, size=(1.5, 4.0), rise=(2, 6), grow=3.0)
-    W.camera((7.5, 770, 6.0), (-1.0, 1400, 2.0), lens=30)
+    cam = W.camera((0, 0, 0), (0, 1, 0), lens=30)
+    cam.parent = train
+    cam.location = (5.0, -150.0, 7.0)
+    cam.rotation_euler = (Vector((0, 40.0, 1.0)) - Vector(cam.location)).to_track_quat('-Z', 'Y').to_euler()
     motion_blur(True, 0.5)
 
 
@@ -570,7 +570,7 @@ def s09_sound(tm):
     cone(train, 160, 16, start=-1.0, alpha=0.08, name="shock")
     cam = W.camera((0, 0, 0), (0, 1, 0), lens=24)
     cam.parent = train
-    cam.location = (-10.0, -20.0, 3.4)
+    cam.location = (-12.0, -24.0, 5.0)
     cam.rotation_euler = (Vector((0, -4.0, 2.2)) - Vector(cam.location)).to_track_quat('-Z', 'Y').to_euler()
     motion_blur(True, 0.5)
 
@@ -629,13 +629,13 @@ def s12_osaka(tm):
     tracking_world(120)
     train = W.shinkansen(y0=0.0, cars=4)
     W.sunset()
-    train_at(train, tm, off=-1700.0)    # 場所は畑の中（t=3 の位置を原点近くに）
+    train_at(train, tm, off=-6000.0)    # 場所は畑の中（t=3 の位置 8.5km を y=2.5km 付近に）
     hot_nose(10.0)
     flames(train, len(tm), n=50, speed=0.5)
     cone(train, 200, 20, start=-1.0, alpha=0.08, name="shock")
     cam = W.camera((0, 0, 0), (0, 1, 0), lens=26)
     cam.parent = train
-    cam.location = (14.0, -30.0, 120.0)
+    cam.location = (10.0, -25.0, 70.0)
     cam.rotation_euler = (Vector((0, -50.0, 0.0)) - Vector(cam.location)).to_track_quat('-Z', 'Y').to_euler()
     motion_blur(True, 0.5)
 

@@ -34,3 +34,4 @@
 
 ## Not_Sure_Not_Care_60s.mp3（11/6 Sunoで自作）
 - Cool, Not Cool と同じコンセプトの女性ボイス版。元の曲（1:20）の19.83秒〜79.83秒を60秒に切った（最後の一発で自然に終わる）
+- Not_Sure_Not_Care_60s.wav：配信用（TuneCore）。SunoのWAV（48kHz）から同じ場所を切って 44.1kHz・16bit・ちょうど60.000秒に変換

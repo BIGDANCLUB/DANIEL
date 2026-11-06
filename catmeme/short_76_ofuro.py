@@ -25,7 +25,7 @@ def cuts():
         ('30分', 'peek_what_happen_cat', '大丈夫？', 'read_book_orange_kitten', '湯船で\nスマホ'),
         ('1時間', 'scream_standing_marmot', 'ありえない', 'snore_snoring_dog', '寝落ち'),
         ('2時間', 'fight_cat_fight', '救急車を\n呼ぶ', 'showoff_gojo_cosplay_cat', '入浴剤を\n3つ入れる'),
-        ('毎日', 'stare_aloha_gray_cat', 'シャワーで\n十分', 'dance_three_kittens', 'お風呂は\n心の洗濯'),
+        ('0秒', 'blank_black_cat_zoning_out', 'くさい', 'blank_black_cat_zoning_out', 'くさい\n風呂入れ'),   # 11/6 ユーザー指定：毎日→0秒・両方とも失神猫・世界は「くさい」日本は「くさい/風呂入れ」
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

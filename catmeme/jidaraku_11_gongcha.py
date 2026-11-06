@@ -14,7 +14,7 @@ import jidaraku as J
 
 J.BGS.insert(0, os.path.join(J.HERE, "backgrounds", "jidaraku", "11_gongcha"))
 ROOM, FRONT, IN, SEAT, STREET, ROOM_N = ("j01_room", "g01_front", "g02_counter", "g03_seat", "bg48_clean_street", "j07_room_night")
-J.STANDIN.update({FRONT: "bg48_clean_street", IN: "bg20_counter", SEAT: "bg20_counter"})
+# 11/6 外観・カウンター・席の写真が届いた（仮の背景はいらない）。ミルクティーはドリンク集合写真のまん中を切り出し
 # 仮の背景のある場所（ほかの店の写真は使わない。j01_room は自堕落シリーズの部屋）
 J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in (os.path.join("jidaraku", "01_yakiniku"), "03_kodomo_nisa", "14_japan", "16_tenchim")]
 J.HOLD = 3

@@ -16,9 +16,9 @@ import cuts_04_leak as L
 import jidaraku as J
 
 J.BGS.insert(0, os.path.join(J.HERE, "backgrounds", "jidaraku", "10_shinjidai"))
-J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku", d) for d in ("04_sushiro", "05_gokurakuyu", "06_bronco", "07_ikea", "08_torikizoku")]
+J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku", d) for d in ("06_bronco",)]   # b06_road_night（道のイラスト）だけ使う・ほかの店の写真は使わない（11/6）
 OFFICE, FRONT, IN, COUNTER, ROAD, ROOM_N = ("bg25_office_desk", "n01_front", "n02_inside", "n03_counter", "b06_road_night", "j07_room_night")
-J.STANDIN.update({FRONT: "bg51_night_street", IN: "bg98_izakaya_night", COUNTER: "bg13_izakaya"})
+J.STANDIN.update({IN: "n03_counter"})   # 11/6 写真が届いた（外観・カウンター・伝串・メガジョッキ）。店内の入口はカウンターの写真で
 NIGHT = {OFFICE: 0.85}
 J.HOLD = 3   # 11/4：1つの素材を2〜3文つづけて使う
 J.SUB_STYLE = "glow"   # 11/4 ユーザー指定：黒い文字＋淡い黄緑の光

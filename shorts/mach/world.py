@@ -106,12 +106,14 @@ def shinkansen(y0=0.0, cars=4, name="train"):
     y = -nose_len
     for c in range(cars):
         yc = y - car_len / 2
-        parts.append(box((0, yc, 0.45 + (H_CAR - 0.45) / 2), (W_CAR, car_len - 0.4, H_CAR - 0.45), white, bevel=0.25))
+        parts.append(box((0, yc, 1.05 + (H_CAR - 1.05) / 2), (W_CAR, car_len - 0.4, H_CAR - 1.05), white, bevel=0.25))
+        for ys in (-car_len / 2 + 2.0, car_len / 2 - 2.0):   # 車体のすそ（台車の前後）
+            parts.append(box((0, yc + ys, 0.78), (W_CAR - 0.1, 2.6, 0.56), white, bevel=0.08))
         # 青い帯（窓の下）と窓の列
         for sx in (-1, 1):
             parts.append(box((sx * (W_CAR / 2 + 0.005), yc, 1.45), (0.02, car_len - 0.6, 0.22), blue, bevel=0))
             parts.append(box((sx * (W_CAR / 2 + 0.005), yc, 2.25), (0.02, car_len - 2.0, 0.55), glass, bevel=0))
-        parts.append(box((0, yc, 0.25), (W_CAR - 0.6, car_len - 3, 0.5), dark, bevel=0.05))   # 床下
+        parts.append(box((0, yc, 0.78), (1.1, car_len - 3, 0.5), dark, bevel=0.05))   # 床下
         y -= car_len
     # 最後尾もくちばし形（新幹線は両端が先頭車）
     tail = nose_mesh(name + "_tail", white)

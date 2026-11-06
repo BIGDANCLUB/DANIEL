@@ -1,7 +1,7 @@
 """自堕落シリーズ #10 新時代のサムネ（11/6 ユーザー指定：いつものAパターン）。
 
 python3 catmeme/make_thumb_shinjidai.py → thumbs/jidaraku_10_shinjidai_thumb_a.png
-左：夜の外観・右：伝串と生ビール。札：30代独身 一人飲み。字幕：水曜の1人新時代は最高／伝串をメガジョッキで流し込む快楽
+左：夜の外観・右：伝串と生ビール。札：30代独身 水曜の夜。字幕（11/6 ユーザー指定）：新時代は一人飲みもオススメ／パリモチとカニの遊園地!?
 """
 import os
 
@@ -17,9 +17,9 @@ def main():
     T.type_a("jidaraku_10_shinjidai_thumb_a.png", "n01_front", "f_denkushi",
              ("happy_hamster_open_arms", 1.0, 110, 410, 250, False),
              [("excited_hodomoe_city_cat", 1.0, 1150, 410, 320, False)],
-             "30代独身　一人飲み",
-             [("水曜の", BK), ("1人新時代", T.BLUE), ("は最高", BK)],
-             [("伝串", R), ("をメガジョッキで流し込む快楽", BK)], split=640, size=104)
+             "30代独身　水曜の夜",
+             [("新時代", T.BLUE), ("は", BK), ("一人飲み", R), ("もオススメ", BK)],
+             [("パリモチ", R), ("と", BK), ("カニ", R), ("の遊園地!?", BK)], split=640, size=104)
 
 
 if __name__ == "__main__":

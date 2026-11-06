@@ -214,6 +214,9 @@ def chain(cs):
 HOLD = 0   # 11/4 ユーザー指定：1つの素材を2〜3文つづけて使う（0＝使わない）。台本で J.HOLD = 3 にする
 
 
+LOOPS = 1   # 素材を何回くり返してよいか（1＝1回分まで。11/6 新時代は2＝切り替えをもっと少なく）
+
+
 def hold(cs, n=None):
     """同じ素材を2〜3文（n文まで）つづけて流す。素材の長さ（くり返す素材は1回分）が足りなくなったら、そこで次の素材に替える。
     文が次の字幕に続くときは n をこえても同じ素材のまま（素材の長さまで）。場所（背景）が変わったら替える。"""
@@ -225,17 +228,18 @@ def hold(cs, n=None):
             i += 1
             continue
         head = c["cats"][0]
-        limit = _cat_len(head["a"])
+        limit = _cat_len(head["a"]) * LOOPS
         grp = [c]
         used = c["dur"] + 0.25
         while i + len(grp) < len(cs):
             nxt = cs[i + len(grp)]
-            if not nxt.get("text") or not nxt.get("cats") or nxt.get("bg") != c.get("bg") or nxt.get("solo"):
+            if not nxt.get("text") or not nxt.get("cats") or nxt.get("bg") != c.get("bg") or nxt.get("solo") or nxt.get("new"):   # new：ここから別の素材（11/6）
                 break
             cont = grp[-1]["text"].replace("\n", "").endswith(CONT)
-            if len(grp) >= n and not cont:
+            keep = nxt.get("keep")   # keep：前の場面の素材をそのまま続ける（11/6 ユーザー指定・素材が足りなければくり返す）
+            if len(grp) >= n and not cont and not keep:
                 break
-            if used + nxt["dur"] > limit:
+            if used + nxt["dur"] > limit and not keep:
                 break
             grp.append(nxt)
             used += nxt["dur"]
@@ -249,6 +253,17 @@ def hold(cs, n=None):
             x["cats"] = [q]
             off += x["dur"]
         i += len(grp)
+    return cs
+
+
+def item_cont(cs):
+    """前の文と同じ料理の写真が続くときは、文が変わるたびにポンと出しなおさない（11/6 ユーザー指定）。"""
+    prev = None
+    for c in cs:
+        it = c.get("item")
+        if it and prev and prev.get("item") == it and prev.get("bg") == c.get("bg"):
+            c["item_cont"] = True
+        prev = c
     return cs
 
 
@@ -369,8 +384,8 @@ class Renderer:
             out = out + (1 - out) * (0.55 * (1 - t / 0.1))
         if self.c.get("arrive") and t >= ARRIVE_T:   # 届いたあとも文が終わるまで集中線
             out = _lines(out, t)
-        if self.item is not None and not arr:   # 料理の写真：ポンと出て少し縮む
-            k = 1.18 - 0.18 * min(1.0, t / 0.18)
+        if self.item is not None and not arr:   # 料理の写真：ポンと出て少し縮む（前の文と同じ写真なら出しっぱなし・11/6 ユーザー指定）
+            k = 1.0 if self.c.get("item_cont") else 1.18 - 0.18 * min(1.0, t / 0.18)
             it = self.item.resize((int(self.item.width * k), int(self.item.height * k)), Image.BILINEAR)
             img, a = R.to_np(it)
             I.over(out, img, a, int(1390 - it.width / 2), int(max(10, 400 - it.height / 2)))
@@ -386,7 +401,7 @@ class Renderer:
 
 
 def run(cs, out_path, prev=None, only=None):
-    cs = effects(hold(cs) if HOLD else chain(cs))
+    cs = item_cont(effects(hold(cs) if HOLD else chain(cs)))
     durs = [c["dur"] for c in cs]
     total = float(sum(durs))
     starts = list(np.cumsum([0] + durs[:-1]))

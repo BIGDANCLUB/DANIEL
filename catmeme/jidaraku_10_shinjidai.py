@@ -21,7 +21,8 @@ OFFICE, FRONT, IN, COUNTER, ROAD, ROOM_N = ("bg25_office_desk", "n01_front", "n0
 # 11/6 写真10枚がそろった（外観・店内・カウンター・伝串・メガジョッキ・カニカニランド・焼きそば・ポテサラ・ユッケ）。生ビールの単品は伝串の写真で
 J.STANDIN.update({"f_nama": "f_denkushi"})
 NIGHT = {OFFICE: 0.85}
-J.HOLD = 3   # 11/4：1つの素材を2〜3文つづけて使う
+J.LOOPS = 2   # 11/6 ユーザー指定：素材が短いときは2回までくり返して、切り替えを減らす
+J.HOLD = 5   # 11/6 ユーザー指定：素材の切り替えをもっと少なく（11/4 は3文）
 J.SUB_STYLE = "glow"   # 11/4 ユーザー指定：黒い文字＋淡い黄緑の光
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
 HIRU = os.path.join(L.BGM, "昼下がり気分.mp3")
@@ -68,16 +69,16 @@ def cuts():
         s(IN, "happy_chipi_chapa_cat", "店員さんの声で\nこっちまで\n元気になる"),
         s(IN, "think_bike_front_seat_cat", "カウンターのお席\nどうぞー！"),
         s(IN, "stare_big_eyes_tabby_kitten", "カウンター席が\nあるのか"),
-        s(IN, "joy_happy_happy_happy_cat", "助かった"),
+        s(IN, "joy_happy_happy_happy_cat", "よし\nなんとか\n空いていたようだな"),   # 11/6 ユーザー指定
         s(COUNTER, "think_bike_front_seat_cat", "この新時代"),
         s(COUNTER, "read_book_orange_kitten", "なんと\n1人飲みがしやすい\nカウンター席がある店舗が多い"),
         s(COUNTER, "calmdown_dancing_cat", "にぎやかな店の中に\n1人用の\n安全地帯"),
         s(COUNTER, "happy_hamster_open_arms", "ここは\n独身のシェルターだ"),
-        s(COUNTER, "think_bike_front_seat_cat", "うしろの席では\n大学生が\nゲームをしている"),
+        dict(s(COUNTER, "peek_what_happen_cat", "うしろの席では\n大学生が\nゲームをしている"), new=True),   # 11/6 ユーザー指定：素材を変更
         s(COUNTER, "stare_tabby_wide_eyes_cat", "負けた人が\n一気飲み"),
         s(COUNTER, "calm_black_face_sheep", "俺の前では\n平和な時間が\n流れている"),
-        s(COUNTER, "stare_lying_tabby_cat", "となりも\nひとり客"),
-        s(COUNTER, "meow_gray_white_kitten", "無言でうなずき合う"),
+        s(COUNTER, "stare_lying_tabby_cat", "2つ隣の席にも\nひとり客"),   # 11/6 ユーザー指定
+        dict(s(COUNTER, "stare_lying_tabby_cat", "言葉は交わさないが\n心が通じている\n気がする"), keep=True),   # 11/6 ユーザー指定：前の場面の素材のまま
         s(COUNTER, "think_chin_paw_orange_cat", "ひとり客は\nみんな同じ顔をしている"),
         s(COUNTER, "sleepy_old_memories_cat", "がんばった1日の\n顔だ"),
         s(COUNTER, "happy_hamster_open_arms", "今日はここが\n俺たちの家だ"),

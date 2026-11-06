@@ -24,6 +24,7 @@ NANDE = os.path.join(L.BGM, "なんでしょう？.mp3")
 PASTEL = os.path.join(L.BGM, "パステルハウス.mp3")
 JITAKU = os.path.join(L.BGM, "自宅にて.mp3")
 MENU, MILK, FOAM = "f_menu", "f_milktea", "f_foam"
+HAND = "f_milktea_hand"   # 11/6 店員さんが手わたすミルクティー（受け取りの場面）
 
 
 def cuts():
@@ -132,9 +133,9 @@ def cuts():
         s(IN, "sad_looking_away_tabby", "俺より\nずっと先輩だ", item=MILK),
         s(IN, "stare_lying_tabby_cat", "レシートの番号を\n10回見る", item=MILK),
         s(IN, "blank_black_cat_zoning_out", "まだかな", item=MILK),
-        s(IN, "stare_interviewer_cat", "お待たせしましたー！", se="pinpon_notice", item=MILK),
-        s(IN, "surprise_big_pupils_cat", "来た", item=MILK),
-        s(IN, "stare_big_eyes_tabby_kitten", "カップの底に\n黒い粒が\nしずんでいる", item=MILK),
+        s(IN, "stare_interviewer_cat", "お待たせしましたー！", se="pinpon_notice", item=HAND),
+        s(IN, "surprise_big_pupils_cat", "来た", item=HAND),
+        s(IN, "stare_big_eyes_tabby_kitten", "カップの底に\n黒い粒が\nしずんでいる", item=HAND),
         s(IN, "showoff_gojo_cosplay_cat", "これが\nタピオカ", item=MILK, se="gong_dora_jaan"),
         s(IN, "huh_huh_cat", "ストローが\n太い", item=MILK),
         s(IN, "think_chin_paw_orange_cat", "ふたが\nフィルムでとじてある", item=MILK),

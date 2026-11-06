@@ -24,6 +24,7 @@ MORNING = os.path.join(L.BGM, "Morning.mp3")
 HIRU = os.path.join(L.BGM, "昼下がり気分.mp3")
 PASTEL = os.path.join(L.BGM, "パステルハウス.mp3")
 JITAKU = os.path.join(L.BGM, "自宅にて.mp3")
+LINEUP = "f_lineup"   # 11/6 ならんだドーナツのアップ（ショーケースの最初）
 TRAY, PON, OLD, ANGEL, CRULLER, GOLDEN, COFFEE = ("f_tray", "f_ponde", "f_old", "f_angel", "f_cruller", "f_golden", "f_coffee")
 
 
@@ -66,8 +67,8 @@ def cuts():
         s(FRONT, "joy_happy_happy_happy_cat", "30代独身男も\n例外ではない"),
         s(FRONT, "yell_orange_fat_cat", "入店", se="gong_match_start"),
         # ---- ショーケース ----
-        s(CASE, "stare_big_eyes_tabby_kitten", "目の前に\nずらりとならぶ\nドーナツ", bgm={"file": PASTEL, "gain": -12, "fade": 0.8}),
-        s(CASE, "showoff_gojo_cosplay_cat", "ドーナツの宝石箱だ", se="gong_dora_jaan"),
+        s(CASE, "stare_big_eyes_tabby_kitten", "目の前に\nずらりとならぶ\nドーナツ", bgm={"file": PASTEL, "gain": -12, "fade": 0.8}, item=LINEUP),
+        s(CASE, "showoff_gojo_cosplay_cat", "ドーナツの宝石箱だ", se="gong_dora_jaan", item=LINEUP),
         s(CASE, "read_book_orange_kitten", "トレーとトングを\n持って\n自分で選ぶ", item=TRAY),
         s(CASE, "think_chin_paw_orange_cat", "トングを\nカチカチ\n2回鳴らす", item=TRAY, se="pi"),
         s(CASE, "smug_squint_bicolor_cat", "準備はできた", item=TRAY),

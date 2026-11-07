@@ -113,17 +113,20 @@ def note(im, text, y=1497):
 def info_box(im, title, rows):
     """右上の黒い箱。rows = [(アイコン色 or None, 文字, 色), ...]。"""
     x0, y0, x1 = 580, 168, 963
+    rf, tf = font(SANS, 38, "Bold"), font(SANS, 28, "Bold")
+    need = max([tf.getlength(title) + 48] + [rf.getlength(t) + (92 if ic else 0) + 48 for ic, t, _ in rows])
+    x0 = min(x0, x1 - need)          # 文字が長いときは左へ広げる
     h = 72 + 66 * len(rows)
     rounded_box(im, (x0, y0, x1, y0 + max(h, 257)), (24, 26, 34, 232), radius=18, outline=(235, 235, 240, 255), width=3)
     d = ImageDraw.Draw(im)
-    d.text((x0 + 24, y0 + 34), title, font=font(SANS, 28, "Bold"), fill=(255, 255, 255), anchor="lm")
+    d.text((x0 + 24, y0 + 34), title, font=tf, fill=(255, 255, 255), anchor="lm")
     for i, (icon, text, col) in enumerate(rows):
         y = y0 + 106 + i * 66
         x = x0 + 24
         if icon:
             d.ellipse((x, y - 30, x + 60, y + 30), fill=icon, outline=(240, 240, 240), width=3)
             x += 92
-        d.text((x, y), text, font=font(SANS, 38, "Bold"), fill=col, anchor="lm")
+        d.text((x, y), text, font=rf, fill=col, anchor="lm")
 
 
 def rewind(im, t):

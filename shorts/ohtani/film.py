@@ -279,7 +279,8 @@ def o07_bonds(tm):
 def o08_rain(tm):
     stadium()
     W.sunset()
-    fl = [(t0, ang, d, dur) for (t0, ang, d, dur) in random_flights(30, 8, -2.0, 4.0, dur=3.0)]
+    r8 = random.Random(8)      # カメラのいる外野席の近くに落ちるボール
+    fl = [(r8.uniform(-2.0, 4.0), r8.uniform(-4, 10), r8.uniform(124, 134), 3.0 * r8.uniform(0.9, 1.1)) for _ in range(30)]
     balls(fl, video_time(len(tm)))
     W.camera((8, 128, 6.5), (-6, 100, 8), lens=24)
 
@@ -300,7 +301,7 @@ def o09_lap(tm):
         runner.rotation_euler.z = math.atan2(-d.x, d.y)
         runner.keyframe_insert("location", frame=f)
         runner.keyframe_insert("rotation_euler", frame=f)
-    W.camera((26, 22, 2.5), (10, 28, 1.2), lens=30)
+    W.camera((17, 23, 1.8), (8, 30, 1.2), lens=32)
 
 
 def o10_distance(tm):
@@ -339,10 +340,11 @@ def o12_fans(tm):
     stadium()
     W.sunset()
     for i, x in enumerate([-3, -1.5, 0, 1.5, 3, 4.5]):
-        player((x, 131 + (i % 2) * 2, 8.2), 180, seed=10 + i, helmet=False, color=[(0.15, 0.25, 0.6), (0.85, 0.85, 0.85)][i % 2])
-    fl = [(t0, r_a, d, dur) for (t0, r_a, d, dur) in random_flights(14, 12, -1.0, 4.0, dur=3.0)]
+        player((x, 130.5, 5.6), 180, seed=10 + i, helmet=False, color=[(0.15, 0.25, 0.6), (0.85, 0.85, 0.85)][i % 2])
+    r12 = random.Random(12)
+    fl = [(r12.uniform(-1.0, 4.0), r12.uniform(-3, 4), r12.uniform(126, 132), 3.0) for _ in range(14)]
     balls(fl, video_time(len(tm)))
-    W.camera((2, 140, 10.5), (0, 100, 8), lens=24)
+    W.camera((2, 142, 12.0), (0, 100, 6), lens=24)
 
 
 def o15_end(tm):

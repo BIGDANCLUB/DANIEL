@@ -39,7 +39,8 @@ def draw_shot(s, i, base, sun):
         return g
     t, tag = TL.t_of(s, i)
     td = min(t, s["freeze"]) if s.get("freeze") else t
-    O.timer(g, "出発から", (fmt_t(td, tag), "秒"), tag[0], O.TAG_GREEN if tag[1] == "green" else O.TAG_ORANGE)
+    O.timer(g, "出発から", (fmt_t(td, tag), "秒"), tag[0], O.TAG_GREEN if tag[1] == "green" else O.TAG_ORANGE,
+            max_w=440 if s.get("info") else 850)     # 右上の箱と重ならないように
     O.speed(g, "鬼ヶ島まで", "", C.fmt_km(TL.remain_km(td)), "km")
     if s.get("note") and s["note"][0] <= sec < s["note"][1]:
         O.note(g, s["note"][2])

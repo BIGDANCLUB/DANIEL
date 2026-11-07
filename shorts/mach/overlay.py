@@ -50,7 +50,10 @@ def watermark(im):
 # ---------- オープニング ----------
 def opening(im, title1, title2, count, quote_lines, quote_src):
     """title1/title2 は [(文字, 色)] の列。count は「出発まで」の数字（None なら出さない）。"""
-    tf = font(SERIF, 70, "Black")
+    size = 70                         # 長いタイトルは画面（スマホの安全な幅 960px）に収まるまで小さくする
+    while max(sum(font(SERIF, size, "Black").getlength(t) for t, _ in line) for line in (title1, title2)) > 960:
+        size -= 2
+    tf = font(SERIF, size, "Black")
     runs_text(im, 540, 335, title1, tf)
     runs_text(im, 540, 468, title2, tf)
     if count is not None:
@@ -64,13 +67,16 @@ def opening(im, title1, title2, count, quote_lines, quote_src):
 
 
 # ---------- 本編の数字 ----------
-def timer(im, label, value, tag=None, tag_color=TAG_ORANGE):
-    """左上：「出発から」＋「1.002秒」＋オレンジ（または緑）の枠。"""
+def timer(im, label, value, tag=None, tag_color=TAG_ORANGE, max_w=850):
+    """左上：「出発から」＋「1.002秒」＋オレンジ（または緑）の枠。数字が長いときは max_w に収まるまで小さくする。"""
     shadow_text(im, (118, 327), label, font(SANS, 32, "Bold"), fill=(255, 255, 255, 235), anchor="lm")
-    f = font(SERIF, 112, "Regular")
     num, unit = value
+    k = 1.0
+    while font(SERIF, int(112 * k), "Regular").getlength(num) + font(SERIF, int(96 * k), "Regular").getlength(unit) > max_w:
+        k -= 0.04
+    f = font(SERIF, int(112 * k), "Regular")
     shadow_text(im, (114, 468), num, f, anchor="ls")
-    shadow_text(im, (114 + f.getlength(num), 468), unit, font(SERIF, 96, "Regular"), anchor="ls")
+    shadow_text(im, (114 + f.getlength(num), 468), unit, font(SERIF, int(96 * k), "Regular"), anchor="ls")
     if tag:
         tf = font(SANS, 33, "Bold")
         tw = tf.getlength(tag)

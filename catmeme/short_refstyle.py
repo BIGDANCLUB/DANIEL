@@ -1,0 +1,303 @@
+"""参考ショート（reference/short_ref の5本：「閲覧注意 相続税がヤバすぎる」「日本VS海外 夏休み」など）の作りをほぼマネしたショート。
+題材は 4本目の「免許証が漏れると…」。
+
+python3 catmeme/short_refstyle.py → out/short_refstyle_license.mp4
+
+参考の作り（マネしたところ）
+  - 背景イラストを縦いっぱいに敷く（図やパネルは出さない。全部セリフで進める）
+  - 上の黒い帯に2行のタイトル（1行目は赤い大きな文字、2行目は黄色）。帯の上に背景が少し見える
+  - 猫ミームは画面の下半分に大きく1〜2匹、下の辺から生やす
+  - セリフは帯のすぐ下に、白（または黄緑）の太い文字＋黒い縁取り。大事な言葉だけ赤
+  - 擬人化した相手役（参考では「相続税」「ママ」）は、猫の足元に黄緑の大きな文字で役名
+  - 1セリフ2〜3秒でテンポよく切り替え、猫ミームの元の音を鳴らす
+"""
+import os
+
+import cv2
+import numpy as np
+from PIL import Image, ImageDraw
+
+import parts as P
+import render as R
+import short_03_kodomo_nisa as S
+import short_hooks as H
+
+SW, SH = S.SW, S.SH
+HERE = S.HERE
+OUT = os.path.join(HERE, "out", "short_refstyle_license.mp4")
+BGS = [os.path.join(HERE, "backgrounds", d) for d in ("04_leak", "03_kodomo_nisa", "02_october", "01_todai")]
+WHITE, BLACK, RED, YELLOW = (255, 255, 255), (0, 0, 0), (235, 25, 25), (255, 230, 0)
+LIME = (120, 235, 40)
+# スマホの YouTube ショート画面は 9:16 より縦長なので、左右が約9%ずつ切れる（10/13 ユーザー確認）。
+# 文字はこの幅の中に収める（左右それぞれ 120px あける）
+SAFE_W = SW - 240
+BAND = (0, 560)     # 黒い帯の上下。サムネと同じく画面の一番上から黒（10/13 ユーザー指定）
+TEXT_Y = 740        # セリフの中心
+# ショート画面の下（約2割）はタイトル・チャンネル名で隠れるので、猫・役名・画像はこの線より上に置く（10/16 ユーザー指定）
+SAFE_BOTTOM = 1540
+SAFE_SCALE = 0.6    # 猫の高さは各ショートで書いた値のこの倍（足元を SAFE_BOTTOM まで上げるぶん小さく）
+SAFE_RIGHT = SW - 140   # 右端はいいね等のボタンで隠れる
+
+
+def bg_path(n):
+    for d in BGS:
+        p = os.path.join(d, n + ".png")
+        if os.path.exists(p):
+            return p
+    raise FileNotFoundError(n)
+
+
+_BG = {}
+
+
+def vbg(n):
+    """横長の背景を、縦いっぱいに拡大して真ん中を切り出す。"""
+    if n not in _BG:
+        im = Image.open(bg_path(n)).convert("RGB")
+        im = im.resize((int(im.width * SH / im.height), SH), Image.LANCZOS)
+        x0 = (im.width - SW) // 2
+        _BG[n] = np.asarray(im.crop((x0, 0, x0 + SW, SH)))[:, :, ::-1].astype(np.float32) / 255
+    return _BG[n]
+
+
+def outline_text(lines, size, w=SAFE_W):
+    """参考ふうのセリフ：太い文字＋黒い太縁。lines=[[(文字, 色), ...], ...]（1行の中で色を変えられる）。"""
+    f = P.font("black", size)
+    d0 = ImageDraw.Draw(Image.new("RGBA", (8, 8)))
+    width = lambda ln: sum(d0.textlength(t, font=f) for t, _ in ln)
+    while max(width(ln) for ln in lines) > w - 40 and size > 30:
+        size -= 4
+        f = P.font("black", size)
+    sw = max(8, size // 7)
+    lh = int(size * 1.18)
+    im = Image.new("RGBA", (w, lh * len(lines) + sw * 2 + 10), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    for i, ln in enumerate(lines):
+        x = (w - width(ln)) / 2
+        y = sw + 5 + i * lh
+        for t, col in ln:
+            d.text((x, y), t, font=f, fill=col, stroke_width=sw, stroke_fill=BLACK)
+            x += d.textlength(t, font=f)
+    return im
+
+
+def parse(text, base=WHITE):
+    """「*赤*」で囲んだ所だけ赤。\\n で改行。"""
+    out = []
+    for raw in text.split("\n"):
+        parts, red = [], False
+        for k, seg in enumerate(raw.split("*")):
+            if seg:
+                parts.append((seg, RED if red else base))
+            red = not red
+        out.append(parts)
+    return out
+
+
+def fit_wide(im, w, h, squeeze=0.8):
+    """長い文字を横幅に収める。小さくする前に、まず横だけ少し細くする（最大 squeeze 倍）ので文字が大きく保てる（10/12）。"""
+    im = im.crop(im.getbbox())
+    k = min(1.0, w / im.width)          # 横幅に収める倍率
+    sx, sy = k, (1.0 if k >= squeeze else k / squeeze)   # 細くするのは squeeze 倍まで、その先は全体を小さく
+    if im.height * sy > h:
+        sx, sy = sx * h / (im.height * sy), h / im.height
+    return im.resize((max(1, int(im.width * sx)), max(1, int(im.height * sy))), Image.LANCZOS)
+
+
+def title_band(top, sub, top_col=RED, sub_col=YELLOW, top_stroke=BLACK):
+    """上の黒い帯：ショートのサムネ（make_thumb_short_ref.py）と同じ作り（10/13 ユーザー指定）。
+    画面の一番上から黒。極太ゴシックを帯の下の方に、それぞれ横いっぱい（スマホで切れない幅）に。
+    sub に \n を入れると下の行を2行に分けられる（長い文でも文字を大きく出すため。帯の上の余白を使う）。"""
+    from make_thumb_short_ref import heavy
+    im = Image.new("RGBA", (SW, BAND[1] - BAND[0]), (0, 0, 0, 255))
+    ts = [heavy(top, 190, top_col, top_stroke, 6, w=SAFE_W + 40)]
+    ts += [heavy(ln, 190, sub_col, BLACK, 6, w=SAFE_W + 40) for ln in sub.split("\n")]
+    gap = 22
+    room = im.height - 40
+    total = sum(t.height for t in ts) + gap * (len(ts) - 1)
+    if total > room:   # 入りきらないときは全体を小さく
+        k = (room - gap * (len(ts) - 1)) / sum(t.height for t in ts)
+        ts = [t.resize((int(t.width * k), int(t.height * k)), Image.LANCZOS) for t in ts]
+        total = sum(t.height for t in ts) + gap * (len(ts) - 1)
+    y = im.height - 26 - total
+    for t in ts:
+        im.alpha_composite(t, ((SW - t.width) // 2, y))
+        y += t.height + gap
+    return im
+
+
+def role_label(name, size=110, flag=None):
+    """役名（黄緑の文字）。flag（jp / us / tw）があれば左に小さい国旗（国どうしの話・10/20）。"""
+    t = outline_text([[(name, LIME)]], size, w=700)
+    if not flag:
+        return t
+    import story_style as T
+    fl = T.flag_img(flag, int(size * 0.62)).convert("RGBA")
+    box = Image.new("RGBA", (fl.width + 8, fl.height + 8), (255, 255, 255, 255))
+    box.alpha_composite(fl, (4, 4))
+    im = Image.new("RGBA", (box.width + 14 + t.width, max(box.height, t.height)), (0, 0, 0, 0))
+    im.alpha_composite(box, (0, (im.height - box.height) // 2))
+    im.alpha_composite(t, (box.width + 14, (im.height - t.height) // 2))
+    return im
+
+
+def moving_bg(bg, T):
+    """背景をゆっくり動かす：ふわっと寄ったり引いたりしながら、左右・上下に少しずつ流れる（カットをまたいでつながる）。"""
+    z = 1.10 + 0.05 * np.sin(T * 0.9)
+    dx = 55 * np.sin(T * 0.7)
+    dy = 35 * np.cos(T * 0.6)
+    M_ = np.float32([[z, 0, (1 - z) * SW / 2 + dx], [0, z, (1 - z) * SH / 2 + dy]])
+    return cv2.warpAffine(bg, M_, (SW, SH), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+
+
+def tall_video(n):
+    """ショート用の動く背景（assets_video/tall の縦長 mp4）。あればそのパス。"""
+    p = os.path.join(HERE, "assets_video", "tall", n + ".mp4")
+    return p if os.path.exists(p) else None
+
+
+def make_draw(c, title):
+    """1カットぶんの絵を描く関数（t はカットの頭からの秒）。"""
+    vp = tall_video(c["bg"])
+    vid = R.VideoBG(vp, (SW, SH), c.get("bg_ss", 0.0)) if vp else None
+    bg = None if vid else vbg(c["bg"])
+    # セリフは大きめに（10/13 ユーザー指定）：横幅に収まらない分は、まず横だけ少し細くして大きさを保つ
+    cap = fit_wide(outline_text(parse(c["say"], c.get("col", WHITE)), int(c.get("size", 100) * 1.3), w=3000), SAFE_W + 20, 900)
+    lab = role_label(c["label"], c.get("label_size", 110), c.get("label_flag")) if c.get("label") else None
+    extra = [(role_label(t_), x_) for t_, x_ in c.get("labels", [])]   # 2つ目以降の役名
+    safe = c.get("safe", True)
+    lab_y = SAFE_BOTTOM - 70 if safe else SH - 330
+
+    def lab_x(im, x):   # 役名が右のボタンや画面の外にはみ出さないように
+        return min(max(x, im.width / 2 + 20), SAFE_RIGHT - im.width / 2) if safe else x
+    tags = {k["tag"]: role_label(k["tag"]) for k in c["cats"] if k.get("tag")}
+
+    def draw(t):
+        out = vid.frame(t).copy() if vid else moving_bg(bg, c.get("t0", 0.0) + t)
+        if c.get("img") is not None:   # 実際の画像（ニュースの画像など）をセリフの下に差し込む。猫はその手前
+            H.put(out, c["img"], c.get("img_x", SW / 2), c.get("img_y", 1060), H.pop(t, 0.05, 0.16))
+        for k in c["cats"]:
+            s = H.pop(t, k.get("delay", 0.0), 0.16) if k.get("pop", True) else 1.0
+            x, h = k["x"], k["h"]
+            if k.get("from"):
+                u = R.ease_out(min(1.0, t / 0.25))
+                x, h = k["from"][0] + (x - k["from"][0]) * u, k["from"][1] + (h - k["from"][1]) * u
+            if safe and not k.get("raw"):
+                h *= SAFE_SCALE
+                bottom = SAFE_BOTTOM + k.get("drop", 60) * SAFE_SCALE
+            else:
+                bottom = SH + k.get("drop", 60)
+            if k.get("move"):   # 横に走り抜ける（競馬など）。bob で上下にはねる
+                x0, x1 = k["move"]
+                x = x0 + (x1 - x0) * min(1.0, t / max(0.1, R.cut_dur(c)))
+                bottom -= abs(np.sin(t * 9 + k.get("phase", 0.0))) * k.get("bob", 0)
+            H.cat(out, k["a"], t + k.get("ss", 0.0), x, bottom, h, s, flip=k.get("flip", False))
+            if k.get("tag"):   # その猫の足元に役名（猫といっしょに動く）
+                H.put(out, tags[k["tag"]], x, bottom - k.get("tag_up", 300))
+        if lab is not None:
+            H.put(out, lab, lab_x(lab, c.get("label_x", 760)), lab_y)
+        for im, lx in extra:
+            H.put(out, im, lab_x(im, lx), lab_y)
+        H.put(out, title, SW / 2, (BAND[0] + BAND[1]) / 2)
+        H.put(out, cap, SW / 2, TEXT_Y + cap.height / 2 - 60, H.pop(t, 0.0, 0.14))
+        if c.get("shake"):
+            out = H.shake(out, t, 0.0, 30, 0.3)
+        return H.finish(out)
+
+    return draw
+
+
+def cut(bg, say, cats, dur=2.4, label=None, label_x=760, se=None, col=WHITE, size=100, shake=False, bgm=None, speaker=0):
+    """cats=[(素材, x, 高さ, 左右反転)]。speaker 番目の猫の音だけ鳴らす。"""
+    ks = [dict(a=a, x=x, h=h, flip=fl, mute=(i != speaker), full=False, delay=0.0 if i == 0 else 0.08)
+          for i, (a, x, h, fl) in enumerate(cats)]
+    d = dict(kind="hook", bg=bg, say=say, cats=ks, dur=dur / R.TEMPO, fixed=True, cap="", label=label, label_x=label_x, col=col,
+             size=size, shake=shake)
+    if se:
+        d["se"] = se
+    if bgm:
+        d["bgm"] = bgm
+    return d
+
+
+L, Rr, C = 300, 790, 540   # 左・右・真ん中
+HOME, SHOP, HACK = "bg14_home_night", "bg20_counter", "bg23_hacker_room"
+HAN = "なりすまし犯"
+
+
+def cuts():
+    return [
+        cut(SHOP, "レンタカー\n予約完了！！", [("dance_maxwell_cat", C, 1100, False)], 2.6, se="jan",
+            bgm={"file": os.path.join(S.BGM, "野良猫は宇宙を目指した.mp3"), "gain": -6}),
+        cut(SHOP, "免許証も写真で\nアップするだけ！\n楽ちん♪", [("happy_girlfriend_dance_cat", L, 1000, False), ("joy_happy_happy_happy_cat", Rr, 1000, True)],
+            2.8, se="pikon"),
+        cut(HOME, "【速報】\n免許証など約160万件\n*漏えいのおそれ*", [("surprise_big_pupils_cat", C, 1150, False)], 3.0, se="pc_warning", shake=True),
+        cut(HOME, "は？", [("huh_huh_cat", C, 1150, False)], 1.8, size=230, se="question_hatena_maou"),
+        cut(HOME, "どうも〜\nあなたで〜す", [("weird_meowing_cat", L, 950, False), ("cocky_dj_cat", Rr, 1050, True)], 2.6, label=HAN, speaker=1,
+            se="anime_broly_dedeen"),
+        cut(HOME, "は？？誰？？", [("glare_disgusted_cat", L, 1000, False), ("cocky_dj_cat", Rr, 1050, True)], 2.2, label=HAN, size=150,
+            se="boing_fail"),
+        cut(HOME, "あなたの名前で\n*クレカ*作りました！", [("glare_disgusted_cat", L, 1000, False), ("shady_dancing_man", Rr, 1100, False)], 2.8,
+            label=HAN, speaker=1, col=LIME, se="shine_kira_01"),
+        cut(HOME, "勝手に！？", [("surprise_big_pupils_cat", L, 1000, False), ("shady_dancing_man", Rr, 1100, False)], 2.0, label=HAN,
+            size=170, shake=True, se="explosion_chudoon"),
+        cut(HOME, "ついでに\n*キャッシング*も\nしときました〜ww", [("weird_meowing_cat", L, 950, False), ("laugh_laughing_dog", Rr, 1000, True)], 3.0,
+            label=HAN, speaker=1, col=LIME, se="anime_shinchan_taraan"),
+        cut(HOME, "払った覚えのない\n*督促状*が…", [("sad_banana_cat_cry", C, 1150, False)], 2.8, se="tear_drop"),
+        cut(HOME, "延滞の記録で\n*ブラック入り*\nで〜す", [("sad_banana_cat_cry", L, 950, False), ("angry_aiming_cat", Rr, 1050, True)], 3.0,
+            label=HAN, speaker=1, col=LIME, se="game_mgs_alert"),
+        cut(SHOP, "家を買おうと\nしたら…", [("think_bike_front_seat_cat", C, 1100, False)], 2.4, se="page_turn_01"),
+        cut(SHOP, "*ローン*は\n通りません", [("think_bike_front_seat_cat", L, 950, False), ("call_customer_service_cat", Rr, 1050, True)], 2.6,
+            label="銀行", speaker=1, se="buzzer_wrong"),
+        cut(SHOP, "人生\n詰んだ…", [("despair_dramatic_kitten", C, 1150, False)], 2.4, size=170, se="deflate_hyororo"),
+        cut(HOME, "でも安心してください\n*防ぐ方法*があります！", [("despair_dramatic_kitten", L, 900, False), ("eat_pop_cat", Rr, 1050, True)], 3.0,
+            label="博識な猫", speaker=1, col=LIME, se="idea_newtype_01",
+            bgm={"file": os.path.join(S.BGM, "星降る夜のホットココア.mp3"), "gain": -6, "fade": 0.6}),
+        cut(HOME, "信用情報機関に\n*「本人申告」*を\n登録しとけ！", [("realize_wet_cat_stare", L, 950, False), ("eat_pop_cat", Rr, 1050, True)], 3.0,
+            label="博識な猫", speaker=1, col=LIME, se="pinpoon_correct"),
+        cut(HOME, "なりすましの契約を\n防ぎやすくなる", [("realize_wet_cat_stare", L, 950, False), ("calm_black_face_sheep", Rr, 1050, True)], 2.8,
+            label="博識な猫", speaker=1, col=LIME, se="pikon"),
+        cut(HOME, "*開示*して\n身に覚えのない契約が\nないかもチェック！", [("happy_girlfriend_dance_cat", L, 1000, False), ("calm_black_face_sheep", Rr, 1050, True)],
+            3.0, label="博識な猫", speaker=1, col=LIME, se="page_turn_02"),
+        cut(HACK, "本人申告…\nだと…", [("blank_black_cat_zoning_out", C, 1100, False)], 2.6, label=HAN, label_x=540, size=150,
+            se="deflate_hyororo"),
+        cut(HOME, "※実際は審査で確認もあるので\n必ずこうなるわけではありません", [("eat_pop_cat", C, 1000, False)], 2.8, size=64, se="pinpon_notice"),
+        cut(HOME, "今すぐ\nやっとこ！", [("dance_maxwell_cat", L, 1000, False), ("joy_happy_happy_happy_cat", Rr, 1000, True)], 2.6, size=160,
+            se="chirin"),
+    ]
+
+
+def keep_going(cs):
+    """前のカットと同じ素材が続くときは、登場し直さない（ポンと出ない・動きと音を前のカットの続きから）。"""
+    # ショートの最初の効果音は「チリン」（se/short_start_chirin.mp3）に統一（10/13 ユーザー指定）
+    if cs:
+        cs[0]["se"] = "short_start_chirin"
+    prev = {}   # 素材名 → (前のカットでの x, そのカットの終わりの素材時間)
+    t0 = 0.0
+    for c in cs:
+        d = R.cut_dur(c)
+        c["t0"] = t0   # 動画の頭からの時刻（背景をカットをまたいで動かし続けるため）
+        t0 += d
+        now = {}
+        for k in c["cats"]:
+            if k["a"] in prev:
+                px, ph, end = prev[k["a"]]
+                k["ss"] = end
+                k["pop"] = False
+                if abs(px - k["x"]) > 5 or abs(ph - k["h"]) > 5:
+                    k["from"] = (px, ph)   # 位置や大きさが変わるときは、すっと移動する
+            now[k["a"]] = (k["x"], k["h"], k.get("ss", 0.0) + d)
+        prev = now
+    return cs
+
+
+def main():
+    title = title_band("閲覧注意", "免許証が漏れるとヤバすぎる")
+    cs = keep_going(cuts())
+    for c in cs:   # 絵を描く関数を用意（タイトル帯を毎フレーム重ねる）
+        c["draw"] = make_draw(c, title)
+    S.run(cs, title, OUT, os.path.join(HERE, "out", "short_refstyle_license_preview"))
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,228 @@
+{
+ "_comment": "ST-014 加給年金。厚生年金20年以上の人が65歳到達時に生計維持する65歳未満の配偶者がいると加算。2025年度は配偶者加給239,300円＋特別加算176,600円＝約41.6万円（年度で改定）。配偶者が65歳になるまで。配偶者の年収850万円以上や、配偶者自身が厚生年金20年以上の老齢年金を受け取れる場合は停止。老齢厚生年金を繰下げ中は受け取れない。",
+ "tempo": 1.22,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "知らないと大損する\n{年下の妻がいる人の年金}",
+ "thumb_top": "年下の妻がいるだけで\n年金に年40万円上乗せ",
+ "thumb_teaser": "年金事務所のひと言で",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n65歳の日本人男性。落ち着いた低めの声で、誠実な人柄。\n## THE SCENE\n自分の身に起きた出来事を、同世代の男性に打ち明けるように語っている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。数字は少し強調する。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st014_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st014_ai/images"
+ },
+ "scenes": {
+  "booklet_tea": {
+   "prompt": "A plain blue pension booklet beside two cups of green tea on a low wooden table in a Japanese living room, warm morning light No faces visible, no readable text."
+  },
+  "retire": {
+   "prompt": "An older man's hands holding a small bouquet of flowers and a rolled certificate tied with a ribbon at an office farewell, soft light No faces visible, no readable text."
+  },
+  "couple_kotatsu": {
+   "prompt": "An older Japanese couple seen from behind sitting at a kotatsu in the evening looking over household papers and a calculator No faces visible, no readable text."
+  },
+  "pension_desk": {
+   "prompt": "A Japanese pension office counter where a staff member's hands point at a form in front of an older man's hands, bright fluorescent light No faces visible, no readable text."
+  },
+  "bar_chart": {
+   "prompt": "A printed pamphlet with a simple bar chart showing an added amount on top of a base bar, a pen resting on it, top-down view No faces visible, no readable text."
+  },
+  "passbook_up": {
+   "prompt": "An older man's hands holding an open bank passbook showing a new deposit entry, relieved mood, warm light No faces visible, no readable text."
+  },
+  "park_couple": {
+   "prompt": "An older Japanese couple walking side by side through a park lined with autumn ginkgo trees, seen from behind, warm afternoon light No faces visible, no readable text."
+  },
+  "bench_river": {
+   "prompt": "An older man sitting on a bench by a river at sunset, seen from behind, calm reflective mood No faces visible, no readable text."
+  }
+ },
+ "lines": [
+  {
+   "text": "年金に\n{年40万円}の\n上乗せ",
+   "tone": "信じられない結果を打ち明ける。驚きをこめて、力強く",
+   "say": "年金に、年40万円の上乗せがありました。",
+   "se": "don",
+   "scene": "booklet_tea",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true
+  },
+  {
+   "text": "<年下の妻>が\nいるだけで",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "年下の妻がいる。それだけでした。",
+   "scene": "booklet_tea",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{65歳}の私\n妻は{5歳年下}",
+   "tone": "淡々と、落ち着いて",
+   "say": "65歳の私。妻は5歳年下です。",
+   "scene": "retire",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "会社員を{38年}\n定年まで勤めました",
+   "tone": "少し誇らしく",
+   "say": "会社員を38年、定年まで勤めあげました。",
+   "scene": "retire",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "年金だけで\n<夫婦二人>\n暮らせるのか",
+   "tone": "不安がにじむ。声を少し落として",
+   "say": "年金だけで、夫婦二人暮らしていけるのか。",
+   "scene": "couple_kotatsu",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "妻の年金は\n<まだ5年先>です",
+   "tone": "ため息まじりに",
+   "say": "妻が年金をもらえるのは、まだ5年も先です。",
+   "scene": "couple_kotatsu",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "年金の手続きで\n{年金事務所}へ",
+   "tone": "淡々と",
+   "say": "65歳の年金の手続きで、年金事務所へ行きました。",
+   "scene": "pension_desk",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「奥様は\n{年下}ですか」",
+   "tone": "職員の言葉を、やさしく明るく再現する",
+   "say": "窓口の人が言いました。奥様は、年下ですか。",
+   "scene": "pension_desk",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{加給年金}\nという制度です",
+   "tone": "はっきりと、聞き手に教えるように",
+   "say": "加給年金という制度です。",
+   "scene": "bar_chart",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "厚生年金に\n{20年以上}入っていた\n人が対象",
+   "tone": "説明するように、わかりやすく",
+   "say": "厚生年金に20年以上入っていた人が対象です。",
+   "scene": "bar_chart",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "妻が{65歳}になるまで\n年金に上乗せされます",
+   "tone": "驚きをこめて",
+   "say": "年下の妻が65歳になるまで、年金に上乗せされるんです。",
+   "scene": "bar_chart",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "私の場合\n<年約40万円>",
+   "tone": "驚きと安堵。声がふっと明るくなる",
+   "say": "私の場合、年に約40万円。",
+   "se": "coin",
+   "scene": "passbook_up",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "{5年}で\n<約200万円>に\nなります",
+   "tone": "うれしさをかみしめて",
+   "say": "5年で、約200万円になります。",
+   "scene": "passbook_up",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "長く働いた夫婦を\n{国が支える}仕組みです",
+   "tone": "誇らしく、力強く",
+   "say": "長く働いてきた夫婦を、国が支えてくれる仕組みです。",
+   "scene": "park_couple",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "妻は\n「{あなたのおかげね}」\nと笑いました",
+   "tone": "しみじみと、やさしく",
+   "say": "妻は、あなたのおかげね、と笑いました。",
+   "scene": "park_couple",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "奥さんが年下の人\n<この制度>を\n知っていますか？",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "奥さんが年下の人、この制度を知っていますか。",
+   "scene": "bench_river",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  }
+ ]
+}

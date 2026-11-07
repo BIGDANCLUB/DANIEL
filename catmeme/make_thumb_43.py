@@ -15,7 +15,7 @@ R, BK, Y, NV = T.RED, T.BLACK, T.YELLOW, T.NAVY
 def main():
     T.type_a("43_petcost_thumb_a.png", "bg59_sakura_park", "bg02_room",
              ("dance_cute_dog", 1.0, 300, 410, 320, False),
-             [("meow_gray_white_kitten", 1.0, 900, 410, 300, False), ("money_counting_orange_cat", 1.0, 1150, 410, 280, True)],
+             [("meow_gray_white_kitten", 1.0, 900, 445, 300, False), ("money_counting_orange_cat", 1.0, 1150, 410, 280, True)],
              "一生でかかるお金",
              [("犬", R), ("vs", BK), ("猫", NV)], [("犬は", BK), ("約610万!?", R)], split=640, size=120)
     T.type_b("43_petcost_thumb_b.png",
@@ -33,3 +33,15 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def variants():
+    """11/7 ユーザー指定：A案をもとに文言を3案（a1・a2・a3）。"""
+    L, RC = ("dance_cute_dog", 1.0, 300, 410, 320, False), [("meow_gray_white_kitten", 1.0, 900, 445, 300, False),
+                                                           ("money_counting_orange_cat", 1.0, 1150, 410, 280, True)]
+    for name, tag, l1, l2 in [
+        ("a1", "飼う前に知りたい", [("犬", R), ("と", BK), ("猫", NV), ("　一生でいくら？", BK)], [("犬は", BK), ("新車1台分!?", R)]),
+        ("a2", "一生でかかるお金", [("猫", NV), ("は", BK), ("約310万", NV)], [("犬", R), ("はその", BK), ("2倍!?", R)]),
+        ("a3", "犬と猫のお金", [("1年で", BK), ("犬41万", R), ("・", BK), ("猫20万", NV)], [("一生だと", BK), ("約610万!?", R)]),
+    ]:
+        T.type_a("43_petcost_thumb_%s.png" % name, "bg59_sakura_park", "bg02_room", L, RC, tag, l1, l2, split=640, size=120)

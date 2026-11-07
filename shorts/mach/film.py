@@ -283,7 +283,7 @@ def render(out, n_frames, step=1, first=None, last=None):
     cam = sc.camera
     if not cam.parent and not (cam.animation_data and cam.animation_data.action):
         # 止まったカメラは、参考動画のようにゆっくり前へ寄せる（見ている方向へ距離の4%）
-        fwd = cam.matrix_world.to_quaternion() @ Vector((0, 0, -1))
+        fwd = cam.rotation_euler.to_quaternion() @ Vector((0, 0, -1))   # matrix_world はまだ更新前なので向きから計算
         cam.keyframe_insert("location", frame=1)
         cam.location += fwd * max(0.6, 0.04 * cam.location.length if cam.location.length < 60 else 2.5)
         cam.keyframe_insert("location", frame=n_frames)

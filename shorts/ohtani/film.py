@@ -139,7 +139,7 @@ def player(loc, facing=0, seed=0, number=False, bat=None, helmet=True, color=(0.
         tex = number_texture(os.path.join(os.environ.get("TMPDIR", "/tmp"), "num17.png"))
         bpy.ops.mesh.primitive_plane_add(size=1, location=(0, -0.135, 1.25), rotation=(math.radians(90), 0, math.radians(180)))
         p = bpy.context.object
-        p.scale = (0.32, 0.32, 1)
+        p.scale = (-0.32, 0.32, 1)      # 背中から見て正しい向き
         p.data.materials.append(img_mat("num17", tex))
         p.parent = root
     if bat:
@@ -162,7 +162,7 @@ def balls(flights, tm_video, glow=True):
     m = W.mat("ball", (1, 1, 1), 0.4, emit=(1.0, 0.9, 0.75) if glow else None, emit_strength=3.0 if glow else 0)
     out = []
     for (t0, ang, dist, dur) in flights:
-        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=0.5 if glow else 0.04, location=(0, 0.6, 1.0))
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=0.22 if glow else 0.04, location=(0, 0.6, 1.0))
         o = bpy.context.object
         o.data.materials.append(m)
         o.visible_shadow = False
@@ -236,7 +236,7 @@ def o03b_stands(tm):
     stadium()
     W.sunset()
     balls(random_flights(60, 4, -1.0, 3.0), video_time(len(tm)))
-    W.camera((-30, 150, 16), (0, 0, 2), lens=24)
+    W.camera((8, 95, 2.5), (0, 0, 12), lens=24)
     F.motion_blur(True, 0.5)
 
 
@@ -300,7 +300,7 @@ def o09_lap(tm):
         runner.rotation_euler.z = math.atan2(-d.x, d.y)
         runner.keyframe_insert("location", frame=f)
         runner.keyframe_insert("rotation_euler", frame=f)
-    W.camera((30, 2, 6), (8, 30, 1), lens=26)
+    W.camera((26, 22, 2.5), (10, 28, 1.2), lens=30)
 
 
 def o10_distance(tm):

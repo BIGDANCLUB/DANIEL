@@ -22,7 +22,7 @@ def grade(img, sun=None, glow=1.0, warmth=1.0, haze=0.35):
     core = np.exp(-(d / 0.07) ** 2)
     wide = np.exp(-(d / 0.45) ** 2)
     glow_col = np.array([1.0, 0.78, 0.45])
-    a = a + glow * (0.9 * core[..., None] * np.array([1.0, 0.93, 0.75]) + 0.45 * wide[..., None] * glow_col)
+    a = a + glow * (0.6 * core[..., None] * np.array([1.0, 0.93, 0.75]) + 0.32 * wide[..., None] * glow_col)
     # 地平線のもや（太陽の高さで一番濃く、上下に薄く）
     band = np.exp(-((yy - sy) / (h * 0.18)) ** 2)
     a = a * (1 - haze * band[..., None]) + haze * band[..., None] * np.array([1.0, 0.72, 0.42])
@@ -33,7 +33,7 @@ def grade(img, sun=None, glow=1.0, warmth=1.0, haze=0.35):
     bright = out.point(lambda v: max(0, v - 200) * 3)
     bloom = bright.filter(ImageFilter.GaussianBlur(w * 0.03))
     b = np.asarray(bloom, dtype=np.float32) / 255.0
-    a = np.clip(a + 0.6 * b, 0, 1)
+    a = np.clip(a + 0.45 * b, 0, 1)
     # 周辺を少し暗く
     vig = 1 - 0.28 * np.clip(((xx - w / 2) / (w * 0.75)) ** 2 + ((yy - h / 2) / (h * 0.75)) ** 2, 0, 1)
     a = a * vig[..., None]

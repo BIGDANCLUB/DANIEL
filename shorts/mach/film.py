@@ -280,6 +280,13 @@ def render(out, n_frames, step=1, first=None, last=None):
     sc = bpy.context.scene
     W.render_setup(os.path.join(out, "f_####.png"), 1, n_frames, res=RES, samples=10)
     sun = sun_obj()
+    cam = sc.camera
+    if not cam.parent and not (cam.animation_data and cam.animation_data.action):
+        # 止まったカメラは、参考動画のようにゆっくり前へ寄せる（見ている方向へ距離の4%）
+        fwd = cam.matrix_world.to_quaternion() @ Vector((0, 0, -1))
+        cam.keyframe_insert("location", frame=1)
+        cam.location += fwd * max(0.6, 0.04 * cam.location.length if cam.location.length < 60 else 2.5)
+        cam.keyframe_insert("location", frame=n_frames)
     info = {}
     first = first or 1
     last = last or n_frames
@@ -402,7 +409,7 @@ def s03b_shinagawa(tm):
 
 def tama_set():
     """多摩川：川は x の向きに流れる。鉄橋は y=-170〜170、高さ 8m。"""
-    water = W.mat("water", (0.12, 0.16, 0.20), 0.03)
+    water = W.mat("water", (0.30, 0.34, 0.38), 0.12)
     W.box((0, 0, -1.6), (8000, 340, 0.2), water, bevel=0)
     ground_y(-4000, -170)
     ground_y(170, 6000)
@@ -474,7 +481,7 @@ def s03d_town(tm):
         train.keyframe_insert("location", index=1, frame=f)
     pts = [(sx, y, 1.0, T0 + y / TL.V, 0) for y in range(60, 4000, 12) for sx in (-3, 3)]
     puffs(pts, tm, size=(1.5, 3.5), rise=(1.0, 4.0), grow=2.5)
-    W.camera((16, -40, 14), (-2, 500, 0), lens=26)
+    W.camera((10, 30, 3.5), (-1, 300, 2.0), lens=32)
     motion_blur(True, 0.5)
 
 
@@ -655,7 +662,7 @@ def s13_fisher(tm):
     trig = lambda o: TL.T_TAMA + o.location.y / TL.V + 10 * abs(o.location.x) / TL.V
     fly([rod, hat], trig, tm, seed=8, vx=(3, 8), vy=(4, 10), vz=(5, 10), side=lambda o: 1, drag=0.6)
     river_spray(tm, [-6, -12, -20, 6, 12, 20])
-    W.camera((49.5, -177.5, 1.6), (40, -150, 3.0), lens=24)
+    W.camera((48.6, -176.6, 1.4), (44.0, -165.0, 2.2), lens=28)
     motion_blur(True, 0.5)
 
 

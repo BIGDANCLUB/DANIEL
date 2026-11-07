@@ -22,9 +22,14 @@ def font(path, size, weight):
 def shadow_text(im, xy, text, f, fill=(255, 255, 255), anchor="la", blur=6, alpha=150, spacing=0):
     """柔らかい影つきの文字（参考は白文字＋ぼかした黒い影）。"""
     sh = Image.new("RGBA", im.size, (0, 0, 0, 0))
-    ImageDraw.Draw(sh).text((xy[0] + 2, xy[1] + 3), text, font=f, fill=(0, 0, 0, alpha), anchor=anchor)
-    sh = sh.filter(ImageFilter.GaussianBlur(blur))
+    ImageDraw.Draw(sh).text((xy[0] + 2, xy[1] + 3), text, font=f, fill=(0, 0, 0, min(255, alpha + 40)), anchor=anchor)
+    sh = sh.filter(ImageFilter.GaussianBlur(blur * 1.4))
     im.alpha_composite(sh)
+    # 文字のすぐ外側に薄い影（明るい夕日の上でも読めるように）
+    edge = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    ImageDraw.Draw(edge).text(xy, text, font=f, fill=(30, 20, 10, 150), anchor=anchor,
+                              stroke_width=max(2, f.size // 28), stroke_fill=(30, 20, 10, 150))
+    im.alpha_composite(edge.filter(ImageFilter.GaussianBlur(2)))
     ImageDraw.Draw(im).text(xy, text, font=f, fill=fill, anchor=anchor)
 
 

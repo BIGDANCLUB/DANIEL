@@ -28,7 +28,37 @@ def mat(name, col, rough=0.85, emit=None, emit_strength=0.0, alpha=1.0):
         b.inputs["Emission Strength"].default_value = emit_strength
     if alpha < 1:
         b.inputs["Alpha"].default_value = alpha
+    if any(name.startswith(k) for k in TEXTURED):
+        texture(m, col, TEXTURED[next(k for k in TEXTURED if name.startswith(k))])
     return m
+
+
+# 地面・芝・砂などに細かいむらを付ける（参考動画の草地の質感に近づける）。値＝模様の細かさ
+TEXTURED = {"ground": 0.6, "field": 0.9, "sand": 1.2, "grass": 0.8, "dirt": 1.5, "platform": 2.5, "ballast": 6.0,
+            "bank": 1.0, "embank": 1.0, "island_ground": 1.0, "isl_": 0.05, "rock": 0.3, "seat_": 3.0}
+
+
+def texture(m, col, scale):
+    nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]
+    coord = nt.nodes.new("ShaderNodeTexCoord")
+    noise = nt.nodes.new("ShaderNodeTexNoise")
+    noise.inputs["Scale"].default_value = scale
+    noise.inputs["Detail"].default_value = 8.0
+    noise.inputs["Roughness"].default_value = 0.6
+    nt.links.new(coord.outputs["Object"], noise.inputs["Vector"])
+    ramp = nt.nodes.new("ShaderNodeValToRGB")
+    cr = ramp.color_ramp
+    cr.elements[0].position = 0.3
+    cr.elements[0].color = (col[0] * 0.62, col[1] * 0.62, col[2] * 0.6, 1)
+    cr.elements[1].position = 0.75
+    cr.elements[1].color = (min(1, col[0] * 1.3), min(1, col[1] * 1.3), min(1, col[2] * 1.25), 1)
+    nt.links.new(noise.outputs["Fac"], ramp.inputs[0])
+    nt.links.new(ramp.outputs[0], b.inputs["Base Color"])
+    bump = nt.nodes.new("ShaderNodeBump")
+    bump.inputs["Strength"].default_value = 0.25
+    nt.links.new(noise.outputs["Fac"], bump.inputs["Height"])
+    nt.links.new(bump.outputs["Normal"], b.inputs["Normal"])
 
 
 def box(loc, size, m, rot=(0, 0, 0), bevel=0.03, name=None):

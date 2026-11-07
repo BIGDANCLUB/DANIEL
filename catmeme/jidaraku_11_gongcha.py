@@ -17,7 +17,8 @@ ROOM, FRONT, IN, SEAT, STREET, ROOM_N = ("j01_room", "g01_front", "g02_counter",
 # 11/6 外観・カウンター・席の写真が届いた（仮の背景はいらない）。ミルクティーはドリンク集合写真のまん中を切り出し
 # 仮の背景のある場所（ほかの店の写真は使わない。j01_room は自堕落シリーズの部屋）
 J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in (os.path.join("jidaraku", "01_yakiniku"), "03_kodomo_nisa", "14_japan", "16_tenchim")]
-J.HOLD = 3
+J.HOLD = 4   # 11/7 ユーザー指定：ミスドと同じ切り替えの数に
+J.LOOPS = 2
 J.SUB_STYLE = "glow"
 MORNING = os.path.join(L.BGM, "Morning.mp3")
 NANDE = os.path.join(L.BGM, "なんでしょう？.mp3")

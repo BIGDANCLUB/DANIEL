@@ -599,7 +599,7 @@ def s10_after(tm):
     for i, (x, y) in enumerate([(4.5, 40), (6.0, 70), (5.0, 110), (7.0, 150)]):
         _, hat = person((x, y, 1.2), -90, seed=i + 30, hat=True)
         hats.append(hat)
-    pp = papers(61, 60, 2.4, 9.5, -30, 200, 1.2)
+    pp = papers(61, 60, 2.4, 9.5, 10, 200, 1.2)       # カメラの前を横切らないよう少し先から
     trig = lambda o: T0 + o.location.y / TL.V + 10 * abs(o.location.x) / TL.V
     fly(hats + pp, trig, tm, seed=7, vx=(5, 15), vy=(5, 25), vz=(3, 10), drag=0.8)
     pts = [(sx, y, 0.6, T0 + y / TL.V + 10 * 2.2 / TL.V, 0) for y in range(-60, 1100, 6) for sx in (-2.2, 2.2)]
@@ -660,7 +660,7 @@ def s13_fisher(tm):
     rod.rotation_euler.x = math.radians(35)
     bucket = W.box((47.2, -172.5, 0.25), (0.4, 0.4, 0.5), W.mat("bucket", (0.2, 0.3, 0.6), 0.6), bevel=0.03)
     trig = lambda o: TL.T_TAMA + o.location.y / TL.V + 10 * abs(o.location.x) / TL.V
-    fly([rod, hat], trig, tm, seed=8, vx=(3, 8), vy=(4, 10), vz=(5, 10), side=lambda o: 1, drag=0.6)
+    fly([rod, hat], trig, tm, seed=8, vx=(3, 8), vy=(4, 10), vz=(5, 10), spin=4, side=lambda o: -1, drag=0.6)   # カメラと反対へ
     river_spray(tm, [-6, -12, -20, 6, 12, 20])
     W.camera((48.6, -176.6, 1.4), (44.0, -165.0, 2.2), lens=28)
     motion_blur(True, 0.5)

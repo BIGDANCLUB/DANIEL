@@ -4,6 +4,7 @@ python3 catmeme/short_78_gym.py → out/short_78_gym.mp4
 - 段階ごとに「札だけ → 右の猫 → 左の猫」の3段。段階が上がるほどずれが大きくなる。どの国・人もけなさない
 - ライバル3チャンネルと被らないことを確認ずみ（11/6 一覧を取り直して確認）
 - 数字・反応は「よくあるイメージ」としての目安（実際の統計ではない）。BGM なし
+- 11/7 ユーザー指定：筋肉痛で行けない・怖くて体重計に乗れない・半年は会員カード5枚で満足感（ダンスとスマホの猫）
 """
 import os
 
@@ -19,13 +20,13 @@ def cuts():
     rows = [
         ('入会日', 'showoff_gojo_cosplay_cat', 'ウェアを\n全部そろえる', 'money_counting_orange_cat', '年会費を\n一括払い'),
         ('1日目', 'punch_boxing_white_cat', 'マシンを\n全部制覇', 'happy_hamster_open_arms', 'やる気\nMAX'),
-        ('2日目', 'dance_tabby_standing_cat', '筋肉痛でも\n行く', 'despair_dramatic_kitten', '全身\n筋肉痛'),
+        ('2日目', 'dance_tabby_standing_cat', '筋肉痛でも\n行く', 'despair_dramatic_kitten', '筋肉痛で\n行けない'),
         ('3日目', 'cocky_dj_cat', 'プロテインを\n買う', 'sleepy_sleepy_cat', '今日は\n休養日'),
         ('1週間', 'dance_edm_cat', '体が\n軽い', 'calm_black_face_sheep', '雨なので\n休み'),
         ('2週間', 'smug_squint_bicolor_cat', '腹筋が\nうっすら', 'eat_chips_cat', 'ジムの帰りに\nラーメン'),
-        ('1か月', 'happy_girlfriend_dance_cat', '体重\nマイナス3kg', 'stare_lying_tabby_cat', '体重\nプラス1kg'),
+        ('1か月', 'happy_girlfriend_dance_cat', '体重\nマイナス3kg', 'stare_lying_tabby_cat', '怖くて\n体重計に\n乗れない'),
         ('3か月', 'dance_three_kittens', 'トレーナーと\n友だちに', 'blank_black_cat_zoning_out', '会員カードが\n行方不明'),
-        ('半年', 'joy_happy_happy_happy_cat', '大会に\n出る', 'sad_banana_cat_cry', '会費だけ\n払っている'),
+        ('半年', 'joy_happy_happy_happy_cat', '大会に\n出る', 'dance_filmed_by_gray_cat', '会員カード\n5枚あるから\n満足感😁'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

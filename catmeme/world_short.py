@@ -14,7 +14,7 @@ import os
 
 import cv2
 import numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 import income_short as I
 import render as R
@@ -74,12 +74,50 @@ def segs_of(t, base, hi=RED):
     return out
 
 
+EMOJI_FONT = "/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf"
+
+
+def _is_emoji(ch):
+    o = ord(ch)
+    return o >= 0x1F000 or 0x2600 <= o <= 0x27BF
+
+
+def _emoji(ch, h):
+    """絵文字は Noto Color Emoji で描いて貼る（11/7）。"""
+    f = ImageFont.truetype(EMOJI_FONT, 109)
+    im = Image.new("RGBA", (160, 160), (0, 0, 0, 0))
+    ImageDraw.Draw(im).text((10, 10), ch, font=f, embedded_color=True)
+    im = im.crop(im.getbbox())
+    return im.resize((max(1, int(im.width * h / im.height)), h), Image.LANCZOS)
+
+
+def _pieces(s):
+    """文字列を「ふつうの文字のかたまり」と「絵文字1つ」に分ける。"""
+    out, buf = [], ""
+    for ch in s:
+        if _is_emoji(ch):
+            if buf:
+                out.append(buf)
+            buf = ""
+            out.append(ch)
+        elif ord(ch) in (0xFE0F, 0x200D):
+            continue
+        else:
+            buf += ch
+    if buf:
+        out.append(buf)
+    return out
+
+
 def rich(lines, size, stroke=0, stroke_col=BLACK, max_w=W - 50, lh=1.18):
-    """lines = [[(文字, 色), ...], ...]。行ごとに真ん中そろえ。はみ出すときは小さくする。"""
+    """lines = [[(文字, 色), ...], ...]。行ごとに真ん中そろえ。はみ出すときは小さくする。絵文字も使える（11/7）。"""
     d0 = ImageDraw.Draw(Image.new("RGBA", (8, 8)))
+
+    def plen(p, f, size):
+        return size * 1.05 if len(p) == 1 and _is_emoji(p) else d0.textlength(p, font=f)
     while True:
         f = I.font(size)
-        ws = [sum(d0.textlength(s, font=f) for s, _ in ln) for ln in lines]
+        ws = [sum(plen(p, f, size) for s, _ in ln for p in _pieces(s)) for ln in lines]
         if max(ws) + stroke * 2 <= max_w or size < 30:
             break
         size -= 3
@@ -89,8 +127,13 @@ def rich(lines, size, stroke=0, stroke_col=BLACK, max_w=W - 50, lh=1.18):
     for i, (ln, w) in enumerate(zip(lines, ws)):
         x = (im.width - w) / 2
         for s, col in ln:
-            d.text((x, stroke + 4 + i * h), s, font=f, fill=col, stroke_width=stroke, stroke_fill=stroke_col)
-            x += d0.textlength(s, font=f)
+            for p in _pieces(s):
+                if len(p) == 1 and _is_emoji(p):
+                    e = _emoji(p, int(size * 0.92))
+                    im.alpha_composite(e, (int(x + size * 0.06), int(stroke + 4 + i * h + size * 0.12)))
+                else:
+                    d.text((x, stroke + 4 + i * h), p, font=f, fill=col, stroke_width=stroke, stroke_fill=stroke_col)
+                x += plen(p, f, size)
     return im.crop(im.getbbox())
 
 

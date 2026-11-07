@@ -452,6 +452,7 @@ class Renderer(I.Renderer):
             sz = c.get("heads_size") or (140 if max(len(hl), len(hr)) <= 2 else int(min(140, 480 / max(len(hl), len(hr)))))   # 長い見出しは片側におさまる大きさに（11/1）
             self.heads = (rich([[(hl, BLUE)]], sz, stroke=6, stroke_col=WHITE, max_w=500), rich([[(hr, RED)]], sz, stroke=6, stroke_col=WHITE, max_w=500))
             self.cap = cap_box(c["cap"], c.get("cap_full", False)) if c.get("cap") else None
+            self.cap2 = cap_box(c["cap2"]) if c.get("cap2") else None   # 反対側にも説明を出しっぱなしにする（11/7 ショート81）
             # 見出しの下に出しっぱなしにする説明（11/2 ショート57：平均と中央値のちがい）
             self.note = rich(c["note"], c.get("note_size", 46), stroke=6, stroke_col=WHITE, max_w=1040) if c.get("note") else None
 
@@ -533,6 +534,11 @@ class Renderer(I.Renderer):
             cx = min(max(cx, self.cap.width / 2 + 20), W - self.cap.width / 2 - 20)
             cy = min(1310 + self.cap.height / 2, SAFE_BOTTOM - self.cap.height / 2)
             I.put(out, self.cap, cx, cy)
+        if c["kind"] == "split" and getattr(self, "cap2", None) is not None:
+            cx = 805 if c["cap_side"] == "L" else 275
+            cx = min(max(cx, self.cap2.width / 2 + 20), W - self.cap2.width / 2 - 20)
+            cy = min(1310 + self.cap2.height / 2, SAFE_BOTTOM - self.cap2.height / 2)
+            I.put(out, self.cap2, cx, cy)
         b = R.to_np(self.band)
         I.over(out, b[0], b[1], 0, c.get("band_y", I.BAND[0]))
         I.put(out, self.tag, W / 2, self.tag_y)

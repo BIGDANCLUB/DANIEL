@@ -1,7 +1,7 @@
 """自堕落シリーズ #12 ミスド（ドーナツビュッフェ）のサムネ（11/7）。いつものAパターンで文言3案。
 
 python3 catmeme/make_thumb_misdo.py → thumbs/jidaraku_12_misdo_thumb_a1/a2/a3.png
-左：外観・右：トレーに山盛りのドーナツ
+左：外観・右：ショーケースの棚（11/7 ユーザー指定・a1 を採用）
 """
 import os
 
@@ -21,7 +21,7 @@ def main():
         ("a2", "30代独身　日曜の朝", [("1個まで", R), ("だった俺が", BK)], [("ミスド", T.BLUE), ("60分", R), ("食べ放題!?", BK)]),
         ("a3", "30代独身　ひとりミスド", [("ドーナツ", BK), ("ビュッフェ60分", R)], [("10個とった", R), ("結果…", BK)]),
     ]:
-        T.type_a("jidaraku_12_misdo_thumb_%s.png" % name, "m01_front", "f_tray", L, RC, tag, l1, l2, split=640, size=104)
+        T.type_a("jidaraku_12_misdo_thumb_%s.png" % name, "m01_front", "m02_showcase", L, RC, tag, l1, l2, split=640, size=104)
 
 
 if __name__ == "__main__":

@@ -11,7 +11,11 @@ sys.path.insert(0, HERE)
 sys.path.append(os.path.join(HERE, "..", "mach"))
 import timeline as TL  # noqa: E402  （この動画の時間割）
 import world as W  # noqa: E402
-import film as F  # noqa: E402  （新幹線版の部品：人・飛ぶ物・けむり・書き出し）
+import importlib.util  # noqa: E402
+
+_spec = importlib.util.spec_from_file_location("mach_film", os.path.join(HERE, "..", "mach", "film.py"))
+F = importlib.util.module_from_spec(_spec)   # 新幹線版の部品（同じ名前の film.py なので別名で読む）
+_spec.loader.exec_module(F)
 
 bpy = W.bpy
 from mathutils import Vector  # noqa: E402
@@ -270,7 +274,7 @@ def m01_open(tm):
     dog((-1.4, -0.4, 0), 10)
     monkey((1.3, -0.3, 0), -10)
     pheasant((2.1, -0.6, 0), 5)
-    cam = W.camera((0.6, -9.0, 1.6), (0.0, 30, 2.6), lens=30)
+    cam = W.camera((0.5, -6.0, 1.2), (0.0, 30, 2.4), lens=30)
     cam.keyframe_insert("location", frame=1)
     cam.location.y += 0.8
     cam.keyframe_insert("location", frame=len(tm))
@@ -305,8 +309,8 @@ def m03a_vanish(tm):
         o.rotation_euler.z -= math.radians(120 if i % 2 else -120)
         o.keyframe_insert("rotation_euler", frame=55 + i * 4)
     pts = [(random.uniform(-1.5, 1.5), random.uniform(-0.5, 3), 0.1, 5 / 30, 0) for _ in range(60)]
-    F.puffs(pts, tm, size=(0.15, 0.5), rise=(0.3, 1.5), grow=2.0, col=(0.72, 0.6, 0.42))
-    W.camera((0.6, -9.0, 1.6), (0.0, 30, 2.6), lens=30)
+    F.puffs(pts, tm, size=(0.04, 0.12), rise=(0.3, 1.2), grow=1.5, col=(0.72, 0.6, 0.42))
+    W.camera((0.5, -6.0, 1.2), (0.0, 30, 2.4), lens=30)
 
 
 def m03b_island(tm):
@@ -315,7 +319,7 @@ def m03b_island(tm):
     runner((0, 20, 0), 0)
     for i, (x, y, c) in enumerate([(-6, 28, (0.75, 0.18, 0.12)), (5, 30, (0.18, 0.28, 0.6)), (9, 26, (0.75, 0.18, 0.12))]):
         oni((x, y, 0), 180 + (30 if x > 0 else -30), color=c, seed=i)
-    cam = W.camera((3.0, 4.0, 2.2), (0, 26, 2.5), lens=28)
+    cam = W.camera((2.5, 11.0, 1.7), (0, 24, 1.8), lens=30)
     cam.keyframe_insert("location", frame=1)
     cam.location.y += 1.5
     cam.keyframe_insert("location", frame=len(tm))
@@ -362,9 +366,9 @@ def m06_run(tm):
     islands(seed=5)
     W.sunset()
     m = runner((0, 0, 0), 0, pose="run")
-    set_pos(m, tm, off=-200.0 - 6.0)
+    set_pos(m, tm, off=-200.0 + 94.0)
     glow_trail(m, length=40)
-    W.camera((-9.0, 0.0, 1.4), (0, 0.0, 1.3), lens=24)
+    W.camera((-9.0, 100.0, 1.4), (0, 100.0, 1.3), lens=24)
 
 
 def m07_fire(tm):

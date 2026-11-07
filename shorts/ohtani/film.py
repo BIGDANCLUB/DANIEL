@@ -11,7 +11,11 @@ sys.path.insert(0, HERE)
 sys.path.append(os.path.join(HERE, "..", "mach"))
 import timeline as TL  # noqa: E402
 import world as W  # noqa: E402
-import film as F  # noqa: E402
+import importlib.util  # noqa: E402
+
+_spec = importlib.util.spec_from_file_location("mach_film", os.path.join(HERE, "..", "mach", "film.py"))
+F = importlib.util.module_from_spec(_spec)   # 新幹線版の部品（同じ名前の film.py なので別名で読む）
+_spec.loader.exec_module(F)
 
 bpy = W.bpy
 from mathutils import Vector  # noqa: E402

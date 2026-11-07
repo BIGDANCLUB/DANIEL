@@ -19,7 +19,7 @@ ROOM, FRONT, CASE, SEAT, STREET, ROOM_N = ("j01_room", "m01_front", "m02_showcas
 # 11/6 外観・ショーケース・席の写真が届いた（外観は右下のロゴが入らないよう下を切った）
 # 仮の背景のある場所（ほかの店の写真は使わない。j01_room は自堕落シリーズの部屋）
 J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in (os.path.join("jidaraku", "01_yakiniku"), "03_kodomo_nisa", "14_japan", "16_tenchim")]
-J.HOLD = 5   # 11/6 新時代と同じ：素材の切り替えを少なく
+J.HOLD = 4   # 11/7 ユーザー指定：もう少しだけ切り替えを多めに（11/6 は5）
 J.LOOPS = 2
 J.SUB_STYLE = "glow"
 MORNING = os.path.join(L.BGM, "Morning.mp3")
@@ -39,7 +39,7 @@ def cuts():
     return [
         # ---- 日曜の朝・コインランドリー ----（11/6 ユーザー指定：毎回同じ「目が覚めた」で始めない・外出中から）
         s(STREET, "drive_driving_cat", "日曜日の朝10時\nコインランドリーへ向かう", bgm={"file": MORNING, "gain": -12}),
-        s(STREET, "calm_black_face_sheep", "1週間分の洗濯物を\nかかえて歩く"),
+        dict(s(STREET, "walk_approaching_orange_cat", "1週間分の洗濯物を\nかかえて歩く"), new=True),   # 11/6 運転する猫のまま続かないように
         s(STREET, "stare_lying_tabby_cat", "洗濯機を回す\n終わるまで40分"),
         s(STREET, "blank_black_cat_zoning_out", "することがない"),
         s(STREET, "think_chin_paw_orange_cat", "ベンチに座って\n駅前をながめる"),
@@ -69,7 +69,7 @@ def cuts():
         # ---- 来店 ----
         s(FRONT, "leave_cat_leaves_home", "駅前の\nミスタードーナツ", se="whoosh_shu"),
         s(FRONT, "surprise_big_pupils_cat", "あまい香りが\n外までただよっている"),
-        s(FRONT, "happy_hamster_open_arms", "この香りだけで\nごはんが食べられる"),
+        s(FRONT, "happy_hamster_open_arms", "この香りだけで\nおなかが鳴る"),
         s(FRONT, "stare_interviewer_cat", "家族づれ\n学生さん\n近所のおばあちゃん"),
         s(FRONT, "rizz_cat_rizz", "ミスドは\nだれでも入れる店だ"),
         s(FRONT, "yell_orange_fat_cat", "入店", se="gong_match_start"),

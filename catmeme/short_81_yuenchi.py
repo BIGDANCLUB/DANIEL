@@ -26,7 +26,7 @@ def cuts():
         ('3時間', 'fight_cat_fight', '大さわぎ', 'sleepy_sleepy_cat', '足が\n棒になる'),
         ('4時間', 'scream_standing_marmot', 'ありえない', 'sleepy_old_memories_cat', '話すことが\nなくなる'),
         ('5時間', 'despair_dramatic_kitten', '帰る', 'happy_hamster_open_arms', '乗れたら\n泣く'),
-        ('6時間', None, '(さすがに\n帰った)', None, '(↓この辺に↓\n↓寝ている↓)'),
+        ('6時間', None, '(さすがに\n帰った)', None, '↓この辺に↓\n↓寝ている↓'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

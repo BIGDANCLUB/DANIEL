@@ -35,6 +35,7 @@ def cuts():
         last = Wd.split(ST, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K)
         if wcat is None:   # 11/7 ユーザー指定：猫なしの段は世界の説明も出したまま
             last["cap2"] = wcap
+            last["se"] = "pafu"   # 11/7 ユーザー指定：日本の字幕が出るときにパフ
         out.append(last)
     for c in out:
         c.update(blur=9, band_y=0, tag_y=460)

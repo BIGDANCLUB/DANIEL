@@ -319,7 +319,7 @@ def m03b_island(tm):
     runner((0, 20, 0), 0)
     for i, (x, y, c) in enumerate([(-6, 28, (0.75, 0.18, 0.12)), (5, 30, (0.18, 0.28, 0.6)), (9, 26, (0.75, 0.18, 0.12))]):
         oni((x, y, 0), 180 + (30 if x > 0 else -30), color=c, seed=i)
-    cam = W.camera((2.5, 11.0, 1.7), (0, 24, 1.8), lens=30)
+    cam = W.camera((7.5, 15.0, 2.2), (-1.5, 26, 1.6), lens=26)
     cam.keyframe_insert("location", frame=1)
     cam.location.y += 1.5
     cam.keyframe_insert("location", frame=len(tm))
@@ -391,7 +391,7 @@ def m10_sound(tm):
     for mk, p, fac in [(dog, (-1.4, -0.4, 0), 10), (monkey, (1.3, -0.3, 0), -10), (pheasant, (2.1, -0.6, 0), 5)]:
         mk(p, fac)
     # 音の波：出発点から秒速340mで広がる、すき通った半球
-    m = F.puff_mat("soundwave", (1, 0.95, 0.9), 0.08)
+    m = F.puff_mat("soundwave", (1, 0.95, 0.9), 0.18)
     bpy.ops.mesh.primitive_uv_sphere_add(segments=32, ring_count=16, radius=1.0, location=(0, 0, 0))
     s = bpy.context.object
     s.data.materials.append(m)
@@ -400,7 +400,7 @@ def m10_sound(tm):
         r = max(0.01, TL.SOUND * t)
         s.scale = (r, r, r)
         s.keyframe_insert("scale", frame=f)
-    W.camera((6.0, -40.0, 14.0), (0, 200, 0), lens=24)
+    W.camera((1.0, -7.0, 1.8), (0.3, 80, 4.0), lens=26)
 
 
 def m11_sea(tm):

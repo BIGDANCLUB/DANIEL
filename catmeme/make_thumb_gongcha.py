@@ -26,3 +26,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def final():
+    """11/8 ユーザー指定：a3 をもとに文字を会話の形に・猫を少し大きくして両はしへ。"""
+    L = ("scream_phone_orange_cat", 1.0, 125, 410, 300, False)
+    RC = [("huh_huh_cat", 1.0, 1185, 410, 340, False)]
+    T.type_a("jidaraku_11_gongcha_thumb_final.png", "g01_front", "f_milktea", L, RC, "30代独身　ゴンチャデビュー",
+             [("ワイ「", BK), ("タピオカを1つ！", R), ("」", BK)], [("店員「", BK), ("それトッピングだよ", R), ("」", BK)],
+             split=640, size=104)

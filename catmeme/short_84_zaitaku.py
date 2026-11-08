@@ -25,7 +25,7 @@ def cuts():
         ('14時', 'read_book_orange_kitten', '資料を\n仕上げる', 'snore_snoring_dog', 'ちょっと\n横になる'),
         ('15時', 'showoff_gojo_cosplay_cat', '進み具合を\n報告', 'scream_phone_orange_cat', 'チャットの\n通知で\nとび起きる'),
         ('18時', 'dance_happy_banana_cat', '定時で\nおしまい', 'sad_looking_away_tabby', '終わりが\nわからず\n21時'),
-        ('1か月後', 'happy_hamster_open_arms', '通勤がなくて\n最高', 'despair_dramatic_kitten', '1日\n200歩'),
+        ('1か月後', 'happy_hamster_open_arms', '通勤がなくて\n最高', 'despair_dramatic_kitten', '1日\n128歩'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

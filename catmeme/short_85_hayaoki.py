@@ -4,6 +4,7 @@ python3 catmeme/short_85_hayaoki.py → out/short_85_hayaoki.mp4
 - 段階ごとに「札だけ → 右の猫 → 左の猫」の3段。段階が上がるほどずれが大きくなる。どの国・人もけなさない
 - ライバル3チャンネルと被らないことを確認ずみ（11/6 一覧を取り直して確認）
 - 数字・反応は「よくあるイメージ」としての目安（実際の統計ではない）。BGM なし
+- 11/8 ユーザー指定：7時半「走る(全速力)」・3日後は寝ている猫「お布団には勝てない」・1週間後「朝が好きになる(二度寝)」
 """
 import os
 
@@ -23,9 +24,9 @@ def cuts():
         ('6時', 'cocky_dj_cat', 'シャワーと\nコーヒー', 'snore_snoring_dog', 'スヌーズ\n5回目'),
         ('6時半', 'work_typing_cat', '読書と\n勉強', 'stare_lying_tabby_cat', '布団の中で\nスマホ'),
         ('7時', 'happy_chipi_chapa_cat', 'ゆっくり\n朝ごはん', 'surprise_big_pupils_cat', 'いつもの\n時間に\n起きる'),
-        ('7時半', 'joy_happy_happy_happy_cat', 'よゆうで\n出発', 'despair_dramatic_kitten', '走る'),
-        ('3日後', 'happy_girlfriend_dance_cat', 'すっかり\n習慣に', 'calm_black_face_sheep', '早起きは\n休日だけに'),
-        ('1週間後', 'dance_three_kittens', '朝が\n好きになる', 'dance_filmed_by_gray_cat', '早起き\nなにそれ'),
+        ('7時半', 'joy_happy_happy_happy_cat', 'よゆうで\n出発', 'despair_dramatic_kitten', '走る\n(全速力)'),
+        ('3日後', 'happy_girlfriend_dance_cat', 'すっかり\n習慣に', 'sleep_sleeping_cat', 'お布団には\n勝てない'),
+        ('1週間後', 'dance_three_kittens', '朝が\n好きになる', 'dance_filmed_by_gray_cat', '朝が\n好きになる\n(二度寝)'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

@@ -27,7 +27,7 @@ def cuts():
         ('再検査', 'glare_disgusted_cat', '封筒を\n開けない', 'sad_looking_away_tabby', 'なぜか\n日本人も\n開けない'),
         ('腹囲', 'read_book_orange_kitten', '気にしない', 'despair_dramatic_kitten', '検査時に\n凹ませるが\nすぐバレる'),
         ('前日の夜', 'sleep_sleeping_cat', 'いつも通り', 'mock_swinging_cat', '21時までなら\n飲める！\n(非推奨)'),
-        ('1年後', 'blank_black_cat_zoning_out', '去年より\n悪い結果', 'dance_happy_banana_cat', '肝臓は\n毎年\n悪い'),
+        ('1年後', 'blank_black_cat_zoning_out', '去年より\n悪い結果', 'scream_phone_orange_cat', '肝臓は\n毎年\n悪い'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

@@ -4,6 +4,7 @@ python3 catmeme/short_82_kenshin.py → out/short_82_kenshin.mp4
 - 段階ごとに「札だけ → 右の猫 → 左の猫」の3段。段階が上がるほどずれが大きくなる。どの国・人もけなさない
 - ライバル3チャンネルと被らないことを確認ずみ（11/6 一覧を取り直して確認）
 - 数字・反応は「よくあるイメージ」としての目安（実際の統計ではない）。BGM なし
+- 11/8 ユーザー指定：A判定は世界が五条猫「最☆強」・C判定「まだ舞える／要注意」・D判定は日本と世界を入れかえ・E判定「その日もパーティー／午前休で病院へ」・再検査「封筒を開けない／なぜか日本人も開けない」
 """
 import os
 
@@ -17,12 +18,12 @@ def cuts():
     out = []
     # (札, 右の猫, 右の説明, 左の猫, 左の説明)
     rows = [
-        ('A判定', 'happy_chipi_chapa_cat', 'ふつう', 'showoff_gojo_cosplay_cat', '職場で\n自慢する'),
+        ('A判定', 'showoff_gojo_cosplay_cat', '最☆強', 'happy_chipi_chapa_cat', '職場で\n自慢する'),
         ('B判定', 'stare_interviewer_cat', '問題なし', 'think_chin_paw_orange_cat', 'ちょっと\n気にする'),
-        ('C判定', 'calm_black_face_sheep', '少し\n気をつける', 'eat_chips_cat', 'とりあえず\nポテチ'),
-        ('D判定', 'call_customer_service_cat', 'すぐ病院へ', 'sleepy_old_memories_cat', '忙しいから\nまた今度'),
-        ('E判定', 'surprise_big_pupils_cat', '仕事を\n休む', 'dance_filmed_by_gray_cat', 'その日も\n飲み会'),
-        ('再検査', 'glare_disgusted_cat', 'すぐ予約', 'sad_looking_away_tabby', '封筒を\nあけない'),
+        ('C判定', 'calm_black_face_sheep', 'まだ舞える', 'eat_chips_cat', '要注意'),
+        ('D判定', 'sleepy_old_memories_cat', '忙しいから\nまた今度', 'call_customer_service_cat', 'すぐ病院へ'),
+        ('E判定', 'surprise_big_pupils_cat', 'その日も\nパーティー', 'dance_filmed_by_gray_cat', '午前休で\n病院へ'),
+        ('再検査', 'glare_disgusted_cat', '封筒を\n開けない', 'sad_looking_away_tabby', 'なぜか\n日本人も\n開けない'),
         ('腹囲', 'read_book_orange_kitten', '気にしない', 'despair_dramatic_kitten', '前日だけ\nお腹をへこませる'),
         ('前日の夜', 'sleep_sleeping_cat', 'いつも通り', 'stare_lying_tabby_cat', '急に\nサラダだけ'),
         ('1年後', 'dance_happy_banana_cat', '健康', 'blank_black_cat_zoning_out', '去年と\n同じ結果'),

@@ -5,6 +5,7 @@ python3 catmeme/short_82_kenshin.py → out/short_82_kenshin.mp4
 - ライバル3チャンネルと被らないことを確認ずみ（11/6 一覧を取り直して確認）
 - 数字・反応は「よくあるイメージ」としての目安（実際の統計ではない）。BGM なし
 - 11/8 ユーザー指定：A判定は世界が五条猫「最☆強」・C判定「まだ舞える／要注意」・D判定は日本と世界を入れかえ・E判定「その日もパーティー／午前休で病院へ」・再検査「封筒を開けない／なぜか日本人も開けない」
+- 11/8 続き：腹囲「検査時に凹ませるがすぐバレる」・前日の夜はへいへい猫（mock_swinging_cat）「21時までなら飲める！(非推奨)」・1年後は世界「去年より悪い結果」（もとの日本の素材）日本「肝臓は毎年悪い」
 """
 import os
 
@@ -24,9 +25,9 @@ def cuts():
         ('D判定', 'sleepy_old_memories_cat', '忙しいから\nまた今度', 'call_customer_service_cat', 'すぐ病院へ'),
         ('E判定', 'surprise_big_pupils_cat', 'その日も\nパーティー', 'dance_filmed_by_gray_cat', '午前休で\n病院へ'),
         ('再検査', 'glare_disgusted_cat', '封筒を\n開けない', 'sad_looking_away_tabby', 'なぜか\n日本人も\n開けない'),
-        ('腹囲', 'read_book_orange_kitten', '気にしない', 'despair_dramatic_kitten', '前日だけ\nお腹をへこませる'),
-        ('前日の夜', 'sleep_sleeping_cat', 'いつも通り', 'stare_lying_tabby_cat', '急に\nサラダだけ'),
-        ('1年後', 'dance_happy_banana_cat', '健康', 'blank_black_cat_zoning_out', '去年と\n同じ結果'),
+        ('腹囲', 'read_book_orange_kitten', '気にしない', 'despair_dramatic_kitten', '検査時に\n凹ませるが\nすぐバレる'),
+        ('前日の夜', 'sleep_sleeping_cat', 'いつも通り', 'mock_swinging_cat', '21時までなら\n飲める！\n(非推奨)'),
+        ('1年後', 'blank_black_cat_zoning_out', '去年より\n悪い結果', 'dance_happy_banana_cat', '肝臓は\n毎年\n悪い'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

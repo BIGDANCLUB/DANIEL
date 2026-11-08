@@ -3,7 +3,7 @@
 python3 catmeme/jidaraku_14_ichigo.py → out/jidaraku_14_ichigo.mp4
 - 流れ：休日にSNSでいちご狩り → 30分食べ放題で元を取る作戦 → 受付で練乳 → ハウスの中は家族とカップルだらけ →
   開始・最初は勢いよく → 品種の食べくらべ・先っぽが甘い → 10分で満足してくる → 練乳で味変 → 時計がない → 最後の追い込み →
-  終了・数えたら25個くらい → 直売所でパックを買う → 家でいちごミルク・来年も
+  終了・数えたら25個くらい → 直売所でパックを買う → 家でいちごミルク → 母さんからいちごの宅配便 → 食べ放題よりタダのいちごがうまかったオチ（11/8 ユーザー指定）
 - 体験談（口コミ・2025〜2026年ごろ）：30分食べ放題・大人2500〜2600円ほど（農園で変わる）／食べた数は18個〜33個と人それぞれ／
   開始10分ほどでだいぶ満足してしまう／ハウスの中に時計がないので時間がわかるものを持っていく／練乳は受付で買える・つけずに食べるのもおすすめ／
   食べすぎて体調をくずす人も／収穫は12月〜5月ごろ。農園の名前は出さない
@@ -84,7 +84,8 @@ def cuts():
         s(RECEPT, "stare_interviewer_cat", "いらっしゃいませー\n何名様ですかー", se="pinpon_notice", bgm={"file": NANDE, "gain": -12, "fade": 0.8}),
         s(RECEPT, "meow_ragdoll_chubby_cat", "1名です"),
         s(RECEPT, "stare_interviewer_cat", "……1名様ですねー", se="pi"),
-        s(RECEPT, "huh_huh_cat", "今の間は\nなんだったんだ"),
+        s(RECEPT, "huh_huh_cat", "なんだ\n今の間は"),
+        s(RECEPT, "despair_dramatic_kitten", "この受付の人からの\n不審者扱いゲージが\n爆上がりしたのを\n感じる", se="explosion_chudoon"),   # 11/8 ユーザー指定
         s(RECEPT, "money_counting_orange_cat", "料金を払う"),
         s(RECEPT, "stare_interviewer_cat", "練乳は\nいかがですかー", item=MILK),
         s(RECEPT, "think_chin_paw_orange_cat", "練乳……", item=MILK),
@@ -204,11 +205,6 @@ def cuts():
         s(HOUSE, "stare_interviewer_cat", "ぼく25個\n食べた！"),
         s(HOUSE, "despair_dramatic_kitten", "負けた", se="pi"),
         s(HOUSE, "laugh_laughing_dog", "小学生に\n負けた"),
-        s(HOUSE, "stare_interviewer_cat", "おじさん\nこれあげる"),
-        s(HOUSE, "surprise_big_pupils_cat", "子どもが\nいちごを\n1個くれた", item=BERRY),
-        s(HOUSE, "sad_banana_cat_cry", "やさしい", item=BERRY),
-        s(HOUSE, "eat_crunchy_cat_luna", "24個目", item=BERRY),
-        s(HOUSE, "happy_hamster_open_arms", "24個で\n引き分けに\nしておこう", item=BERRY),
         # ---- 直売所 ----
         s(SHOP, "leave_cat_leaves_home", "ハウスを出る", se="whoosh_shu", bgm={"file": HIRU, "gain": -12, "fade": 0.8}),
         s(SHOP, "stare_big_eyes_tabby_kitten", "出口に\n直売所がある", item=PACK),
@@ -217,7 +213,6 @@ def cuts():
         s(SHOP, "money_counting_orange_cat", "でも\n買ってしまう", item=PACK),
         s(SHOP, "sad_black_dog", "食べ放題のあとに\nいちごを買う男", item=PACK),
         s(SHOP, "joy_happy_happy_happy_cat", "いちごジャムと\nいちご大福も\n買う", item=PACK),
-        s(SHOP, "sleepy_old_memories_cat", "母さんにも\n送ってあげよう", item=PACK),
         # ---- 帰り道 ----
         s(ROAD, "drive_driving_cat", "帰りの車", se="whoosh_shu", bgm={"file": JITAKU, "gain": -8, "fade": 1.0}),
         s(ROAD, "sleepy_sleepy_cat", "車の中が\nいちごの香り"),
@@ -249,12 +244,26 @@ def cuts():
         s(ROOM_N, "read_book_orange_kitten", "いちごは\nビタミンCが\n多いらしい"),
         s(ROOM_N, "rizz_cat_rizz", "つまり今日の俺は\n健康だ"),
         s(ROOM_N, "calm_black_face_sheep", "練乳のことは\n考えない"),
-        s(ROOM_N, "scream_phone_orange_cat", "母さんからLINE"),
+        s(ROOM_N, "stare_big_eyes_tabby_kitten", "ピンポーン", se="pinpon_notice"),
+        s(ROOM_N, "huh_huh_cat", "こんな時間に\n荷物？"),
+        s(ROOM_N, "surprise_big_pupils_cat", "母さんからの\n宅配便だ"),
+        s(ROOM_N, "work_typing_cat", "箱を開ける"),
+        s(ROOM_N, "scream_standing_marmot", "いちご", item=PACK, se="explosion_chudoon"),
+        s(ROOM_N, "despair_dramatic_kitten", "今日1日\nいちごしか\n見ていない", item=PACK),
+        s(ROOM_N, "read_book_orange_kitten", "近所の農家さんに\nたくさんもらったので\nおすそわけです\nと手紙", item=PACK),
+        s(ROOM_N, "sleepy_old_memories_cat", "子どものころと\n同じ字だ", item=PACK),
+        s(ROOM_N, "think_chin_paw_orange_cat", "おなかは\nいっぱいだ", item=PACK),
+        s(ROOM_N, "calm_black_face_sheep", "でも\n1個だけ", item=PACK),
+        s(ROOM_N, "eat_crunchy_cat_luna", "パクッ", item=PACK, se="pikon"),
+        s(ROOM_N, "surprise_big_pupils_cat", "……うまい", item=PACK),
+        s(ROOM_N, "realize_wet_cat_stare", "今日食べた\nどのいちごより\nうまい", item=PACK),
+        s(ROOM_N, "money_counting_orange_cat", "2500円払って\n23個食べた\nいちごより", item=PACK),
+        s(ROOM_N, "sad_banana_cat_cry", "タダで食べる\nいちごのほうが\nうまかった", item=PACK, se="explosion_dokaan"),
+        s(ROOM_N, "scream_phone_orange_cat", "母さんにLINE"),
         s(ROOM_N, "happy_chipi_chapa_cat", "いちご届いたよ\nありがとう"),
-        s(ROOM_N, "stare_big_eyes_tabby_kitten", "今度は\nいっしょに行こうね"),
-        s(ROOM_N, "happy_hamster_open_arms", "次は\n2人でいちご狩りだ"),
-        s(ROOM_N, "smug_squint_bicolor_cat", "そのときは\n練乳を2本買おう"),
-        s(ROOM_N, "excited_hodomoe_city_cat", "来年こそ\n50個", se="pikon", dur=3.8),
+        s(ROOM_N, "stare_interviewer_cat", "たくさん食べてね"),
+        s(ROOM_N, "happy_hamster_open_arms", "今日はもう\nたくさん食べた\nとは言えない"),
+        s(ROOM_N, "excited_hodomoe_city_cat", "いちごは\n母さんのが\nいちばん", se="pikon", dur=3.8),
         J.end_card(),
     ]
 

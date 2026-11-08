@@ -4,6 +4,7 @@ python3 catmeme/short_83_osouji.py → out/short_83_osouji.mp4
 - 段階ごとに「札だけ → 右の猫 → 左の猫」の3段。段階が上がるほどずれが大きくなる。どの国・人もけなさない
 - ライバル3チャンネルと被らないことを確認ずみ（11/6 一覧を取り直して確認）
 - 数字・反応は「よくあるイメージ」としての目安（実際の統計ではない）。BGM なし
+- 11/8 ユーザー指定：14時の理想は別の素材・16時「何も終わっていない」・18時「何もしてないけど疲れた」・夜の理想「綺麗な部屋で心機一転」・翌日は理想の素材を変えて現実「年末の自分に託す」（踊る猫をスマホで撮る猫）
 """
 import os
 
@@ -21,11 +22,11 @@ def cuts():
         ('10時', 'work_typing_cat', 'いらない物を\n捨てる', 'scream_phone_orange_cat', '掃除のやり方を\n動画で見る'),
         ('11時', 'cocky_dj_cat', '台所の\n油よごれ', 'sleepy_old_memories_cat', '昔のアルバムを\n見つける'),
         ('12時', 'happy_hamster_open_arms', 'お昼も\nさっと', 'eat_pop_cat', 'アルバムを\n見ながら\nお昼'),
-        ('14時', 'dance_tabby_standing_cat', '押し入れを\n整理', 'read_book_orange_kitten', '昔のマンガを\n読みはじめる'),
-        ('16時', 'joy_happy_happy_happy_cat', 'ほぼ終わり', 'despair_dramatic_kitten', '部屋が\n朝より\n散らかっている'),
-        ('18時', 'dance_three_kittens', 'ピカピカの部屋で\nごほうび', 'sulk_hungry_cat', '疲れて\n何もしたくない'),
-        ('夜', 'happy_girlfriend_dance_cat', 'すっきりして\n新年へ', 'calm_black_face_sheep', '窓だけ\n1枚ふいた'),
-        ('翌日', 'smug_squint_bicolor_cat', 'きれいを\nキープ', 'stare_tabby_wide_eyes_cat', '続きは\n来年'),
+        ('14時', 'calmdown_dancing_cat', '押し入れを\n整理', 'read_book_orange_kitten', '昔のマンガを\n読みはじめる'),
+        ('16時', 'joy_happy_happy_happy_cat', 'ほぼ終わり', 'despair_dramatic_kitten', '何も\n終わっていない'),
+        ('18時', 'dance_three_kittens', 'ピカピカの部屋で\nごほうび', 'sulk_hungry_cat', '何もしてないけど\n疲れた'),
+        ('夜', 'happy_girlfriend_dance_cat', '綺麗な\n部屋で\n心機一転', 'calm_black_face_sheep', '窓だけ\n1枚ふいた'),
+        ('翌日', 'happy_hamster_open_arms', 'きれいを\nキープ', 'dance_filmed_by_gray_cat', '年末の\n自分に\n託す'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

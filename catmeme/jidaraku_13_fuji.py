@@ -24,8 +24,7 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku", "01_yakiniku")]
 ROOM, ROOM_N, BUS, FIVE, TRAIL, HIGH, HUT, SUMMIT, DOWN, OFFICE = (
     "j01_room", "j07_room_night", "fj00_bus", "fj01_5gome", "fj02_trail", "fj03_trail_high", "fj04_hut", "fj05_summit",
     "fj06_descent", "bg25_office_desk")
-J.STANDIN.update({BUS: "bg26_rural_road", FIVE: "bg63_hokkaido_field", TRAIL: "bg60_autumn_leaves", HIGH: "bg63_hokkaido_field",
-                  HUT: "bg55_ryokan", SUMMIT: "bg120_yellow_rays", DOWN: "bg26_rural_road"})
+J.STANDIN.update({BUS: "bg26_rural_road", DOWN: "fj03_trail_high"})   # 11/8 写真5枚（5合目・登山道・雲の上の道・山小屋・山頂）。下山は雲の上の砂ぼこりの道の写真で
 J.HOLD = 4   # ミスド・ゴンチャと同じ切り替えの数
 J.LOOPS = 2
 J.SUB_STYLE = "glow"

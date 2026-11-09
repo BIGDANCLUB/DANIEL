@@ -260,6 +260,7 @@ def cuts():
 
 def place(cs):
     J.diversify(cs)   # 11/9 ユーザー指定：もっと多様な素材を
+    J.no_music(cs)   # 11/9 ユーザー指定：申し立てのもとになる曲つき素材（⚠）は使わない
     J.auto_tempo(cs)
     for c in cs:
         if c.get("text"):

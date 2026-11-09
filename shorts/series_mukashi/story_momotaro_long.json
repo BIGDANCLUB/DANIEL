@@ -1,0 +1,1949 @@
+{
+ "_comment": "むかしばなしにマジレス 桃太郎・長尺横動画版（16:9）。イラストは scenes の8枚を crop で切り出して使い回し、解説図（images、make_zu.py で作成）を間に挟む。chapter は YouTube のチャプター用の目印（make_short.py では使われない）。",
+ "format": "landscape",
+ "tempo": 1.15,
+ "gap": 0.1,
+ "max_pause": 0.2,
+ "lead_in": 0.3,
+ "tail": 2.0,
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Puck",
+  "style": "# AUDIO PROFILE\n30代の日本人男性。若手お笑い芸人のような、明るく張りのある声。\n## THE SCENE\n昔話をネタにしたトークを、客席を笑わせながらテンポよく進めている。\n### DIRECTOR'S NOTES\n全体を速めのテンポで、サクサク読む。文と文の間は短く。説明は自信満々に勢いよく、数字は歯切れよく強調する。ツッコミどころは軽く笑いを含ませる。オチの一文は一拍おいて、真顔で言い切る。",
+  "voice_dir": "work_momotaro_long/voice",
+  "batch": 20,
+  "check": true,
+  "batch_chars": 560
+ },
+ "image_gen": {
+  "style": "Horizontal 16:9 wide illustration in the style of a traditional Japanese folktale picture book: soft watercolor and sumi ink on textured washi paper, warm muted earthy colors, gentle brush outlines, simple rounded character designs, rural old Japan. Wide, detailed composition with several points of interest spread across the frame, so that parts of it can be cropped as separate shots. Expressive comedic faces are fine. No text, no letters, no numbers, no symbols, no logos, no watermark.",
+  "image_dir": "illust_momotaro"
+ },
+ "scenes": {
+  "river": {
+   "prompt": "Wide riverside landscape in rural old Japan. On the left, an old grandmother kneeling at the river's edge with a washing tub, staring in shock. In the center, a gigantic pink peach as big as a boulder floating down the clear river. On the right in the distance, a thatched farmhouse on the bank, and on the far mountain path a tiny old grandfather carrying a bundle of brushwood on his back. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+  },
+  "house": {
+   "prompt": "Interior of a thatched farmhouse with a sunken hearth. A gigantic peach split open in the middle of the wooden floor, revealing its huge wrinkled stone and a cheerful baby boy sitting in the hollow. The old grandmother and grandfather fall backward in surprise on either side. A kitchen knife lies on the floor, a small sack of millet dumplings on a shelf. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+  },
+  "road": {
+   "prompt": "A country road through rice paddies and hills. Momotaro in the center with a pouch of millet dumplings at his waist, striding forward. A dog trotting beside him, a monkey on a stone wall, a green pheasant walking (not flying) on the road. In one corner, a bored cat sitting on a fence ignoring a dumpling. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+  },
+  "sea": {
+   "prompt": "A small wooden boat crossing a wavy sea. The dog lying limp and seasick over the side of the boat, the monkey calmly sitting at the bow washing a sweet potato in the seawater, the pheasant clinging to the mast, Momotaro rowing. On the horizon, a craggy dark island with an ogre fortress. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+  },
+  "feast": {
+   "prompt": "Great hall of an ogre fortress at night, lit by lanterns. A large red ogre with a flushed drunk face and a large blue ogre panting heavily sit at a feast with big sake jars. Huge iron clubs with studs lean against the wall. In the background, a heavy wooden gate. The ogres are drawn twice the height of a human. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+  },
+  "battle": {
+   "prompt": "Comedic chaotic battle in the ogre hall. A giant red ogre toppling backward mid-fall, the dog biting its ankle, the monkey clinging to its back and scratching, the pheasant flapping at its head, Momotaro charging in front. The blue ogre already sitting on the floor exhausted. Overturned sake jars. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+  },
+  "treasure": {
+   "prompt": "A rocky shore of the ogre island in daylight. Defeated ogres bowing low. A mountain of gold coins, gold bars and treasures, and a small wooden boat sitting very low in the water, overloaded with gold. A big ogre standing waist-deep in the sea holding the boat's tow rope. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+  },
+  "home": {
+   "prompt": "A village by the river at sunset. Villagers happily receiving back shining gold treasures. The old couple welcoming Momotaro and the animals. In the garden, a canal dug from the river holds leftover giant peach pieces, and in the far background a couple of ogres peeking over the hill, sniffing the air. The same characters throughout: a kind old grandmother and old grandfather in patched work kimono; Momotaro, a sturdy cheerful boy in a white headband and a peach-patterned vest; a brown shiba-like dog; a Japanese macaque; a green pheasant."
+  }
+ },
+ "images": {
+  "alcohol": "zu_momotaro/alcohol.png",
+  "amami": "zu_momotaro/amami.png",
+  "dango": "zu_momotaro/dango.png",
+  "danmen": "zu_momotaro/danmen.png",
+  "funayoi": "zu_momotaro/funayoi.png",
+  "fune": "zu_momotaro/fune.png",
+  "furyoku": "zu_momotaro/furyoku.png",
+  "hakko": "zu_momotaro/hakko.png",
+  "hana": "zu_momotaro/hana.png",
+  "hozon": "zu_momotaro/hozon.png",
+  "ion": "zu_momotaro/ion.png",
+  "kanabo": "zu_momotaro/kanabo.png",
+  "kiru": "zu_momotaro/kiru.png",
+  "kokyu": "zu_momotaro/kokyu.png",
+  "kosoku": "zu_momotaro/kosoku.png",
+  "mitsudo": "zu_momotaro/mitsudo.png",
+  "momo_size": "zu_momotaro/momo_size.png",
+  "nijo": "zu_momotaro/nijo.png",
+  "oni_hikaku": "zu_momotaro/oni_hikaku.png",
+  "rodo": "zu_momotaro/rodo.png",
+  "security": "zu_momotaro/security.png",
+  "seicho": "zu_momotaro/seicho.png",
+  "tento": "zu_momotaro/tento.png"
+ },
+ "lines": [
+  {
+   "chapter": "オープニング",
+   "hook": true,
+   "se": "don",
+   "scene": "battle",
+   "crop": [
+    0.45,
+    0.45,
+    1.0
+   ],
+   "text": "鬼が負けた本当の理由\nそれは<でかすぎた>から",
+   "say": "桃太郎で鬼が負けた、本当の理由。それは、鬼がでかすぎたからです。",
+   "tone": "一文目から力強く言い切る。前置きなし"
+  },
+  {
+   "scene": "battle",
+   "crop": [
+    0.5,
+    0.5,
+    1.25
+   ],
+   "text": "今日は桃太郎を最初から最後まで\n{現代風に解説}します",
+   "say": "今日は桃太郎を、最初から最後まで、現代風に解説していきます。",
+   "tone": "得意げに、楽しそうに"
+  },
+  {
+   "scene": "battle",
+   "crop": [
+    0.25,
+    0.5,
+    1.5
+   ],
+   "text": "誰が見ても{納得できる}\n桃太郎を目指します",
+   "say": "誰が見ても納得できるような桃太郎を目指します。",
+   "tone": "堂々と宣言する"
+  },
+  {
+   "scene": "river",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "それでは…\nむかしむかし",
+   "say": "それでは。むかしむかし。",
+   "tone": "急に昔話っぽく、でもテンポよくに切り替える"
+  },
+  {
+   "chapter": "第1章 250キロの桃",
+   "scene": "river",
+   "crop": [
+    0.5,
+    0.45,
+    1.15
+   ],
+   "text": "あるところに\nおじいさんとおばあさんがいました",
+   "say": "あるところに、おじいさんとおばあさんがいました。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "river",
+   "crop": [
+    0.86,
+    0.35,
+    1.6
+   ],
+   "text": "おじいさんは山へ{しば刈り}に\nおばあさんは川へ{洗濯}に",
+   "say": "おじいさんは山へしば刈りに、おばあさんは川へ洗濯に行きました。",
+   "tone": "昔話っぽく、でもテンポよく"
+  },
+  {
+   "scene": "river",
+   "crop": [
+    0.86,
+    0.35,
+    1.8
+   ],
+   "text": "しばは{薪にする小枝}の「柴」\n<ここテストに出ます>",
+   "say": "ちなみに、しば刈りのしばは、芝生の芝ではありません。薪にする小枝の、柴です。ここ、テストに出ます。",
+   "tone": "早口の豆知識。最後は先生っぽく念を押す"
+  },
+  {
+   "scene": "river",
+   "crop": [
+    0.55,
+    0.55,
+    1.3
+   ],
+   "text": "すると川上から\n{大きな桃}がどんぶらこ",
+   "say": "すると川上から、大きな桃が、どんぶらこ、どんぶらこ。",
+   "tone": "昔話らしく、楽しげに"
+  },
+  {
+   "scene": "river",
+   "crop": [
+    0.55,
+    0.6,
+    1.5
+   ],
+   "text": "はい、ここで\n{冷静に}考えてみます",
+   "say": "はい。ここで、冷静に考えてみます。",
+   "tone": "急に真顔になる。早口"
+  },
+  {
+   "scene": "river",
+   "crop": [
+    0.56,
+    0.6,
+    1.7
+   ],
+   "text": "赤ちゃんが入る桃なら\n直径{80センチ}は欲しい",
+   "say": "赤ちゃんが入る桃なら、直径80センチは欲しいところ。",
+   "tone": "真剣に設計するように"
+  },
+  {
+   "shot": {
+    "image": "momo_size"
+   },
+   "move": "still",
+   "text": "普通の桃は直径8センチ・約250グラム\n大きさは{10倍}",
+   "say": "普通の桃は、直径8センチで、約250グラム。大きさは10倍です。",
+   "tone": "淡々と数字を並べる"
+  },
+  {
+   "shot": {
+    "image": "momo_size"
+   },
+   "move": "still",
+   "text": "大きさが10倍なら\n重さは10×10×10で<1000倍>",
+   "say": "大きさが10倍なら、重さは、10かける10かける10で、1000倍。",
+   "tone": "得意げに、一つずつ強調"
+  },
+  {
+   "shot": {
+    "image": "momo_size"
+   },
+   "move": "still",
+   "text": "つまりこの桃\n約<250キロ>",
+   "say": "つまりこの桃、約250キロです。",
+   "tone": "嫌な予感を込めて"
+  },
+  {
+   "shot": {
+    "image": "momo_size"
+   },
+   "move": "still",
+   "text": "おばあさんと並べると\n{この大きさ}",
+   "say": "同じ縮尺で、おばあさんと並べると、この大きさ。",
+   "tone": "図を指さすように"
+  },
+  {
+   "shot": {
+    "image": "nijo"
+   },
+   "move": "still",
+   "text": "大きさ2倍で面積4倍・重さ8倍\nこれが{二乗三乗の法則}",
+   "say": "大きさが2倍になると、面積は4倍、体積と重さは8倍。これを、二乗三乗の法則といいます。",
+   "tone": "ここは大事、とばかりにはっきり"
+  },
+  {
+   "shot": {
+    "image": "nijo"
+   },
+   "move": "still",
+   "text": "2倍の立方体は\n小さい立方体{8個}でできている",
+   "say": "角砂糖で考えてみましょう。大きさ2倍の立方体は、小さい角砂糖8個でできています。",
+   "tone": "図を見せながら、はっきり"
+  },
+  {
+   "shot": {
+    "image": "nijo"
+   },
+   "move": "still",
+   "text": "表面は{4倍}なのに\n中身は<8倍>",
+   "say": "表面は4倍なのに、中身は8倍。この差が、あとで鬼を苦しめます。",
+   "tone": "意味ありげに"
+  },
+  {
+   "shot": {
+    "image": "nijo"
+   },
+   "move": "still",
+   "text": "この法則\n<最後の鬼退治>まで効いてきます",
+   "say": "この法則、最後の鬼退治まで効いてきますので、覚えておいてください。",
+   "tone": "意味ありげに、少しニヤリと"
+  },
+  {
+   "scene": "river",
+   "crop": [
+    0.16,
+    0.55,
+    1.7
+   ],
+   "text": "おばあさん\n<持てません>",
+   "say": "おばあさん、持てません。",
+   "tone": "気の毒そうに、でも淡々と"
+  },
+  {
+   "scene": "river",
+   "crop": [
+    0.55,
+    0.6,
+    1.4
+   ],
+   "text": "でも待ってください\n桃は{浮いています}",
+   "say": "でも、待ってください。桃は、浮いています。",
+   "tone": "ひらめいた。声が明るくなる"
+  },
+  {
+   "shot": {
+    "image": "furyoku"
+   },
+   "move": "still",
+   "text": "浮いているということは\n桃全体の密度が{水より小さい}",
+   "say": "浮いているということは、桃全体の密度が、水より小さいということ。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "furyoku"
+   },
+   "move": "still",
+   "text": "赤ちゃんの入った{空洞}があるぶん\n平均すると軽い",
+   "say": "赤ちゃんの入った空洞があるぶん、平均すると軽くなるんです。",
+   "tone": "納得させるように"
+  },
+  {
+   "shot": {
+    "image": "furyoku"
+   },
+   "move": "still",
+   "text": "そして浮いている限り\n重さは{浮力}が支えてくれる",
+   "say": "そして、浮いている限り、重さは水の浮力が支えてくれます。",
+   "tone": "得意げに"
+  },
+  {
+   "scene": "river",
+   "crop": [
+    0.17,
+    0.62,
+    1.5
+   ],
+   "text": "おばあさんは{フルエンチャント済の}\n{ダイヤスコップ}で<水路を掘りました>",
+   "say": "結論。おばあさんは、フルエンチャント済のダイヤスコップで、川から家まで水路を掘りました。",
+   "tone": "当然のことのように、さらっと"
+  },
+  {
+   "scene": "river",
+   "crop": [
+    0.86,
+    0.35,
+    1.6
+   ],
+   "text": "しば刈りから帰ったおじいさん\n庭に{250キロの桃}",
+   "say": "しば刈りから帰ったおじいさんが見たのは、庭に浮かぶ、250キロの桃でした。",
+   "tone": "オチ。真顔でぼそっと"
+  },
+  {
+   "chapter": "第2章 桃太郎、酸欠と熟成",
+   "scene": "house",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "さっそく{包丁}で\n切ってみると",
+   "say": "さっそく包丁で切ってみると",
+   "tone": "昔話調、わくわくと"
+  },
+  {
+   "shot": {
+    "image": "kiru"
+   },
+   "move": "still",
+   "text": "ここで問題\n包丁は桃の{ど真ん中}を通る",
+   "say": "ここで問題。桃を真っ二つに切るとき、包丁の刃は、桃のど真ん中を通ります。",
+   "tone": "急に深刻に"
+  },
+  {
+   "shot": {
+    "image": "kiru"
+   },
+   "move": "still",
+   "text": "真ん中にいたら\n桃太郎も<真っ二つ>",
+   "say": "真ん中にいたら、桃太郎も真っ二つ。",
+   "tone": "ぞっとしたように"
+  },
+  {
+   "shot": {
+    "image": "kiru"
+   },
+   "move": "still",
+   "text": "助かるには\n桃の{端っこに張り付く}しかない",
+   "say": "助かるには、切る線から離れた、桃の端っこに張り付いておくしかありません。",
+   "tone": "解説モード"
+  },
+  {
+   "shot": {
+    "image": "kiru"
+   },
+   "move": "still",
+   "text": "包丁の刃渡りは{20cm前後}\n直径80cmの桃は一度で切れない",
+   "say": "しかも包丁の刃渡りは、ふつう20センチ前後。直径80センチの桃は、一度では切れません。",
+   "tone": "早口で"
+  },
+  {
+   "shot": {
+    "image": "kiru"
+   },
+   "move": "still",
+   "text": "何度も刃が入るあいだ\nずっと<端っこで耐えていた>",
+   "say": "おばあさんが何度も刃を入れるあいだ、桃太郎は、ずっと端っこで耐えていたことになります。",
+   "tone": "気の毒そうに、でも淡々と"
+  },
+  {
+   "scene": "house",
+   "crop": [
+    0.5,
+    0.55,
+    1.2
+   ],
+   "text": "そして、ついに",
+   "say": "そして、ついに。",
+   "tone": "ためて"
+  },
+  {
+   "scene": "house",
+   "crop": [
+    0.36,
+    0.6,
+    1.5
+   ],
+   "text": "中から{元気な男の子}！\n名前は{桃太郎}",
+   "say": "中から元気な男の子！名前は、桃太郎。",
+   "tone": "昔話らしく盛り上げる"
+  },
+  {
+   "scene": "house",
+   "crop": [
+    0.34,
+    0.6,
+    1.8
+   ],
+   "text": "でもちょっと待ってください\n桃の中に{酸素}ってあるんですか？",
+   "say": "でもちょっと待ってください。桃の中に、酸素ってあるんですか。",
+   "tone": "急に冷静にツッコむ"
+  },
+  {
+   "shot": {
+    "image": "kokyu"
+   },
+   "move": "still",
+   "text": "果物は、もいだあとも\n生きて{呼吸}している",
+   "say": "実は果物は、木からもいだあとも生きていて、呼吸をしています。",
+   "tone": "へぇと言わせるように"
+  },
+  {
+   "shot": {
+    "image": "kokyu"
+   },
+   "move": "still",
+   "text": "酸素を吸って\n{二酸化炭素}を出す",
+   "say": "酸素を吸って、二酸化炭素を出す。",
+   "tone": "早口で"
+  },
+  {
+   "shot": {
+    "image": "kokyu"
+   },
+   "move": "still",
+   "text": "つまり桃太郎は\n桃と<酸素を奪い合っていた>",
+   "say": "つまり桃太郎は、桃の中で、桃と酸素を奪い合っていたんです。",
+   "tone": "深刻そうに"
+  },
+  {
+   "shot": {
+    "image": "kokyu"
+   },
+   "move": "still",
+   "text": "しかも桃は熟すとき\n{エチレン}というガスを出す",
+   "say": "しかも桃は、熟すときに、エチレンというガスを出します。",
+   "tone": "得意げに"
+  },
+  {
+   "shot": {
+    "image": "kokyu"
+   },
+   "move": "still",
+   "text": "エチレンは\n果物を{熟させるガス}",
+   "say": "エチレンは、果物を熟させるガス。",
+   "tone": "早口で"
+  },
+  {
+   "scene": "house",
+   "crop": [
+    0.34,
+    0.6,
+    1.8
+   ],
+   "text": "この桃太郎は\n桃の中で<熟成>されていたことになります",
+   "say": "この桃太郎は、桃の中で熟成されていたことになります。",
+   "tone": "オチ。真顔でぼそっと"
+  },
+  {
+   "scene": "house",
+   "crop": [
+    0.6,
+    0.57,
+    1.6
+   ],
+   "text": "さらに{桃のつくり}を\n見てみると",
+   "say": "さらに、桃のつくりを見てみると",
+   "tone": "もったいぶって"
+  },
+  {
+   "shot": {
+    "image": "danmen"
+   },
+   "move": "still",
+   "text": "桃は{核果}\n奥の硬い{核}の中に種がある",
+   "say": "桃は、核果という果物。いちばん奥の硬い核の中に、種があります。",
+   "tone": "解説モード"
+  },
+  {
+   "shot": {
+    "image": "danmen"
+   },
+   "move": "still",
+   "text": "皮も果肉も核も\nめしべの{子房の壁}が育ったもの",
+   "say": "皮も、果肉も、硬い核も、全部、めしべの根元の、子房の壁が育ったものです。",
+   "tone": "解説モード"
+  },
+  {
+   "shot": {
+    "image": "danmen"
+   },
+   "move": "still",
+   "text": "桃の実は\n{種を守る入れ物}",
+   "say": "つまり桃の実は、種を守って運んでもらうための、入れ物なんです。",
+   "tone": "へぇと言わせるように"
+  },
+  {
+   "shot": {
+    "image": "danmen"
+   },
+   "move": "still",
+   "text": "桃から生まれるものは\n本来{種}だけ",
+   "say": "つまり、桃から生まれるものは、本来、種だけ。",
+   "tone": "ツッコむように"
+  },
+  {
+   "scene": "house",
+   "crop": [
+    0.46,
+    0.6,
+    1.5
+   ],
+   "text": "つまり桃太郎は\n<でっかい種>ということにもなります",
+   "say": "つまり桃太郎は、でっかい種ということにもなります。",
+   "tone": "真顔で断言する"
+  },
+  {
+   "scene": "house",
+   "crop": [
+    0.3,
+    0.55,
+    1.5
+   ],
+   "text": "そんな{完熟種子太郎}こと桃太郎は\nすくすく育ちました",
+   "say": "そんなかんじゅくしゅしたろうこと桃太郎は、すくすく育ちました。",
+   "tone": "言い切って、昔話調に戻る"
+  },
+  {
+   "shot": {
+    "image": "seicho"
+   },
+   "move": "still",
+   "text": "人間の赤ちゃんは1年で\n身長が{約25センチ}伸びる",
+   "say": "ちなみに人間の赤ちゃんは、生まれてから1年で、身長が約25センチも伸びます。",
+   "tone": "豆知識を早口で"
+  },
+  {
+   "shot": {
+    "image": "seicho"
+   },
+   "move": "still",
+   "text": "1歳で約12cm・2歳で約8cm\nどんどん{ペースが落ちる}",
+   "say": "1歳では約12センチ、2歳では約8センチ。ペースはどんどん落ちていきます。",
+   "tone": "早口で"
+  },
+  {
+   "shot": {
+    "image": "seicho"
+   },
+   "move": "still",
+   "text": "いちばん背が伸びるのは\n思春期じゃなく<0歳>",
+   "say": "人生でいちばん背が伸びるのは、思春期じゃなくて、0歳なんです。",
+   "tone": "得意げに"
+  },
+  {
+   "chapter": "第3章 きびだんご1個の雇用契約",
+   "scene": "road",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "立派な若者になった桃太郎\n「{鬼ヶ島}へ鬼退治に行きます」",
+   "say": "立派な若者になった桃太郎。鬼ヶ島へ、鬼退治に行きます、と言いました。",
+   "tone": "昔話調、凛々しく"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.46,
+    0.6,
+    1.8
+   ],
+   "text": "おばあさんは\n{きびだんご}を持たせました",
+   "say": "おばあさんは、きびだんごを作って持たせました。",
+   "tone": "やさしく"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.46,
+    0.6,
+    1.5
+   ],
+   "text": "でもだんごは\n{すぐ硬くなる}",
+   "say": "でも、だんごは、すぐ硬くなります。",
+   "tone": "心配そうに"
+  },
+  {
+   "shot": {
+    "image": "hozon"
+   },
+   "move": "still",
+   "text": "硬くなる原因は{でんぷんの老化}\n冷蔵庫の温度で<いちばん進む>",
+   "say": "硬くなる原因は、でんぷんの老化。実は、冷蔵庫くらいの温度で、いちばん早く進みます。",
+   "tone": "へぇと言わせるように"
+  },
+  {
+   "shot": {
+    "image": "hozon"
+   },
+   "move": "still",
+   "text": "作りたてを{冷凍}すれば\n老化はほぼ止まる",
+   "say": "だから、作りたてをすぐ冷凍。凍らせてしまえば、老化はほぼ止まります。",
+   "tone": "解説モード"
+  },
+  {
+   "shot": {
+    "image": "hozon"
+   },
+   "move": "still",
+   "text": "持ち歩くなら{真空パック}に\n{脱酸素剤}でカビ対策",
+   "say": "持ち歩くなら、真空パックに脱酸素剤。これでカビも防げます。",
+   "tone": "得意げに"
+  },
+  {
+   "shot": {
+    "image": "hozon"
+   },
+   "move": "still",
+   "text": "おばあさん\n<まさかの保存食メーカー>",
+   "say": "おばあさん、まさかの保存食メーカーです。",
+   "tone": "オチ。ぼそっと"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.2,
+    0.6,
+    1.6
+   ],
+   "text": "歩いていると\n{犬}がやってきました",
+   "say": "歩いていると、犬がやってきました。",
+   "tone": "昔話調"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.25,
+    0.6,
+    1.5
+   ],
+   "text": "「そのだんご1つくれたら\nお供します」",
+   "say": "そのだんご、ひとつくれたら、お供しますよ。",
+   "tone": "犬のセリフ。少しおどけて"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.35,
+    0.55,
+    1.3
+   ],
+   "text": "契約成立\n報酬は{だんご1個}",
+   "say": "契約成立。報酬は、だんご1個です。",
+   "tone": "事務的に"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.55,
+    0.4,
+    1.8
+   ],
+   "text": "ここで\n{お給料}の話です",
+   "say": "ここで、お給料の話です。",
+   "tone": "急に事務的に"
+  },
+  {
+   "shot": {
+    "image": "dango"
+   },
+   "move": "still",
+   "text": "だんご1個\nおよそ{40キロカロリー}",
+   "say": "きびだんご1個は、およそ40キロカロリー。",
+   "tone": "淡々と"
+  },
+  {
+   "shot": {
+    "image": "dango"
+   },
+   "move": "still",
+   "text": "体重10キロの犬が1日に必要なのは\nおよそ{600キロカロリー}",
+   "say": "体重10キロの犬が、1日に必要なのは、およそ600キロカロリー。",
+   "tone": "淡々と、少し心配そうに"
+  },
+  {
+   "shot": {
+    "image": "dango"
+   },
+   "move": "still",
+   "text": "報酬は\n1日分の<約15分の1>",
+   "say": "報酬は、1日分の、約15分の1。",
+   "tone": "気の毒そうに"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.45,
+    0.5,
+    1.1
+   ],
+   "text": "命がけの鬼退治で\nこの報酬は<ブラック>",
+   "say": "命がけの鬼退治で、この報酬。完全にブラックです。",
+   "tone": "オチ。真顔でぼそっと"
+  },
+  {
+   "shot": {
+    "image": "rodo"
+   },
+   "move": "still",
+   "text": "ここで{法律}の話\n賃金は<お金で払う>のが原則",
+   "say": "ここで法律の話。人を雇うなら、賃金はお金で払うのが原則。労働基準法の、通貨払いの原則です。",
+   "tone": "急にきっちりした口調で"
+  },
+  {
+   "shot": {
+    "image": "rodo"
+   },
+   "move": "still",
+   "text": "しかも{最低賃金}以上\nだんご1個は<完全にアウト>",
+   "say": "しかも金額は、最低賃金以上でなければいけません。だんご1個では、完全にアウト。",
+   "tone": "厳しく"
+  },
+  {
+   "shot": {
+    "image": "rodo"
+   },
+   "move": "still",
+   "text": "働く条件も\n{はっきり示す}決まり",
+   "say": "さらに、仕事の内容や条件は、はっきり示す決まりもあります。",
+   "tone": "淡々と"
+  },
+  {
+   "shot": {
+    "image": "rodo"
+   },
+   "move": "still",
+   "text": "ただし犬は法律上\n人ではなく{物}のあつかい",
+   "say": "ただし、犬は法律上、人ではなく、物のあつかい。",
+   "tone": "ひそひそと"
+  },
+  {
+   "shot": {
+    "image": "rodo"
+   },
+   "move": "still",
+   "text": "労働者にはあたらないので\n<ギリギリセーフ…？>",
+   "say": "労働者にはあたらないので、ギリギリセーフ…なのか？",
+   "tone": "自信なさげに"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.4,
+    0.5,
+    1.3
+   ],
+   "text": "しかも桃太郎たちは\n{お金を持っていない}",
+   "say": "しかも桃太郎たちは、お金をもらっていないので、食べ物を買うこともできません。",
+   "tone": "だんだん深刻に"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.4,
+    0.45,
+    1.6
+   ],
+   "text": "だんごが尽きたら\n<飢え死にの危険>",
+   "say": "手持ちのだんごが尽きたら、飢え死にの危険。",
+   "tone": "深刻に"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.5,
+    0.5,
+    1.1
+   ],
+   "text": "一刻も早く\n鬼退治を終わらせるしかない",
+   "say": "一刻も早く、鬼退治を終わらせるしかありません。",
+   "tone": "決意を込めて"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.45,
+    0.5,
+    1.4
+   ],
+   "text": "<鬼退治RTA>\nの始まりです",
+   "say": "最速クリアを目指す、鬼退治RTAの始まりです。",
+   "tone": "ゲーム実況風に、テンション高く"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.68,
+    0.45,
+    1.3
+   ],
+   "text": "続いて{猿}、そして{キジ}も\n仲間になりました",
+   "say": "続いて猿、そしてキジも、仲間になりました。",
+   "tone": "昔話調、テンポよく"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.88,
+    0.25,
+    1.8
+   ],
+   "text": "ところで\nなぜ{猫}はいないのか",
+   "say": "ところで、なぜ猫はいないのか。",
+   "tone": "もったいぶって"
+  },
+  {
+   "shot": {
+    "image": "amami"
+   },
+   "move": "still",
+   "text": "猫は\n{甘みを感じない}",
+   "say": "答え。猫は、甘みを感じない動物だからです。",
+   "tone": "得意げに"
+  },
+  {
+   "shot": {
+    "image": "amami"
+   },
+   "move": "still",
+   "text": "甘みセンサーの遺伝子が\n{働いていない}",
+   "say": "甘みを感じるセンサーの遺伝子が、働かなくなっているんです。",
+   "tone": "早口の解説"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.88,
+    0.25,
+    1.5
+   ],
+   "text": "だんごで雇えない猫に\n<用はありません>",
+   "say": "だんごで雇えない猫に、用はありません。",
+   "tone": "冷たく、きっぱり"
+  },
+  {
+   "shot": {
+    "image": "amami"
+   },
+   "move": "still",
+   "text": "ついでに言うと\n{キジ}もあやしい",
+   "say": "ついでに言うと、キジも、あやしい。",
+   "tone": "ひそひそと"
+  },
+  {
+   "shot": {
+    "image": "amami"
+   },
+   "move": "still",
+   "text": "鳥の多くは甘みセンサーの\n{遺伝子そのものが無い}",
+   "say": "鳥の仲間の多くは、甘みセンサーの遺伝子そのものを、持っていないんです。",
+   "tone": "早口の解説"
+  },
+  {
+   "shot": {
+    "image": "amami"
+   },
+   "move": "still",
+   "text": "味じゃなくて{義理と正義感}で\nついてきてくれている<忠臣〜>",
+   "say": "キジ、たぶん、味じゃなくて、義理と正義感でついてきてくれています。忠臣〜。",
+   "tone": "しみじみ感動して、最後は泣きそうに"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.72,
+    0.67,
+    1.8
+   ],
+   "text": "そしてキジは\n{日本の国鳥}",
+   "say": "そしてキジは、日本の国鳥。",
+   "tone": "誇らしげに"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.72,
+    0.67,
+    1.8
+   ],
+   "text": "ただしキジは\n{長い距離を飛ぶのが苦手}",
+   "say": "ただし、キジは長い距離を飛ぶのが苦手。ふだんは地面を歩いて暮らしています。",
+   "tone": "ちょっと残念そうに"
+  },
+  {
+   "scene": "road",
+   "crop": [
+    0.72,
+    0.67,
+    1.5
+   ],
+   "text": "空からの偵察担当\n<ほぼ徒歩>",
+   "say": "空からの偵察担当、ほぼ徒歩です。",
+   "tone": "オチ。真顔で"
+  },
+  {
+   "chapter": "第4章 鬼退治RTAと船酔い",
+   "scene": "sea",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "一行は舟で\n{鬼ヶ島}へ",
+   "say": "一行は、舟で鬼ヶ島へ向かいます。",
+   "tone": "昔話調、冒険らしく"
+  },
+  {
+   "scene": "sea",
+   "crop": [
+    0.3,
+    0.5,
+    1.3
+   ],
+   "text": "RTA中なので\n舟は{速いほうがいい}",
+   "say": "RTA中なので、舟は速いほうがいい。",
+   "tone": "焦り気味に"
+  },
+  {
+   "shot": {
+    "image": "kosoku"
+   },
+   "move": "still",
+   "text": "水をかき分ける舟には\n{長さで決まる速さの壁}",
+   "say": "ところが、水をかき分けて進む舟には、長さで決まる速さの壁があります。",
+   "tone": "解説モード"
+  },
+  {
+   "shot": {
+    "image": "kosoku"
+   },
+   "move": "still",
+   "text": "長さ4mの舟なら\n時速{9キロ前後}が目安",
+   "say": "長さ4メートルの舟なら、目安は時速9キロ前後。そこから先は、いくら漕いでも波が大きくなるばかり。",
+   "tone": "早口で"
+  },
+  {
+   "shot": {
+    "image": "kosoku"
+   },
+   "move": "still",
+   "text": "壁を越えるには\n水の上を{滑らせる}",
+   "say": "壁を越えるには、舟を水の上に浮かせて滑らせるしかない。これを、滑走といいます。",
+   "tone": "得意げに"
+  },
+  {
+   "shot": {
+    "image": "kosoku"
+   },
+   "move": "still",
+   "text": "現代なら{船外機}\nエンジンの力で滑走",
+   "say": "現代なら、船外機。エンジンの力で、舟を一気に滑走させます。",
+   "tone": "テンション高く",
+   "note": "※桃太郎は小型船舶免許取得済み"
+  },
+  {
+   "shot": {
+    "image": "kosoku"
+   },
+   "move": "still",
+   "text": "燃料はガソリン\n<だんごでは動きません>",
+   "say": "燃料はガソリン。きびだんごでは、動きません。",
+   "tone": "オチ。真顔で"
+  },
+  {
+   "scene": "sea",
+   "crop": [
+    0.82,
+    0.3,
+    1.8
+   ],
+   "text": "香川県の{女木島}は\n「鬼ヶ島」と呼ばれている",
+   "say": "ちなみに、香川県の女木島は、鬼ヶ島と呼ばれ、鬼のすみかとされる洞くつもあります。",
+   "tone": "豆知識を楽しそうに"
+  },
+  {
+   "scene": "sea",
+   "crop": [
+    0.28,
+    0.6,
+    1.8
+   ],
+   "text": "スピードを上げたとたん\n{犬}がぐったり",
+   "say": "スピードを上げたとたん、犬がぐったり。",
+   "tone": "心配そうに"
+  },
+  {
+   "scene": "sea",
+   "crop": [
+    0.28,
+    0.6,
+    1.8
+   ],
+   "text": "<船酔い>です",
+   "say": "船酔いです。",
+   "tone": "真顔で"
+  },
+  {
+   "shot": {
+    "image": "funayoi"
+   },
+   "move": "still",
+   "text": "船酔いは{目}と{耳の奥}の\n情報のズレで起きるとされる",
+   "say": "船酔いは、目で見た景色と、耳の奥の平衡感覚の情報がズレることで起きる、と考えられています。",
+   "tone": "解説モード"
+  },
+  {
+   "shot": {
+    "image": "funayoi"
+   },
+   "move": "still",
+   "text": "{遠くの水平線}を見ると\n酔いにくいと言われる",
+   "say": "遠くの水平線を見ると酔いにくい、と言われるのは、目と耳の情報をそろえるためです。",
+   "tone": "解説モード"
+  },
+  {
+   "scene": "sea",
+   "crop": [
+    0.28,
+    0.6,
+    1.8
+   ],
+   "text": "犬に「水平線を見ろ」は\n<通じません>",
+   "say": "ただし、犬に水平線を見ろと言っても、通じません。",
+   "tone": "オチ。ぼそっと"
+  },
+  {
+   "scene": "sea",
+   "crop": [
+    0.28,
+    0.6,
+    1.6
+   ],
+   "text": "犬も\n{乗り物酔い}します",
+   "say": "ちなみに、犬も乗り物酔いします。",
+   "tone": "豆知識"
+  },
+  {
+   "scene": "sea",
+   "crop": [
+    0.72,
+    0.52,
+    1.8
+   ],
+   "text": "一方、猿は{平気}",
+   "say": "一方、猿は平気。",
+   "tone": "意外そうに"
+  },
+  {
+   "scene": "sea",
+   "crop": [
+    0.72,
+    0.52,
+    1.8
+   ],
+   "text": "宮崎の幸島のニホンザルは\n{芋を海水で洗って}食べる",
+   "say": "宮崎県の幸島にいるニホンザルは、サツマイモを海水で洗って食べることで有名です。",
+   "tone": "へぇと言わせるように"
+  },
+  {
+   "scene": "sea",
+   "crop": [
+    0.72,
+    0.52,
+    1.6
+   ],
+   "text": "猿、海では\n<まさかのベテラン>",
+   "say": "猿、海では、まさかのベテランです。",
+   "tone": "オチ。ぼそっと"
+  },
+  {
+   "chapter": "第5章 鬼の弱点は体重",
+   "scene": "feast",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "ついに{鬼ヶ島}に上陸\n鬼たちは{大宴会}の真っ最中",
+   "say": "ついに鬼ヶ島に上陸。鬼たちは、大宴会の真っ最中でした。",
+   "tone": "緊迫感をもって"
+  },
+  {
+   "scene": "feast",
+   "crop": [
+    0.3,
+    0.45,
+    1.8
+   ],
+   "text": "赤鬼の顔が赤いのは\n{お酒}のせいかもしれない",
+   "say": "赤鬼の顔が赤いのは、お酒のせいかもしれません。",
+   "tone": "ひそひそと"
+  },
+  {
+   "shot": {
+    "image": "alcohol"
+   },
+   "move": "still",
+   "text": "アルコールは体の中で\n{アセトアルデヒド}に変わる",
+   "say": "アルコールは、体の中で、アセトアルデヒドという物質に変わります。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "alcohol"
+   },
+   "move": "still",
+   "text": "これを分解する酵素が弱いと\n{顔が赤くなる}",
+   "say": "これを分解する酵素の働きが弱いと、顔が赤くなります。",
+   "tone": "早口で"
+  },
+  {
+   "shot": {
+    "image": "alcohol"
+   },
+   "move": "still",
+   "text": "日本人の{約4割}は\nこの酵素が弱いタイプ",
+   "say": "日本人の約4割は、この酵素の働きが弱いタイプだといわれています。",
+   "tone": "へぇと言わせるように"
+  },
+  {
+   "shot": {
+    "image": "alcohol"
+   },
+   "move": "still",
+   "text": "ほぼ働かない人も{約4%}\nお酒の無理強いは<鬼でもダメ>",
+   "say": "酵素がほとんど働かない人も、約4パーセント。お酒の無理強いは、鬼でもダメです。",
+   "tone": "少し真面目に、きっぱり"
+  },
+  {
+   "scene": "feast",
+   "crop": [
+    0.3,
+    0.45,
+    1.8
+   ],
+   "text": "つまり赤鬼は{日本人気質}\n<純ジャパニーズ>です",
+   "say": "つまり赤鬼は、日本人気質。純ジャパニーズです。",
+   "tone": "オチ。真顔でぼそっと"
+  },
+  {
+   "scene": "feast",
+   "crop": [
+    0.82,
+    0.5,
+    1.8
+   ],
+   "text": "では{青鬼}は？",
+   "say": "では、青鬼は。",
+   "tone": "もったいぶって"
+  },
+  {
+   "scene": "feast",
+   "crop": [
+    0.82,
+    0.5,
+    1.8
+   ],
+   "text": "血の中の酸素が足りないと\n唇や肌が{青紫}っぽくなる",
+   "say": "血の中の酸素が足りないと、唇や肌が、青紫っぽくなることがあります。",
+   "tone": "解説モード"
+  },
+  {
+   "scene": "feast",
+   "crop": [
+    0.82,
+    0.5,
+    1.6
+   ],
+   "text": "青鬼は青鬼で{酸欠状態}\n<酒飲むなよ>",
+   "say": "つまり青鬼は青鬼で、酸欠状態を引き起こしています。酒飲むなよ。",
+   "tone": "あきれてツッコむ"
+  },
+  {
+   "scene": "feast",
+   "crop": [
+    0.1,
+    0.43,
+    1.8
+   ],
+   "text": "壁には{金棒}",
+   "say": "壁には、鬼の金棒。",
+   "tone": "少し怖そうに"
+  },
+  {
+   "shot": {
+    "image": "kanabo"
+   },
+   "move": "still",
+   "text": "直径12cm・長さ1.5mの鉄なら\n約{130キロ}",
+   "say": "直径12センチ、長さ1.5メートルの鉄の棒なら、約130キロあります。",
+   "tone": "淡々と"
+  },
+  {
+   "shot": {
+    "image": "kanabo"
+   },
+   "move": "still",
+   "text": "お米の30キロ袋\n{4袋以上}を振り回す",
+   "say": "お米の30キロ袋、4袋以上を振り回している計算です。",
+   "tone": "感心したように"
+  },
+  {
+   "scene": "feast",
+   "crop": [
+    0.5,
+    0.5,
+    1.2
+   ],
+   "text": "ここで{冒頭の法則}を\n思い出してください",
+   "say": "ここで、冒頭の、二乗三乗の法則を思い出してください。",
+   "tone": "意味ありげに、ためて"
+  },
+  {
+   "shot": {
+    "image": "oni_hikaku"
+   },
+   "move": "still",
+   "text": "鬼の背たけを\n人の{2倍}とすると",
+   "say": "鬼の背たけを、人の2倍とします。",
+   "tone": "解説モード"
+  },
+  {
+   "shot": {
+    "image": "oni_hikaku"
+   },
+   "move": "still",
+   "text": "体重は2×2×2で\n<8倍>",
+   "say": "体重は、2かける2かける2で、8倍。",
+   "tone": "得意げに"
+  },
+  {
+   "shot": {
+    "image": "oni_hikaku"
+   },
+   "move": "still",
+   "text": "でも筋肉の力は\n{太さ＝断面積}で決まる",
+   "say": "ところが、筋肉が出せる力は、筋肉の太さ、つまり断面積で決まります。",
+   "tone": "ここが肝心、とはっきり"
+  },
+  {
+   "shot": {
+    "image": "oni_hikaku"
+   },
+   "move": "still",
+   "text": "断面積は2×2で\n{4倍}だけ",
+   "say": "断面積は、2かける2で、4倍だけ。",
+   "tone": "早口で"
+  },
+  {
+   "shot": {
+    "image": "oni_hikaku"
+   },
+   "move": "still",
+   "text": "体重8倍・力4倍\n体重あたりの力は<半分>",
+   "say": "体重は8倍なのに、力は4倍。体重あたりの力は、半分です。",
+   "tone": "勝ち誇るように"
+  },
+  {
+   "scene": "feast",
+   "crop": [
+    0.3,
+    0.5,
+    1.5
+   ],
+   "text": "鬼は自分の体重に\n<負けかけている>",
+   "say": "鬼は、自分の体重に、負けかけているんです。",
+   "tone": "オチ。ぼそっと"
+  },
+  {
+   "scene": "feast",
+   "crop": [
+    0.5,
+    0.5,
+    1.1
+   ],
+   "text": "ゾウがジャンプできないのも\nこの法則が{一因}",
+   "say": "ゾウがジャンプできないのも、この法則が一因です。",
+   "tone": "豆知識"
+  },
+  {
+   "scene": "battle",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "さあ\n{現代風鬼退治}の始まりです",
+   "say": "さあ、現代風鬼退治の始まりです。",
+   "tone": "勢いよく"
+  },
+  {
+   "scene": "feast",
+   "crop": [
+    0.58,
+    0.35,
+    1.6
+   ],
+   "text": "まずは門\n鬼ヶ島は{最新セキュリティ}",
+   "say": "まずは門。ところがこの鬼ヶ島、最新のセキュリティを導入していました。",
+   "tone": "緊迫して"
+  },
+  {
+   "shot": {
+    "image": "security"
+   },
+   "move": "still",
+   "text": "{顔認証スマートロック}と\n監視カメラ",
+   "say": "顔認証のスマートロックに、監視カメラ。登録された鬼の顔しか通しません。",
+   "tone": "解説モード"
+  },
+  {
+   "shot": {
+    "image": "security"
+   },
+   "move": "still",
+   "text": "猿が{鬼のお面}で\n突破を試みる",
+   "say": "そこで猿が、鬼のお面をかぶって、突破を試みます。",
+   "tone": "わくわくと"
+  },
+  {
+   "shot": {
+    "image": "security"
+   },
+   "move": "still",
+   "text": "最近の顔認証は\n{お面や写真を見破る}ものも多い",
+   "say": "しかし最近の顔認証は、お面や写真を見破る仕組みを持つものも多い。",
+   "tone": "冷静に"
+  },
+  {
+   "shot": {
+    "image": "security"
+   },
+   "move": "still",
+   "text": "<あっさり失敗>",
+   "say": "あっさり失敗。",
+   "tone": "ぼそっと"
+  },
+  {
+   "shot": {
+    "image": "security"
+   },
+   "move": "still",
+   "text": "最新の手口は\n{機械ではなく中の鬼}を狙う",
+   "say": "そこで最新の手口。狙うのは機械ではなく、中にいる鬼です。",
+   "tone": "もったいぶって"
+  },
+  {
+   "scene": "feast",
+   "crop": [
+    0.72,
+    0.33,
+    1.8
+   ],
+   "text": "犬がインターホンで\n「{お届けものでーす}」",
+   "say": "犬が、インターホン越しに一言。お届けものでーす。",
+   "tone": "犬のセリフ。明るく軽く"
+  },
+  {
+   "scene": "feast",
+   "crop": [
+    0.45,
+    0.4,
+    1.4
+   ],
+   "text": "酔った鬼\n確認もせずに<ドアを開ける>",
+   "say": "酔っぱらった鬼、確認もせずに、ドアを開けてしまいました。",
+   "tone": "あきれて"
+  },
+  {
+   "shot": {
+    "image": "security"
+   },
+   "move": "still",
+   "text": "人をだまして入り込む手口\n{ソーシャルエンジニアリング}",
+   "say": "人をだまして入り込む手口を、ソーシャルエンジニアリングといいます。",
+   "tone": "解説モード"
+  },
+  {
+   "shot": {
+    "image": "security"
+   },
+   "move": "still",
+   "text": "知らない訪問者に\n<すぐドアを開けない>",
+   "say": "知らない訪問者には、すぐドアを開けない。鬼も人間も、これがいちばんの防犯です。",
+   "tone": "少し真面目に、言い聞かせるように"
+  },
+  {
+   "scene": "battle",
+   "crop": [
+    0.27,
+    0.72,
+    1.8
+   ],
+   "text": "中に入ったら{犬}の出番\n鼻で鬼の居場所を探す",
+   "say": "中に入ったら、犬の出番。鼻で、鬼の居場所を探します。",
+   "tone": "テンポよく"
+  },
+  {
+   "shot": {
+    "image": "hana"
+   },
+   "move": "still",
+   "text": "犬のにおいセンサーは\n人の{2倍以上}の種類",
+   "say": "犬の、においを感じるセンサーの種類は、人間の2倍以上。",
+   "tone": "早口の豆知識"
+  },
+  {
+   "scene": "battle",
+   "crop": [
+    0.75,
+    0.75,
+    1.8
+   ],
+   "text": "酒のにおいで\n鬼の居場所は<バレバレ>",
+   "say": "しかも鬼は、酒のにおいをぷんぷんさせているので、居場所はバレバレ。",
+   "tone": "楽しそうに"
+  },
+  {
+   "scene": "battle",
+   "crop": [
+    0.42,
+    0.5,
+    1.4
+   ],
+   "text": "犬が{足首}にかみつき\n猿が{背中}をひっかく",
+   "say": "犬が足首にかみつき、猿が背中をひっかく。",
+   "tone": "勢いよく"
+  },
+  {
+   "scene": "battle",
+   "crop": [
+    0.58,
+    0.2,
+    1.8
+   ],
+   "text": "キジは{短い距離なら飛べる}\nここぞとばかりに頭をつつく",
+   "say": "そしてキジ。短い距離なら飛べるので、ここぞとばかりに頭をつつきます。",
+   "tone": "勢いよく"
+  },
+  {
+   "scene": "battle",
+   "crop": [
+    0.6,
+    0.45,
+    1.2
+   ],
+   "text": "たまらず鬼は\n<どしーん>と転倒",
+   "say": "たまらず鬼は、どしーん、と転倒。",
+   "tone": "大きく"
+  },
+  {
+   "scene": "battle",
+   "crop": [
+    0.6,
+    0.45,
+    1.6
+   ],
+   "text": "ここでも\n{二乗三乗の法則}",
+   "say": "ここでも、二乗三乗の法則です。",
+   "tone": "解説スイッチ"
+  },
+  {
+   "shot": {
+    "image": "tento"
+   },
+   "move": "still",
+   "text": "転ぶエネルギーは\n体重8倍×高さ2倍で<16倍>",
+   "say": "背が2倍の鬼が転ぶと、ぶつかるエネルギーは、体重8倍、高さ2倍で、16倍。",
+   "tone": "早口で得意げに"
+  },
+  {
+   "shot": {
+    "image": "tento"
+   },
+   "move": "still",
+   "text": "受け止める骨の断面積は\n{4倍}だけ",
+   "say": "それを受け止める骨の断面積は、4倍だけ。",
+   "tone": "早口で"
+  },
+  {
+   "shot": {
+    "image": "tento"
+   },
+   "move": "still",
+   "text": "骨にかかる負担は\n人間の<4倍>",
+   "say": "骨にかかる負担は、人間の4倍です。",
+   "tone": "強調して"
+  },
+  {
+   "scene": "battle",
+   "crop": [
+    0.5,
+    0.5,
+    1.1
+   ],
+   "text": "小さい子が転んでも平気なのと\n{同じ理屈}",
+   "say": "小さな子どもが転んでも、わりと平気なのと、同じ理屈です。",
+   "tone": "納得させるように"
+  },
+  {
+   "scene": "battle",
+   "crop": [
+    0.22,
+    0.35,
+    1.8
+   ],
+   "text": "最後に桃太郎\n<熟成されきった>その一撃",
+   "say": "最後に桃太郎。熟成されきったその一撃は、伊達ではありません。",
+   "tone": "真顔で、力強く"
+  },
+  {
+   "scene": "battle",
+   "crop": [
+    0.85,
+    0.6,
+    1.8
+   ],
+   "text": "鬼たちは\n{降参}しました",
+   "say": "鬼たちは、まいりました、と降参しました。",
+   "tone": "昔話調"
+  },
+  {
+   "scene": "battle",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "勝因は{チームワーク}と\n<鬼の虚弱体質>",
+   "say": "勝因は、チームワークと、鬼の虚弱体質でした。",
+   "tone": "満足げに"
+  },
+  {
+   "chapter": "第6章 金は重い",
+   "scene": "treasure",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "鬼は{宝物}を\n差し出しました",
+   "say": "鬼たちは、村から奪った宝物を、差し出しました。",
+   "tone": "昔話調"
+  },
+  {
+   "shot": {
+    "image": "mitsudo"
+   },
+   "move": "still",
+   "text": "しかしここで問題が\n金は水の<約19倍>重い物質",
+   "say": "しかしここで問題が。金は、水の約19倍重い物質です。",
+   "tone": "嫌な予感を込めて"
+  },
+  {
+   "shot": {
+    "image": "mitsudo"
+   },
+   "move": "still",
+   "text": "バケツ1杯分で\n{約190キロ}",
+   "say": "バケツ1杯分の金で、約190キロ。",
+   "tone": "絶望的な数字を淡々と"
+  },
+  {
+   "shot": {
+    "image": "mitsudo"
+   },
+   "move": "still",
+   "text": "鉄でも約79キロ\n金は{その2倍以上}",
+   "say": "鉄でも約79キロ。金は、その2倍以上です。",
+   "tone": "淡々と"
+  },
+  {
+   "shot": {
+    "image": "fune"
+   },
+   "move": "still",
+   "text": "舟が支えられるのは\n{押しのけた水の重さ}まで",
+   "say": "舟が支えられる重さは、舟が押しのけた水の重さまで。これも浮力です。",
+   "tone": "解説モード"
+  },
+  {
+   "shot": {
+    "image": "fune"
+   },
+   "move": "still",
+   "text": "4m×1mの舟を\nあと40cm沈めるなら{1.6トン}",
+   "say": "たとえば、長さ4メートル、幅1メートルの箱形の舟を、あと40センチ沈められるなら、積めるのは1.6トン。",
+   "tone": "解説モード、早口"
+  },
+  {
+   "shot": {
+    "image": "fune"
+   },
+   "move": "still",
+   "text": "金なら{約83リットル}\nバケツ<8杯ちょっと>で満載",
+   "say": "金なら約83リットル。バケツ8杯ちょっとで、もう満載です。",
+   "tone": "絶望的に"
+  },
+  {
+   "scene": "treasure",
+   "crop": [
+    0.6,
+    0.5,
+    1.8
+   ],
+   "text": "積みすぎると\n<沈みます>",
+   "say": "積みすぎると、沈みます。",
+   "tone": "真顔で"
+  },
+  {
+   "scene": "treasure",
+   "crop": [
+    0.32,
+    0.5,
+    1.3
+   ],
+   "text": "そこで桃太郎\nひらめいた",
+   "say": "そこで桃太郎、ひらめきました。",
+   "tone": "明るく"
+  },
+  {
+   "scene": "treasure",
+   "crop": [
+    0.88,
+    0.52,
+    1.8
+   ],
+   "text": "{鬼}に舟を\n引っぱってもらう",
+   "say": "鬼に、舟を引っぱって泳いでもらうことにしました。",
+   "tone": "当然のように、さらっと"
+  },
+  {
+   "scene": "treasure",
+   "crop": [
+    0.88,
+    0.52,
+    1.5
+   ],
+   "text": "でも鬼って\n{浮く}んですか？",
+   "say": "でも、鬼って、浮くんですか。",
+   "tone": "心配そうにツッコむ"
+  },
+  {
+   "scene": "treasure",
+   "crop": [
+    0.88,
+    0.52,
+    1.8
+   ],
+   "text": "人の体は息を吸うと\n{ほぼ水と同じ密度}",
+   "say": "人の体は、息をたっぷり吸った状態だと、ほぼ水と同じ密度。だから、なんとか浮きます。",
+   "tone": "解説モード"
+  },
+  {
+   "scene": "treasure",
+   "crop": [
+    0.88,
+    0.52,
+    1.8
+   ],
+   "text": "ただし青鬼は\n<息切れ中>",
+   "say": "ただし、青鬼は、息切れ中なので、赤鬼が担当しました。",
+   "tone": "オチ。真顔で"
+  },
+  {
+   "scene": "treasure",
+   "crop": [
+    0.88,
+    0.52,
+    1.8
+   ],
+   "text": "体重あたりでは弱い鬼も\n力そのものは人の<4倍>",
+   "say": "体重あたりでは弱い鬼も、力そのものは、人の4倍ありますから。",
+   "tone": "得意げに"
+  },
+  {
+   "scene": "treasure",
+   "crop": [
+    0.75,
+    0.52,
+    1.3
+   ],
+   "text": "でかいやつは\n{使いよう}",
+   "say": "でかいやつは、使いようです。",
+   "tone": "オチ。しみじみと"
+  },
+  {
+   "scene": "treasure",
+   "crop": [
+    0.88,
+    0.52,
+    1.5
+   ],
+   "text": "もちろん\n<タダ働き>はさせません",
+   "say": "もちろん、タダ働きはさせません。",
+   "tone": "きっぱりと"
+  },
+  {
+   "shot": {
+    "image": "rodo"
+   },
+   "move": "still",
+   "text": "赤鬼と{正式な雇用契約}\n仕事は舟を引いて泳ぐこと",
+   "say": "赤鬼と、正式に雇用契約を結びます。仕事の内容は、舟を引いて泳ぐこと。",
+   "tone": "事務的に、きっちり"
+  },
+  {
+   "shot": {
+    "image": "rodo"
+   },
+   "move": "still",
+   "text": "条件をはっきり示し\n{最低賃金以上}を<お金で>",
+   "say": "条件をはっきり示して、賃金は最低賃金以上を、お金で支払います。",
+   "tone": "きっちりと"
+  },
+  {
+   "scene": "treasure",
+   "crop": [
+    0.88,
+    0.52,
+    1.8
+   ],
+   "text": "犬のときとは大違い\n{ホワイト契約}",
+   "say": "犬のときとは大違い。今回は、まっとうなホワイト契約です。",
+   "tone": "誇らしげに"
+  },
+  {
+   "scene": "treasure",
+   "crop": [
+    0.88,
+    0.52,
+    1.8
+   ],
+   "text": "赤鬼、人生初の\n<まともな職場>",
+   "say": "赤鬼、人生初の、まともな職場に、涙を流しながら舟を引きました。",
+   "tone": "しみじみと"
+  },
+  {
+   "scene": "treasure",
+   "crop": [
+    0.3,
+    0.45,
+    1.6
+   ],
+   "text": "ちなみに雇い主の桃太郎は\n<まだ無給>",
+   "say": "ちなみに、雇い主の桃太郎自身は、まだ無給です。",
+   "tone": "オチ。真顔でぼそっと"
+  },
+  {
+   "chapter": "第7章 めでたし…？",
+   "scene": "home",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "村に帰ると\n宝は{ピカピカ}のまま",
+   "say": "村に帰ると、宝はピカピカのままでした。",
+   "tone": "昔話調、晴れやかに"
+  },
+  {
+   "shot": {
+    "image": "ion"
+   },
+   "move": "still",
+   "text": "金は{さびない}\n酸素や水とほとんど反応しないから",
+   "say": "金は、さびません。酸素や水と、ほとんど反応しない、とても安定した金属だからです。",
+   "tone": "解説モード"
+  },
+  {
+   "shot": {
+    "image": "ion"
+   },
+   "move": "still",
+   "text": "金属には反応しやすさの順番\n{イオン化傾向}がある",
+   "say": "金属には、反応しやすさの順番があります。これを、イオン化傾向といいます。",
+   "tone": "解説モード"
+  },
+  {
+   "shot": {
+    "image": "ion"
+   },
+   "move": "still",
+   "text": "{鉄}は真ん中あたり\nだから金棒は<さびる>",
+   "say": "鉄は真ん中あたり。だから、鬼の金棒はさびます。",
+   "tone": "楽しそうに"
+  },
+  {
+   "shot": {
+    "image": "ion"
+   },
+   "move": "still",
+   "text": "{金}はいちばん最後\nだから<さびない>",
+   "say": "金は、いちばん最後。だから、さびないんです。",
+   "tone": "得意げに"
+  },
+  {
+   "scene": "home",
+   "crop": [
+    0.2,
+    0.35,
+    1.8
+   ],
+   "text": "何百年も海に沈んでいた金貨も\n{輝いたまま}",
+   "say": "何百年も海の底に沈んでいた金貨でも、輝きを保っているほどです。",
+   "tone": "へぇと言わせるように"
+  },
+  {
+   "scene": "home",
+   "crop": [
+    0.25,
+    0.35,
+    1.4
+   ],
+   "text": "宝は{もとの持ち主}に\n返されました",
+   "say": "宝は、もとの持ち主たちに返されました。",
+   "tone": "やさしく"
+  },
+  {
+   "scene": "home",
+   "crop": [
+    0.5,
+    0.5,
+    1.1
+   ],
+   "text": "めでたし、めでたし…",
+   "say": "めでたし、めでたし。",
+   "tone": "軽やかに締める…と見せかける"
+  },
+  {
+   "scene": "home",
+   "crop": [
+    0.26,
+    0.8,
+    1.8
+   ],
+   "text": "…でも庭の水路には\n{食べきれなかった桃}",
+   "say": "…でも、庭の水路には、食べきれなかった、250キロの桃の残りが浮かんでいました。",
+   "tone": "急に声をひそめる"
+  },
+  {
+   "shot": {
+    "image": "hakko"
+   },
+   "move": "still",
+   "text": "果物の糖は{酵母}で\n{アルコール}に変わる",
+   "say": "果物の糖は、酵母のはたらきで、アルコールに変わります。これが発酵。",
+   "tone": "早口の解説"
+  },
+  {
+   "scene": "home",
+   "crop": [
+    0.26,
+    0.8,
+    1.6
+   ],
+   "text": "庭じゅう\n<お酒のにおい>",
+   "say": "庭じゅう、お酒のにおい。",
+   "tone": "不穏に"
+  },
+  {
+   "scene": "home",
+   "crop": [
+    0.8,
+    0.15,
+    1.8
+   ],
+   "text": "においにつられて\n今度は鬼が<宴会しに来た>",
+   "say": "そのにおいにつられて、今度は鬼たちが、宴会をしにやって来ました。",
+   "tone": "オチ。真顔でぼそっと"
+  },
+  {
+   "scene": "home",
+   "crop": [
+    0.5,
+    0.5,
+    1.2
+   ],
+   "text": "250キロの桃、背たけ2倍の鬼\n190キロの金",
+   "say": "振り返ると、250キロの桃、背たけ2倍の鬼、そして190キロの金。",
+   "tone": "語り部として、しみじみ振り返る"
+  },
+  {
+   "scene": "home",
+   "crop": [
+    0.5,
+    0.5,
+    1.4
+   ],
+   "text": "今日の敵は\nぜんぶ<重さ>でした",
+   "say": "今日の敵は、ぜんぶ、重さでした。",
+   "tone": "ぼそっと、でも味わい深く"
+  },
+  {
+   "scene": "home",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "大きければ強い、とは限らない\nそれが{二乗三乗の法則}",
+   "say": "大きければ強い、とは限らない。それが、二乗三乗の法則です。",
+   "tone": "語り部として、しみじみ締める"
+  },
+  {
+   "scene": "home",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "text": "本日の物語がおもしろかった方は\n{高評価}・{チャンネル登録}もお願いします",
+   "say": "本日の物語がおもしろかった方は、高評価、チャンネル登録も、お願いします。",
+   "tone": "語り部として、やさしく笑顔で締めくくる"
+  }
+ ],
+ "bgm": "今日も元気にオモテナシ.mp3",
+ "bgm_volume": -16
+}

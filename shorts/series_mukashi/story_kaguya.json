@@ -1,0 +1,125 @@
+{
+ "_comment": "むかしばなしにマジレス #3 かぐや姫。竹の成長、火浣布＝石綿、アラミド、地球–月の距離と光の往復2.6秒、月の後退3.8cm/年。",
+ "tempo": 1.2,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "むかしばなしにマジレス\n{かぐや姫、遠距離すぎる}",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n70代の日本人男性の語り部。囲炉裏端で子どもにむかしばなしを聞かせる、少ししわがれた温かい声。ただし中身は筋金入りの理系オタク。\n## THE SCENE\n昔話を語っているつもりが、科学の話になると我慢できずに早口で熱くなってしまう。\n### DIRECTOR'S NOTES\n「むかしむかし」はゆったり昔話調。数字や科学用語が出たら急にテンポを上げ、得意げに強調する。オチの一文は真顔でぼそっと言う。棒読みにせず、間延びさせず、テンポよく。",
+  "voice_dir": "work_kaguya/voice"
+ },
+ "image_gen": {
+  "style": "Vertical illustration in the style of a traditional Japanese folktale picture book: soft watercolor and sumi ink on textured washi paper, warm muted earthy colors, gentle brush outlines, simple rounded character designs, rural old Japan setting. Modern scientific objects, when they appear, are drawn in the same brush style, which makes the scene look absurd and funny. Expressive comedic faces are fine. No text, no letters, no numbers, no symbols, no logos, no watermark.",
+  "image_dir": "work_kaguya/images"
+ },
+ "lines": [
+  {
+   "hook": true,
+   "se": "don",
+   "text": "月から電話すると\n返事が<2.6秒>遅れる",
+   "say": "月にいる人と電話すると、返事が2.6秒遅れます。",
+   "tone": "意外な事実をいきなり突きつける。力強く",
+   "prompt": "A beautiful princess in a flowing twelve-layer kimono sitting on the moon's surface holding an old rotary telephone, the Earth hanging in the black sky"
+  },
+  {
+   "text": "むかしむかし\n{光る竹}の中に女の子",
+   "say": "むかしむかし、おじいさんが光る竹の中で、小さな女の子を見つけました。",
+   "tone": "ゆったりした昔話調",
+   "prompt": "An old bamboo cutter in a moonlit bamboo grove discovering a glowing bamboo stalk with a tiny girl sitting inside it"
+  },
+  {
+   "text": "竹は1日に\n{1m以上}伸びた記録も",
+   "say": "竹は、1日に1メートル以上伸びた記録もある植物。",
+   "tone": "急に理系スイッチ。早口で",
+   "prompt": "A bamboo shoot shooting up to the sky like a rocket in a bamboo forest, speed lines drawn as brush strokes, the old man's hat blown off"
+  },
+  {
+   "text": "だから姫も\n<3か月で大人に>",
+   "say": "だから姫も、たった3か月で大人になりました。",
+   "tone": "当然のように、さらっと",
+   "prompt": "Three panels in one image: a tiny girl, a teenage girl, and a grown princess, standing in the same spot in a thatched house as seasons change"
+  },
+  {
+   "text": "求婚者への無理難題\n「{火ネズミの皮衣}を」",
+   "say": "求婚者に無理難題。燃えない、火ネズミの皮衣を持ってきて。",
+   "tone": "昔話調で、少し意地悪そうに",
+   "prompt": "The princess behind a bamboo blind, a nervous noble kneeling in front holding an empty wooden box, candlelight"
+  },
+  {
+   "text": "燃えない布の正体\n昔は{石綿}だった",
+   "say": "実は昔の燃えない布の正体は、石綿。アスベストです。",
+   "tone": "急に解説モード。へぇと言わせるように",
+   "prompt": "A piece of whitish fibrous mineral rock beside a small woven gray cloth on an old wooden desk, scholarly still life"
+  },
+  {
+   "text": "江戸時代には\n{平賀源内}も作った",
+   "say": "江戸時代には、平賀源内も石綿から燃えない布を作っています。",
+   "tone": "得意げに",
+   "prompt": "An Edo-period inventor seen from behind at a cluttered workbench full of strange devices and scrolls, holding up a small gray cloth"
+  },
+  {
+   "text": "でも今は健康被害で\n<使用禁止>",
+   "say": "でも今は、健康被害があるので使用禁止。",
+   "tone": "真顔で、きっぱりと",
+   "prompt": "A wooden sealed box wrapped in rope with a big red X brush stroke painted over it, dim storehouse"
+  },
+  {
+   "text": "現代なら消防服の\n{アラミド繊維}で即クリア",
+   "say": "現代なら、消防服にも使われるアラミド繊維で、即クリアです。",
+   "tone": "楽しそうに、軽く",
+   "prompt": "A noble in Heian court robes proudly presenting a modern firefighter's protective suit to the astonished princess, absurd picture-book style"
+  },
+  {
+   "text": "それでも姫は\n<月へ帰る>",
+   "say": "それでも姫は、月へ帰ってしまいます。",
+   "tone": "昔話調に戻って、切なく",
+   "prompt": "A procession of celestial beings on a glowing cloud descending from a huge full moon, the princess rising toward them, old couple crying below"
+  },
+  {
+   "text": "月までは\n{約38万キロ}",
+   "say": "月までは、約38万キロ。",
+   "tone": "急に理系の顔に戻る",
+   "prompt": "A view of the Earth and the Moon far apart in space with a thin dotted line between them, watercolor cosmic style"
+  },
+  {
+   "text": "光の速さでも\n片道{約1.3秒}",
+   "say": "光の速さでも、片道約1.3秒かかります。",
+   "tone": "早口で得意げに",
+   "prompt": "A glowing beam of light traveling from the Earth toward the Moon, drawn as a single golden brush stroke across deep blue space"
+  },
+  {
+   "text": "帝が「好きです」\n返事まで<2.6秒の沈黙>",
+   "say": "帝が、好きですと言っても、返事まで2.6秒の沈黙。",
+   "tone": "気まずそうに、間をためて",
+   "prompt": "A Heian emperor on the Earth holding a telephone receiver, sweating nervously, staring at the full moon in total silence"
+  },
+  {
+   "text": "しかも月は毎年\n{3.8cm}ずつ離れてる",
+   "say": "しかも月は、毎年3.8センチずつ、地球から離れています。",
+   "tone": "悲報を告げるように",
+   "prompt": "The Moon slowly drifting away from the Earth, a tiny measuring tape stretched between them, melancholic space scene"
+  },
+  {
+   "text": "二人の距離は\n<毎年広がる>",
+   "say": "二人の距離は、毎年広がる一方。",
+   "tone": "しみじみと、切なく",
+   "prompt": "The emperor on a palace balcony looking up at a small distant moon, the princess on the moon looking down, both tiny and lonely"
+  },
+  {
+   "text": "かぐや姫\n物理的にも{距離を置いてた}",
+   "say": "かぐや姫、物理的にも、距離を置いていました。",
+   "tone": "オチ。真顔でぼそっと",
+   "prompt": "The princess on the moon calmly sipping tea with her back turned to the Earth, completely unbothered, comedic"
+  },
+  {
+   "text": "2.6秒の沈黙\nあなたは{耐えられる}？",
+   "say": "2.6秒の沈黙、あなたは耐えられますか？コメントで教えてください。",
+   "tone": "聞き手に楽しそうに問いかける",
+   "prompt": "A full moon over a bamboo grove at night, one bamboo stalk still faintly glowing, quiet and beautiful"
+  }
+ ]
+}

@@ -1,0 +1,137 @@
+{
+ "_comment": "むかしばなしにマジレス #2 一寸法師。縮尺の3乗（0.33g）、小さい体の熱損失、胃酸pH、空気抵抗、E=mc²（60kg→5.4×10^18 J）。",
+ "tempo": 1.2,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "むかしばなしにマジレス\n{一寸法師、都を停電させる}",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n70代の日本人男性の語り部。囲炉裏端で子どもにむかしばなしを聞かせる、少ししわがれた温かい声。ただし中身は筋金入りの理系オタク。\n## THE SCENE\n昔話を語っているつもりが、科学の話になると我慢できずに早口で熱くなってしまう。\n### DIRECTOR'S NOTES\n「むかしむかし」はゆったり昔話調。数字や科学用語が出たら急にテンポを上げ、得意げに強調する。オチの一文は真顔でぼそっと言う。棒読みにせず、間延びさせず、テンポよく。",
+  "voice_dir": "work_issunboshi/voice"
+ },
+ "image_gen": {
+  "style": "Vertical illustration in the style of a traditional Japanese folktale picture book: soft watercolor and sumi ink on textured washi paper, warm muted earthy colors, gentle brush outlines, simple rounded character designs, rural old Japan setting. Modern scientific objects, when they appear, are drawn in the same brush style, which makes the scene look absurd and funny. Expressive comedic faces are fine. No text, no letters, no numbers, no symbols, no logos, no watermark.",
+  "image_dir": "work_issunboshi/images"
+ },
+ "lines": [
+  {
+   "hook": true,
+   "se": "don",
+   "text": "一寸法師の体重\n<0.3グラム>",
+   "say": "一寸法師の体重、たったの0.3グラム。",
+   "tone": "衝撃の事実をいきなり突きつける。力強く",
+   "prompt": "A tiny samurai boy about three centimeters tall standing on a traditional balance scale, the other pan holding a single grain of rice and it barely tips"
+  },
+  {
+   "text": "むかしむかし\n背丈{一寸}の男の子",
+   "say": "むかしむかし、背丈が一寸しかない男の子がいました。",
+   "tone": "ゆったりした昔話調",
+   "prompt": "An old Japanese couple kneeling on tatami, gazing lovingly at a tiny boy standing on the palm of the old woman's hand"
+  },
+  {
+   "text": "一寸は{約3センチ}",
+   "say": "一寸は、約3センチ。",
+   "tone": "急に理系スイッチ。早口で",
+   "prompt": "A tiny boy standing next to a bamboo ruler, only reaching the third notch, on a wooden table"
+  },
+  {
+   "text": "170cm・60kgを\n{3cm}に縮めると",
+   "say": "身長170センチ、体重60キロの人を、3センチに縮めると",
+   "tone": "実験を始めるように、わくわくと",
+   "prompt": "A full-size Japanese man and a tiny version of him side by side, the tiny one standing on the big one's sandal, whimsical"
+  },
+  {
+   "text": "体重約0.3g\n<1円玉の3分の1>",
+   "say": "体重は約0.3グラム。1円玉の、3分の1です。",
+   "tone": "得意げに強調する",
+   "prompt": "A tiny boy trying to lift a coin much bigger than him with both arms, straining, the coin plain with no markings"
+  },
+  {
+   "text": "お椀の舟に\n{箸の櫂}で都へ",
+   "say": "お椀の舟に、お箸の櫂で、いざ都へ。",
+   "tone": "昔話調に戻って、軽やかに",
+   "prompt": "A tiny boy rowing a lacquered rice bowl boat with a single chopstick down a wide river toward a distant old Kyoto, picture-book style"
+  },
+  {
+   "text": "小さい体は{熱が逃げ}\n<すぐお腹がすく>",
+   "say": "でも、体が小さいほど熱は逃げやすく、すぐお腹がすく。",
+   "tone": "心配そうに、ツッコむように",
+   "prompt": "The tiny boy shivering in his rice bowl boat, wrapped in a leaf, little puffs of breath, cold river mist"
+  },
+  {
+   "text": "だから道中ずっと\n<米粒をかじってた>",
+   "say": "だから一寸法師、道中ずっと米粒をかじっていました。",
+   "tone": "真顔で断言する",
+   "prompt": "The tiny boy in his bowl boat hugging a single rice grain as big as his head and munching on it, other rice grains stacked as supplies"
+  },
+  {
+   "text": "都で鬼に\n{丸のみ}にされる！",
+   "say": "都で鬼に出くわし、丸のみにされます！",
+   "tone": "昔話らしく緊迫して",
+   "prompt": "A huge red ogre opening its enormous mouth wide over the tiny boy, a princess hiding behind a pillar in an old Kyoto mansion"
+  },
+  {
+   "text": "胃酸は{pH1〜2}\nレモン汁並みの強い酸",
+   "say": "胃酸は、ピーエイチ1から2。レモン汁並みの強い酸です。",
+   "tone": "急に冷静に、解説モード",
+   "prompt": "Inside a cartoonish ogre stomach drawn like a pink cave, the tiny boy standing on a floating lemon slice with his needle sword, bubbling liquid"
+  },
+  {
+   "text": "針の刀でチクチク\n鬼は{降参}",
+   "say": "針の刀でチクチク刺すと、鬼はたまらず降参。",
+   "tone": "テンポよく、楽しそうに",
+   "prompt": "A red ogre clutching its belly and crying in pain, rolling on the ground, comedic"
+  },
+  {
+   "text": "口から飛び出し落下\nでも{無傷}",
+   "say": "口から飛び出して地面へ落下。でも、無傷。",
+   "tone": "意外そうに",
+   "prompt": "The tiny boy falling from the ogre's mouth high in the air, floating down gently like a feather, calm expression"
+  },
+  {
+   "text": "体が小さいほど\n{空気抵抗}で落ちても平気",
+   "say": "体が小さいほど空気抵抗が効いて、落ちても平気なんです。",
+   "tone": "得意げに解説する",
+   "prompt": "The tiny boy landing softly on a flower petal on the ground, arms crossed confidently, dandelion seeds floating around"
+  },
+  {
+   "text": "打ち出の小づちで\n「{大きくなあれ}」",
+   "say": "打ち出の小づちで、大きくなあれ。",
+   "tone": "昔話調で、祈るように",
+   "prompt": "A princess swinging a small golden magic mallet over the tiny boy, sparkles and light swirling around him"
+  },
+  {
+   "text": "体重は<約18万倍>\n増えた分は約60kg",
+   "say": "体重は約18万倍。増えた約60キロは、どこから来るのか。",
+   "tone": "急に理系の顔に戻る。疑問を投げる",
+   "prompt": "The tiny boy growing into a full-size young man in a swirl of light, his old tiny sandals left on the floor"
+  },
+  {
+   "text": "{E=mc²}で\nエネルギーから作ると",
+   "say": "イー・イコール・エムシー二乗で、エネルギーから作ると",
+   "tone": "もったいぶって、早口で",
+   "prompt": "An old wooden abacus and a chalk-like brush drawing of a glowing atom floating above the magic mallet, mysterious glow"
+  },
+  {
+   "text": "日本の電気の\n<1年分以上>",
+   "say": "日本の電気の、1年分以上が必要です。",
+   "tone": "とんでもない数字を真剣に",
+   "prompt": "The magic mallet glowing with blinding white energy, lightning arcing from it into the night sky over old Kyoto"
+  },
+  {
+   "text": "振った瞬間\n都じゅう<停電>",
+   "say": "小づちを振った瞬間、都じゅうが停電しました。",
+   "tone": "オチ。真顔でぼそっと",
+   "prompt": "Old Kyoto at night suddenly completely dark, every lantern going out at once, surprised silhouettes of people in the streets"
+  },
+  {
+   "text": "この電気代\n{誰が払う}と思う？",
+   "say": "この電気代、誰が払うと思う？コメントで教えて。",
+   "tone": "聞き手に楽しそうに問いかける",
+   "prompt": "The now full-size young samurai and the princess standing in a dark room holding one small candle, looking awkwardly at each other"
+  }
+ ]
+}

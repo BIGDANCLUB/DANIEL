@@ -1,0 +1,131 @@
+{
+ "_comment": "むかしばなしにマジレス #1 桃太郎。二乗三乗の法則（大きさ10倍→重さ1000倍）、浮力、核果、猫の甘味受容体、金の密度19.3。",
+ "tempo": 1.2,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "むかしばなしにマジレス\n{桃太郎、重さで詰む}",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n70代の日本人男性の語り部。囲炉裏端で子どもにむかしばなしを聞かせる、少ししわがれた温かい声。ただし中身は筋金入りの理系オタク。\n## THE SCENE\n昔話を語っているつもりが、科学の話になると我慢できずに早口で熱くなってしまう。\n### DIRECTOR'S NOTES\n「むかしむかし」はゆったり昔話調。数字や科学用語が出たら急にテンポを上げ、得意げに強調する。オチの一文は真顔でぼそっと言う。棒読みにせず、間延びさせず、テンポよく。",
+  "voice_dir": "work_momotaro/voice"
+ },
+ "image_gen": {
+  "style": "Vertical illustration in the style of a traditional Japanese folktale picture book: soft watercolor and sumi ink on textured washi paper, warm muted earthy colors, gentle brush outlines, simple rounded character designs, rural old Japan setting. Modern scientific objects, when they appear, are drawn in the same brush style, which makes the scene look absurd and funny. Expressive comedic faces are fine. No text, no letters, no numbers, no symbols, no logos, no watermark.",
+  "image_dir": "work_momotaro/images"
+ },
+ "lines": [
+  {
+   "hook": true,
+   "se": "don",
+   "text": "桃太郎の桃\n重さ<250キロ>",
+   "say": "桃太郎の桃、重さ250キロです。",
+   "tone": "衝撃の事実をいきなり突きつける。力強く",
+   "prompt": "A gigantic peach the size of a boulder crushing a wooden cart, the cart's wheels splayed out, an old Japanese grandmother staring in disbelief"
+  },
+  {
+   "text": "むかしむかし\n川上から{大きな桃}が",
+   "say": "むかしむかし、川上から大きな桃が、どんぶらこ。",
+   "tone": "ゆったりした昔話調",
+   "prompt": "A huge pink peach floating down a clear mountain river in rural old Japan, an old woman washing clothes on the riverbank"
+  },
+  {
+   "text": "普通の桃は直径8cm\n重さは{約250g}",
+   "say": "普通の桃は、直径8センチで、約250グラム。",
+   "tone": "急に理系スイッチが入る。早口で",
+   "prompt": "A single normal-sized peach sitting on a traditional kitchen scale beside a bamboo ruler, on a wooden table, picture-book style"
+  },
+  {
+   "text": "赤ちゃんが入るなら\n直径{80cm}は欲しい",
+   "say": "赤ちゃんが入るなら、直径80センチは欲しい。",
+   "tone": "真剣に設計するように",
+   "prompt": "Cutaway diagram-like illustration of a giant peach with a sleeping baby curled up inside, an old man measuring it with a long bamboo pole"
+  },
+  {
+   "text": "大きさ10倍で\n重さは<1000倍>",
+   "say": "大きさが10倍なら、重さは10かける10かける10で、1000倍。",
+   "tone": "得意げに、数字を指折り数えるように",
+   "prompt": "Ten small peaches in a row next to one giant peach, with a thousand tiny peaches piled in a mountain behind, humorous comparison"
+  },
+  {
+   "text": "桃は約<250キロ>\nおばあさん{持てません}",
+   "say": "つまり桃は約250キロ。おばあさん、持って帰れません。",
+   "tone": "気の毒そうに、でも淡々と",
+   "prompt": "An old grandmother straining to hug and lift a gigantic peach on a riverbank, sweat flying, the peach not moving at all, comedic"
+  },
+  {
+   "text": "でも浮いてるなら\n{浮力}が支えてくれる",
+   "say": "でも川に浮いているなら、重さは水の浮力が支えてくれる。",
+   "tone": "ひらめいた。声が明るくなる",
+   "prompt": "A giant peach floating calmly on a river, gentle blue arrows of water pushing it up from below drawn as soft brush strokes"
+  },
+  {
+   "text": "おばあさん\n家まで<水路を掘った>",
+   "say": "そこでおばあさん、家まで水路を掘りました。",
+   "tone": "当然のことのように、さらっと",
+   "prompt": "An old grandmother digging a long canal with a shovel from the river all the way to her thatched farmhouse, the giant peach floating behind her, epic and absurd"
+  },
+  {
+   "text": "切ってみると\n中から{男の子}！",
+   "say": "切ってみると、中から元気な男の子！",
+   "tone": "昔話らしく盛り上げる",
+   "prompt": "A giant peach split open in a farmhouse, a cheerful baby boy popping out, the old couple jumping back in surprise"
+  },
+  {
+   "text": "でも植物学的に\n桃から生まれるのは{種}",
+   "say": "でも植物学的に言うと、桃から生まれるのは、種です。",
+   "tone": "急に冷静に。ツッコむように",
+   "prompt": "A peach cut in half showing its hard wrinkled stone, next to it a peach seedling sprouting from soil, botanical sketch style"
+  },
+  {
+   "text": "つまり桃太郎の正体は\n<でっかい種>",
+   "say": "つまり桃太郎の正体は、でっかい種。",
+   "tone": "真顔で断言する",
+   "prompt": "A small boy in a traditional kimono standing proudly, but his silhouette shaped like a wrinkly peach stone, confused old couple behind him"
+  },
+  {
+   "text": "きびだんごで\n{犬・猿・キジ}が仲間に",
+   "say": "きびだんごで、犬と猿とキジが仲間になりました。",
+   "tone": "昔話調に戻って、テンポよく",
+   "prompt": "A boy hero in a headband walking on a country road with a dog, a monkey and a green pheasant, each holding a round millet dumpling"
+  },
+  {
+   "text": "猫がいないのは正解\n猫は{甘みを感じない}",
+   "say": "猫がいないのは正解。猫は、甘みを感じない動物です。",
+   "tone": "小声で豆知識をはさむ。ドヤ顔で",
+   "prompt": "A cat sitting on a fence looking completely unimpressed at a sweet dumpling offered to it, bored expression"
+  },
+  {
+   "text": "鬼を倒して\n{金銀財宝}ゲット！",
+   "say": "鬼を倒して、金銀財宝をゲット！",
+   "tone": "勢いよく、楽しそうに",
+   "prompt": "Onigashima island treasure room, piles of gold bars and coins, defeated red and blue ogres bowing, the boy and animals cheering"
+  },
+  {
+   "text": "でも金は同じ体積の\n水の<約19倍>重い",
+   "say": "でも金は、同じ体積の水の、約19倍も重い。",
+   "tone": "嫌な予感を込めて、ゆっくり",
+   "prompt": "A wooden bucket filled with water next to an identical bucket filled with gold on a balance scale, the gold side slammed down"
+  },
+  {
+   "text": "バケツ1杯で\n{約190キロ}",
+   "say": "バケツ1杯分の金で、約190キロ。",
+   "tone": "絶望的な数字を淡々と",
+   "prompt": "The dog, monkey and pheasant all collapsed flat under a single bucket of gold, comedic exhaustion"
+  },
+  {
+   "text": "帰りも川に流したら\n<全部沈みました>",
+   "say": "帰りも川に流したら、全部、沈みました。",
+   "tone": "オチ。真顔でぼそっと",
+   "prompt": "Momotaro standing on a riverbank staring blankly at bubbles rising from the river where the treasure sank, the animals looking at him"
+  },
+  {
+   "text": "あなたなら\n{金}をどう運ぶ？",
+   "say": "あなたなら、どうやって運びますか？コメントで教えてください。",
+   "tone": "聞き手に楽しそうに問いかける",
+   "prompt": "Sunset over a rural Japanese river, the boy hero and his three animal companions sitting on the bank thinking hard, empty-handed"
+  }
+ ]
+}

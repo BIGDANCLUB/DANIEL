@@ -1093,6 +1093,14 @@ def db(x):
     return 10 ** (x / 20)
 
 
+def _continues(prev_cut, prev_dur, k):
+    """k（次の文の猫）が prev_cut の猫の続き（同じ素材で、再生位置がつながっている）か。"""
+    for q in prev_cut.get("cats", [])[:1]:
+        if q.get("a") == k.get("a") and abs(q.get("ss", 0.0) + prev_dur - k.get("ss", 0.0)) < 0.05:
+            return True
+    return False
+
+
 def build_audio(cuts, starts, durs, total):
     n = int(total * SR) + SR
     mix = np.zeros((n, 2), np.float32)
@@ -1162,9 +1170,14 @@ def build_audio(cuts, starts, durs, total):
             st = int(k.get("ss", 0.0) * SR) % max(len(a), 1)
             a = np.concatenate([a[st:], np.tile(a, (ln // max(len(a), 1) + 1, 1))])[:ln].copy()
             f, fo = min(int(0.02 * SR), len(a) // 2), min(int(0.2 * SR), len(a) // 2)
+            # 11/9：同じ素材が次の文へそのまま続くとき（hold）は、つなぎ目で音を下げない（一瞬小さくなるのを防ぐ）
+            same_prev = i > 0 and _continues(cuts[i - 1], durs[i - 1], k)
+            same_next = i + 1 < len(cuts) and any(_continues(c, durs[i], q) for q in cuts[i + 1].get("cats", [])[:1])
             if f:
-                a[:f] *= np.linspace(0, 1, f)[:, None]
-                a[-fo:] *= np.linspace(1, 0, fo)[:, None]
+                if not same_prev:
+                    a[:f] *= np.linspace(0, 1, f)[:, None]
+                if not same_next:
+                    a[-fo:] *= np.linspace(1, 0, fo)[:, None]
             g = k.get("gain", -6 if k.get("small") else -3)
             mix[i0:i0 + len(a)] += a[: n - i0] * db(g)
             has_cat_sound = True

@@ -39,3 +39,4 @@
 ## BIGDANIEL_60s（11/9 自作）
 - もとの曲（1:35・曲の終わりは1:33.7）の33.74秒〜93.74秒を60秒に。曲の自然な終わりで締まる。頭0.3秒だけフェードイン
 - BIGDANIEL_60s.wav：配信用（44.1kHz・16bit・60.000秒）／BIGDANIEL_60s.mp3：動画用
+- 曲名は「Ride, Not Hide」に決定（11/9）。配信用は release/music/Ride_Not_Hide_60s.wav

@@ -24,9 +24,10 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku", "01_yakiniku")]
 ROOM, ROOM_N, BUS, FIVE, TRAIL, HIGH, HUT, SUMMIT, DOWN, OFFICE = (
     "j01_room", "j07_room_night", "fj00_bus", "fj01_5gome", "fj02_trail", "fj03_trail_high", "fj04_hut", "fj05_summit",
     "fj06_descent", "bg25_office_desk")
+NIGHTB = "fj07_night"   # 11/9 夜の登山道の写真
 J.STANDIN.update({BUS: "bg26_rural_road", DOWN: "fj03_trail_high"})   # 11/8 写真5枚（5合目・登山道・雲の上の道・山小屋・山頂）。下山は雲の上の砂ぼこりの道の写真で
 J.HOLD = 4   # ミスド・ゴンチャと同じ切り替えの数
-J.LOOPS = 2
+J.LOOPS = 1   # 11/9 ユーザー指定：素材はくり返さない（終わる前の文で替える）
 J.SUB_STYLE = "glow"
 MORNING = os.path.join(L.BGM, "Morning.mp3")
 NANDE = os.path.join(L.BGM, "なんでしょう？.mp3")
@@ -46,7 +47,7 @@ def cuts():
     return [
         # ---- 決意 ----
         s(ROOM, "sleepy_old_memories_cat", "金曜日の夜\nテレビを見ていた", bgm={"file": LOFI, "gain": -12}),
-        s(ROOM, "stare_big_eyes_tabby_kitten", "画面いっぱいの\n富士山"),
+        dict(s(ROOM, "surprise_big_pupils_cat", "画面いっぱいの\n富士山"), new=True),   # 11/9 ユーザー指定：素材を変える
         s(ROOM, "surprise_big_pupils_cat", "雲の上から\n朝日がのぼる"),
         s(ROOM, "think_chin_paw_orange_cat", "そういえば俺"),
         s(ROOM, "sad_looking_away_tabby", "富士山に\n登ったことがない"),
@@ -177,13 +178,13 @@ def cuts():
         s(HUT, "sad_banana_cat_cry", "この高さで\nこのおにぎり", item=ONIGIRI),
         s(HUT, "happy_hamster_open_arms", "命をもらったに\n等しい", item=ONIGIRI, se="shine_kiraan_maou"),
         s(HUT, "work_typing_cat", "ヘッドライトを\nつける"),
-        s(HIGH, "walk_approaching_orange_cat", "まっくらな中\n頂上をめざす", se="whoosh_shu", bgm={"file": LOFI, "gain": -12, "fade": 0.8}),
-        s(HIGH, "peek_what_happen_cat", "上を見ると\nヘッドライトの列が\n光の川みたいだ"),
-        s(HIGH, "stare_tabby_wide_eyes_cat", "下を見ると\n街の明かり"),
-        s(HIGH, "blank_black_cat_zoning_out", "寒い\n息が白い"),
-        s(HIGH, "despair_dramatic_kitten", "9合目\n足が重い"),
-        s(HIGH, "think_bike_front_seat_cat", "でも\nここまで来て\n引き返せない"),
-        s(HIGH, "angry_shooting_cat", "最後の\n鳥居が見えた", se="explosion_chudoon"),
+        s(NIGHTB, "walk_approaching_orange_cat", "まっくらな中\n頂上をめざす", se="whoosh_shu", bgm={"file": LOFI, "gain": -12, "fade": 0.8}),
+        s(NIGHTB, "peek_what_happen_cat", "上を見ると\nヘッドライトの列が\n光の川みたいだ"),
+        s(NIGHTB, "stare_tabby_wide_eyes_cat", "下を見ると\n街の明かり"),
+        s(NIGHTB, "blank_black_cat_zoning_out", "寒い\n息が白い"),
+        s(NIGHTB, "despair_dramatic_kitten", "9合目\n足が重い"),
+        s(NIGHTB, "think_bike_front_seat_cat", "でも\nここまで来て\n引き返せない"),
+        s(NIGHTB, "angry_shooting_cat", "最後の\n鳥居が見えた", se="explosion_chudoon"),
         # ---- 山頂 ----
         s(SUMMIT, "showoff_gojo_cosplay_cat", "山頂", se="gong_dora_jaan", bgm={"file": MORNING, "gain": -12, "fade": 0.8}),
         s(SUMMIT, "read_book_orange_kitten", "標高3776m\n日本でいちばん\n高い場所"),
@@ -276,6 +277,7 @@ def cuts():
 
 
 def place(cs):
+    J.diversify(cs)   # 11/9 ユーザー指定：もっと多様な素材を
     J.auto_tempo(cs)
     for c in cs:
         if c.get("text"):

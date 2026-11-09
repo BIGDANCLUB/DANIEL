@@ -256,6 +256,42 @@ def hold(cs, n=None):
     return cs
 
 
+# 11/9 ユーザー指定：もっと多様な素材を。よく使う素材が何度も出るときは、似た意味のほかの素材に順番に替える
+ALTS = {
+    "stare_big_eyes_tabby_kitten": ["stare_aloha_gray_cat", "meow_gray_white_kitten", "stare_standing_marmot", "talk_orange_white_sitting_cat"],
+    "read_book_orange_kitten": ["talk_orange_white_sitting_cat", "work_dog_staring_computer", "listen_dancing_dog", "stare_aloha_gray_cat"],
+    "surprise_big_pupils_cat": ["stare_standing_marmot", "huh_goat_talks_to_huh_cat", "flip_emo_cat_hair", "scream_standing_marmot"],
+    "despair_dramatic_kitten": ["rage_talking_cat", "meow_ragdoll_chubby_cat", "wakeup_dog_hits_bowl", "sad_black_dog"],
+    "think_chin_paw_orange_cat": ["confused_i_dont_know_cat", "slack_nail_filing_cat", "talk_orange_white_sitting_cat", "think_bike_front_seat_cat"],
+    "stare_tabby_wide_eyes_cat": ["stare_aloha_gray_cat", "ignore_orange_cat_sniffed", "stare_standing_marmot", "meow_gray_white_kitten"],
+    "peek_what_happen_cat": ["ignore_orange_cat_sniffed", "film_phone_orange_white_cats", "stare_standing_marmot", "huh_goat_talks_to_huh_cat"],
+    "happy_hamster_open_arms": ["dance_three_kittens", "dance_happy_banana_cat", "dance_cute_dog", "dance_trending_cat"],
+    "sleepy_old_memories_cat": ["slack_nail_filing_cat", "stare_aloha_gray_cat", "sleepy_sleepy_cat", "talk_orange_white_sitting_cat"],
+    "money_counting_orange_cat": ["money_counting_cream_cat"],
+    "calm_black_face_sheep": ["stand_real_sheep", "walk_white_duck", "slack_nail_filing_cat"],
+    "happy_chipi_chapa_cat": ["dance_wop_cat", "dance_koto_nai_cat", "dance_white_dog"],
+    "stare_interviewer_cat": ["talk_orange_white_sitting_cat", "lick_talking_goat", "meow_gray_white_kitten"],
+    "sad_looking_away_tabby": ["sad_black_dog", "meow_ragdoll_chubby_cat"],
+    "realize_wet_cat_stare": ["stare_aloha_gray_cat", "flip_emo_cat_hair"],
+}
+
+
+def diversify(cs, cap=3):
+    """同じ素材が cap 回をこえたら、ALTS の中で使った回数がいちばん少ない素材に替える（11/9）。"""
+    import collections
+    used = collections.Counter()
+    for c in cs:
+        if not c.get("cats"):
+            continue
+        a = c["cats"][0]["a"]
+        if used[a] >= cap and a in ALTS:
+            alt = min(ALTS[a], key=lambda x: used[x])
+            if used[alt] < used[a]:
+                c["cats"][0]["a"] = a = alt
+        used[a] += 1
+    return cs
+
+
 def item_cont(cs):
     """前の文と同じ料理の写真が続くときは、文が変わるたびにポンと出しなおさない（11/6 ユーザー指定）。"""
     prev = None

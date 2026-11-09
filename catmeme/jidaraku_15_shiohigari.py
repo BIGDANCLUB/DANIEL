@@ -21,7 +21,7 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku", "01_yakiniku")]
 ROOM, ROOM_N, ROAD, BEACH, FLAT = ("j01_room", "j07_room_night", "bg26_rural_road", "sh01_beach", "sh02_flat")
 J.STANDIN.update({BEACH: "bg107_lake_shore", FLAT: "bg107_lake_shore"})
 J.HOLD = 4
-J.LOOPS = 2
+J.LOOPS = 1   # 11/9 ユーザー指定：素材はくり返さない
 J.SUB_STYLE = "glow"
 MORNING = os.path.join(L.BGM, "Morning.mp3")
 NANDE = os.path.join(L.BGM, "なんでしょう？.mp3")
@@ -259,6 +259,7 @@ def cuts():
 
 
 def place(cs):
+    J.diversify(cs)   # 11/9 ユーザー指定：もっと多様な素材を
     J.auto_tempo(cs)
     for c in cs:
         if c.get("text"):

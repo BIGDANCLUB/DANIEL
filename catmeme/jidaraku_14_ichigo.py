@@ -23,7 +23,7 @@ ROOM, ROOM_N, ROAD, FRONT, RECEPT, HOUSE, SHOP = (
     "j01_room", "j07_room_night", "bg26_rural_road", "ic01_farm", "ic02_reception", "ic03_house", "ic04_shop")
 J.STANDIN.update({FRONT: "bg63_hokkaido_field", RECEPT: "bg20_counter", HOUSE: "bg63_hokkaido_field", SHOP: "bg20_counter"})
 J.HOLD = 4
-J.LOOPS = 2
+J.LOOPS = 1   # 11/9 ユーザー指定：素材はくり返さない
 J.SUB_STYLE = "glow"
 MORNING = os.path.join(L.BGM, "Morning.mp3")
 NANDE = os.path.join(L.BGM, "なんでしょう？.mp3")
@@ -269,6 +269,7 @@ def cuts():
 
 
 def place(cs):
+    J.diversify(cs)   # 11/9 ユーザー指定：もっと多様な素材を
     J.auto_tempo(cs)
     for c in cs:
         if c.get("text"):

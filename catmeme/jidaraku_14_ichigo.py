@@ -25,6 +25,7 @@ J.STANDIN.update({FRONT: "bg63_hokkaido_field", RECEPT: "bg20_counter", HOUSE: "
 J.HOLD = 4
 J.LOOPS = 1   # 11/9 ユーザー指定：素材はくり返さない
 J.SUB_STYLE = "glow"
+J.MAXLEN = {a: 9.0 for a in ("joy_happy_happy_happy_cat", "happy_chipi_chapa_cat", "happy_girlfriend_dance_cat")}   # 11/10 ユーザー指定：1回9秒まで
 MORNING = os.path.join(L.BGM, "Morning.mp3")
 NANDE = os.path.join(L.BGM, "なんでしょう？.mp3")
 HIRU = os.path.join(L.BGM, "昼下がり気分.mp3")

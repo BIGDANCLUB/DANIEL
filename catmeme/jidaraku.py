@@ -214,6 +214,7 @@ def chain(cs):
 HOLD = 0   # 11/4 ユーザー指定：1つの素材を2〜3文つづけて使う（0＝使わない）。台本で J.HOLD = 3 にする
 
 
+MAXLEN = {}   # 素材ごとの「1回に続けて使える秒数」の上限（11/10 ユーザー指定で一部の素材を9秒まで）
 LOOPS = 1   # 素材を何回くり返してよいか（1＝1回分まで。11/6 新時代は2＝切り替えをもっと少なく）
 
 
@@ -229,6 +230,7 @@ def hold(cs, n=None):
             continue
         head = c["cats"][0]
         limit = _cat_len(head["a"]) * LOOPS
+        cap = MAXLEN.get(head["a"])
         grp = [c]
         used = c["dur"] + 0.25
         while i + len(grp) < len(cs):
@@ -240,6 +242,8 @@ def hold(cs, n=None):
             if len(grp) >= n and not cont and not keep:
                 break
             if used + nxt["dur"] > limit and not keep:
+                break
+            if cap and used + nxt["dur"] > cap:   # 上限の秒数は keep でもこえない
                 break
             grp.append(nxt)
             used += nxt["dur"]

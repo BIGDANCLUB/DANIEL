@@ -19,7 +19,7 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
           if os.path.isdir(os.path.join(J.HERE, "backgrounds", d)) and d != "jidaraku"]
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku", "01_yakiniku")]
 ROOM, ROOM_N, ROAD, BEACH, FLAT = ("j01_room", "j07_room_night", "bg26_rural_road", "sh01_beach", "sh02_flat")
-J.STANDIN.update({BEACH: "bg107_lake_shore", FLAT: "bg107_lake_shore"})
+# 11/10 写真6枚（干潟・潮干狩り受付・熊手・あさり・網の袋・酒蒸し）がそろったので仮の背景はなし
 J.HOLD = 4
 J.LOOPS = 1   # 11/9 ユーザー指定：素材はくり返さない
 J.SUB_STYLE = "glow"

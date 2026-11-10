@@ -162,7 +162,7 @@ def cuts():
         s(HOUSE, "think_chin_paw_orange_cat", "ここからは\nいちごそのものと\n向き合う", item=BERRY),
         s(HOUSE, "read_book_orange_kitten", "口コミの言うとおり\n練乳なしでも\nちゃんと甘い", item=BERRY),
         s(HOUSE, "eat_crunchy_cat_luna", "17個目\n18個目", item=BERRY),
-        s(HOUSE, "think_chin_paw_orange_cat", "ヘタのカップを\nのぞく", item=BERRY),
+        s(HOUSE, "think_chin_paw_orange_cat", "カップのヘタを\nのぞく", item=BERRY),
         s(HOUSE, "stare_tabby_wide_eyes_cat", "思ったより\n少ない", item=BERRY),
         s(HOUSE, "despair_dramatic_kitten", "ペースが\n落ちている", item=BERRY),
         s(HOUSE, "angry_aiming_cat", "小さいいちごを\n選ぶ作戦に\n切りかえる", item=BERRY),
@@ -190,7 +190,7 @@ def cuts():
         s(HOUSE, "cocky_dj_cat", "ピピピピ", se="pi"),
         s(HOUSE, "stare_interviewer_cat", "お時間でーす"),
         # ---- 結果 ----
-        s(HOUSE, "think_chin_paw_orange_cat", "ヘタのカップを\n数える"),
+        s(HOUSE, "think_chin_paw_orange_cat", "カップのヘタを\n数える"),
         s(HOUSE, "money_counting_orange_cat", "1個\n2個\n3個……"),
         s(HOUSE, "surprise_big_pupils_cat", "23個", se="explosion_chudoon"),
         s(HOUSE, "sad_looking_away_tabby", "目標の\n半分もいかなかった"),

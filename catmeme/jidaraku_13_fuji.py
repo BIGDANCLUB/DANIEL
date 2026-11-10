@@ -29,7 +29,7 @@ J.STANDIN.update({BUS: "bg26_rural_road", DOWN: "fj03_trail_high"})   # 11/8 写
 J.HOLD = 4   # ミスド・ゴンチャと同じ切り替えの数
 J.LOOPS = 1   # 11/9 ユーザー指定：素材はくり返さない（終わる前の文で替える）
 J.SUB_STYLE = "glow"
-J.MAXLEN = {a: 9.0 for a in ("joy_happy_happy_happy_cat", "happy_chipi_chapa_cat", "happy_girlfriend_dance_cat")}   # 11/10 ユーザー指定：1回9秒まで
+J.MAXLEN = {a: 6.0 for a in ("joy_happy_happy_happy_cat", "happy_chipi_chapa_cat", "happy_girlfriend_dance_cat")}   # 11/10 ユーザー指定：1回6秒まで（はじめは9秒）
 MORNING = os.path.join(L.BGM, "Morning.mp3")
 NANDE = os.path.join(L.BGM, "なんでしょう？.mp3")
 HIRU = os.path.join(L.BGM, "昼下がり気分.mp3")

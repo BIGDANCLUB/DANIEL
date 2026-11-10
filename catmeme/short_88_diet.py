@@ -4,6 +4,7 @@ python3 catmeme/short_88_diet.py → out/short_88_diet.mp4
 - 段階ごとに「札だけ → 右の猫 → 左の猫」の3段。段階が上がるほどずれが大きくなる。どの国・人もけなさない
 - ライバル3チャンネルと被らないことを確認ずみ（11/6 一覧を取り直して確認）
 - 数字・反応は「よくあるイメージ」としての目安（実際の統計ではない）。BGM なし
+- 11/10 ユーザー指定：半年の現実は五条猫「ドーナツは穴があるからカロリー0」
 """
 import os
 
@@ -25,7 +26,7 @@ def cuts():
         ('1か月', 'happy_girlfriend_dance_cat', 'マイナス5kg', 'stare_lying_tabby_cat', '明日から\n本気出す'),
         ('2か月', 'joy_happy_happy_happy_cat', '服が\nゆるくなる', 'eat_pop_cat', '服が\nきつくなる'),
         ('3か月', 'dance_edm_cat', '理想の体', 'sleepy_old_memories_cat', 'ダイエット本が\n3冊ふえた'),
-        ('半年', 'happy_hamster_open_arms', 'キープ', 'dance_filmed_by_gray_cat', 'スタートより\n増えた'),
+        ('半年', 'happy_hamster_open_arms', 'キープ', 'showoff_gojo_cosplay_cat', 'ドーナツは\n穴があるから\nカロリー0'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

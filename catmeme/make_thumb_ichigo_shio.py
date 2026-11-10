@@ -46,3 +46,11 @@ def ichigo_more():
     ]:
         T.type_a("jidaraku_14_ichigo_thumb_%s.png" % name, "ic03_house", "f_strawberry", L, RC, "30代独身　ひとりいちご狩り", l1, l2,
                  split=640, size=108)
+
+
+def ichigo_final():
+    """11/10 ユーザー指定：b2 をもとに文字を「30分いちご食べ放題／あなたは30分食べ続けられるか」に。"""
+    L = ("happy_hamster_open_arms", 1.0, 125, 410, 280, False)
+    RC = [("sad_banana_cat_cry", 1.0, 1170, 410, 300, False)]
+    T.type_a("jidaraku_14_ichigo_thumb_final.png", "ic03_house", "f_strawberry", L, RC, "30代独身　ひとりいちご狩り",
+             [("30分", R), ("いちご食べ放題", BK)], [("あなたは", BK), ("30分食べ続けられるか", R)], split=640, size=108)

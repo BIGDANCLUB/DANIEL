@@ -21,7 +21,7 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku", "01_yakiniku")]
 ROOM, ROOM_N, ROAD, FRONT, RECEPT, HOUSE, SHOP = (
     "j01_room", "j07_room_night", "bg26_rural_road", "ic01_farm", "ic02_reception", "ic03_house", "ic04_shop")
-J.STANDIN.update({FRONT: "bg63_hokkaido_field", RECEPT: "bg20_counter", HOUSE: "bg63_hokkaido_field", SHOP: "bg20_counter"})
+J.STANDIN.update({RECEPT: "ic04_shop"})   # 11/10 背景4枚（ハウスの中・農園・直売所）。受付の写真がないので直売所の小屋で
 J.HOLD = 4
 J.LOOPS = 1   # 11/9 ユーザー指定：素材はくり返さない
 J.SUB_STYLE = "glow"

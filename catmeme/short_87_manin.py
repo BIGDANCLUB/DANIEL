@@ -4,6 +4,7 @@ python3 catmeme/short_87_manin.py → out/short_87_manin.mp4
 - 段階ごとに「札だけ → 右の猫 → 左の猫」の3段。段階が上がるほどずれが大きくなる。どの国・人もけなさない
 - ライバル3チャンネルと被らないことを確認ずみ（11/6 一覧を取り直して確認）
 - 数字・反応は「よくあるイメージ」としての目安（実際の統計ではない）。BGM なし
+- 11/10 ユーザー指定：120%「今日はつり革捕まれそう」・150%「日課(苦行)」・雨の日「濡れるし蒸すしツライ」・降りる駅「降りまあぁぁぁぁぁぁす！！！」（2行）
 """
 import os
 
@@ -20,12 +21,12 @@ def cuts():
         ('50%', 'happy_chipi_chapa_cat', '座れる', 'read_book_orange_kitten', '座って\n読書'),
         ('80%', 'stare_interviewer_cat', 'ふつう', 'work_typing_cat', '立って\nスマホ'),
         ('100%', 'glare_disgusted_cat', '混んでる', 'calm_black_face_sheep', 'ふつう'),
-        ('120%', 'leave_cat_leaves_home', '次の電車に\nする', 'think_chin_paw_orange_cat', 'ドアの前で\n深呼吸'),
-        ('150%', 'fight_cat_fight', '大さわぎ', 'stare_lying_tabby_cat', 'カバンを\n前に抱える'),
+        ('120%', 'leave_cat_leaves_home', '次の電車に\nする', 'think_chin_paw_orange_cat', '今日は\nつり革\n捕まれそう'),
+        ('150%', 'fight_cat_fight', '大さわぎ', 'stare_lying_tabby_cat', '日課\n(苦行)'),
         ('180%', 'scream_standing_marmot', '乗れない', 'sleepy_old_memories_cat', '押されながら\nスマホ'),
         ('200%', 'call_customer_service_cat', 'タクシーで\n行く', 'despair_dramatic_kitten', '駅員さんに\n押してもらう'),
-        ('雨の日', 'surprise_big_pupils_cat', '会社を\n休む', 'sad_looking_away_tabby', '傘がぬれて\nさらに地獄'),
-        ('降りる駅', 'dance_happy_banana_cat', 'ゆっくり\n降りる', 'dance_filmed_by_gray_cat', 'すみません\n降ります\n(戦い)'),
+        ('雨の日', 'surprise_big_pupils_cat', '会社を\n休む', 'sad_looking_away_tabby', '濡れるし\n蒸すし\nツライ'),
+        ('降りる駅', 'dance_happy_banana_cat', 'ゆっくり\n降りる', 'dance_filmed_by_gray_cat', '降りまあぁぁぁ\nぁぁぁす！！！'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

@@ -33,3 +33,16 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def ichigo_more():
+    """11/10 ユーザー指定：いちご狩り a1 をもとに文言をもう3案（b1〜b3）。写真・猫は a1 と同じ。"""
+    L = ("happy_hamster_open_arms", 1.0, 125, 410, 280, False)
+    RC = [("sad_banana_cat_cry", 1.0, 1170, 410, 300, False)]
+    for name, l1, l2 in [
+        ("b1", [("2500円", R), ("払ったいちご", BK)], [("母のタダいちご", R), ("に完敗", BK)]),
+        ("b2", [("30分食べ放題", R), ("より", BK)], [("母さんのいちご", R), ("がうまい", BK)]),
+        ("b3", [("いちご狩りの", BK), ("本当のオチ", R)], [("いちばんうまいのは", BK), ("タダ", R)]),
+    ]:
+        T.type_a("jidaraku_14_ichigo_thumb_%s.png" % name, "ic03_house", "f_strawberry", L, RC, "30代独身　ひとりいちご狩り", l1, l2,
+                 split=640, size=108)

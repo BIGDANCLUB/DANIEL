@@ -4,6 +4,7 @@ python3 catmeme/short_86_line_jikan.py → out/short_86_line_jikan.mp4
 - 段階ごとに「札だけ → 右の猫 → 左の猫」の3段。段階が上がるほどずれが大きくなる。どの国・人もけなさない
 - ライバル3チャンネルと被らないことを確認ずみ（11/6 一覧を取り直して確認）
 - 数字・反応は「よくあるイメージ」としての目安（実際の統計ではない）。BGM なし
+- 11/10 ユーザー指定：2時の日本「さすがに何か事件かと思って通知は見る」・23時の日本「既読つけたら負け」
 """
 import os
 
@@ -20,9 +21,9 @@ def cuts():
         ('18時', 'stare_interviewer_cat', '明日\n見る', 'work_typing_cat', 'すぐ返信'),
         ('20時', 'calm_black_face_sheep', '見ない', 'eat_chips_cat', 'ごはん中でも\n返信'),
         ('22時', 'glare_disgusted_cat', 'ありえない', 'scream_phone_orange_cat', 'お風呂で\n返信'),
-        ('23時', 'fight_cat_fight', '人事に\n相談', 'think_chin_paw_orange_cat', '既読を\nつけない作戦'),
+        ('23時', 'fight_cat_fight', '人事に\n相談', 'think_chin_paw_orange_cat', '既読\nつけたら\n負け'),
         ('0時', 'call_customer_service_cat', '弁護士に\n相談', 'sleepy_sleepy_cat', '夢の中で\n返信'),
-        ('2時', 'scream_standing_marmot', '警察を\n呼ぶ', 'stare_lying_tabby_cat', '寝たふり'),
+        ('2時', 'scream_standing_marmot', '警察を\n呼ぶ', 'stare_lying_tabby_cat', 'さすがに何か\n事件かと思って\n通知は見る'),
         ('休日', 'dance_edm_cat', '通知オフ', 'despair_dramatic_kitten', 'スタンプ\nだけ返す'),
         ('有給中', 'happy_hamster_open_arms', '電話も\n出ない', 'sad_looking_away_tabby', '旅行先で\n資料を作る'),
         ('退職後', 'dance_happy_banana_cat', 'ブロック', 'blank_black_cat_zoning_out', 'まだ\n通知が来る'),

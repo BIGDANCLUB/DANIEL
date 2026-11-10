@@ -292,50 +292,6 @@ def diversify(cs, cap=3):
     return cs
 
 
-# 11/9 ユーザー指定：申し立てのもとになる曲つき素材（CATALOG の ⚠）を使わない回のための置きかえ表。
-# 置きかえ先はどれも ⚠ のない素材。同じ素材ばかりにならないよう順番に回す
-NO_MUSIC_ALTS = {
-    "happy_chipi_chapa_cat": ["wave_waving_cat", "meow_gray_white_kitten", "ride_kitten_bike"],
-    "happy_girlfriend_dance_cat": ["listen_dancing_dog", "mock_swinging_cat", "dance_cute_dog"],
-    "joy_happy_happy_happy_cat": ["happy_hamster_open_arms", "ride_kitten_bike", "wave_waving_cat"],
-    "excited_hodomoe_city_cat": ["happy_hamster_open_arms", "rizz_cat_rizz", "wave_waving_cat"],
-    "dance_edm_cat": ["mock_swinging_cat", "dance_white_dog", "listen_dancing_dog"],
-    "calmdown_dancing_cat": ["listen_dancing_dog", "slack_nail_filing_cat", "talk_orange_white_sitting_cat"],
-    "cocky_dj_cat": ["smug_squint_bicolor_cat", "rizz_cat_rizz", "stare_aloha_gray_cat"],
-    "dance_wop_cat": ["mock_swinging_cat", "dance_cute_dog", "dance_white_dog"],
-    "dance_three_kittens": ["dance_cute_dog", "film_phone_orange_white_cats", "dance_white_dog"],
-    "dance_happy_banana_cat": ["dance_cute_dog", "walk_approaching_orange_cat", "ride_kitten_bike"],
-    "dance_trending_cat": ["mock_swinging_cat", "dance_white_dog"],
-    "dance_maxwell_cat": ["dance_cute_dog", "mock_swinging_cat"],
-    "spin_spinning_cat": ["mock_swinging_cat", "ride_kitten_bike"],
-    "dance_koto_nai_cat": ["dance_white_dog", "listen_dancing_dog"],
-    "dance_wild_dog": ["dance_white_dog", "dance_cute_dog"],
-    "shady_dancing_man": ["rizz_cat_rizz", "smug_squint_bicolor_cat"],
-    "dance_tabby_standing_cat": ["dance_cute_dog", "mock_swinging_cat"],
-    "dance_orange_gray_cats": ["film_phone_orange_white_cats", "dance_cute_dog"],
-    "walk_white_duck": ["walk_approaching_orange_cat", "stand_real_sheep"],
-    "dance_filmed_by_gray_cat": ["film_phone_orange_white_cats", "mock_swinging_cat"],
-}
-
-
-def no_music(cs):
-    """曲つき素材（⚠）をすべて、⚠ のない素材に置きかえる。残っていたら止める（11/9）。"""
-    import collections
-    used = collections.Counter(c["cats"][0]["a"] for c in cs if c.get("cats"))
-    for c in cs:
-        for k in c.get("cats", []):
-            if k["a"] in R.MUSIC:
-                alts = [x for x in NO_MUSIC_ALTS.get(k["a"], []) if x not in R.MUSIC]
-                if not alts:
-                    raise SystemExit("曲つき素材の置きかえ先がない: " + k["a"])
-                k["a"] = min(alts, key=lambda x: used[x])
-                used[k["a"]] += 1
-    left = sorted({k["a"] for c in cs for k in c.get("cats", []) if k["a"] in R.MUSIC})
-    if left:
-        raise SystemExit("曲つき素材が残っている: " + ", ".join(left))
-    return cs
-
-
 def item_cont(cs):
     """前の文と同じ料理の写真が続くときは、文が変わるたびにポンと出しなおさない（11/6 ユーザー指定）。"""
     prev = None

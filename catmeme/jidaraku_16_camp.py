@@ -79,7 +79,7 @@ def cuts():
         s(ROAD, "calmdown_dancing_cat", "電波が\n0本になった", se="pikon"),
         s(ROAD, "happy_hamster_open_arms", "今度こそ\n最高だ"),
         s(SITE, "leave_cat_leaves_home", "キャンプ場に到着", se="gong_dora_jaan", bgm={"file": HIRU, "gain": -12, "fade": 0.8}),
-        s(SITE, "surprise_big_pupils_cat", "湖が見える\n林の中のサイト"),
+        s(SITE, "surprise_big_pupils_cat", "木もれ日の\n林の中のサイト"),
         s(SITE, "peek_what_happen_cat", "まわりは\n家族づれと\nキャンプ仲間"),
         s(SITE, "stare_lying_tabby_cat", "となりのサイトでは\nベテランが\nもうコーヒーを飲んでいる"),
         s(SITE, "angry_aiming_cat", "俺も\nいくぞ"),
@@ -222,7 +222,7 @@ def cuts():
         s(SITE_N, "sleep_sleeping_cat", "気がつけば\n眠っていた"),
         # ---- 朝 ----
         s(SITE, "stare_tabby_wide_eyes_cat", "朝6時\n鳥の声で\n目が覚めた", bgm={"file": MORNING, "gain": -12, "fade": 0.8}),
-        s(SITE, "surprise_big_pupils_cat", "湖に\n朝もやが\nかかっている"),
+        s(SITE, "surprise_big_pupils_cat", "林に\n朝もやが\nかかっている"),
         s(SITE, "work_typing_cat", "お湯をわかして\nコーヒーを入れる", item=COFFEE),
         s(SITE, "eat_crunchy_cat_luna", "ズズッ", item=COFFEE, se="drink_gulp_gokugoku_thirsty_chug"),
         s(SITE, "happy_girlfriend_dance_cat", "うまい", item=COFFEE),

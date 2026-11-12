@@ -20,11 +20,11 @@ def cuts():
         ('17時', 'stare_interviewer_cat', 'ふつうに\n買う', 'think_chin_paw_orange_cat', '様子見'),
         ('18時', 'calm_black_face_sheep', 'もう\n家で料理', 'stare_lying_tabby_cat', '惣菜コーナーを\nうろうろ'),
         ('19時', 'glare_disgusted_cat', 'セール？', 'peek_what_happen_cat', '店員さんの\n動きを見張る'),
-        ('19時半', 'sleepy_sleepy_cat', 'もう寝る', 'surprise_big_pupils_cat', '2割引の\nシール発見'),
+        ('19時半', 'sleepy_sleepy_cat', '食後で\nまったり', 'surprise_big_pupils_cat', '2割引の\nシール発見'),
         ('20時', 'dance_cute_dog', '気にしない', 'angry_aiming_cat', '半額を待つか\n2割引で買うか'),
-        ('20時半', 'listen_dancing_dog', '？', 'scream_standing_marmot', '半額シール\n貼られた!!'),
+        ('20時半', 'listen_dancing_dog', '家族と\nテレビ', 'scream_standing_marmot', '半額シール\n貼られた!!'),
         ('20時31分', 'huh_huh_cat', 'なにごと？', 'fight_cat_fight', '争奪戦'),
-        ('閉店前', 'stare_aloha_gray_cat', 'お店\n閉まってる', 'despair_dramatic_kitten', '残っているのは\nパセリだけ'),
+        ('閉店前', 'stare_aloha_gray_cat', 'お店も\n早仕舞い', 'despair_dramatic_kitten', '敗者は\nベントーに\nありつけず'),
         ('家で', 'happy_hamster_open_arms', '手料理', 'eat_pop_cat', '半額のお寿司が\n人生の\nごほうび'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):

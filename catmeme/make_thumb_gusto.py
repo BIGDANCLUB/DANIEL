@@ -36,3 +36,11 @@ def final():
     T.type_a("jidaraku_18_gusto_thumb_final.png", "gs01_front", "f_karaage", L, [("rizz_cat_rizz", 1.0, 1170, 410, 300, False)],
              "30代独身　ひとりガスト飲み", [("ガスト", R), ("・", BK), ("サイゼ", R), ("・", BK), ("バーミヤン", R)],
              [("群雄割拠", R), ("の中", BK), ("選ばれたのは？", BK)], split=640, size=108)
+
+
+def final2():
+    """11/12 ユーザー指定：文字を「ガストには「コレ」がある／30代男性一人飲み」に。"""
+    L = ("happy_hamster_open_arms", 1.0, 125, 410, 280, False)
+    T.type_a("jidaraku_18_gusto_thumb_final2.png", "gs01_front", "f_karaage", L, [("rizz_cat_rizz", 1.0, 1170, 410, 300, False)],
+             "30代独身　ひとりガスト飲み", [("ガストには", BK), ("「コレ」", R), ("がある", BK)],
+             [("30代男性", R), ("一人飲み", BK)], split=640, size=108)

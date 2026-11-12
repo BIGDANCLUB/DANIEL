@@ -28,3 +28,11 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def final():
+    """11/12 ユーザー指定：a1 をもとに文字を「ガスト・サイゼ・バーミヤン／群雄割拠の中選ばれたのは？」に。"""
+    L = ("happy_hamster_open_arms", 1.0, 125, 410, 280, False)
+    T.type_a("jidaraku_18_gusto_thumb_final.png", "gs01_front", "f_karaage", L, [("rizz_cat_rizz", 1.0, 1170, 410, 300, False)],
+             "30代独身　ひとりガスト飲み", [("ガスト", R), ("・", BK), ("サイゼ", R), ("・", BK), ("バーミヤン", R)],
+             [("群雄割拠", R), ("の中", BK), ("選ばれたのは？", BK)], split=640, size=108)

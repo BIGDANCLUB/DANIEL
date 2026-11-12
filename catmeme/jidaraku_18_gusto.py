@@ -20,7 +20,7 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
           if os.path.isdir(os.path.join(J.HERE, "backgrounds", d)) and d != "jidaraku"]
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku")]
 OFFICE, STREET, FRONT, SEAT, ROOM_N = ("bg25_office_desk", "bg51_night_street", "gs01_front", "gs02_seat", "j07_room_night")
-J.STANDIN.update({FRONT: "bg51_night_street", SEAT: "bg28_ny_diner"})   # gs01_front はユーザーの外観写真が届いたら差しかえ
+J.STANDIN.update({SEAT: "bg28_ny_diner"})   # 外観 gs01_front・ワイン f_wine はユーザー提供（11/12）
 J.HOLD = 4
 J.LOOPS = 1
 J.SUB_STYLE = "glow"

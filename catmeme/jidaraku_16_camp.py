@@ -21,7 +21,7 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku", "01_yakiniku")]
 ROOM, ROOM_N, ROAD, OFFICE, SITE, SITE_N, FIRE = ("j01_room", "j07_room_night", "bg26_rural_road", "bg25_office_desk",
                                                   "cp01_site", "cp02_site_night", "cp03_fire")
-J.STANDIN.update({SITE: "bg106_lake_calm", SITE_N: "bg110_lake_sunset", FIRE: "bg110_lake_sunset"})
+# 背景 cp01_site・cp02_site_night・cp03_fire はユーザー提供（11/12）
 J.HOLD = 4
 J.LOOPS = 1
 J.SUB_STYLE = "glow"

@@ -21,7 +21,7 @@ def cuts():
         ('先輩', 'talk_orange_white_sitting_cat', 'Hi!', 'meow_ragdoll_chubby_cat', 'おつかれさまです'),
         ('上司', 'stare_interviewer_cat', 'Hi!', 'work_typing_cat', 'おつかれさまでございます'),
         ('部長', 'smug_squint_bicolor_cat', 'Hi John!', 'sad_looking_away_tabby', 'お手すきの際に\nご確認いただけますと\n幸いです'),
-        ('社長', 'rizz_cat_rizz', 'Hey!', 'surprise_big_pupils_cat', '恐れ入りますが\nなにとぞ'),
+        ('社長', 'rizz_cat_rizz', 'Hey!', 'surprise_big_pupils_cat', '誠に恐縮ですが\n何卒お願い\n申し上げます'),
         ('取引先', 'cocky_dj_cat', 'Nice to\nmeet you', 'despair_dramatic_kitten', '平素より格別の\nお引き立てを\n賜り'),
         ('お詫び', 'calm_black_face_sheep', 'Sorry', 'scream_phone_orange_cat', '誠に申し訳\nございません\nでした'),
         ('メールの最後', 'stare_aloha_gray_cat', 'Thanks', 'blank_black_cat_zoning_out', '引き続き\nよろしく\nお願いいたします'),

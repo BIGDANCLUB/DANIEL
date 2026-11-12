@@ -20,7 +20,8 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
           if os.path.isdir(os.path.join(J.HERE, "backgrounds", d)) and d != "jidaraku"]
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku")]
 OFFICE, STREET, FRONT, SEAT, ROOM_N = ("bg25_office_desk", "bg51_night_street", "gs01_front", "gs02_seat", "j07_room_night")
-J.STANDIN.update({SEAT: "bg28_ny_diner"})   # 外観 gs01_front・ワイン f_wine はユーザー提供（11/12）
+# 外観 gs01_front・店内 gs02_seat・ワイン f_wine はユーザー提供（11/12）
+STREET_D = "bg35_suburb_street"   # 18時前の道は昼（11/12 ユーザー指定）
 J.HOLD = 4
 J.LOOPS = 1
 J.SUB_STYLE = "glow"
@@ -39,7 +40,7 @@ def cuts():
         c = J.line(*a, **k)
         c["auto"] = auto
         return c
-    return [
+    cs = [
         # ---- 会社 ----
         s(OFFICE, "work_typing_cat", "平日の午後5時", bgm={"file": LOFI, "gain": -12}),
         s(OFFICE, "stare_tabby_wide_eyes_cat", "今日は\n定時で帰る"),
@@ -49,19 +50,19 @@ def cuts():
         s(OFFICE, "money_counting_orange_cat", "デカンタワインが\nとにかく安い"),
         s(OFFICE, "happy_hamster_open_arms", "それは\nみんな知っている"),
         s(OFFICE, "rizz_cat_rizz", "だが\n俺は知っている"),
-        s(OFFICE, "angry_aiming_cat", "ガストも\n負けず劣らず\nオトクだということを", se="shine_kiraan_maou"),
+        s(OFFICE, "angry_aiming_cat", "ガストも\n負けず劣らず\nオトクだということを", se="shine_kiraan_maou", dur=3.4),
         s(OFFICE, "stare_interviewer_cat", "ちょっといいかな", se="pi"),
-        s(OFFICE, "surprise_big_pupils_cat", "上司だ"),
+        s(OFFICE, "stare_interviewer_cat", "上司だ"),
         s(OFFICE, "stare_interviewer_cat", "あした\n時間ある？"),
         s(OFFICE, "calmdown_dancing_cat", "あしたなら\nいくらでも"),
         s(OFFICE, "leave_cat_leaves_home", "お先に\n失礼します", se="whoosh_shu"),
         # ---- 18時前に入る ----
-        s(STREET, "drive_driving_cat", "時計を見る\n5時45分", bgm={"file": NANDE, "gain": -12, "fade": 0.8}),
-        s(STREET, "read_book_orange_kitten", "ガストには\nハッピーアワーがある"),
-        s(STREET, "think_chin_paw_orange_cat", "平日の18時前は\nビールが安くなる"),
-        s(STREET, "calm_black_face_sheep", "※時間や値段は\n店舗や時期で\n変わります"),
-        s(STREET, "angry_aiming_cat", "つまり\n勝負は\n18時前"),
-        s(STREET, "scream_standing_marmot", "急げ", se="explosion_chudoon"),
+        s(STREET_D, "drive_driving_cat", "時計を見る\n5時45分", bgm={"file": NANDE, "gain": -12, "fade": 0.8}),
+        s(STREET_D, "read_book_orange_kitten", "ガストには\nハッピーアワーがある"),
+        s(STREET_D, "think_chin_paw_orange_cat", "平日の18時前は\nビールが安くなる"),
+        s(STREET_D, "calm_black_face_sheep", "※時間や値段は\n店舗や時期で\n変わります"),
+        s(STREET_D, "angry_aiming_cat", "つまり\n勝負は\n18時前"),
+        s(STREET_D, "scream_standing_marmot", "急げ", se="explosion_chudoon"),
         s(FRONT, "surprise_big_pupils_cat", "赤い看板が\n見えてきた"),
         s(FRONT, "happy_hamster_open_arms", "いつ見ても\n安心する赤だ"),
         s(FRONT, "sleepy_old_memories_cat", "子どものころは\n家族で来た店"),
@@ -161,7 +162,7 @@ def cuts():
         s(SEAT, "surprise_big_pupils_cat", "ドンッ", se="explosion_dokaan", item=WINE),
         s(SEAT, "happy_girlfriend_dance_cat", "ボトルが\n自分のテーブルに\n置かれたときの\nこの高揚感", item=WINE),
         s(SEAT, "showoff_gojo_cosplay_cat", "無敵感", se="gong_dora_jaan", item=WINE),
-        s(SEAT, "rizz_cat_rizz", "ひとりなのに\n1本まるごと\n俺のもの", item=WINE),
+        s(SEAT, "rizz_cat_rizz", "ひとりだから\n1本まるごと\n俺のもの", item=WINE),
         s(SEAT, "stare_big_eyes_tabby_kitten", "イタリアの\n赤ワイン", item=WINE),
         s(SEAT, "read_book_orange_kitten", "ラベルには\nぶどうと\n古いおうちの絵", item=WINE),
         s(SEAT, "smug_squint_bicolor_cat", "気分は\nイタリアの田舎", item=WINE),
@@ -263,6 +264,13 @@ def cuts():
         s(ROOM_N, "excited_hodomoe_city_cat", "それでも\nファミレスがある限り\n俺は\nがんばれる", se="pikon", dur=3.8),
         J.end_card(),
     ]
+    for c in cs:   # 11/12 ユーザー指定：ちょっといいかな～あした時間ある？はおいおい猫（stare_interviewer_cat）、あしたならから別の素材
+        t = c.get("text")
+        if t == "ちょっといいかな" or t == "あしたなら\nいくらでも":
+            c["new"] = True
+        elif t in ("上司だ", "あした\n時間ある？"):
+            c["keep"] = True
+    return cs
 
 
 def place(cs):

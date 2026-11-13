@@ -28,3 +28,11 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def final():
+    """11/13 ユーザー指定：a1 をもとに文字を「会社の理不尽はたき火で／全て燃やす燃やす燃やす燃やす」に。"""
+    L = ("happy_hamster_open_arms", 1.0, 125, 410, 280, False)
+    T.type_a("jidaraku_16_camp_thumb_final.png", "cp02_site_night", "cp03_fire", L, [("sad_banana_cat_cry", 1.0, 1170, 410, 300, False)],
+             "30代独身　ひとりソロキャンプ", [("会社の理不尽", R), ("はたき火で", BK)],
+             [("全て", BK), ("燃やす燃やす燃やす燃やす", R)], split=640, size=108)

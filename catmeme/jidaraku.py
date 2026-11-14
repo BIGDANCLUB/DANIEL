@@ -217,6 +217,7 @@ HOLD = 0   # 11/4 ユーザー指定：1つの素材を2〜3文つづけて使�
 # 素材ごとの「1回に続けて使える秒数」の上限。11/10 ユーザー指定：申し立てのあった3つの素材は、これからずっと1回6秒まで（5〜6秒で通った）
 CLAIM_CLIPS = ("joy_happy_happy_happy_cat", "happy_chipi_chapa_cat", "happy_girlfriend_dance_cat")
 MAXLEN = {a: 6.0 for a in CLAIM_CLIPS}
+MAXLEN["slack_nail_filing_cat"] = 8.0   # 11/14 ユーザー指定：つめ研ぎの黒猫は1回8秒まで
 LOOPS = 1   # 素材を何回くり返してよいか（1＝1回分まで。11/6 新時代は2＝切り替えをもっと少なく）
 
 

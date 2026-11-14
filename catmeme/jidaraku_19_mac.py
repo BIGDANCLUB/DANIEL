@@ -119,7 +119,7 @@ def cuts():
         s(SEAT, "surprise_big_pupils_cat", "これは", item=TERI, se="pi"),
         s(SEAT, "stare_big_eyes_tabby_kitten", "なんと", item=TERI),
         s(SEAT, "showoff_gojo_cosplay_cat", "見つけた", item=TERI, se="gong_dora_jaan"),
-        s(SEAT, "joy_happy_happy_happy_cat", "今回の\n優勝わくだ", item=TERI),
+        s(SEAT, "joy_happy_happy_happy_cat", "今回の\n優勝枠だ", item=TERI),
         s(SEAT, "read_book_orange_kitten", "てりやきソースと\nスイートレモンソース", item=TERI),
         s(SEAT, "happy_girlfriend_dance_cat", "この2つの\nからみが\nすばらしい", item=TERI),
         s(SEAT, "think_chin_paw_orange_cat", "そもそも", item=TERI),

@@ -35,3 +35,19 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def type_a_set():
+    """11/14 ユーザー指定：いつものA案の形（左に外観・右に料理・左上の帯・黄色い枠に2行）で3案。"""
+    R, BK = T.RED, T.BLACK
+    L = ("happy_hamster_open_arms", 1.0, 125, 410, 280, False)
+    for name, left, right, rc, l1, l2 in [
+        ("b1", "mc01_front", "f_teriyaki", "showoff_gojo_cosplay_cat",
+         [("マック新作チキン", R), ("3種", BK)], [("優勝", R), ("はまさかの…", BK)]),
+        ("b2", "mc01_front", "f_lineup", "surprise_big_pupils_cat",
+         [("新作3つ", R), ("一気に頼んだら", BK)], [("店員さん", BK), ("に全部バレた", R)]),
+        ("b3", "mc03_front_night", "f_teriyaki_bai", "sad_banana_cat_cry",
+         [("うますぎて", BK), ("販売休止", R)], [("てりやきの倍", R), ("を食べ納め", BK)]),
+    ]:
+        T.type_a("jidaraku_19_mac_thumb_%s.png" % name, left, right, L, [(rc, 1.0, 1170, 410, 300, False)],
+                 "30代独身　ひとりマック新作チキン", l1, l2, split=640, size=108)

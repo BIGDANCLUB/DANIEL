@@ -25,7 +25,7 @@ def cuts():
         ('翌日', 'dance_cute_dog', 'いい買い物\nだった', 'sad_looking_away_tabby', 'セール前と\n同じ値段だった'),
         ('1週間後', 'cocky_dj_cat', 'さっそく\n使う', 'despair_dramatic_kitten', '段ボールが\n10箱'),
         ('1か月後', 'happy_chipi_chapa_cat', '大満足', 'calm_black_face_sheep', 'まだ\n開けてない'),
-        ('請求日', 'stare_aloha_gray_cat', '予算どおり', 'dance_filmed_by_gray_cat', 'カードの\n請求を見て\n気絶'),
+        ('請求日', 'stare_aloha_gray_cat', '予算どおり', 'blank_black_cat_zoning_out', 'カードの\n請求を見て\n気絶'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

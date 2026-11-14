@@ -22,10 +22,10 @@ def cuts():
         ('30代', 'work_typing_cat', '缶コーヒー', 'eat_chips_cat', 'ジュースで\n若返り'),
         ('40代', 'stare_lying_tabby_cat', 'ブラック\nコーヒー', 'sleepy_old_memories_cat', 'お茶'),
         ('50代', 'calm_black_face_sheep', 'トクホの\nお茶', 'sad_looking_away_tabby', 'あったか〜い\nおしるこ'),
-        ('60代', 'stare_aloha_gray_cat', '健康飲料', 'read_book_orange_kitten', '老眼で\nボタンが\n見えない'),
+        ('60代', 'stare_aloha_gray_cat', '健康飲料', 'blank_black_cat_zoning_out', '水'),
         ('70代', 'sleep_sleeping_cat', '水', 'huh_huh_cat', 'スマホで\n払えない'),
-        ('80代', 'talk_orange_white_sitting_cat', '孫の分も\n買う', 'happy_chipi_chapa_cat', '孫の分も\n買う'),
-        ('100歳', 'showoff_gojo_cosplay_cat', 'コーラ', 'blank_black_cat_zoning_out', '若いころと\n同じ\nコーラ'),
+        ('80代', 'talk_orange_white_sitting_cat', '家から\n水筒を持参', 'happy_chipi_chapa_cat', '家から\n水筒を持参'),
+        ('100歳', 'showoff_gojo_cosplay_cat', 'いちごミルク', 'dance_filmed_by_gray_cat', 'コーラ'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

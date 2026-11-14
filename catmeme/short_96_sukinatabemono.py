@@ -19,13 +19,13 @@ def cuts():
     rows = [
         ('10代', 'eat_pop_cat', '給食の\nあげパン', 'happy_hamster_open_arms', 'ハンバーグ'),
         ('20代', 'dance_cute_dog', 'ラーメン\n大盛り', 'cocky_dj_cat', '焼肉\n食べ放題'),
-        ('30代', 'work_typing_cat', 'コンビニ\n弁当', 'eat_chips_cat', 'ビールと\n唐揚げ'),
+        ('30代', 'work_typing_cat', 'コンビニの\n唐揚げ', 'eat_chips_cat', 'ビールと\n唐揚げ'),
         ('40代', 'sleepy_old_memories_cat', 'そば', 'stare_lying_tabby_cat', '焼き鳥と\nハイボール'),
         ('50代', 'calm_black_face_sheep', 'うどん', 'sad_looking_away_tabby', '漬物と\nお茶づけ'),
         ('60代', 'read_book_orange_kitten', '煮物', 'stare_aloha_gray_cat', '湯豆腐'),
-        ('70代', 'talk_orange_white_sitting_cat', 'おかゆ', 'sleep_sleeping_cat', '早く寝る'),
-        ('80代', 'surprise_big_pupils_cat', 'ステーキ', 'showoff_gojo_cosplay_cat', '焼肉\n食べ放題'),
-        ('100歳', 'dance_white_dog', 'ハンバーグ', 'happy_chipi_chapa_cat', '結局\n子どもの\nころの味'),
+        ('70代', 'talk_orange_white_sitting_cat', '雑炊', 'blank_black_cat_zoning_out', 'うめぼし'),
+        ('80代', 'surprise_big_pupils_cat', 'おにぎり', 'sleep_sleeping_cat', '早く寝る'),
+        ('100歳', 'dance_white_dog', 'ハンバーグ', 'dance_filmed_by_gray_cat', 'ステーキ'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

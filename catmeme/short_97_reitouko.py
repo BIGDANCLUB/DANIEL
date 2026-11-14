@@ -21,11 +21,11 @@ def cuts():
         ('2年目', 'work_typing_cat', '肉と魚を\n小分け', 'eat_chips_cat', '冷凍\nチャーハン'),
         ('3年目', 'read_book_orange_kitten', '季節の\n野菜', 'stare_lying_tabby_cat', 'アイスだけ'),
         ('4年目', 'cocky_dj_cat', '手作り\nギョーザ', 'think_chin_paw_orange_cat', 'いつのか\nわからない肉'),
-        ('5年目', 'smug_squint_bicolor_cat', '冷凍ごはん', 'sad_looking_away_tabby', '霜で\n中が見えない'),
+        ('5年目', 'smug_squint_bicolor_cat', '冷凍ごはん', 'scream_phone_orange_cat', '霜で\n中が見えない'),
         ('6年目', 'dance_cute_dog', 'フルーツ', 'calm_black_face_sheep', 'もらった\n保冷剤'),
-        ('7年目', 'listen_dancing_dog', 'パンを\n冷凍', 'despair_dramatic_kitten', '保冷剤が\n増殖'),
-        ('8年目', 'happy_chipi_chapa_cat', '整理整頓', 'blank_black_cat_zoning_out', '保冷剤\n30個'),
-        ('10年目', 'stare_aloha_gray_cat', '理想の\n冷凍庫', 'dance_filmed_by_gray_cat', '保冷剤しか\nない'),
+        ('7年目', 'listen_dancing_dog', 'パンを\n冷凍', 'blank_black_cat_zoning_out', '保冷剤\n30個'),
+        ('8年目', 'happy_chipi_chapa_cat', '整理整頓', 'smug_squint_bicolor_cat', '冷凍パスタ\nうめぇ'),
+        ('10年目', 'stare_aloha_gray_cat', '理想の\n冷凍庫', 'dance_filmed_by_gray_cat', 'ニチレイと\n明治が\n領域展開'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4
@@ -38,5 +38,5 @@ def cuts():
 
 
 if __name__ == "__main__":
-    Wd.run(cuts(), Wd.rich_band([("{y}冷凍庫の中身の", 96, Wd.BLACK, 95), ("{y}理想と現実", 90, Wd.BLACK, 245)], 0, 330),
+    Wd.run(cuts(), Wd.rich_band([("{y}一人暮らしの冷凍庫", 96, Wd.BLACK, 95), ("{y}理想と現実", 90, Wd.BLACK, 245)], 0, 330),
            os.path.join(Wd.HERE, "out", "short_97_reitouko.mp4"), os.path.join(Wd.HERE, "out", "short_97_reitouko_preview"))

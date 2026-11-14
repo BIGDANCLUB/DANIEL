@@ -21,7 +21,7 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku")]
 OFFICE, STREET, STREET_N, ROOM_N = "bg25_office_desk", "bg35_suburb_street", "bg51_night_street", "j07_room_night"
 FRONT, SEAT, FRONT_N = "mc01_front", "mc02_seat", "mc03_front_night"
-J.STANDIN.update({FRONT: "bg35_suburb_street", SEAT: "bg28_ny_diner", FRONT_N: "bg51_night_street"})
+J.STANDIN.update({SEAT: "bg28_ny_diner", FRONT_N: "bg51_night_street"})   # 外観 mc01_front はユーザー提供（11/14）
 J.HOLD = 4
 J.LOOPS = 1
 J.SUB_STYLE = "glow"
@@ -31,6 +31,7 @@ HIRU = os.path.join(L.BGM, "昼下がり気分.mp3")
 PASTEL = os.path.join(L.BGM, "パステルハウス.mp3")
 JITAKU = os.path.join(L.BGM, "自宅にて.mp3")
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
+LINEUP = "f_lineup"   # ユーザー提供の新作4品のポスター（11/14）
 TRAY, ZAKU, SPICY, TERI, BAI, MOMO, FIZZ = "f_tray3", "f_zakuzaku", "f_spicy", "f_teriyaki", "f_teriyaki_bai", "f_momo", "f_fizz"
 
 
@@ -44,12 +45,12 @@ def cuts():
         # ---- 発端 ----
         s(OFFICE, "work_typing_cat", "10月のある日\n昼休み", bgm={"file": LOFI, "gain": -12}),
         s(OFFICE, "scream_phone_orange_cat", "スマホを見る"),
-        s(OFFICE, "surprise_big_pupils_cat", "マックから\nチキンの新作が\n出るらしい", se="pi"),
-        s(OFFICE, "read_book_orange_kitten", "ザクザクチキン\nジューシーマック"),
-        s(OFFICE, "read_book_orange_kitten", "スパイシー\nザクザク\nジューシーマック"),
-        s(OFFICE, "read_book_orange_kitten", "てりやきチキン\nジューシーマック"),
-        s(OFFICE, "stare_tabby_wide_eyes_cat", "さらに\nサイドメニューに\nももチキン単品"),
-        s(OFFICE, "think_chin_paw_orange_cat", "新作が\n3つ同時"),
+        s(OFFICE, "surprise_big_pupils_cat", "マックから\nチキンの新作が\n出るらしい", se="pi", item=LINEUP),
+        s(OFFICE, "read_book_orange_kitten", "ザクザクチキン\nジューシーマック", item=LINEUP),
+        s(OFFICE, "read_book_orange_kitten", "スパイシー\nザクザク\nジューシーマック", item=LINEUP),
+        s(OFFICE, "read_book_orange_kitten", "てりやきチキン\nジューシーマック", item=LINEUP),
+        s(OFFICE, "stare_tabby_wide_eyes_cat", "さらに\nサイドメニューに\nももチキン単品", item=LINEUP),
+        s(OFFICE, "think_chin_paw_orange_cat", "新作が\n3つ同時", item=LINEUP),
         s(OFFICE, "angry_aiming_cat", "これは\n食べくらべるしかない"),
         s(OFFICE, "stare_interviewer_cat", "ちょっといいかな", se="pi"),
         s(OFFICE, "surprise_big_pupils_cat", "上司だ"),
@@ -60,8 +61,8 @@ def cuts():
         s(STREET, "drive_driving_cat", "土曜日の昼", se="whoosh_shu", bgm={"file": MORNING, "gain": -12, "fade": 0.8}),
         s(STREET, "happy_hamster_open_arms", "足どりが軽い"),
         s(FRONT, "showoff_gojo_cosplay_cat", "マックに到着", se="gong_dora_jaan"),
-        s(FRONT, "peek_what_happen_cat", "店の前に\n新作のポスター"),
-        s(FRONT, "stare_big_eyes_tabby_kitten", "ザクザクの文字が\nまぶしい"),
+        s(FRONT, "peek_what_happen_cat", "店の前に\n新作のポスター", item=LINEUP),
+        s(FRONT, "stare_big_eyes_tabby_kitten", "ザクザクの文字が\nまぶしい", item=LINEUP),
         s(FRONT, "rizz_cat_rizz", "待っていたぞ"),
         s(SEAT, "work_typing_cat", "注文は\nもう決めてある", bgm={"file": HIRU, "gain": -12, "fade": 0.8}),
         s(SEAT, "stare_lying_tabby_cat", "……はずだった"),

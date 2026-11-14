@@ -24,7 +24,7 @@ def cuts():
         ('1時', 'rizz_cat_rizz', '24時間\n電車', 'calm_black_face_sheep', 'ファミレスで\nドリンクバー'),
         ('3時', 'smug_squint_bicolor_cat', 'もう家で\n寝ている', 'sleep_sleeping_cat', 'カラオケで\n仮眠'),
         ('5時', 'stare_aloha_gray_cat', 'ぐっすり', 'despair_dramatic_kitten', '始発で帰る'),
-        ('翌日', 'dance_filmed_by_gray_cat', '元気に\n出社', 'blank_black_cat_zoning_out', '眠気と\n出費'),
+        ('翌日', 'dance_filmed_by_gray_cat', 'フレックスで\n元気に出社', 'blank_black_cat_zoning_out', '眠気と\n出費'),
         ('合計', 'showoff_gojo_cosplay_cat', '0円', 'money_counting_orange_cat', '飲み代より\n高い'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):

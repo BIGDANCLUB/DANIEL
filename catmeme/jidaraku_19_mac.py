@@ -21,7 +21,7 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku")]
 OFFICE, STREET, STREET_N, ROOM_N = "bg25_office_desk", "bg35_suburb_street", "bg51_night_street", "j07_room_night"
 FRONT, SEAT, FRONT_N = "mc01_front", "mc02_seat", "mc03_front_night"
-J.STANDIN.update({SEAT: "bg28_ny_diner", FRONT_N: "bg51_night_street"})   # 外観 mc01_front はユーザー提供（11/14）
+# 写真はすべてユーザー提供（11/14）。トレーの写真はないので新作4品のポスターで代用
 J.HOLD = 4
 J.LOOPS = 1
 J.SUB_STYLE = "glow"
@@ -32,7 +32,7 @@ PASTEL = os.path.join(L.BGM, "パステルハウス.mp3")
 JITAKU = os.path.join(L.BGM, "自宅にて.mp3")
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
 LINEUP = "f_lineup"   # ユーザー提供の新作4品のポスター（11/14）
-TRAY, ZAKU, SPICY, TERI, BAI, MOMO, FIZZ = "f_tray3", "f_zakuzaku", "f_spicy", "f_teriyaki", "f_teriyaki_bai", "f_momo", "f_fizz"
+TRAY, ZAKU, SPICY, TERI, BAI, MOMO, FIZZ = "f_lineup", "f_zakuzaku", "f_spicy", "f_teriyaki", "f_teriyaki_bai", "f_momo", "f_fizz"
 
 
 def cuts():

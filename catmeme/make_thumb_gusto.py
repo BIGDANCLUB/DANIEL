@@ -1,0 +1,46 @@
+"""自堕落シリーズ #18 ガストひとり飲みのサムネ（11/12）。いつものAパターンで文言3案。
+
+python3 catmeme/make_thumb_gusto.py → thumbs/jidaraku_18_gusto_thumb_a1〜a3.png
+"""
+import os
+
+import make_thumb_long_ref as T
+import make_thumb_short_ref as S
+
+for d in (os.path.join("jidaraku", "18_gusto"), "jidaraku"):
+    S.BGS.insert(0, os.path.join(T.HERE, "backgrounds", d))
+R, BK = T.RED, T.BLACK
+
+
+def main():
+    L = ("happy_hamster_open_arms", 1.0, 125, 410, 280, False)
+    for name, left, right, rc, l1, l2 in [
+        ("a1", "gs01_front", "f_karaage", "rizz_cat_rizz",
+         [("サイゼ", BK), ("だけじゃない", R)], [("ガスト飲み", R), ("がオトクすぎる", BK)]),
+        ("a2", "gs02_seat", "f_wine", "showoff_gojo_cosplay_cat",
+         [("18時前", R), ("に入るのが", BK)], [("クレバーな", BK), ("ひとり飲み", R)]),
+        ("a3", "gs02_seat", "f_karaage", "angry_aiming_cat",
+         [("から好しの唐揚げ", R)], [("反則", R), ("のうまさだった", BK)]),
+    ]:
+        T.type_a("jidaraku_18_gusto_thumb_%s.png" % name, left, right, L, [(rc, 1.0, 1170, 410, 300, False)],
+                 "30代独身　ひとりガスト飲み", l1, l2, split=640, size=108)
+
+
+if __name__ == "__main__":
+    main()
+
+
+def final():
+    """11/12 ユーザー指定：a1 をもとに文字を「ガスト・サイゼ・バーミヤン／群雄割拠の中選ばれたのは？」に。"""
+    L = ("happy_hamster_open_arms", 1.0, 125, 410, 280, False)
+    T.type_a("jidaraku_18_gusto_thumb_final.png", "gs01_front", "f_karaage", L, [("rizz_cat_rizz", 1.0, 1170, 410, 300, False)],
+             "30代独身　ひとりガスト飲み", [("ガスト", R), ("・", BK), ("サイゼ", R), ("・", BK), ("バーミヤン", R)],
+             [("群雄割拠", R), ("の中", BK), ("選ばれたのは？", BK)], split=640, size=108)
+
+
+def final2():
+    """11/12 ユーザー指定：文字を「ガストには「コレ」がある／30代男性一人飲み」に。"""
+    L = ("happy_hamster_open_arms", 1.0, 125, 410, 280, False)
+    T.type_a("jidaraku_18_gusto_thumb_final2.png", "gs01_front", "f_karaage", L, [("rizz_cat_rizz", 1.0, 1170, 410, 300, False)],
+             "30代独身　ひとりガスト飲み", [("ガストには", BK), ("「コレ」", R), ("がある", BK)],
+             [("30代男性", R), ("一人飲み", BK)], split=640, size=108)

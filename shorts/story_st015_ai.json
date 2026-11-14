@@ -1,0 +1,228 @@
+{
+ "_comment": "ST-015 傷病手当金。会社員等の健康保険（協会けんぽ・組合健保）。業務外の病気やけがで連続3日休んだ後、4日目から支給。1日あたり支給開始前12か月の標準報酬月額の平均÷30×3分の2。通算1年6か月。給与が出ている場合は調整。国民健康保険には原則なし。月給36万円なら月約24万円（目安）。",
+ "tempo": 1.22,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "知らないと大損する\n{病気で働けなくなったら}",
+ "thumb_top": "54歳でがん 半年休職\n月24万円もらえた",
+ "thumb_teaser": "会社員なら誰でも",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n54歳の日本人男性。落ち着いた低めの声で、誠実な人柄。\n## THE SCENE\n自分の身に起きた出来事を、同世代の男性に打ち明けるように語っている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。数字は少し強調する。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st015_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st015_ai/images"
+ },
+ "scenes": {
+  "office_empty_desk": {
+   "prompt": "An empty office desk with a neatly pushed-in chair and a closed laptop, a get-well card on it, soft morning light No faces visible, no readable text."
+  },
+  "checkup": {
+   "prompt": "A health checkup result envelope and a doctor's referral letter on a kitchen table, an older man's hands resting beside them, text blurred No faces visible, no readable text."
+  },
+  "hospital_window": {
+   "prompt": "A hospital room window with a single bed and an IV stand, afternoon light, quiet and worried mood, no people No faces visible, no readable text."
+  },
+  "loan_papers": {
+   "prompt": "Housing loan documents and a calculator on a dining table at night, an older man's hands clasped above them, text blurred No faces visible, no readable text."
+  },
+  "hr_form": {
+   "prompt": "A company HR office desk where a staff member's hands slide an application form toward an older man's hands, text blurred No faces visible, no readable text."
+  },
+  "deposit_salary": {
+   "prompt": "An older man's hands holding an open bank passbook with a new blurred entry, sitting on a hospital bed blanket, relieved mood No faces visible, no readable text."
+  },
+  "back_to_work": {
+   "prompt": "A middle-aged man in a suit walking into an office lobby in the morning, seen from behind, hopeful bright light No faces visible, no readable text."
+  },
+  "station_evening": {
+   "prompt": "A busy Japanese train station platform at dusk with commuters seen from behind, warm light No faces visible, no readable text."
+  }
+ },
+ "lines": [
+  {
+   "text": "病気で休んで\n{月24万円}\nもらえた",
+   "tone": "信じられない結果を打ち明ける。驚きをこめて、力強く",
+   "say": "病気で会社を休んで、月24万円もらえました。",
+   "se": "don",
+   "scene": "office_empty_desk",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true
+  },
+  {
+   "text": "会社員なら\n<誰でも>使える\n制度でした",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "会社員なら誰でも使える、ある制度のおかげです。",
+   "scene": "office_empty_desk",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{54歳}の会社員\n月給は{36万円}",
+   "tone": "淡々と、落ち着いて",
+   "say": "54歳の会社員。月給は36万円です。",
+   "scene": "checkup",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "健康診断で\n<胃がん>が\n見つかりました",
+   "tone": "重く、声を詰まらせるように",
+   "say": "健康診断で、胃がんが見つかりました。",
+   "scene": "checkup",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "手術と治療で\n<半年>は働けない",
+   "tone": "沈んだ声で",
+   "say": "手術と治療で、半年は働けないと言われました。",
+   "scene": "hospital_window",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "休めば\n<給料はゼロ>",
+   "tone": "絶望がにじむ",
+   "say": "休めば、給料はゼロになります。",
+   "scene": "hospital_window",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "住宅ローンも\n<まだ10年>\n残っています",
+   "tone": "不安で声が沈む",
+   "say": "住宅ローンも、まだ10年残っていました。",
+   "scene": "loan_papers",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "会社の{総務}に\n相談しました",
+   "tone": "気を取り直して",
+   "say": "会社の総務に、相談しました。",
+   "scene": "loan_papers",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "「{傷病手当金}を\n申請しましょう」",
+   "tone": "総務の人の言葉を、やさしく落ち着いて再現する",
+   "say": "総務の人が言いました。傷病手当金を、申請しましょう。",
+   "scene": "hr_form",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "連続して{3日}休むと\n{4日目}から支給",
+   "tone": "はっきりと、聞き手に教えるように",
+   "say": "連続して3日休むと、4日目から支給されます。",
+   "scene": "hr_form",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "給料の\n約{3分の2}",
+   "tone": "説明するように、わかりやすく",
+   "say": "金額は、給料の約3分の2。",
+   "scene": "hr_form",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "私の場合\n<月約24万円>",
+   "tone": "驚きと安堵。声がふっと明るくなる",
+   "say": "私の場合、月約24万円でした。",
+   "se": "coin",
+   "scene": "deposit_salary",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "最長\n{1年6か月}\n受け取れます",
+   "tone": "驚きをこめて",
+   "say": "最長で1年6か月、受け取れます。",
+   "scene": "deposit_salary",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{健康保険}は\n働く人の命綱です",
+   "tone": "誇らしく、力強く",
+   "say": "健康保険は、働く人の命綱です。",
+   "scene": "back_to_work",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "治療に専念して\n{職場に復帰}\nできました",
+   "tone": "ほっとして、前向きに",
+   "say": "治療に専念して、職場に復帰できました。",
+   "scene": "back_to_work",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "病気で休むとき\n<この制度>を\n知っていますか？",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "病気で休むとき、この制度を知っていますか。",
+   "scene": "station_evening",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  }
+ ]
+}

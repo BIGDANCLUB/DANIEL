@@ -51,3 +51,33 @@ def type_a_set():
     ]:
         T.type_a("jidaraku_19_mac_thumb_%s.png" % name, left, right, L, [(rc, 1.0, 1170, 410, 300, False)],
                  "30代独身　ひとりマック新作チキン", l1, l2, split=640, size=108)
+
+
+def center_cat(name, cat, l1, l2, left="mc01_front", right="f_teriyaki", tag="30代独身　ひとりマック新作チキン"):
+    """11/14 ユーザー指定：b1 をもとに、猫を1匹だけ真ん中に大きく置く形（左右の写真・左上の帯・黄色い枠の2行はそのまま）。"""
+    from PIL import ImageDraw as D
+    W, H, top_h, split = T.W, T.H, 410, 640
+    img = Image.new("RGBA", (W, H), T.WHITE)
+    img.alpha_composite(T.fill_photo(left, split, top_h, cx=0.5), (0, 0))
+    img.alpha_composite(T.fill_photo(right, W - split - 4, top_h), (split + 4, 0))
+    t = T.runs([(tag, (T.RED, T.WHITE))], 52, 2, 640)
+    box = Image.new("RGBA", (t.width + 50, t.height + 34), T.WHITE + (255,))
+    D.Draw(box).rectangle((0, 0, box.width - 1, box.height - 1), outline=T.BLACK, width=5)
+    box.alpha_composite(t, (25, 17))
+    box = box.rotate(2, expand=True, resample=Image.BICUBIC)
+    D.Draw(img).rectangle((0, top_h + 18, W, H), fill=(255, 245, 60, 255), outline=T.BLACK, width=6)
+    T.put_cat(img, cat, 1.0, 640, top_h + 18, 420, False)   # 黄色い枠の上にのる大きな猫
+    img.alpha_composite(box, (14, top_h - box.height + 40))   # 帯は猫より手前
+    a = T.runs(l1, 108, 8, W - 40)
+    b = T.runs(l2, 108, 8, W - 40)
+    img.alpha_composite(a, ((W - a.width) // 2, top_h + 40))
+    img.alpha_composite(b, ((W - b.width) // 2, top_h + 50 + a.height))
+    T.save(img, name)
+
+
+def center_set():
+    R, BK = T.RED, T.BLACK
+    l1, l2 = [("マック新作チキン", R), ("3種", BK)], [("食べ比べした結果…", BK)]
+    center_cat("jidaraku_19_mac_thumb_c1.png", "stare_big_eyes_tabby_kitten", l1, l2)
+    center_cat("jidaraku_19_mac_thumb_c2.png", "surprise_big_pupils_cat", l1, l2)
+    center_cat("jidaraku_19_mac_thumb_c3.png", "showoff_gojo_cosplay_cat", l1, l2)

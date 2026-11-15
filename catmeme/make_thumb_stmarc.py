@@ -28,3 +28,13 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def line2_set():
+    """11/15 ユーザー指定：c1 をもとに2行目だけ3案（d1〜d3）。"""
+    l1 = [("焼きたてパン", R), ("食べ放題", BK)]
+    for name, l2 in [("d1", [("元を取る", BK), ("つもりが…", R)]),
+                     ("d2", [("店員さんに", BK), ("常連扱い", R), ("された", BK)]),
+                     ("d3", [("パンの重み", R), ("で立てない", BK)])]:
+        M.center_cat("jidaraku_20_stmarc_thumb_%s.png" % name, "surprise_big_pupils_cat", l1, l2,
+                     left="sm01_front", right="f_basket", tag=TAG)

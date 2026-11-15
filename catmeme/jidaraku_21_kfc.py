@@ -21,7 +21,7 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku")]
 OFFICE, STREET, STREET_N, ROOM_N = "bg25_office_desk", "bg35_suburb_street", "bg51_night_street", "j07_room_night"
 FRONT, SEAT, BUFFET = "kf01_front", "kf02_seat", "kf03_buffet"
-J.STANDIN.update({SEAT: "bg28_ny_diner"})   # 入口 kf01_front・食べ放題のショーケース kf03_buffet はユーザー提供（11/15）
+# 写真はユーザー提供（11/15）。骨の皿・デザートの写真はないので、その場面は写真なし
 J.HOLD = 4
 J.LOOPS = 1
 J.SUB_STYLE = "glow"

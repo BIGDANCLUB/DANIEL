@@ -19,9 +19,9 @@ def cuts():
     rows = [
         ('1年目', 'showoff_gojo_cosplay_cat', '作り置き\nぎっしり', 'happy_hamster_open_arms', '冷凍食品\nぎっしり'),
         ('2年目', 'work_typing_cat', '肉と魚を\n小分け', 'eat_chips_cat', '冷凍\nチャーハン'),
-        ('3年目', 'read_book_orange_kitten', '季節の\n野菜', 'stare_lying_tabby_cat', 'アイスだけ'),
+        ('3年目', 'read_book_orange_kitten', '季節の\n野菜', 'stare_lying_tabby_cat', 'アイスの\nバリエーションは\n豊富'),
         ('4年目', 'cocky_dj_cat', '手作り\nギョーザ', 'think_chin_paw_orange_cat', 'いつのか\nわからない肉'),
-        ('5年目', 'smug_squint_bicolor_cat', '冷凍ごはん', 'scream_phone_orange_cat', '霜で\n中が見えない'),
+        ('5年目', 'smug_squint_bicolor_cat', '冷凍ごはん', 'scream_phone_orange_cat', 'パンパンで\n中が見えない'),
         ('6年目', 'dance_cute_dog', 'フルーツ', 'calm_black_face_sheep', 'もらった\n保冷剤'),
         ('7年目', 'listen_dancing_dog', 'パンを\n冷凍', 'blank_black_cat_zoning_out', '保冷剤\n30個'),
         ('8年目', 'happy_chipi_chapa_cat', '整理整頓', 'smug_squint_bicolor_cat', '冷凍パスタ\nうめぇ'),

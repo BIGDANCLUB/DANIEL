@@ -17,15 +17,15 @@ def cuts():
     out = []
     # (札, 右の猫, 右の説明, 左の猫, 左の説明)
     rows = [
-        ('1週間前', 'read_book_orange_kitten', '欲しいものを\nリストにする', 'scream_phone_orange_cat', 'なんとなく\nアプリを見る'),
-        ('前日', 'work_typing_cat', '値段を\nメモしておく', 'think_chin_paw_orange_cat', 'カートに\n30個'),
+        ('1週間前', 'read_book_orange_kitten', '欲しいものを\nリストにする', 'scream_phone_orange_cat', 'アプリを見て\nやる気だけは出す'),
+        ('前日', 'work_typing_cat', '値段を\nメモしておく', 'think_chin_paw_orange_cat', '届いた後の\n生活を妄想'),
         ('0時', 'angry_aiming_cat', 'リストの物だけ\n買う', 'surprise_big_pupils_cat', 'セール開始\n全部ほしい'),
-        ('0時5分', 'smug_squint_bicolor_cat', '半額で\nゲット', 'money_counting_orange_cat', '送料無料まで\nあと1000円'),
+        ('0時5分', 'smug_squint_bicolor_cat', '半額で\nゲット', 'money_counting_orange_cat', 'なぜか\nセール対象外も\n買う'),
         ('1時', 'happy_hamster_open_arms', '寝る', 'stare_lying_tabby_cat', 'いらない物で\n1000円うめる'),
         ('翌日', 'dance_cute_dog', 'いい買い物\nだった', 'sad_looking_away_tabby', 'セール前と\n同じ値段だった'),
         ('1週間後', 'cocky_dj_cat', 'さっそく\n使う', 'despair_dramatic_kitten', '段ボールが\n10箱'),
-        ('1か月後', 'happy_chipi_chapa_cat', '大満足', 'calm_black_face_sheep', 'まだ\n開けてない'),
-        ('請求日', 'stare_aloha_gray_cat', '予算どおり', 'blank_black_cat_zoning_out', 'カードの\n請求を見て\n気絶'),
+        ('1か月後', 'happy_chipi_chapa_cat', '大満足', 'calm_black_face_sheep', 'ダンボールが\nインテリア化'),
+        ('請求日', 'stare_aloha_gray_cat', '予算どおり', 'dance_filmed_by_gray_cat', '請求は\n決して\n見ない'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

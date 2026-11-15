@@ -21,7 +21,7 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku")]
 OFFICE, STREET, STREET_N, ROOM_N = "bg25_office_desk", "bg35_suburb_street", "bg51_night_street", "j07_room_night"
 FRONT, SEAT, BUFFET = "kf01_front", "kf02_seat", "kf03_buffet"
-# 写真はユーザー提供（11/15）。骨の皿・デザートの写真はないので、その場面は写真なし
+# 写真はユーザー提供（11/15）。骨の皿・デザートの写真はないので、その場面は写真なし。チキンの皿 f_plate はパスタ・カレーの場面では出さない（11/15 ユーザー指定）
 J.HOLD = 4
 J.LOOPS = 1
 J.SUB_STYLE = "glow"
@@ -177,12 +177,12 @@ def cuts():
         s(SEAT, "calmdown_dancing_cat", "今は\n骨のことは忘れよう", item=BONES, bgm={"file": PASTEL, "gain": -12, "fade": 0.8}),
         # ---- 3皿目 ----
         s(BUFFET, "angry_aiming_cat", "3皿目", item=CHICKEN),
-        s(BUFFET, "read_book_orange_kitten", "パスタや\nカレーまで\nある", item=PLATE),
-        s(BUFFET, "think_chin_paw_orange_cat", "ケンタッキーで\nカレー", item=PLATE),
-        s(BUFFET, "smug_squint_bicolor_cat", "これは\n味見しないと\n失礼だ", item=PLATE),
-        s(SEAT, "eat_pop_cat", "カレーの上に\nチキンをのせる", item=PLATE, se="pikon"),
-        s(SEAT, "happy_girlfriend_dance_cat", "チキンカレーの\n完成", item=PLATE),
-        s(SEAT, "rizz_cat_rizz", "ここだけの\n裏メニューだ", item=PLATE),
+        s(BUFFET, "read_book_orange_kitten", "パスタや\nカレーまで\nある"),
+        s(BUFFET, "think_chin_paw_orange_cat", "ケンタッキーで\nカレー"),
+        s(BUFFET, "smug_squint_bicolor_cat", "これは\n味見しないと\n失礼だ"),
+        s(SEAT, "eat_pop_cat", "カレーの上に\nチキンをのせる", se="pikon"),
+        s(SEAT, "happy_girlfriend_dance_cat", "チキンカレーの\n完成"),
+        s(SEAT, "rizz_cat_rizz", "ここだけの\n裏メニューだ"),
         s(SEAT, "eat_crunchy_cat_luna", "7ピース目", item=CHICKEN),
         s(SEAT, "stare_tabby_wide_eyes_cat", "……", item=CHICKEN),
         s(SEAT, "sleepy_sleepy_cat", "少し\nペースが落ちてきた", item=CHICKEN),

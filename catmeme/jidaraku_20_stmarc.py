@@ -20,7 +20,7 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku")]
 OFFICE, STREET, STREET_E, ROOM_N = "bg25_office_desk", "bg35_suburb_street", "bg51_night_street", "j07_room_night"
 FRONT, SEAT = "sm01_front", "sm02_seat"
-J.STANDIN.update({FRONT: "bg35_suburb_street", SEAT: "bg28_ny_diner"})
+J.STANDIN.update({SEAT: "bg28_ny_diner"})   # 外観 sm01_front・パン・ハンバーグはユーザー提供（11/15）。f_bread_cheese は塩パンの写真
 J.HOLD = 4
 J.LOOPS = 1
 J.SUB_STYLE = "glow"
@@ -105,7 +105,7 @@ def cuts():
         s(SEAT, "stare_lying_tabby_cat", "かごが\n近づいてくる", item=BASKET, bgm={"file": PASTEL, "gain": -12, "fade": 0.8}),
         s(SEAT, "stare_interviewer_cat", "焼きたてパン\nいかがですか？", item=BASKET),
         s(SEAT, "surprise_big_pupils_cat", "種類が多い", item=BASKET, se="pi"),
-        s(SEAT, "read_book_orange_kitten", "チョコのパン\nチーズのパン\nくるみのパン", item=BASKET),
+        s(SEAT, "read_book_orange_kitten", "チョコのパン\n塩パン\nくるみのパン", item=BASKET),
         s(SEAT, "think_chin_paw_orange_cat", "最初の1個は\n大事だ", item=BASKET),
         s(SEAT, "angry_aiming_cat", "チョコのパンを\nください", item=CHOCO),
         s(SEAT, "eat_pop_cat", "ふわっ", item=CHOCO, se="pikon"),
@@ -134,7 +134,7 @@ def cuts():
         # ---- 2回目のかご ----
         s(SEAT, "stare_interviewer_cat", "焼きたてパン\nいかがですか？", item=BASKET, se="pi"),
         s(SEAT, "showoff_gojo_cosplay_cat", "来た", item=BASKET, se="gong_dora_jaan"),
-        s(SEAT, "angry_shooting_cat", "チーズのパンと\nくるみのパンを", item=CHEESE),
+        s(SEAT, "angry_shooting_cat", "塩パンと\nくるみのパンを", item=CHEESE),
         s(SEAT, "work_typing_cat", "ハンバーグのソースを\nパンでぬぐう", item=MAIN),
         s(SEAT, "eat_crunchy_cat_luna", "もぐっ", item=CHEESE, se="pikon"),
         s(SEAT, "realize_wet_cat_stare", "これが\nやりたかった", item=CHEESE),
@@ -144,7 +144,7 @@ def cuts():
         s(SEAT, "stare_lying_tabby_cat", "ハンバーグを\n完食している", item=MAIN),
         s(SEAT, "despair_dramatic_kitten", "作戦は\n1つ目から\nくずれた", item=MAIN),
         s(SEAT, "calmdown_dancing_cat", "まあいい", item=MAIN),
-        s(SEAT, "eat_pop_cat", "チーズのパンも\nもっちもち", item=CHEESE),
+        s(SEAT, "eat_pop_cat", "塩パンも\nもっちもち", item=CHEESE),
         s(SEAT, "joy_happy_happy_happy_cat", "これで\n3個", item=CHEESE),
         # ---- 回想：後輩 ----
         s(SEAT, "think_chin_paw_orange_cat", "ちぎって食べると\nふと思い出す", item=CHEESE),
@@ -181,7 +181,7 @@ def cuts():
         s(SEAT, "blank_black_cat_zoning_out", "今日\n初めて来た", item=BASKET),
         s(SEAT, "work_typing_cat", "ここまでの\nパンランキング", item=BASKET, bgm={"file": PASTEL, "gain": -12, "fade": 0.8}),
         s(SEAT, "read_book_orange_kitten", "3位\nくるみのパン\n香ばしい", item=BASKET),
-        s(SEAT, "read_book_orange_kitten", "2位\nチーズのパン\nもっちもち", item=CHEESE),
+        s(SEAT, "read_book_orange_kitten", "2位\n塩パン\nもっちもち", item=CHEESE),
         s(SEAT, "read_book_orange_kitten", "1位\nチョコのパン\n焼きたてが反則", item=CHOCO),
         s(SEAT, "smug_squint_bicolor_cat", "でも\nランキングは\nかごが来るたびに\n変わる", item=BASKET),
         s(SEAT, "rizz_cat_rizz", "パンの世界は\n下克上だ", item=BASKET),

@@ -38,3 +38,10 @@ def line2_set():
                      ("d3", [("パンの重み", R), ("で立てない", BK)])]:
         M.center_cat("jidaraku_20_stmarc_thumb_%s.png" % name, "surprise_big_pupils_cat", l1, l2,
                      left="sm01_front", right="f_basket", tag=TAG)
+
+
+def final():
+    """11/15 ユーザー指定：c2 をもとに文字を「焼きたてパン食べ放題／断れずにわんこそば状態」に。"""
+    M.center_cat("jidaraku_20_stmarc_thumb_final.png", "stare_big_eyes_tabby_kitten",
+                 [("焼きたてパン", R), ("食べ放題", BK)], [("断れずに", BK), ("わんこそば状態", R)],
+                 left="sm02_seat", right="f_basket", tag=TAG)

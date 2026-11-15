@@ -20,7 +20,7 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku")]
 OFFICE, STREET, STREET_E, ROOM_N = "bg25_office_desk", "bg35_suburb_street", "bg51_night_street", "j07_room_night"
 FRONT, SEAT = "sm01_front", "sm02_seat"
-J.STANDIN.update({SEAT: "bg28_ny_diner"})   # 外観 sm01_front・パン・ハンバーグはユーザー提供（11/15）。f_bread_cheese は塩パンの写真
+# 写真はすべてユーザー提供（11/15）。f_bread_cheese は塩パン、f_cheese_stick はチーズのパン（チーズチャパタ）の写真。ガーリックパン・サラダは写真なし
 J.HOLD = 4
 J.LOOPS = 1
 J.SUB_STYLE = "glow"
@@ -31,6 +31,7 @@ PASTEL = os.path.join(L.BGM, "パステルハウス.mp3")
 JITAKU = os.path.join(L.BGM, "自宅にて.mp3")
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
 BASKET, MAIN, SALAD, CHOCO, CHEESE, DESSERT = "f_basket", "f_main", "f_salad", "f_bread_choco", "f_bread_cheese", "f_dessert"
+MILK, CROISSANT, CHEESE2 = "f_milk", "f_croissant", "f_cheese_stick"   # 11/15 ユーザー提供
 
 
 def cuts():
@@ -105,7 +106,7 @@ def cuts():
         s(SEAT, "stare_lying_tabby_cat", "かごが\n近づいてくる", item=BASKET, bgm={"file": PASTEL, "gain": -12, "fade": 0.8}),
         s(SEAT, "stare_interviewer_cat", "焼きたてパン\nいかがですか？", item=BASKET),
         s(SEAT, "surprise_big_pupils_cat", "種類が多い", item=BASKET, se="pi"),
-        s(SEAT, "read_book_orange_kitten", "チョコのパン\n塩パン\nくるみのパン", item=BASKET),
+        s(SEAT, "read_book_orange_kitten", "チョコのパン\nガーリックパン\nミルクブレッド", item=BASKET),
         s(SEAT, "think_chin_paw_orange_cat", "最初の1個は\n大事だ", item=BASKET),
         s(SEAT, "angry_aiming_cat", "チョコのパンを\nください", item=CHOCO),
         s(SEAT, "eat_pop_cat", "ふわっ", item=CHOCO, se="pikon"),
@@ -134,7 +135,15 @@ def cuts():
         # ---- 2回目のかご ----
         s(SEAT, "stare_interviewer_cat", "焼きたてパン\nいかがですか？", item=BASKET, se="pi"),
         s(SEAT, "showoff_gojo_cosplay_cat", "来た", item=BASKET, se="gong_dora_jaan"),
-        s(SEAT, "angry_shooting_cat", "塩パンと\nくるみのパンを", item=CHEESE),
+        s(SEAT, "angry_shooting_cat", "ガーリックパンと\n塩パンを", item=BASKET),
+        s(SEAT, "eat_crunchy_cat_luna", "カリッ", item=BASKET, se="pikon"),
+        s(SEAT, "surprise_big_pupils_cat", "アツアツの\nカリッとした外側", item=BASKET),
+        s(SEAT, "happy_girlfriend_dance_cat", "中はモチモチ", item=BASKET),
+        s(SEAT, "realize_wet_cat_stare", "ガーリックの\n濃い香りが\n口から頭に\nしみわたる", item=BASKET),
+        s(SEAT, "scream_standing_marmot", "香りの暴力", item=BASKET, se="explosion_dokaan"),
+        s(SEAT, "think_chin_paw_orange_cat", "いや", item=BASKET),
+        s(SEAT, "rizz_cat_rizz", "暴力の香りだ", item=BASKET),
+        s(SEAT, "showoff_gojo_cosplay_cat", "いちばん好きなパンに\n決定", item=BASKET, se="gong_dora_jaan"),
         s(SEAT, "work_typing_cat", "ハンバーグのソースを\nパンでぬぐう", item=MAIN),
         s(SEAT, "eat_crunchy_cat_luna", "もぐっ", item=CHEESE, se="pikon"),
         s(SEAT, "realize_wet_cat_stare", "これが\nやりたかった", item=CHEESE),
@@ -144,7 +153,7 @@ def cuts():
         s(SEAT, "stare_lying_tabby_cat", "ハンバーグを\n完食している", item=MAIN),
         s(SEAT, "despair_dramatic_kitten", "作戦は\n1つ目から\nくずれた", item=MAIN),
         s(SEAT, "calmdown_dancing_cat", "まあいい", item=MAIN),
-        s(SEAT, "eat_pop_cat", "塩パンも\nもっちもち", item=CHEESE),
+        s(SEAT, "eat_pop_cat", "塩パンも\nもっちり", item=CHEESE),
         s(SEAT, "joy_happy_happy_happy_cat", "これで\n3個", item=CHEESE),
         # ---- 回想：後輩 ----
         s(SEAT, "think_chin_paw_orange_cat", "ちぎって食べると\nふと思い出す", item=CHEESE),
@@ -168,7 +177,19 @@ def cuts():
         s(SEAT, "read_book_orange_kitten", "焼きたての\n新しい種類", item=BASKET),
         s(SEAT, "angry_aiming_cat", "断れない", item=BASKET, se="explosion_chudoon"),
         s(SEAT, "eat_pop_cat", "ください", item=BASKET),
-        s(SEAT, "happy_hamster_open_arms", "これで\n5個", item=BASKET),
+        s(SEAT, "angry_aiming_cat", "チーズチャパタ", item=CHEESE2),
+        s(SEAT, "eat_pop_cat", "サクッ", item=CHEESE2, se="pikon"),
+        s(SEAT, "smug_squint_bicolor_cat", "合間に\nはさむのに\nちょうどいい", item=CHEESE2),
+        s(SEAT, "rizz_cat_rizz", "パンの\n名脇役だ", item=CHEESE2),
+        s(SEAT, "stare_big_eyes_tabby_kitten", "ミルクブレッド", item=MILK),
+        s(SEAT, "eat_crunchy_cat_luna", "ふわっ", item=MILK),
+        s(SEAT, "sleepy_sleepy_cat", "やわらかくて\nほんのり甘い", item=MILK),
+        s(SEAT, "realize_wet_cat_stare", "なんというか\nやさしさを\n感じる", item=MILK),
+        s(SEAT, "sleepy_old_memories_cat", "なんかね\nクレアおばさんが\n見えるのよ", item=MILK),
+        s(SEAT, "happy_hamster_open_arms", "そういう\nあたたかさが\nあるよね\nこのパンには", item=MILK),
+        s(SEAT, "eat_pop_cat", "クロワッサンも", item=CROISSANT),
+        s(SEAT, "happy_girlfriend_dance_cat", "サクサク\nバターの香り", item=CROISSANT),
+        s(SEAT, "happy_hamster_open_arms", "これで\n5個", item=CROISSANT),
         s(SEAT, "stare_lying_tabby_cat", "かごが\n回ってくるたびに", item=BASKET),
         s(SEAT, "sad_looking_away_tabby", "パンが\n1個ふえる", item=BASKET),
         s(SEAT, "despair_dramatic_kitten", "これは\nわんこそばだ", item=BASKET),
@@ -180,9 +201,9 @@ def cuts():
         s(SEAT, "rizz_cat_rizz", "常連だと\n思われている", item=BASKET),
         s(SEAT, "blank_black_cat_zoning_out", "今日\n初めて来た", item=BASKET),
         s(SEAT, "work_typing_cat", "ここまでの\nパンランキング", item=BASKET, bgm={"file": PASTEL, "gain": -12, "fade": 0.8}),
-        s(SEAT, "read_book_orange_kitten", "3位\nくるみのパン\n香ばしい", item=BASKET),
-        s(SEAT, "read_book_orange_kitten", "2位\n塩パン\nもっちもち", item=CHEESE),
-        s(SEAT, "read_book_orange_kitten", "1位\nチョコのパン\n焼きたてが反則", item=CHOCO),
+        s(SEAT, "read_book_orange_kitten", "3位\nミルクブレッド\nクレアおばさん", item=MILK),
+        s(SEAT, "read_book_orange_kitten", "2位\nチョコのパン\n焼きたてが反則", item=CHOCO),
+        s(SEAT, "read_book_orange_kitten", "1位\nガーリックパン\n暴力の香り", item=BASKET),
         s(SEAT, "smug_squint_bicolor_cat", "でも\nランキングは\nかごが来るたびに\n変わる", item=BASKET),
         s(SEAT, "rizz_cat_rizz", "パンの世界は\n下克上だ", item=BASKET),
         # ---- ドリンクバー ----
@@ -228,6 +249,16 @@ def cuts():
         s(SEAT, "surprise_big_pupils_cat", "デザートも\nついていた", item=DESSERT, se="shine_kiraan_maou"),
         s(SEAT, "sad_banana_cat_cry", "入る場所が\nない", item=DESSERT),
         s(SEAT, "eat_crunchy_cat_luna", "でも\n甘いものは\n別の胃袋", item=DESSERT),
+        s(SEAT, "stare_big_eyes_tabby_kitten", "クリームブリュレ", item=DESSERT),
+        s(SEAT, "eat_pop_cat", "パリッ", item=DESSERT, se="pikon"),
+        s(SEAT, "surprise_big_pupils_cat", "これ\nおいしいのよ", item=DESSERT),
+        s(SEAT, "smug_squint_bicolor_cat", "これを食べに\n来てもいいくらい", item=DESSERT),
+        s(SEAT, "think_chin_paw_orange_cat", "クリームと\nブリュレが\n戦って\n調和する", item=DESSERT),
+        s(SEAT, "rizz_cat_rizz", "言ってしまえば\nアルセウスなんだよ\nこれ", item=DESSERT),
+        s(SEAT, "angry_shooting_cat", "ディアルガと\nパルキアが\n争っていたら", item=DESSERT, se="explosion_dokaan"),
+        s(SEAT, "showoff_gojo_cosplay_cat", "最後に\nアルセウスが来て\n全ておさまった感じ", item=DESSERT, se="gong_dora_jaan"),
+        s(SEAT, "stare_tabby_wide_eyes_cat", "……", item=DESSERT),
+        s(SEAT, "blank_black_cat_zoning_out", "何言ってんだ\n俺は", item=DESSERT),
         s(SEAT, "happy_hamster_open_arms", "ペロリ", item=DESSERT),
         s(SEAT, "sleepy_sleepy_cat", "しあわせな\n満腹", item=DESSERT),
         s(SEAT, "scream_phone_orange_cat", "記念に\n写真をとる", item=DESSERT),

@@ -24,6 +24,7 @@ W, H = I.W, I.H
 WHITE, BLACK, RED, YELLOW = I.WHITE, I.BLACK, I.RED, I.YELLOW
 CYAN, GREEN, ORANGE, BLUE = (40, 200, 255), (60, 220, 60), (255, 140, 0), (20, 40, 230)
 SAFE_BOTTOM = 1540
+SHIFT_Y = 150   # 画面ぜんたいを下にずらす量（11/15 ユーザー指定・タイトル帯1行ぶん）
 HERE = I.HERE
 for _d in ("25_world", "19_inawashiro", "18_semicon"):
     _p = os.path.join(HERE, "backgrounds", _d)
@@ -566,6 +567,8 @@ class Renderer(I.Renderer):
             I.put(out, self.subs[1 if t > 1.3 else 0], W / 2, 1180)
         if c.get("hype"):
             out = hype_fx(out, t)
+        if SHIFT_Y:   # 11/15 ユーザー指定：YouTube の上の表示でタイトル帯の1行目が隠れるので、画面ぜんたいを下にずらす（上は黒で埋める）
+            out = np.concatenate([np.zeros((SHIFT_Y,) + out.shape[1:], out.dtype), out[:H - SHIFT_Y]], axis=0)
         return out
 
 

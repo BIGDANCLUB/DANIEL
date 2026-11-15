@@ -16,6 +16,7 @@
 - ハッピーハッピーハッピー猫（joy_happy_happy_happy_cat）・チピチピ猫（happy_chipi_chapa_cat）・Girlfriend猫（happy_girlfriend_dance_cat）は、**1回の出番を6秒まで**（5〜6秒で申し立てが通った）
 - 自堕落シリーズは jidaraku.py の MAXLEN で自動。ショート・くらべる長尺でも1回6秒をこえないようにする
 - つめ研ぎの黒猫（slack_nail_filing_cat）は1回8秒まで（11/14 ユーザー指定・jidaraku.py の MAXLEN）
+- ショート（world_short.py）は画面ぜんたいを150px下にずらす（SHIFT_Y・11/15 ユーザー指定：YouTube の上の表示でタイトル帯1行目が隠れるため）
 
 ## ショートの BGM と概要欄（10/23 ユーザー指定・これからのショート全部）
 - **ショートには BGM を入れない**（猫ミームの音と効果音だけ）

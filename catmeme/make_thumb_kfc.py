@@ -42,3 +42,10 @@ def final2():
     M.center_cat("jidaraku_21_kfc_thumb_final2.png", "sad_banana_cat_cry",
                  [("元は取れた", BK)], [("胃袋の元", R), ("は取れていない", BK)],
                  left="kf01_front", right="f_chicken", tag=TAG)
+
+
+def final3():
+    """11/16 ユーザー指定：final2（左は入口・右はチキン単品・泣くバナナ猫）の文字を「ケンタッキー食べ放題／衣だけのメニューが欲しい！」に。"""
+    M.center_cat("jidaraku_21_kfc_thumb_final3.png", "sad_banana_cat_cry",
+                 [("ケンタッキー", R), ("食べ放題", BK)], [("衣だけ", R), ("のメニューが欲しい！", BK)],
+                 left="kf01_front", right="f_chicken", tag=TAG)

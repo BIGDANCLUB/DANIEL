@@ -1,6 +1,6 @@
 # 自堕落シリーズ #21 ケンタッキー食べ放題：リンク・タイトル・説明文・サムネ
 - 1080：https://github.com/bigdanclub/daniel/blob/claude/cat-meme-longform/catmeme/release/jidaraku_21_kfc.mp4（8:06）
-- サムネ：thumbs/jidaraku_21_kfc_thumb_final2.png（元は取れた／胃袋の元は取れていない・左は入口・右はチキン単品）
+- サムネ：thumbs/jidaraku_21_kfc_thumb_final3.png（ケンタッキー食べ放題／衣だけのメニューが欲しい！・左は入口・右はチキン単品・泣くバナナ猫）
 
 タイトル案：
 1. 【猫ミーム】30代独身、1人でケンタッキー食べ放題に行った結果…元は取れたが胃袋の元は取れていない #猫ミーム

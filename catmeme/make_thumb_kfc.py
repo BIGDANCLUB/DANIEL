@@ -28,3 +28,10 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def final():
+    """11/16 ユーザー指定：c2 をもとに文字を「ケンタッキー食べ放題／衣だけのメニューが欲しい！」に。"""
+    M.center_cat("jidaraku_21_kfc_thumb_final.png", "stare_big_eyes_tabby_kitten",
+                 [("ケンタッキー", R), ("食べ放題", BK)], [("衣だけ", R), ("のメニューが欲しい！", BK)],
+                 left="kf02_seat", right="f_plate", tag=TAG)

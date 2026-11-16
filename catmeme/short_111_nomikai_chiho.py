@@ -18,14 +18,14 @@ def cuts():
     # (札, 右の猫, 右の説明, 左の猫, 左の説明)
     rows = [
         ('1次会', 'happy_hamster_open_arms', '飲み放題\n3000円', 'eat_crunchy_cat_luna', '飲み放題\n5000円'),
-        ('2次会', 'cocky_dj_cat', 'スナック\n2000円', 'work_typing_cat', 'バー\n4000円'),
+        ('2次会', 'cocky_dj_cat', 'スナック\n2000円', 'showoff_gojo_cosplay_cat', 'バー\n4000円'),
         ('カラオケ', 'dance_cute_dog', '1人\n500円', 'listen_dancing_dog', '1人\n2000円'),
         ('ラーメン', 'rizz_cat_rizz', 'ラーメン\n700円', 'think_chin_paw_orange_cat', 'ラーメン\n1200円'),
         ('終電', 'stare_aloha_gray_cat', '電車が\nない', 'stare_tabby_wide_eyes_cat', '終電\nダッシュ'),
-        ('帰り', 'smug_squint_bicolor_cat', '運転代行\n4000円', 'scream_phone_orange_cat', 'タクシー\n6000円'),
+        ('終電後帰り', 'smug_squint_bicolor_cat', '運転代行\n4000円', 'scream_phone_orange_cat', 'タクシー\n1万円'),
         ('翌朝', 'calm_black_face_sheep', '車を\n取りに行く', 'sleepy_sleepy_cat', '二日酔いで\n出社'),
-        ('合計', 'money_counting_orange_cat', '1万円\nちょっと', 'despair_dramatic_kitten', '2万円\nこえ'),
-        ('結局', 'happy_chipi_chapa_cat', '家飲みが\nいちばん', 'dance_filmed_by_gray_cat', '家飲みが\nいちばん'),
+        ('合計', 'money_counting_orange_cat', '1万円\nちょっと', 'despair_dramatic_kitten', '2万円\nOver'),
+        ('飲み会中', 'dance_filmed_by_gray_cat', 'アイツ19歳で\n結婚したの!?', 'sad_banana_cat_cry', 'アイツ35歳で\n未婚なんだ…'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

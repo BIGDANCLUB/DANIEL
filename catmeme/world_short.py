@@ -233,8 +233,26 @@ def split(bg, tag, left=None, right=None, cap=None, cap_side="R", sound="R", dur
 
 # ---- 描画 ----
 
+FANCY_FONT = os.path.join(HERE, "fonts", "GreatVibes-Regular.ttf")   # おしゃれな筆記体（OFL・11/16 ショート110）
+
+
+def fancy_box(t):
+    """「{fancy}Congratulations」のように書くと、白地の枠に筆記体（金色・こげ茶のふち）で出す（11/16 ユーザー指定）。"""
+    f = ImageFont.truetype(FANCY_FONT, 92)
+    d0 = ImageDraw.Draw(Image.new("RGBA", (8, 8)))
+    l, tp, r, bt = d0.textbbox((0, 0), t, font=f, stroke_width=3)
+    tx = Image.new("RGBA", (r - l + 20, bt - tp + 20), (0, 0, 0, 0))
+    ImageDraw.Draw(tx).text((10 - l, 10 - tp), t, font=f, fill=(196, 150, 40), stroke_width=3, stroke_fill=(90, 50, 10))
+    im = Image.new("RGBA", (max(tx.width + 50, 300), tx.height + 34), GREEN + (255,))
+    ImageDraw.Draw(im).rectangle((9, 9, im.width - 10, im.height - 10), fill=WHITE)
+    im.alpha_composite(tx, ((im.width - tx.width) // 2, (im.height - tx.height) // 2))
+    return im
+
+
 def cap_box(t, full=False):
     """下の説明：白地・緑の太い枠・青い太字。full=True は横いっぱい（まとめ用・10/26）。"""
+    if t.startswith("{fancy}"):
+        return fancy_box(t[len("{fancy}"):])
     tx = rich([[(ln, BLUE)] for ln in t.split("\n")], 96 if full else 76, stroke=3, stroke_col=WHITE, max_w=960 if full else 450,
               lh=1.12)
     im = Image.new("RGBA", (W - 60 if full else max(tx.width + 50, 300), tx.height + 44), GREEN + (255,))

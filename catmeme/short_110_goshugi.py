@@ -24,8 +24,8 @@ def cuts():
         ('上司', 'rizz_cat_rizz', 'ハグ', 'sad_looking_away_tabby', 'ご祝儀\n3万円と\n気づかい'),
         ('2次会', 'smug_squint_bicolor_cat', 'そのまま\n踊る', 'stare_tabby_wide_eyes_cat', '会費\n7000円'),
         ('交通費', 'stare_aloha_gray_cat', '近所', 'scream_phone_orange_cat', '新幹線で\n往復2万円'),
-        ('3人目', 'happy_chipi_chapa_cat', 'パーティー\n最高', 'despair_dramatic_kitten', '同じ月に\n3回目'),
-        ('その月', 'dance_filmed_by_gray_cat', 'いい思い出', 'blank_black_cat_zoning_out', 'ご祝儀で\n給料が\n消えた'),
+        ('3人目', 'happy_chipi_chapa_cat', 'パーティー\n最高', 'despair_dramatic_kitten', 'Nine\n渋沢’s'),
+        ('本番', 'dance_filmed_by_gray_cat', '{fancy}Congratulations', 'dance_filmed_by_gray_cat', 'ウェーイｗ'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

@@ -18,15 +18,15 @@ def cuts():
     out = []
     # (札, 右の猫, 右の説明, 左の猫, 左の説明)
     rows = [
-        ('0分', 'work_typing_cat', '免許はあるけど\nペーパー', 'happy_hamster_open_arms', '車がないと\n生きていけない'),
-        ('5分', 'stare_tabby_wide_eyes_cat', '乗らない', 'cocky_dj_cat', 'コンビニへ\n車で'),
-        ('10分', 'think_chin_paw_orange_cat', '乗らない', 'dance_cute_dog', 'ゴミ出しも\n車で'),
-        ('30分', 'sad_looking_away_tabby', '駐車場が\n見つからない', 'listen_dancing_dog', '通勤'),
-        ('1時間', 'scream_phone_orange_cat', '渋滞で\n1キロ', 'rizz_cat_rizz', 'イオンへ\nドライブ'),
-        ('2時間', 'stare_lying_tabby_cat', '首都高で\n迷う', 'smug_squint_bicolor_cat', 'となり町の\nラーメン屋'),
-        ('3時間', 'despair_dramatic_kitten', '駐車代\n3000円', 'stare_aloha_gray_cat', '日帰り温泉'),
-        ('飲み会', 'calm_black_face_sheep', '電車で\n帰れる', 'sad_banana_cat_cry', '運転代行を\nよぶ'),
-        ('休日', 'blank_black_cat_zoning_out', '家で寝る', 'dance_filmed_by_gray_cat', 'とりあえず\nドライブ'),
+        ('0分', 'happy_hamster_open_arms', '車がないと\n生きていけない', 'work_typing_cat', '免許はあるけど\nペーパー'),
+        ('5分', 'cocky_dj_cat', 'コンビニへ\n車で', 'stare_tabby_wide_eyes_cat', '乗らない'),
+        ('10分', 'dance_cute_dog', 'ゴミ出しも\n車で', 'think_chin_paw_orange_cat', '乗らない'),
+        ('30分', 'listen_dancing_dog', '通勤', 'sad_looking_away_tabby', '駐車場が\n見つからない'),
+        ('1時間', 'rizz_cat_rizz', 'イオンへ\nドライブ', 'scream_phone_orange_cat', '渋滞で\n1キロ'),
+        ('2時間', 'smug_squint_bicolor_cat', 'となり町の\nラーメン屋', 'stare_lying_tabby_cat', '首都高で\n迷う'),
+        ('3時間', 'stare_aloha_gray_cat', '日帰り温泉', 'despair_dramatic_kitten', '駐車代\n3000円'),
+        ('飲み会', 'sad_banana_cat_cry', '運転代行を\nよぶ', 'calm_black_face_sheep', '電車で\n帰れる'),
+        ('休日', 'dance_filmed_by_gray_cat', 'とりあえず\nドライブ', 'blank_black_cat_zoning_out', '家で寝る'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

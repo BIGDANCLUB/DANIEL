@@ -18,15 +18,15 @@ def cuts():
     out = []
     # (札, 右の猫, 右の説明, 左の猫, 左の説明)
     rows = [
-        ('25℃', 'dance_cute_dog', 'ちょうどいい', 'work_typing_cat', 'ちょっと\n涼しい'),
-        ('22℃', 'happy_hamster_open_arms', '半そで', 'think_chin_paw_orange_cat', '長そでを\n出す'),
-        ('20℃', 'cocky_dj_cat', '快適', 'stare_tabby_wide_eyes_cat', '上着を\n着る'),
-        ('18℃', 'listen_dancing_dog', '気持ちいい', 'sad_looking_away_tabby', 'ダウンを\n着る'),
-        ('16℃', 'rizz_cat_rizz', '秋だな', 'scream_phone_orange_cat', '暖房を\nつける'),
-        ('15℃', 'smug_squint_bicolor_cat', 'まだ半そで', 'despair_dramatic_kitten', '外に出ない'),
-        ('13℃', 'stare_aloha_gray_cat', 'ちょっと寒い', 'sleep_sleeping_cat', 'こたつから\n出られない'),
-        ('10℃', 'happy_chipi_chapa_cat', 'まだまだ', 'blank_black_cat_zoning_out', 'ニュースで\n大寒波'),
-        ('5℃', 'dance_filmed_by_gray_cat', 'ふつうの冬', 'sad_banana_cat_cry', '沖縄では\n伝説の寒さ'),
+        ('25℃', 'work_typing_cat', 'ちょっと\n涼しい', 'dance_cute_dog', 'ちょうどいい'),
+        ('22℃', 'think_chin_paw_orange_cat', '長そでを\n出す', 'happy_hamster_open_arms', '半そで'),
+        ('20℃', 'stare_tabby_wide_eyes_cat', '上着を\n着る', 'cocky_dj_cat', '快適'),
+        ('18℃', 'sad_looking_away_tabby', 'ダウンを\n着る', 'listen_dancing_dog', '気持ちいい'),
+        ('16℃', 'scream_phone_orange_cat', '暖房を\nつける', 'rizz_cat_rizz', '秋だな'),
+        ('15℃', 'despair_dramatic_kitten', '外に出ない', 'smug_squint_bicolor_cat', 'まだ半そで'),
+        ('13℃', 'sleep_sleeping_cat', 'こたつから\n出られない', 'stare_aloha_gray_cat', 'ちょっと寒い'),
+        ('10℃', 'blank_black_cat_zoning_out', 'ニュースで\n大寒波', 'happy_chipi_chapa_cat', 'まだまだ'),
+        ('5℃', 'sad_banana_cat_cry', '沖縄では\n伝説の寒さ', 'dance_filmed_by_gray_cat', 'ふつうの冬'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

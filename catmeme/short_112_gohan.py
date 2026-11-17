@@ -23,9 +23,9 @@ def cuts():
         ('昼ごはん', 'cocky_dj_cat', 'ゆっくり\n1時間半', 'eat_crunchy_cat_luna', 'デスクで\n7分'),
         ('おやつ', 'dance_cute_dog', 'ケーキと\nお茶会', 'think_chin_paw_orange_cat', 'お客さんの\nおみやげ1個'),
         ('夕方', 'rizz_cat_rizz', 'ワインで\n乾杯', 'sad_looking_away_tabby', '残業中に\nチョコ1粒'),
-        ('晩ごはん', 'smug_squint_bicolor_cat', '家族で\n2時間', 'stare_lying_tabby_cat', '23時に\nコンビニ弁当'),
+        ('晩ごはん', 'smug_squint_bicolor_cat', '家族で\n2時間', 'stare_lying_tabby_cat', '22時に\nコンビニ弁当'),
         ('夜食', 'stare_aloha_gray_cat', '食べない', 'scream_phone_orange_cat', 'カップ麺\n3分待てない'),
-        ('休日', 'happy_chipi_chapa_cat', 'ブランチ\n3時間', 'calm_black_face_sheep', '1日1食で\nすむ'),
+        ('休日', 'happy_chipi_chapa_cat', 'ブランチ\n3時間', 'calm_black_face_sheep', '1日1食\n(ドカ食い)'),
         ('合計', 'dance_filmed_by_gray_cat', '1日5時間', 'blank_black_cat_zoning_out', '1日30分'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):

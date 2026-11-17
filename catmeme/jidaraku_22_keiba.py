@@ -21,8 +21,9 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku")]
 ROOM, ROOM_N, STREET = "j01_room", "j07_room_night", "bg35_suburb_street"
 GATE, STAND, PADDOCK, TRACK, FOOD = "kb01_gate", "kb02_stand", "kb03_paddock", "kb04_track", "kb05_food"
-J.STANDIN.update({GATE: "bg54_station_crowd_map", STAND: "bg30_summer_stadium", PADDOCK: "bg63_hokkaido_field",
-                  TRACK: "bg30_summer_stadium", FOOD: "bg54_station_crowd_map"})
+# 背景5枚はユーザー提供（11/17）
+J.STANDIN.update({
+})
 J.HOLD = 6
 J.LOOPS = 1
 J.TEMPO_K = 1.3

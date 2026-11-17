@@ -18,15 +18,15 @@ def cuts():
     out = []
     # (札, 右の猫, 右の説明, 左の猫, 左の説明)
     rows = [
-        ('0分', 'happy_hamster_open_arms', '車がないと\n生きていけない', 'work_typing_cat', '免許はあるけど\nペーパー'),
-        ('5分', 'cocky_dj_cat', 'コンビニへ\n車で', 'stare_tabby_wide_eyes_cat', '乗らない'),
-        ('10分', 'dance_cute_dog', 'ゴミ出しも\n車で', 'think_chin_paw_orange_cat', '乗らない'),
+        ('0分', 'happy_hamster_open_arms', '在宅ですか？', 'work_typing_cat', '免許はあるけど\nペーパー'),
+        ('5分', 'dance_cute_dog', '車で\nゴミ出し', 'stare_tabby_wide_eyes_cat', 'ちゃんとエンジン\nかかるか確認'),
+        ('10分', 'cocky_dj_cat', 'コンビニへ\n車で', 'think_chin_paw_orange_cat', 'コンビニに\n運転'),
         ('30分', 'listen_dancing_dog', '通勤', 'sad_looking_away_tabby', '駐車場が\n見つからない'),
-        ('1時間', 'rizz_cat_rizz', 'イオンへ\nドライブ', 'scream_phone_orange_cat', '渋滞で\n1キロ'),
+        ('1時間', 'rizz_cat_rizz', 'イオンへ\nドライブ', 'scream_phone_orange_cat', '3キロの\n渋滞'),
         ('2時間', 'smug_squint_bicolor_cat', 'となり町の\nラーメン屋', 'stare_lying_tabby_cat', '首都高で\n迷う'),
-        ('3時間', 'stare_aloha_gray_cat', '日帰り温泉', 'despair_dramatic_kitten', '駐車代\n3000円'),
+        ('3時間', 'stare_aloha_gray_cat', '日帰り温泉', 'despair_dramatic_kitten', '出先の駐車場で\n3000円'),
         ('飲み会', 'sad_banana_cat_cry', '運転代行を\nよぶ', 'calm_black_face_sheep', '電車で\n帰れる'),
-        ('休日', 'dance_filmed_by_gray_cat', 'とりあえず\nドライブ', 'blank_black_cat_zoning_out', '家で寝る'),
+        ('休日', 'rage_talking_cat', '「わ」ナンバー\n邪魔だ！！', 'dance_filmed_by_gray_cat', 'レンタカーで\nドライブ'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

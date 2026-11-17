@@ -35,6 +35,7 @@ HIRU = os.path.join(L.BGM, "昼下がり気分.mp3")
 PASTEL = os.path.join(L.BGM, "パステルハウス.mp3")
 JITAKU = os.path.join(L.BGM, "自宅にて.mp3")
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
+TICKET2 = "f_ticket2"   # メインレースの馬券（11/17 ユーザー提供の2枚目）
 # ビールは汎用の写真（backgrounds/jidaraku/f_beer.png）で代用（11/17 ユーザー指定）
 NEWSPAPER, MARK, TICKET, GOURMET, BEER, HORSE, MACHINE = ("f_newspaper", "f_marksheet", "f_ticket", "f_food", "f_beer",
                                                            "f_horse", "f_machine")
@@ -172,9 +173,9 @@ def cuts():
         s(STAND, "sleepy_old_memories_cat", "ここで\n悪魔がささやく"),
         s(STAND, "smug_squint_bicolor_cat", "増えたぶんは\nもともと\nなかったお金だ"),
         s(STAND, "angry_aiming_cat", "全部\nいこう", se="explosion_chudoon"),
-        s(STAND, "work_typing_cat", "今度は\n単勝", item=TICKET),
-        s(STAND, "money_counting_orange_cat", "増えたぶん\nすべて\nぶっこむ", item=TICKET),
-        s(STAND, "realize_wet_cat_stare", "馬券を\nにぎる手に\n汗", item=TICKET),
+        s(STAND, "work_typing_cat", "今度は\n単勝", item=TICKET2),
+        s(STAND, "money_counting_orange_cat", "増えたぶん\nすべて\nぶっこむ", item=TICKET2),
+        s(STAND, "realize_wet_cat_stare", "馬券を\nにぎる手に\n汗", item=TICKET2),
         s(TRACK, "surprise_big_pupils_cat", "ファンファーレ", se="gong_dora_jaan"),
         s(TRACK, "joy_happy_happy_happy_cat", "大歓声"),
         s(TRACK, "stare_big_eyes_tabby_kitten", "スタート", se="pi"),
@@ -184,11 +185,11 @@ def cuts():
         s(TRACK, "scream_standing_marmot", "最後の直線", item=HORSE),
         s(TRACK, "despair_dramatic_kitten", "うしろから\nすごい勢いで\n何頭もくる", item=HORSE),
         s(TRACK, "sad_banana_cat_cry", "かわされた", item=HORSE, se="explosion_chudoon"),
-        s(TRACK, "blank_black_cat_zoning_out", "4着", item=TICKET),
-        s(TRACK, "calm_black_face_sheep", "増えたお金は\n全部\n馬のもとへ", item=TICKET),
-        s(TRACK, "sad_looking_away_tabby", "もとどおり", item=TICKET),
-        s(TRACK, "stare_interviewer_cat", "兄ちゃん\nそれが競馬だ", item=TICKET),
-        s(TRACK, "realize_wet_cat_stare", "おじさんの言葉が\nしみる", item=TICKET),
+        s(TRACK, "blank_black_cat_zoning_out", "4着", item=TICKET2),
+        s(TRACK, "calm_black_face_sheep", "増えたお金は\n全部\n馬のもとへ", item=TICKET2),
+        s(TRACK, "sad_looking_away_tabby", "もとどおり", item=TICKET2),
+        s(TRACK, "stare_interviewer_cat", "兄ちゃん\nそれが競馬だ", item=TICKET2),
+        s(TRACK, "realize_wet_cat_stare", "おじさんの言葉が\nしみる", item=TICKET2),
         s(FOOD, "stare_lying_tabby_cat", "帰りに\nフードコートの前を通る", item=GOURMET),
         s(FOOD, "stare_big_eyes_tabby_kitten", "勝った日の\nステーキ丼", item=GOURMET),
         s(FOOD, "sad_looking_away_tabby", "今日は\n見るだけ", item=GOURMET),

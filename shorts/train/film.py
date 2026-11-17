@@ -204,8 +204,24 @@ def city_ground():
     brick.inputs["Mortar"].default_value = (0.12, 0.12, 0.13, 1)
     brick.offset = 0.0
     nt.links.new(geo.outputs["Position"], brick.inputs["Vector"])
-    nt.links.new(brick.outputs["Color"], b.inputs["Base Color"])
-    bpy.ops.mesh.primitive_plane_add(size=3000000, location=(0, 0, 0))
+    # 遠くから見たときの、緑（公園・山）と街のまだら（数km単位）
+    noi = nt.nodes.new("ShaderNodeTexNoise")
+    noi.inputs["Scale"].default_value = 0.0004
+    noi.inputs["Detail"].default_value = 6
+    nt.links.new(geo.outputs["Position"], noi.inputs["Vector"])
+    ramp = nt.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.elements[0].position = 0.45
+    ramp.color_ramp.elements[0].color = (0.09, 0.15, 0.07, 1)
+    ramp.color_ramp.elements[1].position = 0.6
+    ramp.color_ramp.elements[1].color = (0.30, 0.29, 0.27, 1)
+    nt.links.new(noi.outputs["Fac"], ramp.inputs[0])
+    mix = nt.nodes.new("ShaderNodeMix")
+    mix.data_type = 'RGBA'
+    mix.inputs["Factor"].default_value = 0.55
+    nt.links.new(brick.outputs["Color"], mix.inputs[6])
+    nt.links.new(ramp.outputs["Color"], mix.inputs[7])
+    nt.links.new(mix.outputs[2], b.inputs["Base Color"])
+    bpy.ops.mesh.primitive_plane_add(size=30000000, location=(0, 0, 0))
     bpy.context.object.data.materials.append(m)
 
 
@@ -366,7 +382,7 @@ def deck_train(tm, boards=False, far=False):
         column.keyframe_insert("scale", frame=f)
         lifter.location.z = base - 5.1
         lifter.keyframe_insert("location", frame=f)
-        edge.scale = (w + 0.25, L + 0.65, th * 0.8)
+        edge.scale = (w * (1.004 if far else 1) + 0.25, L * (1.004 if far else 1) + 0.65, th * 0.8)
         # 人：板が付いてから乗り込む（高さ 0→1.7m）
         ph = 1.7 if not far else max(1.7, 0.002 * max(w, L))
         k = 1.0
@@ -418,7 +434,7 @@ def lift(w):
 def follow_cam(tm, rel_fn, look_fn, lens=28):
     """電車を追いかけるカメラ。rel_fn(f, x) → 先頭からの位置、look_fn(f, x) → 先頭から見る点。"""
     cam = W.camera((0, 0, 10), (0, 100, 0), lens=lens)
-    cam.data.clip_end = 3000000
+    cam.data.clip_end = 100000000
     for f in range(1, len(tm) + 1):
         x = tm[f - 1]
         fy = front_y(f)
@@ -497,7 +513,7 @@ def aerial_follow(tm, k=1.6, side=-0.55, min_r=60):
     def rel(f, x):
         w, L = TL.deck_size(x)
         r = max(min_r, 0.5 * max(w, L))
-        return (side * k * r, -k * r * 0.35, k * r * 0.9)
+        return (side * k * r * 0.6, -k * r * 1.1, k * r * 0.62)
 
     def look(f, x):
         w, L = TL.deck_size(x)

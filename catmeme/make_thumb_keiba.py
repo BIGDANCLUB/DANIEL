@@ -69,6 +69,5 @@ def full_set():
 
 
 def final():
-    """11/17 ユーザー指定：d1 をもとに帯を若干だけ黄色・小さい文字を「30代」に。"""
-    full("jidaraku_22_keiba_thumb_final.png", "stare_big_eyes_tabby_kitten", (210, 40, 30), small_text="30代",
-         fill=(255, 250, 215, 245))
+    """11/17 ユーザー指定：d1 をもとに小さい文字を「30代」に（帯は白・黄色はやめた）。"""
+    full("jidaraku_22_keiba_thumb_final.png", "stare_big_eyes_tabby_kitten", (210, 40, 30), small_text="30代")

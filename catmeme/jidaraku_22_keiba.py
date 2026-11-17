@@ -33,6 +33,7 @@ HIRU = os.path.join(L.BGM, "昼下がり気分.mp3")
 PASTEL = os.path.join(L.BGM, "パステルハウス.mp3")
 JITAKU = os.path.join(L.BGM, "自宅にて.mp3")
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
+# ビールは汎用の写真（backgrounds/jidaraku/f_beer.png）で代用（11/17 ユーザー指定）
 NEWSPAPER, MARK, TICKET, GOURMET, BEER, HORSE, MACHINE = ("f_newspaper", "f_marksheet", "f_ticket", "f_food", "f_beer",
                                                            "f_horse", "f_machine")
 

@@ -115,6 +115,12 @@ def draw_shot(s, i, base, sun):
     return g
 
 
+def rewind_timer(g, u):
+    """巻き戻し中のタイマー（u: 0→1）。動画ごとに差し替えられる。"""
+    t = TL.T_ARRIVE * (1 - u) + 0.083 * u
+    O.timer(g, "出発から", (f"{t:.2f}", "秒"))
+
+
 def rewind_frames(cache, n):
     """「◀◀ リプレイ」：直前の場面を速く逆に流す。"""
     src = cache[::-1]
@@ -126,8 +132,7 @@ def rewind_frames(cache, n):
         a[::4] = a[::4] * 0.7                       # 走査線
         g = Image.fromarray(np.clip(a, 0, 255).astype(np.uint8)).convert("RGBA")
         O.watermark(g)
-        t = TL.T_ARRIVE * (1 - k / (n - 1)) + 0.083 * (k / (n - 1))
-        O.timer(g, "出発から", (f"{t:.2f}", "秒"))
+        rewind_timer(g, k / max(1, n - 1))
         O.rewind(g, k)
         out.append(g)
     return out

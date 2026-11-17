@@ -16,6 +16,13 @@ WHITE, OR = (255, 255, 255), O.ORANGE
 C.REWIND_PREFIX = "e03"
 
 
+def _rewind_timer(g, u):
+    O.timer(g, "発車してから", (f"{int(round(33 * (1 - u)))}", "駅目"))
+
+
+C.rewind_timer = _rewind_timer
+
+
 def fmt_n(v):
     v = int(v)
     if v < 10000:

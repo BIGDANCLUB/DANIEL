@@ -26,7 +26,7 @@ def cuts():
         ('病気', 'smug_squint_bicolor_cat', 'すぐ休む', 'scream_phone_orange_cat', '熱があっても\nリモートで参加'),
         ('連休', 'stare_aloha_gray_cat', '海外旅行', 'calm_black_face_sheep', 'どこも混んでて\n家にいる'),
         ('合計', 'happy_chipi_chapa_cat', '年150日', 'despair_dramatic_kitten', '年120日'),
-        ('結局', 'dance_filmed_by_gray_cat', '人生を\n楽しむ', 'blank_black_cat_zoning_out', '休みの日も\n仕事のことを\n考える'),
+        ('休みの日', 'dance_filmed_by_gray_cat', '人生を\n楽しむ', 'sleep_sleeping_cat', '見ての通り'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

@@ -182,7 +182,6 @@ def final5():
     img.alpha_composite(big, ((T.W - big.width) // 2, by + 20))
     t = T.runs([("30代独身", (T.RED, T.WHITE))], 60, 2, 640)
     box = Image.new("RGBA", (t.width + 56, t.height + 34), T.WHITE + (255,))
-    ImageDraw.Draw(box).rectangle((0, 0, box.width - 1, box.height - 1), outline=T.BLACK, width=5)
-    box.alpha_composite(t, (28, 17))
+    box.alpha_composite(t, (28, 17))   # 11/17 ユーザー指定：黒い枠はなし
     img.alpha_composite(box, ((T.W - box.width) // 2, by - box.height + 12))
     T.save(img, "jidaraku_22_keiba_thumb_final.png")

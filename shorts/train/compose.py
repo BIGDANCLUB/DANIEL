@@ -30,7 +30,7 @@ def fmt_n(v):
     if v < 100000000:
         return f"{v // 10000:,}万"
     oku, man = divmod(v, 100000000)
-    return f"{oku}億{man // 10000:,}万" if oku < 10 else f"{oku}億"
+    return f"{oku}億{man // 10000:,}万" if oku < 10 else f"{round(v / 100000000)}億"
 
 
 def draw_shot(s, i, base, sun):

@@ -81,7 +81,7 @@ def final2():
     big = T.runs([("初めての競馬", T.RED)], 200, 10, T.W - 260)
     bh = big.height + 40
     by = T.H - bh - 18
-    ImageDraw.Draw(img).rectangle((80, by, T.W - 80, by + bh), fill=(255, 245, 60, 255))
+    ImageDraw.Draw(img).rounded_rectangle((80, by, T.W - 80, by + bh), 36, fill=(255, 245, 60, 255))   # 11/17 角丸（白い帯の形をまねる）
     img.alpha_composite(big, ((T.W - big.width) // 2, by + 20))
     small = JT.serif_text("30代にして", 54, T.WHITE, 7, T.BLACK, 600)
     img.alpha_composite(small, ((T.W - small.width) // 2, by - small.height - 8))

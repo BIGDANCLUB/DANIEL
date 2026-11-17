@@ -44,3 +44,25 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def full(name, cat, col, cy=0.3, cat_x=300):
+    """11/17 ユーザー指定：「40代独身 給料日 焼肉」のサムネをまねる。走る馬の写真を全面に・左上の帯はなし・
+    小さい明朝「30代独身」・白い角丸の帯（黒い枠なし）に明朝の大きな文字。"""
+    import make_thumb_jidaraku as JT
+    img = T.fill_photo("f_horse", T.W, T.H, cy=cy, zoom=1.06)   # 写真の白いふちを切る
+    T.put_cat(img, cat, 0.6, cat_x, 560, 520, False)
+    small = JT.serif_text("30代独身", 54, T.WHITE, 7, T.BLACK, 600)
+    big = JT.serif_text("初めての競馬", 170, col, 0, T.WHITE, T.W - 200)
+    box = Image.new("RGBA", (T.W - 160, big.height + 40), (0, 0, 0, 0))
+    ImageDraw.Draw(box).rounded_rectangle((0, 0, box.width - 1, box.height - 1), 36, fill=(255, 255, 255, 245))
+    box.alpha_composite(big, ((box.width - big.width) // 2, 20))
+    by = T.H - box.height - 18
+    img.alpha_composite(small, ((T.W - small.width) // 2, by - small.height - 8))
+    img.alpha_composite(box, (80, by))
+    T.save(img, name)
+
+
+def full_set():
+    full("jidaraku_22_keiba_thumb_d1.png", "stare_big_eyes_tabby_kitten", (210, 40, 30))
+    full("jidaraku_22_keiba_thumb_d2.png", "stare_big_eyes_tabby_kitten", (20, 20, 20))

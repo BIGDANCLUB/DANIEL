@@ -48,7 +48,12 @@ def rounded_box(im, box, fill, radius=24, outline=None, width=0):
     im.alpha_composite(lay)
 
 
+SHOW_WATERMARK = False      # ユーザー指定で一旦外す（戻すときは True）
+
+
 def watermark(im):
+    if not SHOW_WATERMARK:
+        return
     shadow_text(im, (968, 105), WATERMARK, font(SANS, 30, "Bold"), fill=(255, 255, 255, 185), anchor="rm", blur=3, alpha=90)
 
 

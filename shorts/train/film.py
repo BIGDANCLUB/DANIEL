@@ -225,6 +225,9 @@ def city_ground():
     bpy.context.object.data.materials.append(m)
 
 
+BLDS = []      # (x, y, 高さ, 幅)：窓ガラスを飛ばすのに使う
+
+
 def dense_blocks(half=1500, step=80, seed=7):
     r = random.Random(seed)
     cols = [W.mat("bld_a", (0.55, 0.55, 0.58), 0.6), W.mat("bld_b", (0.68, 0.64, 0.58), 0.7), W.mat("bld_c", (0.42, 0.45, 0.5), 0.5)]
@@ -235,6 +238,7 @@ def dense_blocks(half=1500, step=80, seed=7):
             d = math.hypot(gx, gy)
             hh = r.uniform(8, 25) + (60 * math.exp(-d / 500) * r.random())
             W.box((gx + step / 2, gy + step / 2, hh / 2), (step * 0.7, step * 0.7, hh), r.choice(cols), bevel=0)
+            BLDS.append((gx + step / 2, gy + step / 2, hh, step * 0.7))
 
 
 def city():
@@ -495,7 +499,9 @@ def f04_deck(tm):
     W.buildings(seed=21, n=110, y_from=150, y_to=2500, x_min=40, x_max=350)
     W.houses(seed=22, n=280, y_from=-200, y_to=700, x_min=12, x_max=150)
     W.sunset()
-    deck_train(tm, boards=True)
+    root = deck_train(tm, boards=True)
+    fx_sparks(root, len(tm), f_on=95)
+    fx_track_dust(tm, f_on=95)
 
     def rel(f, x):
         w, _ = TL.deck_size(x) if f > 90 else (4.2, 0)
@@ -528,40 +534,236 @@ def hide_sun_disc():
             o.hide_render = True
 
 
-def deck_aerial(tm, **kw):
+# ---------- 物理現象（重さ・空気で起きること） ----------
+def tsec(nf):
+    return [(f - 1) / TL.FPS for f in range(1, nf + 1)]
+
+
+def deck_geom(f, x):
+    """そのコマの床板：(中心 y, 幅, 長さ, 前のはしの y)。電車は -y へ走る。"""
+    w, L = TL.deck_size(x)
+    yc = front_y(f) + D * (CAR_L * CARS + 0.5 * (CARS - 1)) / 2
+    return yc, w, L, yc - L / 2
+
+
+def fx_sparks(root, nf, f_on, seed=3):
+    """車輪から散る火花（重さで車輪とレールがこすれる）。だんだん強く。"""
+    r = random.Random(seed)
+    m = W.mat("spark", (1, 0.6, 0.2), emit=(1.0, 0.55, 0.15), emit_strength=40)
+    for c in range(CARS):
+        yc = -CAR_L / 2 - c * (CAR_L + 0.5)
+        for wy in (-6.5, 6.5):
+            for sx in (-1, 1):
+                for k in range(3):
+                    o = W.box((sx * (0.8 + 0.1 * k), yc + wy - 0.6 * k, 0.35 + 0.15 * k), (0.035, 0.9, 0.035), m,
+                              rot=(math.radians(r.uniform(-25, 5)), 0, math.radians(sx * r.uniform(10, 40))), bevel=0)
+                    o.visible_shadow = False
+                    o.parent = root
+                    for f in range(1, nf + 1):
+                        u = 0 if f < f_on else min(1.0, (f - f_on) / 40)
+                        on = r.random() < 0.25 + 0.6 * u
+                        sc = r.uniform(0.6, 1.6) * (0.4 + u) if (u > 0 and on) else 0.001
+                        o.scale = (sc, sc, sc)
+                        o.keyframe_insert("scale", frame=f)
+
+
+def fx_track_dust(tm, f_on, n=70, seed=4):
+    """重さで線路わきの砂ぼこりが舞う（電車が通ったあとに残る）。"""
+    r = random.Random(seed)
+    nf = len(tm)
+    pts = []
+    for _ in range(n):
+        f = r.randint(f_on, nf)
+        y = front_y(f) + D * r.uniform(0, CAR_L * CARS)
+        sx = r.choice((-1, 1))
+        pts.append((sx * r.uniform(2.2, 3.5), y, 0.4, (f - 1) / TL.FPS, sx))
+    F.puffs(pts, tsec(nf), seed=seed, col=(0.62, 0.52, 0.40), alpha=0.35, size=(0.6, 1.6), rise=(0.3, 1.2),
+            grow=2.0, out=(1.0, 4.0), name="dust_track")
+
+
+def fx_dust_wall(tm, t_from, n=60, k=0.05, seed=5):
+    """巨大な床板が押す空気で、前のはしと両わきに砂ぼこりの壁が立つ。"""
+    r = random.Random(seed)
+    nf = len(tm)
+    pts = []
+    for _ in range(n):
+        f = r.randint(max(1, int(t_from * TL.FPS) + 1), nf)
+        yc, w, L, yf = deck_geom(f, tm[f - 1])
+        side = r.random()
+        if side < 0.6:                                       # 前のはし
+            x, y, sx = r.uniform(-w / 2, w / 2), yf - r.uniform(0, 0.05) * L, 0
+        else:                                                # 両わき
+            sx = r.choice((-1, 1))
+            x, y = sx * (w / 2 + r.uniform(0, 0.05) * w), r.uniform(yf, yf + L)
+        S = max(w, L)
+        pts.append((x, y, 0.0, (f - 1) / TL.FPS, sx))
+    S = max(TL.deck_size(tm[-1]))
+    F.puffs(pts, tsec(nf), seed=seed, col=(0.70, 0.58, 0.44), alpha=0.4, size=(k * S * 0.4, k * S), rise=(k * S * 0.2, k * S * 0.6),
+            grow=2.5, life=2.0, out=(k * S * 0.5, k * S * 1.5), name="dust_wall")
+
+
+def fx_glass(tm, t0, reach, wave_v, n=260, pane=3.0, seed=6):
+    """押しのけた空気で、ビルの窓ガラスが割れて飛ぶ。床板の前のはしに近いビルから順に。"""
+    r = random.Random(seed)
+    nf = len(tm)
+    f0 = max(1, min(nf, int(t0 * TL.FPS) + 1))
+    yc, w, L, yf = deck_geom(f0, tm[f0 - 1])
+    m = W.mat("glass_shard", (0.75, 0.88, 1.0), 0.05, emit=(0.85, 0.92, 1.0), emit_strength=2.5)
+    near = []
+    for (bx, by, bh, bw) in BLDS:
+        dx = max(0.0, abs(bx) - w / 2)
+        dy = max(0.0, yf - by, by - (yf + L))
+        d = math.hypot(dx, dy)
+        if d < reach and abs(bx) > w / 2 + bw / 2:
+            near.append((d, bx, by, bh, bw))
+    if not near:
+        return
+    objs, hits = [], {}
+    for k in range(n):
+        d, bx, by, bh, bw = r.choice(near)
+        sx = 1 if bx > 0 else -1
+        x = bx - sx * (bw / 2 + 0.3)                         # 線路を向いた面
+        o = W.box((x, by + r.uniform(-bw / 2, bw / 2), r.uniform(0.2, 0.95) * bh), (0.15, pane, pane * 0.7), m,
+                  rot=(0, 0, r.uniform(-0.3, 0.3)), bevel=0)
+        o.visible_shadow = False
+        objs.append(o)
+        hits[o.name] = t0 + d / wave_v + r.uniform(0, 0.15)
+    F.fly(objs, lambda o: hits[o.name], tsec(nf), seed=seed, vx=(25, 60), vy=(-20, 20), vz=(5, 25), spin=10,
+          side=lambda o: 1 if o.location.x > 0 else -1)
+
+
+def fx_shockwave(tm, t0, R, dur=1.4, seed=7):
+    """衝撃波：床板の前のはしから、すき通ったドームと砂ぼこりの輪が広がる。"""
+    nf = len(tm)
+    f0 = max(1, min(nf, int(t0 * TL.FPS) + 1))
+    yc, w, L, yf = deck_geom(f0, tm[f0 - 1])
+    cx, cy = 0.0, yf
+    m = bpy.data.materials.new("shock")
+    m.use_nodes = True
+    b = m.node_tree.nodes["Principled BSDF"]
+    b.inputs["Base Color"].default_value = (1, 0.95, 0.88, 1)
+    b.inputs["Roughness"].default_value = 0.3
+    b.inputs["Emission Color"].default_value = (1, 0.9, 0.75, 1)
+    b.inputs["Emission Strength"].default_value = 0.6
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=1.0, location=(cx, cy, 0))
+    o = bpy.context.object
+    o.data.materials.append(m)
+    o.visible_shadow = False
+    for f in range(1, nf + 1):
+        t = (f - 1) / TL.FPS
+        u = (t - t0) / dur
+        if u < 0:
+            sc, a = 0.001, 0.0
+        else:
+            e = 1 - (1 - min(u, 1.0)) ** 2
+            sc, a = max(0.001, R * e), max(0.0, 0.32 * (1 - u))
+        o.scale = (sc, sc, sc * 0.4)
+        o.keyframe_insert("scale", frame=f)
+        b.inputs["Alpha"].default_value = a
+        b.inputs["Alpha"].keyframe_insert("default_value", frame=f)
+        b.inputs["Emission Strength"].default_value = 0.6 * a / 0.32 if a else 0.0
+        b.inputs["Emission Strength"].keyframe_insert("default_value", frame=f)
+    # 地面を走る砂ぼこりの輪
+    r = random.Random(seed)
+    pts = []
+    for ring in range(1, 6):
+        rr = R * ring / 5
+        for k in range(18):
+            a = 2 * math.pi * (k + r.random() * 0.5) / 18
+            ts = t0 + dur * (1 - math.sqrt(1 - ring / 5)) * 0.9
+            pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a), 0.0, ts, 0))
+    F.puffs(pts, tsec(nf), seed=seed, col=(0.72, 0.60, 0.46), alpha=0.35, size=(0.04 * R, 0.09 * R), rise=(0.02 * R, 0.06 * R),
+            grow=2.0, life=2.0, name="dust_ring")
+
+
+def fx_cracks(tm, t0, n=40, seed=8):
+    """重さで地面がひび割れる：線路と床板のまわりから黒い割れ目がのびる。"""
+    r = random.Random(seed)
+    nf = len(tm)
+    f0 = max(1, min(nf, int(t0 * TL.FPS) + 1))
+    yc, w, L, yf = deck_geom(f0, tm[f0 - 1])
+    S = max(w, L)
+    m = W.mat("crack", (0.02, 0.015, 0.012), 0.95)
+    for k in range(n):
+        sx = r.choice((-1, 1))
+        x0 = sx * (w / 2) * r.uniform(0.9, 1.05)
+        y0 = r.uniform(yf, yf + L)
+        ln = r.uniform(0.15, 0.5) * S
+        ang = math.radians(r.uniform(-40, 40)) + (0 if sx > 0 else math.pi)
+        wd = r.uniform(0.004, 0.01) * S
+        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(x0, y0, 0.3))
+        o = bpy.context.object
+        o.data.materials.append(m)
+        o.rotation_euler.z = ang
+        ts = t0 + r.uniform(0, 0.8)
+        for f in range(1, nf + 1):
+            t = (f - 1) / TL.FPS
+            u = min(1.0, max(0.0, (t - ts) / 0.5))
+            L2 = max(0.001, ln * u)
+            o.scale = (L2, wd if u > 0 else 0.001, 0.6)
+            o.location = (x0 + math.cos(ang) * L2 / 2, y0 + math.sin(ang) * L2 / 2, 0.3)
+            o.keyframe_insert("scale", frame=f)
+            o.keyframe_insert("location", frame=f)
+
+
+def fx_clouds(tm, t0, n=50, seed=9, col=(1.0, 0.95, 0.9)):
+    """空気の壁が冷えてできる雲の輪（床板のまわり、空の高いところ）。"""
+    r = random.Random(seed)
+    nf = len(tm)
+    f0 = min(nf, int(max(t0, 0) * TL.FPS) + 1)
+    yc, w, L, yf = deck_geom(f0, tm[f0 - 1])
+    S = max(w, L)
+    pts = []
+    for k in range(n):
+        a = 2 * math.pi * k / n + r.uniform(-0.05, 0.05)
+        rr = 0.62 * S * r.uniform(0.95, 1.1)
+        pts.append((rr * math.cos(a), yc + rr * math.sin(a), S * r.uniform(0.03, 0.08), t0 + r.uniform(0, 0.6), 0))
+    F.puffs(pts, tsec(nf), seed=seed, col=col, alpha=0.55, size=(0.05 * S, 0.1 * S), rise=(0.0, 0.02 * S), grow=1.6,
+            life=2.5, name="cloud_ring")
+
+
+def deck_aerial(tm, fx=(), **kw):
     big_city()
     W.sunset()
     hide_sun_disc()
     deck_train(tm, far=True)
     aerial_follow(tm, **kw)
+    for name, args in fx:
+        globals()["fx_" + name](tm, **args)
 
 
 def f05_wide(tm):
-    deck_aerial(tm, k=1.9)
+    deck_aerial(tm, k=2.4, fx=[("dust_wall", dict(t_from=0.0, n=50, k=0.05)),
+                              ("glass", dict(t0=2.9, reach=700, wave_v=300, n=320, pane=4.0))])
 
 
 def f06_tokyo(tm):
-    deck_aerial(tm)
+    deck_aerial(tm, k=2.6, fx=[("dust_wall", dict(t_from=0.0, n=50, k=0.05)), ("shockwave", dict(t0=3.0, R=2.2 * 2048))])
 
 
 def f07_japan(tm):
-    deck_aerial(tm, side=0.55)
+    deck_aerial(tm, k=2.6, side=0.55, fx=[("dust_wall", dict(t_from=0.0, n=40, k=0.04)), ("cracks", dict(t0=3.0, n=45)),
+                                          ("shockwave", dict(t0=1.6, R=1.6 * 5792, dur=1.2))])
 
 
 def f08_loop(tm):
-    deck_aerial(tm, k=1.5)
+    deck_aerial(tm, k=2.4, fx=[("dust_wall", dict(t_from=0.0, n=40, k=0.04)), ("cracks", dict(t0=0.3, n=40)),
+                               ("clouds", dict(t0=3.0, n=56))])
 
 
 def f09_world(tm):
-    deck_aerial(tm, side=0.55)
+    deck_aerial(tm, k=2.6, side=0.55, fx=[("cracks", dict(t0=0.2, n=50)), ("clouds", dict(t0=0.5, n=50)),
+                                          ("dust_wall", dict(t_from=2.6, n=80, k=0.09)), ("shockwave", dict(t0=3.0, R=2.0 * 46341))])
 
 
 def f10_area(tm):
-    deck_aerial(tm, k=1.3, side=-0.8)
+    deck_aerial(tm, k=2.2, side=-0.8, fx=[("cracks", dict(t0=-1.0, n=50)), ("clouds", dict(t0=-2.0, n=50)),
+                                          ("dust_wall", dict(t_from=0.0, n=40, k=0.07))])
 
 
 def f11_end(tm):
-    deck_aerial(tm, k=2.2, side=0.3)
+    deck_aerial(tm, k=3.0, side=0.3, fx=[("cracks", dict(t0=-1.0, n=50)), ("clouds", dict(t0=-2.0, n=50)),
+                                         ("dust_wall", dict(t_from=0.0, n=40, k=0.07))])
 
 
 if __name__ == "__main__":

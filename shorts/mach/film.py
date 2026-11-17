@@ -61,40 +61,127 @@ def track_z(x, y_from, y_to, z):
 
 
 SKIN = [(0.78, 0.55, 0.40), (0.70, 0.48, 0.34), (0.82, 0.62, 0.48)]
-CLOTH = [(0.20, 0.24, 0.36), (0.55, 0.50, 0.42), (0.80, 0.78, 0.72), (0.30, 0.30, 0.32), (0.55, 0.22, 0.18), (0.25, 0.35, 0.28)]
+CLOTH = [(0.40, 0.50, 0.65), (0.72, 0.62, 0.42), (0.85, 0.84, 0.80), (0.42, 0.30, 0.20), (0.25, 0.27, 0.32), (0.55, 0.45, 0.35)]
+
+
+_PERSON_MESH = {}
+
+
+def _join(parts, name):
+    """部品をまとめて1つのメッシュにし、メッシュだけ返す（同じ見た目の人はメッシュを共有して速くする）。"""
+    bpy.ops.object.select_all(action='DESELECT')
+    for o in parts:
+        o.select_set(True)
+    bpy.context.view_layer.objects.active = parts[0]
+    bpy.ops.object.join()
+    o = bpy.context.view_layer.objects.active
+    me = o.data
+    me.name = name
+    me.use_fake_user = True
+    bpy.data.objects.remove(o)
+    return me
+
+
+def _cyl(r1, r2, h, loc, m, rot=(0, 0, 0), verts=7, sy=1.0):
+    bpy.ops.mesh.primitive_cone_add(vertices=verts, radius1=r1, radius2=r2, depth=h, location=loc, rotation=rot)
+    o = bpy.context.object
+    if sy != 1.0:
+        o.scale = (1, sy, 1)
+        bpy.ops.object.transform_apply(scale=True)
+    o.data.materials.append(m)
+    return o
+
+
+def _ball(r, loc, m, sub=2, sc=(1, 1, 1)):
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=sub, radius=r, location=loc)
+    o = bpy.context.object
+    o.scale = sc
+    bpy.ops.object.transform_apply(scale=True)
+    o.data.materials.append(m)
+    return o
+
+
+def person_mesh(variant, pose):
+    """参考動画に寄せたローポリの人（細い手足、丸い頭、大きな白目と黒目、太い眉、丸い鼻、髪のかぶりもの）。
+    原点は足もと（座りは腰が z=0.2）。顔は +y。"""
+    key = (variant, pose)
+    if key in _PERSON_MESH:
+        return _PERSON_MESH[key]
+    r = random.Random(variant * 31 + 7)
+    skin = W.mat(f"skin{variant % 3}", SKIN[variant % 3], 0.8)
+    top = W.mat(f"cloth{variant % 6}", CLOTH[variant % 6], 0.9)
+    bottom = W.mat(f"cloth{(variant + 3) % 6}", CLOTH[(variant + 3) % 6], 0.9)
+    hair = W.mat("hair", (0.06, 0.045, 0.035), 0.8)
+    white = W.mat("eye_white", (0.95, 0.95, 0.93), 0.4)
+    black = W.mat("eye_black", (0.02, 0.02, 0.02), 0.3)
+    shoe = W.mat("shoe", (0.12, 0.10, 0.09), 0.7)
+    skirt = variant % 4 == 1
+    bald = variant % 9 == 4
+    p = []
+    if pose == "sit":
+        hip = 0.2
+        for sx in (-1, 1):
+            p.append(_cyl(0.075, 0.065, 0.45, (sx * 0.1, 0.22, hip), bottom, rot=(math.radians(90), 0, 0)))   # もも
+            p.append(_cyl(0.06, 0.05, 0.45, (sx * 0.1, 0.44, hip - 0.24), bottom if not skirt else skin))       # すね
+            p.append(W.box((sx * 0.1, 0.49, hip - 0.47), (0.11, 0.22, 0.07), shoe, bevel=0))
+    else:
+        hip = 0.86
+        for sx in (-1, 1):
+            p.append(_cyl(0.062, 0.05, 0.84, (sx * 0.095, 0, 0.44), skin if skirt else bottom))
+            p.append(W.box((sx * 0.095, 0.04, 0.03), (0.11, 0.24, 0.07), shoe, bevel=0))
+        if skirt:
+            p.append(_cyl(0.23, 0.17, 0.42, (0, 0, hip - 0.12), bottom, verts=9, sy=0.75))
+    # 腰・胴（肩が広い台形）
+    p.append(_cyl(0.16, 0.15, 0.14, (0, 0, hip + 0.04), bottom, verts=8, sy=0.65))
+    p.append(_cyl(0.155, 0.215, 0.5, (0, 0, hip + 0.33), top, verts=8, sy=0.6))
+    # 腕（少し外へ開いて下ろす）と手
+    sh = hip + 0.54
+    for sx in (-1, 1):
+        ang = math.radians(sx * 8)
+        p.append(_cyl(0.058, 0.045, 0.6, (sx * 0.25, 0, sh - 0.29), top if r.random() < 0.5 else skin, rot=(0, ang, 0)))
+        p.append(_ball(0.05, (sx * 0.29, 0.01, sh - 0.62), skin, sub=1))
+    # 首と頭
+    p.append(_cyl(0.05, 0.05, 0.1, (0, 0, sh + 0.05), skin))
+    hc = sh + 0.22
+    p.append(_ball(0.135, (0, 0, hc), skin, sub=2, sc=(1.0, 0.95, 1.12)))
+    if bald:
+        p.append(_ball(0.14, (0, -0.02, hc - 0.02), hair, sub=2, sc=(1.03, 0.98, 0.7)))      # 横と後ろだけ
+        p.append(_ball(0.12, (0, 0.01, hc + 0.05), skin, sub=2, sc=(1.05, 1.0, 1.0)))
+    else:
+        p.append(_ball(0.145, (0, -0.025, hc + 0.045), hair, sub=2, sc=(1.02, 0.98, 0.85)))   # 髪
+    # 顔：大きな白目と黒目、太い眉、丸い鼻（+y が前）
+    fy = 0.125
+    for sx in (-1, 1):
+        p.append(_ball(0.042, (sx * 0.052, fy, hc + 0.01), white, sub=2, sc=(1, 0.6, 1.1)))
+        p.append(_ball(0.02, (sx * 0.05, fy + 0.022, hc + 0.0), black, sub=1))
+        p.append(W.box((sx * 0.055, fy + 0.005, hc + 0.07), (0.07, 0.02, 0.018), hair, rot=(0, math.radians(-sx * 8), 0), bevel=0))
+    p.append(_ball(0.025, (0, fy + 0.03, hc - 0.045), skin, sub=1))
+    me = _join(p, f"person_{variant}_{pose}")
+    _PERSON_MESH[key] = me
+    return me
 
 
 def person(loc, facing_deg, seed=0, pose="stand", hat=False, scale=1.0):
-    """ローポリの人。facing_deg は顔の向き（0=+y）。帽子は飛ばせるよう別のオブジェクトで返す。"""
+    """人（参考動画に寄せた見た目）。facing_deg は顔の向き（0=+y）。帽子は飛ばせるよう別のオブジェクトで返す。
+    戻り値の root は空のオブジェクト（拡大縮小のキーフレームはここに打てる）。"""
     r = random.Random(seed)
-    skin = W.mat(f"skin{seed % 3}", SKIN[seed % 3], 0.8)
-    top = W.mat(f"cloth{seed % 6}", CLOTH[seed % 6], 0.9)
-    bottom = W.mat(f"cloth{(seed + 3) % 6}", CLOTH[(seed + 3) % 6], 0.9)
-    hair = W.mat("hair", (0.05, 0.04, 0.03), 0.8)
+    me = person_mesh(seed % 12, "sit" if pose == "sit" else "stand")
     bpy.ops.object.empty_add(location=loc)
     root = bpy.context.object
-    s = scale
-    parts = []
-    if pose == "sit":   # 地面に座る（足を前に）
-        parts += [W.box((sx * 0.12 * s, 0.35 * s, 0.12 * s), (0.15 * s, 0.75 * s, 0.16 * s), bottom, bevel=0.02) for sx in (-1, 1)]
-        tz = 0.55
-    else:
-        parts += [W.box((sx * 0.12 * s, 0, 0.45 * s), (0.15 * s, 0.17 * s, 0.9 * s), bottom, bevel=0.02) for sx in (-1, 1)]
-        tz = 1.2
-    parts.append(W.box((0, 0, tz * s), (0.46 * s, 0.26 * s, 0.62 * s), top, bevel=0.04))
-    for sx in (-1, 1):
-        parts.append(W.box((sx * 0.31 * s, 0.02 * s, (tz - 0.05) * s), (0.13 * s, 0.14 * s, 0.6 * s), top, bevel=0.02))
-    parts.append(W.box((0, 0, (tz + 0.48) * s), (0.27 * s, 0.29 * s, 0.31 * s), skin, bevel=0.04))
-    parts.append(W.box((0, -0.03 * s, (tz + 0.62) * s), (0.3 * s, 0.31 * s, 0.1 * s), hair, bevel=0.03))
-    for p in parts:
-        p.parent = root
+    body = bpy.data.objects.new(f"person{seed}", me)
+    bpy.context.collection.objects.link(body)
+    body.parent = root
+    body.scale = (scale, scale, scale)
+    # 座りの人は呼ぶ側が子の z を 0.25 上げる（座面の高さ）
     root.rotation_euler = (0, 0, math.radians(-facing_deg))
     hat_obj = None
     if hat:
+        s = scale
+        tz = 1.62 if pose != "sit" else 0.96
         hm = W.mat("hat", r.choice([(0.85, 0.82, 0.70), (0.15, 0.18, 0.30)]), 0.9)
-        c = Vector(loc) + Vector((0, 0, (tz + 0.72) * s))
-        hat_obj = W.box(tuple(c), (0.42 * s, 0.42 * s, 0.08 * s), hm, bevel=0.02)
-        W.box(tuple(c + Vector((0, 0, 0.08 * s))), (0.26 * s, 0.26 * s, 0.14 * s), hm, bevel=0.02).parent = hat_obj
+        c = Vector(loc) + Vector((0, 0, tz * s))
+        hat_obj = W.box(tuple(c), (0.36 * s, 0.36 * s, 0.06 * s), hm, bevel=0.02)
+        W.box(tuple(c + Vector((0, 0, 0.07 * s))), (0.24 * s, 0.24 * s, 0.12 * s), hm, bevel=0.02).parent = hat_obj
         bpy.context.object.matrix_parent_inverse = hat_obj.matrix_world.inverted()
     return root, hat_obj
 

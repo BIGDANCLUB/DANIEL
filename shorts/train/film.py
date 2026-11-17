@@ -204,7 +204,7 @@ def city_ground():
     brick.offset = 0.0
     nt.links.new(geo.outputs["Position"], brick.inputs["Vector"])
     nt.links.new(brick.outputs["Color"], b.inputs["Base Color"])
-    bpy.ops.mesh.primitive_plane_add(size=240000, location=(0, 0, 0))
+    bpy.ops.mesh.primitive_plane_add(size=3000000, location=(0, 0, 0))
     bpy.context.object.data.materials.append(m)
 
 
@@ -246,6 +246,180 @@ def tmap_of(name):
     return [TL.t_of(s, i)[0] for i in range(s["frames"])]
 
 
+# ---------- 床板つきで走る電車 ----------
+V_TRAIN = 14.0          # 走る速さ m/s（約50km/h）
+FRONT0 = 30.0           # 1コマ目の先頭の位置
+CARS = 11
+
+
+D = 1.0                 # 先頭から後ろへ向かう向き（+y）。電車は -y へ走り、カメラは前から夕日の方を見る
+
+
+def front_y(f):
+    return FRONT0 - V_TRAIN * (f - 1) / TL.FPS
+
+
+def people_mat(name="people_top"):
+    """床板の上の人の海。模様は世界座標で付け、電車と一緒に動くよう位置をキーフレームでずらす。"""
+    m = bpy.data.materials.new(name)
+    m.use_nodes = True
+    nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]
+    b.inputs["Roughness"].default_value = 0.85
+    geo = nt.nodes.new("ShaderNodeNewGeometry")
+    mp = nt.nodes.new("ShaderNodeMapping")
+    nt.links.new(geo.outputs["Position"], mp.inputs["Vector"])
+    vor = nt.nodes.new("ShaderNodeTexVoronoi")
+    vor.inputs["Scale"].default_value = 1.8
+    nt.links.new(mp.outputs["Vector"], vor.inputs["Vector"])
+    ramp = nt.nodes.new("ShaderNodeValToRGB")
+    cr = ramp.color_ramp
+    cr.interpolation = 'CONSTANT'
+    cols = [(0.04, 0.03, 0.03), (0.16, 0.22, 0.42), (0.70, 0.68, 0.64), (0.50, 0.14, 0.12), (0.18, 0.28, 0.18), (0.80, 0.62, 0.22)]
+    cr.elements[0].color = (*cols[0], 1)
+    cr.elements[1].position = 0.92
+    cr.elements[1].color = (*cols[-1], 1)
+    for i, c in enumerate(cols[1:-1], start=1):
+        cr.elements.new(i / len(cols)).color = (*c, 1)
+    sep = nt.nodes.new("ShaderNodeSeparateColor")
+    nt.links.new(vor.outputs["Color"], sep.inputs[0])
+    nt.links.new(sep.outputs[0], ramp.inputs[0])
+    nt.links.new(ramp.outputs[0], b.inputs["Base Color"])
+    bump = nt.nodes.new("ShaderNodeBump")       # 頭のでこぼこ
+    bump.inputs["Strength"].default_value = 0.6
+    nt.links.new(vor.outputs["Distance"], bump.inputs["Height"])
+    nt.links.new(bump.outputs["Normal"], b.inputs["Normal"])
+    return m, mp
+
+
+def unit_box(m, name):
+    """1m の箱（拡大は scale で）。"""
+    bpy.ops.mesh.primitive_cube_add(size=1.0)
+    o = bpy.context.object
+    o.name = name
+    o.data.materials.append(m)
+    return o
+
+
+def deck_train(tm, boards=False, far=False):
+    """走る電車と、屋根の上の床板・人の海。tm は各コマの駅数。"""
+    nf = len(tm)
+    root = commuter(y0=FRONT0, cars=CARS)
+    root.rotation_euler.z = math.pi
+    for f in range(1, nf + 1):
+        root.location.y = front_y(f)
+        root.keyframe_insert("location", frame=f)
+    steel = W.mat("deck_steel", (0.42, 0.43, 0.45), 0.45)
+    plate = W.mat("deck_plate", (0.58, 0.57, 0.54), 0.6)
+    yellow = W.mat("deck_yellow", (0.95, 0.72, 0.10), 0.5)
+    # 1両ずつの床板（上から降りてきて屋根に付く）
+    land_end = 1
+    if boards:
+        for c in range(CARS):
+            yc = -CAR_L / 2 - c * (CAR_L + 0.5)
+            f0 = 8 + c * 6
+            parts = [W.box((0, yc, 4.75), (2.0, CAR_L - 2, 0.7), steel, bevel=0.03)]        # 屋根の上の台
+            for sy in (-1, 1):
+                parts.append(W.box((0, yc + sy * (CAR_L / 2 - 2.5), 4.75), (2.6, 0.5, 0.7), steel, bevel=0.03))
+            pl = W.box((0, yc, 5.25), (4.2, CAR_L + 0.4, 0.3), plate, bevel=0.03)
+            parts.append(pl)
+            for sx in (-1, 1):
+                parts.append(W.box((sx * 2.05, yc, 5.45), (0.12, CAR_L + 0.4, 0.12), yellow, bevel=0))
+            bpy.ops.object.empty_add(location=(0, 0, 0))
+            grp = bpy.context.object
+            grp.parent = root
+            for p in parts:
+                p.parent = grp
+            for f, z in ((1, 18.0), (f0, 18.0), (f0 + 14, 0.0), (nf, 0.0)):
+                grp.location.z = z
+                grp.keyframe_insert("location", frame=f)
+            land_end = max(land_end, f0 + 14)
+    # 床板（広がっていく1枚の板）と、その上の人の海
+    deck = unit_box(plate, "deck")
+    pm, mp = people_mat()
+    near = boards and not far
+    FRONT_FIG = 42.0             # 前から 42m は本物の人形が立つので、人の海は後ろと両わきだけ
+    top = unit_box(pm, "people")
+    sides = [unit_box(pm, "people_l"), unit_box(pm, "people_r")] if near else []
+    edge = unit_box(yellow, "deck_edge")
+    mid = D * (CAR_L * CARS + 0.5 * (CARS - 1)) / 2
+    for f in range(1, nf + 1):
+        x = tm[f - 1]
+        w, L = TL.deck_size(x)
+        if boards and f < land_end:
+            w = 0.001                                 # 板が全部付くまでは1枚板は出さない
+        th = 0.3 if not far else max(0.3, 0.004 * max(w, L))
+        yc = front_y(f) + mid
+        deck.location = (0, yc, 5.1 + th / 2)
+        deck.scale = (w, L + 0.4, th)
+        edge.location = (0, yc, 5.1 + th * 0.4)
+        edge.scale = (w + 0.25, L + 0.65, th * 0.8)
+        # 人：板が付いてから乗り込む（高さ 0→1.7m）
+        ph = 1.7 if not far else max(1.7, 0.002 * max(w, L))
+        k = 1.0
+        if boards:
+            k = min(1.0, max(0.0, (f - land_end) / 20))
+        hz = max(0.001, ph * k)
+        z = 5.1 + th + hz / 2
+        on = 1 if k > 0 else 0.001
+        if near:
+            back_L = L - FRONT_FIG
+            top.location = (0, front_y(f) - FRONT_FIG - back_L / 2 , z)
+            top.location.y = yc + D * FRONT_FIG / 2
+            top.scale = (max(0.001, (w - 0.3) * on), back_L, hz)
+            sw = max(0.001, (w - 4.4) / 2) * on
+            for sx, o in zip((-1, 1), sides):
+                o.location = (sx * (2.2 + sw / 2), front_y(f) + D * FRONT_FIG / 2, z)
+                o.scale = (sw, FRONT_FIG, hz)
+                o.keyframe_insert("location", frame=f)
+                o.keyframe_insert("scale", frame=f)
+        else:
+            top.location = (0, yc, z)
+            top.scale = (max(0.001, (w - 0.3) * on), L, hz)
+        for o in (deck, top, edge):
+            o.keyframe_insert("location", frame=f)
+            o.keyframe_insert("scale", frame=f)
+        mp.inputs["Location"].default_value = (0, -(front_y(f) - FRONT0), 0)
+        mp.inputs["Location"].keyframe_insert("default_value", frame=f)
+    # 前の方の人は本物の人形（近くで見える場所）
+    if near:
+        r = random.Random(9)
+        for k in range(130):
+            px = r.uniform(-1.8, 1.8)
+            py = -r.uniform(0.6, FRONT_FIG)
+            pr, _ = F.person((px, py, 5.4), r.uniform(0, 360), seed=k, pose="stand", scale=0.95)
+            pr.parent = root
+            appear = land_end + 1 + int(20 * (-py / FRONT_FIG) ** 0.7)       # 前から順に乗り込む
+            for f in sorted({1, appear - 1, appear, nf}):
+                sc = 0.0001 if f < appear else 1.0
+                pr.scale = (sc, sc, sc)
+                pr.keyframe_insert("scale", frame=f)
+    return root
+
+
+def follow_cam(tm, rel_fn, look_fn, lens=28):
+    """電車を追いかけるカメラ。rel_fn(f, x) → 先頭からの位置、look_fn(f, x) → 先頭から見る点。"""
+    cam = W.camera((0, 0, 10), (0, 100, 0), lens=lens)
+    cam.data.clip_end = 3000000
+    for f in range(1, len(tm) + 1):
+        x = tm[f - 1]
+        fy = front_y(f)
+        rx, ry, rz = rel_fn(f, x)
+        lx, ly, lz = look_fn(f, x)
+        cam.location = (rx, fy + ry, rz)
+        W.aim(cam, (lx, fy + ly, lz))
+        cam.keyframe_insert("location", frame=f)
+        cam.keyframe_insert("rotation_euler", frame=f)
+    return cam
+
+
+def big_city():
+    city_ground()
+    dense_blocks()
+    track_m = W.mat("rail", (0.55, 0.52, 0.5), 0.3)
+    W.box((0, 0, 0.4), (4, 60000, 0.3), track_m, bevel=0)
+
+
 # ---------- 場面 ----------
 def e01_open(tm):
     station_set()
@@ -257,101 +431,103 @@ def e01_open(tm):
     cam.keyframe_insert("location", frame=len(tm))
 
 
-def car_scene(tm, cap, cam_loc=(0.2, -CAR_L / 2 + 0.6, 1.55), look=(0.0, CAR_L / 2, 1.2), lens=20):
+def per_car(x):
+    """1両あたりの乗客（11両に分かれて乗る）。"""
+    return TL.n(x) / CARS
+
+
+def car_scene(tm, cam_loc=(0.2, -CAR_L / 2 + 0.6, 1.55), look=(0.0, CAR_L / 2, 1.2), lens=20, cap=340):
     interior()
     W.sunset()
     slots = seat_slots() + stand_slots()
-    fill_people(tm, slots, cap)
+    # この車両に乗る人数は 全体÷11（最初の1人だけは、この車両に）
+    tmc = [math.log2(max(1.0, per_car(x))) if per_car(x) >= 1 else 0.0 for x in tm]
+    fill_people(tmc, slots, cap)
     W.camera(cam_loc, look, lens=lens)
 
 
-def e02_one(tm):
-    car_scene(tm, 1, cam_loc=(0.6, -1.8, 1.3), look=(-1.0, 1.0, 0.8), lens=24)
+def f02_car(tm):
+    car_scene(tm, cam_loc=(0.5, -3.6, 1.45), look=(-0.9, 2.5, 0.75), lens=22)
 
 
-def e03a_car(tm):
-    car_scene(tm, 340)
+def f03_full(tm):
+    car_scene(tm)
 
 
-def e06_five(tm):
-    car_scene(tm, 64)
-
-
-def e07_ten(tm):
-    car_scene(tm, 340)
-
-
-def platform_scene(tm, cam, look, lens=26):
-    station_set()
+def f04_deck(tm):
+    W.ground(12000)
+    W.track(0, -400, 9000)
+    W.catenary(-200, 6000, 50)
+    W.buildings(seed=21, n=110, y_from=150, y_to=2500, x_min=40, x_max=350)
+    W.houses(seed=22, n=280, y_from=-200, y_to=700, x_min=12, x_max=150)
     W.sunset()
-    # ホームに並ぶ人（あとから現れる）
-    r = random.Random(4)
-    slots = []
-    for i in range(14):
-        for j in range(60):
-            slots.append(((-3.2 - i * 0.45 + r.uniform(-0.1, 0.1), -60 + j * 1.8 + r.uniform(-0.3, 0.3), 1.2), r.uniform(-60, 60) + 90, "stand"))
-    r.shuffle(slots)
-    # ホームの人は「電車に乗りきれなかった人」：乗客が 1万人を超えたあたりから並び始める
-    tm2 = [x - 11.5 for x in tm]
-    for k, ((x, y, z), face, pose) in enumerate(slots[:600]):
-        root, _ = F.person((x, y, z), face, seed=k, pose="stand", scale=0.95)
-        appear = next((f for f, xx in enumerate(tm2, start=1) if 2 ** max(xx, 0) * 200 >= k + 1), None)
-        for f in sorted({1, len(tm)} | ({max(1, appear - 1), appear} if appear else set())):
-            sc = 0.0001 if (appear is None or f < appear) else 1.0
-            root.scale = (sc, sc, sc)
-            root.keyframe_insert("scale", frame=f)
-    W.camera(cam, look, lens=lens)
+    deck_train(tm, boards=True)
+
+    def rel(f, x):
+        w, _ = TL.deck_size(x) if f > 90 else (4.2, 0)
+        return (-6 - 0.8 * w, -24 - 0.45 * w, 8.5 + 0.55 * w)
+
+    def look(f, x):
+        w, _ = TL.deck_size(x) if f > 90 else (4.2, 0)
+        return (1.5 + 0.15 * w, 70 + 0.3 * w, 2.0)
+
+    follow_cam(tm, rel, look, lens=26)
 
 
-def e03b_platform(tm):
-    platform_scene(tm, (-9.5, -40, 3.5), (-3.0, 40, 1.6))
+def aerial_follow(tm, k=1.6, side=-0.55, min_r=60):
+    """床板を斜め上から見る。r は床板の大きさ。"""
+    def rel(f, x):
+        w, L = TL.deck_size(x)
+        r = max(min_r, 0.5 * max(w, L))
+        return (side * k * r, -k * r * 0.35, k * r * 0.9)
+
+    def look(f, x):
+        w, L = TL.deck_size(x)
+        return (0.0, D * (CAR_L * CARS) / 2 + 0.1 * max(w, L), 0.0)
+    return follow_cam(tm, rel, look, lens=26)
 
 
-def e08_full(tm):
-    platform_scene(tm, (-9.5, -40, 3.5), (-3.0, 40, 1.6))
+def hide_sun_disc():
+    """遠くから見る場面では、太陽の球（5km 先の小道具）が床板から飛び出すので隠す。"""
+    for o in bpy.data.objects:
+        if o.type == 'MESH' and o.data.materials and o.data.materials[0] and o.data.materials[0].name.startswith("sun_disc"):
+            o.hide_render = True
 
 
-def aerial_scene(tm, **kw):
-    city()
+def deck_aerial(tm, **kw):
+    big_city()
     W.sunset()
-    crowd_disk(tm)
-    aerial_cam(tm, **kw)
+    hide_sun_disc()
+    deck_train(tm, far=True)
+    aerial_follow(tm, **kw)
 
 
-def e03c_city(tm):
-    aerial_scene(tm)
+def f05_wide(tm):
+    deck_aerial(tm, k=1.9)
 
 
-def e03d_wide(tm):
-    aerial_scene(tm)
+def f06_tokyo(tm):
+    deck_aerial(tm)
 
 
-def e09_dome(tm):
-    aerial_scene(tm, k=3.2)
+def f07_japan(tm):
+    deck_aerial(tm, side=0.55)
 
 
-def e10_tokyo(tm):
-    aerial_scene(tm)
+def f08_loop(tm):
+    deck_aerial(tm, k=1.5)
 
 
-def e11_japan(tm):
-    aerial_scene(tm)
+def f09_world(tm):
+    deck_aerial(tm, side=0.55)
 
 
-def e12_loop(tm):
-    aerial_scene(tm, k=2.2)
+def f10_area(tm):
+    deck_aerial(tm, k=1.3, side=-0.8)
 
 
-def e13_world(tm):
-    aerial_scene(tm)
-
-
-def e14_area(tm):
-    aerial_scene(tm, k=2.0, side=-0.7)
-
-
-def e15_end(tm):
-    aerial_scene(tm, k=3.0)
+def f11_end(tm):
+    deck_aerial(tm, k=2.2, side=0.3)
 
 
 if __name__ == "__main__":

@@ -129,13 +129,16 @@ END_BGM = {"file": os.path.join(HERE, "bgm", "野良猫は宇宙を目指した.
 CONT = tuple("にがをはでとてどもへやずばの") + ("から", "けど", "……", "ひと口", "そこへ")
 
 
+TEMPO_K = 1.0   # 字幕1つの長さの倍率（11/17 ユーザー指定：場面転換が早すぎる → 競馬回から 1.3）
+
+
 def tempo(c, nxt):
     """字幕の文字数で長さを決める。文が次の字幕に続くときは短く（中だるみをなくす・11/2 ユーザー指定）。"""
     t = c["text"].replace("\n", "")
     n = len(t)
     if t.endswith(CONT) and nxt is not None and nxt.get("text"):
-        return min(max(0.9 + 0.08 * n, 1.4), 2.2)
-    return min(max(1.2 + 0.1 * n, 1.8), 3.0)
+        return min(max(0.9 + 0.08 * n, 1.4), 2.2) * TEMPO_K
+    return min(max(1.2 + 0.1 * n, 1.8), 3.0) * TEMPO_K
 
 
 def auto_tempo(cs):
@@ -296,6 +299,27 @@ def diversify(cs, cap=3):
             if used[alt] < used[a]:
                 c["cats"][0]["a"] = a = alt
         used[a] += 1
+    return cs
+
+
+LONG_SWAP = {   # 11/17 ユーザー指定：場面転換が早すぎる → 短い素材（〜5秒）を、似た感じの長い素材に替える
+    "stare_lying_tabby_cat": "calm_black_face_sheep", "think_chin_paw_orange_cat": "think_bike_front_seat_cat",
+    "sad_looking_away_tabby": "sad_black_dog", "scream_standing_marmot": "rage_talking_cat",
+    "peek_what_happen_cat": "film_phone_orange_white_cats", "happy_hamster_open_arms": "dance_three_kittens",
+    "sleepy_old_memories_cat": "sleepy_sleepy_cat", "stare_big_eyes_tabby_kitten": "surprise_big_pupils_cat",
+    "confused_i_dont_know_cat": "huh_huh_cat", "ignore_orange_cat_sniffed": "stare_standing_marmot",
+    "huh_goat_talks_to_huh_cat": "huh_huh_cat", "meow_gray_white_kitten": "stare_aloha_gray_cat",
+    "walk_white_duck": "walk_approaching_orange_cat", "lick_talking_goat": "rage_talking_cat",
+    "dance_happy_banana_cat": "dance_three_kittens", "meow_ragdoll_chubby_cat": "stare_aloha_gray_cat",
+    "scream_phone_orange_cat": "film_phone_orange_white_cats", "read_book_orange_kitten": "money_counting_cream_cat",
+}
+
+
+def prefer_long(cs):
+    """短い素材を LONG_SWAP の長い素材に替える（同じ素材で文を多くつなげられるので、切り替えがゆっくりになる）。"""
+    for c in cs:
+        if c.get("cats") and c["cats"][0]["a"] in LONG_SWAP:
+            c["cats"][0]["a"] = LONG_SWAP[c["cats"][0]["a"]]
     return cs
 
 

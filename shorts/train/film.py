@@ -146,9 +146,37 @@ def station_set(people_tm=None, cap=0):
     commuter(y0=30, cars=4)
 
 
-def crowd_disk(tm, center=(0, 0), z=1.7):
-    """乗客がぎゅうぎゅうに立った円（半径は TL.radius）。"""
-    m = W.mat("crowd", (0.32, 0.30, 0.34), 0.9)
+def crowd_mat():
+    """人の頭と服が細かく並んだように見える、色のつぶつぶ。"""
+    m = bpy.data.materials.new("people_crowd")
+    m.use_nodes = True
+    nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]
+    b.inputs["Roughness"].default_value = 0.9
+    coord = nt.nodes.new("ShaderNodeTexCoord")
+    vor = nt.nodes.new("ShaderNodeTexVoronoi")
+    vor.inputs["Scale"].default_value = 1.6          # 1m に 1.6 個 ≒ 人の間隔
+    nt.links.new(coord.outputs["Object"], vor.inputs["Vector"])
+    ramp = nt.nodes.new("ShaderNodeValToRGB")
+    cr = ramp.color_ramp
+    cols = [(0.05, 0.04, 0.03), (0.15, 0.22, 0.45), (0.75, 0.72, 0.68), (0.55, 0.15, 0.12), (0.20, 0.30, 0.20), (0.85, 0.65, 0.20)]
+    cr.interpolation = 'CONSTANT'
+    cr.elements[0].color = (*cols[0], 1)
+    cr.elements[1].position = 0.9
+    cr.elements[1].color = (*cols[-1], 1)
+    for i, c in enumerate(cols[1:-1], start=1):
+        e = cr.elements.new(i / len(cols))
+        e.color = (*c, 1)
+    nt.links.new(vor.outputs["Color"], nt.nodes.new("ShaderNodeSeparateColor").inputs[0])
+    sep = nt.nodes["Separate Color"]
+    nt.links.new(sep.outputs[0], ramp.inputs[0])
+    nt.links.new(ramp.outputs[0], b.inputs["Base Color"])
+    return m
+
+
+def crowd_disk(tm, center=(0, 0), z=3.0):
+    """乗客がぎゅうぎゅうに立った円（半径は TL.radius）。模様は物の座標なので、拡大しても人の大きさは変わらないよう世界座標で付ける。"""
+    m = W.mat("crowd", (0.16, 0.11, 0.14), 0.9)      # 遠くから見ると、黒っぽい頭と服の「人の海」
     bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=1.0, depth=z, location=(center[0], center[1], z / 2))
     o = bpy.context.object
     o.data.materials.append(m)
@@ -159,11 +187,42 @@ def crowd_disk(tm, center=(0, 0), z=1.7):
     return o
 
 
+def city_ground():
+    """遠くから見た街：道路の格子と色のちがう区画（レンガ模様のテクスチャ）。"""
+    m = bpy.data.materials.new("citymap")
+    m.use_nodes = True
+    nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]
+    b.inputs["Roughness"].default_value = 0.9
+    geo = nt.nodes.new("ShaderNodeNewGeometry")
+    brick = nt.nodes.new("ShaderNodeTexBrick")
+    brick.inputs["Scale"].default_value = 0.012       # 区画 約80m
+    brick.inputs["Mortar Size"].default_value = 0.012
+    brick.inputs["Color1"].default_value = (0.36, 0.33, 0.30, 1)
+    brick.inputs["Color2"].default_value = (0.24, 0.26, 0.22, 1)
+    brick.inputs["Mortar"].default_value = (0.12, 0.12, 0.13, 1)
+    brick.offset = 0.0
+    nt.links.new(geo.outputs["Position"], brick.inputs["Vector"])
+    nt.links.new(brick.outputs["Color"], b.inputs["Base Color"])
+    bpy.ops.mesh.primitive_plane_add(size=240000, location=(0, 0, 0))
+    bpy.context.object.data.materials.append(m)
+
+
+def dense_blocks(half=1500, step=80, seed=7):
+    r = random.Random(seed)
+    cols = [W.mat("bld_a", (0.55, 0.55, 0.58), 0.6), W.mat("bld_b", (0.68, 0.64, 0.58), 0.7), W.mat("bld_c", (0.42, 0.45, 0.5), 0.5)]
+    for gx in range(-half, half, step):
+        for gy in range(-half, half, step):
+            if abs(gx) < 30:
+                continue                          # 線路のところは空ける
+            d = math.hypot(gx, gy)
+            hh = r.uniform(8, 25) + (60 * math.exp(-d / 500) * r.random())
+            W.box((gx + step / 2, gy + step / 2, hh / 2), (step * 0.7, step * 0.7, hh), r.choice(cols), bevel=0)
+
+
 def city():
-    F.ground_y(-60000, 60000, x_half=60000)
-    W.buildings(seed=31, n=300, y_from=-6000, y_to=6000, x_min=20, x_max=6000)
-    W.buildings(seed=32, n=200, y_from=-30000, y_to=30000, x_min=6000, x_max=30000)
-    W.houses(seed=33, n=250, y_from=-30000, y_to=30000, x_min=200, x_max=30000)
+    city_ground()
+    dense_blocks()
     track_m = W.mat("rail", (0.55, 0.52, 0.5), 0.3)
     W.box((0, 0, 0.4), (4, 60000, 0.3), track_m, bevel=0)
     commuter(y0=30, cars=11)

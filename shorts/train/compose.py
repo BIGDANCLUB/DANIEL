@@ -27,7 +27,9 @@ def fmt_n(v):
 
 
 def draw_shot(s, i, base, sun):
-    if sun:
+    if sun and s["name"] in TL.AERIAL:
+        g = grade(base, sun=tuple(sun), glow=0.25, haze=0.2)      # 上から見下ろす場面は太陽のにじみを弱く
+    elif sun:
         g = grade(base, sun=tuple(sun))
     else:
         g = grade(base, sun=(base.width / 2, -base.height * 0.4), glow=0.4, haze=0.12)

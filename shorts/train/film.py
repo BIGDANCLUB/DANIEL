@@ -19,6 +19,7 @@ _spec.loader.exec_module(F)
 
 bpy = W.bpy
 from mathutils import Vector  # noqa: E402
+TRAIN_L = TL.TRAIN_L
 
 W.TEXTURED["crowd"] = 40.0
 
@@ -342,6 +343,10 @@ def deck_train(tm, boards=False, far=False):
     top = unit_box(pm, "people")
     sides = [unit_box(pm, "people_l"), unit_box(pm, "people_r")] if near else []
     edge = unit_box(yellow, "deck_edge")
+    column = unit_box(steel, "deck_column")          # 屋根から床板を持ち上げる柱
+    bpy.ops.object.empty_add(location=(0, 0, 0))
+    lifter = bpy.context.object                      # 人形を床板と一緒に持ち上げる
+    lifter.parent = root
     mid = D * (CAR_L * CARS + 0.5 * (CARS - 1)) / 2
     for f in range(1, nf + 1):
         x = tm[f - 1]
@@ -350,9 +355,17 @@ def deck_train(tm, boards=False, far=False):
             w = 0.001                                 # 板が全部付くまでは1枚板は出さない
         th = 0.3 if not far else max(0.3, 0.004 * max(w, L))
         yc = front_y(f) + mid
-        deck.location = (0, yc, 5.1 + th / 2)
+        base = 5.1 + lift(w)
+        deck.location = (0, yc, base + th / 2)
         deck.scale = (w, L + 0.4, th)
-        edge.location = (0, yc, 5.1 + th * 0.4)
+        edge.location = (0, yc, base + th * 0.4)
+        ch = max(0.001, base - 4.4)
+        column.location = (0, yc, 4.4 + ch / 2)
+        column.scale = (min(2.0, w), min(L, 3 * TRAIN_L) * 0.92, ch)
+        column.keyframe_insert("location", frame=f)
+        column.keyframe_insert("scale", frame=f)
+        lifter.location.z = base - 5.1
+        lifter.keyframe_insert("location", frame=f)
         edge.scale = (w + 0.25, L + 0.65, th * 0.8)
         # 人：板が付いてから乗り込む（高さ 0→1.7m）
         ph = 1.7 if not far else max(1.7, 0.002 * max(w, L))
@@ -360,7 +373,7 @@ def deck_train(tm, boards=False, far=False):
         if boards:
             k = min(1.0, max(0.0, (f - land_end) / 20))
         hz = max(0.001, ph * k)
-        z = 5.1 + th + hz / 2
+        z = base + th + hz / 2
         on = 1 if k > 0 else 0.001
         if near:
             back_L = L - FRONT_FIG
@@ -388,13 +401,18 @@ def deck_train(tm, boards=False, far=False):
             px = r.uniform(-1.8, 1.8)
             py = -r.uniform(0.6, FRONT_FIG)
             pr, _ = F.person((px, py, 5.4), r.uniform(0, 360), seed=k, pose="stand", scale=0.95)
-            pr.parent = root
+            pr.parent = lifter
             appear = land_end + 1 + int(20 * (-py / FRONT_FIG) ** 0.7)       # 前から順に乗り込む
             for f in sorted({1, appear - 1, appear, nf}):
                 sc = 0.0001 if f < appear else 1.0
                 pr.scale = (sc, sc, sc)
                 pr.keyframe_insert("scale", frame=f)
     return root
+
+
+def lift(w):
+    """床板が広がったら、家や電柱に当たらないよう持ち上げる（最大120m）。"""
+    return min(120.0, max(0.0, 0.32 * (w - 4.2)))
 
 
 def follow_cam(tm, rel_fn, look_fn, lens=28):

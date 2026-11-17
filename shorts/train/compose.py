@@ -103,6 +103,14 @@ def build_audio(total, st):
     for c in range(11):
         put(clank(), t0 + (8 + c * 6 + 14) / TL.FPS, 0.5)
     put(C.sfx_whoosh(1.2, True, 8), st["f05_wide"], 0.5)
+    # 物理現象の音（film.py の fx の時刻に合わせる）
+    put(C.sfx_crackle(3.3, 11), st["f04_deck"] + 95 / TL.FPS, 0.35)          # 火花
+    put(C.sfx_crackle(1.6, 12), st["f05_wide"] + 2.9, 0.7)                    # 窓ガラスが割れる
+    put(C.sfx_boom(2.5, 13), st["f05_wide"] + 2.9, 0.5)
+    for name, t in (("f06_tokyo", 3.0), ("f07_japan", 1.6), ("f09_world", 3.0)):
+        put(C.sfx_boom(3.0, hash(name) % 90), st[name] + t, 0.9)              # 衝撃波
+    put(C.sfx_boom(3.5, 21) * 0.6, st["f07_japan"] + 3.0, 0.8)               # 地面が割れる
+    put(C.sfx_whoosh(2.5, True, 22), st["f08_loop"] + 3.0, 0.6)              # 雲の輪
     a = a / max(1e-6, abs(a).max()) * 0.8
     return a
 

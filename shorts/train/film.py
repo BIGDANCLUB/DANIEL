@@ -16,6 +16,8 @@ import importlib.util  # noqa: E402
 _spec = importlib.util.spec_from_file_location("mach_film", os.path.join(HERE, "..", "mach", "film.py"))
 F = importlib.util.module_from_spec(_spec)   # 新幹線版の部品（同じ名前の film.py なので別名で読む）
 _spec.loader.exec_module(F)
+F.SUBDIV = 3
+F.SOFT = True
 
 bpy = W.bpy
 from mathutils import Vector  # noqa: E402
@@ -598,7 +600,7 @@ def fx_dust_wall(tm, t_from, n=60, k=0.05, seed=5):
         S = max(w, L)
         pts.append((x, y, 0.0, (f - 1) / TL.FPS, sx))
     S = max(TL.deck_size(tm[-1]))
-    F.puffs(pts, tsec(nf), seed=seed, col=(0.70, 0.58, 0.44), alpha=0.4, size=(k * S * 0.4, k * S), rise=(k * S * 0.2, k * S * 0.6),
+    F.puffs(pts, tsec(nf), seed=seed, col=(0.70, 0.58, 0.44), alpha=0.22, size=(k * S * 0.3, k * S * 0.7), rise=(k * S * 0.2, k * S * 0.6),
             grow=2.5, life=2.0, out=(k * S * 0.5, k * S * 1.5), name="dust_wall")
 
 
@@ -672,7 +674,7 @@ def fx_shockwave(tm, t0, R, dur=1.4, seed=7):
             a = 2 * math.pi * (k + r.random() * 0.5) / 18
             ts = t0 + dur * (1 - math.sqrt(1 - ring / 5)) * 0.9
             pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a), 0.0, ts, 0))
-    F.puffs(pts, tsec(nf), seed=seed, col=(0.72, 0.60, 0.46), alpha=0.35, size=(0.04 * R, 0.09 * R), rise=(0.02 * R, 0.06 * R),
+    F.puffs(pts, tsec(nf), seed=seed, col=(0.72, 0.60, 0.46), alpha=0.25, size=(0.025 * R, 0.05 * R), rise=(0.02 * R, 0.06 * R),
             grow=2.0, life=2.0, name="dust_ring")
 
 

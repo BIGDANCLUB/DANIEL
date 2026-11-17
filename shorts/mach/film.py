@@ -73,6 +73,12 @@ def _join(parts, name):
     for o in parts:
         o.select_set(True)
     bpy.context.view_layer.objects.active = parts[0]
+    for o in parts:                       # 修飾子（角の丸め）を形に焼き込み、位置と向きも形に入れてから合体
+        for md in list(o.modifiers):
+            bpy.context.view_layer.objects.active = o
+            bpy.ops.object.modifier_apply(modifier=md.name)
+    bpy.context.view_layer.objects.active = parts[0]
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
     bpy.ops.object.join()
     o = bpy.context.view_layer.objects.active
     me = o.data
@@ -246,7 +252,39 @@ def puff_mat(name, col, alpha):
     b.inputs["Base Color"].default_value = (*col, 1)
     b.inputs["Roughness"].default_value = 1.0
     b.inputs["Alpha"].default_value = alpha
+    if SOFT:
+        # ふちが透けてやわらかい「けむり」に（てかりを消し、まだら模様を付ける）
+        nt = m.node_tree
+        try:
+            b.inputs["Specular IOR Level"].default_value = 0.0
+        except KeyError:
+            pass
+        lw = nt.nodes.new("ShaderNodeLayerWeight")
+        lw.inputs["Blend"].default_value = 0.35
+        inv = nt.nodes.new("ShaderNodeMath")
+        inv.operation = 'SUBTRACT'
+        inv.inputs[0].default_value = 1.0
+        nt.links.new(lw.outputs["Facing"], inv.inputs[1])
+        pw = nt.nodes.new("ShaderNodeMath")
+        pw.operation = 'POWER'
+        pw.inputs[1].default_value = 1.6
+        nt.links.new(inv.outputs[0], pw.inputs[0])
+        noi = nt.nodes.new("ShaderNodeTexNoise")
+        noi.inputs["Scale"].default_value = 3.0
+        mul = nt.nodes.new("ShaderNodeMath")
+        mul.operation = 'MULTIPLY'
+        nt.links.new(pw.outputs[0], mul.inputs[0])
+        nt.links.new(noi.outputs["Fac"], mul.inputs[1])
+        mul2 = nt.nodes.new("ShaderNodeMath")
+        mul2.operation = 'MULTIPLY'
+        mul2.inputs[1].default_value = alpha * 2.0
+        nt.links.new(mul.outputs[0], mul2.inputs[0])
+        nt.links.new(mul2.outputs[0], b.inputs["Alpha"])
     return m
+
+
+SOFT = False    # True でふちのやわらかいけむり（電車版から）
+SUBDIV = 1      # 土けむりの細かさ（電車版から 3：角ばった結晶に見えないよう丸く）
 
 
 def puffs(points, tmap, seed=3, col=(0.75, 0.62, 0.48), alpha=0.35, size=(1.5, 4.0), rise=(1.0, 4.0), grow=3.0,
@@ -255,8 +293,10 @@ def puffs(points, tmap, seed=3, col=(0.75, 0.62, 0.48), alpha=0.35, size=(1.5, 4
     r = random.Random(seed)
     m = puff_mat(name, col, alpha)
     for (x, y, z, ts, sx) in points:
-        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=1.0, location=(x, y, z))
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=SUBDIV, radius=1.0, location=(x, y, z))
         o = bpy.context.object
+        if SUBDIV > 1:
+            bpy.ops.object.shade_smooth()
         o.data.materials.append(m)
         o.visible_shadow = False
         s0 = r.uniform(*size)

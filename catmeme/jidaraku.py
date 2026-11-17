@@ -141,7 +141,52 @@ def tempo(c, nxt):
     return min(max(1.2 + 0.1 * n, 1.8), 3.0) * TEMPO_K
 
 
+def reflow(cs, width=12, rows=2):
+    """11/17 ユーザー指定（参考動画にそろえる）：字幕は1行 width 字まで・最大 rows 行。
+    改行は台本で区切った所（言葉の切れ目）でだけ入れる。入りきらない字幕は2つ以上の字幕に分ける（猫・背景・写真は同じ）。"""
+    out = []
+    for c in cs:
+        t = c.get("text")
+        if not t or c.get("kind") == "end":
+            out.append(c)
+            continue
+        parts = [x for x in t.split("\n") if x]
+        lines, cur = [], ""
+        for p_ in parts:
+            if cur and len(cur) + len(p_) > width:
+                lines.append(cur)
+                cur = p_
+            else:
+                cur += p_
+        if cur:
+            lines.append(cur)
+        chunks = [lines[i:i + rows] for i in range(0, len(lines), rows)]
+        for k, ch in enumerate(chunks):
+            d = dict(c)
+            d["cats"] = [dict(q) for q in c.get("cats", [])]
+            d["text"] = "\n".join(ch)
+            if k:
+                for key in ("se", "bgm", "new"):
+                    d.pop(key, None)
+                d["keep"] = True
+                d["auto"] = True
+            out.append(d)
+    cs[:] = out
+    return cs
+
+
+SUB_SEC = None   # (最短, 最長) 秒。決めると字幕の長さをこの範囲にそろえる（11/17 競馬回：参考どおり 2.5〜3秒）
+
+
 def auto_tempo(cs):
+    if SUB_SEC:
+        lo, hi = SUB_SEC
+        for c in cs:
+            if c.pop("auto", False) and c.get("text"):
+                n = len(c["text"].replace("\n", ""))
+                c["dur"] = min(max(lo + (hi - lo) * (n - 4) / 16, lo), hi)
+        return cs
+
     for i, c in enumerate(cs):
         if c.pop("auto", False) and c.get("text"):
             c["dur"] = tempo(c, cs[i + 1] if i + 1 < len(cs) else None)

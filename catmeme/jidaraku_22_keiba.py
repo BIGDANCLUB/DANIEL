@@ -26,6 +26,7 @@ J.STANDIN.update({GATE: "bg54_station_crowd_map", STAND: "bg30_summer_stadium", 
 J.HOLD = 6
 J.LOOPS = 1
 J.TEMPO_K = 1.3
+J.SUB_SEC = (2.5, 3.0)   # 11/17 ユーザー指定：参考動画どおり字幕1つ2.5〜3秒・1〜2行
 J.SUB_STYLE = "glow"
 MORNING = os.path.join(L.BGM, "Morning.mp3")
 NANDE = os.path.join(L.BGM, "なんでしょう？.mp3")
@@ -223,6 +224,12 @@ def cuts():
         s(ROOM_N, "sad_looking_away_tabby", "何回見ても\nかわされる"),
         s(ROOM_N, "think_chin_paw_orange_cat", "そして\nあの機械の前の\n俺"),
         s(ROOM_N, "blank_black_cat_zoning_out", "思い出すたびに\n顔があつくなる"),
+        s(ROOM_N, "think_chin_paw_orange_cat", "競馬新聞を\nもう一度ひらく"),
+        s(ROOM_N, "huh_huh_cat", "やっぱり\n何ひとつ\nわからない"),
+        s(ROOM_N, "smug_squint_bicolor_cat", "でも\nパドックの馬の顔は\n覚えている"),
+        s(ROOM_N, "happy_hamster_open_arms", "それで\n十分だ"),
+        s(ROOM_N, "stare_lying_tabby_cat", "勝った日の\nステーキ丼"),
+        s(ROOM_N, "rizz_cat_rizz", "その日まで\n競馬場に通おう"),
         s(ROOM_N, "read_book_orange_kitten", "次の予定を\n調べる"),
         s(ROOM_N, "excited_hodomoe_city_cat", "来月も\n行こう\n今度は\n払い戻し機に\n当たり券を\n入れるために", se="pikon", dur=4.2),
         J.end_card(),
@@ -232,6 +239,7 @@ def cuts():
 def place(cs):
     J.diversify(cs)
     J.prefer_long(cs)   # 11/17 ユーザー指定：場面転換をゆっくりに
+    J.reflow(cs)   # 11/17 ユーザー指定：1行12字まで・最大2行
     J.auto_tempo(cs)
     for c in cs:
         if c.get("text"):

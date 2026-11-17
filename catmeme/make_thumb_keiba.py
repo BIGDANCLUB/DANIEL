@@ -86,3 +86,46 @@ def final2():
     small = JT.serif_text("30代にして", 54, T.WHITE, 7, T.BLACK, 600)
     img.alpha_composite(small, ((T.W - small.width) // 2, by - small.height - 8))
     T.save(img, "jidaraku_22_keiba_thumb_final.png")
+
+
+def final3():
+    """11/17 ユーザー指定：「20代ぼっち女 1人焼肉に行く」のサムネをまねる。帯なし・ピンクの角丸札に白い明朝「30代独身」・
+    下に極太明朝の大きな文字「初めての（黄色）競馬（赤）」（白いふち＋黒いふち）。背景は走る馬の全面。"""
+    from PIL import ImageFont
+    import jidaraku as J
+    img = T.fill_photo("f_horse", T.W, T.H, cy=0.3, zoom=1.06)
+    T.put_cat(img, "stare_big_eyes_tabby_kitten", 0.6, 300, 520, 480, False)
+    f = ImageFont.truetype(J.SERIF, 200)
+    try:
+        f.set_variation_by_axes([900])
+    except Exception:
+        pass
+    parts = [("初めての", (255, 230, 0)), ("競馬", (230, 30, 30))]
+    d0 = ImageDraw.Draw(Image.new("RGBA", (8, 8)))
+    ws = [d0.textlength(t, font=f) for t, _ in parts]
+    tw = int(sum(ws)) + 60
+    th = 260
+    layer = Image.new("RGBA", (tw, th), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    x = 30
+    for (t, col), w in zip(parts, ws):
+        d.text((x, 10), t, font=f, fill=(20, 20, 20), stroke_width=22, stroke_fill=(20, 20, 20))
+        d.text((x, 10), t, font=f, fill=col, stroke_width=9, stroke_fill=(255, 255, 255))
+        x += w
+    layer = layer.crop(layer.getbbox())
+    if layer.width > T.W - 40:
+        k = (T.W - 40) / layer.width
+        layer = layer.resize((int(layer.width * k), int(layer.height * k)), Image.LANCZOS)
+    by = T.H - layer.height - 24
+    sf = ImageFont.truetype(J.SERIF, 64)
+    try:
+        sf.set_variation_by_axes([800])
+    except Exception:
+        pass
+    sw = int(d0.textlength("30代独身", font=sf))
+    tag = Image.new("RGBA", (sw + 60, 96), (0, 0, 0, 0))
+    ImageDraw.Draw(tag).rounded_rectangle((0, 0, tag.width - 1, tag.height - 1), 18, fill=(232, 70, 140, 255))
+    ImageDraw.Draw(tag).text((30, 8), "30代独身", font=sf, fill=(255, 255, 255))
+    img.alpha_composite(tag, ((T.W - tag.width) // 2, by - tag.height - 6))
+    img.alpha_composite(layer, ((T.W - layer.width) // 2, by))
+    T.save(img, "jidaraku_22_keiba_thumb_final.png")

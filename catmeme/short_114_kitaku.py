@@ -26,7 +26,7 @@ def cuts():
         ('22時', 'smug_squint_bicolor_cat', '読書', 'stare_lying_tabby_cat', 'お風呂に入る\n元気がない'),
         ('23時', 'stare_aloha_gray_cat', 'ぐっすり', 'scream_phone_orange_cat', 'スマホを\nだらだら'),
         ('0時', 'happy_chipi_chapa_cat', '夢の中', 'despair_dramatic_kitten', '自分の時間が\nほしくて\n夜ふかし'),
-        ('1時', 'dance_filmed_by_gray_cat', '熟睡', 'blank_black_cat_zoning_out', '明日も\n仕事だと\n気づく'),
+        ('1時', 'dance_filmed_by_gray_cat', '熟睡', 'blank_black_cat_zoning_out', '寝たくないまま\n寝落ちする'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

@@ -129,3 +129,42 @@ def final3():
     img.alpha_composite(tag, ((T.W - tag.width) // 2, by - tag.height - 6))
     img.alpha_composite(layer, ((T.W - layer.width) // 2, by))
     T.save(img, "jidaraku_22_keiba_thumb_final.png")
+
+
+def final4():
+    """11/17 ユーザー指定：
+    - 「30代独身」は c1 の札（白地・黒い枠・赤いゴシック・少しかたむける）
+    - 大きな文字は参考（1人焼肉に行く）に忠実に：極太の明朝（Zen Old Mincho Black・OFL）・黒い太いふち＋黒い影、白いふちなし"""
+    from PIL import ImageFilter, ImageFont
+    img = T.fill_photo("f_horse", T.W, T.H, cy=0.3, zoom=1.06)
+    T.put_cat(img, "stare_big_eyes_tabby_kitten", 0.6, 300, 520, 480, False)
+    f = ImageFont.truetype(os.path.join(T.HERE, "fonts", "ZenOldMincho-Black.ttf"), 230)
+    parts = [("初めての", (255, 232, 0)), ("競馬", (232, 28, 28))]
+    d0 = ImageDraw.Draw(Image.new("RGBA", (8, 8)))
+    ws = [d0.textlength(t, font=f) for t, _ in parts]
+    layer = Image.new("RGBA", (int(sum(ws)) + 80, 320), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    x = 40
+    for (t, col), w in zip(parts, ws):
+        d.text((x, 20), t, font=f, fill=(15, 15, 15), stroke_width=20, stroke_fill=(15, 15, 15))
+        d.text((x, 20), t, font=f, fill=col, stroke_width=6, stroke_fill=col)   # 文字そのものを太らせる（参考の極太に近づける）
+        x += w
+    sh = Image.new("RGBA", layer.size, (0, 0, 0, 0))
+    sh.paste((0, 0, 0, 170), (0, 0), layer.split()[3])
+    sh = sh.filter(ImageFilter.GaussianBlur(6))
+    out = Image.new("RGBA", (layer.width + 10, layer.height + 10), (0, 0, 0, 0))
+    out.alpha_composite(sh, (10, 10))
+    out.alpha_composite(layer, (0, 0))
+    out = out.crop(out.getbbox())
+    if out.width > T.W - 30:
+        k = (T.W - 30) / out.width
+        out = out.resize((int(out.width * k), int(out.height * k)), Image.LANCZOS)
+    by = T.H - out.height - 14
+    t = T.runs([("30代独身", (T.RED, T.WHITE))], 60, 2, 640)
+    box = Image.new("RGBA", (t.width + 56, t.height + 34), T.WHITE + (255,))
+    ImageDraw.Draw(box).rectangle((0, 0, box.width - 1, box.height - 1), outline=T.BLACK, width=5)
+    box.alpha_composite(t, (28, 17))
+    box = box.rotate(2, expand=True, resample=Image.BICUBIC)
+    img.alpha_composite(box, ((T.W - box.width) // 2, by - box.height + 10))
+    img.alpha_composite(out, ((T.W - out.width) // 2, by))
+    T.save(img, "jidaraku_22_keiba_thumb_final.png")

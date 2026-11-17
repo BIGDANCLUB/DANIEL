@@ -71,3 +71,18 @@ def full_set():
 def final():
     """11/17 ユーザー指定：d1 をもとに小さい文字を「30代にして」に（帯は白・黄色はやめた）。"""
     full("jidaraku_22_keiba_thumb_final.png", "stare_big_eyes_tabby_kitten", (210, 40, 30), small_text="30代にして")
+
+
+def final2():
+    """11/17 ユーザー指定：帯を c1 の黄色い帯＋赤いゴシックの大きな文字にもどす（黒い枠なし）。背景は走る馬の全面のまま。"""
+    import make_thumb_jidaraku as JT
+    img = T.fill_photo("f_horse", T.W, T.H, cy=0.3, zoom=1.06)
+    T.put_cat(img, "stare_big_eyes_tabby_kitten", 0.6, 300, 560, 520, False)
+    big = T.runs([("初めての競馬", T.RED)], 200, 10, T.W - 260)
+    bh = big.height + 40
+    by = T.H - bh - 18
+    ImageDraw.Draw(img).rectangle((80, by, T.W - 80, by + bh), fill=(255, 245, 60, 255))
+    img.alpha_composite(big, ((T.W - big.width) // 2, by + 20))
+    small = JT.serif_text("30代にして", 54, T.WHITE, 7, T.BLACK, 600)
+    img.alpha_composite(small, ((T.W - small.width) // 2, by - small.height - 8))
+    T.save(img, "jidaraku_22_keiba_thumb_final.png")

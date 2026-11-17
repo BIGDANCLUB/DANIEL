@@ -59,7 +59,7 @@ def interior(seat_rows=True):
     floor = W.mat("car_floor", (0.55, 0.50, 0.42), 0.8)
     wall = W.mat("car_wall", (0.88, 0.88, 0.86), 0.6)
     seat = W.mat("car_seat", (0.20, 0.35, 0.55), 0.9)
-    glass = W.mat("sunset_glass", (1.0, 0.7, 0.4), emit=(1.0, 0.62, 0.32), emit_strength=3.0)
+    glass = W.mat("sunset_glass", (1.0, 0.7, 0.4), emit=(1.0, 0.62, 0.32), emit_strength=1.4)
     metal = W.mat("car_pole", (0.8, 0.8, 0.82), 0.2)
     lamp = W.mat("car_lamp", (1, 1, 1), emit=(1.0, 0.97, 0.9), emit_strength=6)
     W.box((0, 0, -0.05), (CAR_W, CAR_L, 0.1), floor, bevel=0)
@@ -92,7 +92,10 @@ def seat_slots():
             for j in range(7):
                 out.append(((sx * (CAR_W / 2 - 0.42), yc - 1.4 + j * 0.47, 0.0), 90 if sx > 0 else -90, "sit"))
     random.Random(2).shuffle(out)
-    return out
+    # 最初の1人は、カメラから見える席に
+    first = min(out, key=lambda p: (p[0][0] - (-(CAR_W / 2 - 0.42))) ** 2 + (p[0][1] - 1.2) ** 2)
+    out.remove(first)
+    return [first] + out
 
 
 def stand_slots():
@@ -103,6 +106,7 @@ def stand_slots():
             x = -0.85 + i * 0.12 + r.uniform(-0.04, 0.04)
             y = -CAR_L / 2 + 0.6 + j * 0.47 + r.uniform(-0.08, 0.08)
             out.append(((x, y, 0.0), r.uniform(0, 360), "stand"))
+    out = [p for p in out if p[0][1] > -CAR_L / 2 + 2.2]          # カメラのいる端には立たせない
     out.sort(key=lambda p: (abs(p[0][0]) > 0.6, r.random()))
     return out
 
@@ -157,9 +161,9 @@ def crowd_disk(tm, center=(0, 0), z=1.7):
 
 def city():
     F.ground_y(-60000, 60000, x_half=60000)
-    W.buildings(seed=31, n=700, y_from=-6000, y_to=6000, x_min=20, x_max=6000)
-    W.buildings(seed=32, n=500, y_from=-30000, y_to=30000, x_min=6000, x_max=30000)
-    W.houses(seed=33, n=600, y_from=-30000, y_to=30000, x_min=200, x_max=30000)
+    W.buildings(seed=31, n=300, y_from=-6000, y_to=6000, x_min=20, x_max=6000)
+    W.buildings(seed=32, n=200, y_from=-30000, y_to=30000, x_min=6000, x_max=30000)
+    W.houses(seed=33, n=250, y_from=-30000, y_to=30000, x_min=200, x_max=30000)
     track_m = W.mat("rail", (0.55, 0.52, 0.5), 0.3)
     W.box((0, 0, 0.4), (4, 60000, 0.3), track_m, bevel=0)
     commuter(y0=30, cars=11)
@@ -232,7 +236,7 @@ def platform_scene(tm, cam, look, lens=26):
     tm2 = [x - 11.5 for x in tm]
     for k, ((x, y, z), face, pose) in enumerate(slots[:600]):
         root, _ = F.person((x, y, z), face, seed=k, pose="stand", scale=0.95)
-        appear = next((f for f, xx in enumerate(tm2, start=1) if 2 ** max(xx, 0) * 40 >= k + 1), None)
+        appear = next((f for f, xx in enumerate(tm2, start=1) if 2 ** max(xx, 0) * 200 >= k + 1), None)
         for f in sorted({1, len(tm)} | ({max(1, appear - 1), appear} if appear else set())):
             sc = 0.0001 if (appear is None or f < appear) else 1.0
             root.scale = (sc, sc, sc)

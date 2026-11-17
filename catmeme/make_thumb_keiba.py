@@ -168,3 +168,21 @@ def final4():
     img.alpha_composite(box, ((T.W - box.width) // 2, by - box.height + 10))
     img.alpha_composite(out, ((T.W - out.width) // 2, by))
     T.save(img, "jidaraku_22_keiba_thumb_final.png")
+
+
+def final5():
+    """11/17 ユーザー指定：final2（黄色い角丸の帯・赤いゴシック）に、final4 の「30代独身」の札（白地・黒い枠・赤いゴシック）を
+    合わせる。札はかたむけない。"""
+    img = T.fill_photo("f_horse", T.W, T.H, cy=0.3, zoom=1.06)
+    T.put_cat(img, "stare_big_eyes_tabby_kitten", 0.6, 300, 560, 520, False)
+    big = T.runs([("初めての競馬", T.RED)], 200, 10, T.W - 260)
+    bh = big.height + 40
+    by = T.H - bh - 18
+    ImageDraw.Draw(img).rounded_rectangle((80, by, T.W - 80, by + bh), 36, fill=(255, 245, 60, 255))
+    img.alpha_composite(big, ((T.W - big.width) // 2, by + 20))
+    t = T.runs([("30代独身", (T.RED, T.WHITE))], 60, 2, 640)
+    box = Image.new("RGBA", (t.width + 56, t.height + 34), T.WHITE + (255,))
+    ImageDraw.Draw(box).rectangle((0, 0, box.width - 1, box.height - 1), outline=T.BLACK, width=5)
+    box.alpha_composite(t, (28, 17))
+    img.alpha_composite(box, ((T.W - box.width) // 2, by - box.height + 12))
+    T.save(img, "jidaraku_22_keiba_thumb_final.png")

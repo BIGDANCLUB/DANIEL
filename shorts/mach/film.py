@@ -107,10 +107,11 @@ def _ball(r, loc, m, sub=2, sc=(1, 1, 1)):
     return o
 
 
-def person_mesh(variant, pose):
+def person_mesh(variant, pose, look=None):
     """参考動画に寄せたローポリの人（細い手足、丸い頭、大きな白目と黒目、太い眉、丸い鼻、髪のかぶりもの）。
     原点は足もと（座りは腰が z=0.2）。顔は +y。"""
-    key = (variant, pose)
+    look = look or {}                      # look: hair / top / bottom の色を上書き（おじいさんの白髪など）
+    key = (variant, pose, tuple(sorted(look.items())))
     if key in _PERSON_MESH:
         return _PERSON_MESH[key]
     r = random.Random(variant * 31 + 7)
@@ -118,6 +119,12 @@ def person_mesh(variant, pose):
     top = W.mat(f"cloth{variant % 6}", CLOTH[variant % 6], 0.9)
     bottom = W.mat(f"cloth{(variant + 3) % 6}", CLOTH[(variant + 3) % 6], 0.9)
     hair = W.mat("hair", (0.06, 0.045, 0.035), 0.8)
+    if "top" in look:
+        top = W.mat(f"top_{look['top']}", look["top"], 0.9)
+    if "bottom" in look:
+        bottom = W.mat(f"bottom_{look['bottom']}", look["bottom"], 0.9)
+    if "hair" in look:
+        hair = W.mat(f"hair_{look['hair']}", look["hair"], 0.8)
     white = W.mat("eye_white", (0.95, 0.95, 0.93), 0.4)
     black = W.mat("eye_black", (0.02, 0.02, 0.02), 0.3)
     shoe = W.mat("shoe", (0.12, 0.10, 0.09), 0.7)
@@ -150,6 +157,8 @@ def person_mesh(variant, pose):
     p.append(_cyl(0.05, 0.05, 0.1, (0, 0, sh + 0.05), skin))
     hc = sh + 0.22
     p.append(_ball(0.135, (0, 0, hc), skin, sub=2, sc=(1.0, 0.95, 1.12)))
+    if "bald" in look:
+        bald = look["bald"]
     if bald:
         p.append(_ball(0.14, (0, -0.02, hc - 0.02), hair, sub=2, sc=(1.03, 0.98, 0.7)))      # 横と後ろだけ
         p.append(_ball(0.12, (0, 0.01, hc + 0.05), skin, sub=2, sc=(1.05, 1.0, 1.0)))
@@ -167,11 +176,11 @@ def person_mesh(variant, pose):
     return me
 
 
-def person(loc, facing_deg, seed=0, pose="stand", hat=False, scale=1.0):
+def person(loc, facing_deg, seed=0, pose="stand", hat=False, scale=1.0, look=None):
     """人（参考動画に寄せた見た目）。facing_deg は顔の向き（0=+y）。帽子は飛ばせるよう別のオブジェクトで返す。
     戻り値の root は空のオブジェクト（拡大縮小のキーフレームはここに打てる）。"""
     r = random.Random(seed)
-    me = person_mesh(seed % 12, "sit" if pose == "sit" else "stand")
+    me = person_mesh(seed % 12, "sit" if pose == "sit" else "stand", look)
     bpy.ops.object.empty_add(location=loc)
     root = bpy.context.object
     body = bpy.data.objects.new(f"person{seed}", me)

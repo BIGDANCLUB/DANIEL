@@ -437,7 +437,7 @@ def park_set(season=None, wire_crows=0, seed=1):
     return trees, crows_on_wire
 
 
-def park_cam(loc=(-1.7, -4.3, 1.0), at=(0.1, -0.5, 0.75), lens=34):
+def park_cam(loc=(-1.7, -4.3, 1.0), at=(0.1, -0.5, 1.0), lens=34):
     return W.camera(loc, at, lens)
 
 
@@ -959,7 +959,7 @@ def c10_book(nf):
 def render(out, nf, step=1, first=None, last=None):
     os.makedirs(out, exist_ok=True)
     sc = bpy.context.scene
-    W.render_setup(os.path.join(out, "f_####.png"), 1, nf, res=RES, samples=12)
+    W.render_setup(os.path.join(out, "f_####.png"), 1, nf, res=RES, samples=8)
     sc.view_settings.look = 'AgX - Base Contrast'
     sc.view_settings.exposure = EXPOSURE
     cam = sc.camera

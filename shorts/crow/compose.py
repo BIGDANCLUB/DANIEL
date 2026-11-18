@@ -125,7 +125,7 @@ def sparkle(seed=1, dur=1.6, up=True):
         fq = notes[k % 5] * (1 if up else 0.75)
         at = int((k * 0.09 if up else (8 - k) * 0.09) * SR)
         m = n - at
-        y[at:] += tone(m / SR, fq) * env(m, 0.002, 0.35) * r.uniform(0.15, 0.3)
+        y[at:] += (tone((m + 0.5) / SR, fq)[:m] * env(m, 0.002, 0.35)[:m]) * r.uniform(0.15, 0.3)
     return y
 
 

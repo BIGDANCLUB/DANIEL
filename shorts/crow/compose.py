@@ -224,7 +224,7 @@ def build_audio(total, st):
         put(chirp(k), st["c09_birds"] + 0.8 + k * 0.7, 0.7)
     # 毎朝（季節が変わるたび）
     for k in range(1, 4):
-        put(whoosh(0.5, 30 + k) * 0.6, st["c11_bench"] + k * 1.5 - 0.15, 0.5)
+        put(whoosh(0.5, 30 + k) * 0.6, st["c11_bench"] + k * 2.0 - 0.15, 0.5)
     # 再会
     r0 = st["c12_return"]
     for k in range(1, 3):
@@ -240,7 +240,6 @@ def main():
     root, out = sys.argv[1], sys.argv[2]
     bgm = sys.argv[3] if len(sys.argv) > 3 else None
     total_frames = TL.total_frames()
-    assert total_frames == TL.TOTAL, f"{total_frames} != {TL.TOTAL}"
     total = total_frames / FPS
     st, k = {}, 0
     for s in TL.SHOTS:

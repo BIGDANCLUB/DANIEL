@@ -627,7 +627,7 @@ def skit_draw(out, c, t):
     key = ("card", pn, ps)
     if key not in _PIC:
         im = Image.open(I.bg_path(bg_name(pn))).convert("RGBA")
-        side = int(700 * ps)
+        side = min(int(700 * ps), 530)   # 右半分からはみ出さない（11/18 ユーザー指定）
         k = min(side / im.width, side / im.height)
         im = im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
         if c.get("pic_card", True) and im.getpixel((2, 2))[3] == 255:   # 背景のある写真だけ白いふちのカードにのせる（透過の絵はそのまま・11/18）
@@ -640,13 +640,13 @@ def skit_draw(out, c, t):
     k = 1.0 if t > 0.12 or c.get("pic_cont") else 0.85 + 0.15 * (t / 0.12)
     if k != 1.0:
         card = card.resize((int(card.width * k), int(card.height * k)), Image.BILINEAR)
-    cx, bottom = min(770, W - 12 - card.width / 2), c.get("skit_bottom", 1360)
+    cx, bottom = max(W / 2 + card.width / 2 + 6, min(810, W - 12 - card.width / 2)), c.get("skit_bottom", 1360)
     I.put(out, card, cx, bottom - card.height / 2)
     tag = _skit_text(c.get("tag") or "", YELLOW, 96)
     I.put(out, tag, max(cx, 560 + tag.width / 2 + 20), bottom - card.height - tag.height / 2 + 10)   # 猫の字幕とかさならないよう右寄せ
     if c.get("pic_cap"):
-        pc = _skit_text(c["pic_cap"], WHITE, 92)
-        I.put(out, pc, cx, bottom - pc.height / 2 - 18)
+        pc = _skit_text(c["pic_cap"], WHITE, 92, max_w=W / 2 - 20)
+        I.put(out, pc, min(cx, W - 10 - pc.width / 2), bottom - pc.height / 2 - 18)
     if c.get("cat_cap"):
         cc = _skit_text(c["cat_cap"], WHITE, 96, max_w=540)   # 左半分に収める
         I.put(out, cc, max(290, cc.width / 2 + 16), c.get("cat_cap_y", 640))

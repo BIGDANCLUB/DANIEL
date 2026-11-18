@@ -24,6 +24,7 @@ W, H = I.W, I.H
 WHITE, BLACK, RED, YELLOW = I.WHITE, I.BLACK, I.RED, I.YELLOW
 CYAN, GREEN, ORANGE, BLUE = (40, 200, 255), (60, 220, 60), (255, 140, 0), (20, 40, 230)
 SAFE_BOTTOM = 1540
+_PIC = {}
 SHIFT_Y = 150   # 画面ぜんたいを下にずらす量（11/15 ユーザー指定・タイトル帯1行ぶん）
 HERE = I.HERE
 for _d in ("25_world", "19_inawashiro", "18_semicon"):
@@ -548,6 +549,19 @@ class Renderer(I.Renderer):
             I.put(out, self.heads[1], 805, 600)
             if self.note is not None:
                 I.put(out, self.note, W / 2, c.get("note_y", 740))
+        if c.get("pic"):   # 11/18 新しい作風：右側に料理の写真（白いふち）。pic=(写真の名前, 大きさ)。大きいと上にはみ出してよい
+            pn, ps = c["pic"]
+            key = (pn, ps)
+            if key not in _PIC:
+                im = Image.open(I.bg_path(bg_name(pn))).convert("RGBA")
+                k = min(470 / im.width, 520 / im.height) * ps
+                im = im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
+                _PIC[key] = im
+            im = _PIC[key]
+            k = 1.0 if t > 0.12 or c.get("pic_cont") else 0.85 + 0.15 * (t / 0.12)
+            if k != 1.0:
+                im = im.resize((int(im.width * k), int(im.height * k)), Image.BILINEAR)
+            I.put(out, im, 805, 1290 - im.height / 2)
         if c["kind"] == "split" and self.cap is not None:
             cx = W / 2 if c.get("cap_full") else (275 if c["cap_side"] == "L" else 805)
             cx = min(max(cx, self.cap.width / 2 + 20), W - self.cap.width / 2 - 20)

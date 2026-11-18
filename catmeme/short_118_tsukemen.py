@@ -1,4 +1,4 @@
-"""ショート118：つけ麺の量で変わる俺の反応（新しい作風・11/18 ユーザー指定）。59.9秒。
+"""ショート118：つけ麺食べる時 大体こうなる（旧：つけ麺の量で変わる俺の反応）（新しい作風・11/18 ユーザー指定）。59.9秒。
 
 python3 catmeme/short_118_tsukemen.py → out/short_118_tsukemen.mp4
 - 右：つけ麺のイラスト（量が増えるほど大きく）＋字幕。左：猫ミーム1匹＋猫のひとこと（寸劇）
@@ -32,16 +32,16 @@ def cuts():
         big = k >= len(rows) - 4
         a = Wd.split(ST, lv, dur=2.4 * K, se=["explosion_chudoon"] if big else ["pi"])
         b = Wd.split(ST, lv, left=cat, sound="L", dur=3.6 * K, se="don_hit")
-        b["cats"][0].update(x=290, h=760, w=600, bottom=1360)
+        b["cats"][0].update(x=290, h=760, w=600, bottom=1250)
         for c in (a, b):
             c.update(skit=True, pic=(pic, sz), pic_cap=rcap)
         b.update(pic_cont=True, cat_cap=lcap)
         out += [a, b]
     for c in out:
-        c.update(blur=4, band_y=0)
+        c.update(blur=4, band_y=0, skit_bottom=1250, cat_cap_y=540)   # 11/18 ユーザー指定：上下のまん中に寄せる
     return out
 
 
 if __name__ == "__main__":
-    Wd.run(cuts(), Wd.rich_band([("{y}つけ麺の量で", 96, Wd.BLACK, 95), ("{y}変わる俺の反応", 90, Wd.BLACK, 245)], 0, 330),
+    Wd.run(cuts(), Wd.rich_band([("{w}つけ麺{y}食べる時", 132, Wd.BLACK, 100), ("{y}大体こうなる", 132, Wd.BLACK, 250)], 0, 330),
            os.path.join(Wd.HERE, "out", "short_118_tsukemen.mp4"), os.path.join(Wd.HERE, "out", "short_118_tsukemen_preview"))

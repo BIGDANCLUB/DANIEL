@@ -627,18 +627,20 @@ def skit_draw(out, c, t):
     key = ("card", pn, ps)
     if key not in _PIC:
         im = Image.open(I.bg_path(bg_name(pn))).convert("RGBA")
-        side = int(640 * ps)
-        k = min((side - 40) / im.width, (side - 40) / im.height)
+        side = int(700 * ps)
+        k = min(side / im.width, side / im.height)
         im = im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
-        card = Image.new("RGBA", (side, side), (0, 0, 0, 0))
-        ImageDraw.Draw(card).rounded_rectangle((0, 0, side - 1, side - 1), 24, fill=(255, 255, 255, 255))
-        card.alpha_composite(im, ((side - im.width) // 2, (side - im.height) // 2))
-        _PIC[key] = card
+        if c.get("pic_card", True) and im.getpixel((2, 2))[3] == 255:   # 背景のある写真だけ白いふちのカードにのせる（透過の絵はそのまま・11/18）
+            card = Image.new("RGBA", (im.width + 40, im.height + 40), (0, 0, 0, 0))
+            ImageDraw.Draw(card).rounded_rectangle((0, 0, card.width - 1, card.height - 1), 24, fill=(255, 255, 255, 255))
+            card.alpha_composite(im, (20, 20))
+            im = card
+        _PIC[key] = im
     card = _PIC[key]
     k = 1.0 if t > 0.12 or c.get("pic_cont") else 0.85 + 0.15 * (t / 0.12)
     if k != 1.0:
         card = card.resize((int(card.width * k), int(card.height * k)), Image.BILINEAR)
-    cx, bottom = min(770, W - 12 - card.width / 2), 1360
+    cx, bottom = min(770, W - 12 - card.width / 2), c.get("skit_bottom", 1360)
     I.put(out, card, cx, bottom - card.height / 2)
     tag = _skit_text(c.get("tag") or "", YELLOW, 96)
     I.put(out, tag, max(cx, 560 + tag.width / 2 + 20), bottom - card.height - tag.height / 2 + 10)   # 猫の字幕とかさならないよう右寄せ

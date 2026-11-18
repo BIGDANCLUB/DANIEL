@@ -45,7 +45,7 @@ def cuts():
         b.update(pic_cont=True, cat_cap=lcap)
         out += [a, b]
     for c in out:
-        c.update(blur=4, band_y=0, skit_bottom=1200, cat_cap_y=560, free_len=True)   # テンポ系：59.9秒でなくてよい
+        c.update(blur=4, band_y=0, skit_bottom=1200, cat_cap_y=560, free_len=True, pic_right=True)   # テンポ系：59.9秒でなくてよい
     return out
 
 

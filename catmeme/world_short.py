@@ -640,7 +640,8 @@ def skit_draw(out, c, t):
     k = 1.0 if t > 0.12 or c.get("pic_cont") else 0.85 + 0.15 * (t / 0.12)
     if k != 1.0:
         card = card.resize((int(card.width * k), int(card.height * k)), Image.BILINEAR)
-    cx, bottom = c.get("pic_x", 740), c.get("skit_bottom", 1360)   # 11/18 ユーザー指定：右の絵はまん中寄り
+    cx = W - 8 - card.width / 2 if c.get("pic_right") else c.get("pic_x", 740)   # pic_right：画面の右はしぎりぎり（11/18）
+    bottom = c.get("skit_bottom", 1360)
     I.put(out, card, cx, bottom - card.height / 2)
     tag = _skit_text(c.get("tag") or "", YELLOW, 96)
     I.put(out, tag, max(cx, 560 + tag.width / 2 + 20), bottom - card.height - tag.height / 2 + 10)   # 猫の字幕とかさならないよう右寄せ

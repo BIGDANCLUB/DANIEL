@@ -21,7 +21,7 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku")]
 ROOM_N, STREET_N = "j07_room_night", "bg51_night_street"
 FRONT, SEAT = "yo01_front", "yo02_seat"
-J.STANDIN.update({FRONT: "bg51_night_street", SEAT: "bg20_counter"})
+# 写真はユーザー提供（11/18）。ポスターの写真はないので牛すき鍋膳の写真で代用
 J.HOLD = 6
 J.LOOPS = 1
 J.TEMPO_K = 1.3
@@ -32,7 +32,7 @@ HIRU = os.path.join(L.BGM, "昼下がり気分.mp3")
 PASTEL = os.path.join(L.BGM, "パステルハウス.mp3")
 JITAKU = os.path.join(L.BGM, "自宅にて.mp3")
 LOFI = os.path.join(L.BGM, "2_23_AM.mp3")
-NABE, RICE, EGG, POSTER = "f_nabe", "f_rice", "f_egg", "f_poster"
+NABE, RICE, EGG, POSTER = "f_nabe", "f_rice", "f_egg", "f_nabe"
 
 
 def cuts():

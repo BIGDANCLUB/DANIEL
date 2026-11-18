@@ -113,9 +113,9 @@ def final3():
     img = T.fill_photo("yo03_front_wide", T.W, T.H, cy=0.4)
     cat = Image.open(os.path.join(T.HERE, "backgrounds", "jidaraku", "23_yoshinoya", "t_cat_dance.png")).convert("RGBA")
     cat = cat.crop((0, 0, cat.width, int(cat.height * 0.55)))   # 上半身だけ
-    k = 760 / cat.width
-    cat = cat.resize((760, int(cat.height * k)), Image.LANCZOS)
-    img.alpha_composite(cat, ((T.W - cat.width) // 2, T.H - cat.height))
+    k = 880 / cat.width   # 11/18 もう少しアップ
+    cat = cat.resize((880, int(cat.height * k)), Image.LANCZOS)
+    img.alpha_composite(cat, ((T.W - cat.width) // 2, T.H - cat.height - 40))   # 上半身を少し上に出す
     big = T.runs([("吉野家 牛すき鍋膳", T.RED)], 170, 10, T.W - 220)
     bh = big.height + 40
     by = T.H - bh - 18

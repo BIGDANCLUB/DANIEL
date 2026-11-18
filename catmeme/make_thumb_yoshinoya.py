@@ -106,3 +106,23 @@ def final2():
     img.alpha_composite(box, ((T.W - box.width) // 2, by - box.height + 4))
     img.alpha_composite(out, ((T.W - out.width) // 2, by))
     T.save(img, "jidaraku_23_yoshinoya_thumb_final.png")
+
+
+def final3():
+    """11/18 ユーザー指定：帯と文字は c1（白い札＋黄色い角丸の帯に赤いゴシック）。猫は「1人焼肉」のように上半身をアップで真ん中に。"""
+    img = T.fill_photo("yo03_front_wide", T.W, T.H, cy=0.4)
+    cat = Image.open(os.path.join(T.HERE, "backgrounds", "jidaraku", "23_yoshinoya", "t_cat_dance.png")).convert("RGBA")
+    cat = cat.crop((0, 0, cat.width, int(cat.height * 0.55)))   # 上半身だけ
+    k = 760 / cat.width
+    cat = cat.resize((760, int(cat.height * k)), Image.LANCZOS)
+    img.alpha_composite(cat, ((T.W - cat.width) // 2, T.H - cat.height))
+    big = T.runs([("吉野家 牛すき鍋膳", T.RED)], 170, 10, T.W - 220)
+    bh = big.height + 40
+    by = T.H - bh - 18
+    ImageDraw.Draw(img).rounded_rectangle((60, by, T.W - 60, by + bh), 36, fill=(255, 245, 60, 255))
+    img.alpha_composite(big, ((T.W - big.width) // 2, by + 20))
+    t = T.runs([("今年も来た", (T.RED, T.WHITE))], 60, 2, 900)
+    box = Image.new("RGBA", (t.width + 56, t.height + 34), T.WHITE + (255,))
+    box.alpha_composite(t, (28, 17))
+    img.alpha_composite(box, ((T.W - box.width) // 2, by - box.height + 12))
+    T.save(img, "jidaraku_23_yoshinoya_thumb_final.png")

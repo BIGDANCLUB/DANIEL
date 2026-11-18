@@ -60,11 +60,11 @@ def draw(s, i, base):
     sec = i / FPS
     if s.get("kind") == "open":
         if sec < TL.T_VANISH:
-            Y.big_title(g, "カラス", "もしも", "が", "消えたら？", "毎朝6時。おじいさんとクロの朝ごはん")
+            Y.big_title(g, "カラス", "もしも", "が", "消えたら？", "東京・新宿。毎朝6時の、いつもの公園")
             Y.countdown(g, "カラスが消えるまで", TL.T_VANISH - sec)
-            Y.headline(g, "この子の名前は、クロ", ["毎朝、おじいさんに", "パンくずをもらいにくる"], fade(sec, 0.4, 2.8))
-            left = math.ceil(TL.T_VANISH - sec)
-            Y.headline(g, f"あと{left}秒で、クロは消える", ["日本中のカラスといっしょに"], fade(sec, 2.8, TL.T_VANISH + 0.01))
+            Y.headline(g, "毎朝やってくる[クロ]", ["おじいさんのパンくずが", "お目当て"], fade(sec, 0.4, 2.8))
+            Y.headline(g, "クロとの朝は、[これが最後]", ["日本中のカラスといっしょに"], fade(sec, 2.8, TL.T_VANISH + 0.01))
+            Y.note(g, "※統計や研究をもとにした、もしもの話です", fade(sec, 0.2, TL.T_VANISH, k=0.3))
         else:
             e = sec - TL.T_VANISH
             Y.title_small(g, "カラス", "もしも", "が消えたら？")
@@ -219,6 +219,14 @@ def build_audio(total, st):
     put(buzz(6.0, 1.6, 6), s7, 1.1)
     for k in range(10):
         put(squeak(k), st["c08_rats"] + 0.6 + k * 0.42, 0.8)
+    for t in (0.0, 1.0):     # 車が通る（クルミは割れない）
+        put(whoosh(2.5, 40 + int(t)), st["c05b_walnut"] + 1.0 + t * 2.0, 0.6)
+    put(buzz(6.0, 0.4, 8), st["c06b_kite"], 0.5)
+    for t in (1.2, 3.0, 4.8):     # トビの「ピーヒョロロ」
+        n = int(1.0 * SR)
+        x = np.concatenate([tone(0.35, 2600, 3000), tone(0.65, 2900, 2200) * (1 + 0.6 * np.sin(2 * np.pi * 9 * np.arange(int(0.65 * SR)) / SR))])
+        put(x * env(len(x), 0.02, 0.5) * 0.25, st["c06b_kite"] + t, 0.8)
+    put(sparkle(7, 1.4), st["c10b_shrine"] + 0.4, 0.4)
     put(flutter(4.5), st["c09_birds"] + 0.3, 0.8)
     for k in range(6):
         put(chirp(k), st["c09_birds"] + 0.8 + k * 0.7, 0.7)

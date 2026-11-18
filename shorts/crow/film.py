@@ -34,13 +34,100 @@ def sec(f):
     return (f - 1) / FPS
 
 
+# ---------- 人（参考元に寄せた角ばった体。顔は今の丸い頭のまま＝ユーザー指定） ----------
+_BLOCK = {}
+
+
+def person_block_mesh(variant, pose, look=None):
+    look = look or {}
+    key = (variant, pose, tuple(sorted(look.items())))
+    if key in _BLOCK:
+        return _BLOCK[key]
+    r = random.Random(variant * 31 + 7)
+    skin = W.mat(f"skin{variant % 3}", F.SKIN[variant % 3], 0.8)
+    top = W.mat(f"top_{look.get('top', F.CLOTH[variant % 6])}", look.get("top", F.CLOTH[variant % 6]), 0.9)
+    bcol = look.get("bottom", F.CLOTH[(variant + 3) % 6])
+    bottom = W.mat(f"bottom_{bcol}", bcol, 0.9)
+    hcol = look.get("hair", (0.06, 0.045, 0.035))
+    hair = W.mat(f"hair_{hcol}", hcol, 0.8)
+    white = W.mat("eye_white", (0.95, 0.95, 0.93), 0.4)
+    black = W.mat("eye_black", (0.02, 0.02, 0.02), 0.3)
+    shoe = W.mat("shoe", (0.12, 0.10, 0.09), 0.7)
+    bv = 0.015
+    p = []
+    if pose == "sit":
+        hip = 0.2
+        for sx in (-1, 1):
+            p.append(W.box((sx * 0.1, 0.2, hip), (0.15, 0.46, 0.16), bottom, bevel=bv))          # もも（前へ）
+            p.append(W.box((sx * 0.1, 0.42, hip - 0.24), (0.13, 0.14, 0.44), bottom, bevel=bv))  # すね
+            p.append(W.box((sx * 0.1, 0.47, hip - 0.47), (0.13, 0.24, 0.07), shoe, bevel=bv))
+    else:
+        hip = 0.86
+        for sx in (-1, 1):
+            p.append(W.box((sx * 0.095, 0, 0.47), (0.15, 0.16, 0.8), bottom, bevel=bv))
+            p.append(W.box((sx * 0.095, 0.04, 0.035), (0.14, 0.26, 0.07), shoe, bevel=bv))
+    p.append(W.box((0, 0, hip + 0.06), (0.36, 0.2, 0.16), bottom, bevel=bv))                     # 腰
+    p.append(W.box((0, 0, hip + 0.36), (0.42, 0.23, 0.5), top, bevel=bv))                         # 胴
+    sh = hip + 0.54
+    for sx in (-1, 1):
+        p.append(W.box((sx * 0.27, 0, sh - 0.27), (0.12, 0.13, 0.56), top, rot=(0, math.radians(sx * 4), 0), bevel=bv))
+        p.append(W.box((sx * 0.285, 0.01, sh - 0.6), (0.1, 0.11, 0.12), skin, bevel=bv))
+    p.append(W.box((0, 0, sh + 0.05), (0.1, 0.1, 0.1), skin, bevel=0))
+    hc = sh + 0.22
+    p.append(F._ball(0.135, (0, 0, hc), skin, sub=2, sc=(1.0, 0.95, 1.12)))
+    if look.get("bald"):
+        p.append(F._ball(0.14, (0, -0.02, hc - 0.02), hair, sub=2, sc=(1.03, 0.98, 0.7)))
+        p.append(F._ball(0.12, (0, 0.01, hc + 0.05), skin, sub=2, sc=(1.05, 1.0, 1.0)))
+    else:
+        p.append(F._ball(0.145, (0, -0.025, hc + 0.045), hair, sub=2, sc=(1.02, 0.98, 0.85)))
+    fy = 0.125
+    for sx in (-1, 1):
+        p.append(F._ball(0.042, (sx * 0.052, fy, hc + 0.01), white, sub=2, sc=(1, 0.6, 1.1)))
+        p.append(F._ball(0.02, (sx * 0.05, fy + 0.022, hc + 0.0), black, sub=1))
+        p.append(W.box((sx * 0.055, fy + 0.005, hc + 0.07), (0.07, 0.02, 0.018), hair, rot=(0, math.radians(-sx * 8), 0), bevel=0))
+    p.append(F._ball(0.025, (0, fy + 0.03, hc - 0.045), skin, sub=1))
+    me = F._join(p, f"pblock_{variant}_{pose}")
+    _BLOCK[key] = me
+    return me
+
+
+def person(loc, facing_deg, seed=0, pose="stand", scale=1.0, look=None, hat=None):
+    """hat: None / "cap"（作業帽）/ "straw"（麦わら帽子）。帽子は頭の上にのせて体と一緒に動く。"""
+    me = person_block_mesh(seed % 12, pose, look)
+    bpy.ops.object.empty_add(location=loc)
+    root = bpy.context.object
+    body = bpy.data.objects.new(f"person{seed}", me)
+    bpy.context.collection.objects.link(body)
+    body.parent = root
+    body.scale = (scale,) * 3
+    root.rotation_euler = (0, 0, math.radians(-facing_deg))
+    if hat:
+        top_z = (0.86 if pose != "sit" else 0.2) + 0.54 + 0.22 + 0.13
+        if hat == "straw":
+            m = W.mat("straw", (0.86, 0.74, 0.45), 0.9)
+            band = W.mat("hat_band", (0.55, 0.12, 0.10), 0.8)
+            parts = [F._cyl(0.27, 0.27, 0.02, (0, 0, top_z - 0.02), m, verts=16),
+                     F._cyl(0.14, 0.13, 0.11, (0, -0.01, top_z + 0.04), m, verts=12),
+                     F._cyl(0.142, 0.142, 0.03, (0, -0.01, top_z + 0.0), band, verts=12)]
+        else:
+            m = W.mat("cap", (0.15, 0.25, 0.45), 0.8)
+            parts = [F._ball(0.15, (0, -0.02, top_z - 0.03), m, sub=2, sc=(1.0, 1.0, 0.6)),
+                     W.box((0, 0.13, top_z - 0.06), (0.2, 0.14, 0.015), m, bevel=0)]
+        hm = F._join(parts, f"hat_{hat}")
+        h = bpy.data.objects.new("hat", hm)
+        bpy.context.collection.objects.link(h)
+        h.parent = body
+    return root, None
+
+
 def frame_of(t):
     return int(round(t * FPS)) + 1
 
 
 # ---------- 光と空 ----------
 def daylight(elev=38.0, az=-35.0, strength=4.0, col=(1.0, 0.95, 0.88), sky=0.35):
-    strength *= 1.35
+    strength *= 1.15
+    col = (min(1, col[0]), col[1] * 0.95, col[2] * 0.86)       # 参考元のような、あたたかい光
     bpy.ops.object.light_add(type='SUN')
     s = bpy.context.object
     e, a = math.radians(elev), math.radians(az)
@@ -59,9 +146,9 @@ def daylight(elev=38.0, az=-35.0, strength=4.0, col=(1.0, 0.95, 0.88), sky=0.35)
     ramp = nt.nodes.new("ShaderNodeValToRGB")
     cr = ramp.color_ramp
     cr.elements[0].position = 0.0
-    cr.elements[0].color = (0.78, 0.86, 0.95, 1) if elev > 20 else (0.95, 0.86, 0.78, 1)
-    cr.elements[1].position = 0.45
-    cr.elements[1].color = (0.20, 0.45, 0.90, 1)
+    cr.elements[0].color = (0.96, 0.90, 0.80, 1)
+    cr.elements[1].position = 0.5
+    cr.elements[1].color = (0.42, 0.62, 0.88, 1)
     nt.links.new(tc.outputs["Generated"], sep.inputs[0])
     nt.links.new(sep.outputs["Z"], ramp.inputs[0])
     nt.links.new(ramp.outputs[0], bg.inputs[0])
@@ -349,11 +436,42 @@ def appear(root, f0, seed=2, n=40):
 
 
 # ---------- 町の部品 ----------
-def grass_ground(size=600, col=(0.30, 0.45, 0.16), name="grass"):
+def grass_ground(size=600, col=(0.30, 0.45, 0.16), name="grass", tufts=0, area=(-8, 8, -6, 14), seed=3, avoid=None):
     m = W.mat(name, col, 1.0)
     bpy.ops.mesh.primitive_plane_add(size=size, location=(0, 0, 0))
     bpy.context.object.data.materials.append(m)
+    if tufts:
+        grass_tufts(tufts, area, col, seed, avoid)
     return bpy.context.object
+
+
+def grass_tufts(n, area, col, seed=3, avoid=None):
+    """参考元のような草の葉（細い板を少しかたむけて、たくさん立てる）。"""
+    import bmesh
+    r = random.Random(seed)
+    bm = bmesh.new()
+    x0, x1, y0, y1 = area
+    for _ in range(n):
+        cx, cy = r.uniform(x0, x1), r.uniform(y0, y1)
+        if avoid and any(a0 <= cx <= a1 and b0 <= cy <= b1 for a0, a1, b0, b1 in avoid):
+            continue
+        for k in range(3):
+            h = r.uniform(0.04, 0.11)
+            a = r.uniform(0, 6.28)
+            tilt = r.uniform(-0.4, 0.4)
+            w = 0.012
+            ca, sa = math.cos(a), math.sin(a)
+            v1 = bm.verts.new((cx - w * ca, cy - w * sa, 0))
+            v2 = bm.verts.new((cx + w * ca, cy + w * sa, 0))
+            v3 = bm.verts.new((cx + tilt * h * sa * 0.5, cy - tilt * h * ca * 0.5, h))
+            bm.faces.new((v1, v2, v3))
+    me = bpy.data.meshes.new("tufts")
+    bm.to_mesh(me)
+    bm.free()
+    o = bpy.data.objects.new("tufts", me)
+    bpy.context.collection.objects.link(o)
+    o.data.materials.append(W.mat("tuft", (col[0] * 1.05, col[1] * 1.1, col[2] * 0.9), 0.9))
+    return o
 
 
 def tree(loc, h=5.0, crowns=None, seed=0):
@@ -407,7 +525,7 @@ def path(x0, x1, y0, y1):
 
 
 def grandpa(loc=(0.05, 0.05, 0.05), facing=180, seed=4):
-    root, _ = F.person(loc, facing, seed=seed, pose="sit", look=GRANDPA)
+    root, _ = person(loc, facing, seed=seed, pose="sit", look=GRANDPA)
     for c in root.children:
         c.location.z += 0.25
     return root
@@ -416,7 +534,7 @@ def grandpa(loc=(0.05, 0.05, 0.05), facing=180, seed=4):
 # ---------- 公園（冒頭・静かな朝・毎朝・再会） ----------
 def park_set(season=None, wire_crows=0, seed=1):
     """ベンチは原点（座る人は -y を向く）。うしろに電線と新宿のビル。"""
-    grass_ground(col=(0.22, 0.38, 0.11))
+    grass_ground(col=(0.30, 0.42, 0.14), tufts=5000, area=(-7, 7, -7, 8), avoid=[(-2.7, 2.7, -2.7, 1.1)])
     path(-2.6, 2.6, -2.6, 1.0)
     F.bench((0, 0, 0), rot_deg=90)
     crowns = [(0.22, 0.42, 0.14)] if season is None else [(0.95, 0.72, 0.80), (0.20, 0.42, 0.13), (0.85, 0.42, 0.10), (0.50, 0.42, 0.34)]
@@ -604,7 +722,7 @@ def c04_garbage(nf):
     daylight(elev=22, az=-55, strength=4.2, col=(1.0, 0.88, 0.72), sky=0.4)
     street_back()
     garbage_station()
-    p, _ = F.person((-1.3, -0.5, 0.12), 150, seed=7, hat=True)
+    p, _ = person((-1.3, -0.5, 0.12), 150, seed=7, hat="cap")
     W.camera((-2.4, -4.2, 1.4), (-0.2, 0.6, 0.8), lens=30)
     return nf
 
@@ -669,7 +787,7 @@ def rats(nf, n=14, seed=5):
 # ---------- りんご畑 ----------
 def c05_orchard(nf):
     daylight(elev=40, az=-35, strength=4.5)
-    grass_ground(col=(0.26, 0.40, 0.12))
+    grass_ground(col=(0.32, 0.44, 0.15), tufts=3500, area=(-5, 5, -5, 4))
     r = random.Random(3)
     trunk = W.mat("trunk", (0.32, 0.22, 0.14), 0.9)
     leaf = W.mat("leafy_apple", (0.20, 0.42, 0.14), 0.9)
@@ -692,7 +810,7 @@ def c05_orchard(nf):
         bpy.ops.mesh.primitive_cone_add(vertices=7, radius1=r.uniform(60, 110), depth=r.uniform(45, 80),
                                         location=(-250 + i * 85, 330 + r.uniform(0, 60), 20))
         bpy.context.object.data.materials.append(mt)
-    p, _ = F.person((0.6, -1.0, 0), 200, seed=2, hat=True)
+    p, _ = person((0.6, -1.0, 0), 200, seed=2, hat="straw")
     W.box((0.95, -0.8, 0.85), (0.4, 0.3, 0.25), W.mat("basket", (0.55, 0.38, 0.18), 0.9), bevel=0.02)
     multi_ball([(0.95 + r.uniform(-0.12, 0.12), -0.8 + r.uniform(-0.08, 0.08), 1.0, 0.07, (1, 1, 1)) for _ in range(6)], red, "basket_apples")
     W.camera((-1.0, -3.8, 1.45), (0.4, -0.3, 1.35), lens=32)
@@ -742,9 +860,8 @@ def flies(nf, center, n, radius=0.6, seed=7, grow=None, spread_up=0.5, swarm=Non
             show_between(o, f_on, None)
 
 
-def c06_road(nf):
-    daylight(elev=55, az=-20, strength=4.8, col=(1.0, 0.95, 0.85))
-    grass_ground(col=(0.24, 0.38, 0.11))
+def road_set(seed=5):
+    grass_ground(col=(0.32, 0.42, 0.14), tufts=3000, area=(-5, 5, -4, 0.9))
     W.box((0, 5.0, 0.02), (300, 7.5, 0.04), W.mat("asphalt", (0.25, 0.25, 0.26), 0.9), bevel=0)
     W.box((0, 1.6, 0.045), (300, 0.12, 0.01), W.mat("line_white", (0.95, 0.95, 0.92), 0.6), bevel=0)
     W.box((0, 5.0, 0.045), (300, 0.12, 0.01), W.mat("line_yellow", (0.95, 0.75, 0.15), 0.6), bevel=0)
@@ -753,7 +870,7 @@ def c06_road(nf):
     for x in range(-60, 61, 4):
         W.box((x, 9.35, 0.35), (0.1, 0.1, 0.7), rail, bevel=0)
     zs = pole_and_wires(y=11.5, x_poles=(-30, 0, 30), z=8.0)
-    r = random.Random(5)
+    r = random.Random(seed)
     mt = W.mat("mountain", (0.32, 0.45, 0.30), 1.0)
     for i in range(6):
         bpy.ops.mesh.primitive_cone_add(vertices=7, radius1=r.uniform(50, 90), depth=r.uniform(40, 70),
@@ -761,6 +878,144 @@ def c06_road(nf):
         bpy.context.object.data.materials.append(mt)
     for i in range(10):
         tree((r.uniform(-40, 40), r.uniform(16, 40), 0), h=r.uniform(5, 7), seed=50 + i)
+    return r
+
+
+def car(y, color=(0.75, 0.12, 0.10)):
+    """ローポリの乗用車（+x へ走る）。root を返す。"""
+    body = W.mat(f"car_{color}", color, 0.3)
+    glass = W.mat("car_glass2", (0.08, 0.10, 0.13), 0.1)
+    tire = W.mat("tire", (0.05, 0.05, 0.05), 0.8)
+    bpy.ops.object.empty_add(location=(0, y, 0))
+    root = bpy.context.object
+    parts = [W.box((0, 0, 0.55), (4.2, 1.7, 0.6), body, bevel=0.12),
+             W.box((-0.2, 0, 1.05), (2.3, 1.55, 0.5), glass, bevel=0.1),
+             W.box((-0.2, 0, 1.33), (2.2, 1.5, 0.08), body, bevel=0.04)]
+    for x in (-1.35, 1.35):
+        for yy in (-0.8, 0.8):
+            parts.append(F._cyl(0.33, 0.33, 0.22, (x, yy, 0.33), tire, rot=(math.radians(90), 0, 0), verts=12))
+    for p in parts:
+        p.parent = root
+    return root
+
+
+# ---------- クルミが割れない（宮城・仙台） ----------
+def c05b_walnut(nf):
+    daylight(elev=45, az=-30, strength=4.6)
+    r = road_set(seed=12)
+    nut = W.mat("walnut", (0.42, 0.30, 0.17), 0.8)
+    multi_ball([(r.uniform(-0.4, 2.6), r.uniform(1.6, 3.6), 0.065, 0.065, (1, 1, 0.9)) for _ in range(10)], nut, "walnuts", sub=2)
+    tree((-3.5, 0.0, 0), h=7.5, seed=21)
+    tree((3.8, -1.0, 0), h=6.5, seed=22)
+    multi_ball([(r.uniform(-4.5, -2.5), r.uniform(-1, 1), 0.04, 0.05, (1, 1, 0.9)) for _ in range(12)], nut, "walnuts_grass", sub=1)
+    c = car(3.0)
+    for f, x in ((1, -40.0), (nf, 40.0)):
+        c.location.x = x
+        c.keyframe_insert("location", frame=f)
+    c2 = car(6.5, color=(0.85, 0.85, 0.88))
+    c2.rotation_euler.z = math.pi
+    for f, x in ((1, 60.0), (nf, -30.0)):
+        c2.location.x = x
+        c2.keyframe_insert("location", frame=f)
+    W.camera((-0.8, -0.2, 0.65), (1.1, 2.6, 0.1), lens=30)
+    return nf
+
+
+# ---------- トビがやってきた ----------
+def kite_bird(loc, name, flying=True):
+    """トビ：カラスの形を茶色にして、翼を長く。"""
+    m = crow_meshes()
+    br = W.mat("kite_brown", (0.30, 0.20, 0.13), 0.7)
+    root = crow(loc, 0, name=name, flying=flying, scale=1.5)
+    for ch in root.children:
+        ch.data = ch.data.copy()
+        ch.data.materials[0] = br
+        if "wing" in ch.name and flying:
+            ch.scale = (1.7, 1.0, 1.0)
+    return root
+
+
+def c06b_kite(nf):
+    daylight(elev=50, az=-20, strength=4.8, col=(1.0, 0.95, 0.85))
+    r = road_set()
+    tanuki()
+    flies(nf, (0, 1.4, 0.1), 40, radius=0.5)
+    for k in range(2):
+        kb = kite_bird((0, 0, 0), f"kite{k}")
+        flap(kb, 1, nf, period=26, amp=18)
+        for f in range(1, nf + 1, 3):
+            a = f / 40 + k * 3.1
+            kb.location = (math.cos(a) * (6 + k * 3), 8 + math.sin(a) * 4, 9 + k * 2)
+            kb.rotation_euler.z = a + math.pi
+            kb.keyframe_insert("location", frame=f)
+            kb.keyframe_insert("rotation_euler", frame=f)
+    k3 = kite_bird((0.6, 1.7, 0), "kite_ground", flying=False)       # 死がいに降りたトビ
+    k3.rotation_euler.z = math.radians(-120)
+    for f in range(20, nf, 28):
+        peck(k3, f, dur=10)
+    W.camera((-2.0, -1.9, 1.0), (0.2, 1.8, 0.6), lens=30)
+    return nf
+
+
+# ---------- 熊野の神社と八咫烏 ----------
+def crest_texture():
+    from PIL import Image, ImageDraw
+    p = os.path.join(HERE, "assets", "crest.png")
+    if os.path.exists(p):
+        return p
+    os.makedirs(os.path.dirname(p), exist_ok=True)
+    im = Image.new("RGB", (512, 512), (240, 236, 225))
+    d = ImageDraw.Draw(im)
+    d.ellipse((40, 40, 472, 472), fill=(200, 40, 35))
+    k = (15, 15, 18)
+    d.ellipse((190, 170, 330, 330), fill=k)                              # 体
+    d.ellipse((290, 120, 370, 200), fill=k)                              # 頭
+    d.polygon([(360, 150), (420, 165), (360, 180)], fill=k)              # くちばし
+    d.polygon([(200, 230), (90, 120), (150, 260)], fill=k)               # 翼
+    d.polygon([(310, 240), (430, 300), (300, 300)], fill=k)
+    d.polygon([(200, 300), (130, 380), (230, 320)], fill=k)              # 尾
+    for x in (235, 260, 285):                                            # 三本の足
+        d.line((x, 320, x - 10, 400), fill=k, width=10)
+    im.save(p)
+    return p
+
+
+def c10b_shrine(nf):
+    daylight(elev=35, az=-40, strength=4.4)
+    grass_ground(col=(0.30, 0.40, 0.14), tufts=1200, area=(-6, 6, -6, 0), avoid=[(-1.6, 1.6, -7, 12)])
+    path(-1.5, 1.5, -8, 12)
+    red = W.mat("torii_red", (0.80, 0.20, 0.10), 0.6)
+    blk = W.mat("torii_black", (0.08, 0.07, 0.07), 0.6)
+    for x in (-1.9, 1.9):
+        F._cyl(0.18, 0.18, 4.6, (x, 3.0, 2.3), red, verts=12)
+    W.box((0, 3.0, 4.75), (5.6, 0.45, 0.3), blk, bevel=0.03)
+    W.box((0, 3.0, 4.45), (5.0, 0.35, 0.25), red, bevel=0.02)
+    W.box((0, 3.0, 3.7), (4.4, 0.3, 0.22), red, bevel=0.02)
+    wood = W.mat("shrine_wood", (0.50, 0.32, 0.18), 0.8)
+    roof = W.mat("shrine_roof", (0.20, 0.28, 0.26), 0.7)
+    W.box((0, 11, 1.6), (6, 4.5, 3.2), wood, bevel=0.05)
+    W.box((0, 11, 3.6), (7.4, 5.8, 0.8), roof, rot=(0, 0, 0), bevel=0.3)
+    flag = img_mat("crest", crest_texture())
+    for x in (-3.2, 3.2):
+        F._cyl(0.05, 0.05, 4.2, (x, 5.0, 2.1), W.mat("pole", (0.62, 0.62, 0.60), 0.8))
+        bpy.ops.mesh.primitive_plane_add(size=1, location=(x + (0.55 if x < 0 else -0.55), 4.98, 3.3))
+        fl = bpy.context.object
+        fl.scale = (0.95, 1.0, 1.4)
+        fl.rotation_euler.x = math.radians(90)
+        fl.data.materials.append(flag)
+    r = random.Random(8)
+    for i in range(14):
+        tree((r.choice((-1, 1)) * r.uniform(5, 14), r.uniform(-2, 18), 0), h=r.uniform(8, 12), seed=80 + i,
+             crowns=[(0.14, 0.30, 0.12)])
+    person((-0.4, 1.0, 0), 0, seed=5)
+    person((0.5, 0.6, 0), 10, seed=8, look={"top": (0.85, 0.85, 0.82)})
+    W.camera((0.3, -5.5, 1.5), (0.0, 4.0, 2.6), lens=28)
+    return nf
+
+
+def c06_road(nf):
+    daylight(elev=55, az=-20, strength=4.8, col=(1.0, 0.95, 0.85))
+    r = road_set()
     tanuki()
     # くさる時のガス（緑がかったもや）
     pts = [(r.uniform(-0.25, 0.25), 1.4 + r.uniform(-0.25, 0.25), 0.12, 1.0 + i * 0.16, 0) for i in range(28)]
@@ -774,7 +1029,7 @@ def c06_road(nf):
 # ---------- ハエの大発生 ----------
 def c07_flies(nf):
     daylight(elev=50, az=-30, strength=4.6)
-    grass_ground(col=(0.24, 0.40, 0.12))
+    grass_ground(col=(0.32, 0.44, 0.15), tufts=3500, area=(-6, 5, -8, 2))
     r = random.Random(9)
     wall = W.mat("wall_c", (0.90, 0.88, 0.82))
     roof = W.mat("roof_b", (0.22, 0.26, 0.32))
@@ -794,7 +1049,7 @@ def c07_flies(nf):
         o = multi_box([(-1.2 + r.uniform(-0.85, 0.85), 2.95, 1.6 + r.uniform(-0.6, 0.6), 0.025, 0.01, 0.018, 0) for _ in range(30)],
                       W.mat("fly", (0.02, 0.02, 0.02), 0.4), f"screen_flies{k}")
         show_between(o, 20 + k * 35, None)
-    p, _ = F.person((1.4, 0.3, 0), 205, seed=9)
+    p, _ = person((1.4, 0.3, 0), 205, seed=9)
     # 大きな群れ：庭の上を雲のようにうねって動く
     flies(nf, (0, 0, 0), 520, radius=1.6, grow=(1, 120), spread_up=1.2, seed=13,
           swarm=lambda f: (-2.5 + 3.0 * f / nf, 0.5 + 0.6 * math.sin(f / 25), 1.4 + 0.4 * math.sin(f / 17)))
@@ -840,7 +1095,7 @@ def c09_birds(nf):
         bpy.ops.mesh.primitive_cone_add(vertices=7, radius1=r.uniform(50, 90), depth=r.uniform(40, 70),
                                         location=(-200 + i * 80, 240 + r.uniform(0, 60), 15))
         bpy.context.object.data.materials.append(mt)
-    p, _ = F.person((0.4, -1.2, 0), 190, seed=3, hat=True)
+    p, _ = person((0.4, -1.2, 0), 190, seed=3, hat="straw")
     me = small_bird_mesh()
     wing = _CROW["bird_wing"]
     # 群れ：右上から左手前へ低く横切る（地面に影が流れる）
@@ -946,8 +1201,8 @@ def c10_book(nf):
     b.rotation_euler.z = math.radians(8)
     b.data.materials.append(bk)
     W.box((0.0, 0.32, 0.358), (0.5, 0.32, 0.012), W.mat("book_cover", (0.85, 0.30, 0.20), 0.7), rot=(0, 0, math.radians(8)), bevel=0)
-    gp, _ = F.person((0.55, 0.85, 0.0), 215, seed=4, pose="sit", look=GRANDPA)
-    kid, _ = F.person((-0.45, 0.85, 0.0), 160, seed=1, pose="sit", scale=0.68, look=KID)
+    gp, _ = person((0.55, 0.85, 0.0), 215, seed=4, pose="sit", look=GRANDPA)
+    kid, _ = person((-0.45, 0.85, 0.0), 160, seed=1, pose="sit", scale=0.68, look=KID)
     for f, d in ((1, 160), (60, 160), (75, 125), (180, 125)):       # 子がおじいさんの方を見る
         kid.rotation_euler.z = math.radians(-d)
         kid.keyframe_insert("rotation_euler", frame=f)
@@ -961,7 +1216,7 @@ def render(out, nf, step=1, first=None, last=None):
     sc = bpy.context.scene
     W.render_setup(os.path.join(out, "f_####.png"), 1, nf, res=RES, samples=8)
     sc.view_settings.look = 'AgX - Base Contrast'
-    sc.view_settings.exposure = EXPOSURE
+    sc.view_settings.exposure = EXPOSURE + 0.15
     cam = sc.camera
     if not (cam.animation_data and cam.animation_data.action):
         fwd = cam.rotation_euler.to_quaternion() @ Vector((0, 0, -1))
@@ -975,7 +1230,7 @@ def render(out, nf, step=1, first=None, last=None):
             bpy.ops.render.render(write_still=True)
 
 
-SCENES = {"c01_open": c01_open, "c02_wire": c02_wire, "c03_quiet": c03_quiet, "c04_garbage": c04_garbage,
+SCENES = {"c05b_walnut": c05b_walnut, "c06b_kite": c06b_kite, "c10b_shrine": c10b_shrine, "c01_open": c01_open, "c02_wire": c02_wire, "c03_quiet": c03_quiet, "c04_garbage": c04_garbage,
           "c05_orchard": c05_orchard, "c06_road": c06_road, "c07_flies": c07_flies, "c08_rats": c08_rats,
           "c09_birds": c09_birds, "c10_book": c10_book, "c11_bench": c11_bench, "c12_return": c12_return}
 

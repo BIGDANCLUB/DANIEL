@@ -10,8 +10,8 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "
 import overlay as O  # noqa: E402
 
 W, H = 1080, 1920
-KEY = (130, 205, 95)        # キーワードの色（よねあぷの「蚊」の緑）
-LINE = (130, 205, 95)       # 経過時間の下線
+KEY = (245, 160, 60)        # キーワードの色（参考元の見出しのオレンジ）
+LINE = (245, 160, 60)       # 経過時間の下線（最初の数字の下だけ）
 WHITE = (255, 255, 255)
 SANS = O.SANS
 
@@ -28,17 +28,34 @@ def title_small(im, word, rest_before, rest_after):
     runs(im, 540, 215, [(rest_before, WHITE), (word, KEY), (rest_after, WHITE)], f(46, "Black"))
 
 
+def parse(text):
+    """「ふつう[色つき]ふつう」を [(文字, 色)] に。"""
+    out, cur, col = [], "", WHITE
+    for ch in text:
+        if ch in "[]":
+            if cur:
+                out.append((cur, col))
+            cur, col = "", (KEY if ch == "[" else WHITE)
+        else:
+            cur += ch
+    if cur:
+        out.append((cur, col))
+    return out
+
+
 def headline(im, text, sub=(), alpha=1.0, y=1330):
-    """下の大きな見出し（箱なし、影つき）＋小さな説明。"""
+    """下の大きな見出し（箱なし、影つき。[ ] の中は色つき）＋小さな説明。"""
     if alpha <= 0:
         return
     lay = Image.new("RGBA", im.size, (0, 0, 0, 0))
-    hf = f(76, "Black")
+    parts = parse(text)
+    plain = "".join(t for t, _ in parts)
     size = 76
-    while hf.getlength(text) > 980:
+    hf = f(size, "Black")
+    while hf.getlength(plain) > 980:
         size -= 4
         hf = f(size, "Black")
-    O.shadow_text(lay, (540, y), text, hf, anchor="mm", blur=6, alpha=170)
+    O.runs_text(lay, 540, y + size * 0.36, parts, hf)
     for i, s in enumerate(sub):
         O.shadow_text(lay, (540, y + 92 + i * 54), s, f(38, "Bold"), anchor="mm", blur=4, alpha=170)
     if alpha < 1:
@@ -55,7 +72,7 @@ def elapsed(im, label, speed, value, loc=None):
     vf = f(86, "Bold")
     O.shadow_text(im, (x - 4, 408), value, vf, anchor="ls", blur=5, alpha=150)
     w = vf.getlength(value)
-    O.rounded_box(im, (x, 424, x + w, 432), LINE + (255,), radius=4)
+    O.rounded_box(im, (x, 424, x + min(w, vf.getlength(value[:2]) + 6), 431), LINE + (255,), radius=4)
     if loc:
         d = ImageDraw.Draw(im)
         d.ellipse((x, 466, x + 22, 488), fill=(230, 60, 60, 255))
@@ -71,6 +88,7 @@ def countdown(im, label, sec_left):
 
 
 def big_title(im, word, before, after_line1, line2, situation):
+    """冒頭の大きなタイトル（2行）と、状況の一文。"""
     tf = f(98, "Black")
     runs(im, 540, 330, [(before, WHITE), (word, KEY), (after_line1, WHITE)], tf)
     runs(im, 540, 460, [(line2, WHITE)], tf)
@@ -89,8 +107,12 @@ def card(im, text, alpha):
 
 
 def end_card(im):
-    O.shadow_text(im, (540, 860), "次は何が", f(92, "Black"), anchor="mm", blur=6, alpha=170)
-    O.shadow_text(im, (540, 980), "消えたら見たい？", f(92, "Black"), anchor="mm", blur=6, alpha=170)
-    O.shadow_text(im, (540, 1095), "コメントで教えてね", f(40, "Bold"), anchor="mm", blur=4, alpha=150)
-    O.rounded_box(im, (370, 1150, 710, 1210), (255, 255, 255, 40), radius=30, outline=(255, 255, 255, 200), width=2)
-    O.shadow_text(im, (540, 1180), "リクエストまってるよ！", f(28, "Bold"), anchor="mm", blur=2, alpha=100)
+    O.shadow_text(im, (540, 860), "あなたなら", f(92, "Black"), anchor="mm", blur=6, alpha=170)
+    O.runs_text(im, 540, 1013, [("何", KEY), ("が消えたら困る？", WHITE)], f(92, "Black"))
+    O.shadow_text(im, (540, 1100), "コメントで聞かせてください", f(40, "Bold"), anchor="mm", blur=4, alpha=150)
+
+
+def note(im, text, alpha=1.0):
+    if alpha <= 0:
+        return
+    O.shadow_text(im, (540, 1620), text, f(26, "Bold"), fill=(255, 255, 255, int(220 * alpha)), anchor="mm", blur=3, alpha=110)

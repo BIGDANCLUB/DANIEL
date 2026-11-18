@@ -282,27 +282,28 @@ class Renderer:
 def run(cs, top, sub, out_path, prev=None, band=None, renderer=None):
     durs = [c["dur"] for c in cs]
     total = sum(durs)
-    if abs(total - TOTAL) > 1e-6:   # 厳密に 59.9 秒（最後のカットで合わせる・最大±3秒）
+    if not cs[0].get("free_len") and abs(total - TOTAL) > 1e-6:   # 厳密に 59.9 秒（テンポ系 free_len は好きな長さ・11/18）（最後のカットで合わせる・最大±3秒）
         diff = TOTAL - total
         if abs(diff) > 3 or durs[-1] + diff < 1.5:
             raise SystemExit(f"長さ {total:.2f}秒。59.9秒に合わせるには {diff:+.2f}秒 の調整が必要です。カットを足すか削ってください")
         durs[-1] += diff
         cs[-1]["dur"] = durs[-1]
+    TOT = sum(durs) if cs[0].get("free_len") else TOTAL   # テンポ系は台本の長さのまま
     starts = list(np.cumsum([0] + durs[:-1]))
     R.conan_confusion(cs, zlib.crc32(os.path.basename(out_path).encode()))   # 戸惑いの場面はコナンのひらめき（10/28）
     band = band or title_band(top, sub)
     renderer = renderer or Renderer
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     wav = out_path + ".audio.f32"
-    R.build_audio(cs, starts, durs, TOTAL).tofile(wav)
+    R.build_audio(cs, starts, durs, TOT).tofile(wav)
     proc = subprocess.Popen(
         ["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{W}x{H}", "-r", str(R.FPS), "-i", "-",
          "-f", "f32le", "-ar", str(R.SR), "-ac", "2", "-i", wav, "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
-         "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-t", f"{TOTAL:.3f}", "-movflags", "+faststart", out_path],
+         "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-t", f"{TOT:.3f}", "-movflags", "+faststart", out_path],
         stdin=subprocess.PIPE)
     if prev:
         os.makedirs(prev, exist_ok=True)
-    nframes = int(round(TOTAL * R.FPS))
+    nframes = int(round(TOT * R.FPS))
     fno = 0
     for i, c in enumerate(cs):
         rd = renderer(c, band)
@@ -317,8 +318,8 @@ def run(cs, top, sub, out_path, prev=None, band=None, renderer=None):
                 shot = True
             fno += 1
         rd.close()
-        print(f"\r{i + 1}/{len(cs)}  {fno / R.FPS:5.1f}s / {TOTAL}s", end="", flush=True)
+        print(f"\r{i + 1}/{len(cs)}  {fno / R.FPS:5.1f}s / {TOT:.1f}s", end="", flush=True)
     proc.stdin.close()
     proc.wait()
     os.remove(wav)
-    print(f"\n-> {out_path} ({TOTAL}s)")
+    print(f"\n-> {out_path} ({TOT:.1f}s)")

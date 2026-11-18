@@ -460,7 +460,7 @@ class Renderer(I.Renderer):
             self.huh = [rich([[("!?", (RED, YELLOW)[j % 2])]], size, stroke=10, stroke_col=BLACK).rotate(
                 (-12, 9, -6, 12, -9)[j % 5], expand=True, resample=Image.BICUBIC) for j in range(n)]
             self.say = None
-        self.clips = [R.Clip(q["a"]) for q in c["cats"]]
+        self.clips = [R.Clip(q["a"], q.get("ss", 0.0)) for q in c["cats"]]
         self.labels = [I.name_tag(q["label"]) if q.get("label") else None for q in c["cats"]]
         self.bbox = {}
         self.phone = phone_img(c) if k == "phone" else None

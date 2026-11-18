@@ -15,30 +15,37 @@ K = 59.9 / 54.0
 
 
 def cuts():
+    """11/18 ユーザー指定「テンポ系」：参考動画のように、同じ猫のまま右の絵だけテンポよく切りかえる。
+    200〜400g はハムスター「余裕www」を出しっぱなし（素材も続けて再生）。500g からは段ごとに猫と字幕が替わる。59.9秒でなくてよい。"""
     out = []
-    # (札, 写真, 大きさ, 右の字幕, 左の猫, 左のひとこと)
+    # 前半：同じ猫のまま絵だけ替わる
+    ham, t0 = "happy_hamster_open_arms", 0.0
+    for lv, sz, cap in [("200g", 0.85, "並盛"), ("300g", 0.95, "中盛"), ("400g", 1.05, "大盛")]:
+        c = Wd.split(ST, lv, left=ham, sound="L", dur=1.6, se="pi")
+        c["cats"][0].update(x=290, h=760, w=600, bottom=1250, ss=t0)
+        c.update(skit=True, pic=(PIC, sz), pic_cap=cap, cat_cap="余裕www")
+        out.append(c)
+        t0 += 1.6
+    # 後半：絵 → 猫とひとこと（少し早め）
     rows = [
-        ("200g", PIC, 0.8, "並盛", "happy_hamster_open_arms", "ちょうどいい"),
-        ("300g", PIC, 0.85, "中盛", "cocky_dj_cat", "今日はがんばった日\nだから"),
-        ("400g", PIC, 0.9, "大盛", "smug_squint_bicolor_cat", "余裕です"),
-        ("500g", PIC, 0.95, "特盛", "stare_tabby_wide_eyes_cat", "……思ったより\n多い"),
-        ("600g", BIG, 1.0, "増量無料", "think_chin_paw_orange_cat", "無料なら\n頼むしかない"),
-        ("700g", BIG, 1.05, "つけ汁が\n足りない", "despair_dramatic_kitten", "汁が先に\n尽きた"),
-        ("800g", BIG, 1.1, "割りスープで\n延命", "sleepy_old_memories_cat", "麺と戦う意味を\n考え始める"),
-        ("1kg", BIG, 1.2, "店員さん\n「大丈夫ですか？」", "scream_standing_marmot", "大丈夫じゃない"),
-        ("完食", EMPTY, 0.9, "完食", "dance_filmed_by_gray_cat", "明日は\n1.2kg"),
+        ("500g", PIC, 1.15, "特盛", "stare_tabby_wide_eyes_cat", "……思ったより\n多い"),
+        ("600g", BIG, 1.15, "増量無料", "think_chin_paw_orange_cat", "無料なら\n頼むしかない"),
+        ("700g", BIG, 1.25, "つけ汁が\n足りない", "despair_dramatic_kitten", "汁が先に\n尽きた"),
+        ("800g", BIG, 1.35, "割りスープで\n延命", "sleepy_old_memories_cat", "麺と戦う意味を\n考え始める"),
+        ("1kg", BIG, 1.5, "店員さん\n「大丈夫ですか？」", "scream_standing_marmot", "大丈夫じゃない"),
+        ("完食", EMPTY, 1.15, "完食", "dance_filmed_by_gray_cat", "明日は\n1.2kg"),
     ]
-    for k, (lv, pic, sz, rcap, cat, lcap) in enumerate(rows):   # 11/18 ユーザー指定：枠なし・ネイルサロンの参考の配置
-        big = k >= len(rows) - 4
-        a = Wd.split(ST, lv, dur=2.4 * K, se=["explosion_chudoon"] if big else ["pi"])
-        b = Wd.split(ST, lv, left=cat, sound="L", dur=3.6 * K, se="don_hit")
+    for k, (lv, pic, sz, rcap, cat, lcap) in enumerate(rows):
+        big = k >= len(rows) - 3
+        a = Wd.split(ST, lv, dur=0.7, se=["explosion_chudoon"] if big else ["pi"])
+        b = Wd.split(ST, lv, left=cat, sound="L", dur=2.2, se="don_hit")
         b["cats"][0].update(x=290, h=760, w=600, bottom=1250)
         for c in (a, b):
             c.update(skit=True, pic=(pic, sz), pic_cap=rcap)
         b.update(pic_cont=True, cat_cap=lcap)
         out += [a, b]
     for c in out:
-        c.update(blur=4, band_y=0, skit_bottom=1250, cat_cap_y=540)   # 11/18 ユーザー指定：上下のまん中に寄せる
+        c.update(blur=4, band_y=0, skit_bottom=1250, cat_cap_y=540, free_len=True)   # テンポ系：59.9秒でなくてよい
     return out
 
 

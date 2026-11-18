@@ -23,16 +23,28 @@ WORD, PRE, POST = "富士山", "もしも", "が消えたら？"
 tone, noise, lp, env = CC.tone, CC.noise, CC.lp, CC.env
 
 
+HY, HS = 1170, 86      # 見出しは画面の中ほどに大きく（参考元に合わせる）
+
+
+def look(img):
+    """色をあざやかに、コントラストを強めに（参考元の暖かく濃い色に寄せる）。"""
+    from PIL import ImageEnhance
+    g = img.convert("RGB")
+    g = ImageEnhance.Color(g).enhance(1.4)
+    g = ImageEnhance.Contrast(g).enhance(1.1)
+    return g.resize((Y.W, Y.H), Image.LANCZOS).convert("RGBA")
+
+
 def draw(s, i, base, t_joy=None):
-    g = CC.look(base)
+    g = look(base)
     sec = i / FPS
     fade = CC.fade
     if s.get("kind") == "open":
         if sec < TL.T_VANISH:
             Y.big_title(g, WORD, PRE, "が", "消えたら？", "静岡・富士市。縁側から富士山が見える家")
             Y.countdown(g, "富士山が消えるまで", TL.T_VANISH - sec)
-            Y.headline(g, "毎朝あいさつする[あの山]", ["おじいさんの、70年の日課"], fade(sec, 0.4, 2.8))
-            Y.headline(g, "いつもの朝は、[これが最後]", ["日本一の山が、ある朝とつぜん"], fade(sec, 2.8, TL.T_VANISH + 0.01))
+            Y.headline(g, "毎朝あいさつする[あの山]", ["おじいさんの、70年の日課"], fade(sec, 0.4, 2.8), y=HY, size=HS)
+            Y.headline(g, "いつもの朝は、[これが最後]", ["日本一の山が、ある朝とつぜん"], fade(sec, 2.8, TL.T_VANISH + 0.01), y=HY, size=HS)
             Y.note(g, "※統計や研究をもとにした、もしもの話です", fade(sec, 0.2, TL.T_VANISH, k=0.3))
         else:
             Y.title_small(g, WORD, PRE, POST)
@@ -42,9 +54,9 @@ def draw(s, i, base, t_joy=None):
     e, speed = TL.e_of(s, i)
     Y.elapsed(g, LABEL, CC.fmt_speed(speed), CC.fmt_elapsed(e, speed), s.get("loc"))
     for a, b, head, sub in s.get("captions", []):
-        Y.headline(g, head, sub, fade(sec, a, b))
+        Y.headline(g, head, sub, fade(sec, a, b), y=HY, size=HS)
     if s.get("cap_cont") and t_joy is not None:
-        Y.headline(g, "やっぱり、[あってよかった]", ["10年ぶりの、いつもの景色"], 1.0)
+        Y.headline(g, "やっぱり、[あってよかった]", ["10年ぶりの、いつもの景色"], 1.0, y=HY, size=HS)
     if s.get("card"):
         Y.card(g, s["card"], fade(sec, 0.0, 1.3, k=0.12))
     return g
@@ -174,7 +186,7 @@ def main():
     last_img = None
     for s in TL.SHOTS:
         if s.get("kind") == "end":
-            base = CC.look(last_img)
+            base = look(last_img)
             for i in range(s["frames"]):
                 g = base.copy()
                 g.alpha_composite(Image.new("RGBA", base.size, (8, 8, 10, int(150 * min(1.0, i / 12)))))
@@ -204,7 +216,7 @@ def main():
     fc = "[1:a]volume=1.0[s]"
     if bgm:
         inputs += ["-stream_loop", "-1", "-i", bgm]
-        fc += (f";[2:a]volume=0.25,atrim=0:{total:.2f},afade=t=out:st={total - 2.5:.2f}:d=2.5[b];"
+        fc += (f";[2:a]volume={os.environ.get('BGM_VOL', '0.25')},atrim=0:{total:.2f},afade=t=out:st={total - 2.5:.2f}:d=2.5[b];"
                "[s][b]amix=inputs=2:normalize=0[m];[m]loudnorm=I=-14:TP=-1.5[a]")
     else:
         fc += ";[s]loudnorm=I=-14:TP=-1.5[a]"

@@ -27,6 +27,68 @@ WORKER = {"top": (0.40, 0.48, 0.55), "bottom": (0.30, 0.34, 0.40)}
 TROUT = {"top": (0.25, 0.35, 0.30), "bottom": (0.20, 0.22, 0.25)}
 fr = C.frame_of
 
+# ---------- カメラ：カット割りと、全カットでゆっくり動くカメラ（参考元に合わせる） ----------
+_camera0 = W.camera
+
+
+def _camera(loc, look_at, lens=28):
+    c = _camera0(loc, look_at, lens)
+    c["at"] = tuple(look_at)
+    c["f0"] = 1
+    return c
+
+
+W.camera = _camera
+
+
+def cut(f0, loc, at, lens=28, orbit=None, push=None, piv=None):
+    """f0 コマ目から別のカメラに切りかえる。"""
+    keep = bpy.context.scene.camera
+    c = W.camera(loc, at, lens)
+    c["f0"] = f0
+    for k, v in (("orbit", orbit), ("push", push), ("piv", piv)):
+        if v is not None:
+            c[k] = v
+    if keep:
+        bpy.context.scene.camera = keep
+    return c
+
+
+def cams():
+    return sorted([o for o in bpy.data.objects if o.type == 'CAMERA' and "at" in o], key=lambda o: o["f0"])
+
+
+def move_cams(nf):
+    """各カメラを、ねらう点のまわりに少し回りこみながら寄せる（ゆっくり加速・減速）。"""
+    cs = cams()
+    for i, c in enumerate(cs):
+        if c.get("keep"):
+            continue
+        f0 = c["f0"]
+        f1 = cs[i + 1]["f0"] - 1 if i + 1 < len(cs) else nf
+        if c.animation_data:
+            c.animation_data_clear()
+        p0, at = Vector(c.location), Vector(c["at"])
+        d = at - p0
+        dist = d.length
+        fwd = d.normalized()
+        piv = p0 + fwd * min(dist, c.get("piv", 10.0))
+        orbit = math.radians(c.get("orbit", 9.0)) * (1 if i % 2 == 0 else -1)
+        push = min(c.get("push", 0.22) * (piv - p0).length, 2.5)
+        for f in list(range(f0, f1 + 1, 2)) + [f1]:
+            t = (f - f0) / max(1, f1 - f0)
+            u = t * t * (3 - 2 * t)
+            a = orbit * (u - 0.5)
+            ca, sa = math.cos(a), math.sin(a)
+
+            def rot(v):
+                w = v - piv
+                return piv + Vector((w.x * ca - w.y * sa, w.x * sa + w.y * ca, w.z))
+            c.location = rot(p0) + fwd * push * u
+            W.aim(c, rot(at))
+            c.keyframe_insert("location", frame=f)
+            c.keyframe_insert("rotation_euler", frame=f)
+
 
 def set_interp(o, kind):
     """キーフレームの補間をまとめて変える（Blender 4.4 以降の新しいアクション形式にも対応）。"""
@@ -298,22 +360,23 @@ def surface_points(o, n, seed, front=None):
     return out
 
 
-def sparkle_points(points, f0, size, rise, mode="out", seed=1, life=(0.7, 1.5), name="sp"):
+def sparkle_points(points, f0, size, rise, mode="out", seed=1, life=(0.7, 1.5), name="sp", trail=(2, 4)):
+    """金色の光の粒（うしろに小さな粒が2つ続いて、光の跡になる）。"""
     r = random.Random(seed)
-    m = W.mat("sparkle", (1, 0.97, 0.85), emit=(1.0, 0.95, 0.75), emit_strength=12)
-    tmp = F._ball(1.0, (0, 0, 0), m, sub=1)
-    me = tmp.data
-    bpy.data.objects.remove(tmp)
+    meshes = []
+    for nm, col, em in (("sparkle_gold", (1.0, 0.85, 0.5), (1.0, 0.72, 0.30)), ("sparkle_white", (1, 0.97, 0.88), (1.0, 0.95, 0.80))):
+        tmp = F._ball(1.0, (0, 0, 0), W.mat(nm, col, emit=em, emit_strength=16), sub=1)
+        meshes.append(tmp.data)
+        bpy.data.objects.remove(tmp)
     for k, p0 in enumerate(points):
-        o = bpy.data.objects.new(f"{name}{k}", me)
-        bpy.context.collection.objects.link(o)
-        o.visible_shadow = False
-        sz = size * r.uniform(0.6, 1.3)
-        v = Vector((r.uniform(-0.3, 0.3) * rise, r.uniform(-0.3, 0.3) * rise, r.uniform(0.4, 1.0) * rise))
+        me = meshes[0 if r.random() < 0.75 else 1]
+        sz = size * r.uniform(0.6, 1.4)
+        v = Vector((r.uniform(-0.35, 0.35) * rise, r.uniform(-0.35, 0.35) * rise, r.uniform(0.4, 1.1) * rise))
         lf = r.uniform(*life)
         nfr = int(lf * FPS)
         start = f0 + (r.randint(0, 10) if mode == "out" else 0)
-        for f in range(max(1, start - 1), start + nfr + 2):
+
+        def state(f):
             if mode == "out":
                 dt = (f - start) / FPS
                 vis = 0 <= dt <= lf
@@ -322,23 +385,29 @@ def sparkle_points(points, f0, size, rise, mode="out", seed=1, life=(0.7, 1.5), 
                 vis = f >= start and dt >= 0
                 dt = max(dt, 0)
             u = min(max(dt / lf, 0), 1)
-            o.location = p0 + v * dt
-            sc = sz * (1 - u) if vis else 1e-4
-            o.scale = (max(sc, 1e-4),) * 3
-            o.keyframe_insert("location", frame=f)
-            o.keyframe_insert("scale", frame=f)
-        if start - 2 >= 1:
-            o.scale = (1e-4,) * 3
-            o.keyframe_insert("scale", frame=1)
+            return p0 + v * dt, (sz * (1 - 0.8 * u) if vis else 1e-4)
+        for j, (dl, ks) in enumerate([(0, 1.0)] + [(d, 0.7 ** (i + 1)) for i, d in enumerate(trail)]):
+            o = bpy.data.objects.new(f"{name}{k}_{j}", me)
+            bpy.context.collection.objects.link(o)
+            o.visible_shadow = False
+            for f in range(max(1, start - 1), start + nfr + 2 + dl):
+                loc, sc = state(f - dl)
+                o.location = loc
+                o.scale = (max(sc * ks, 1e-4),) * 3
+                o.keyframe_insert("location", frame=f)
+                o.keyframe_insert("scale", frame=f)
+            if start - 2 >= 1:
+                o.scale = (1e-4,) * 3
+                o.keyframe_insert("scale", frame=1)
 
 
-def fuji_vanish(o, f0, n=260, seed=3):
+def fuji_vanish(o, f0, n=480, seed=3):
     R = o["R"]
     sparkle_points(surface_points(o, n, seed), f0, R * 0.012, R * 0.12, seed=seed)
     C.show_between(o, None, f0 + 4, s=R)
 
 
-def fuji_appear(o, f0, n=260, seed=4):
+def fuji_appear(o, f0, n=480, seed=4):
     R = o["R"]
     sparkle_points(surface_points(o, n, seed), f0 - 30, R * 0.012, R * 0.12, mode="in", seed=seed, life=(0.8, 1.0))
     C.show_between(o, f0, None, s=R)
@@ -424,9 +493,7 @@ FUJI_R = 3200
 
 def engawa_cam(nf, loc=(-0.4, -2.1, 1.5), at=(0.3, 30, 7.0), lens=28, push=0.4):
     cam = W.camera(loc, at, lens)
-    cam.keyframe_insert("location", frame=1)
-    cam.location += (Vector(at) - Vector(loc)).normalized() * push
-    cam.keyframe_insert("location", frame=nf)
+    cam["push"] = push * 0.3
     return cam
 
 
@@ -443,7 +510,10 @@ def f01_open(nf):
         b.keyframe_insert("location", frame=1)
         b.location.x += 30
         b.keyframe_insert("location", frame=nf)
-    engawa_cam(nf)
+    cut(1, (-1.3, -2.1, 1.7), (FUJI_LOC[0], FUJI_LOC[1], FUJI_H * FUJI_R * 0.7), lens=55, orbit=3, push=0.0, piv=3)
+    cut(61, (0.55, 2.7, 1.95), (0.2, 0.8, 1.95), lens=40, orbit=14, push=0.25)
+    c = engawa_cam(nf)
+    c["f0"] = 121
     return nf
 
 
@@ -497,6 +567,7 @@ def f02_train(nf):
     for k, (y, fac) in enumerate(((-0.6, 80), (0.5, 100), (1.5, 75))):
         person((0.9, y, 0.05), fac, seed=5 + k * 3, arms="hold" if k == 1 else "down")
     W.camera((-1.0, -0.5, 1.15), (1.7, 1.0, 1.35), lens=22)
+    cut(61, (1.55, -0.6, 1.4), (0.9, 0.6, 1.5), lens=22, orbit=10)
     return nf
 
 
@@ -527,7 +598,9 @@ def f03_shadow(nf):
     foothills(seed=9, y=(-1400, -900), x=(-1400, 1400), n=9, col=(0.36, 0.44, 0.50), h=(80, 200))
     for i in range(8):
         C.tree((r.uniform(-60, 60), r.uniform(-120, -50), 0), h=r.uniform(7, 10), seed=60 + i, crowns=[(0.16, 0.32, 0.12)])
-    W.camera((0, 30, 30), (0, -180, 0), lens=22)
+    c = W.camera((0, 30, 30), (0, -180, 0), lens=22)
+    c["piv"], c["orbit"] = 120, 12
+    cut(90, (6, -8, 1.3), (0, -28, 0.8), lens=28, orbit=12)
     return nf
 
 
@@ -700,7 +773,10 @@ def f06_cloud(nf):
         return z0 + bump * (1 - 0.15 * (z0 / 30)) + lee
 
     wind_arrows(nf, -140, 160, [6, 18, 32, 46], path, f_sw, scale=10.0, speed=60, y=-40)
-    W.camera((10, -175, 28), (10, 0, 30), lens=30)
+    c = W.camera((10, -175, 28), (10, 0, 30), lens=30)
+    c["piv"], c["orbit"] = 175, 14
+    cut(61, (20, -110, 42), (0, 0, 31), lens=55, piv=110, orbit=10)
+    c = cut(102, (10, -175, 28), (10, 0, 30), lens=30, piv=175, orbit=14)
     return nf
 
 
@@ -762,6 +838,7 @@ def f07_spring(nf, flowing=True, sparse=False):
     for i in range(3):
         C.tree((13 + i * 1.5, 4.5, 0), h=3, seed=90 + i)
     W.camera((1.2, -27, -1.5), (1.2, 0, -1.8), lens=30)
+    cut(91, (8.0, -11, -0.3), (9.5, 0, -1.0), lens=30, orbit=12)
     return nf
 
 
@@ -775,6 +852,7 @@ def f08_snow(nf):
     C.show_between(g, None, 75, s=FUJI_R)
     person((0.4, 0.5, 0), 10, seed=3, arms=("down", "brow"), hat="cap")
     W.camera((-1.4, -2.6, 1.3), (0.5, 40, 7), lens=28)
+    cut(96, (0.7, 2.4, 1.65), (0.4, 0.5, 1.55), lens=34, orbit=14)
     return nf
 
 
@@ -824,6 +902,7 @@ def f09_hazard(nf):
         pp.keyframe_insert("rotation_euler", frame=f)
     person((-0.9, 0.0, 0), 30, seed=8, arms=("down", "brow"))
     W.camera((-2.2, -3.2, 1.5), (0.6, 2.0, 1.6), lens=26)
+    cut(80, (0.2, -1.2, 0.7), (3.5, 4.5, 4.2), lens=22, orbit=10)
     return nf
 
 
@@ -917,6 +996,7 @@ def f11_diamond(nf):
         lg.keyframe_insert("rotation_euler", frame=100)
     person((-1.0, 0.8, 0), 30, seed=10, arms="hold", hat="cap")
     W.camera((-1.9, -2.0, 1.55), (0.6, 12, 1.5), lens=26)
+    cut(68, (-1.3, -0.4, 1.35), (-0.5, 1.3, 1.15), lens=30, orbit=12)
     return nf
 
 
@@ -966,6 +1046,7 @@ def f12_kid(nf):
     b.scale = (0.16, 0.075, 1)
     b.rotation_euler.z = math.radians(-20)
     b.data.materials.append(C.img_mat("bill", bill_texture()))
+    cut(90, (0.3, -0.35, 1.05), (0.25, 0.45, 0.36), lens=30, orbit=12)
     return nf
 
 
@@ -1008,6 +1089,7 @@ def f13_lowwater(nf):
     day(elev=40, az=-30, strength=4.6)
     river_set(-0.1, -0.5, nf)
     W.camera((0.8, -3.5, 1.4), (0.0, 8, -0.4), lens=26)
+    cut(76, (1.4, 1.0, 0.15), (-0.2, 12, -0.4), lens=26, orbit=8)
     return nf
 
 
@@ -1042,12 +1124,12 @@ def trout_set(nf, level0, level1, worker_arms, alt=None, jump=False):
             fo.keyframe_insert("location", frame=f)
             fo.keyframe_insert("rotation_euler", frame=f)
     foothills(seed=3, y=(800, 1300), n=8, col=(0.30, 0.42, 0.34), h=(40, 90), gap=(-500, 500))
-    person((0.3, -0.7, 0), 330 if not alt else 200, seed=11, arms=worker_arms, alt=alt, nf=nf, period=8, look=TROUT, hat="cap")
+    person((0.3, -0.7, 0), 200, seed=11, arms=worker_arms, alt=alt, nf=nf, period=8, look=TROUT, hat="cap")
 
 
 def f14_trout(nf):
     trout_set(nf, 0.55, 0.2, "head")
-    W.camera((-1.8, -3.3, 1.8), (0.4, 2.0, 0.0), lens=26)
+    W.camera((-1.0, -3.7, 1.6), (0.3, 0.6, 0.7), lens=26)
     return nf
 
 
@@ -1127,7 +1209,7 @@ def kitchen_set(nf, strong, mom_arms, alt=None):
     a = bpy.context.object
     a.data.energy = 80
     a.data.size = 2.5
-    person((-0.35, 0.6, 0), 20, seed=9, arms=mom_arms, alt=alt, nf=nf, period=8, look=MOM)
+    person((-0.35, 0.6, 0), 70, seed=9, arms=mom_arms, alt=alt, nf=nf, period=8, look=MOM)
 
 
 def f16_tap(nf):
@@ -1147,6 +1229,7 @@ def f17_return(nf):
     kasa = cap_cloud((FUJI_LOC[0], FUJI_LOC[1], FUJI_H * FUJI_R + 8), FUJI_R)
     grow(kasa, f_back + 30, f_back + 90)
     engawa_cam(nf, push=0.8)
+    cut(131, (-0.4, -2.1, 1.5), (FUJI_LOC[0], FUJI_LOC[1], FUJI_H * FUJI_R * 0.7), lens=55, orbit=3, push=0.0, piv=3)
     return nf
 
 
@@ -1193,7 +1276,24 @@ def j5_wide(nf):
     cam.keyframe_insert("location", frame=1)
     cam.location = (0.2, -6.5, 1.6)
     cam.keyframe_insert("location", frame=nf)
+    cam["keep"] = 1
     return nf
+
+
+def render(out, nf, step=1, first=None, last=None):
+    os.makedirs(out, exist_ok=True)
+    sc = bpy.context.scene
+    W.render_setup(os.path.join(out, "f_####.png"), 1, nf, res=C.RES, samples=8)
+    sc.view_settings.look = 'AgX - Punchy'
+    sc.view_settings.exposure = C.EXPOSURE + 0.1
+    move_cams(nf)
+    cs = cams()
+    for f in range((first or 1), (last or nf) + 1, step):
+        sc.camera = [c for c in cs if c["f0"] <= f][-1]
+        sc.frame_set(f)
+        sc.render.filepath = os.path.join(out, f"f_{f:04d}.png")
+        if not os.path.exists(sc.render.filepath):
+            bpy.ops.render.render(write_still=True)
 
 
 SCENES = {k: v for k, v in globals().items() if callable(v) and k[:1] in "fj" and k[1:2].isdigit() and "_" in k}
@@ -1206,5 +1306,5 @@ if __name__ == "__main__":
     W.reset()
     nf = TL.shot(name)["frames"]
     SCENES[name](nf)
-    C.render(out, nf, step, first, last)
+    render(out, nf, step, first, last)
     print("rendered", name, flush=True)

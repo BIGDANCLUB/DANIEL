@@ -43,21 +43,20 @@ def parse(text):
     return out
 
 
-def headline(im, text, sub=(), alpha=1.0, y=1330):
+def headline(im, text, sub=(), alpha=1.0, y=1330, size=76):
     """下の大きな見出し（箱なし、影つき。[ ] の中は色つき）＋小さな説明。"""
     if alpha <= 0:
         return
     lay = Image.new("RGBA", im.size, (0, 0, 0, 0))
     parts = parse(text)
     plain = "".join(t for t, _ in parts)
-    size = 76
     hf = f(size, "Black")
     while hf.getlength(plain) > 980:
         size -= 4
         hf = f(size, "Black")
     O.runs_text(lay, 540, y + size * 0.36, parts, hf)
     for i, s in enumerate(sub):
-        O.shadow_text(lay, (540, y + 92 + i * 54), s, f(38, "Bold"), anchor="mm", blur=4, alpha=170)
+        O.shadow_text(lay, (540, y + size * 0.6 + 46 + i * 54), s, f(38 + (size - 76) // 4, "Bold"), anchor="mm", blur=4, alpha=170)
     if alpha < 1:
         a = lay.split()[3].point(lambda v: int(v * alpha))
         lay.putalpha(a)

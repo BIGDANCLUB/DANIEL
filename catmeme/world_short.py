@@ -523,7 +523,7 @@ class Renderer(I.Renderer):
             self.side_layout()
         if self.phone is not None:
             I.put(out, self.phone, W / 2 + 20, 1010)
-        if c["kind"] == "split":
+        if c["kind"] == "split" and not c.get("skit"):
             cv2.rectangle(out, (W // 2 - 8, 680), (W // 2 + 8, 1290), (0, 0, 0), -1)
         for i, q in enumerate(c["cats"]):
             s = 1.0 if t > 0.12 else 0.85 + 0.15 * (t / 0.12)   # ポンと出る
@@ -532,7 +532,7 @@ class Renderer(I.Renderer):
                 img = cv2.resize(img, None, fx=s, fy=s)
                 al = cv2.resize(al, None, fx=s, fy=s)
             h, w = al.shape
-            lo, hi = (20, W - 20) if c["kind"] != "split" else ((20, W // 2 - 14) if q["x"] < W / 2 else (W // 2 + 14, W - 40))
+            lo, hi = (20, W - 20) if c["kind"] != "split" or c.get("skit") else ((20, W // 2 - 14) if q["x"] < W / 2 else (W // 2 + 14, W - 40))
             x0 = min(max(int(q["x"] - w / 2), lo), hi - w)   # 画面（左右くらべでは自分の側）からはみ出さない
             over_cat(out, img, al, x0, int(q["bottom"] - h), c["kind"] == "split")
             if self.labels[i] is not None:
@@ -544,12 +544,14 @@ class Renderer(I.Renderer):
         for im, x, y, at in self.bubbles:
             if t >= at:
                 I.put(out, im, x, y)
-        if c["kind"] == "split":   # 「日本」「世界」は猫より手前
+        if c["kind"] == "split" and not c.get("skit"):   # 「日本」「世界」は猫より手前
             I.put(out, self.heads[0], 275, 600)
             I.put(out, self.heads[1], 805, 600)
             if self.note is not None:
                 I.put(out, self.note, W / 2, c.get("note_y", 740))
-        if c.get("pic"):   # 11/18 新しい作風：右側に料理の写真（白いふち）。pic=(写真の名前, 大きさ)。大きいと上にはみ出してよい
+        if c.get("skit"):   # 11/18 ユーザー指定（ネイルサロンの参考）：枠なし。右に白いふちの写真、左に大きな猫、文字は白い太字＋黒ふち
+            skit_draw(out, c, t)
+        elif c.get("pic"):   # 11/18 新しい作風：右側に料理の写真（白いふち）。pic=(写真の名前, 大きさ)。大きいと上にはみ出してよい
             pn, ps = c["pic"]
             key = (pn, ps)
             if key not in _PIC:
@@ -562,19 +564,20 @@ class Renderer(I.Renderer):
             if k != 1.0:
                 im = im.resize((int(im.width * k), int(im.height * k)), Image.BILINEAR)
             I.put(out, im, min(805, W - 10 - im.width / 2), 1290 - im.height / 2)   # 大きいときは右はしにそろえる
-        if c["kind"] == "split" and self.cap is not None:
+        if c["kind"] == "split" and self.cap is not None and not c.get("skit"):
             cx = W / 2 if c.get("cap_full") else (275 if c["cap_side"] == "L" else 805)
             cx = min(max(cx, self.cap.width / 2 + 20), W - self.cap.width / 2 - 20)
             cy = min(1310 + self.cap.height / 2, SAFE_BOTTOM - self.cap.height / 2)
             I.put(out, self.cap, cx, cy)
-        if c["kind"] == "split" and getattr(self, "cap2", None) is not None:
+        if c["kind"] == "split" and getattr(self, "cap2", None) is not None and not c.get("skit"):
             cx = 805 if c["cap_side"] == "L" else 275
             cx = min(max(cx, self.cap2.width / 2 + 20), W - self.cap2.width / 2 - 20)
             cy = min(1310 + self.cap2.height / 2, SAFE_BOTTOM - self.cap2.height / 2)
             I.put(out, self.cap2, cx, cy)
         b = R.to_np(self.band)
         I.over(out, b[0], b[1], 0, c.get("band_y", I.BAND[0]))
-        I.put(out, self.tag, W / 2, self.tag_y)
+        if not c.get("skit"):
+            I.put(out, self.tag, W / 2, self.tag_y)
         if self.huh:
             n = len(self.huh)
             rng = np.random.default_rng(int(t * R.FPS))
@@ -605,6 +608,46 @@ class Renderer(I.Renderer):
 
 
 _VIG = None
+
+
+_SKIT = {}
+
+
+def _skit_text(t, col, size, max_w=W - 80):
+    key = (t, col, size, max_w)
+    if key not in _SKIT:
+        _SKIT[key] = rich([[(ln, col)] for ln in t.split("\n")], size, stroke=10, stroke_col=BLACK, max_w=max_w, lh=1.1)
+    return _SKIT[key]
+
+
+def skit_draw(out, c, t):
+    """寸劇型：右に写真カード（白い角丸のふち・中に料理の絵）、その上に黄色い札、写真の下の方に白い字幕。
+    猫の字幕は猫の上に白い文字。カードは猫に少し重ねる。"""
+    pn, ps = c["pic"]
+    key = ("card", pn, ps)
+    if key not in _PIC:
+        im = Image.open(I.bg_path(bg_name(pn))).convert("RGBA")
+        side = int(640 * ps)
+        k = min((side - 40) / im.width, (side - 40) / im.height)
+        im = im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
+        card = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+        ImageDraw.Draw(card).rounded_rectangle((0, 0, side - 1, side - 1), 24, fill=(255, 255, 255, 255))
+        card.alpha_composite(im, ((side - im.width) // 2, (side - im.height) // 2))
+        _PIC[key] = card
+    card = _PIC[key]
+    k = 1.0 if t > 0.12 or c.get("pic_cont") else 0.85 + 0.15 * (t / 0.12)
+    if k != 1.0:
+        card = card.resize((int(card.width * k), int(card.height * k)), Image.BILINEAR)
+    cx, bottom = min(770, W - 12 - card.width / 2), 1360
+    I.put(out, card, cx, bottom - card.height / 2)
+    tag = _skit_text(c.get("tag") or "", YELLOW, 96)
+    I.put(out, tag, max(cx, 560 + tag.width / 2 + 20), bottom - card.height - tag.height / 2 + 10)   # 猫の字幕とかさならないよう右寄せ
+    if c.get("pic_cap"):
+        pc = _skit_text(c["pic_cap"], WHITE, 92)
+        I.put(out, pc, cx, bottom - pc.height / 2 - 18)
+    if c.get("cat_cap"):
+        cc = _skit_text(c["cat_cap"], WHITE, 96, max_w=540)   # 左半分に収める
+        I.put(out, cc, max(290, cc.width / 2 + 16), c.get("cat_cap_y", 640))
 
 
 def hype_fx(out, t):

@@ -67,3 +67,42 @@ def final():
     box.alpha_composite(t, (30, 18))
     img.alpha_composite(box, ((T.W - box.width) // 2, by - box.height + 12))
     T.save(img, "jidaraku_23_yoshinoya_thumb_final.png")
+
+
+def final2():
+    """11/18 ユーザー指定：「20代ぼっち女 1人焼肉に行く」と同じ構図。店構えを全面・猫を真ん中に大きく・
+    白い札「今年も来た」・極太明朝の大きな文字「吉野家（黄）牛すき鍋膳（赤）」（黒い太いふち＋影）。帯なし。"""
+    from PIL import ImageFilter, ImageFont
+    img = T.fill_photo("yo03_front_wide", T.W, T.H, cy=0.4)
+    cat = Image.open(os.path.join(T.HERE, "backgrounds", "jidaraku", "23_yoshinoya", "t_cat_dance.png")).convert("RGBA")
+    k = 700 / cat.height
+    cat = cat.resize((int(cat.width * k), 700), Image.LANCZOS)
+    img.alpha_composite(cat, ((T.W - cat.width) // 2, 10))
+    f = ImageFont.truetype(os.path.join(T.HERE, "fonts", "ZenOldMincho-Black.ttf"), 200)
+    parts = [("吉野家", (255, 232, 0)), ("牛すき鍋膳", (232, 28, 28))]
+    d0 = ImageDraw.Draw(Image.new("RGBA", (8, 8)))
+    ws = [d0.textlength(t, font=f) + (40 if i == 0 else 0) for i, (t, _) in enumerate(parts)]
+    layer = Image.new("RGBA", (int(sum(ws)) + 80, 300), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    x = 40
+    for (t, col), w in zip(parts, ws):
+        d.text((x, 20), t, font=f, fill=(15, 15, 15), stroke_width=20, stroke_fill=(15, 15, 15))
+        d.text((x, 20), t, font=f, fill=col, stroke_width=6, stroke_fill=col)
+        x += w
+    sh = Image.new("RGBA", layer.size, (0, 0, 0, 0))
+    sh.paste((0, 0, 0, 170), (0, 0), layer.split()[3])
+    sh = sh.filter(ImageFilter.GaussianBlur(6))
+    out = Image.new("RGBA", (layer.width + 10, layer.height + 10), (0, 0, 0, 0))
+    out.alpha_composite(sh, (10, 10))
+    out.alpha_composite(layer, (0, 0))
+    out = out.crop(out.getbbox())
+    if out.width > T.W - 30:
+        k = (T.W - 30) / out.width
+        out = out.resize((int(out.width * k), int(out.height * k)), Image.LANCZOS)
+    by = T.H - out.height - 14
+    t = T.runs([("今年も来た", (T.RED, T.WHITE))], 66, 2, 900)
+    box = Image.new("RGBA", (t.width + 60, t.height + 36), T.WHITE + (255,))
+    box.alpha_composite(t, (30, 18))
+    img.alpha_composite(box, ((T.W - box.width) // 2, by - box.height + 4))
+    img.alpha_composite(out, ((T.W - out.width) // 2, by))
+    T.save(img, "jidaraku_23_yoshinoya_thumb_final.png")

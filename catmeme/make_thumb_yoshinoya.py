@@ -42,3 +42,28 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def final():
+    """11/18 ユーザー指定：夜の店構え（yo03_front_wide）を全面・踊る猫のイラスト（t_cat_dance）・
+    白い札「今年も来た」・黄色い帯「吉野家 牛すき鍋膳」。右に牛すき鍋膳の写真。"""
+    img = T.fill_photo("yo03_front_wide", T.W, T.H, cy=0.45)
+    it = T.fill_photo("f_nabe", 560, 400)
+    fr = Image.new("RGBA", (it.width + 24, it.height + 24), (255, 255, 255, 255))
+    fr.alpha_composite(it, (12, 12))
+    fr = fr.rotate(-3, expand=True, resample=Image.BICUBIC)
+    img.alpha_composite(fr, (T.W - fr.width - 30, 150))
+    cat = Image.open(os.path.join(T.HERE, "backgrounds", "jidaraku", "23_yoshinoya", "t_cat_dance.png")).convert("RGBA")
+    k = 560 / cat.height
+    cat = cat.resize((int(cat.width * k), 560), Image.LANCZOS)
+    img.alpha_composite(cat, (60, 40))
+    big = T.runs([("吉野家 牛すき鍋膳", T.RED)], 170, 10, T.W - 220)
+    bh = big.height + 40
+    by = T.H - bh - 18
+    ImageDraw.Draw(img).rounded_rectangle((60, by, T.W - 60, by + bh), 36, fill=(255, 245, 60, 255))
+    img.alpha_composite(big, ((T.W - big.width) // 2, by + 20))
+    t = T.runs([("今年も来た", (T.RED, T.WHITE))], 72, 2, 900)
+    box = Image.new("RGBA", (t.width + 60, t.height + 36), T.WHITE + (255,))
+    box.alpha_composite(t, (30, 18))
+    img.alpha_composite(box, ((T.W - box.width) // 2, by - box.height + 12))
+    T.save(img, "jidaraku_23_yoshinoya_thumb_final.png")

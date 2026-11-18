@@ -32,7 +32,7 @@ def cuts():
         ("600g", BIG, 0.74, "増量無料", "think_chin_paw_orange_cat", "無料なら\n頼むしかない"),
         ("700g", BIG, 0.73, "つけ汁が\n足りない", "despair_dramatic_kitten", "汁が先に\n尽きた"),
         ("800g", BIG, 0.75, "割りスープ\nで延命", "sleepy_old_memories_cat", "麺と戦う\n意味を考える"),
-        ("1kg", BIG, 0.76, "店員さん\n大丈夫ですか", "scream_standing_marmot", "大丈夫\nじゃない"),
+        ("1kg", BIG, 0.76, "店員\n「大丈夫？」", "scream_standing_marmot", "大丈夫！\n(今更残せない)"),
         ("1.5kg", BIG, 0.78, "店員\n「残すなよ」", "dance_filmed_by_gray_cat", "とりあえず\n写真撮ろｗ"),
     ]
     for k, (lv, pic, sz, rcap, cat, lcap) in enumerate(rows):

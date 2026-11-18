@@ -561,7 +561,7 @@ class Renderer(I.Renderer):
             k = 1.0 if t > 0.12 or c.get("pic_cont") else 0.85 + 0.15 * (t / 0.12)
             if k != 1.0:
                 im = im.resize((int(im.width * k), int(im.height * k)), Image.BILINEAR)
-            I.put(out, im, 805, 1290 - im.height / 2)
+            I.put(out, im, min(805, W - 10 - im.width / 2), 1290 - im.height / 2)   # 大きいときは右はしにそろえる
         if c["kind"] == "split" and self.cap is not None:
             cx = W / 2 if c.get("cap_full") else (275 if c["cap_side"] == "L" else 805)
             cx = min(max(cx, self.cap.width / 2 + 20), W - self.cap.width / 2 - 20)

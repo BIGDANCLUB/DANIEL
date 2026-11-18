@@ -18,15 +18,15 @@ def cuts():
     out = []
     # (札, 写真, 大きさ, 右の字幕, 左の猫, 左のひとこと)
     rows = [
-        ("200g", PIC, 0.55, "並盛", "happy_hamster_open_arms", "ちょうどいい"),
-        ("300g", PIC, 0.65, "中盛", "cocky_dj_cat", "今日はがんばった日\nだから"),
-        ("400g", PIC, 0.75, "大盛", "smug_squint_bicolor_cat", "余裕です"),
-        ("500g", PIC, 0.85, "特盛", "stare_tabby_wide_eyes_cat", "……思ったより\n多い"),
-        ("600g", BIG, 0.90, "増量無料", "think_chin_paw_orange_cat", "無料なら\n頼むしかない"),
-        ("700g", BIG, 1.00, "つけ汁が\n足りない", "despair_dramatic_kitten", "汁が先に\n尽きた"),
-        ("800g", BIG, 1.10, "割りスープで\n延命", "sleepy_old_memories_cat", "麺と戦う意味を\n考え始める"),
-        ("1kg", BIG, 1.25, "店員さん\n「大丈夫ですか？」", "scream_standing_marmot", "大丈夫じゃない"),
-        ("完食", EMPTY, 0.85, "完食", "dance_filmed_by_gray_cat", "明日は\n1.2kg"),
+        ("200g", PIC, 0.85, "並盛", "happy_hamster_open_arms", "ちょうどいい"),
+        ("300g", PIC, 0.95, "中盛", "cocky_dj_cat", "今日はがんばった日\nだから"),
+        ("400g", PIC, 1.05, "大盛", "smug_squint_bicolor_cat", "余裕です"),
+        ("500g", PIC, 1.15, "特盛", "stare_tabby_wide_eyes_cat", "……思ったより\n多い"),
+        ("600g", BIG, 1.15, "増量無料", "think_chin_paw_orange_cat", "無料なら\n頼むしかない"),
+        ("700g", BIG, 1.25, "つけ汁が\n足りない", "despair_dramatic_kitten", "汁が先に\n尽きた"),
+        ("800g", BIG, 1.35, "割りスープで\n延命", "sleepy_old_memories_cat", "麺と戦う意味を\n考え始める"),
+        ("1kg", BIG, 1.5, "店員さん\n「大丈夫ですか？」", "scream_standing_marmot", "大丈夫じゃない"),
+        ("完食", EMPTY, 1.15, "完食", "dance_filmed_by_gray_cat", "明日は\n1.2kg"),
     ]
     for k, (lv, pic, sz, rcap, cat, lcap) in enumerate(rows):
         big = k >= len(rows) - 4

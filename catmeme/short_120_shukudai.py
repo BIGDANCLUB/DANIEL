@@ -25,8 +25,8 @@ def cuts():
         ("8/30", "pic_cal_8_30", "宿題\n30%", "work_typing_cat", "全力で\nやる"),
         ("8/31", "pic_cal_8_31", "宿題\n30%", "blank_black_cat_zoning_out", "もう\nむり"),
         ("9/1", "pic_cal_9_1", "提出日", "sad_banana_cat_cry", "先生に\n怒られた"),
-        ("9/2", "pic_cal_9_2", "宿題\n70%", "work_typing_cat", "全力で\nやる"),
-        ("9/3", "pic_cal_9_3", "宿題\n100%", "dance_filmed_by_gray_cat", "夏休み\n終わった"),
+        ("9/2", "pic_cal_9_2", "宿題\n60%", "work_typing_cat", "全力で\nやる"),
+        ("9/3", "pic_cal_9_3", "宿題\n60%", "dance_filmed_by_gray_cat", "うおｗ"),
     ]
     for k, (lv, pic, rcap, cat, lcap) in enumerate(rows):
         big = k >= len(rows) - 3

@@ -43,5 +43,5 @@ def cuts():
 
 
 if __name__ == "__main__":
-    Wd.run(cuts(), Wd.rich_band([("{r}夏休みの宿題", 132, Wd.BLACK, 100), ("{y}大体こうなる", 132, Wd.BLACK, 250)], 0, 330),
+    Wd.run(cuts(), Wd.rich_band([("{r}夏休みの宿題", 132, Wd.BLACK, 100), ("{y}あるある", 132, Wd.BLACK, 250)], 0, 330),
            os.path.join(Wd.HERE, "out", "short_120_shukudai.mp4"), os.path.join(Wd.HERE, "out", "short_120_shukudai_preview"))

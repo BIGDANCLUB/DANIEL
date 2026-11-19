@@ -41,12 +41,12 @@ def _camera(loc, look_at, lens=28):
 W.camera = _camera
 
 
-def cut(f0, loc, at, lens=28, orbit=None, push=None, piv=None):
-    """f0 コマ目から別のカメラに切りかえる。"""
+def cut(f0, loc, at, lens=28, orbit=None, push=None, piv=None, focus=None, fixat=None, zoom=None):
+    """f0 コマ目から別のカメラに切りかえる。focus：ピントを合わせる点（"far"＝遠く）。fixat：ねらう点を動かさない。"""
     keep = bpy.context.scene.camera
     c = W.camera(loc, at, lens)
     c["f0"] = f0
-    for k, v in (("orbit", orbit), ("push", push), ("piv", piv)):
+    for k, v in (("orbit", orbit), ("push", push), ("piv", piv), ("focus", focus), ("fixat", fixat), ("zoom", zoom)):
         if v is not None:
             c[k] = v
     if keep:
@@ -58,10 +58,35 @@ def cams():
     return sorted([o for o in bpy.data.objects if o.type == 'CAMERA' and "at" in o], key=lambda o: o["f0"])
 
 
+BLUR = 0.012        # 遠くの背景のボケの大きさ（画面の横幅に対する割合）
+FAR = 25.0          # ねらう点がこれより遠いときは、遠くにピントを合わせる
+
+
+def setup_dof(c):
+    """ボケ（被写界深度）。近くをねらうカメラは背景がボケ、遠くをねらうカメラは手前が少しボケる。"""
+    fo = c.get("focus")
+    if isinstance(fo, str) and fo == "none":
+        return None
+    dof = c.data.dof
+    dof.use_dof = True
+    if isinstance(fo, str) or (fo is None and (Vector(c["at"]) - Vector(c.location)).length > FAR):
+        dof.focus_distance = 10000.0
+        dof.aperture_fstop = 4.0 if c.data.lens < 45 else 2.8
+        return None
+    target = Vector(fo) if fo is not None else None
+    s = ((target or Vector(c["at"])) - Vector(c.location)).length
+    f = c.data.lens / 1000.0
+    width = 0.036 * C.RES[0] / C.RES[1]
+    dof.aperture_fstop = min(16.0, max(0.5, f * f / (BLUR * width * max(0.05, s - f))))
+    dof.focus_distance = s
+    return target
+
+
 def move_cams(nf):
-    """各カメラを、ねらう点のまわりに少し回りこみながら寄せる（ゆっくり加速・減速）。"""
+    """各カメラを、ねらう点のまわりに回りこみながら寄せる（ゆっくり加速・減速）。ピントも追いかける。"""
     cs = cams()
     for i, c in enumerate(cs):
+        target = setup_dof(c)
         if c.get("keep"):
             continue
         f0 = c["f0"]
@@ -73,8 +98,10 @@ def move_cams(nf):
         dist = d.length
         fwd = d.normalized()
         piv = p0 + fwd * min(dist, c.get("piv", 10.0))
-        orbit = math.radians(c.get("orbit", 9.0)) * (1 if i % 2 == 0 else -1)
-        push = min(c.get("push", 0.22) * (piv - p0).length, 2.5)
+        orbit = math.radians(c.get("orbit", 13.0)) * (1 if i % 2 == 0 else -1)
+        push = min(c.get("push", 0.3) * (piv - p0).length, 2.5)
+        track = c.data.dof.use_dof and c.data.dof.focus_distance < 9999
+        lens0, zoom = c.data.lens, c.get("zoom", 1.0)
         for f in list(range(f0, f1 + 1, 2)) + [f1]:
             t = (f - f0) / max(1, f1 - f0)
             u = t * t * (3 - 2 * t)
@@ -85,9 +112,16 @@ def move_cams(nf):
                 w = v - piv
                 return piv + Vector((w.x * ca - w.y * sa, w.x * sa + w.y * ca, w.z))
             c.location = rot(p0) + fwd * push * u
-            W.aim(c, rot(at))
+            W.aim(c, at if c.get("fixat") else rot(at))
             c.keyframe_insert("location", frame=f)
             c.keyframe_insert("rotation_euler", frame=f)
+            if zoom != 1.0:
+                c.data.lens = lens0 * (1 + (zoom - 1) * u)
+                c.data.keyframe_insert("lens", frame=f)
+            if track:
+                ft = target if target is not None else (at if c.get("fixat") else rot(at))
+                c.data.dof.focus_distance = (ft - c.location).length
+                c.data.dof.keyframe_insert("focus_distance", frame=f)
 
 
 def set_interp(o, kind):
@@ -237,7 +271,11 @@ def person(loc, facing, seed=0, arms="down", look=None, pose="stand", scale=1.0,
 
 
 # ---------- 空と光 ----------
+SKY_K, SUN_K = 0.6, 1.3     # 参考元の「強い日差し・濃い影」に寄せる（空の光を弱く、太陽を強く）
+
+
 def sky(lo=(0.96, 0.90, 0.80), hi=(0.42, 0.62, 0.88), strength=0.45):
+    """空。カメラに見える空は明るいまま、まわりを照らす光だけ弱くする（影が濃くなる）。"""
     w = bpy.data.worlds.new("sky")
     bpy.context.scene.world = w
     w.use_nodes = True
@@ -254,7 +292,16 @@ def sky(lo=(0.96, 0.90, 0.80), hi=(0.42, 0.62, 0.88), strength=0.45):
     nt.links.new(tc.outputs["Generated"], sep.inputs[0])
     nt.links.new(sep.outputs["Z"], ramp.inputs[0])
     nt.links.new(ramp.outputs[0], bg.inputs[0])
-    bg.inputs[1].default_value = strength
+    bg.inputs[1].default_value = strength * SKY_K
+    bg2 = nt.nodes.new("ShaderNodeBackground")
+    nt.links.new(ramp.outputs[0], bg2.inputs[0])
+    bg2.inputs[1].default_value = strength * 1.7
+    lp = nt.nodes.new("ShaderNodeLightPath")
+    mix = nt.nodes.new("ShaderNodeMixShader")
+    nt.links.new(lp.outputs["Is Camera Ray"], mix.inputs[0])
+    nt.links.new(bg.outputs[0], mix.inputs[1])
+    nt.links.new(bg2.outputs[0], mix.inputs[2])
+    nt.links.new(mix.outputs[0], nt.nodes["World Output"].inputs[0])
 
 
 def sun(elev, az, strength=4.5, col=(1.0, 0.93, 0.80)):
@@ -264,10 +311,34 @@ def sun(elev, az, strength=4.5, col=(1.0, 0.93, 0.80)):
     e, a = math.radians(elev), math.radians(az)
     d = Vector((-math.sin(a) * math.cos(e), -math.cos(a) * math.cos(e), -math.sin(e)))
     s.rotation_euler = d.to_track_quat('-Z', 'Y').to_euler()
-    s.data.energy = strength
-    s.data.color = col
-    s.data.angle = math.radians(2.0)
+    s.data.energy = strength * SUN_K
+    s.data.color = (col[0], col[1] * 0.97, col[2] * 0.9)
+    s.data.angle = math.radians(1.0)
     return s
+
+
+def room(col, strength):
+    """室内の背景の光（参考元のように影を濃く、暖かく）。"""
+    w = bpy.data.worlds.new("room")
+    bpy.context.scene.world = w
+    w.use_nodes = True
+    nt = w.node_tree
+    nt.nodes["Background"].inputs[0].default_value = (*col, 1)
+    nt.nodes["Background"].inputs[1].default_value = strength * SKY_K
+    bg2 = nt.nodes.new("ShaderNodeBackground")       # カメラに見える部分（天井のない所）は明るいまま
+    bg2.inputs[0].default_value = (*col, 1)
+    bg2.inputs[1].default_value = 0.9
+    lp = nt.nodes.new("ShaderNodeLightPath")
+    mix = nt.nodes.new("ShaderNodeMixShader")
+    nt.links.new(lp.outputs["Is Camera Ray"], mix.inputs[0])
+    nt.links.new(nt.nodes["Background"].outputs[0], mix.inputs[1])
+    nt.links.new(bg2.outputs[0], mix.inputs[2])
+    nt.links.new(mix.outputs[0], nt.nodes["World Output"].inputs[0])
+
+
+def window_sun(elev=30, az=-60, strength=3.5):
+    """窓から差しこむ日差し（室内に濃い光と影を作る）。"""
+    return sun(elev, az, strength, (1.0, 0.85, 0.65))
 
 
 def day(elev=35, az=-35, strength=4.6, col=(1.0, 0.93, 0.80)):
@@ -360,18 +431,41 @@ def surface_points(o, n, seed, front=None):
     return out
 
 
-def sparkle_points(points, f0, size, rise, mode="out", seed=1, life=(0.7, 1.5), name="sp", trail=(2, 4)):
-    """金色の光の粒（うしろに小さな粒が2つ続いて、光の跡になる）。"""
-    r = random.Random(seed)
-    meshes = []
-    for nm, col, em in (("sparkle_gold", (1.0, 0.85, 0.5), (1.0, 0.72, 0.30)), ("sparkle_white", (1, 0.97, 0.88), (1.0, 0.95, 0.80))):
-        tmp = F._ball(1.0, (0, 0, 0), W.mat(nm, col, emit=em, emit_strength=16), sub=1)
-        meshes.append(tmp.data)
+def particle_meshes(white_only=False):
+    """消える演出の粒：参考元のような四角い粒（金色と白）。"""
+    key = ("cubes", white_only)
+    if key in _PM:
+        return _PM[key]
+    out = []
+    cols = [("cube_white", (1, 0.97, 0.90), (1.0, 0.96, 0.85), 3.0)]
+    if not white_only:
+        cols.insert(0, ("cube_gold", (1.0, 0.75, 0.3), (1.0, 0.62, 0.18), 5.0))
+    for nm, col, em, es in cols:
+        bpy.ops.mesh.primitive_cube_add(size=1.0)
+        tmp = bpy.context.object
+        tmp.data.materials.append(W.mat(nm, col, emit=em, emit_strength=es))
+        tmp.data.use_fake_user = True
+        out.append(tmp.data)
         bpy.data.objects.remove(tmp)
+    _PM[key] = out
+    return out
+
+
+def sparkle_points(points, f0, size, rise, mode="out", seed=1, life=(0.7, 1.5), name="sp", trail=(2, 4), center=None,
+                   burst=0.0, white=False, gold_ratio=0.6):
+    """四角い光の粒。center を渡すと、そこから外向きに飛び散る（burst＝横向きの速さ）。うしろに小さな粒が続いて光の跡になる。"""
+    r = random.Random(seed)
+    meshes = particle_meshes(white)
     for k, p0 in enumerate(points):
-        me = meshes[0 if r.random() < 0.75 else 1]
-        sz = size * r.uniform(0.6, 1.4)
+        me = meshes[0 if (not white and r.random() < gold_ratio) else -1]
+        sz = size * r.uniform(0.6, 1.5)
         v = Vector((r.uniform(-0.35, 0.35) * rise, r.uniform(-0.35, 0.35) * rise, r.uniform(0.4, 1.1) * rise))
+        if center is not None:
+            out = Vector((p0.x - center[0], p0.y - center[1], 0))
+            if out.length > 1e-6:
+                v += out.normalized() * burst * r.uniform(0.4, 1.2)
+        spin = Vector((r.uniform(-6, 6), r.uniform(-6, 6), r.uniform(-6, 6)))
+        rot0 = Vector((r.uniform(0, 3), r.uniform(0, 3), r.uniform(0, 3)))
         lf = r.uniform(*life)
         nfr = int(lf * FPS)
         start = f0 + (r.randint(0, 10) if mode == "out" else 0)
@@ -385,32 +479,104 @@ def sparkle_points(points, f0, size, rise, mode="out", seed=1, life=(0.7, 1.5), 
                 vis = f >= start and dt >= 0
                 dt = max(dt, 0)
             u = min(max(dt / lf, 0), 1)
-            return p0 + v * dt, (sz * (1 - 0.8 * u) if vis else 1e-4)
+            # 飛び出してから、空気にブレーキをかけられて ゆっくりになる
+            s = (1 - math.exp(-2.2 * dt)) / 2.2
+            return p0 + v * s, (sz * (1 - 0.8 * u) if vis else 1e-4), rot0 + spin * dt
         for j, (dl, ks) in enumerate([(0, 1.0)] + [(d, 0.7 ** (i + 1)) for i, d in enumerate(trail)]):
+            if j and r.random() < 0.4:
+                continue
             o = bpy.data.objects.new(f"{name}{k}_{j}", me)
             bpy.context.collection.objects.link(o)
             o.visible_shadow = False
             for f in range(max(1, start - 1), start + nfr + 2 + dl):
-                loc, sc = state(f - dl)
+                loc, sc, rt = state(f - dl)
                 o.location = loc
+                o.rotation_euler = rt
                 o.scale = (max(sc * ks, 1e-4),) * 3
                 o.keyframe_insert("location", frame=f)
                 o.keyframe_insert("scale", frame=f)
+                o.keyframe_insert("rotation_euler", frame=f)
             if start - 2 >= 1:
                 o.scale = (1e-4,) * 3
                 o.keyframe_insert("scale", frame=1)
 
 
-def fuji_vanish(o, f0, n=480, seed=3):
+def fuji_vanish(o, f0, n=650, seed=3):
     R = o["R"]
-    sparkle_points(surface_points(o, n, seed), f0, R * 0.012, R * 0.12, seed=seed)
+    sparkle_points(surface_points(o, n, seed), f0, R * 0.01, R * 0.3, seed=seed, center=o.location, burst=R * 0.35)
     C.show_between(o, None, f0 + 4, s=R)
 
 
-def fuji_appear(o, f0, n=480, seed=4):
+def fuji_appear(o, f0, n=650, seed=4):
     R = o["R"]
-    sparkle_points(surface_points(o, n, seed), f0 - 30, R * 0.012, R * 0.12, mode="in", seed=seed, life=(0.8, 1.0))
+    sparkle_points(surface_points(o, n, seed), f0 - 30, R * 0.01, R * 0.3, mode="in", seed=seed, life=(0.8, 1.0),
+                   center=o.location, burst=R * 0.35)
     C.show_between(o, f0, None, s=R)
+
+
+def snow_cap_mesh():
+    """富士山の雪の部分だけのメッシュ。"""
+    key = ("snowcap",)
+    if key in _PM:
+        return _PM[key]
+    import bmesh
+    me = fuji_mesh(FUJI_H).copy()
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    bmesh.ops.delete(bm, geom=[f for f in bm.faces if f.material_index == 0], context='FACES')
+    bm.to_mesh(me)
+    bm.free()
+    me.use_fake_user = True
+    _PM[key] = me
+    return me
+
+
+def snow_fall(o, f0, hang=8, fall=36, seed=7):
+    """山だけが消えて、雪の部分が一瞬 空中に残る → 重力で落ちて（だんだん速く）、地面で白い粉になって散る。"""
+    R = o["R"]
+    s = bpy.data.objects.new("snowcap", snow_cap_mesh())
+    bpy.context.collection.objects.link(s)
+    s.location = o.location
+    s.scale = (1e-4,) * 3
+    s.keyframe_insert("scale", frame=1)
+    s.keyframe_insert("scale", frame=f0 + 2)
+    s.scale = (R,) * 3
+    s.keyframe_insert("scale", frame=f0 + 3)
+    z_top = FUJI_H * R
+    z_low = FUJI_H * R * 0.55        # 雪の下のはし
+    for k in range(fall + 1):
+        u = k / fall
+        s.location.z = o.location.z - z_low * u * u      # 等加速度（落ちる距離は時間の2乗）
+        s.rotation_euler.x = math.radians(4 * u * u)
+        s.keyframe_insert("location", frame=f0 + hang + k)
+        s.keyframe_insert("rotation_euler", frame=f0 + hang + k)
+    s.location.z = o.location.z
+    s.keyframe_insert("location", frame=f0 + hang - 1)
+    end = f0 + hang + fall
+    s.keyframe_insert("scale", frame=end)
+    s.scale = (1e-4,) * 3
+    s.keyframe_insert("scale", frame=end + 1)
+    # 落ちながら、下のはしから雪のかけらがこぼれる
+    r = random.Random(seed)
+    for k in range(0, fall, 4):
+        u = k / fall
+        zc = o.location.z + z_low - z_low * u * u
+        pts = []
+        for _ in range(14):
+            a = r.uniform(0, 2 * math.pi)
+            rad = fuji_profile(0.6) * R * r.uniform(0.85, 1.0)
+            pts.append(Vector(o.location) + Vector((rad * math.cos(a), rad * math.sin(a), zc - o.location.z)))
+        sparkle_points(pts, f0 + hang + k, R * 0.008, R * 0.05, seed=seed + k, life=(0.6, 1.0), white=True,
+                       name=f"crumb{k}_", trail=())
+    # 地面に落ちたところで、白い粉が横に広がる
+    pts = []
+    for _ in range(260):
+        a = r.uniform(0, 2 * math.pi)
+        rad = r.uniform(0.05, 0.55) * R
+        pts.append(Vector(o.location) + Vector((rad * math.cos(a), rad * math.sin(a), r.uniform(0, 0.05) * z_top)))
+    sparkle_points(pts, end - 4, R * 0.01, R * 0.08, seed=seed, life=(1.0, 1.8), center=o.location, burst=R * 0.5,
+                   white=True, name="powder", trail=())
+    return s
 
 
 def cloud_mat():
@@ -422,12 +588,20 @@ def cap_cloud(top, R, name="kasa", seed=1):
     r = random.Random(seed)
     pts = [(top[0] + r.uniform(-0.05, 0.05) * R, top[1] + r.uniform(-0.05, 0.05) * R, top[2] + R * (0.01 + 0.012 * k),
             R * (0.17 - 0.03 * k), (1, 1, 0.16)) for k in range(3)]
-    return C.multi_ball(pts, cloud_mat(), name, sub=2)
+    return recenter(C.multi_ball(pts, cloud_mat(), name, sub=2), top)
 
 
 def lens_cloud(loc, R, name="tsurushi"):
     pts = [(loc[0], loc[1], loc[2] + R * 0.012 * k, R * (0.12 - 0.025 * k), (1.4, 0.8, 0.18)) for k in range(3)]
-    return C.multi_ball(pts, cloud_mat(), name, sub=2)
+    return recenter(C.multi_ball(pts, cloud_mat(), name, sub=2), loc)
+
+
+def recenter(o, c):
+    """メッシュの中心を c に移す（その場で大きさを変えられるように）。"""
+    from mathutils import Matrix
+    o.data.transform(Matrix.Translation(-Vector(c)))
+    o.location = c
+    return o
 
 
 def grow(o, f0, f1, s1=1.0, s0=1e-4):
@@ -467,6 +641,69 @@ def town(seed=1, y=(40, 400), x=(-260, 260), n=90):
         C.multi_box(rx, roofs[rm], f"town_r{k}")
 
 
+def wire(p0, p1, m, r=0.012):
+    p0, p1 = Vector(p0), Vector(p1)
+    d = p1 - p0
+    rot = d.to_track_quat('Z', 'Y').to_euler()
+    o = F._cyl(r, r, d.length, tuple((p0 + p1) / 2), m, rot=tuple(rot), verts=5)
+    o.visible_shadow = False
+    return o
+
+
+def utility_poles(pts, h=9.0):
+    """電柱と電線（日本の町らしさ）。pts = [(x, y)]。"""
+    pole = W.mat("pole_conc", (0.62, 0.62, 0.60), 0.9)
+    dark = W.mat("wire_black", (0.05, 0.05, 0.05), 0.6)
+    for (x, y) in pts:
+        F._cyl(0.14, 0.11, h, (x, y, h / 2), pole, verts=8)
+        W.box((x, y, h - 0.6), (1.6, 0.1, 0.1), pole, bevel=0)
+        F._cyl(0.18, 0.18, 0.45, (x + 0.35, y, h - 1.6), W.mat("transformer", (0.55, 0.58, 0.60), 0.6), verts=10)
+    for (a, b) in zip(pts, pts[1:]):
+        for dx in (-0.7, 0.0, 0.7):
+            mid = ((a[0] + b[0]) / 2 + dx, (a[1] + b[1]) / 2, h - 0.9)
+            wire((a[0] + dx, a[1], h - 0.55), mid, dark)
+            wire(mid, (b[0] + dx, b[1], h - 0.55), dark)
+
+
+def cat(loc, facing=0, col=(0.85, 0.55, 0.25)):
+    """丸くなって寝ているネコ。"""
+    m = W.mat(f"cat_{col}", col, 0.9)
+    bpy.ops.object.empty_add(location=loc)
+    root = bpy.context.object
+    root.rotation_euler.z = math.radians(-facing)
+    parts = [F._ball(0.16, (0, 0, 0.1), m, sub=2, sc=(1.3, 1.0, 0.65)), F._ball(0.09, (0.17, 0.08, 0.13), m, sub=2),
+             F._cyl(0.035, 0.0, 0.07, (0.14, 0.11, 0.22), m, verts=4), F._cyl(0.035, 0.0, 0.07, (0.21, 0.07, 0.22), m, verts=4),
+             F._ball(0.04, (-0.12, 0.12, 0.05), m, sub=1, sc=(2.5, 1.0, 0.8))]
+    for p in parts:
+        p.parent = root
+    for f, s in ((1, 1.0), (45, 1.06), (90, 1.0), (135, 1.06), (180, 1.0), (225, 1.06)):     # 寝息でおなかが動く
+        parts[0].scale = (1, 1, s)
+        parts[0].keyframe_insert("scale", frame=f)
+    return root
+
+
+def engawa_props():
+    """縁側の小物（座ぶとん、お茶、盆栽、くつぬぎ石とげた、ネコ）。"""
+    W.box((0.2, 0.75, 0.475), (0.55, 0.55, 0.06), W.mat("zabuton", (0.55, 0.18, 0.20), 0.9), bevel=0.02)
+    W.box((-0.5, 0.72, 0.475), (0.45, 0.45, 0.06), W.mat("zabuton2", (0.20, 0.30, 0.50), 0.9), bevel=0.02)
+    W.box((0.95, 0.55, 0.465), (0.42, 0.3, 0.03), W.mat("tray", (0.30, 0.15, 0.10), 0.4), bevel=0.01)
+    F._ball(0.075, (0.88, 0.55, 0.54), W.mat("kyusu", (0.35, 0.22, 0.14), 0.3), sub=2, sc=(1, 1, 0.85))
+    F._cyl(0.012, 0.006, 0.09, (0.80, 0.55, 0.56), W.mat("kyusu", (0.35, 0.22, 0.14), 0.3), rot=(0, math.radians(-60), 0))
+    for k in range(2):
+        F._cyl(0.033, 0.028, 0.07, (1.03 + k * 0.08, 0.5 + k * 0.08, 0.515), W.mat("yunomi", (0.80, 0.78, 0.70), 0.3),
+               verts=12)
+    F._cyl(0.16, 0.12, 0.16, (-1.5, 0.6, 0.53), W.mat("bonsai_pot", (0.30, 0.32, 0.38), 0.4), verts=12)
+    C.multi_ball([(-1.5 + dx, 0.6, 0.78 + dz, rr, (1.4, 1.0, 0.6)) for dx, dz, rr in ((-0.12, 0.05, 0.13), (0.1, 0.12, 0.12),
+                                                                                      (0.0, 0.24, 0.1))],
+                 W.mat("bonsai_leaf", (0.16, 0.34, 0.12), 0.9), "bonsai")
+    F._cyl(0.025, 0.03, 0.25, (-1.5, 0.6, 0.72), W.mat("bonsai_trunk", (0.30, 0.20, 0.12), 0.9), verts=6)
+    W.box((0.1, 1.45, 0.12), (1.0, 0.55, 0.24), W.mat("rock_step", (0.55, 0.54, 0.50), 1.0), bevel=0.06)
+    geta = W.mat("geta", (0.65, 0.48, 0.30), 0.7)
+    for dx in (-0.1, 0.1):
+        W.box((dx, 1.42, 0.27), (0.1, 0.24, 0.03), geta, bevel=0.005)
+    cat((-1.0, 0.25, 0.45), 200)
+
+
 def engawa_set(people=True):
     """富士市の家の縁側。縁側の床の端が y=1.0、高さ 0.45。富士山は +y の遠く。"""
     wood = W.mat("engawa", (0.55, 0.38, 0.22), 0.6)
@@ -483,6 +720,8 @@ def engawa_set(people=True):
     for i, (x, y, h) in enumerate(((-5.5, 10, 4.5), (6.0, 11, 4.0))):
         C.tree((x, y, 0), h=h, seed=40 + i, crowns=[(0.17, 0.36, 0.12)])
     W.box((3.0, 4.5, 0.4), (0.8, 0.8, 0.8), W.mat("stone_lantern", (0.6, 0.6, 0.58), 0.9), bevel=0.05)
+    engawa_props()
+    utility_poles([(-25, 20), (-8, 20), (9, 20), (26, 20)])
     town(seed=2, y=(40, 500), n=120)
     foothills(seed=3, y=(700, 1200), n=10, col=(0.30, 0.42, 0.34), h=(40, 90))
 
@@ -503,17 +742,39 @@ def f01_open(nf):
     engawa_set()
     person((0.2, 0.8, 0.45), 0, seed=4, arms="pray", look=GRANDPA)
     fj = fuji(FUJI_LOC, FUJI_R)
-    fuji_vanish(fj, fr(TL.T_VANISH))
+    fv = fr(TL.T_VANISH)
+    fuji_vanish(fj, fv)
+    snow_fall(fj, fv)
+    # 山頂の笠雲：山が消えても、雲だけがその場に残る → ゆっくり沈んで広がる
+    kasa = cap_cloud((FUJI_LOC[0], FUJI_LOC[1], FUJI_H * FUJI_R + 8), FUJI_R)
+    kasa.scale = (0.55, 0.55, 0.6)
+    kasa.keyframe_insert("scale", frame=fv + 6)
+    kasa.keyframe_insert("location", frame=fv + 6)
+    kasa.scale = (0.8, 0.8, 0.4)
+    kasa.location.z -= FUJI_H * FUJI_R * 0.12
+    kasa.keyframe_insert("scale", frame=nf)
+    kasa.keyframe_insert("location", frame=nf)
     for k in range(5):     # 朝の小鳥
         b = C.link_copy(C.small_bird_mesh(), (-20 + k * 7, 60 + k * 9, 18 + k), f"bird{k}")
         b.scale = (3,) * 3
         b.keyframe_insert("location", frame=1)
-        b.location.x += 30
+        b.location.x += 40
         b.keyframe_insert("location", frame=nf)
-    cut(1, (-1.3, -2.1, 1.7), (FUJI_LOC[0], FUJI_LOC[1], FUJI_H * FUJI_R * 0.7), lens=55, orbit=3, push=0.0, piv=3)
+    for k in range(3):     # 手前を横切る小鳥
+        b = C.link_copy(C.small_bird_mesh(), (-14 - k * 2.5, 13 + k * 3, 4.5 + k * 0.6), f"birdn{k}")
+        b.scale = (1.5,) * 3
+        b.keyframe_insert("location", frame=1)
+        b.location.x += 34
+        b.keyframe_insert("location", frame=110)
+    top = (FUJI_LOC[0], FUJI_LOC[1], FUJI_H * FUJI_R * 0.62)
+    # 冒頭：おじいさんの肩ごしに、横へ回りこみながら富士山（手前のおじいさんはボケる）
+    cut(1, (-0.45, -1.55, 1.6), top, lens=55, orbit=20, push=0.15, piv=2.4, fixat=1, focus="far")
     cut(61, (0.55, 2.7, 1.95), (0.2, 0.8, 1.95), lens=40, orbit=14, push=0.25)
     c = engawa_cam(nf)
     c["f0"] = 121
+    # 消えたあと：望遠で、残った雪が落ち、雲だけが残る「何もない空」を文字なしで見せる
+    cut(fv + 8, (-0.4, -2.1, 1.5), (FUJI_LOC[0], FUJI_LOC[1], FUJI_H * FUJI_R * 0.45), lens=45, orbit=10, push=0.0, piv=3,
+        fixat=1, focus="far", zoom=1.18)
     return nf
 
 
@@ -573,7 +834,7 @@ def f02_train(nf):
 
 def f03_shadow(nf):
     """朝霧高原：うしろ（+y）の富士山の影が、牧場に長くのびている → 消える。カメラは影の先（-y）を見る。"""
-    sky(lo=(1.0, 0.80, 0.58), hi=(0.50, 0.62, 0.86), strength=0.22)
+    sky(lo=(1.0, 0.80, 0.58), hi=(0.50, 0.62, 0.86), strength=0.5)
     sun(3, 0, 8.0, (1.0, 0.72, 0.45))
     C.grass_ground(col=(0.34, 0.46, 0.16), size=4000, tufts=3000, area=(-8, 8, -16, 2))
     fj = fuji((0, 200, 0), 100)
@@ -584,24 +845,65 @@ def f03_shadow(nf):
         W.box((k * 2.0, -6, 0.5), (0.1, 0.1, 1.0), fence, bevel=0)
     W.box((0, -6, 0.8), (42, 0.06, 0.08), fence, bevel=0)
     W.box((0, -6, 0.45), (42, 0.06, 0.08), fence, bevel=0)
-    white = W.mat("cow_white", (0.92, 0.92, 0.90), 0.8)
-    blk = W.mat("cow_black", (0.06, 0.06, 0.06), 0.8)
     r = random.Random(3)
-    for k in range(7):
-        x, y = r.uniform(-14, 14), r.uniform(-40, -10)
-        a = r.uniform(0, 3)
-        W.box((x, y, 1.0), (0.9, 2.0, 0.9), white, rot=(0, 0, a), bevel=0.1)
-        W.box((x + 1.1 * math.sin(-a), y + 1.1 * math.cos(a), 1.2), (0.5, 0.6, 0.5), blk, rot=(0, 0, a), bevel=0.08)
-        for dx, dy in ((-0.3, -0.7), (0.3, -0.7), (-0.3, 0.7), (0.3, 0.7)):
-            ca, sa = math.cos(a), math.sin(a)
-            W.box((x + dx * ca - dy * sa, y + dx * sa + dy * ca, 0.3), (0.15, 0.15, 0.6), white, bevel=0)
+    cow((1.2, -9.0), 100, seed=1, nf=nf)
+    cow((-2.6, -12.5), 230, seed=2, nf=nf)
+    for k in range(6):
+        cow((r.uniform(-14, 14), r.uniform(-40, -16)), r.uniform(0, 360), seed=3 + k)
+    # 牧場の牛舎とサイロ、干し草ロール
+    W.box((-16, -34, 2.5), (10, 7, 5), W.mat("barn", (0.72, 0.22, 0.16), 0.8), bevel=0.05)
+    W.box((-16, -34, 5.4), (10.6, 7.6, 0.9), W.mat("barn_roof", (0.25, 0.27, 0.30), 0.7), bevel=0.05)
+    F._cyl(2.0, 2.0, 11, (-9.5, -36, 5.5), W.mat("silo", (0.85, 0.84, 0.80), 0.7), verts=16)
+    F._ball(2.0, (-9.5, -36, 11), W.mat("silo_top", (0.30, 0.45, 0.55), 0.5), sub=2, sc=(1, 1, 0.6))
+    for k in range(5):
+        F._cyl(0.7, 0.7, 1.2, (6 + k * 1.6, -22 - (k % 2) * 1.2, 0.7), W.mat("hay", (0.85, 0.75, 0.45), 0.9),
+               rot=(0, math.radians(90), 0), verts=14)
     foothills(seed=9, y=(-1400, -900), x=(-1400, 1400), n=9, col=(0.36, 0.44, 0.50), h=(80, 200))
     for i in range(8):
         C.tree((r.uniform(-60, 60), r.uniform(-120, -50), 0), h=r.uniform(7, 10), seed=60 + i, crowns=[(0.16, 0.32, 0.12)])
-    c = W.camera((0, 30, 30), (0, -180, 0), lens=22)
-    c["piv"], c["orbit"] = 120, 12
-    cut(90, (6, -8, 1.3), (0, -28, 0.8), lens=28, orbit=12)
+    # 手前に牛。富士山の影の中 → 影が消えて、牧場いっぱいに朝日が当たる
+    W.camera((2.6, -2.2, 2.1), (-1.0, -40, 0.4), lens=24)
+    cut(90, (4.4, -6.6, 1.3), (1.8, -9.3, 0.95), lens=35, orbit=16, push=0.2)
     return nf
+
+
+def cow(loc, facing, seed=0, nf=0):
+    """ホルスタイン（白に黒のもよう、ピンクの鼻、角、しっぽ）。nf を渡すと、首を下げて草を食べる。"""
+    r = random.Random(seed)
+    white = W.mat("cow_white", (0.92, 0.92, 0.90), 0.8)
+    blk = W.mat("cow_black", (0.06, 0.06, 0.06), 0.8)
+    pink = W.mat("cow_nose", (0.85, 0.55, 0.55), 0.6)
+    horn = W.mat("cow_horn", (0.85, 0.80, 0.65), 0.5)
+    bpy.ops.object.empty_add(location=(loc[0], loc[1], 0))
+    root = bpy.context.object
+    root.rotation_euler.z = math.radians(-facing)
+    parts = [W.box((0, 0, 1.05), (0.95, 2.1, 0.95), white, bevel=0.12)]
+    for _ in range(4):
+        sx = r.choice((-1, 1))
+        parts.append(W.box((sx * 0.48, r.uniform(-0.7, 0.7), r.uniform(0.9, 1.25)),
+                           (0.04, r.uniform(0.4, 0.8), r.uniform(0.3, 0.5)), blk, bevel=0))
+    parts.append(W.box((r.uniform(-0.2, 0.2), r.uniform(-0.5, 0.5), 1.53), (r.uniform(0.4, 0.6), r.uniform(0.5, 0.8), 0.04),
+                       blk, bevel=0))
+    for dx, dy in ((-0.3, -0.75), (0.3, -0.75), (-0.3, 0.75), (0.3, 0.75)):
+        parts.append(W.box((dx, dy, 0.32), (0.17, 0.17, 0.64), white, bevel=0))
+        parts.append(W.box((dx, dy, 0.04), (0.18, 0.18, 0.08), blk, bevel=0))
+    parts.append(F._cyl(0.03, 0.03, 0.8, (0, -1.1, 0.95), white, rot=(math.radians(-15), 0, 0), verts=6))
+    bpy.ops.object.empty_add(location=(0, 1.0, 1.25))
+    neck = bpy.context.object
+    head = [W.box((0, 0.35, 0.0), (0.5, 0.6, 0.5), blk, bevel=0.08),
+            W.box((0, 0.68, -0.08), (0.42, 0.14, 0.3), pink, bevel=0.05),
+            F._cyl(0.03, 0.0, 0.16, (-0.2, 0.25, 0.3), horn, rot=(0, math.radians(-30), 0), verts=6),
+            F._cyl(0.03, 0.0, 0.16, (0.2, 0.25, 0.3), horn, rot=(0, math.radians(30), 0), verts=6),
+            W.box((-0.3, 0.25, 0.12), (0.18, 0.06, 0.1), blk, bevel=0), W.box((0.3, 0.25, 0.12), (0.18, 0.06, 0.1), blk, bevel=0)]
+    for h in head:
+        h.parent = neck
+    for p in parts + [neck]:
+        p.parent = root
+    if nf:
+        for f in range(1, nf + 1, 15):      # 首を下げて草を食べる → 顔を上げる
+            neck.rotation_euler.x = math.radians(-45 if (f // 45) % 2 == 0 else -5)
+            neck.keyframe_insert("rotation_euler", frame=f)
+    return root
 
 
 def mural_texture():
@@ -632,11 +934,8 @@ def mural_texture():
 
 
 def f04_sento(nf):
-    w = bpy.data.worlds.new("room")
-    bpy.context.scene.world = w
-    w.use_nodes = True
-    w.node_tree.nodes["Background"].inputs[0].default_value = (0.85, 0.88, 0.9, 1)
-    w.node_tree.nodes["Background"].inputs[1].default_value = 0.3
+    room((0.85, 0.88, 0.9), 0.3)
+    window_sun(elev=38, az=150, strength=3.0)
     tile = W.mat("tile", (0.85, 0.90, 0.92), 0.3)
     W.box((0, 0, -0.05), (8, 8, 0.1), W.mat("tile_floor", (0.70, 0.78, 0.80), 0.3), bevel=0)
     bpy.ops.mesh.primitive_plane_add(size=1, location=(0, 3.0, 2.2))
@@ -651,6 +950,18 @@ def f04_sento(nf):
     for k in range(5):
         W.box((-3.8, -2 + k * 0.8, 0.9), (0.12, 0.1, 0.12), W.mat("faucet", (0.8, 0.8, 0.82), 0.2), bevel=0.01)
     man = person((0.4, 1.2, 0.0), 0, seed=6, pose="sit", look={"top": (0.86, 0.68, 0.55), "bottom": (0.86, 0.68, 0.55)})
+    # 黄色い湯おけと、いす
+    oke = W.mat("oke_yellow", (0.95, 0.75, 0.10), 0.4)
+    stool = W.mat("stool", (0.85, 0.85, 0.82), 0.4)
+    for k in range(5):
+        F._cyl(0.15, 0.12, 0.13, (-3.3, -2 + k * 0.8, 0.065), oke, verts=14)
+        W.box((-2.9, -2 + k * 0.8, 0.13), (0.32, 0.3, 0.26), stool, bevel=0.03)
+    for k in range(4):
+        F._cyl(0.15, 0.12, 0.13, (1.9, 0.0, 0.065 + k * 0.1), oke, verts=14)
+    W.box((-1.0, -0.2, 0.13), (0.32, 0.3, 0.26), stool, bevel=0.03)
+    F._cyl(0.15, 0.12, 0.13, (-1.0, -0.2, 0.33), oke, verts=14)
+    W.box((-0.4, 0.15, 0.62), (0.35, 0.1, 0.03), W.mat("towel", (0.95, 0.95, 0.95), 0.9), bevel=0.01)
+    W.box((-3.84, -0.4, 1.5), (0.04, 3.4, 0.6), W.mat("mirror", (0.8, 0.85, 0.9), 0.05), bevel=0)
     man.location.z = 0.05
     bpy.ops.object.light_add(type='AREA', location=(0, 0.5, 3.8))
     a = bpy.context.object
@@ -846,12 +1157,15 @@ def f08_snow(nf):
     day(elev=62, az=-20, strength=5.0, col=(1.0, 0.96, 0.86))
     C.grass_ground(col=(0.32, 0.46, 0.15), tufts=4000, area=(-7, 7, -4, 10))
     town(seed=5, y=(60, 400), n=60)
+    utility_poles([(-20, 14), (-5, 14), (10, 14), (25, 14)])
+    for i, (x, y) in enumerate(((-2.5, 9), (5.0, 8), (-6.5, 12))):
+        C.tree((x, y, 0), h=4.0, seed=70 + i)
     foothills(seed=4, y=(800, 1300), n=8, col=(0.30, 0.42, 0.34), h=(40, 90), gap=(-500, 500))
     g = fuji(FUJI_LOC, FUJI_R, ghost=True)
     g.modifiers["wf"].thickness = 0.0015
     C.show_between(g, None, 75, s=FUJI_R)
-    person((0.4, 0.5, 0), 10, seed=3, arms=("down", "brow"), hat="cap")
-    W.camera((-1.4, -2.6, 1.3), (0.5, 40, 7), lens=28)
+    person((-0.2, 1.2, 0), 10, seed=3, arms=("down", "brow"), hat="cap")
+    W.camera((-1.4, -2.6, 1.3), (6.0, 40, 7), lens=28)
     cut(96, (0.7, 2.4, 1.65), (0.4, 0.5, 1.55), lens=34, orbit=14)
     return nf
 
@@ -879,6 +1193,9 @@ def f09_hazard(nf):
     day(elev=40, az=-40, strength=4.6)
     C.grass_ground(col=(0.32, 0.44, 0.15), tufts=3000, area=(-6, 6, -3, 8))
     town(seed=7, y=(40, 300), n=50)
+    utility_poles([(-18, 12), (-3, 12), (12, 12)])
+    for i, (x, y) in enumerate(((3.5, 7), (-5.0, 9))):
+        C.tree((x, y, 0), h=4.5, seed=80 + i)
     foothills(seed=5, y=(800, 1300), n=8, col=(0.30, 0.42, 0.34), h=(40, 90), gap=(-500, 500))
     board = W.mat("board", (0.45, 0.32, 0.20), 0.8)
     W.box((0, 2.0, 1.4), (1.6, 0.1, 1.2), board, bevel=0.02)
@@ -927,11 +1244,8 @@ def chalk_texture():
 
 
 def f10_plumb(nf):
-    w = bpy.data.worlds.new("room")
-    bpy.context.scene.world = w
-    w.use_nodes = True
-    w.node_tree.nodes["Background"].inputs[0].default_value = (0.9, 0.88, 0.82, 1)
-    w.node_tree.nodes["Background"].inputs[1].default_value = 0.35
+    room((0.9, 0.88, 0.82), 0.35)
+    window_sun(elev=28, az=150, strength=3.2)
     W.box((0, 0, -0.05), (8, 8, 0.1), W.mat("floor_wood", (0.60, 0.45, 0.30), 0.6), bevel=0)
     W.box((0, 2.5, 1.6), (8, 0.1, 3.2), W.mat("room_wall", (0.88, 0.86, 0.80), 0.9), bevel=0)
     bpy.ops.mesh.primitive_plane_add(size=1, location=(-0.6, 2.44, 1.75))
@@ -959,6 +1273,19 @@ def f10_plumb(nf):
         piv.rotation_euler.y = math.radians(deg)
         piv.keyframe_insert("rotation_euler", frame=f)
     person((1.4, 0.0, 0), 300, seed=1, scale=0.85, look=KID)
+    # 理科室の棚（ビーカー、フラスコ、地球儀）
+    shelf = W.mat("shelf_wood", (0.50, 0.36, 0.22), 0.7)
+    glassm = W.mat("beaker", (0.80, 0.90, 0.95), 0.05, alpha=0.5)
+    W.box((2.3, 2.2, 1.0), (1.6, 0.4, 2.0), shelf, bevel=0.01)
+    for k in range(3):
+        W.box((2.3, 2.0, 0.45 + k * 0.55), (1.5, 0.36, 0.03), W.mat("shelf_board", (0.62, 0.48, 0.32), 0.7), bevel=0)
+        for j in range(5):
+            F._cyl(0.06, 0.06, 0.16, (1.75 + j * 0.27, 2.0, 0.55 + k * 0.55), glassm, verts=10)
+    F._ball(0.18, (-1.6, 0.9, 1.05), W.mat("globe_sea", (0.20, 0.45, 0.75), 0.4), sub=2)
+    F._cyl(0.02, 0.03, 0.85, (-1.6, 0.9, 0.42), W.mat("stand_metal", (0.70, 0.70, 0.72), 0.3), verts=8)
+    W.box((-1.6, 0.9, 0.0), (0.5, 0.6, 0.04), W.mat("floor_wood", (0.60, 0.45, 0.30), 0.6), bevel=0)
+    for k, col in enumerate(((0.95, 0.85, 0.35), (0.45, 0.70, 0.90))):
+        W.box((1.2 + k * 0.9, 2.44, 2.2), (0.7, 0.02, 0.9), W.mat(f"poster{k}", col, 0.8), bevel=0)
     W.camera((0.25, -0.55, 1.45), (0.3, 0.75, 1.3), lens=30)
     return nf
 
@@ -1041,6 +1368,12 @@ def bill_texture():
 def f12_kid(nf):
     C.book_texture = ichifuji_texture
     C.c10_book(nf)
+    bpy.context.scene.world.node_tree.nodes["Background"].inputs[1].default_value *= SKY_K
+    window_sun(elev=25, az=150, strength=2.6)
+    W.box((-0.9, 0.5, 0.18), (0.36, 0.36, 0.36), W.mat("teapot_box", (0.30, 0.20, 0.14), 0.5), bevel=0.03)
+    F._cyl(0.035, 0.03, 0.08, (0.32, 0.25, 0.4), W.mat("yunomi", (0.80, 0.78, 0.70), 0.3), verts=12)
+    F._ball(0.05, (-0.25, 0.2, 0.39), W.mat("mikan", (0.98, 0.55, 0.10), 0.5), sub=2)
+    F._ball(0.05, (-0.15, 0.28, 0.39), W.mat("mikan", (0.98, 0.55, 0.10), 0.5), sub=2)
     bpy.ops.mesh.primitive_plane_add(size=1, location=(0.42, 0.55, 0.37))
     b = bpy.context.object
     b.scale = (0.16, 0.075, 1)
@@ -1085,10 +1418,46 @@ def river_set(level0, level1, nf, fish=True):
         C.tree((r.choice((-1, 1)) * r.uniform(4, 9), r.uniform(3, 30), 0), h=r.uniform(5, 8), seed=30 + i)
 
 
+def heron(loc, facing, nf=0):
+    """川に立つシラサギ（首をのばして、ときどき水をつつく）。"""
+    wm = W.mat("heron", (0.97, 0.97, 0.95), 0.6)
+    ym = W.mat("heron_beak", (0.95, 0.75, 0.15), 0.5)
+    km = W.mat("heron_leg", (0.10, 0.10, 0.10), 0.6)
+    bpy.ops.object.empty_add(location=loc)
+    root = bpy.context.object
+    root.rotation_euler.z = math.radians(-facing)
+    parts = [F._ball(0.16, (0, 0, 0.62), wm, sub=2, sc=(0.8, 1.5, 0.8))]
+    for dx in (-0.04, 0.04):
+        parts.append(F._cyl(0.01, 0.01, 0.55, (dx, 0, 0.28), km, verts=5))
+    bpy.ops.object.empty_add(location=(0, 0.18, 0.7))
+    neck = bpy.context.object
+    for h in (F._cyl(0.03, 0.03, 0.4, (0, 0.05, 0.2), wm, rot=(math.radians(-15), 0, 0), verts=6),
+              F._ball(0.06, (0, 0.1, 0.42), wm, sub=2, sc=(0.8, 1.3, 0.8)),
+              F._cyl(0.015, 0.0, 0.16, (0, 0.24, 0.41), ym, rot=(math.radians(-90), 0, 0), verts=6)):
+        h.parent = neck
+    for p in parts + [neck]:
+        p.parent = root
+    for f in range(1, nf + 1, 6):
+        neck.rotation_euler.x = math.radians(-70 if (f // 36) % 3 == 1 else 0)
+        neck.keyframe_insert("rotation_euler", frame=f)
+    return root
+
+
 def f13_lowwater(nf):
     day(elev=40, az=-30, strength=4.6)
     river_set(-0.1, -0.5, nf)
-    W.camera((0.8, -3.5, 1.4), (0.0, 8, -0.4), lens=26)
+    C.multi_ball([(0.3, 6.0, -0.65, 0.32, (1.3, 1.0, 0.8))], W.mat("rock_river", (0.50, 0.50, 0.50), 0.9), "heron_rock")
+    heron((0.3, 6.0, -0.42), 200, nf)
+    # 川をのぞきこむ、地元のおじいさん（柵と看板）
+    person((2.9, 4.2, 0), 250, seed=4, arms="hold", look=GRANDPA)
+    rail = W.mat("rail_wood", (0.50, 0.38, 0.25), 0.8)
+    for k in range(6):
+        W.box((2.4, -1 + k * 2.0, 0.45), (0.1, 0.1, 0.9), rail, bevel=0)
+    W.box((2.4, 4, 0.85), (0.08, 12, 0.08), rail, bevel=0)
+    W.box((3.4, 6.0, 1.2), (0.06, 0.9, 0.6), W.mat("sign_board", (0.95, 0.93, 0.85), 0.8), bevel=0.01)
+    W.box((3.4, 6.0, 0.5), (0.06, 0.06, 1.0), rail, bevel=0)
+    # 水面すれすれから：手前の石と水草がボケて、奥のサギとおじいさん
+    W.camera((1.5, -1.0, 0.25), (1.8, 6.0, -0.1), lens=30)
     cut(76, (1.4, 1.0, 0.15), (-0.2, 12, -0.4), lens=26, orbit=8)
     return nf
 
@@ -1125,6 +1494,14 @@ def trout_set(nf, level0, level1, worker_arms, alt=None, jump=False):
             fo.keyframe_insert("rotation_euler", frame=f)
     foothills(seed=3, y=(800, 1300), n=8, col=(0.30, 0.42, 0.34), h=(40, 90), gap=(-500, 500))
     person((0.3, -0.7, 0), 200, seed=11, arms=worker_arms, alt=alt, nf=nf, period=8, look=TROUT, hat="cap")
+    # 養殖場の小物（青いバケツ、たも網、ホース、えさの袋）
+    bucket = W.mat("bucket_blue", (0.15, 0.40, 0.75), 0.5)
+    for k in range(3):
+        F._cyl(0.17, 0.14, 0.32, (-1.6 + k * 0.45, -1.4, 0.16), bucket, verts=14)
+    F._cyl(0.015, 0.015, 1.8, (1.6, -0.9, 0.9), W.mat("net_pole", (0.75, 0.70, 0.55), 0.6), rot=(math.radians(25), 0, 0))
+    F._ball(0.2, (1.6, -0.5, 1.75), W.mat("net", (0.15, 0.30, 0.20), 0.9), sub=1, sc=(1, 1, 0.5))
+    W.box((-2.6, -1.2, 0.2), (0.5, 0.35, 0.4), W.mat("feed_bag", (0.85, 0.80, 0.65), 0.9), bevel=0.05)
+    W.box((-3.1, -1.1, 0.2), (0.5, 0.35, 0.4), W.mat("feed_bag", (0.85, 0.80, 0.65), 0.9), bevel=0.05)
 
 
 def f14_trout(nf):
@@ -1134,7 +1511,7 @@ def f14_trout(nf):
 
 
 def factory_set(nf, running, workers):
-    day(elev=40, az=-35, strength=4.6)
+    day(elev=40, az=150, strength=4.6)
     C.grass_ground(col=(0.42, 0.42, 0.42), name="asphalt")
     wall = W.mat("factory", (0.78, 0.80, 0.82), 0.8)
     W.box((0, 14, 5), (30, 12, 10), wall, bevel=0.1)
@@ -1158,6 +1535,17 @@ def factory_set(nf, running, workers):
                 rolls.append((-4.5 + i * 0.5 + 0.0, 3.0 + j * 0.5, 0.25 + k * 0.5))
     for (x, y, z) in rolls:
         F._cyl(0.22, 0.22, 0.45, (x, y, z), white, verts=12)
+    # パレットに積んだ紙、フォークリフト、トラック
+    pal = W.mat("pallet", (0.70, 0.55, 0.35), 0.8)
+    for k in range(3):
+        W.box((-7 + k * 1.4, 4.5, 0.08), (1.2, 1.2, 0.16), pal, bevel=0)
+        W.box((-7 + k * 1.4, 4.5, 0.6), (1.1, 1.1, 0.9), white, bevel=0.02)
+    W.box((6.5, 2.0, 0.7), (1.2, 2.0, 1.0), W.mat("forklift", (0.95, 0.70, 0.10), 0.5), bevel=0.05)
+    W.box((6.5, 1.4, 1.9), (1.1, 0.9, 0.08), W.mat("forklift_roof", (0.15, 0.15, 0.15), 0.6), bevel=0)
+    for dx in (-0.5, 0.5):
+        F._cyl(0.04, 0.04, 1.4, (6.5 + dx, 1.0, 1.2), W.mat("forklift_roof", (0.15, 0.15, 0.15), 0.6), verts=6)
+    W.box((-10, 9.0, 1.6), (2.4, 6.5, 2.6), W.mat("truck_box", (0.85, 0.86, 0.88), 0.6), bevel=0.05)
+    W.box((-10, 5.0, 1.2), (2.3, 1.6, 1.8), W.mat("truck_cab", (0.20, 0.40, 0.70), 0.4), bevel=0.08)
     big = F._cyl(1.2, 1.2, 3.0, (3.5, 5.0, 1.3), white, rot=(0, math.radians(90), 0), verts=24)
     bpy.ops.object.empty_add(location=(3.5, 5.0, 1.3))
     piv = bpy.context.object
@@ -1175,16 +1563,14 @@ def factory_set(nf, running, workers):
 
 def f15_paper(nf):
     factory_set(nf, False, [(0.6, 150, "head", None), (-1.2, 200, ("down", "head"), None)])
-    W.camera((-2.8, -5.5, 2.0), (0.4, 4.0, 1.6), lens=26)
+    W.camera((-1.2, -2.0, 1.55), (0.2, 1.4, 1.55), lens=30)
+    cut(46, (-2.8, -5.5, 2.0), (0.4, 4.0, 3.0), lens=24)
     return nf
 
 
 def kitchen_set(nf, strong, mom_arms, alt=None):
-    w = bpy.data.worlds.new("room")
-    bpy.context.scene.world = w
-    w.use_nodes = True
-    w.node_tree.nodes["Background"].inputs[0].default_value = (0.95, 0.9, 0.82, 1)
-    w.node_tree.nodes["Background"].inputs[1].default_value = 0.22
+    room((0.95, 0.9, 0.82), 0.22)
+    window_sun(elev=35, az=150, strength=3.0)
     W.box((0, 0, -0.05), (6, 6, 0.1), W.mat("floor_wood", (0.60, 0.45, 0.30), 0.6), bevel=0)
     W.box((0, 1.6, 1.4), (6, 0.1, 2.8), W.mat("kitchen_wall", (0.92, 0.90, 0.85), 0.9), bevel=0)
     W.box((0, 1.25, 0.43), (2.4, 0.6, 0.86), W.mat("cabinet", (0.85, 0.82, 0.76), 0.6), bevel=0.01)
@@ -1210,6 +1596,17 @@ def kitchen_set(nf, strong, mom_arms, alt=None):
     a.data.energy = 80
     a.data.size = 2.5
     person((-0.35, 0.6, 0), 70, seed=9, arms=mom_arms, alt=alt, nf=nf, period=8, look=MOM)
+    # 台所の小物（冷蔵庫、食器だな、炊飯器、カレンダー、まな板）
+    W.box((-1.8, 1.2, 0.9), (0.7, 0.7, 1.8), W.mat("fridge", (0.92, 0.92, 0.90), 0.3), bevel=0.03)
+    W.box((-1.47, 1.2, 1.3), (0.03, 0.05, 0.4), W.mat("handle", (0.6, 0.6, 0.6), 0.3), bevel=0)
+    W.box((0.0, 1.45, 1.9), (2.4, 0.3, 0.6), W.mat("cupboard", (0.80, 0.66, 0.48), 0.6), bevel=0.01)
+    for k in range(5):
+        F._cyl(0.09, 0.09, 0.02, (-0.8 + k * 0.4, 1.3, 1.58), W.mat("plate", (0.95, 0.95, 0.92), 0.3), verts=14)
+    F._ball(0.15, (-0.85, 1.25, 1.03), W.mat("ricecooker", (0.95, 0.95, 0.93), 0.3), sub=2, sc=(1, 1, 0.8))
+    W.box((0.85, 1.25, 0.915), (0.4, 0.28, 0.03), W.mat("cuttingboard", (0.85, 0.72, 0.50), 0.6), bevel=0.005)
+    F._ball(0.06, (0.85, 1.25, 0.96), W.mat("tomato", (0.85, 0.15, 0.10), 0.4), sub=2)
+    W.box((1.6, 1.54, 1.7), (0.4, 0.02, 0.55), W.mat("calendar", (0.97, 0.96, 0.92), 0.8), bevel=0)
+    W.box((1.6, 1.53, 1.88), (0.4, 0.02, 0.14), W.mat("calendar_top", (0.85, 0.25, 0.20), 0.8), bevel=0)
 
 
 def f16_tap(nf):
@@ -1229,7 +1626,8 @@ def f17_return(nf):
     kasa = cap_cloud((FUJI_LOC[0], FUJI_LOC[1], FUJI_H * FUJI_R + 8), FUJI_R)
     grow(kasa, f_back + 30, f_back + 90)
     engawa_cam(nf, push=0.8)
-    cut(131, (-0.4, -2.1, 1.5), (FUJI_LOC[0], FUJI_LOC[1], FUJI_H * FUJI_R * 0.7), lens=55, orbit=3, push=0.0, piv=3)
+    cut(131, (-0.4, -2.1, 1.5), (FUJI_LOC[0], FUJI_LOC[1], FUJI_H * FUJI_R * 0.7), lens=50, orbit=10, push=0.0, piv=3,
+        fixat=1, focus="far", zoom=1.15)
     return nf
 
 
@@ -1250,7 +1648,7 @@ def j2_trout(nf):
 
 def j3_paper(nf):
     factory_set(nf, True, [(0.6, 180, ("down", "wave"), "up"), (-1.2, 170, "up", "down")])
-    W.camera((-2.8, -5.5, 2.0), (0.4, 4.0, 1.8), lens=26)
+    W.camera((-1.8, -3.6, 1.6), (0.0, 3.0, 2.6), lens=24)
     return nf
 
 
@@ -1272,9 +1670,11 @@ def j5_wide(nf):
             (1.3, 13, "up", "down", WORKER, "white", 1.0), (2.0, 9, "pray", None, MOM, None, 1.0)]
     for k, (x, seed, a, alt, lk, hat, sc) in enumerate(cast):
         person((x, 1.5 + 0.2 * (k % 2), 0), 0, seed=seed, arms=a, alt=alt, nf=nf, period=8 + k, look=lk, hat=hat, scale=sc)
-    cam = W.camera((0.2, -4.0, 1.3), (0.2, 40, 10.5), lens=26)
+    utility_poles([(-22, 16), (-6, 16), (10, 16), (26, 16)])
+    cat((2.8, 1.2, 0), 120)
+    cam = W.camera((0.2, -3.0, 2.1), (0.2, 40, 10.5), lens=26)
     cam.keyframe_insert("location", frame=1)
-    cam.location = (0.2, -6.5, 1.6)
+    cam.location = (0.2, -6.5, 1.9)
     cam.keyframe_insert("location", frame=nf)
     cam["keep"] = 1
     return nf

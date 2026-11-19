@@ -26,12 +26,26 @@ tone, noise, lp, env = CC.tone, CC.noise, CC.lp, CC.env
 HY, HS = 1170, 86      # 見出しは画面の中ほどに大きく（参考元に合わせる）
 
 
+# 色の調整（参考元に合わせて計測で決めた値）：黒を締める・S字で明暗をはっきり・暖かく・あざやかに
+GRADE = dict(lo=0.08, hi=0.88, s=0.6, r=1.03, b=0.93, sat=1.25, vib=1.2)
+
+
+def grade(a, g=None):
+    """黒を締める → S字カーブ → 少し暖かく → くすんだ色ほど強く色をのせる（肌がオレンジにならないように）。"""
+    g = g or GRADE
+    a = np.clip((a - g["lo"]) / (g["hi"] - g["lo"]), 0, 1)
+    a = a * (1 - g["s"]) + a * a * (3 - 2 * a) * g["s"]
+    a[..., 0] *= g["r"]
+    a[..., 2] *= g["b"]
+    lum = (a @ np.array([0.299, 0.587, 0.114], np.float32))[..., None]
+    chroma = (a.max(-1) - a.min(-1))[..., None]
+    k = g["sat"] + g["vib"] * np.clip(1 - chroma / 0.35, 0, 1)
+    return np.clip(lum + (a - lum) * k, 0, 1)
+
+
 def look(img):
-    """色をあざやかに、コントラストを強めに（参考元の暖かく濃い色に寄せる）。"""
-    from PIL import ImageEnhance
-    g = img.convert("RGB")
-    g = ImageEnhance.Color(g).enhance(1.4)
-    g = ImageEnhance.Contrast(g).enhance(1.1)
+    a = np.asarray(img.convert("RGB"), np.float32) / 255
+    g = Image.fromarray((grade(a) * 255 + 0.5).astype(np.uint8))
     return g.resize((Y.W, Y.H), Image.LANCZOS).convert("RGBA")
 
 
@@ -109,6 +123,14 @@ def cheer(dur, seed=6):
     return x * 0.5
 
 
+def thud():
+    """遠くで重いものが落ちた、低い「ドスン」と、ザーッと広がる音。"""
+    n = int(1.6 * SR)
+    x = lp(noise(1.6, 31), 90) * 3.0 * env(n, 0.005, 0.35)
+    x += (lp(noise(1.6, 32), 2500) - lp(noise(1.6, 32), 400)) * env(n, 0.02, 0.6) * 0.5
+    return x
+
+
 def hum(dur):
     tt = np.arange(int(dur * SR)) / SR
     return sum(np.sin(2 * np.pi * 60 * h * tt) / h for h in (1, 2, 3, 5)) * 0.06
@@ -134,6 +156,9 @@ def build_audio(total, st):
     for k in range(1, 6):
         put(CC.tick(), TL.T_VANISH - k, 0.6)
     put(CC.sparkle(1, 2.0), TL.T_VANISH, 1.0)
+    t_fall = TL.T_VANISH + 8 / FPS
+    put(CC.whoosh(1.2, 21), t_fall, 0.7)                          # 残った雪が落ちていく
+    put(thud(), t_fall + 36 / FPS, 1.0)                           # 地面に落ちて、粉が広がる
     for s in TL.SHOTS:
         if s.get("card"):
             put(CC.whoosh(0.9, hash(s["name"]) % 50), st[s["name"]] - 0.2, 0.7)

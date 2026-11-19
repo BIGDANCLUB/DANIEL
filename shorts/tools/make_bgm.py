@@ -30,6 +30,8 @@ def make(total, bright_at=None, seed=1, chord_sec=3.0):
         ch = CHORDS[PROG[k % len(PROG)]]
         root = ch[0]
         a, b = int(max(0, t0 - 0.15) * SR), min(n, int((t0 + chord_sec + 0.2) * SR))
+        if a >= b:
+            break
         tt = t[a:b] - t0
         # なめらかに入って抜ける（前後の和音と重ねる）
         envp = np.clip((tt + 0.15) / 0.3, 0, 1) * np.clip((chord_sec + 0.2 - tt) / 0.35, 0, 1)

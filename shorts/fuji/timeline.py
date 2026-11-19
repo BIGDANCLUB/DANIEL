@@ -18,7 +18,7 @@ def at(e0, frames, dur):
 
 H = 3600
 SHOTS = [
-    dict(name="f01_open", frames=180, kind="open", loc="静岡・富士市の家（朝6時）"),
+    dict(name="f01_open", frames=240, kind="open", loc="静岡・富士市の家（朝6時）"),
     dict(name="f02_train", frames=120, segs=at(0.0, 120, 4.0), loc="同じ瞬間 ― 東海道新幹線",
          captions=[(0.3, 4.0, "その朝、日本から[富士山]が消えた", ["高さ3776m、日本一の山が", "一瞬でなくなった"])]),
     dict(name="f03_shadow", frames=150, segs=at(4.0, 150, 5.0), loc="同じころ ― 静岡・朝霧高原",

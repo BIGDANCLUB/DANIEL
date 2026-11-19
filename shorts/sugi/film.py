@@ -553,7 +553,7 @@ def s02_shrine(nf):
     puffs([(land + r.randint(0, 3), (math.cos(a) * 1.1, 8 + math.sin(a) * 1.1, 0.15)) for a in [r.uniform(0, 6.3) for _ in range(14)]],
           nf, (0, 0, 0.2), (0.15, 0.3), grow=3.0, rate=2.0, mat=F.puff_mat("dust_soil", (0.62, 0.52, 0.40), 0.3), name="ropedust",
           life=40)
-    for k, (x, fac, look, arms) in enumerate(((-1.2, 165, C.GRANDPA, "brow"), (-0.3, 190, MOTHER, "head"))):
+    for k, (x, fac, look, arms) in enumerate(((-1.2, 10, C.GRANDPA, "down"), (-0.3, 350, MOTHER, "head"))):
         person((x, 2.6, 0), fac, seed=20 + k, arms=arms, look=look)
     W.camera((0.6, -4.0, 1.2), (0.0, 8.0, 7.0), lens=22)
     cut(45, (0.4, 10.6, 0.7), (-0.7, 2.6, 1.3), lens=32, orbit=10, push=0.2, focus=(-0.7, 2.6, 1.5))
@@ -761,10 +761,10 @@ def s06_rain(nf):
     puffs(spawns, nf, (0, -1.5, 1.2), (0.8, 1.6), grow=2.0, rate=1.5, mat=F.puff_mat("mud_spray", (0.42, 0.33, 0.24), 0.3),
           name="mud", seed=6, life=45)
     rain((0, 2, 5), (20, 10, 6), 1400, nf, length=0.5, speed=10.0)
-    p = person((14.5, 4.6, 0), 300, seed=50, arms="brow", look={"top": (0.55, 0.50, 0.42), "bottom": (0.25, 0.25, 0.28)})
+    p = person((14.5, 4.6, 0), 300, seed=50, arms="hold", look={"top": (0.55, 0.50, 0.42), "bottom": (0.25, 0.25, 0.28)})
     umbrella(p, (0.75, 0.20, 0.20))
     fill((11.0, 8.0, 2.4), (14.5, 4.6, 1.5), power=150, size=2.0, col=(0.9, 0.93, 1.0))
-    W.camera((2.0, -11.0, 3.2), (-1.0, 26.0, 11.0), lens=24)
+    W.camera((3.5, -11.0, 3.2), (0.0, 28.0, 12.0), lens=24)
     cut(96, (12.0, 8.6, 1.7), (14.5, 4.6, 1.55), lens=40, orbit=10, push=0.15, focus=(14.5, 4.6, 1.55))
     return nf
 
@@ -804,7 +804,7 @@ def s07_river(nf):
 
 
 def s08_snow(nf):
-    overcast(1.4, col_lo=(0.82, 0.86, 0.92), col_hi=(0.50, 0.60, 0.76), sun_s=2.6)
+    overcast(1.0, col_lo=(0.82, 0.86, 0.92), col_hi=(0.50, 0.60, 0.76), sun_s=2.2)
     C.grass_ground(col=(0.88, 0.90, 0.94), name="snow_flat", size=900)
     th = 36.0
     terrain(lambda x, y: slope_h(x, y, th), -50, 50, 11.5, 80, 1.5, zone=lambda x, y: abs(x) < 30, name="snow_slope",
@@ -849,10 +849,10 @@ def s08_snow(nf):
                      W.mat("headlight", (1, 1, 0.9), emit=(1, 0.95, 0.8), emit_strength=6), bevel=0)
         lamp.parent = car
         lamp.location = (2.1, (-0.55 if k == 0 else 0.55), 0.62)
-    person((-8.6, 4.0, 0), 340, seed=52, arms="brow", look=ORANGE, hat="white")
+    person((-8.6, 4.0, 0), 345, seed=52, arms="down", look=ORANGE, hat="white")
     fill((-7.6, 7.6, 2.2), (-8.6, 4.0, 1.5), power=120, size=2.0, col=(0.9, 0.93, 1.0))
     W.camera((-14.0, -6.0, 3.2), (2.0, 30.0, 12.0), lens=24)
-    cut(90, (-7.3, 8.0, 1.5), (-8.6, 4.0, 1.55), lens=40, orbit=12, push=0.15, focus=(-8.6, 4.0, 1.55))
+    cut(90, (-8.0, 8.2, 1.5), (-8.6, 4.0, 1.55), lens=40, orbit=12, push=0.15, focus=(-8.6, 4.0, 1.55))
     return nf
 
 
@@ -925,7 +925,7 @@ def s09_sake(nf):
             o.keyframe_insert("location", frame=f)
             o.keyframe_insert("rotation_euler", frame=f)
             o.keyframe_insert("scale", frame=f)
-    person((-0.4, 1.2, 0), 160, seed=60, arms="brow", look=BREWER)
+    person((-0.4, 1.2, 0), 200, seed=60, arms="down", look=BREWER)
     W.camera((-3.4, -3.6, 1.4), (0.0, 2.6, 2.2), lens=28)
     cut(64, (1.6, -0.9, 1.7), (0.4, 2.0, 2.2), lens=40, orbit=10, push=0.15, focus=(0.8, 2.25, 2.55))
     return nf
@@ -963,7 +963,7 @@ def nikko_set():
 def s10_nikko(nf):
     morning(0.5)
     nikko_set()
-    ghost(sugi_forest(avenue(-4, 160), "nikko_ghost"), col=(0.75, 0.92, 1.0), strength=0.9, thick=0.015)
+    ghost(sugi_forest(avenue(-4, 160), "nikko_ghost"), col=(0.70, 0.90, 1.0), strength=0.45, thick=0.012)
     for k, (x, look) in enumerate(((-0.6, MOTHER), (0.3, C.GRANDPA))):
         p = person((x, 9.0, 0), 180, seed=62 + k, arms="brow" if k else "down", look=look)
         p.keyframe_insert("location", frame=1)
@@ -1003,7 +1003,7 @@ def s11_jomon(nf):
         trunk.append(([(x + cx, y + cy, z + 14 + (k % 3) * 2.5) for x, y, z in v], f, m))
     g = mesh_obj("jomon_ghost", merge(trunk), [W.mat("x", (1, 1, 1))])
     g.location = (0.5, 12, 0)
-    ghost(g, col=(0.75, 0.92, 1.0), strength=1.0, thick=0.03)
+    ghost(g, col=(0.70, 0.90, 1.0), strength=0.6, thick=0.025)
     for k, (x, arms) in enumerate(((-1.6, "brow"), (-0.3, "down"), (1.2, "hold"))):
         p = person((x, 2.6, 1.08), 180 + (k - 1) * 15, seed=70 + k, arms=arms, look=HIKER if k != 1 else WORKER,
                    hat="cap" if k == 0 else None)
@@ -1159,8 +1159,8 @@ def j2_lumber(nf):
     day(elev=40, az=150, strength=4.6)
     lumber_set(True)
     for k, (x, arms, alt) in enumerate(((-1.2, "up", "down"), (0.0, "wave", "up"), (1.2, "up", "down"))):
-        person((x, 6.4 + 0.2 * (k % 2), 0), 180, seed=41 + k, arms=arms, alt=alt, nf=nf, period=7 + k, look=WORKER, hat="white")
-    W.camera((-1.2, 0.2, 1.6), (0.0, 6.2, 1.4), lens=28)
+        person((x, 3.7 + 0.2 * (k % 2), 0), 180, seed=41 + k, arms=arms, alt=alt, nf=nf, period=7 + k, look=WORKER, hat="white")
+    W.camera((-1.0, -1.8, 1.5), (0.0, 4.2, 1.4), lens=28)
     return nf
 
 

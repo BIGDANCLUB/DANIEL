@@ -1444,12 +1444,12 @@ def heron(loc, facing, nf=0):
 
 
 def f13_lowwater(nf):
-    day(elev=40, az=-30, strength=4.6)
+    day(elev=40, az=150, strength=4.6)
     river_set(-0.1, -0.5, nf)
-    C.multi_ball([(0.3, 6.0, -0.65, 0.32, (1.3, 1.0, 0.8))], W.mat("rock_river", (0.50, 0.50, 0.50), 0.9), "heron_rock")
-    heron((0.3, 6.0, -0.42), 200, nf)
+    C.multi_ball([(1.3, 6.0, -0.65, 0.32, (1.3, 1.0, 0.8))], W.mat("rock_river", (0.50, 0.50, 0.50), 0.9), "heron_rock")
+    heron((1.3, 6.0, -0.42), 200, nf)
     # 川をのぞきこむ、地元のおじいさん（柵と看板）
-    person((2.9, 4.2, 0), 250, seed=4, arms="hold", look=GRANDPA)
+    person((2.9, 7.0, 0), 250, seed=4, arms="hold", look=GRANDPA)
     rail = W.mat("rail_wood", (0.50, 0.38, 0.25), 0.8)
     for k in range(6):
         W.box((2.4, -1 + k * 2.0, 0.45), (0.1, 0.1, 0.9), rail, bevel=0)
@@ -1457,13 +1457,15 @@ def f13_lowwater(nf):
     W.box((3.4, 6.0, 1.2), (0.06, 0.9, 0.6), W.mat("sign_board", (0.95, 0.93, 0.85), 0.8), bevel=0.01)
     W.box((3.4, 6.0, 0.5), (0.06, 0.06, 1.0), rail, bevel=0)
     # 水面すれすれから：手前の石と水草がボケて、奥のサギとおじいさん
-    W.camera((1.5, -1.0, 0.25), (1.8, 6.0, -0.1), lens=30)
+    # 川のまん中から（土手と柵にぶつからないように）
+    W.camera((0.6, 1.5, 0.4), (2.0, 6.5, 0.5), lens=45)
+    cams()[-1]["focus"] = (1.3, 6.0, 0.2)
     cut(76, (1.4, 1.0, 0.15), (-0.2, 12, -0.4), lens=26, orbit=8)
     return nf
 
 
 def trout_set(nf, level0, level1, worker_arms, alt=None, jump=False):
-    day(elev=45, az=-30, strength=4.6)
+    day(elev=45, az=150, strength=4.6)
     C.grass_ground(col=(0.32, 0.44, 0.15), tufts=2000, area=(-6, 6, -4, 1.5))
     conc = W.mat("concrete", (0.70, 0.70, 0.68), 0.9)
     for k in range(3):

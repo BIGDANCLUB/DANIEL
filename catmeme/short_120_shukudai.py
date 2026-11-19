@@ -23,7 +23,7 @@ def cuts():
         ("8/28", "pic_cal_8_28", "宿題\n0%", "confused_i_dont_know_cat", "あれ…？\nあと何日？"),
         ("8/29", "pic_cal_8_29", "宿題\nまだ0%", "scream_standing_marmot", "やばい\nやばい"),
         ("8/30", "pic_cal_8_30", "宿題\n30%", "work_typing_cat", "全力で\nやる"),
-        ("8/31", "pic_cal_8_31", "宿題\n30%", "blank_black_cat_zoning_out", "もう\nむり"),
+        ("8/31", "pic_cal_8_31", "宿題\n40%", "blank_black_cat_zoning_out", "もう\nむり"),
         ("9/1", "pic_cal_9_1", "提出日", "sad_banana_cat_cry", "先生に\n怒られた"),
         ("9/2", "pic_cal_9_2", "宿題\n60%", "work_typing_cat", "全力で\nやる"),
         ("9/3", "pic_cal_9_3", "宿題\n60%", "dance_filmed_by_gray_cat", "うおｗ"),

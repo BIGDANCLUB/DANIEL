@@ -647,7 +647,8 @@ def skit_draw(out, c, t):
     I.put(out, tag, max(cx, 560 + tag.width / 2 + 20), bottom - card.height - tag.height / 2 + 10)   # 猫の字幕とかさならないよう右寄せ
     if c.get("pic_cap"):
         pc = _skit_text(c["pic_cap"], WHITE, 92, max_w=W / 2 - 20)
-        I.put(out, pc, min(cx, W - 10 - pc.width / 2), bottom - pc.height / 2 - 18)
+        py = bottom + pc.height / 2 + 12 if c.get("pic_cap_below") else bottom - pc.height / 2 - 18   # below：絵の下に出す（カレンダーなど）
+        I.put(out, pc, min(cx, W - 10 - pc.width / 2), py)
     if c.get("cat_cap"):
         cc = _skit_text(c["cat_cap"], WHITE, 96, max_w=540)   # 左半分に収める
         I.put(out, cc, max(290, cc.width / 2 + 16), c.get("cat_cap_y", 640))

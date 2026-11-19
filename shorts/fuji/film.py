@@ -1164,7 +1164,7 @@ def f08_snow(nf):
     g = fuji(FUJI_LOC, FUJI_R, ghost=True)
     g.modifiers["wf"].thickness = 0.0015
     C.show_between(g, None, 75, s=FUJI_R)
-    person((-0.2, 1.2, 0), 10, seed=3, arms=("down", "brow"), hat="cap")
+    person((-0.9, 1.4, 0), 10, seed=3, arms=("down", "brow"), hat="cap")
     W.camera((-1.4, -2.6, 1.3), (6.0, 40, 7), lens=28)
     cut(96, (0.7, 2.4, 1.65), (0.4, 0.5, 1.55), lens=34, orbit=14)
     return nf

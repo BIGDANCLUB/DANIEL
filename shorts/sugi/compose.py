@@ -22,6 +22,8 @@ LABEL = "スギが消えてから"
 WORD, PRE, POST = "スギ", "もしも", "が消えたら？"
 tone, noise, lp, env = CC.tone, CC.noise, CC.lp, CC.env
 HY, HS = FC.HY, FC.HS
+# 参考元より明るかった（平均の明るさ 121 → 参考元 94）ので、中間を少し下げ、オレンジを弱める（計測で決めた値）
+FC.GRADE = dict(FC.GRADE, gam=1.55, r=1.0, b=0.97)
 look = FC.look
 
 

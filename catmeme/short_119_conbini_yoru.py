@@ -27,7 +27,7 @@ def cuts():
         ("水曜", "pic_cv_bento", 0.70, "からあげ\n弁当", "work_typing_cat", "残業したから\nセーフ"),
         ("木曜", "pic_cv_cupmen", 0.72, "カップ麺", "sleepy_sleepy_cat", "もう何も\n考えたくない"),
         ("金曜", "pic_cv_beer", 0.74, "ビールと\nからあげ", "happy_girlfriend_dance_cat", "1週間の\nごほうび"),
-        ("金曜\n23時", "pic_cv_ice", 0.75, "アイスも", "eat_crunchy_cat_luna", "ついでに\nもう1個"),
+        ("金曜23時", "pic_cv_ice", 0.75, "アイスも", "eat_crunchy_cat_luna", "ついでに\nもう1個"),
         ("土曜", "pic_cv_chicken", 0.76, "冷蔵庫に\nサラダチキン", "dance_filmed_by_gray_cat", "来週こそ\n健康www"),
     ]
     for k, (lv, pic, sz, rcap, cat, lcap) in enumerate(rows):

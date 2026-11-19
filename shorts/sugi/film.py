@@ -207,7 +207,7 @@ def valley(seed=1, cedar=True, broad=True, young=False, x_lim=(150, 0.42), y_max
     spts, bpts = [], []
     y = 236.0
     while y < y_max:
-        sp = 8.5 + (y - 230) * 0.011
+        sp = 6.5 + (y - 230) * 0.009
         x = -800.0
         while x < 800:
             xx, yy = x + r.uniform(-0.4, 0.4) * sp, y + r.uniform(-0.4, 0.4) * sp
@@ -215,13 +215,13 @@ def valley(seed=1, cedar=True, broad=True, young=False, x_lim=(150, 0.42), y_max
                 z = mt_h(xx, yy)
                 if z > 3:
                     h = r.uniform(17, 25) * (1 + (yy - 230) / 1100)
-                    p = (xx, yy, z - 1.0, h, r.uniform(0, 6.3), r.uniform(0.9, 1.15))
+                    p = (xx, yy, z - 1.0, h, r.uniform(0, 6.3), r.uniform(1.3, 1.6))
                     (spts if sugi_zone(xx, yy) else bpts).append(p)
             x += sp
         y += sp
     forest = sugi_forest(spts, "valley_sugi") if cedar else None
     if broad:
-        broad_forest([(x, y, z, h * 0.7, a, w * 1.1) for x, y, z, h, a, w in bpts], "valley_broad", seed)
+        broad_forest([(x, y, z, h * 0.7, a, w * 0.85) for x, y, z, h, a, w in bpts], "valley_broad", seed)
     if young:
         sugi_forest([(x, y, z, h * 0.25, a, w) for k, (x, y, z, h, a, w) in enumerate(spts) if k % 2 == 0],
                     "young", col=(0.18, 0.34, 0.14))
@@ -418,9 +418,25 @@ def morning(strength=0.5):
     return sun(22, 160, 4.8, (1.0, 0.84, 0.64))      # 朝日はカメラのうしろから（山が順光で見える）
 
 
-def overcast(strength=0.55, col_lo=(0.62, 0.64, 0.66), col_hi=(0.42, 0.45, 0.50), sun_s=0.8):
+def overcast(strength=1.3, col_lo=(0.70, 0.72, 0.74), col_hi=(0.50, 0.54, 0.60), sun_s=2.2):
+    """くもり・雨：空の光を強めにして、うすい太陽をカメラ側から（暗くなりすぎないように）。"""
     sky(lo=col_lo, hi=col_hi, strength=strength)
-    return sun(50, -30, sun_s, (0.85, 0.88, 0.95))
+    w = bpy.context.scene.world
+    for n in w.node_tree.nodes:
+        if n.type == 'BACKGROUND':
+            n.inputs[1].default_value = strength * (1.0 if n.name == "Background" else 1.4)
+    return sun(40, 170, sun_s, (0.88, 0.90, 0.96))
+
+
+def fill(loc, at, power=120, size=1.5, col=(1.0, 0.92, 0.82)):
+    """顔を照らす補助の光（大きなやわらかい板の光）。"""
+    bpy.ops.object.light_add(type='AREA', location=loc)
+    o = bpy.context.object
+    o.data.energy = power
+    o.data.size = size
+    o.data.color = col
+    W.aim(o, at)
+    return o
 
 
 def birds_up(pts, f0, nf, seed=2, scale=6.0, dist=120.0):
@@ -458,6 +474,7 @@ def s01_open(nf):
     fv = fr(TL.T_VANISH)
     dad = person((0.2, 0.8, 0.33), 0, seed=4, arms="hold", look=FATHER, pose="sit")
     mask_on(dad, off=None)
+    fill((0.3, 3.2, 1.8), (0.2, 0.8, 1.2), power=90)
     sneeze(dad, 95, spray=False)
     # 風がふくたびに、山から黄色い花粉のけむり → 消えたあとも、飛んだ花粉だけ空に残って ゆっくり沈む
     pollen_gust(spts, 4, fv, nf, every=2, sink_from=fv)
@@ -509,7 +526,7 @@ def shimenawa(center, radius, z, name="nawa"):
 
 
 def s02_shrine(nf):
-    day(elev=35, az=-40, strength=4.4)
+    day(elev=35, az=165, strength=4.4)
     shrine_set()
     tree = sugi_forest([(0, 8, 0, 34, 0.3, 2.2)], "goshinboku")
     f0 = 12
@@ -539,7 +556,7 @@ def s02_shrine(nf):
     for k, (x, fac, look, arms) in enumerate(((-1.2, 165, C.GRANDPA, "brow"), (-0.3, 190, MOTHER, "head"))):
         person((x, 2.6, 0), fac, seed=20 + k, arms=arms, look=look)
     W.camera((0.6, -4.0, 1.2), (0.0, 8.0, 7.0), lens=22)
-    cut(45, (-2.4, 4.4, 1.0), (0.0, 8.0, 0.4), lens=30, orbit=10, push=0.2)
+    cut(45, (0.4, 10.6, 0.7), (-0.7, 2.6, 1.3), lens=32, orbit=10, push=0.2, focus=(-0.7, 2.6, 1.5))
     return nf
 
 
@@ -558,12 +575,12 @@ def station_set():
 
 
 def s03_station(nf):
-    day(elev=25, az=-110, strength=4.2)
+    day(elev=22, az=75, strength=4.4)
     station_set()
     r = random.Random(12)
     spots = []
-    for k in range(30):
-        spots.append((r.uniform(-8.5, -2.6), r.uniform(-4, 26)))
+    for k in range(40):
+        spots.append((r.uniform(-9.0, -2.6), r.uniform(-1, 18)))
     spots.sort(key=lambda p: p[1])
     for k, (x, y) in enumerate(spots):
         off = 18 + int(k * 3.2) + r.randint(-6, 6)
@@ -573,8 +590,8 @@ def s03_station(nf):
                    hat=None)
         if k % 9 != 4:
             mask_on(p, off=off)
-    W.camera((-0.9, -6.0, 2.9), (-4.5, 8.0, 2.4), lens=30)
-    cut(76, (-1.2, 10.0, 2.7), (-5.0, 3.0, 2.6), lens=40, orbit=12, push=0.2)
+    W.camera((-0.6, -3.0, 2.8), (-6.0, 6.5, 2.1), lens=26)
+    cut(76, (-1.0, 9.0, 2.8), (-4.5, 3.5, 2.6), lens=35, orbit=12, push=0.2)
     return nf
 
 
@@ -613,17 +630,17 @@ def lumber_set(full=False):
     C.grass_ground(col=(0.45, 0.43, 0.40), name="asphalt", size=600)
     post = W.mat("shed_post", (0.55, 0.55, 0.55), 0.6)
     for x in (-5, 5):
-        for y in (4, 12):
+        for y in (9, 17):
             W.box((x, y, 2.5), (0.25, 0.25, 5.0), post, bevel=0.02)
-    W.box((0, 8, 5.1), (11.5, 10, 0.3), W.mat("shed_roof", (0.35, 0.45, 0.55), 0.6), bevel=0.05)
-    W.box((0, 8, 0.45), (2.4, 1.2, 0.9), W.mat("saw_table", (0.55, 0.58, 0.60), 0.5), bevel=0.03)
-    saw = F._cyl(0.5, 0.5, 0.03, (0, 7.6, 1.05), W.mat("saw_blade", (0.80, 0.82, 0.85), 0.25), rot=(0, math.radians(90), 0),
+    W.box((0, 13, 5.1), (11.5, 10, 0.3), W.mat("shed_roof", (0.35, 0.45, 0.55), 0.6), bevel=0.05)
+    W.box((0, 5.0, 0.45), (2.4, 1.2, 0.9), W.mat("saw_table", (0.55, 0.58, 0.60), 0.5), bevel=0.03)
+    saw = F._cyl(0.5, 0.5, 0.03, (0, 5.0, 1.05), W.mat("saw_blade", (0.80, 0.82, 0.85), 0.25), rot=(0, math.radians(90), 0),
                  verts=24)
     bpy.ops.object.transform_apply(rotation=True)
-    mark = W.box((0, 7.6, 1.38), (0.05, 0.08, 0.22), W.mat("saw_mark", (0.85, 0.15, 0.10), 0.5), bevel=0)
+    mark = W.box((0, 5.0, 1.38), (0.05, 0.08, 0.22), W.mat("saw_mark", (0.85, 0.15, 0.10), 0.5), bevel=0)
     mark.parent = saw
     mark.location = (0, 0, 0.33)
-    saw.location = (0, 7.6, 1.05)
+    saw.location = (0, 5.0, 1.05)
     log_pile(-7.5, 2.0, 2 if not full else 5, seed=1)
     if full:
         log_pile(7.5, 2.0, 5, seed=2)
@@ -649,9 +666,9 @@ def s05_lumber(nf):
         tt = min(t, w0 / alpha)
         saw.rotation_euler.x = w0 * tt - 0.5 * alpha * tt * tt
         saw.keyframe_insert("rotation_euler", frame=f)
-    person((-1.0, 9.8, 0), 160, seed=41, arms="head", look=WORKER, hat="white")
-    person((1.2, 10.2, 0), 200, seed=42, arms="hold", look=WORKER, hat="white")
-    W.camera((-2.6, 2.2, 1.6), (0.3, 9.2, 1.2), lens=30)
+    person((-0.6, 6.2, 0), 170, seed=41, arms="head", look=WORKER, hat="white")
+    person((1.6, 6.6, 0), 200, seed=42, arms="hold", look=WORKER, hat="white")
+    W.camera((-1.4, -0.6, 1.6), (0.3, 5.8, 1.2), lens=32)
     cut(62, (-9.0, -4.0, 2.2), (-6.5, 2.5, 0.6), lens=28, orbit=10, push=0.2)
     return nf
 
@@ -702,7 +719,7 @@ def slide_blocks(blocks, hf, th, f0, nf, a, base_y=12.0, deg_per_m=40.0):
 
 
 def s06_rain(nf):
-    overcast(0.5, sun_s=0.6)
+    overcast()
     C.grass_ground(col=(0.26, 0.32, 0.14), size=800)
     th = 34.0
     terrain(lambda x, y: slope_h(x, y, th), -40, 40, 11.5, 70, 1.5, zone=lambda x, y: abs(x) < 26, name="rain_slope",
@@ -743,16 +760,17 @@ def s06_rain(nf):
         spawns.append((f, (r.uniform(-10, 8), yy, slope_h(0, yy, th) + 0.8)))
     puffs(spawns, nf, (0, -1.5, 1.2), (0.8, 1.6), grow=2.0, rate=1.5, mat=F.puff_mat("mud_spray", (0.42, 0.33, 0.24), 0.3),
           name="mud", seed=6, life=45)
-    rain((0, 6, 6), (22, 14, 7), 2600, nf, length=0.55, speed=10.0)
+    rain((0, 2, 5), (20, 10, 6), 1400, nf, length=0.5, speed=10.0)
     p = person((14.5, 4.6, 0), 300, seed=50, arms="brow", look={"top": (0.55, 0.50, 0.42), "bottom": (0.25, 0.25, 0.28)})
     umbrella(p, (0.75, 0.20, 0.20))
+    fill((11.0, 8.0, 2.4), (14.5, 4.6, 1.5), power=150, size=2.0, col=(0.9, 0.93, 1.0))
     W.camera((2.0, -11.0, 3.2), (-1.0, 26.0, 11.0), lens=24)
     cut(96, (12.0, 8.6, 1.7), (14.5, 4.6, 1.55), lens=40, orbit=10, push=0.15, focus=(14.5, 4.6, 1.55))
     return nf
 
 
 def s07_river(nf):
-    overcast(0.45, sun_s=0.5)
+    overcast()
     FJ.river_set(-0.35, 0.25, nf, fish=False)
     wm = bpy.data.materials["water_clear"]
     b = wm.node_tree.nodes["Principled BSDF"]
@@ -777,15 +795,16 @@ def s07_river(nf):
     spawns = [(f, (r.uniform(-2, 2), r.uniform(0, 12), 0.0)) for f in range(1, nf, 1)]
     puffs(spawns, nf, (0, -3.0, 0.1), (0.15, 0.35), grow=1.5, rate=2.0, mat=F.puff_mat("foam", (0.75, 0.68, 0.58), 0.35),
           name="foam", seed=8, life=30)
-    rain((0, 3, 2.5), (6, 8, 3.5), 1600, nf, length=0.45, speed=9.0)
+    rain((0, 5, 3), (6, 8, 3.5), 700, nf, length=0.4, speed=9.0)
     p = person((0.8, 7.0, 1.78), 190, seed=51, arms="brow", look={"top": (0.30, 0.42, 0.35), "bottom": (0.25, 0.25, 0.28)})
     umbrella(p, (0.20, 0.30, 0.55))
-    W.camera((1.6, -2.6, 0.75), (0.2, 8.0, 1.4), lens=26)
+    fill((0.8, 3.5, 2.6), (0.8, 7.0, 2.4), power=120, size=2.0, col=(0.9, 0.93, 1.0))
+    W.camera((1.8, -2.0, 1.5), (0.4, 8.0, 1.6), lens=26)
     return nf
 
 
 def s08_snow(nf):
-    overcast(0.6, col_lo=(0.80, 0.84, 0.90), col_hi=(0.52, 0.60, 0.72), sun_s=1.4)
+    overcast(1.4, col_lo=(0.82, 0.86, 0.92), col_hi=(0.50, 0.60, 0.76), sun_s=2.6)
     C.grass_ground(col=(0.88, 0.90, 0.94), name="snow_flat", size=900)
     th = 36.0
     terrain(lambda x, y: slope_h(x, y, th), -50, 50, 11.5, 80, 1.5, zone=lambda x, y: abs(x) < 30, name="snow_slope",
@@ -830,9 +849,10 @@ def s08_snow(nf):
                      W.mat("headlight", (1, 1, 0.9), emit=(1, 0.95, 0.8), emit_strength=6), bevel=0)
         lamp.parent = car
         lamp.location = (2.1, (-0.55 if k == 0 else 0.55), 0.62)
-    person((-8.6, 4.0, 0), 160, seed=52, arms="brow", look=ORANGE, hat="white")
-    W.camera((-14.0, -6.0, 2.2), (2.0, 30.0, 12.0), lens=24)
-    cut(90, (-7.4, 0.2, 1.6), (-8.6, 4.0, 1.5), lens=40, orbit=12, push=0.15, focus=(-8.6, 4.0, 1.5))
+    person((-8.6, 4.0, 0), 340, seed=52, arms="brow", look=ORANGE, hat="white")
+    fill((-7.6, 7.6, 2.2), (-8.6, 4.0, 1.5), power=120, size=2.0, col=(0.9, 0.93, 1.0))
+    W.camera((-14.0, -6.0, 3.2), (2.0, 30.0, 12.0), lens=24)
+    cut(90, (-7.3, 8.0, 1.5), (-8.6, 4.0, 1.55), lens=40, orbit=12, push=0.15, focus=(-8.6, 4.0, 1.55))
     return nf
 
 
@@ -873,8 +893,8 @@ def brewery_set(fresh=False):
 
 
 def s09_sake(nf):
-    sky(lo=(1.0, 0.70, 0.45), hi=(0.36, 0.42, 0.62), strength=0.45)
-    sun(8, -95, 5.0, (1.0, 0.62, 0.35))
+    sky(lo=(1.0, 0.70, 0.45), hi=(0.36, 0.42, 0.62), strength=0.7)
+    sun(14, 215, 5.2, (1.0, 0.66, 0.40))
     ball, rope = brewery_set(False)
     # 杉玉が風でゆれる（ふりこ：長さ0.65m、周期は約1.6秒、だんだん小さく）
     L = 0.65
@@ -906,8 +926,8 @@ def s09_sake(nf):
             o.keyframe_insert("rotation_euler", frame=f)
             o.keyframe_insert("scale", frame=f)
     person((-0.4, 1.2, 0), 160, seed=60, arms="brow", look=BREWER)
-    W.camera((-2.6, -2.8, 1.25), (0.3, 2.3, 2.3), lens=30)
-    cut(64, (1.0, -0.6, 1.9), (0.8, 2.25, 2.55), lens=50, orbit=10, push=0.15, focus=(0.8, 2.25, 2.55))
+    W.camera((-3.4, -3.6, 1.4), (0.0, 2.6, 2.2), lens=28)
+    cut(64, (1.6, -0.9, 1.7), (0.4, 2.0, 2.2), lens=40, orbit=10, push=0.15, focus=(0.8, 2.25, 2.55))
     return nf
 
 
@@ -918,7 +938,7 @@ def avenue(y0, y1, step=4.5, x=6.5, seed=3):
     while y < y1:
         for sx in (-1, 1):
             pts.append((sx * (x + r.uniform(-0.5, 0.5)), y + r.uniform(-0.8, 0.8), 0.6, r.uniform(32, 40), r.uniform(0, 6),
-                        r.uniform(1.0, 1.3)))
+                        r.uniform(0.5, 0.6)))
         y += step
     return pts
 
@@ -943,7 +963,7 @@ def nikko_set():
 def s10_nikko(nf):
     morning(0.5)
     nikko_set()
-    ghost(sugi_forest(avenue(-4, 160), "nikko_ghost"))
+    ghost(sugi_forest(avenue(-4, 160), "nikko_ghost"), col=(0.75, 0.92, 1.0), strength=0.9, thick=0.015)
     for k, (x, look) in enumerate(((-0.6, MOTHER), (0.3, C.GRANDPA))):
         p = person((x, 9.0, 0), 180, seed=62 + k, arms="brow" if k else "down", look=look)
         p.keyframe_insert("location", frame=1)
@@ -956,7 +976,7 @@ def s10_nikko(nf):
 
 def s11_jomon(nf):
     sky(lo=(0.70, 0.80, 0.72), hi=(0.40, 0.55, 0.60), strength=0.45)
-    sun(50, -20, 3.4, (1.0, 0.92, 0.75))
+    sun(45, 170, 3.6, (1.0, 0.92, 0.75))
     C.grass_ground(col=(0.18, 0.28, 0.12), name="grass_moss", size=300)
     r = random.Random(11)
     C.multi_ball([(r.uniform(-12, 12), r.uniform(4, 30), 0, r.uniform(0.5, 1.5), (1.3, 1.0, 0.55)) for _ in range(40)],
@@ -983,7 +1003,7 @@ def s11_jomon(nf):
         trunk.append(([(x + cx, y + cy, z + 14 + (k % 3) * 2.5) for x, y, z in v], f, m))
     g = mesh_obj("jomon_ghost", merge(trunk), [W.mat("x", (1, 1, 1))])
     g.location = (0.5, 12, 0)
-    ghost(g, thick=0.06)
+    ghost(g, col=(0.75, 0.92, 1.0), strength=1.0, thick=0.03)
     for k, (x, arms) in enumerate(((-1.6, "brow"), (-0.3, "down"), (1.2, "hold"))):
         p = person((x, 2.6, 1.08), 180 + (k - 1) * 15, seed=70 + k, arms=arms, look=HIKER if k != 1 else WORKER,
                    hat="cap" if k == 0 else None)
@@ -999,7 +1019,7 @@ def park_set(sakura=True, hinoki=False):
     if sakura:
         for i in range(9):
             C.tree((r.choice((-1, 1)) * r.uniform(3.5, 12), r.uniform(2, 24), 0), h=r.uniform(4.5, 6.5), seed=90 + i,
-                   crowns=[(0.98, 0.76, 0.84)])
+                   crowns=[(0.95, 0.62, 0.74)])
     if hinoki:
         hinoki_forest([(x, y, 0, r.uniform(9, 12), r.uniform(0, 6), 1.0) for x, y in ((-6, 9), (-3.5, 12), (5.5, 10), (8, 14))])
     sheet = W.mat("sheet_blue", (0.15, 0.40, 0.80), 0.6)
@@ -1046,7 +1066,7 @@ def s12_hanami(nf):
     family(nf)
     petals(nf)
     W.camera((0.3, -2.4, 1.0), (0.2, 1.8, 0.9), lens=30)
-    cut(76, (-2.2, -0.6, 1.6), (0.3, 3.0, 2.6), lens=24, orbit=10, push=0.15)
+    cut(76, (-2.6, -1.6, 1.3), (0.2, 2.0, 1.4), lens=26, orbit=10, push=0.15)
     return nf
 
 
@@ -1113,8 +1133,8 @@ def s15_return(nf):
     young = bpy.data.objects.get("young")
     if young:
         C.show_between(young, None, f_back)
-    dad = person((0.2, 0.8, 0.33), 0, seed=4, arms="down", look=FATHER_OLD, pose="sit")
-    _ = dad
+    person((0.2, 0.8, 0.33), 0, seed=4, arms="down", look=FATHER_OLD, pose="sit")
+    fill((1.8, 3.4, 1.9), (0.2, 0.8, 1.2), power=100)
     # 山が戻ると、また風で花粉のけむり（冒頭と同じ場所）
     pollen_gust(spts, 140, nf, nf, every=2, seed=5)
     cut(1, (-0.4, -2.1, 1.5), (-40, 520, 110), lens=50, orbit=8, push=0.0, piv=3, fixat=1, focus="far", zoom=1.1)
@@ -1129,8 +1149,9 @@ def j1_sneeze(nf):
     valley(seed=1)
     dad = person((0.2, 0.8, 0.33), 0, seed=4, arms="hold", look=FATHER_OLD, pose="sit")
     sneeze(dad, 34)
+    fill((0.3, 3.0, 1.8), (0.2, 0.8, 1.2), power=110)
     specks((0.3, 1.6, 1.2), (1.2, 0.8, 0.6), 110, nf, size=0.005)
-    W.camera((0.25, 2.5, 1.12), (0.2, 0.8, 1.12), lens=50)
+    W.camera((0.25, 2.7, 1.15), (0.2, 0.8, 1.1), lens=40)
     return nf
 
 
@@ -1138,14 +1159,14 @@ def j2_lumber(nf):
     day(elev=40, az=150, strength=4.6)
     lumber_set(True)
     for k, (x, arms, alt) in enumerate(((-1.2, "up", "down"), (0.0, "wave", "up"), (1.2, "up", "down"))):
-        person((x, 9.8 + 0.2 * (k % 2), 0), 180, seed=41 + k, arms=arms, alt=alt, nf=nf, period=7 + k, look=WORKER, hat="white")
-    W.camera((-1.5, 3.0, 1.6), (0.0, 9.6, 1.4), lens=28)
+        person((x, 6.4 + 0.2 * (k % 2), 0), 180, seed=41 + k, arms=arms, alt=alt, nf=nf, period=7 + k, look=WORKER, hat="white")
+    W.camera((-1.2, 0.2, 1.6), (0.0, 6.2, 1.4), lens=28)
     return nf
 
 
 def j3_sake(nf):
-    sky(lo=(1.0, 0.70, 0.45), hi=(0.36, 0.42, 0.62), strength=0.45)
-    sun(8, -95, 5.0, (1.0, 0.62, 0.35))
+    sky(lo=(1.0, 0.70, 0.45), hi=(0.36, 0.42, 0.62), strength=0.7)
+    sun(14, 215, 5.2, (1.0, 0.66, 0.40))
     brewery_set(True)
     person((-0.4, 1.2, 0), 180, seed=60, arms="up", alt="down", nf=nf, period=8, look=BREWER)
     person((-1.5, 1.4, 0), 170, seed=61, arms="wave", alt="up", nf=nf, period=9, look=BREWER)
@@ -1154,14 +1175,14 @@ def j3_sake(nf):
 
 
 def j4_nikko(nf):
-    morning(0.5)
+    morning(0.6)
     nikko_set()
     sugi_forest(avenue(-4, 160), "nikko_sugi")
     cast = [(-1.2, "wave", "up", MOTHER), (-0.3, "up", "down", C.GRANDPA), (0.6, "up", "down", HIKER), (1.4, "wave", "down", DAUGHTER)]
     for k, (x, a, alt, look) in enumerate(cast):
         person((x, 7.0 + 0.3 * (k % 2), 0), 180, seed=62 + k, arms=a, alt=alt, nf=nf, period=7 + k, look=look,
                scale=0.75 if look is DAUGHTER else 1.0)
-    W.camera((0.3, -0.5, 1.4), (0.0, 20.0, 5.0), lens=24)
+    W.camera((0.3, -1.0, 1.4), (0.0, 30.0, 8.0), lens=24)
     return nf
 
 
@@ -1171,15 +1192,15 @@ def j5_wide(nf):
     FJ.town(seed=2, y=(40, 210), x=(-220, 220), n=110)
     _, spts = valley(seed=1)
     pollen_gust(spts, 1, nf, nf, every=2, seed=6)
-    cast = [(-1.8, "up", "down", FATHER_OLD, 4), (-1.1, "up", "down", DAUGHTER, 1), (-0.3, "wave", "up", WORKER, 41),
-            (0.5, "up", "down", BREWER, 60), (1.3, "wave", "down", MOTHER, 21), (2.1, "up", "down", ORANGE, 52)]
+    cast = [(-1.5, "up", "down", FATHER_OLD, 4), (-0.9, "up", "down", DAUGHTER, 1), (-0.2, "wave", "up", WORKER, 41),
+            (0.5, "up", "down", BREWER, 60), (1.1, "wave", "down", MOTHER, 21), (1.7, "up", "down", ORANGE, 52)]
     for k, (x, a, alt, look, seed) in enumerate(cast):
-        p = person((x, 1.5 + 0.3 * (k % 2), 0), 150, seed=seed, arms=a, alt=alt, nf=nf, period=8 + k, look=look,
+        p = person((x, 4.0 + 0.6 * (k % 2), 0), 180 + (k - 2.5) * 6, seed=seed, arms=a, alt=alt, nf=nf, period=8 + k, look=look,
                    scale=0.75 if look is DAUGHTER else 1.0, hat="white" if look is WORKER else None)
         if k == 5:
             mask_on(p)
     FJ.utility_poles([(-22, 16), (-6, 16), (10, 16), (26, 16)])
-    cam = W.camera((5.5, -3.0, 1.4), (-6.0, 60.0, 14.0), lens=24)
+    cam = W.camera((0.6, -2.4, 1.25), (0.0, 40.0, 11.0), lens=24)
     cam["push"] = 0.15
     return nf
 

@@ -133,6 +133,13 @@ def step(seed=0, hard=True):
     return x * (0.6 if hard else 0.8)
 
 
+def clock(k=0):
+    """早送り中の時計の「カチ」（小さく高い音）。"""
+    n = int(0.05 * SR)
+    f = 2600 if k % 2 == 0 else 2200
+    return tone(0.05, f) * env(n, 0.0005, 0.008) * 0.5 + band(noise(0.05, 80 + k % 7), 3000, 9000) * env(n, 0.0003, 0.003) * 0.3
+
+
 def brake():
     n = int(1.2 * SR)
     tt = np.arange(n) / SR
@@ -164,6 +171,11 @@ def build_audio(total):
     put(CC.flutter(2.0), TL.T_VANISH + 0.1, 0.8)
     put(FC.wind(2.5, 32), TL.T_VANISH + 0.3, 0.5)
     for s in TL.SHOTS:
+        if s.get("segs"):
+            e0, sp = TL.e_of(s, 0)
+            if sp > 50:      # 早送りの場面は、時計のカチカチ
+                for k, tt in enumerate(np.arange(0.25, s["frames"] / FPS - 0.1, 0.4)):
+                    put(clock(k), st[s["name"]] + tt, 0.7)
         if s.get("card"):
             put(CC.whoosh(0.9, hash(s["name"]) % 50), st[s["name"]] - 0.2, 0.7)
         for a0, b0, head, sub in s.get("captions", []):

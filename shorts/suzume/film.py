@@ -423,7 +423,7 @@ def wire_scene(nf, f_event, arrive=False):
         sag_with, sag_without = 0.62, 0.56
         o = wire_curve(span[0], span[1], y, z0 + k * 0.05, sag_with if not arrive else sag_without, name=f"wire{k}")
         r = random.Random(4 + k)
-        xs = sorted(r.uniform(-3.2, 3.6) for _ in range(nb))
+        xs = sorted(r.uniform(-1.3, 1.5) for _ in range(nb))
         pts = []
         for x in xs:
             u = (x - span[0]) / (span[1] - span[0])
@@ -448,7 +448,7 @@ def wire_scene(nf, f_event, arrive=False):
 
 def s02_wire(nf):
     wire_scene(nf, 10)
-    W.camera((1.4, 3.4, 6.15), (0.2, 6.3, 6.02), lens=40)
+    W.camera((0.9, 4.2, 6.1), (0.0, 6.2, 6.0), lens=42)
     cut(66, (4.0, 1.0, 5.6), (0.0, 6.3, 6.0), lens=30, orbit=4, push=0.05)
     return nf
 
@@ -627,7 +627,7 @@ def s06_fukura(nf):
     snowfall((0, 5, 4), (6, 6, 4), 900, nf)
     person((1.2, 3.2, 0), 200, seed=12, arms="down", look={"top": (0.75, 0.20, 0.20), "bottom": (0.25, 0.25, 0.30)}, scale=0.75)
     fill((2.0, 0.8, 1.6), (1.2, 3.2, 1.0), power=60, col=(0.9, 0.93, 1.0))
-    W.camera((0.3, 3.4, 6.1), (-0.2, 6.0, 6.08), lens=40)
+    W.camera((0.1, 3.6, 6.12), (-0.2, 6.0, 6.08), lens=35)
     cut(70, (2.8, -0.6, 1.0), (0.4, 6.0, 4.5), lens=26, orbit=4, push=0.05)
     return nf
 
@@ -655,14 +655,14 @@ def caterpillar(loc, rz, nf, seed=0):
     root.rotation_euler.z = rz
     segs = []
     for k in range(7):
-        s = F._ball(0.011, (0, -k * 0.016, 0.011), m, sub=1)
+        s = F._ball(0.016, (0, -k * 0.022, 0.016), m, sub=1)
         s.parent = root
-        s.location = (0, -k * 0.016, 0.011)
+        s.location = (0, -k * 0.022, 0.016)
         segs.append(s)
     for f in range(1, nf + 1, 3):
         t = (f - 1) / FPS
         for k, s in enumerate(segs):
-            s.location.z = 0.011 + 0.008 * max(0.0, math.sin(4 * t - k * 0.8 + seed))
+            s.location.z = 0.016 + 0.012 * max(0.0, math.sin(4 * t - k * 0.8 + seed))
             s.keyframe_insert("location", frame=f)
         root.location = (loc[0] - math.sin(rz) * 0.01 * t, loc[1] + math.cos(rz) * 0.01 * t, loc[2])
         root.keyframe_insert("location", frame=f)
@@ -693,9 +693,10 @@ def s07_spring(nf):
             cabbage((-2.8 + k * 0.75, 1.0 + row * 0.9, 0))
     r = random.Random(2)
     for k in range(26):
-        cx, cy = -2.8 + r.randint(0, 7) * 0.75, 1.0 + r.randint(0, 2) * 0.9
+        cx, cy = (-0.55, 1.0) if k < 5 else ((-1.3, 1.0) if k < 8 else (-2.8 + r.randint(0, 7) * 0.75, 1.0 + r.randint(0, 2) * 0.9))
         a = r.uniform(0, 6.3)
-        caterpillar((cx + 0.17 * math.cos(a), cy + 0.17 * math.sin(a), 0.13), r.uniform(0, 6.3), nf, seed=k)
+        rr = 0.1 if k < 8 else 0.17
+        caterpillar((cx + rr * math.cos(a), cy + rr * math.sin(a), 0.2 if k < 8 else 0.13), r.uniform(0, 6.3), nf, seed=k)
     butterflies(10, nf, (-3, 3, 0.5, 3.5))
     W.box((0, 6.5, 0.6), (14, 0.1, 1.2), W.mat("fence_w", (0.70, 0.62, 0.50), 0.8), bevel=0)
     FJ.town(seed=5, y=(12, 120), x=(-80, 80), n=60)
@@ -759,8 +760,8 @@ def s08_paddy(nf):
     village(green=True)
     leaf_bad = W.mat("rice_bad", (0.62, 0.55, 0.22), 0.9)
     r = random.Random(7)
-    C.multi_ball([(r.uniform(-8, 8), r.uniform(1, 16), r.uniform(0.5, 0.8), r.uniform(0.15, 0.4), (1.4, 1.0, 0.5))
-                  for _ in range(40)], leaf_bad, "damaged")
+    C.multi_ball([(r.choice((-1, 1)) * r.uniform(1.5, 9), r.uniform(7, 18), r.uniform(0.7, 0.85), r.uniform(0.12, 0.25),
+                   (1.4, 1.0, 0.4)) for _ in range(40)], leaf_bad, "damaged")
     walker = farmer((0.0, 6.0, 0.24), 180, nf, arms="down", alt=None)
     walker.keyframe_insert("location", frame=1)
     walker.location.y = 3.0
@@ -828,18 +829,17 @@ def s10_drone(nf):
     sky(lo=(1.0, 0.88, 0.70), hi=(0.42, 0.60, 0.88), strength=0.6)
     sun(35, 195, 4.8, (1.0, 0.88, 0.72))
     village(green=True)
-    d = drone(nf, ((-7.0, 6.0), (6.0, 6.0)))
-    _ = d
+    drone(nf, ((-3.0, 5.5), (3.0, 5.5)))
     r = random.Random(4)
     spawns = []
     for f in range(1, nf, 1):
         u = (f - 1) / max(1, nf - 1)
-        x = -7.0 + 13.0 * u
-        spawns.append((f, (x + r.uniform(-0.6, 0.6), 6.0 + r.uniform(-0.6, 0.6), 1.7)))
+        x = -3.0 + 6.0 * u
+        spawns.append((f, (x + r.uniform(-0.6, 0.6), 5.5 + r.uniform(-0.6, 0.6), 1.7)))
     puffs(spawns, nf, (0.0, 0.0, -0.9), (0.18, 0.35), grow=2.6, rate=1.5, mat=F.puff_mat("mist", (0.95, 0.96, 1.0), 0.22),
           name="mist", seed=4, life=50)
     farmer((1.8, 2.2, 0.24), 200, nf, arms="hold", alt=None)
-    W.camera((2.4, -1.4, 1.4), (0.0, 6.0, 1.8), lens=26)
+    W.camera((1.6, -1.4, 1.3), (0.0, 5.5, 2.0), lens=26)
     cut(70, (0.2, 0.0, 1.5), (1.8, 2.2, 1.5), lens=36, orbit=4, push=0.05, focus=(1.8, 2.2, 1.6))
     return nf
 
@@ -926,15 +926,24 @@ def j2_garden(nf):
 
 def j3_wire(nf):
     wire_scene(nf, 12, arrive=True)
-    W.camera((1.4, 3.4, 6.15), (0.2, 6.3, 6.02), lens=40)
+    W.camera((0.9, 4.2, 6.1), (0.0, 6.2, 6.0), lens=42)
     return nf
 
 
 def j4_school(nf):
     classroom(nf)
-    P = flock_track(40, nf, 9, lambda t: (-9.0 + 2 * math.sin(t), 2.0 + 3 * t, 3.0), lambda t: (1.5, 1.5, 0.6))
-    fly_objects(P, nf, scale=1.3)
-    W.camera((-4.3, 6.2, 1.3), (-0.5, 2.2, 0.8), lens=26)
+    W.box((-5.3, 2.5, 0.88), (0.5, 9.0, 0.06), W.mat("sill", (0.80, 0.80, 0.78), 0.6), bevel=0.01)
+    r = random.Random(3)
+    birds = perched([(-5.35, 1.6 + k * 0.45 + r.uniform(-0.1, 0.1), 0.91, math.radians(r.uniform(60, 120))) for k in range(5)],
+                    name="sill_b", scale=1.2)
+    for j, b in enumerate(birds):
+        peck(b, nf, seed=j, period=16)
+    P = flock_track(30, nf, 9, lambda t: (-8.0 + 0.8 * math.sin(2 * t), 2.5 + 1.5 * t, 2.6), lambda t: (1.6, 1.4, 0.5))
+    fly_objects(P, nf, scale=1.2)
+    for k in range(4):
+        person((-3.4 + k * 0.6, 1.4 + 0.5 * (k % 2), 0.0), 270 + (k - 1.5) * 10, seed=60 + k, arms="up", alt="down", nf=nf,
+               period=18 + k, look=KIDS[k % 4], scale=0.7)
+    W.camera((-6.6, 2.6, 1.45), (0.0, 2.2, 1.0), lens=28)
     return nf
 
 

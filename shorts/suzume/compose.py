@@ -17,6 +17,8 @@ _spec = importlib.util.spec_from_file_location("sugi_compose", os.path.join(HERE
 SC = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(SC)       # スギ版の色の仕上げ（少し暗め・オレンジ弱め）と音の部品を使う
 FC, CC, Y = SC.FC, SC.CC, SC.Y
+# 夕方の場面が多く、明るくオレンジに寄りすぎた（明るさ 122・暖かさ 24）ので、中間を下げて黄色みを弱める（計測で決めた値）
+FC.GRADE = dict(FC.GRADE, gam=1.8, lo=0.18, hi=0.80, s=1.0, r=0.96, b=1.02, sat=0.85, vib=1.0)
 FPS, SR = TL.FPS, CC.SR
 LABEL = "スズメが消えてから"
 WORD, PRE, POST = "スズメ", "もしも", "が消えたら？"

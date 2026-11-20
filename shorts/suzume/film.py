@@ -371,6 +371,9 @@ def s01_open(nf):
     r = np.random.default_rng(1)
     N = 520
     G = np.column_stack([r.uniform(-7, 7, N), r.uniform(0.5, 14, N), r.uniform(0.55, 0.85, N)])
+    near = r.random(N) < 0.35          # 3分の1は、カメラのすぐ前から飛び立つ
+    G[near, 0] = r.uniform(-2.2, 2.2, near.sum())
+    G[near, 1] = r.uniform(0.3, 3.5, near.sum())
     t_off = 0.1 + np.hypot(G[:, 0], G[:, 1] - 1.0) * 0.06 + r.uniform(0, 0.25, N)
     P = flock_track(N, nf, 3, sky_flock_center, sky_flock_size, ground=G, t_off=t_off)
     objs = fly_objects(P, nf, f_off=fv + 3, scale=1.4, flap_near=((0.3, -1.5, 0.55), 6.0))
@@ -378,9 +381,25 @@ def s01_open(nf):
     farmer((2.2, 6.0, 0.24), 200, nf)
     kakashi((-2.8, 9.0, 0.0), 190)
     fill((1.0, 3.0, 2.0), (2.2, 6.0, 1.5), power=80)
-    # 1) 稲の中から目の前で飛び立つ 2) 夕空でうねる群れと、追うおじいさん 3) 消える → 羽だけ落ちる（文字なし）
-    cut(1, (0.3, -1.5, 0.55), (0.0, 10.0, 2.8), lens=22, orbit=0, push=0.05)
-    cut(61, (3.6, 2.8, 1.4), (-1.0, 22.0, 6.5), lens=24, orbit=4, push=0.05)
+    # 1) 稲の中から目の前で飛び立つ群れを、カメラも追って上がる 2) うねる群れを左右に追う（おじいさんも画面に）
+    # 3) 消える → 羽だけ落ちる（文字なし）
+    cen = P[:, :, :].mean(axis=0)
+    c1 = W.camera((0.3, -1.5, 0.5), (0.0, 10.0, 2.8), lens=20)
+    c1["keep"], c1["focus"] = 1, "none"
+    for f in list(range(1, 61, 2)) + [60]:
+        u = float(smooth((f - 1) / 59))
+        c1.location = (0.3 + 0.3 * u, -1.5 + 2.6 * u, 0.5 + 1.3 * u)
+        W.aim(c1, Vector((0.0, 10.0, 2.8)).lerp(Vector(tuple(cen[f])), min(1.0, (f - 1) / 25)))
+        c1.keyframe_insert("location", frame=f)
+        c1.keyframe_insert("rotation_euler", frame=f)
+    c2 = W.camera((3.6, 2.8, 1.4), (-1.0, 22.0, 6.5), lens=22)
+    c2["f0"], c2["keep"], c2["focus"] = 61, 1, "none"
+    for f in list(range(61, 121, 2)) + [120]:
+        u = (f - 61) / 59
+        c2.location = (3.6 - 0.8 * u, 2.8 - 1.0 * u, 1.4 + 0.25 * u)
+        W.aim(c2, Vector(tuple(cen[f])) * 0.75 + Vector((2.2, 6.0, 1.8)) * 0.25)
+        c2.keyframe_insert("location", frame=f)
+        c2.keyframe_insert("rotation_euler", frame=f)
     cut(121, (-1.0, 8.0, 1.6), (-1.0, 27.0, 7.5), lens=28, orbit=0, push=0.0, fixat=1, zoom=1.08)
     return nf
 

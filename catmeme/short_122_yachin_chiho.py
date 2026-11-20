@@ -2,6 +2,7 @@
 
 python3 catmeme/short_122_yachin_chiho.py → out/short_122_yachin_chiho.mp4
 - 段階ごとに「札だけ → 右の猫（地方）→ 左の猫（東京）」の3段。どの地域・人もけなさない
+- 11/20 修正：地方側の説明を変更・最後は「0円」で両方ネタに全振り（ユーザー指定）
 - 金額はざっくりのイメージ（地域や駅によって違う）。BGM なし
 """
 import os
@@ -17,14 +18,14 @@ def cuts():
     # (札, 右の猫＝地方, 右の説明, 左の猫＝東京, 左の説明)
     rows = [
         ('家賃3万', 'happy_hamster_open_arms', '1K\n築浅', 'sad_looking_away_tabby', 'シェアハウスの\n1部屋'),
-        ('家賃4万', 'dance_cute_dog', '1LDK', 'stare_tabby_wide_eyes_cat', '風呂なし\nアパート'),
-        ('家賃5万', 'cocky_dj_cat', '2LDK\n駐車場つき', 'think_chin_paw_orange_cat', '駅から\n徒歩20分'),
-        ('家賃6万', 'rizz_cat_rizz', '新築の\n2LDK', 'despair_dramatic_kitten', 'ワンルーム\n15平米'),
-        ('家賃7万', 'listen_dancing_dog', '一軒家を\nまるごと', 'stare_lying_tabby_cat', 'ロフトつき\n1K'),
-        ('家賃8万', 'smug_squint_bicolor_cat', '庭つきの\n一軒家', 'money_counting_orange_cat', 'やっと\n1DK'),
+        ('家賃4万', 'dance_cute_dog', '1DK', 'stare_tabby_wide_eyes_cat', '風呂なし\nアパート'),
+        ('家賃5万', 'cocky_dj_cat', '1LDK', 'think_chin_paw_orange_cat', '駅から\n徒歩20分'),
+        ('家賃6万', 'rizz_cat_rizz', '駅近\n1LDK', 'despair_dramatic_kitten', 'ワンルーム\n15平米'),
+        ('家賃7万', 'listen_dancing_dog', '2LDK\n駐車場つき', 'stare_lying_tabby_cat', 'ロフトつき\n1K'),
+        ('家賃8万', 'smug_squint_bicolor_cat', '一軒家も', 'money_counting_orange_cat', 'やっと\n1DK'),
         ('家賃10万', 'surprise_big_pupils_cat', 'そんなに\n払うの？', 'work_typing_cat', '駅近の\n1LDK'),
-        ('家賃15万', 'scream_phone_orange_cat', 'ローンで\n家が買える', 'blank_black_cat_zoning_out', '2LDK\n（都心は無理）'),
-        ('更新料', 'calm_black_face_sheep', 'ない所も\n多い', 'sad_banana_cat_cry', '家賃1か月分\n消える'),
+        ('家賃15万', 'scream_phone_orange_cat', '駅前マンション\nでも行ける', 'blank_black_cat_zoning_out', '2LDK\n（都心は無理）'),
+        ('0円', 'dance_edm_cat', '空き家\nもらった', 'happy_girlfriend_dance_cat', '実家暮らし\n（最強）'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

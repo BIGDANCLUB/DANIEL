@@ -24,6 +24,8 @@ cut, sky, sun, day, room, window_sun = FJ.cut, FJ.sky, FJ.sun, FJ.day, FJ.room, 
 
 def person(loc, facing, pose="stand", **kw):
     """富士山版の人。頭の高さ（マスク・くしゃみ用）を覚えておく。"""
+    if kw.get("alt"):
+        kw["period"] = max(kw.get("period", 10), 18)
     root = FJ.person(loc, facing, pose=pose, **kw)
     root["hc0"] = 0.96 if pose == "sit" else 1.62
     return root
@@ -488,8 +490,7 @@ def s01_open(nf):
     # 1) 風で山から花粉のけむり 2) マスクのお父さんがくしゃみ 3) 肩ごしに山 → 消える 4) 何もない斜面を文字なしで
     cut(1, (40, 40, 25), (SPOT[0], SPOT[1] + 40, 120), lens=45, orbit=8, push=0.15, focus="far")
     cut(61, (0.1, 2.9, 1.15), (0.2, 0.8, 1.15), lens=45, orbit=14, push=0.25)
-    cut(121, cam_mt, at_mt, lens=30, orbit=10, push=0.12, focus="far")
-    cut(fv + 8, (-0.4, -2.1, 1.5), (-40, 520, 110), lens=50, orbit=8, push=0.0, piv=3, fixat=1, focus="far", zoom=1.12)
+    cut(121, cam_mt, at_mt, lens=30, orbit=0, push=0.0, fixat=1, focus="far", zoom=1.35)
     return nf
 
 
@@ -556,7 +557,7 @@ def s02_shrine(nf):
     for k, (x, fac, look, arms) in enumerate(((-1.2, 10, C.GRANDPA, "down"), (-0.3, 350, MOTHER, "head"))):
         person((x, 2.6, 0), fac, seed=20 + k, arms=arms, look=look)
     W.camera((0.6, -4.0, 1.2), (0.0, 8.0, 7.0), lens=22)
-    cut(45, (0.4, 10.6, 0.7), (-0.7, 2.6, 1.3), lens=32, orbit=10, push=0.2, focus=(-0.7, 2.6, 1.5))
+    cut(76, (0.4, 10.6, 0.7), (-0.7, 2.6, 1.3), lens=32, orbit=6, push=0.1, focus=(-0.7, 2.6, 1.5))
     return nf
 
 
@@ -963,14 +964,15 @@ def nikko_set():
 def s10_nikko(nf):
     morning(0.5)
     nikko_set()
-    ghost(sugi_forest(avenue(-4, 160), "nikko_ghost"), col=(0.70, 0.90, 1.0), strength=0.45, thick=0.012)
+    ghost(sugi_forest(avenue(-4, 160, step=9.0), "nikko_ghost"), col=(0.70, 0.90, 1.0), strength=0.45, thick=0.012)
     for k, (x, look) in enumerate(((-0.6, MOTHER), (0.3, C.GRANDPA))):
         p = person((x, 9.0, 0), 180, seed=62 + k, arms="brow" if k else "down", look=look)
         p.keyframe_insert("location", frame=1)
         p.location.y = 6.5
         p.keyframe_insert("location", frame=nf)
-    W.camera((0.6, -1.0, 1.35), (0.0, 40.0, 7.0), lens=24)
-    cut(70, (1.6, 3.2, 1.5), (0.0, 7.8, 1.5), lens=40, orbit=12, push=0.15, focus=(0.0, 7.6, 1.5))
+    c = W.camera((0.6, -1.0, 1.35), (0.0, 40.0, 7.0), lens=24)
+    c["orbit"], c["push"] = 0.0, 0.05
+    cut(70, (1.6, 3.2, 1.5), (0.0, 7.8, 1.5), lens=40, orbit=0, push=0.06, focus=(0.0, 7.6, 1.5))
     return nf
 
 
@@ -1008,8 +1010,9 @@ def s11_jomon(nf):
         p = person((x, 2.6, 1.08), 180 + (k - 1) * 15, seed=70 + k, arms=arms, look=HIKER if k != 1 else WORKER,
                    hat="cap" if k == 0 else None)
         W.box((0, -0.2, 1.3), (0.34, 0.2, 0.45), W.mat("backpack", (0.20, 0.30, 0.45), 0.8), bevel=0.04).parent = p.children[0]
-    W.camera((0.8, -3.5, 1.9), (0.4, 8.0, 5.5), lens=24)
-    cut(70, (-0.2, -0.8, 1.9), (-0.3, 2.6, 2.4), lens=40, orbit=12, push=0.12, focus=(-0.3, 2.6, 2.5))
+    c = W.camera((0.8, -3.5, 1.9), (0.4, 8.0, 5.5), lens=24)
+    c["orbit"], c["push"] = 0.0, 0.05
+    cut(70, (-0.2, -0.8, 1.9), (-0.3, 2.6, 2.4), lens=40, orbit=0, push=0.06, focus=(-0.3, 2.6, 2.5))
     return nf
 
 
@@ -1215,5 +1218,8 @@ if __name__ == "__main__":
     W.reset()
     nf = TL.shot(name)["frames"]
     SCENES[name](nf)
+    for cam in FJ.cams():      # 参考元より動きすぎていたので、回りこみと寄りを弱める
+        cam["orbit"] = min(cam.get("orbit", 13.0) * 0.55, 8.0)
+        cam["push"] = min(cam.get("push", 0.3), 0.18)
     FJ.render(out, nf, step, first, last)
     print("rendered", name, flush=True)

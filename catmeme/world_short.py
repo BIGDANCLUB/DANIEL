@@ -624,11 +624,11 @@ def skit_draw(out, c, t):
     """寸劇型：右に写真カード（白い角丸のふち・中に料理の絵）、その上に黄色い札、写真の下の方に白い字幕。
     猫の字幕は猫の上に白い文字。カードは猫に少し重ねる。"""
     pn, ps = c["pic"]
-    key = ("card", pn, ps)
+    key = ("card", pn, ps, c.get("pic_max_h"))
     if key not in _PIC:
         im = Image.open(I.bg_path(bg_name(pn))).convert("RGBA")
         side = min(int(700 * ps), 530)   # 右半分からはみ出さない（11/18 ユーザー指定）
-        k = min(side / im.width, side / im.height)
+        k = min(side / im.width, c.get("pic_max_h", side) / im.height)   # pic_max_h：縦長の絵（スマホ画面など）は縦を大きくしてよい（11/20）
         im = im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
         if c.get("pic_card", True) and im.getpixel((2, 2))[3] == 255:   # 背景のある写真だけ白いふちのカードにのせる（透過の絵はそのまま・11/18）
             card = Image.new("RGBA", (im.width + 40, im.height + 40), (0, 0, 0, 0))

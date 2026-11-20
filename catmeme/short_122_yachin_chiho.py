@@ -17,15 +17,15 @@ def cuts():
     out = []
     # (札, 右の猫＝地方, 右の説明, 左の猫＝東京, 左の説明)
     rows = [
-        ('家賃3万', 'happy_hamster_open_arms', '1K\n築浅', 'sad_looking_away_tabby', 'シェアハウスの\n1部屋'),
-        ('家賃4万', 'dance_cute_dog', '1DK', 'stare_tabby_wide_eyes_cat', '風呂なし\nアパート'),
+        ('家賃3万', 'happy_hamster_open_arms', '1K\n築浅', 'angry_cat_hits_cat', '不動産屋\n「帰れ」'),
+        ('家賃4万', 'dance_cute_dog', '1DK', 'sad_looking_away_tabby', '風呂なし\nアパート'),
         ('家賃5万', 'cocky_dj_cat', '1LDK', 'think_chin_paw_orange_cat', '駅から\n徒歩20分'),
         ('家賃6万', 'rizz_cat_rizz', '駅近\n1LDK', 'despair_dramatic_kitten', 'ワンルーム\n15平米'),
         ('家賃7万', 'listen_dancing_dog', '2LDK\n駐車場つき', 'stare_lying_tabby_cat', 'ロフトつき\n1K'),
         ('家賃8万', 'smug_squint_bicolor_cat', '一軒家も', 'money_counting_orange_cat', 'やっと\n1DK'),
         ('家賃10万', 'surprise_big_pupils_cat', 'そんなに\n払うの？', 'work_typing_cat', '駅近の\n1LDK'),
         ('家賃15万', 'scream_phone_orange_cat', '駅前マンション\nでも行ける', 'blank_black_cat_zoning_out', '2LDK\n（都心は無理）'),
-        ('0円', 'dance_edm_cat', '空き家\nもらった', 'happy_girlfriend_dance_cat', '実家暮らし\n（最強）'),
+        ('0円', 'drive_driving_cat', '山', 'happy_girlfriend_dance_cat', '実家暮らし\n（最強）'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

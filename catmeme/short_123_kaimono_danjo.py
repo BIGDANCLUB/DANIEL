@@ -2,6 +2,7 @@
 
 python3 catmeme/short_123_kaimono_danjo.py → out/short_123_kaimono_danjo.mp4
 - ベンチマークで伸びている「男女の比べっこ」型（11/20 調査）。ほのぼのにある題材とは被らないものを選んだ
+- 11/20 修正：彼氏側のセリフを変更（ユーザー指定）
 - 段階ごとに「札だけ → 右の猫（彼女）→ 左の猫（彼氏）」の3段。どちらもけなさない、よくあるイメージ。BGM なし
 """
 import os
@@ -18,12 +19,12 @@ def cuts():
     rows = [
         ('出発前', 'dance_cute_dog', '見るだけ\nだからね', 'calm_black_face_sheep', '靴下だけ\n買う'),
         ('10分', 'happy_hamster_open_arms', 'かわいい〜', 'smug_squint_bicolor_cat', '靴下\n買った'),
-        ('30分', 'think_chin_paw_orange_cat', 'これと\nこれどっち？', 'stare_tabby_wide_eyes_cat', 'どっちも\n似合う'),
-        ('1時間', 'cocky_dj_cat', 'やっぱり\n最初の店', 'confused_i_dont_know_cat', '最初の店…？'),
-        ('1時間半', 'rizz_cat_rizz', '試着\nしてくる', 'blank_black_cat_zoning_out', 'ベンチと\n一体化'),
-        ('2時間', 'listen_dancing_dog', 'ちょっと\n休憩しよ', 'sad_looking_away_tabby', 'やっと\n座れる'),
-        ('2時間半', 'dance_edm_cat', 'まだ見てない\n店ある', 'despair_dramatic_kitten', '足が\n棒'),
-        ('3時間', 'stare_interviewer_cat', '今日は\nいいや', 'scream_phone_orange_cat', 'えっ'),
+        ('30分', 'think_chin_paw_orange_cat', 'これと\nこれどっち？', 'stare_tabby_wide_eyes_cat', '両方似合うよ！\n（わかんねぇ）'),
+        ('1時間', 'cocky_dj_cat', 'やっぱり\n最初の店', 'confused_i_dont_know_cat', 'ふりだしに\n戻る'),
+        ('1時間半', 'rizz_cat_rizz', '試着\nしてくる', 'blank_black_cat_zoning_out', 'マネキンの\nマネをする'),
+        ('2時間', 'listen_dancing_dog', 'ちょっと\n休憩しよ', 'sad_looking_away_tabby', '人間の感情を\n取り戻す'),
+        ('2時間半', 'dance_edm_cat', 'まだ見てない\n店ある', 'despair_dramatic_kitten', '人間の感情\ngood-by'),
+        ('3時間', 'stare_interviewer_cat', '今日は\nいいや', 'scream_phone_orange_cat', '何の成果も'),
         ('帰り道', 'happy_girlfriend_dance_cat', '楽しかった！', 'stare_lying_tabby_cat', '財布は\n無事'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):

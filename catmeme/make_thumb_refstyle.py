@@ -1,0 +1,85 @@
+"""参考マネのショート（免許証が漏れるとヤバすぎる）のサムネ（縦 1080x1920）。動画と同じ見た目で、いちばん強い場面を1枚に。
+
+python3 catmeme/make_thumb_refstyle.py → thumbs/short_refstyle_license.png
+"""
+import os
+
+import cv2
+import numpy as np
+
+import short_refstyle as M
+
+HERE = M.HERE
+OUT = os.path.join(HERE, "thumbs", "short_refstyle_license.png")
+
+
+def main():
+    title = M.title_band("閲覧注意", "免許証が漏れるとヤバすぎる")
+    c = M.cut(M.HOME, "免許証が漏れたら\n*ブラック入り*！？", [("sad_banana_cat_cry", M.L, 1050, False), ("angry_aiming_cat", M.Rr, 1050, True)],
+              label=M.HAN, size=130)
+    for k in c["cats"]:
+        k["pop"] = False
+    f = M.make_draw(c, title)(1.0)
+    os.makedirs(os.path.dirname(OUT), exist_ok=True)
+    cv2.imwrite(OUT, (np.clip(f, 0, 1) * 255).astype(np.uint8))
+    print("->", OUT)
+
+
+if __name__ == "__main__":
+    main()
+
+
+def phrases():
+    """名フレーズ6選（参考マネの見た目）。"""
+    title = M.title_band("全部わかる？", "ニュース発ネット名フレーズ6選")
+    c = M.cut("bg06_spotlight", "*553＞1107*・古古古米\n2億円トイレ・*のり弁*\nジャンボタニシ農法\n*GoToトラブル*",
+              [("huh_huh_cat", M.L, 1000, False), ("surprise_big_pupils_cat", M.Rr, 1050, True)], size=110)
+    for k in c["cats"]:
+        k["pop"] = False
+    f = M.make_draw(c, title)(1.0)
+    out = os.path.join(HERE, "thumbs", "short_meme_phrases_refstyle.png")
+    cv2.imwrite(out, (np.clip(f, 0, 1) * 255).astype(np.uint8))
+    print("->", out)
+
+
+def dame_rent():
+    """ダメ人間 #1（家賃で馬券）。"""
+    title = M.title_band("とあるダメ人間の", "家賃で馬券買っちゃった")
+    c = M.cut("bg06_spotlight", "家賃払うために\n*家賃で馬券*\n買っちゃった。",
+              [("sad_banana_cat_cry", M.L, 1000, False), ("rizz_cat_rizz", M.Rr, 1000, True)], size=130, label="競馬", label_x=800)
+    for k in c["cats"]:
+        k["pop"] = False
+    f = M.make_draw(c, title)(1.0)
+    out = os.path.join(HERE, "thumbs", "short_dame_rent.png")
+    cv2.imwrite(out, (np.clip(f, 0, 1) * 255).astype(np.uint8))
+    print("->", out)
+
+
+def idcf():
+    """10本目のショート（IDCF、7時間気づかずハッカーに報告されるwww）。"""
+    import short_10_idcf as D
+    title = M.title_band(*D.TITLE)
+    c = M.cut("bg24_server_room", "*7時間*たっても\nまだ気づいてない\nとかwww",
+              [("work_typing_cat", M.L, 950, False), ("laugh_laughing_dog", M.Rr, 1050, True)], label="ハッカー", label_x=830,
+              col=M.LIME, size=120)
+    c["labels"] = [("運用の人", 250)]
+    for k in c["cats"]:
+        k["pop"] = False
+    f = M.make_draw(c, title)(1.0)
+    out = os.path.join(HERE, "thumbs", "short_10_idcf.png")
+    cv2.imwrite(out, (np.clip(f, 0, 1) * 255).astype(np.uint8))
+    print("->", out)
+
+
+def fukiso():
+    """11本目のショート（まさかの不起訴）。"""
+    import short_11_fukiso as D
+    title = M.title_band(*D.TITLE)
+    c = M.cut("bg07_press", "結果\n→　*不起訴*", [("rage_talking_cat", M.L, 1000, False), ("sad_banana_cat_cry", M.Rr, 1000, True)],
+              label="車の持ち主", label_x=740, size=150)
+    for k in c["cats"]:
+        k["pop"] = False
+    f = M.make_draw(c, title)(1.0)
+    out = os.path.join(HERE, "thumbs", "short_11_fukiso.png")
+    cv2.imwrite(out, (np.clip(f, 0, 1) * 255).astype(np.uint8))
+    print("->", out)

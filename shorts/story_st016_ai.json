@@ -1,0 +1,228 @@
+{
+ "_comment": "ST-016 年金の繰下げ受給（1952年4月2日以後生まれ）。1か月遅らせるごとに0.7%増、70歳で42%、75歳で最大84%増。増額は生涯続く。70歳開始の場合、65歳開始との受取総額の逆転は約81歳11か月。繰下げ中は加給年金を受け取れない、増額で税・社会保険料も増える点に注意。例: 月15万円→70歳開始で約21.3万円。",
+ "tempo": 1.22,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "tail": 1.3,
+ "banner": "知らないと大損する\n{年金の受け取り方}",
+ "thumb_top": "受け取り方を変えたら\n年金が4割増えた",
+ "thumb_teaser": "年金事務所のひと言で",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n64歳の日本人男性。落ち着いた低めの声で、誠実な人柄。\n## THE SCENE\n自分の身に起きた出来事を、同世代の男性に打ち明けるように語っている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。数字は少し強調する。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st016_ai/voice",
+  "batch": 5
+ },
+ "image_gen": {
+  "image_dir": "work_st016_ai/images"
+ },
+ "scenes": {
+  "growth_chart": {
+   "prompt": "A printed chart on a wooden desk showing a bar growing taller step by step, reading glasses beside it, warm light, numbers blurred No faces visible, no readable text."
+  },
+  "factory": {
+   "prompt": "An older Japanese man in work clothes seen from behind working at a small factory workbench, afternoon light No faces visible, no readable text."
+  },
+  "calendar_tea": {
+   "prompt": "A wall calendar and a cup of green tea on a table by a window, an older man's hand turning a calendar page, soft light No faces visible, no readable text."
+  },
+  "pension_desk2": {
+   "prompt": "A Japanese pension office consultation booth with a staff member's hands showing a document to an older man's hands, bright light, text blurred No faces visible, no readable text."
+  },
+  "steps": {
+   "prompt": "A simple printed diagram of ascending steps on a pamphlet with a pen pointing at the top step, top-down view, text blurred No faces visible, no readable text."
+  },
+  "wallet_pass": {
+   "prompt": "An older man's hands holding an open bank passbook and a leather wallet at a kitchen table, relieved mood, warm light No faces visible, no readable text."
+  },
+  "morning_walk": {
+   "prompt": "An older Japanese man walking briskly along a seaside promenade at sunrise, seen from behind, energetic hopeful mood No faces visible, no readable text."
+  },
+  "crossroads": {
+   "prompt": "A quiet country road splitting into two paths at sunset, rice fields on both sides, no people No faces visible, no readable text."
+  }
+ },
+ "lines": [
+  {
+   "text": "年金が\n{4割}増えた",
+   "tone": "信じられない結果を打ち明ける。驚きをこめて、力強く",
+   "say": "年金が、4割も増えました。",
+   "se": "don",
+   "scene": "growth_chart",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ],
+   "hook": true
+  },
+  {
+   "text": "<受け取り方>を\n変えただけで",
+   "tone": "秘密を明かす前のように、少し声を落として引きつける",
+   "say": "受け取り方を、変えただけで。",
+   "scene": "growth_chart",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{64歳}の私\n再雇用で\n働いています",
+   "tone": "淡々と、落ち着いて",
+   "say": "64歳の私。再雇用で働いています。",
+   "scene": "factory",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "来年からは\n{年金}がもらえる",
+   "tone": "少し期待をこめて",
+   "say": "来年からは、年金がもらえる。",
+   "scene": "factory",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "でも年金は\n月{15万円}\n<老後が不安>でした",
+   "tone": "不安がにじむ。声を少し落として",
+   "say": "でも年金は月15万円。長い老後が不安でした。",
+   "scene": "calendar_tea",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "体は元気\n{70歳}まで\n働きたい",
+   "tone": "前向きに、力強く",
+   "say": "体は元気。70歳までは働きたい。",
+   "scene": "calendar_tea",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "年金事務所で\n相談すると",
+   "tone": "淡々と",
+   "say": "年金事務所で相談すると、",
+   "scene": "pension_desk2",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "「{繰下げ受給}を\nご存じですか」",
+   "tone": "職員の言葉を、やさしく明るく再現する",
+   "say": "窓口の人が言いました。繰下げ受給を、ご存じですか。",
+   "scene": "pension_desk2",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "1か月遅らせるごとに\n{0.7%}増える",
+   "tone": "はっきりと、聞き手に教えるように",
+   "say": "受け取りを1か月遅らせるごとに、年金が0.7パーセント増えるんです。",
+   "scene": "steps",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "{70歳}からなら\n<42%>増",
+   "tone": "驚きをこめて",
+   "say": "70歳から受け取れば、42パーセント増。",
+   "scene": "steps",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "しかも\n増えた額が\n<一生>続く",
+   "tone": "驚きをこめて",
+   "say": "しかも、増えた額が一生続きます。",
+   "scene": "steps",
+   "crop": [
+    0.44,
+    0.46,
+    1.7
+   ]
+  },
+  {
+   "text": "私の場合\n月15万円が\n<月約21万円>に",
+   "tone": "驚きと安堵。声がふっと明るくなる",
+   "say": "私の場合、月15万円が、月約21万円に。",
+   "se": "coin",
+   "scene": "wallet_pass",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "ただし\n<81歳ごろ>までは\n総額が少ない",
+   "tone": "念を押すように、落ち着いて",
+   "say": "ただし、81歳ごろまでは、受け取る総額が少なくなります。",
+   "scene": "wallet_pass",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "{働けるうち}は働き\n年金は後から",
+   "tone": "噛みしめるように",
+   "say": "働けるうちは働いて、年金は後から増やして受け取る。",
+   "scene": "morning_walk",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  },
+  {
+   "text": "{人生100年}を\n支える選び方です",
+   "tone": "誇らしく、力強く",
+   "say": "人生100年を支える、ひとつの選び方です。",
+   "scene": "morning_walk",
+   "crop": [
+    0.5,
+    0.56,
+    1.5
+   ]
+  },
+  {
+   "text": "あなたは\n<何歳>から\n受け取りますか？",
+   "tone": "同世代に語りかける。まっすぐ問いかけるように",
+   "say": "あなたは、何歳から受け取りますか。",
+   "scene": "crossroads",
+   "crop": [
+    0.5,
+    0.5,
+    1.0
+   ]
+  }
+ ]
+}

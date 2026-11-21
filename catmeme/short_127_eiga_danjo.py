@@ -2,6 +2,7 @@
 
 python3 catmeme/short_127_eiga_danjo.py → out/short_127_eiga_danjo.mp4
 - ベンチマークで伸びている「男女の比べっこ」型（11/20 調査）。ほのぼのにある題材とは被らないものを選んだ
+- 11/21 修正：札は「選び始め」「○分後」・再生の段は彼女スマホでショート／彼氏 開始5分で爆睡
 - 札は選び始めてからの時間。右＝彼女、左＝彼氏
 - 段階ごとに「札だけ → 右の猫（彼女）→ 左の猫（彼氏）」の3段。どちらもけなさない、よくあるイメージ。BGM なし
 """
@@ -17,15 +18,15 @@ def cuts():
     out = []
     # (札, 右の猫＝彼女, 右の説明, 左の猫＝彼氏, 左の説明)
     rows = [
-        ('0分', 'dance_cute_dog', '何見る？', 'calm_black_face_sheep', 'なんでも\nいい'),
-        ('5分', 'happy_hamster_open_arms', 'これ\n面白そう', 'work_typing_cat', '予告編を\n全部見る'),
-        ('10分', 'think_chin_paw_orange_cat', 'やっぱり\nこっち', 'stare_tabby_wide_eyes_cat', 'レビューを\n読み込む'),
-        ('20分', 'listen_dancing_dog', 'あらすじ\n読む', 'smug_squint_bicolor_cat', '星3.8は\n微妙'),
-        ('30分', 'stare_interviewer_cat', 'おすすめ\n教えて', 'confused_i_dont_know_cat', '結局\n昔の名作？'),
-        ('45分', 'cocky_dj_cat', 'お菓子\n準備完了', 'blank_black_cat_zoning_out', 'まだ\n決まらない'),
-        ('1時間', 'glare_disgusted_cat', 'もう\n何でもいい', 'sad_looking_away_tabby', 'スクロール\nし続ける'),
-        ('1時間半', 'stare_lying_tabby_cat', '眠く\nなってきた', 'rizz_cat_rizz', 'これに\n決めた！'),
-        ('再生', 'calm_black_face_sheep', '開始5分で\n寝る', 'sad_banana_cat_cry', '1人で\n号泣'),
+        ('選び始め', 'dance_cute_dog', '何見る？', 'calm_black_face_sheep', 'なんでも\nいい'),
+        ('5分後', 'happy_hamster_open_arms', 'これ\n面白そう', 'work_typing_cat', '予告編を\n全部見る'),
+        ('10分後', 'think_chin_paw_orange_cat', 'やっぱり\nこっち', 'stare_tabby_wide_eyes_cat', 'レビューを\n読み込む'),
+        ('20分後', 'listen_dancing_dog', 'あらすじ\n読む', 'smug_squint_bicolor_cat', '星3.8は\n微妙'),
+        ('30分後', 'stare_interviewer_cat', 'おすすめ\n教えて', 'confused_i_dont_know_cat', '結局\n昔の名作？'),
+        ('45分後', 'cocky_dj_cat', 'お菓子\n準備完了', 'blank_black_cat_zoning_out', 'まだ\n決まらない'),
+        ('1時間後', 'glare_disgusted_cat', 'もう\n何でもいい', 'sad_looking_away_tabby', 'スクロール\nし続ける'),
+        ('1時間半後', 'stare_lying_tabby_cat', '眠く\nなってきた', 'rizz_cat_rizz', 'これに\n決めた！'),
+        ('再生', 'calm_black_face_sheep', 'スマホで\nショート\n見てる', 'sleep_sleeping_cat', '開始5分で\n爆睡'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

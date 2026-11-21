@@ -32,7 +32,7 @@ def final():
     k = 880 / cat.width
     cat = cat.resize((880, int(cat.height * k)), Image.LANCZOS)
     img.alpha_composite(cat, ((T.W - cat.width) // 2, T.H - cat.height - 40))
-    big = T.runs([("夜のドンキは大人の宝物庫！", T.RED)], 170, 10, T.W - 220)
+    big = T.runs([("夜の", T.RED), ("ドンキ", T.BLUE), ("は大人の宝物庫", T.RED)], 170, 10, T.W - 220)   # 11/21：ドンキは青・！なし
     bh = big.height + 40
     by = T.H - bh - 18
     ImageDraw.Draw(img).rounded_rectangle((60, by, T.W - 60, by + bh), 36, fill=(255, 245, 60, 255))

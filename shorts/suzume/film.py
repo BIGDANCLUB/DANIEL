@@ -24,15 +24,35 @@ fr = C.frame_of
 ASSETS = os.path.join(HERE, "assets")
 FJ.ASSETS = ASSETS
 FONT = FJ.FONT
-cut, sky, sun, person, fill, puffs = FJ.cut, FJ.sky, FJ.sun, SG.person, SG.fill, SG.puffs
+cut, sky, sun, fill, puffs = FJ.cut, FJ.sky, FJ.sun, SG.fill, SG.puffs
+sys.path.insert(0, os.path.join(HERE, "..", "voxel"))
+import people as VP  # noqa: E402
 
-FARMER = {"hair": (0.80, 0.80, 0.78), "top": (0.30, 0.38, 0.50), "bottom": (0.32, 0.30, 0.26)}
-FARMER_OLD = {"hair": (0.92, 0.92, 0.90), "top": (0.30, 0.38, 0.50), "bottom": (0.32, 0.30, 0.26)}
-GRANDMA = {"hair": (0.75, 0.74, 0.73), "top": (0.62, 0.42, 0.50), "bottom": (0.35, 0.32, 0.38)}
-TEACHER = {"top": (0.85, 0.82, 0.70), "bottom": (0.30, 0.32, 0.40), "hair": (0.10, 0.08, 0.06)}
+VP.install(FJ)          # 人は参考元のようなブロック体（四角い頭・ドットの顔）に（ユーザー指定 2026-11-21）
+
+
+def person(loc, facing, pose="stand", **kw):
+    root = SG.person(loc, facing, pose=pose, **kw)
+    root["hc0"] = VP.HC_SIT if pose == "sit" else VP.HC_STAND
+    return root
+
+
+def L(base, **kw):
+    """見た目の dict に、表情などを足す。"""
+    d = dict(base)
+    d.update(kw)
+    return d
+
+
+FARMER = {"hair": (0.62, 0.62, 0.60), "top": (0.30, 0.38, 0.50), "bottom": (0.32, 0.30, 0.26), "beard": True}
+FARMER_OLD = {"hair": (0.85, 0.85, 0.83), "top": (0.30, 0.38, 0.50), "bottom": (0.32, 0.30, 0.26), "beard": True}
+GRANDMA = {"hair": (0.62, 0.61, 0.60), "top": (0.62, 0.42, 0.50), "bottom": (0.35, 0.32, 0.38), "long": True}
+TEACHER = {"top": (0.85, 0.82, 0.70), "bottom": (0.30, 0.32, 0.40), "hair": (0.10, 0.08, 0.06), "long": True, "glasses": True}
 CN = {"top": (0.30, 0.38, 0.52), "bottom": (0.28, 0.30, 0.38)}
-KIDS = [{"top": (0.95, 0.75, 0.20), "bottom": (0.20, 0.30, 0.55)}, {"top": (0.90, 0.35, 0.35), "bottom": (0.25, 0.25, 0.30)},
-        {"top": (0.35, 0.65, 0.85), "bottom": (0.30, 0.30, 0.35)}, {"top": (0.55, 0.80, 0.45), "bottom": (0.25, 0.28, 0.40)}]
+KIDS = [{"top": (0.95, 0.75, 0.20), "bottom": (0.20, 0.30, 0.55), "kid": True},
+        {"top": (0.90, 0.35, 0.35), "bottom": (0.25, 0.25, 0.30), "kid": True, "long": True},
+        {"top": (0.35, 0.65, 0.85), "bottom": (0.30, 0.30, 0.35), "kid": True},
+        {"top": (0.55, 0.80, 0.45), "bottom": (0.25, 0.28, 0.40), "kid": True, "long": True}]
 
 
 # ---------- スズメ ----------
@@ -302,15 +322,18 @@ def kakashi(loc, facing=180):
 
 
 def straw_hat(root):
+    """ブロック体の頭にのせる、四角い麦わら帽子。"""
     body = root.children[0]
-    hc = root.get("hc0", 1.62)
+    top = root.get("hc0", VP.HC_STAND) + VP.HEAD / 2
     m = W.mat("mugiwara", (0.86, 0.74, 0.45), 0.9)
-    for o in (F._cyl(0.27, 0.27, 0.015, (0, 0, hc + 0.1), m, verts=16), F._cyl(0.14, 0.12, 0.11, (0, 0, hc + 0.16), m, verts=12)):
+    band = W.mat("mugiwara_band", (0.55, 0.15, 0.12), 0.8)
+    for o in (W.box((0, 0, top + 0.015), (0.66, 0.66, 0.03), m, bevel=0), W.box((0, 0, top + 0.09), (0.40, 0.40, 0.13), m, bevel=0),
+              W.box((0, 0, top + 0.045), (0.41, 0.41, 0.035), band, bevel=0)):
         o.parent = body
 
 
-def farmer(loc, facing, nf, arms="up", alt="down", look=None, period=18):
-    p = person(loc, facing, seed=4, arms=arms, alt=alt, nf=nf, period=period, look=look or FARMER)
+def farmer(loc, facing, nf, arms="up", alt="down", look=None, period=18, face="neutral"):
+    p = person(loc, facing, seed=4, arms=arms, alt=alt, nf=nf, period=period, look=L(look or FARMER, face=face))
     straw_hat(p)
     return p
 
@@ -450,7 +473,7 @@ def s01_open(nf):
     flap = {i for i in range(N) if min(np.min(np.linalg.norm(P[i, 1:fv] - cp, axis=1)) for cp in cams) < 5.0}
     objs = fly_objects(P, nf, f_off=fv + 3, scale=1.4, flap_set=flap)
     vanish_flock(P, objs, fv, nf=nf, n_particles=380, n_feathers=90)
-    farmer((2.2, 6.0, 0.24), 200, nf)
+    farmer((2.2, 6.0, 0.24), 200, nf, face="surprised")
     kakashi((-2.8, 9.0, 0.0), 190)
     fill((1.0, 3.0, 2.0), (2.2, 6.0, 1.5), power=80)
     return nf
@@ -554,7 +577,8 @@ def garden(nf, birds=False):
     sky(lo=(1.0, 0.90, 0.75), hi=(0.48, 0.64, 0.88), strength=0.6)
     sun(30, 25, 4.6, (1.0, 0.90, 0.75))
     FJ.engawa_set()
-    gm = person((0.4, 0.85, 0.45), 0, seed=31, arms="wave", alt="hold", nf=nf, period=20, look=GRANDMA)
+    gm = person((0.4, 0.85, 0.45), 0, seed=31, arms="wave", alt="hold", nf=nf, period=20,
+                look=L(GRANDMA, face="happy" if birds else "worried"))
     for k, f0 in enumerate((14, 54, 94)):
         grains((0.75, 1.1, 1.5), f0, nf, seed=k, name=f"g{k}_")
     if birds:
@@ -585,7 +609,7 @@ def s04_scare(nf):
     k.rotation_euler.y = math.radians(-12)
     k.keyframe_insert("location", frame=70)
     k.keyframe_insert("rotation_euler", frame=70)
-    farmer((0.1, 3.9, 0.0), 160, nf, arms="hold", alt=None)
+    farmer((0.1, 3.9, 0.0), 160, nf, arms="hold", alt=None, face="happy")
     W.camera((0.4, 0.2, 1.4), (0.5, 4.0, 1.4), lens=30)
     cut(76, (-2.6, 1.4, 1.3), (1.0, 8.0, 1.6), lens=24, orbit=4, push=0.05)
     return nf
@@ -771,7 +795,7 @@ def s07_spring(nf):
     butterflies(10, nf, (-3, 3, 0.5, 3.5))
     W.box((0, 6.5, 0.6), (14, 0.1, 1.2), W.mat("fence_w", (0.70, 0.62, 0.50), 0.8), bevel=0)
     FJ.town(seed=5, y=(12, 120), x=(-80, 80), n=60)
-    person((0.6, 3.9, 0), 190, seed=31, arms="head", look=GRANDMA)
+    person((0.6, 3.9, 0), 190, seed=31, arms="head", look=L(GRANDMA, face="worried"))
     W.camera((-0.9, 0.3, 0.42), (-0.6, 1.0, 0.15), lens=40)
     cut(76, (1.2, -0.6, 1.3), (0.6, 3.9, 1.1), lens=28, orbit=4, push=0.05, focus=(0.6, 3.9, 1.4))
     return nf
@@ -833,7 +857,7 @@ def s08_paddy(nf):
     r = random.Random(7)
     C.multi_ball([(r.choice((-1, 1)) * r.uniform(1.5, 9), r.uniform(7, 18), r.uniform(0.7, 0.85), r.uniform(0.12, 0.25),
                    (1.4, 1.0, 0.4)) for _ in range(40)], leaf_bad, "damaged")
-    walker = farmer((0.0, 6.0, 0.24), 180, nf, arms="down", alt=None)
+    walker = farmer((0.0, 6.0, 0.24), 180, nf, arms="down", alt=None, face="worried")
     walker.keyframe_insert("location", frame=1)
     walker.location.y = 3.0
     walker.keyframe_insert("location", frame=nf)
@@ -909,7 +933,7 @@ def s10_drone(nf):
         spawns.append((f, (x + r.uniform(-0.6, 0.6), 5.5 + r.uniform(-0.6, 0.6), 1.7)))
     puffs(spawns, nf, (0.0, 0.0, -0.9), (0.18, 0.35), grow=2.6, rate=1.5, mat=F.puff_mat("mist", (0.95, 0.96, 1.0), 0.22),
           name="mist", seed=4, life=50)
-    farmer((1.8, 2.2, 0.24), 200, nf, arms="hold", alt=None)
+    farmer((1.8, 2.2, 0.24), 200, nf, arms="hold", alt=None, face="worried")
     W.camera((1.6, -1.4, 1.3), (0.0, 5.5, 2.0), lens=26)
     cut(70, (0.2, 0.0, 1.5), (1.8, 2.2, 1.5), lens=36, orbit=4, push=0.05, focus=(1.8, 2.2, 1.6))
     return nf
@@ -953,7 +977,7 @@ def s11_song(nf):
     person((2.2, 4.6, 0), 200, seed=34, arms="hold", look=TEACHER)
     for k in range(6):
         person((-2.2 + k * 0.75, 3.0 + 0.25 * (k % 2), 0), 180 + (k - 2.5) * 5, seed=50 + k, arms="up", alt="down", nf=nf,
-               period=20 + k, look=KIDS[k % 4], scale=0.62)
+               period=20 + k, look=L(KIDS[k % 4], face="happy"), scale=0.62)
     W.camera((0.0, -0.8, 1.0), (-0.4, 3.4, 0.9), lens=28)
     cut(70, (-2.6, 1.0, 1.2), (-1.4, 5.8, 1.7), lens=30, orbit=4, push=0.05)
     return nf
@@ -969,7 +993,7 @@ def s12_return(nf):
     _ = objs
     FJ.sparkle_points([Vector(tuple(P[i, f_back])) for i in range(0, N, 2)], f_back - 30, 0.08, 1.5, mode="in", seed=4,
                       life=(0.8, 1.0))
-    farmer((2.2, 6.0, 0.24), 200, nf, look=FARMER_OLD)
+    farmer((2.2, 6.0, 0.24), 200, nf, look=FARMER_OLD, face="happy")
     kakashi((-2.8, 9.0, 0.0), 190)
     fill((1.0, 3.0, 2.0), (2.2, 6.0, 1.5), power=80)
     cut(1, (-2.0, -4.5, 1.3), (-3.0, 30.0, 8.0), lens=26, orbit=0, push=0.0, fixat=1, focus="far")
@@ -983,7 +1007,7 @@ def j1_chase(nf):
     P = flock_track(300, nf, 7, lambda t: (1.0 + 3 * math.sin(t), 9 + 2 * math.cos(t), 3.0 + 0.8 * math.sin(2 * t)),
                     lambda t: (3.0, 2.0, 1.0))
     fly_objects(P, nf, scale=1.3, flap_near=((2.0, 2.5, 1.5), 5.0))
-    farmer((2.2, 6.0, 0.24), 200, nf, look=FARMER_OLD, period=18)
+    farmer((2.2, 6.0, 0.24), 200, nf, look=FARMER_OLD, period=18, face="happy")
     fill((1.6, 3.4, 2.0), (2.2, 6.0, 1.5), power=90)
     W.camera((1.4, 2.6, 1.55), (2.2, 6.0, 1.6), lens=32)
     return nf
@@ -1013,7 +1037,7 @@ def j4_school(nf):
     fly_objects(P, nf, scale=1.2)
     for k in range(4):
         person((-3.4 + k * 0.6, 1.4 + 0.5 * (k % 2), 0.0), 270 + (k - 1.5) * 10, seed=60 + k, arms="up", alt="down", nf=nf,
-               period=18 + k, look=KIDS[k % 4], scale=0.7)
+               period=18 + k, look=L(KIDS[k % 4], face="happy"), scale=0.7)
     W.camera((-6.6, 2.6, 1.45), (0.0, 2.2, 1.0), lens=28)
     return nf
 
@@ -1026,7 +1050,8 @@ def j5_wide(nf):
     cast = [(-1.6, "up", "down", FARMER_OLD, 4), (-0.8, "wave", "up", GRANDMA, 31), (0.0, "up", "down", KIDS[0], 10),
             (0.8, "wave", "down", TEACHER, 33), (1.6, "up", "down", KIDS[2], 12)]
     for k, (x, a, alt, look, seed) in enumerate(cast):
-        p = person((x, 3.0 + 0.4 * (k % 2), 0.06), 180 + (k - 2) * 6, seed=seed, arms=a, alt=alt, nf=nf, period=18 + k, look=look,
+        p = person((x, 3.0 + 0.4 * (k % 2), 0.06), 180 + (k - 2) * 6, seed=seed, arms=a, alt=alt, nf=nf, period=18 + k,
+                   look=L(look, face="happy"),
                    scale=0.72 if look in KIDS else 1.0)
         if seed == 4:
             straw_hat(p)

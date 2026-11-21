@@ -217,7 +217,7 @@ class Ishigaki:
         n = 24
         rings = []
         for i in range(n + 1):
-            h = self.H * i / n
+            h = (self.H - 0.12) * i / n                 # 上の面は少し下げる（上にのせる土の面と重ならないように）
             o = self.off(h) - inset
             hx, hy = self.Wt / 2 + o, self.Dt / 2 + o
             rings.append([bm.verts.new((sx * hx, sy * hy, h)) for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))])

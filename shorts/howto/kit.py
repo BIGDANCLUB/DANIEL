@@ -945,13 +945,14 @@ def flame(loc, size=1.0, seed=1, f0=1, f1=None, parent=None, name="flame"):
     """ゆらめく炎（光る玉を縦にのばして重ねる）。f0 で燃え始め、f1 で消える。"""
     r = random.Random(seed)
     root = empty(loc, parent, name)
-    mats = [glow("fire_core", (1.0, 0.85, 0.35), 18.0), glow("fire_mid", (1.0, 0.45, 0.08), 12.0), glow("fire_out", (0.9, 0.18, 0.03), 6.0, 0.7)]
+    mats = [glow("flame_core", (1.0, 0.72, 0.18), 7.0), glow("flame_mid", (1.0, 0.36, 0.03), 5.0), glow("flame_out", (0.85, 0.12, 0.01), 3.0, 0.75)]
     parts = []
-    for k in range(7):
+    for k in range(8):
         m = mats[0] if k < 2 else (mats[1] if k < 5 else mats[2])
-        s = size * (0.25 if k < 2 else 0.4 if k < 5 else 0.5)
-        o = obj(ellip_mesh(s, s, s * 2.2, 10, 8), m, root, (r.uniform(-0.25, 0.25) * size, r.uniform(-0.25, 0.25) * size, s * 1.6),
+        s = size * (0.18 if k < 2 else 0.26 if k < 5 else 0.3)
+        o = obj(ellip_mesh(s, s, s * 3.6, 10, 8), m, root, (r.uniform(-0.35, 0.35) * size, r.uniform(-0.15, 0.15) * size, s * 3.0),
                 name=f"{name}_{k}", shadow=False)
+        o.rotation_euler = (r.uniform(-0.25, 0.25), r.uniform(-0.25, 0.25), 0)
         parts.append(o)
     f1 = f1 or 99999
     for o in parts:

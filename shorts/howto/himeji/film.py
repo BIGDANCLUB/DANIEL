@@ -591,7 +591,7 @@ def muzzle(gun_root, f, name):
 
 
 def h07_sama(nf):
-    world(az=150)
+    world(elev=66, az=110)
     T = SC["dur"]
     a, _ = line_t(21)
     b, _ = line_t(22)
@@ -599,19 +599,21 @@ def h07_sama(nf):
     Z = 3.0
     CS.Ishigaki(0, 3.0, 40.0, 6.0, Z, 0.6, seed=31, name="lowig", course=0.75)
     CS.slab(0, 5.0, Z, 40, 10, th=0.3)
-    K.obj(K.box_mesh(40, 2.0, 1.0), CS.soil_mat(), None, (0, 1.3, Z + 0.5), name="walkway")   # 壁の内側の足場
+    K.obj(K.box_mesh(40, 2.4, 1.2), CS.soil_mat(), None, (0, 1.5, Z + 0.6), name="walkway")   # 壁の内側の足場
+    K.obj(K.box_mesh(40, 0.9, 0.6), CS.soil_mat(), None, (0, 0.75, Z + 1.5), name="step")      # 上から撃つための段
     f_h = [fr(c + 0.25), fr(c + 0.75), fr(c + 1.25)]
-    holes = [("tri", -1.6, Z + 1.75, f_h[0]), ("circle", 0.0, Z + 1.75, f_h[1]), ("square", 1.6, Z + 1.75, f_h[2])]
-    sama_wall(-20, 20, Z, 2.6, 0.42, holes)
+    HZ = Z + 2.3
+    holes = [("tri", -1.6, HZ, f_h[0]), ("circle", 0.0, HZ, f_h[1]), ("square", 1.6, HZ, f_h[2])]
+    sama_wall(-20, 20, Z, 3.4, 0.42, holes)
     # 田んぼ（外）
     K.obj(K.box_mesh(60, 30, 0.05), K.noisy("paddy", (0.30, 0.36, 0.12), 0.6, 0.3, 0.2), None, (0, -22, 0.03), name="paddy")
     # 壁の上の味方（撃たれて落ちる）
     r = random.Random(7)
     for k, x in enumerate([-5.5, -2.8, 2.6, 5.4]):
-        al = K.Person((x, 1.0, Z + 1.0), 180, K.ALLY_R if k % 2 else K.ALLY_B, name=f"wal{k}", seed=300 + k)
+        al = K.Person((x, 0.75, Z + 1.8), 180, K.ALLY_R if k % 2 else K.ALLY_B, name=f"wal{k}", seed=300 + k)
         al.stand(1, shL=(60, 10), shR=(60, 10), elL=60, elR=60)
         th = b + 0.35 + 0.22 * k
-        al.fall(fr(th), fr(c - 0.1), (x, 1.0, Z + 1.0), (r.uniform(-0.5, 0.5), 2.2, 2.0), spin=(-150, 0), ground=Z + 1.0)
+        al.fall(fr(th), fr(c - 0.1), (x, 0.75, Z + 1.8), (r.uniform(-0.5, 0.5), 2.2, 2.0), spin=(-150, 0), ground=Z + 1.2)
         K.key_scale(al.root, fr(c) - 1, 1.0)
         K.key_scale(al.root, fr(c), 1e-4)
     # 外の鉄砲隊
@@ -630,7 +632,7 @@ def h07_sama(nf):
         K.key_scale(g.root, fr(c) - 1, 1.0)
         K.key_scale(g.root, fr(c), 1e-4)
     # 内側：職人が大きな木づちで壁をたたき、穴が開く。味方が鉄砲をかまえる
-    wk = K.Person((-3.8, 2.4, Z + 1.0), 160, K.WORKER, name="wk", seed=500)
+    wk = K.Person((-3.8, 2.4, Z + 1.2), 160, K.WORKER, name="wk", seed=500)
     mallet = K.empty(name="mallet")
     K.obj(K.cyl_mesh(0.07, 0.07, 2.2, 10), K.noisy("handle", (0.35, 0.22, 0.10), 4.0, 0.2, 0.1), mallet, (0, 0, -0.3))
     K.obj(K.cyl_mesh(0.45, 0.45, 1.3, 16), K.noisy("mallet_head", (0.42, 0.28, 0.14), 2.0, 0.3, 0.2), mallet, (-0.65, 0, 1.8),
@@ -639,26 +641,26 @@ def h07_sama(nf):
     K.key_scale(wk.root, fr(c) - 1, 1e-4)
     K.key_scale(wk.root, fr(c), 1.0)
     for k, fh in enumerate(f_h):
-        wk.place(fh - 8, (-1.6 + 1.6 * k - 1.4, 1.9, Z + 1.0), 200)
+        wk.place(fh - 8, (-1.6 + 1.6 * k - 1.4, 1.9, Z + 1.2), 200)
         wk.pose(fh - 8, shR=(200, -10), elR=30, shL=(160, 10), elL=40, spine=12)
         wk.pose(fh, shR=(95, -10), elR=5, shL=(80, 10), elL=10, spine=-20)
         wk.pose(fh + 5, shR=(150, -10), elR=20, shL=(130, 10), elL=30, spine=0)
         ring = K.obj(K.cyl_mesh(0.6, 0.6, 0.02, 24), K.fade_mat(K.glow("orange_ring", ORANGE, 4.0, 0.8), fh, fh + 1, fh + 8, fh + 12,
-                     name=f"ring{k}"), None, (-1.6 + 1.6 * k, 0.24, Z + 1.75), rot=(90 * D2R, 0, 0), name=f"ring{k}", shadow=False)
+                     name=f"ring{k}"), None, (-1.6 + 1.6 * k, 0.24, HZ), rot=(90 * D2R, 0, 0), name=f"ring{k}", shadow=False)
         K.key_scale(ring, fh, 0.3)
         K.key_scale(ring, fh + 10, 1.4)
     for k, x in enumerate([-1.6, 0.0, 1.6]):
-        g, aim = gunner((x, 1.2, Z + 1.0), 180, K.ALLY_R if k % 2 == 0 else K.ALLY_B, f"in{k}", 600 + k)
+        g, aim = gunner((x, 0.75, Z + 1.2), 180, K.ALLY_R if k % 2 == 0 else K.ALLY_B, f"in{k}", 600 + k)
         K.key_scale(g.root, f_h[k] + 4, 1e-4)
         K.key_scale(g.root, f_h[k] + 8, 1.0)
-    K.marker("holes", (0, 0, Z + 1.75))
-    keys = [(0.0, (1.5, 7.0, 6.4), (0.0, -20.0, 3.0), 26),
-            (a + 1.1, (0.5, -9.0, 9.0), (0.0, -24.0, 1.0), 26),
-            (b - 0.02, (0.0, -12.0, 7.5), (0.0, -24.0, 1.2), 28),
-            (b, (4.5, -31.0, 1.6), (0.0, 0.0, 5.0), 30),
-            (c - 0.02, (3.5, -30.0, 1.9), (0.0, 0.0, 5.2), 32),
-            (c, (3.2, 7.8, 5.3), (0.0, 0.0, 4.7), 28),
-            (T, (2.4, 6.4, 5.0), (0.0, 0.0, 4.7), 28)]
+    K.marker("holes", (0, 0, HZ))
+    keys = [(0.0, (1.5, 6.5, 7.6), (0.0, -20.0, 3.0), 26),
+            (a + 1.1, (0.5, -9.0, 10.0), (0.0, -24.0, 1.0), 26),
+            (b - 0.02, (0.0, -12.0, 8.0), (0.0, -24.0, 1.2), 28),
+            (b, (4.0, -27.0, 1.7), (0.0, 0.0, 5.6), 30),
+            (c - 0.02, (3.4, -26.0, 1.9), (0.0, 0.0, 5.8), 32),
+            (c, (3.4, 7.4, 6.4), (0.0, 0.0, 5.0), 28),
+            (T, (2.6, 6.2, 6.1), (0.0, 0.0, 5.1), 28)]
     K.campath(keys, nf, shake=0.03, cuts=[b, c])
 
 
@@ -749,11 +751,12 @@ def h08_cone(nf):
         K.key_scale(g, f_on, 1.6)
         K.key_scale(g, f_on + 4, 1.0)
     K.marker("sama", (OX, -0.5, 1.2))
-    keys = [(0.0, (OX + 0.01, -3.0, 22.0), (OX, -4.0, 0.0), 30),
-            (b, (OX + 0.01, -3.5, 22.5), (OX, -4.5, 0.0), 30),
-            (c - 0.02, (OX + 0.01, -4.0, 23.0), (OX, -4.5, 0.0), 30),
-            (c, (-30.0, -42.0, 26.0), (0.0, 0.0, 10.0), 28),
-            (T, (-38.0, -50.0, 30.0), (0.0, 2.0, 9.0), 28)]
+    keys = [(0.0, (OX + 0.01, -0.6, 9.0), (OX, -0.9, 0.0), 30),
+            (a + 0.6, (OX + 0.01, -3.2, 17.0), (OX, -4.0, 0.0), 30),
+            (b, (OX + 0.01, -3.8, 21.0), (OX, -4.6, 0.0), 30),
+            (c - 0.02, (OX + 0.01, -4.0, 22.0), (OX, -4.6, 0.0), 30),
+            (c, (-14.0, -36.0, 19.0), (-2.0, -10.0, 12.5), 28),
+            (T, (-24.0, -44.0, 24.0), (0.0, -4.0, 11.0), 28)]
     K.campath(keys, nf, shake=0.02, cuts=[c])
 
 
@@ -783,7 +786,7 @@ def h09_fire(nf):
         plaster.append((piv, x0, x1, z0, h, d))
     # こて（巨大）と職人：1階、2階の順に左から右へぬる
     trowel = K.empty(name="trowel")
-    K.obj(K.box_mesh(1.6, 0.06, 2.6), K.mat("steel", (0.7, 0.72, 0.75), 0.25), trowel, (0, -0.1, 0))
+    K.obj(K.box_mesh(1.6, 0.06, 2.6), K.mat("trowel_steel", (0.22, 0.24, 0.27), 0.3), trowel, (0, -0.1, 0))
     K.obj(K.cyl_mesh(0.09, 0.09, 1.2, 10), K.noisy("handle", (0.35, 0.22, 0.10), 4.0, 0.2, 0.1), trowel, (0, -0.7, 0), rot=(90 * D2R, 0, 0))
     wk = K.Person((0, -1.5, -1.0), 0, K.WORKER, name="wk", seed=800)
     wk.root.parent = trowel

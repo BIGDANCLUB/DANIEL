@@ -143,6 +143,37 @@ def grains_snd(seed=0):
     return x
 
 
+def flap(seed=0):
+    """羽ばたきの「バサッ」（短いざらついた音が2〜3回）。"""
+    r = np.random.default_rng(seed)
+    out = np.zeros(int(0.12 * SR))
+    for k in range(r.integers(2, 4)):
+        i = int(k * r.uniform(0.025, 0.04) * SR)
+        n = int(0.03 * SR)
+        out[i:i + n] += band(noise(0.03, seed * 7 + k), 400, 4500)[:n] * env(n, 0.001, 0.008) * r.uniform(0.6, 1.0)
+    return out
+
+
+def impact():
+    """始まりの「ドン」（低い音＋ザッ）。"""
+    n = int(0.9 * SR)
+    tt = np.arange(n) / SR
+    x = np.sin(2 * np.pi * np.cumsum(70 - 30 * tt) / SR) * np.exp(-tt / 0.25) * 0.9
+    return x + band(noise(0.9, 71), 300, 5000) * np.exp(-tt / 0.06) * 0.6
+
+
+def pass_by(dur=1.3, seed=72):
+    """群れが頭の上をすれ違う「ゴーッ」（近づいて高く → 遠ざかって低く）。"""
+    n = int(dur * SR)
+    tt = np.arange(n) / SR
+    x = noise(dur, seed)
+    y = np.zeros(n)
+    for i in range(0, n, 1024):
+        u = tt[i] / dur
+        y[i:i + 1024] = lp(x[i:i + 1024], 600 + 4500 * (1 - abs(2 * u - 1)))
+    return y * np.sin(np.pi * tt / dur) ** 1.5 * 1.2
+
+
 def build_audio(total):
     st = {s["name"]: TL.start_of(s["name"]) for s in TL.SHOTS}
     a = np.zeros(int(total * SR) + SR)
@@ -154,10 +185,19 @@ def build_audio(total):
             a[i:j] += gain * x[: j - i]
 
     put(CC.ambience(total), 0, 1.0)
-    # 冒頭：稲の中から群れが飛び立つ（バサバサ＋チュンチュン）、追うおじいさん、カウントダウン → 消える
-    put(flock_snd(TL.T_VANISH, 1, 1.4), 0.0, 1.2)
-    put(CC.whoosh(1.2, 50), 0.15, 0.9)
-    put(CC.whoosh(1.0, 51), 2.0, 0.6)
+    # 冒頭（最初の5秒は派手に）：ドン → バサッとチュンが1秒に20回以上 → カットのたびにシュッ → 頭の上をすれ違うゴーッ
+    put(impact(), 0.0, 1.0)
+    put(flock_snd(TL.T_VANISH, 1, 1.0), 0.0, 0.35)       # ザワザワは小さく、粒の立った音を目立たせる
+    rng = np.random.default_rng(7)
+    t0 = 0.05
+    while t0 < TL.T_VANISH:                                 # バサッ：0.1〜0.16秒おきに、はっきり区切って
+        put(flap(int(t0 * 1000)), t0, rng.uniform(0.7, 1.0))
+        t0 += rng.uniform(0.10, 0.16)
+    for t0 in rng.uniform(0.1, TL.T_VANISH, 30):
+        put(tweet(int(t0 * 997)), t0, 1.0)
+    put(CC.whoosh(1.0, 50), 1.25, 0.8)
+    put(CC.whoosh(1.0, 51), 3.1, 0.8)
+    put(pass_by(), 4.7, 1.0)
     for k in range(1, 6):
         put(CC.tick(), TL.T_VANISH - k, 0.6)
     put(CC.sparkle(1, 2.0), TL.T_VANISH, 1.0)

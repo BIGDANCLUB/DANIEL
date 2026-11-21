@@ -135,12 +135,14 @@ def flock_track(N, nf, seed, center, size, ground=None, t_off=None, settle=None)
     return P
 
 
-def fly_objects(P, nf, f_on=1, f_off=None, scale=1.0, flap_near=None, name="fl", step=2):
-    """位置の表から鳥を作って動かす。flap_near=(カメラ位置, 距離)：近い鳥だけ羽ばたき（羽の上下を入れかえ）。"""
+def fly_objects(P, nf, f_on=1, f_off=None, scale=1.0, flap_near=None, name="fl", step=2, flap_set=None):
+    """位置の表から鳥を作って動かす。flap_near=(カメラ位置, 距離)：近い鳥だけ羽ばたき（羽の上下を入れかえ）。
+    flap_set：羽ばたかせる鳥の番号の集合。"""
     N = P.shape[0]
     objs = []
     for i in range(N):
         near = flap_near is not None and np.linalg.norm(P[i, f_on] - np.array(flap_near[0])) < flap_near[1]
+        near = near or (flap_set is not None and i in flap_set)
         kinds = ("up", "down") if near else ("up",)
         group = []
         for j, kd in enumerate(kinds):
@@ -363,44 +365,94 @@ def sky_flock_size(t):
     return (8 + 3 * math.sin(1.1 * t), 5 + 2 * math.cos(0.8 * t), 2.2 + 0.8 * math.sin(1.4 * t))
 
 
+OPEN_KEYS = [(0.0, (-2.0, 8.0, 2.5)), (1.0, (0.0, 12.0, 5.0)), (2.0, (3.0, 8.5, 2.8)), (2.8, (4.5, 11.0, 3.6)),
+             (3.7, (3.0, 19.0, 7.0)), (4.6, (1.5, 14.5, 4.5)), (5.5, (-0.5, 10.2, 2.6)), (6.3, (-5.0, 13.0, 4.5)),
+             (7.5, (-9.0, 20.0, 7.5)), (9.0, (-14.0, 30.0, 10.0))]     # 消える直前に、カメラのいちばん近くを通る
+
+
+def open_center(t):
+    """冒頭の群れの通り道：稲から飛び立つ → おじいさんのまわりを回る → 高く上がる → カメラに向かって急降下 → 消える。"""
+    ks = OPEN_KEYS
+    t = min(max(t, ks[0][0]), ks[-1][0])
+    i = max(k for k in range(len(ks) - 1) if ks[k][0] <= t)
+    t0, p1 = ks[i]
+    t1, p2 = ks[i + 1]
+    p0 = np.array(ks[max(0, i - 1)][1])
+    p3 = np.array(ks[min(len(ks) - 1, i + 2)][1])
+    p1, p2 = np.array(p1), np.array(p2)
+    u = (t - t0) / (t1 - t0)
+    return 0.5 * ((2 * p1) + (-p0 + p2) * u + (2 * p0 - 5 * p1 + 4 * p2 - p3) * u * u + (-p0 + 3 * p1 - 3 * p2 + p3) * u ** 3)
+
+
+def open_size(t):
+    if t < 1.6:
+        return sky_flock_size(t)
+    if t < 3.2:
+        return (4.5 + 0.8 * math.sin(3 * t), 3.5, 1.8)       # おじいさんのまわりで小さくまとまる
+    return (7.0 + 1.5 * math.sin(1.3 * t), 3.8, 1.5)
+
+
+def shake(cam, f0, f1, amp=1.0, seed=1):
+    """手持ちカメラのようなゆれ（すでに入れた向きのキーに、小さなゆれを足す）。"""
+    r = random.Random(seed)
+    ph = [r.uniform(0, 6.3) for _ in range(6)]
+    sc = bpy.context.scene
+    for f in range(f0, f1 + 1, 2):
+        sc.frame_set(f)
+        t = f / FPS
+        e = cam.rotation_euler.copy()
+        e.x += math.radians(amp * (0.6 * math.sin(7.3 * t + ph[0]) + 0.4 * math.sin(13.1 * t + ph[1])))
+        e.y += math.radians(amp * 0.5 * math.sin(9.7 * t + ph[2]))
+        e.z += math.radians(amp * (0.6 * math.sin(6.1 * t + ph[3]) + 0.4 * math.sin(11.3 * t + ph[4])))
+        cam.rotation_euler = e
+        cam.keyframe_insert("rotation_euler", frame=f)
+    sc.frame_set(1)
+
+
+def track_cam(loc_fn, aim_fn, f0, f1, lens):
+    c = W.camera(loc_fn(f0), aim_fn(f0), lens=lens)
+    c["f0"], c["keep"], c["focus"] = f0, 1, "none"
+    for f in list(range(f0, f1 + 1, 2)) + [f1]:
+        c.location = loc_fn(f)
+        W.aim(c, Vector(aim_fn(f)))
+        c.keyframe_insert("location", frame=f)
+        c.keyframe_insert("rotation_euler", frame=f)
+    return c
+
+
 # ---------- 場面 ----------
 def s01_open(nf):
     dusk()
     village()
     fv = fr(TL.T_VANISH)
     r = np.random.default_rng(1)
-    N = 520
+    N = 560
     G = np.column_stack([r.uniform(-7, 7, N), r.uniform(0.5, 14, N), r.uniform(0.55, 0.85, N)])
-    near = r.random(N) < 0.35          # 3分の1は、カメラのすぐ前から飛び立つ
+    near = r.random(N) < 0.4          # 4割は、カメラのすぐ前から飛び立つ
     G[near, 0] = r.uniform(-2.2, 2.2, near.sum())
     G[near, 1] = r.uniform(0.3, 3.5, near.sum())
-    t_off = 0.1 + np.hypot(G[:, 0], G[:, 1] - 1.0) * 0.06 + r.uniform(0, 0.25, N)
-    P = flock_track(N, nf, 3, sky_flock_center, sky_flock_size, ground=G, t_off=t_off)
-    objs = fly_objects(P, nf, f_off=fv + 3, scale=1.4, flap_near=((0.3, -1.5, 0.55), 6.0))
-    vanish_flock(P, objs, fv, nf=nf)
+    t_off = 0.05 + np.hypot(G[:, 0], G[:, 1] - 1.0) * 0.05 + r.uniform(0, 0.2, N)
+    P = flock_track(N, nf, 3, open_center, open_size, ground=G, t_off=t_off)
+    # カメラ：1) 稲の中から上がる（0〜1.5秒）2) おじいさんのまわりを回る群れ（〜3.3秒）3) 急降下してくる群れを見上げる → 消える
+    cen = P.mean(axis=0)
+    c1_loc = lambda f: (0.3 + 0.3 * float(smooth((f - 1) / 44)), -1.5 + 2.4 * float(smooth((f - 1) / 44)),
+                        0.5 + 1.2 * float(smooth((f - 1) / 44)))
+    c1 = track_cam(c1_loc, lambda f: tuple(Vector((0.0, 10.0, 2.8)).lerp(Vector(tuple(cen[f])), min(1.0, (f - 1) / 20))), 1, 45, 20)
+    c2_loc = lambda f: (4.6 - 0.9 * (f - 46) / 54, 3.0 - 0.6 * (f - 46) / 54, 1.45)
+    c2 = track_cam(c2_loc, lambda f: tuple(Vector(tuple(cen[f])) * 0.6 + Vector((2.2, 6.0, 1.7)) * 0.4), 46, 100, 22)
+    c3_loc = lambda f: (-1.0, 6.2 - 0.4 * min(1.0, (f - 101) / 70), 1.5)
+    c3 = track_cam(c3_loc, lambda f: tuple(cen[min(f, fv)]) if f <= fv else tuple(cen[fv] + np.array([0, 0, 0.4 * (f - fv) / 60])),
+                   101, nf, 22)
+    for c, a, b, amp in ((c1, 1, 45, 1.4), (c2, 46, 100, 1.0), (c3, 101, fv + 6, 1.2)):
+        shake(c, a, b, amp, seed=a)
+    # 近くを通る鳥は羽ばたく
+    cams = [np.array(c1_loc(1)), np.array(c2_loc(70)), np.array(c3_loc(140))]
+    flap = {i for i in range(N) if min(np.min(np.linalg.norm(P[i, 1:fv] - cp, axis=1)) for cp in cams) < 5.0}
+    objs = fly_objects(P, nf, f_off=fv + 3, scale=1.4, flap_set=flap)
+    vanish_flock(P, objs, fv, nf=nf, n_particles=380, n_feathers=90)
     farmer((2.2, 6.0, 0.24), 200, nf)
     kakashi((-2.8, 9.0, 0.0), 190)
     fill((1.0, 3.0, 2.0), (2.2, 6.0, 1.5), power=80)
-    # 1) 稲の中から目の前で飛び立つ群れを、カメラも追って上がる 2) うねる群れを左右に追う（おじいさんも画面に）
-    # 3) 消える → 羽だけ落ちる（文字なし）
-    cen = P[:, :, :].mean(axis=0)
-    c1 = W.camera((0.3, -1.5, 0.5), (0.0, 10.0, 2.8), lens=20)
-    c1["keep"], c1["focus"] = 1, "none"
-    for f in list(range(1, 61, 2)) + [60]:
-        u = float(smooth((f - 1) / 59))
-        c1.location = (0.3 + 0.3 * u, -1.5 + 2.6 * u, 0.5 + 1.3 * u)
-        W.aim(c1, Vector((0.0, 10.0, 2.8)).lerp(Vector(tuple(cen[f])), min(1.0, (f - 1) / 25)))
-        c1.keyframe_insert("location", frame=f)
-        c1.keyframe_insert("rotation_euler", frame=f)
-    c2 = W.camera((3.6, 2.8, 1.4), (-1.0, 22.0, 6.5), lens=22)
-    c2["f0"], c2["keep"], c2["focus"] = 61, 1, "none"
-    for f in list(range(61, 121, 2)) + [120]:
-        u = (f - 61) / 59
-        c2.location = (3.6 - 0.8 * u, 2.8 - 1.0 * u, 1.4 + 0.25 * u)
-        W.aim(c2, Vector(tuple(cen[f])) * 0.75 + Vector((2.2, 6.0, 1.8)) * 0.25)
-        c2.keyframe_insert("location", frame=f)
-        c2.keyframe_insert("rotation_euler", frame=f)
-    cut(121, (-1.0, 8.0, 1.6), (-1.0, 27.0, 7.5), lens=28, orbit=0, push=0.0, fixat=1, zoom=1.08)
     return nf
 
 

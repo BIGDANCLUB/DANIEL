@@ -551,8 +551,8 @@ def bow():
 
 
 # ---------- 空・光・地面 ----------
-def daylight(elev=48, az=-30, strength=3.0, sky_strength=0.2, col=(1.0, 0.95, 0.86), haze=1.0):
-    """晴れた昼の光（太陽＋写実的な空の色）。az は太陽の方角（0＝+y の方から照らす、-90＝-x の方から）。"""
+def daylight(elev=48, az=215, strength=3.0, sky_strength=0.2, col=(1.0, 0.95, 0.86), haze=1.0):
+    """晴れた昼の光（太陽＋写実的な空の色）。az は太陽のある方角（0＝+y、90＝+x、180＝-y、215＝手前左＝-y と -x の間）。"""
     bpy.ops.object.light_add(type='SUN')
     s = bpy.context.object
     e = elev * D2R
@@ -570,7 +570,7 @@ def daylight(elev=48, az=-30, strength=3.0, sky_strength=0.2, col=(1.0, 0.95, 0.
     sky = nt.nodes.new("ShaderNodeTexSky")
     sky.sky_type = 'MULTIPLE_SCATTERING'
     sky.sun_elevation = e
-    sky.sun_rotation = math.atan2(-math.sin(a), -math.cos(a)) * -1 + math.pi / 2
+    sky.sun_rotation = math.atan2(math.cos(a), math.sin(a))      # 太陽のある方角（+x から左回り）
     sky.sun_disc = False
     try:
         sky.air_density = 1.0
@@ -603,7 +603,7 @@ def flat_sky(top=(0.18, 0.42, 0.85), horizon=(0.72, 0.84, 0.96), strength=1.0):
     bg.inputs[1].default_value = strength
 
 
-def clouds(seed=1, cover=0.52, height=900.0, radius=6000.0, bright=1.0, col=(1, 1, 1), shade=(0.62, 0.68, 0.78)):
+def clouds(seed=1, cover=0.56, height=600.0, radius=6000.0, bright=2.6, col=(1, 1, 1), shade=(0.55, 0.60, 0.70)):
     """白い雲（半球の内側に描く。雲の層を下から見上げたような遠近になるよう、高さで割った座標で模様を作る）。"""
     bm = bmesh.new()
     bmesh.ops.create_uvsphere(bm, u_segments=48, v_segments=24, radius=radius)
@@ -644,9 +644,9 @@ def clouds(seed=1, cover=0.52, height=900.0, radius=6000.0, bright=1.0, col=(1, 
     comb.inputs[2].default_value = seed * 3.7
     nz = nt.nodes.new("ShaderNodeTexNoise")
     nz.noise_dimensions = '3D'
-    nz.inputs["Scale"].default_value = 1.1
-    nz.inputs["Detail"].default_value = 12.0
-    nz.inputs["Roughness"].default_value = 0.58
+    nz.inputs["Scale"].default_value = 0.9
+    nz.inputs["Detail"].default_value = 5.0
+    nz.inputs["Roughness"].default_value = 0.5
     nt.links.new(comb.outputs[0], nz.inputs["Vector"])
     ramp = nt.nodes.new("ShaderNodeValToRGB")
     ramp.color_ramp.elements[0].position = cover
@@ -687,8 +687,8 @@ def clouds(seed=1, cover=0.52, height=900.0, radius=6000.0, bright=1.0, col=(1, 
     return o
 
 
-def ground(size=8000, col=(0.24, 0.36, 0.12), name="grass"):
-    m = noisy(name, col, 0.08, 0.35, 0.15, 0.95)
+def ground(size=8000, col=(0.22, 0.34, 0.11), name="grass"):
+    m = noisy(name, col, 0.12, 0.45, 0.35, 0.95)
     bpy.ops.mesh.primitive_plane_add(size=size, location=(0, 0, 0))
     g = bpy.context.object
     g.data.materials.append(m)
@@ -705,8 +705,10 @@ def countryside(seed=3, keep_out=60.0, r_max=900.0, n_fields=160, n_trees=220, c
         d = r.uniform(keep_out + 20, r_max)
         x, y = center[0] + d * math.cos(a), center[1] + d * math.sin(a)
         w, h = r.uniform(20, 60), r.uniform(15, 45)
-        o = obj(box_mesh(w, h, 0.1), fm[i % len(fm)], None, (x, y, 0.02), rot=(0, 0, r.choice((0, 0.05, -0.04))), name="field")
-        _ = o
+        me = bpy.data.meshes.new("field")
+        me.from_pydata([(-w / 2, -h / 2, 0), (w / 2, -h / 2, 0), (w / 2, h / 2, 0), (-w / 2, h / 2, 0)], [], [(0, 1, 2, 3)])
+        me.materials.append(None)
+        obj(me, fm[i % len(fm)], None, (x, y, 0.03 + 0.002 * i), rot=(0, 0, r.choice((0, 0.05, -0.04))), name="field")
     tm = [noisy(f"tree{i}", c, 0.6, 0.3, 0.3, 0.9) for i, c in enumerate([(0.10, 0.20, 0.06), (0.14, 0.25, 0.08), (0.08, 0.16, 0.06)])]
     for i in range(n_trees):
         a = r.uniform(0, 2 * math.pi)
@@ -729,9 +731,9 @@ def _herm(keys, t, idx):
     """キー（時間, 値のタプル）をなめらかにつなぐ（中のキーは通りぬけ、最初と最後はゆっくり）。"""
     n = len(keys)
     if t <= keys[0][0]:
-        return keys[0][idx]
+        return Vector(keys[0][idx])
     if t >= keys[-1][0]:
-        return keys[-1][idx]
+        return Vector(keys[-1][idx])
     i = max(k for k in range(n - 1) if keys[k][0] <= t)
     t0, t1 = keys[i][0], keys[i + 1][0]
     u = (t - t0) / (t1 - t0)
@@ -1001,6 +1003,7 @@ def smoke_puffs(loc, f0, n=6, seed=1, col=(0.45, 0.43, 0.42), size=0.8, rise=1.5
 
 
 def smoke_mat(name, col, alpha):
+    """けむり・土けむり：ふちが透けて、まだらに抜ける（ボールに見えないように）。"""
     m = bpy.data.materials.get(name)
     if m:
         return m
@@ -1010,7 +1013,32 @@ def smoke_mat(name, col, alpha):
     b = nt.nodes["Principled BSDF"]
     b.inputs["Base Color"].default_value = (*col, 1)
     b.inputs["Roughness"].default_value = 1.0
-    b.inputs["Alpha"].default_value = alpha
+    lw = nt.nodes.new("ShaderNodeLayerWeight")
+    lw.inputs["Blend"].default_value = 0.5
+    inv = nt.nodes.new("ShaderNodeMath")
+    inv.operation = 'SUBTRACT'
+    inv.inputs[0].default_value = 1.0
+    nt.links.new(lw.outputs["Facing"], inv.inputs[1])
+    pw = nt.nodes.new("ShaderNodeMath")
+    pw.operation = 'POWER'
+    pw.inputs[1].default_value = 2.5
+    nt.links.new(inv.outputs[0], pw.inputs[0])
+    nz = nt.nodes.new("ShaderNodeTexNoise")
+    nz.inputs["Scale"].default_value = 2.5
+    nz.inputs["Detail"].default_value = 4.0
+    ramp = nt.nodes.new("ShaderNodeMapRange")
+    ramp.inputs[1].default_value = 0.35
+    ramp.inputs[2].default_value = 0.65
+    nt.links.new(nz.outputs["Fac"], ramp.inputs[0])
+    mu = nt.nodes.new("ShaderNodeMath")
+    mu.operation = 'MULTIPLY'
+    nt.links.new(pw.outputs[0], mu.inputs[0])
+    nt.links.new(ramp.outputs[0], mu.inputs[1])
+    mu2 = nt.nodes.new("ShaderNodeMath")
+    mu2.operation = 'MULTIPLY'
+    mu2.inputs[1].default_value = alpha
+    nt.links.new(mu.outputs[0], mu2.inputs[0])
+    nt.links.new(mu2.outputs[0], b.inputs["Alpha"])
     return m
 
 

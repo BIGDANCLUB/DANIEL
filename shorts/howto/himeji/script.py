@@ -1,0 +1,53 @@
+"""作り方シリーズ「姫路城の作り方」の台本（59.9秒）。参考元（熊本城の作り方）と同じ「敵がこう攻める → だからこう作る → これが○○です」の型。
+1行 = 字幕1つ = 読み上げ1つ。scene は 3D の場面名、over は画面の上に大きく出す文字（年など）。kana は読みを直すときの VOICEVOX のカナ。"""
+
+LINES = [
+    # 1) 家と塀（最初の5秒は強く動かす）
+    dict(text="家を高い塀で囲めば", scene="h01_house"),
+    dict(text="それはもう城です", scene="h01_house"),
+    dict(text="でも敵は梯子をかけて", scene="h01_house"),
+    dict(text="塀を乗り越えてきます", scene="h01_house"),
+    # 2) 石垣
+    dict(text="そこで", scene="h02_stone"),
+    dict(text="塀の下に石を積み上げて", scene="h02_stone"),
+    dict(text="土台にします", scene="h02_stone"),
+    dict(text="下はゆるい坂", scene="h03_curve"),
+    dict(text="上へ行くほど急になり", scene="h03_curve"),
+    dict(text="てっぺんはほぼ垂直", scene="h03_curve"),
+    dict(text="これが扇の勾配です", scene="h03_curve"),
+    dict(text="登るほど体が外へ反り", scene="h04_fall"),
+    dict(text="そのまま落ちていきます", scene="h04_fall"),
+    # 3) 石落とし
+    dict(text="すると敵は角に集まるので", scene="h05_corner", kana="スルト'/テキワ'/カ'ドニ/アツマ'ルノデ"),
+    dict(text="角の上に櫓を建てて", scene="h05_corner", kana="カ'ドノ/ウエニ'/ヤグラオ'/タ'テテ"),
+    dict(text="床の蓋を開ければ", scene="h05_corner"),
+    dict(text="これが石落としです", scene="h05_corner"),
+    # 4) 門
+    dict(text="登れない敵は門へ向かいます", scene="h06_gate"),
+    dict(text="だから門はせまく", scene="h06_gate"),
+    dict(text="二人通るのがやっと", scene="h06_gate"),
+    dict(text="上の櫓から一斉攻撃", scene="h06_gate", kana="ウエノ'/ヤグラカラ'/イッセエ'/コオゲキ'"),
+    # 5) 狭間
+    dict(text="それでも敵は鉄砲で", scene="h07_sama"),
+    dict(text="壁の上の兵を撃ってきます", scene="h07_sama"),
+    dict(text="そこで壁に小さな穴を開けます", scene="h07_sama"),
+    dict(text="外からはほとんど当たらず", scene="h08_cone"),
+    dict(text="中からは広く狙えます", scene="h08_cone"),
+    dict(text="これが狭間 その数997", scene="h08_cone", kana="コレガ'/サマ'、ソノカズ'/キュ'ウヒャク/キュウジュウナ'ナ"),
+    # 6) 白漆喰（姫路城ならでは）
+    dict(text="最後に敵は火矢を放ちます", scene="h09_fire"),
+    dict(text="だから壁を白い漆喰で塗りこめ", scene="h09_fire"),
+    dict(text="燃えにくくします", scene="h09_fire"),
+    # 7) 完成
+    dict(text="この城は完成から400年以上", scene="h10_final", over="1609年"),
+    dict(text="1945年の空襲でも", scene="h10_final", over="1945年"),
+    dict(text="焼け残りました", scene="h10_final", over="2026年"),
+    dict(text="おめでとう", scene="h10_final"),
+    dict(text="姫路城の完成です", scene="h10_final"),
+]
+
+TOTAL = 59.9
+LEAD = 0.25          # 最初の声までの間
+TAIL = 1.4           # 最後の声のあと（BGM で締める）
+GAP = 0.06           # 句と句の間
+SPEAKER = 11         # 玄野武宏 ノーマル（参考元の男性の声の高さ 約160Hz に近い）

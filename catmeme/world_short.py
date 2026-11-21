@@ -650,8 +650,22 @@ def skit_draw(out, c, t):
         py = bottom + pc.height / 2 + 12 if c.get("pic_cap_below") else bottom - pc.height / 2 - 18   # below：絵の下に出す（カレンダーなど）
         I.put(out, pc, min(cx, W - 10 - pc.width / 2), py)
     if c.get("cat_cap"):
-        cc = _skit_text(c["cat_cap"], WHITE, 96, max_w=540)   # 左半分に収める
-        I.put(out, cc, max(290, cc.width / 2 + 16), c.get("cat_cap_y", 640))
+        if c.get("cat_cap_over"):   # 11/21 ユーザー指定：いつもの大きさのまま、画面に収まりきらず右へはみ出す（「ああああ…」）
+            key = ("over", c["cat_cap"])
+            if key not in _SKIT:   # 文字を縮めないよう5文字ずつ作って横につなぐ
+                txt = c["cat_cap"]
+                parts = [_skit_text(txt[i:i + 5], WHITE, 96, max_w=100000) for i in range(0, len(txt), 5)]
+                wide = Image.new("RGBA", (sum(p.width for p in parts), max(p.height for p in parts)), (0, 0, 0, 0))
+                x = 0
+                for p in parts:
+                    wide.alpha_composite(p, (x, 0))
+                    x += p.width - 20   # ふちの分だけ重ねて文字間をそろえる
+                _SKIT[key] = wide
+            cc = _SKIT[key]
+            I.put(out, cc, 16 + cc.width / 2, c.get("cat_cap_y", 640))
+        else:
+            cc = _skit_text(c["cat_cap"], WHITE, 96, max_w=540)   # 左半分に収める
+            I.put(out, cc, max(290, cc.width / 2 + 16), c.get("cat_cap_y", 640))
 
 
 def hype_fx(out, t):

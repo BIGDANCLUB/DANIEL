@@ -1,5 +1,5 @@
 # 自堕落シリーズ #25 ドン・キホーテ：リンク・タイトル・説明文
-- 1080：https://github.com/bigdanclub/daniel/blob/claude/cat-meme-longform/catmeme/release/jidaraku_25_donki.mp4
+- 1080：https://github.com/bigdanclub/daniel/blob/claude/cat-meme-longform/catmeme/release/jidaraku_25_donki.mp4（4:27）
 
 タイトル案（11/21 ベンチマーク比較：短く・きっかけ入り）：
 1. 【猫ミーム】30代独身、休日の夜に予定がないので1人でドンキへ #猫ミーム #猫マニ

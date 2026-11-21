@@ -529,22 +529,25 @@ def rise_parts(parts, f0, f1, drop=4.0):
         K.key_loc(p, fk + 2, loc)
 
 
-def tenshu(cx, cy, z, s=1.0, face=0.0, name="tenshu", parent=None):
-    """大天守（白い壁、5重の屋根、千鳥破風・唐破風ふうの三角、てっぺんは入母屋＋金のしゃちほこ）。"""
+def tenshu(cx, cy, z, s=1.0, face=0.0, name="tenshu", parent=None, n_tiers=5):
+    """大天守（白い壁、5重の屋根、千鳥破風、てっぺんは入母屋＋金のしゃちほこ）。n_tiers=3 で小天守。
+    段ごとにまとめた空オブジェクト（tiers）を返す（下から組み上がるアニメ用）。"""
     root = K.empty((cx, cy, z), parent, name)
     root.rotation_euler = (0, 0, face * D2R)
     root.scale = (s, s, s)
     pm = plaster_mat()
-    tiers = [(23, 18, 6.2, 2.4, 1.9), (20.5, 15.5, 4.4, 2.2, 1.7), (17.5, 13, 4.2, 2.2, 1.6), (14, 10.5, 4.0, 2.0, 1.5), (11, 8, 3.8, 4.2, 1.6)]
+    tiers = [(23, 18, 6.2, 2.6, 1.9), (20.5, 15.5, 4.4, 2.4, 1.7), (17.5, 13, 4.2, 2.4, 1.6), (14, 10.5, 4.0, 2.2, 1.5), (11, 8, 3.8, 4.4, 1.6)]
+    if n_tiers == 3:
+        tiers = [tiers[0], tiers[2], tiers[4]]
     zz = 0.0
-    tops = []
+    groups = []
     for i, (w, d, wh, rh, ov) in enumerate(tiers):
-        K.obj(K.box_mesh(w, d, wh), pm, root, (0, 0, zz + wh / 2), name=f"{name}_w{i}")
-        windows(root, w, d, zz + wh * 0.55, 1, max(3, int(w / 3.2)), max(2, int(d / 3.2)), size=(1.0, 0.8), name=f"{name}_win{i}")
+        tg = K.empty((0, 0, zz), root, f"{name}_t{i}")
+        groups.append(tg)
+        K.obj(K.box_mesh(w, d, wh), pm, tg, (0, 0, wh / 2), name=f"{name}_w{i}")
+        windows(tg, w, d, wh * 0.55, 1, max(3, int(w / 3.2)), max(2, int(d / 3.2)), size=(1.0, 0.8), name=f"{name}_win{i}")
         last = i == len(tiers) - 1
-        r = hip_roof(0, 0, zz + wh, w, d, rh, over=ov, sori=0.45, name=f"{name}_r{i}", parent=root, gable=last)
-        tops.append(r)
-        # 破風：段ごとに向きと数を変えて、姫路城らしいにぎやかな屋根に
+        r = hip_roof(0, 0, wh, w, d, rh, over=ov, sori=0.45, name=f"{name}_r{i}", parent=tg, gable=last)
         if i == 0:
             for x in (-w * 0.25, w * 0.25):
                 chidori(r, x, -(d / 2 + ov * 0.35), 0.6, 0, 4.2, 2.3, f"{name}_cd0a{x}")
@@ -553,22 +556,34 @@ def tenshu(cx, cy, z, s=1.0, face=0.0, name="tenshu", parent=None):
             chidori(r, 0, -(d / 2 + ov * 0.3), 0.5, 0, 6.5, 2.6, f"{name}_cd1a")
             chidori(r, (w / 2 + ov * 0.3), 0, 0.5, -90, 5.0, 2.2, f"{name}_cd1b")
             chidori(r, -(w / 2 + ov * 0.3), 0, 0.5, 90, 5.0, 2.2, f"{name}_cd1c")
-        elif i == 2:
+        elif i == 2 and not last:
             for x in (-w * 0.22, w * 0.22):
                 chidori(r, x, -(d / 2 + ov * 0.3), 0.5, 0, 3.6, 2.0, f"{name}_cd2a{x}")
             chidori(r, 0, (d / 2 + ov * 0.3), 0.5, 180, 5.0, 2.2, f"{name}_cd2b")
         elif i == 3:
             chidori(r, 0, -(d / 2 + ov * 0.3), 0.4, 0, 4.0, 2.0, f"{name}_cd3a")
+        if last:
+            gold = K.mat("gold", (0.85, 0.60, 0.15), 0.25)
+            for sx in (-1, 1):
+                K.obj(K.ellip_mesh(0.35, 0.25, 0.7, 10, 8), gold, tg, (sx * (w - d) / 2 * 1.02, 0, wh + rh + 0.6), rot=(0, sx * 25 * D2R, 0),
+                      name=f"{name}_shachi")
         zz += wh + rh * 0.55
-    # しゃちほこ（金）
-    gold = K.mat("gold", (0.85, 0.60, 0.15), 0.25)
-    w, d = tiers[-1][0], tiers[-1][1]
-    ztop = zz - tiers[-1][3] * 0.55 + tiers[-1][3] + 0.4
-    for sx in (-1, 1):
-        K.obj(K.ellip_mesh(0.35, 0.25, 0.7, 10, 8), gold, root, (sx * (w - d) / 2 * 1.02, 0, ztop + 0.3), rot=(0, sx * 25 * D2R, 0),
-              name=f"{name}_shachi")
-    info = {"root": root, "height": ztop + 1.0, "tops": tops}
-    return info
+    return {"root": root, "height": (zz + tiers[-1][3] * 0.45) * s, "tiers": groups}
+
+
+def watari(p0, p1, z, w=6.0, h=3.2, name="watari", parent=None):
+    """渡櫓（天守どうしをつなぐ長い櫓）。"""
+    p0, p1 = Vector(p0), Vector(p1)
+    dv = p1 - p0
+    L = dv.length
+    ang = math.atan2(dv.y, dv.x)
+    c = (p0 + p1) / 2
+    root = K.empty((c.x, c.y, z), parent, name)
+    root.rotation_euler = (0, 0, ang)
+    K.obj(K.box_mesh(L, w, h), plaster_mat(), root, (0, 0, h / 2), name=f"{name}_w")
+    windows(root, L, w, h * 0.55, 1, max(2, int(L / 3.5)), 1, size=(0.9, 0.7), name=f"{name}_win")
+    hip_roof(0, 0, h, L, w, 2.2, over=1.2, sori=0.35, name=f"{name}_r", parent=root)
+    return root
 
 
 def town(cx, cy, r_in, r_out, n=200, seed=4, name="town"):

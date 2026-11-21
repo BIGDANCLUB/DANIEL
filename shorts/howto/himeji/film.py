@@ -502,12 +502,12 @@ def h06_gate(nf):
             e.fall(fr(th), nf, (q[0], q[1], 0.0), (r.uniform(-1, 1), r.uniform(-1.5, -0.5), 2.0), spin=(-200, r.uniform(-90, 90)), ground=0.0)
     K.marker("gate", (0, -3.0, 1.5))
     K.marker("two", (0, -5.0, 1.8))
-    keys = [(0.0, (0.0, -52.0, 30.0), (0, -12.0, 0.0), 26),
-            (b, (0.0, -38.0, 24.0), (0, -6.0, 1.0), 26),
-            (c, (5.0, -24.0, 12.0), (0, -5.0, 2.0), 26),
-            (d - 0.02, (6.0, -21.0, 9.0), (0, -4.5, 2.5), 26),
-            (d, (-13.0, -22.0, 3.0), (0, -3.0, 5.5), 24),
-            (T, (-14.5, -24.0, 2.4), (0, -3.0, 5.0), 24)]
+    keys = [(0.0, (0.0, -34.0, 38.0), (0, -14.0, 0.0), 30),
+            (b, (0.0, -27.0, 30.0), (0, -7.0, 1.0), 30),
+            (c, (4.0, -21.0, 13.0), (0, -5.0, 2.0), 28),
+            (d - 0.02, (5.0, -19.0, 10.0), (0, -4.5, 2.5), 28),
+            (d, (-8.5, -17.0, 2.6), (0, -4.0, 4.6), 24),
+            (T, (-9.5, -18.5, 2.3), (0, -4.0, 4.4), 24)]
     K.campath(keys, nf, shake=0.03, cuts=[d])
 
 
@@ -600,7 +600,7 @@ def h07_sama(nf):
     CS.Ishigaki(0, 3.0, 40.0, 6.0, Z, 0.6, seed=31, name="lowig", course=0.75)
     CS.slab(0, 5.0, Z, 40, 10, th=0.3)
     K.obj(K.box_mesh(40, 2.4, 1.2), CS.soil_mat(), None, (0, 1.5, Z + 0.6), name="walkway")   # 壁の内側の足場
-    K.obj(K.box_mesh(40, 0.9, 0.6), CS.soil_mat(), None, (0, 0.75, Z + 1.5), name="step")      # 上から撃つための段
+    K.obj(K.box_mesh(40, 0.9, 1.2), CS.soil_mat(), None, (0, 0.75, Z + 1.8), name="step")      # 上から撃つための段
     f_h = [fr(c + 0.25), fr(c + 0.75), fr(c + 1.25)]
     HZ = Z + 2.3
     holes = [("tri", -1.6, HZ, f_h[0]), ("circle", 0.0, HZ, f_h[1]), ("square", 1.6, HZ, f_h[2])]
@@ -610,10 +610,10 @@ def h07_sama(nf):
     # 壁の上の味方（撃たれて落ちる）
     r = random.Random(7)
     for k, x in enumerate([-5.5, -2.8, 2.6, 5.4]):
-        al = K.Person((x, 0.75, Z + 1.8), 180, K.ALLY_R if k % 2 else K.ALLY_B, name=f"wal{k}", seed=300 + k)
+        al = K.Person((x, 0.75, Z + 2.4), 180, K.ALLY_R if k % 2 else K.ALLY_B, name=f"wal{k}", seed=300 + k)
         al.stand(1, shL=(60, 10), shR=(60, 10), elL=60, elR=60)
         th = b + 0.35 + 0.22 * k
-        al.fall(fr(th), fr(c - 0.1), (x, 0.75, Z + 1.8), (r.uniform(-0.5, 0.5), 2.2, 2.0), spin=(-150, 0), ground=Z + 1.2)
+        al.fall(fr(th), fr(c - 0.1), (x, 0.75, Z + 2.4), (r.uniform(-0.5, 0.5), 2.2, 2.0), spin=(-150, 0), ground=Z + 1.2)
         K.key_scale(al.root, fr(c) - 1, 1.0)
         K.key_scale(al.root, fr(c), 1e-4)
     # 外の鉄砲隊
@@ -659,8 +659,8 @@ def h07_sama(nf):
             (b - 0.02, (0.0, -12.0, 8.0), (0.0, -24.0, 1.2), 28),
             (b, (4.0, -27.0, 1.7), (0.0, 0.0, 5.6), 30),
             (c - 0.02, (3.4, -26.0, 1.9), (0.0, 0.0, 5.8), 32),
-            (c, (3.4, 7.4, 6.4), (0.0, 0.0, 5.0), 28),
-            (T, (2.6, 6.2, 6.1), (0.0, 0.0, 5.1), 28)]
+            (c, (2.6, 5.6, 5.7), (0.0, 0.0, 5.3), 26),
+            (T, (2.1, 5.0, 5.6), (0.0, 0.0, 5.3), 26)]
     K.campath(keys, nf, shake=0.03, cuts=[b, c])
 
 
@@ -673,7 +673,7 @@ def h08_cone(nf):
     c, _ = line_t(26)
     # --- 図解の場所（遠くに置く）：壁を真上から見る（穴の高さで切った断面）
     OX = 400.0
-    sec = CS.wall_box((OX - 7, 0), (OX + 7, 0), 0.0, 1.2, 1.0, K.mat("section", (0.70, 0.69, 0.66), 0.8), "sec")
+    sec = CS.wall_box((OX - 7, 0), (OX + 7, 0), 0.0, 1.2, 1.0, K.mat("section", (0.42, 0.41, 0.40), 0.8), "sec")
     ct = sama_cutter("square", OX, 0.6, -0.5, 0.5, "seccut")
     ct.scale = (1, 1, 6)
     md = sec.modifiers.new("b", 'BOOLEAN')
@@ -914,7 +914,7 @@ def h10a_1609(nf):
     world(az=200, fields=False)
     K.countryside(seed=7, keep_out=300, r_max=1200, n_fields=150, n_trees=200)
     keep, smalls, big = himeji_castle()
-    CS.town(0, 0, 70, 280, n=230, seed=4)
+    CS.town(0, 0, 150, 420, n=260, seed=4)
     T = SC["dur"]
     a, _ = line_t(30)
     CS.rise_parts(keep["tiers"], fr(0.05), fr(1.3), drop=8.0)
@@ -952,7 +952,7 @@ def h10b_1945(nf):
     world(az=200, fields=False)
     K.countryside(seed=7, keep_out=300, r_max=1200, n_fields=120, n_trees=150)
     keep, smalls, big = himeji_castle()
-    houses = CS.town(0, 0, 70, 280, n=230, seed=4)
+    houses = CS.town(0, 0, 150, 420, n=260, seed=4)
     T = SC["dur"]
     # 夜：空は暗い赤、月の弱い光
     K.flat_sky(top=(0.004, 0.006, 0.018), horizon=(0.22, 0.05, 0.015), strength=1.0)
@@ -961,62 +961,69 @@ def h10b_1945(nf):
     sun.data.color = (0.55, 0.65, 1.0)
     cl = bpy.data.objects["clouds"]
     cl.hide_render = True
+    keys = [(0.0, (-110.0, -330.0, 62.0), (KEEP[0], KEEP[1], 22.0), 62),
+            (T, (-100.0, -305.0, 58.0), (KEEP[0], KEEP[1], 23.0), 64)]
+    cam = K.campath(keys, nf, shake=0.03)
+    from bpy_extras.object_utils import world_to_camera_view
+    sc = bpy.context.scene
+    sc.frame_set(1)
+    bpy.context.view_layer.update()
     r = random.Random(45)
-    burning = r.sample(houses, 60)
+    vis = []
+    for h in houses:
+        v = world_to_camera_view(sc, cam, h.location)
+        if 0.02 < v.x < 0.98 and 0.02 < v.y < 0.6 and v.z > 0:
+            vis.append(h)
+    burning = r.sample(vis, min(55, len(vis)))
     for k, h in enumerate(burning):
         p = h.location
-        f0 = fr(r.uniform(0.0, 1.6))
-        K.flame((p.x, p.y, 4.5), r.uniform(2.0, 3.2), seed=k, f0=f0, name=f"tf{k}")
+        f0 = fr(r.uniform(0.0, 1.4))
+        K.flame((p.x, p.y, 4.0), r.uniform(4.5, 6.5), seed=k, f0=f0, name=f"tf{k}")
         if k % 3 == 0:
-            K.smoke_puffs((p.x, p.y, 8.0), f0, n=5, seed=k, col=(0.08, 0.06, 0.05), size=6.0, rise=25.0, life=70, spread=3.0, alpha=0.7,
+            K.smoke_puffs((p.x, p.y, 9.0), f0, n=5, seed=k, col=(0.06, 0.045, 0.04), size=8.0, rise=30.0, life=70, spread=4.0, alpha=0.7,
                           name=f"ts{k}")
-    # 爆撃機と焼夷弾
+    # 爆撃機と焼夷弾（城のうしろの赤い空を横切る）
     for k in range(4):
         bmr = bomber(f"b29_{k}")
-        y = 60 + k * 40
-        K.key_loc(bmr, 1, (-500 + k * 60, y, 320 + k * 15))
-        K.key_loc(bmr, nf, (300 + k * 60, y + 40, 320 + k * 15))
-        bmr.rotation_euler = (0, 0, -80 * D2R)
-    im = K.glow("incend", (1.0, 0.55, 0.15), 12.0)
-    for k in range(40):
-        st = K.obj(K.ellip_mesh(0.3, 0.3, 4.0, 6, 4), im, None, (0, 0, 0), name=f"inc{k}", shadow=False)
-        t0 = r.uniform(0.0, T - 0.6)
-        x, y = r.uniform(-250, 250), r.uniform(-250, 250)
-        if abs(x) < 50 and abs(y) < 40:
-            x += 120
+        bmr.rotation_euler = (0, 0, -90 * D2R)
+        y = 120 + k * 35
+        K.key_loc(bmr, 1, (-260 + k * 45, y, 150 + k * 12))
+        K.key_loc(bmr, nf, (60 + k * 45, y, 150 + k * 12))
+    im = K.glow("incend", (1.0, 0.55, 0.15), 10.0)
+    for k in range(45):
+        st = K.obj(K.ellip_mesh(0.35, 0.35, 5.0, 6, 4), im, None, (0, 0, 0), name=f"inc{k}", shadow=False)
+        t0 = r.uniform(0.0, T - 0.5)
+        h = r.choice(vis) if vis else None
+        x, y = (h.location.x, h.location.y) if h else (r.uniform(-200, 200), r.uniform(-200, 200))
         K.key_scale(st, fr(t0) - 1, 1e-4)
         K.key_scale(st, fr(t0), 1.0)
-        K.key_loc(st, fr(t0), (x, y, 260))
-        K.key_loc(st, fr(t0 + 0.6), (x + 8, y, 5))
-        K.key_scale(st, fr(t0 + 0.6), 1e-4)
+        K.key_loc(st, fr(t0), (x + r.uniform(-20, 20), y + r.uniform(-20, 20), 150))
+        K.key_loc(st, fr(t0 + 0.5), (x, y, 4))
+        K.key_scale(st, fr(t0 + 0.5), 1e-4)
     # 城は白く浮かぶ（下からの火の照り返し）
-    for k, (x, y) in enumerate([(-60, -70), (70, -60), (0, -90)]):
+    for k, (x, y) in enumerate([(-80, -90), (90, -80), (0, -120)]):
         lt = bpy.data.lights.new(f"glow{k}", 'AREA')
-        lt.energy = 300000
-        lt.size = 60
-        lt.color = (1.0, 0.45, 0.15)
+        lt.energy = 30000
+        lt.size = 40
+        lt.color = (1.0, 0.42, 0.12)
         lo = bpy.data.objects.new(f"glow{k}", lt)
         bpy.context.collection.objects.link(lo)
-        lo.location = (x, y, 15)
-        W_ = K.W
-        W_.aim(lo, (KEEP[0], KEEP[1], 25))
+        lo.location = (x, y, 45)
+        K.W.aim(lo, (KEEP[0], KEEP[1], 28))
     K.marker("keep", (KEEP[0], KEEP[1], 40.0))
-    keys = [(0.0, (-70.0, -150.0, 22.0), (KEEP[0], KEEP[1], 24.0), 34),
-            (T, (-60.0, -132.0, 20.0), (KEEP[0], KEEP[1], 25.0), 36)]
-    K.campath(keys, nf, shake=0.03)
 
 
 def h10c_final(nf):
     world(az=205, fields=False)
     K.countryside(seed=7, keep_out=300, r_max=1200, n_fields=150, n_trees=200)
     keep, smalls, big = himeji_castle(sakura=True)
-    CS.town(0, 0, 70, 280, n=230, seed=4)
+    CS.town(0, 0, 150, 420, n=260, seed=4)
     T = SC["dur"]
     a, _ = line_t(32)
     b, _ = line_t(33)
     c, _ = line_t(34)
     # 主人公（最初と同じ）が城の前で手をふる
-    hero = K.Person((-6.0, -60.0, 0), 160, K.HERO, name="hero")
+    hero = K.Person((-6.0, -60.0, 0), 176, K.HERO, name="hero")
     hero.stand(1)
     hero.wave(fr(b - 0.05), fr(c + 0.6), "R")
     hero.pose(fr(c + 0.7), shL=(150, 40), shR=(150, 40), elL=15, elR=15)
@@ -1025,8 +1032,8 @@ def h10c_final(nf):
     cut = b - 0.03
     keys = [(0.0, (60.0, -120.0, 14.0), (KEEP[0], KEEP[1], 22.0), 40),
             (cut - 0.02, (50.0, -116.0, 16.0), (KEEP[0], KEEP[1], 22.0), 42),
-            (cut, (-4.6, -64.2, 1.5), (-6.0, -59.0, 4.5), 30),
-            (c, (-4.8, -65.5, 1.7), (-5.5, -58.0, 6.0), 30),
+            (cut, (-5.2, -63.6, 1.45), (-5.7, -59.5, 2.0), 32),
+            (c, (-5.3, -64.6, 1.6), (-5.6, -59.0, 2.6), 32),
             (c + 1.6, (-12.0, -100.0, 12.0), (KEEP[0], KEEP[1], 20.0), 32),
             (T, (-14.0, -110.0, 15.0), (KEEP[0], KEEP[1], 21.0), 34)]
     K.campath(keys, nf, shake=0.03, cuts=[cut])

@@ -498,7 +498,7 @@ def main():
         w.setframerate(SR)
         w.writeframes((audio * 32767).astype(np.int16).tobytes())
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", out + ".video.mp4", "-i", wav, "-filter_complex",
-                    "[1:a]loudnorm=I=-12:TP=-1.0:LRA=9[a]", "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+                    "[1:a]loudnorm=I=-13.5:TP=-1.5:LRA=7[a]", "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
                     "-ar", "44100", "-t", f"{total:.3f}", "-movflags", "+faststart", out], check=True)
     os.remove(out + ".video.mp4")
     os.remove(wav)

@@ -57,6 +57,7 @@ def build(name, st, rows, heads, band, script, speed=1.25, target=None):
         t0 += c["dur"]
         for q in c["cats"]:   # 猫は大きめ・少し重なってよい
             q.update(h=860, w=660, bottom=1500, x=330 if q["x"] < 540 else 750)
+        c["cats"].sort(key=lambda q: q["x"] < 540)   # 後から出る左（日本）を右の猫の上に重ねる（11/22 ユーザー指定）
     Wd.hai_extend = lambda x: x   # 猫は鳴かないので、鳴くまで場面をのばす処理はしない（読み上げとずれるため）
     out = os.path.join(Wd.HERE, "out", "short_%s.mp4" % name)
     raw = out.replace(".mp4", "_noVoice.mp4")

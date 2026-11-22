@@ -2,7 +2,7 @@
 
 ずんだもん（VOICEVOX）が「札＋先に出る側」→ その字幕 →「後に出る側」→ その字幕 を間をあけずに読む。
 場面の長さは読み上げの長さに合わせる（59.9秒にしない）。猫の鳴き声は消して、効果音と読み上げだけ。
-- 台本：scripts/short_<名前>_yomiage_zundamon.txt（00＝頭の「おい！」、そのあと1段につき4行）
+- 台本：scripts/short_<名前>_yomiage_zundamon.txt（00＝頭のひと言（なくてよい・11/22 132は「おい！」なし）、そのあと1段につき4行）
 - 声：tools/zunda_tts.py（/home/user/vv の VOICEVOX 公式一式）
 - 概要欄に「VOICEVOX:ずんだもん」を必ず書く
 """
@@ -32,7 +32,7 @@ def build(name, st, rows, heads, band, script, speed=1.25, target=None):
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         n = [("%02d" % (k * 4 + i + 1)) for i in range(4)]
         big = k >= len(rows) - 3
-        head = ["00"] if k == 0 else []
+        head = ["00"] if k == 0 and "00" in v else []   # 00＝頭のひと言（台本にあるときだけ）
         da = sum(L[h] + GAP for h in head) + L[n[0]] + GAP
         a = Wd.split(st, lv, dur=da, se=["explosion_chudoon"] if big else ["pi"])
         b = Wd.split(st, lv, right=wcat, cap=wcap, cap_side="R", sound=None, dur=L[n[1]] + 0.25, se="don_hit")

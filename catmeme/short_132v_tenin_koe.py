@@ -18,7 +18,7 @@ ROWS = [
     ('10回', 'dance_edm_cat', '結婚式に\n呼ばれる', 'stare_interviewer_cat', 'レシートは\nご入用ですか'),
     ('15回', 'smug_squint_bicolor_cat', 'ほぼ親戚', 'blank_black_cat_zoning_out', '全部\n大丈夫です'),
     ('20回', 'showoff_gojo_cosplay_cat', '従業員として\n誘われる', 'sad_looking_away_tabby', 'セルフレジを\n探す'),
-    ('30回', 'happy_girlfriend_dance_cat', 'お店の壁に\n写真が飾られる', 'despair_dramatic_kitten', '「いつもの」が\n通じない'),
+    ('30回', 'happy_girlfriend_dance_cat', 'お店の壁に\n写真が飾られる', 'despair_dramatic_kitten', '初めての\nご来店ですか？'),
     ('帰り際', 'dance_filmed_by_gray_cat', 'See you!', 'cocky_dj_cat', 'っざぁしたぁ～\n（ｵﾗｲｯｵﾗｲｯ）'),
 ]
 

@@ -1,10 +1,12 @@
 # 自堕落シリーズ #26 焼肉ライク：リンク・タイトル・説明文
-- 1080：https://github.com/bigdanclub/daniel/blob/claude/cat-meme-longform/catmeme/release/jidaraku_26_yakinikulike.mp4
+- 1080：https://github.com/bigdanclub/daniel/blob/claude/cat-meme-longform/catmeme/release/jidaraku_26_yakinikulike.mp4（4:29）
+- サムネ：thumbs/jidaraku_26_yakinikulike_thumb_final.png（30代独身 給料日の夜／焼肉ライクで城主になる）
 
 タイトル案（11/21 ベンチマーク比較：短く・きっかけ入り）：
-1. 【猫ミーム】30代独身、給料日に1人で焼肉ライク #猫ミーム #猫マニ
-2. 【猫ミーム】30代独身、給料日のごほうびは1人焼肉 #猫ミーム #猫マニ
-3. 【猫ミーム】30代独身、金曜の夜に1人で焼肉ライクへ行く #猫ミーム #猫マニ
+1. 【猫ミーム】30代独身、給料日に1人で焼肉ライクの城主になる #猫ミーム #猫マニ（サムネに合わせた案）
+2. 【猫ミーム】30代独身、給料日に1人で焼肉ライク #猫ミーム #猫マニ
+3. 【猫ミーム】30代独身、給料日のごほうびは1人焼肉 #猫ミーム #猫マニ
+4. 【猫ミーム】30代独身、金曜の夜に1人で焼肉ライクへ行く #猫ミーム #猫マニ
 
 ```
 30代独身。彼女なし、貯金も少なめ。だけど毎日それなりに幸せです。

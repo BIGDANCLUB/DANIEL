@@ -1,7 +1,7 @@
 """ショート132v：日本vs世界 店員さんの声かけ回数【読み上げ版】（11/22 ユーザー指定：ずんだもん読み上げ形式の1本目）。
 
 python3 catmeme/short_132v_tenin_koe.py → out/short_132v_tenin_koe.mp4
-- 中身は132と同じ。voice_short.py で、ずんだもんが「札＋世界」→字幕→「日本」→字幕を読む。長さは読み上げに合わせる
+- 中身は132と同じ。voice_short.py で、ずんだもんが「札＋世界」→字幕→「日本」→字幕を読む。長さは59.9秒（11/22 ユーザー指定：30回の段を足し、字幕のあとの間で調整）
 - 台本：scripts/short_132_yomiage_zundamon.txt。概要欄に「VOICEVOX:ずんだもん」
 """
 import os
@@ -18,6 +18,7 @@ ROWS = [
     ('10回', 'dance_edm_cat', '結婚式に\n呼ばれる', 'stare_interviewer_cat', 'レシートは\nご入用ですか'),
     ('15回', 'smug_squint_bicolor_cat', 'ほぼ親戚', 'blank_black_cat_zoning_out', '全部\n大丈夫です'),
     ('20回', 'showoff_gojo_cosplay_cat', '従業員として\n誘われる', 'sad_looking_away_tabby', 'セルフレジを\n探す'),
+    ('30回', 'happy_girlfriend_dance_cat', 'お店の壁に\n写真が飾られる', 'despair_dramatic_kitten', '「いつもの」が\n通じない'),
     ('帰り際', 'dance_filmed_by_gray_cat', 'See you!', 'cocky_dj_cat', 'っざぁしたぁ～\n（ｵﾗｲｯｵﾗｲｯ）'),
 ]
 
@@ -25,4 +26,4 @@ ROWS = [
 if __name__ == "__main__":
     V.build("132v_tenin_koe", "bg15_convenience", ROWS, ("日本", "世界"),
             Wd.rich_band([("{y}日本vs世界", 96, Wd.BLACK, 95), ("{y}店員さんの声かけ回数", 90, Wd.BLACK, 245)], 0, 330),
-            os.path.join(Wd.HERE, "scripts", "short_132_yomiage_zundamon.txt"))
+            os.path.join(Wd.HERE, "scripts", "short_132_yomiage_zundamon.txt"), target=59.9)

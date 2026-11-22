@@ -23,7 +23,7 @@ def wav(path):
         return np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(np.float32) / 32768, w.getframerate()
 
 
-def build(name, st, rows, heads, band, script, speed=1.25):
+def build(name, st, rows, heads, band, script, speed=1.25, target=None):
     vdir = os.path.join(Wd.HERE, "out", "voice_" + name)
     subprocess.run(["python3", os.path.join(Wd.HERE, "tools", "zunda_tts.py"), script, vdir, str(speed)], check=True)
     v = {f[:-4]: wav(os.path.join(vdir, f))[0] for f in os.listdir(vdir) if f.endswith(".wav")}
@@ -45,6 +45,11 @@ def build(name, st, rows, heads, band, script, speed=1.25):
         plan.append((len(cs) + 2, n[2], 0.0))
         plan.append((len(cs) + 2, n[3], L[n[2]] + GAP))
         cs += [a, b, c]
+    if target:   # 足りない分は、字幕が出ているカット（右・左）の読み終わりのあとの間として均等に足す
+        caps = [c for i, c in enumerate(cs) if i % 3]
+        extra = (target - sum(c["dur"] for c in cs)) / len(caps)
+        for c in caps:
+            c["dur"] += extra
     for c in cs:
         c.update(blur=9, band_y=0, tag_y=460, free_len=True, heads=heads)
     Wd.hai_extend = lambda x: x   # 猫は鳴かないので、鳴くまで場面をのばす処理はしない（読み上げとずれるため）

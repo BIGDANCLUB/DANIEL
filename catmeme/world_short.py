@@ -250,12 +250,12 @@ def fancy_box(t):
     return im
 
 
-def cap_box(t, full=False):
-    """下の説明：白地・緑の太い枠・青い太字。full=True は横いっぱい（まとめ用・10/26）。"""
+def cap_box(t, full=False, col=None, size=None):
+    """下の説明：白地・緑の太い枠・青い太字。full=True は横いっぱい（まとめ用・10/26）。col・size は読み上げ型（11/22）で使う。"""
     if t.startswith("{fancy}"):
         return fancy_box(t[len("{fancy}"):])
-    tx = rich([[(ln, BLUE)] for ln in t.split("\n")], 96 if full else 76, stroke=3, stroke_col=WHITE, max_w=960 if full else 450,
-              lh=1.12)
+    tx = rich([[(ln, col or BLUE)] for ln in t.split("\n")], size or (96 if full else 76), stroke=3, stroke_col=WHITE,
+              max_w=960 if (full or size) else 450, lh=1.12)
     im = Image.new("RGBA", (W - 60 if full else max(tx.width + 50, 300), tx.height + 44), GREEN + (255,))
     ImageDraw.Draw(im).rectangle((9, 9, im.width - 10, im.height - 10), fill=WHITE)
     im.alpha_composite(tx, ((im.width - tx.width) // 2, (im.height - tx.height) // 2))
@@ -471,7 +471,10 @@ class Renderer(I.Renderer):
             hl, hr = c.get("heads", ("日本", "世界"))
             sz = c.get("heads_size") or (140 if max(len(hl), len(hr)) <= 2 else int(min(140, 480 / max(len(hl), len(hr)))))   # 長い見出しは片側におさまる大きさに（11/1）
             self.heads = (rich([[(hl, BLUE)]], sz, stroke=6, stroke_col=WHITE, max_w=500), rich([[(hr, RED)]], sz, stroke=6, stroke_col=WHITE, max_w=500))
-            self.cap = cap_box(c["cap"], c.get("cap_full", False)) if c.get("cap") else None
+            if c.get("ref"):   # 読み上げ型（11/22）：字幕は下のまん中・日本は青、世界は赤
+                self.cap = cap_box(c["cap"], col=BLUE if c["cap_side"] == "L" else RED, size=100) if c.get("cap") else None
+            else:
+                self.cap = cap_box(c["cap"], c.get("cap_full", False)) if c.get("cap") else None
             self.cap2 = cap_box(c["cap2"]) if c.get("cap2") else None   # 反対側にも説明を出しっぱなしにする（11/7 ショート81）
             # 見出しの下に出しっぱなしにする説明（11/2 ショート57：平均と中央値のちがい）
             self.note = rich(c["note"], c.get("note_size", 46), stroke=6, stroke_col=WHITE, max_w=1040) if c.get("note") else None
@@ -517,14 +520,28 @@ class Renderer(I.Renderer):
         self.say_xy = (cx, cy)
 
     def frame(self, t):
-        out = self.base.copy()
         c = self.c
+        if c.get("ref"):   # 読み上げ型（11/22 参考どおり）：背景を少し大きくして、横にゆっくりスライド（カットをまたいで続く）
+            if not hasattr(self, "wide"):
+                self.wide = cv2.resize(self.base, None, fx=1.18, fy=1.18, interpolation=cv2.INTER_LINEAR)
+            T = c.get("t0", 0.0) + t
+            span = self.wide.shape[1] - W
+            ph = (T / 30.0) % 2.0   # 30秒で端から端へ、そのあと戻る
+            x0 = int(span * (ph if ph <= 1 else 2 - ph))
+            y0 = (self.wide.shape[0] - H) // 2
+            out = self.wide[y0:y0 + H, x0:x0 + W].copy()
+        else:
+            out = self.base.copy()
         if not hasattr(self, "say_xy"):
             self.side_layout()
         if self.phone is not None:
             I.put(out, self.phone, W / 2 + 20, 1010)
         if c["kind"] == "split" and not c.get("skit"):
-            cv2.rectangle(out, (W // 2 - 8, 680), (W // 2 + 8, 1290), (0, 0, 0), -1)
+            if c.get("ref"):   # 読み上げ型：線はゆらゆら少し左右に動く・下の字幕の後ろまでのばす
+                lx = int(W // 2 + 22 * math.sin((c.get("t0", 0.0) + t) * 2 * math.pi / 3.2))
+                cv2.rectangle(out, (lx - 8, 680), (lx + 8, 1560), (0, 0, 0), -1)
+            else:
+                cv2.rectangle(out, (W // 2 - 8, 680), (W // 2 + 8, 1290), (0, 0, 0), -1)
         for i, q in enumerate(c["cats"]):
             s = 1.0 if t > 0.12 else 0.85 + 0.15 * (t / 0.12)   # ポンと出る
             img, al = self.cat_img(i, q, t)
@@ -532,7 +549,7 @@ class Renderer(I.Renderer):
                 img = cv2.resize(img, None, fx=s, fy=s)
                 al = cv2.resize(al, None, fx=s, fy=s)
             h, w = al.shape
-            lo, hi = (20, W - 20) if c["kind"] != "split" or c.get("skit") else ((20, W // 2 - 14) if q["x"] < W / 2 else (W // 2 + 14, W - 40))
+            lo, hi = (20, W - 20) if c["kind"] != "split" or c.get("skit") or c.get("ref") else ((20, W // 2 - 14) if q["x"] < W / 2 else (W // 2 + 14, W - 40))
             x0 = min(max(int(q["x"] - w / 2), lo), hi - w)   # 画面（左右くらべでは自分の側）からはみ出さない
             over_cat(out, img, al, x0, int(q["bottom"] - h), c["kind"] == "split")
             if self.labels[i] is not None:
@@ -564,7 +581,9 @@ class Renderer(I.Renderer):
             if k != 1.0:
                 im = im.resize((int(im.width * k), int(im.height * k)), Image.BILINEAR)
             I.put(out, im, min(805, W - 10 - im.width / 2), 1290 - im.height / 2)   # 大きいときは右はしにそろえる
-        if c["kind"] == "split" and self.cap is not None and not c.get("skit"):
+        if c["kind"] == "split" and self.cap is not None and not c.get("skit") and c.get("ref"):
+            I.put(out, self.cap, W / 2, min(1440, SAFE_BOTTOM - self.cap.height / 2))
+        elif c["kind"] == "split" and self.cap is not None and not c.get("skit"):
             cx = W / 2 if c.get("cap_full") else (275 if c["cap_side"] == "L" else 805)
             cx = min(max(cx, self.cap.width / 2 + 20), W - self.cap.width / 2 - 20)
             cy = min(1310 + self.cap.height / 2, SAFE_BOTTOM - self.cap.height / 2)

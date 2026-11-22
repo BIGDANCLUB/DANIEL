@@ -1,4 +1,5 @@
-"""読み上げ型ショート（11/22 ユーザー指定：ベンチマーク「真面目過ぎる人の末路」の読み上げ形式だけまねる）。
+"""読み上げ型ショート（画面も参考どおり：線がゆれる・猫大きめで重なってよい・字幕は下まん中で日本青/世界赤・背景が横に流れる）
+（11/22 ユーザー指定：ベンチマーク「真面目過ぎる人の末路」の読み上げ形式だけまねる）。
 
 ずんだもん（VOICEVOX）が「札＋先に出る側」→ その字幕 →「後に出る側」→ その字幕 を間をあけずに読む。
 場面の長さは読み上げの長さに合わせる（59.9秒にしない）。猫の鳴き声は消して、効果音と読み上げだけ。
@@ -50,8 +51,12 @@ def build(name, st, rows, heads, band, script, speed=1.25, target=None):
         extra = (target - sum(c["dur"] for c in cs)) / len(caps)
         for c in caps:
             c["dur"] += extra
+    t0 = 0.0
     for c in cs:
-        c.update(blur=9, band_y=0, tag_y=460, free_len=True, heads=heads)
+        c.update(blur=9, band_y=0, tag_y=460, free_len=True, heads=heads, ref=True, t0=t0)   # ref：参考どおりの画面（11/22）
+        t0 += c["dur"]
+        for q in c["cats"]:   # 猫は大きめ・少し重なってよい
+            q.update(h=860, w=660, bottom=1500, x=330 if q["x"] < 540 else 750)
     Wd.hai_extend = lambda x: x   # 猫は鳴かないので、鳴くまで場面をのばす処理はしない（読み上げとずれるため）
     out = os.path.join(Wd.HERE, "out", "short_%s.mp4" % name)
     raw = out.replace(".mp4", "_noVoice.mp4")

@@ -18,7 +18,8 @@ D2R = K.D2R
 
 # ---------- 材質 ----------
 def stone_mat():
-    return K.noisy("stone", (0.56, 0.50, 0.41), 1.3, 0.38, 0.8, 0.92, attr=True)
+    """参考元の石垣：明るい灰色（少しだけ暖かい）、石ごとに明るさがちがう。"""
+    return K.noisy("stone3", (0.50, 0.49, 0.465), 1.3, 0.22, 0.6, 0.9, attr=True)
 
 
 def plaster_mat(name="plaster", col=(0.78, 0.77, 0.73)):
@@ -175,7 +176,7 @@ class Ishigaki:
         return (self.cx + sx * (self.Wt / 2 + o), self.cy + sy * (self.Dt / 2 + o), self.z0 + h)
 
     def _stone(self, bm, cl, r, c0, av, nv, s0, s1, zl, zh, zc, t, dep, end0, end1):
-        g = 0.025
+        g = 0.045                              # 石と石のすき間（奥の黒い中身が見えて、参考元のような濃い目地になる）
         pb, pt = r.uniform(0.0, 0.09), r.uniform(0.0, 0.09)      # 下と上で出っぱりを変える（石の面のでこぼこ）
         z0, z1 = zl + g + r.uniform(-0.05, 0.05), zh - g + r.uniform(-0.05, 0.05)
         a0, a1 = s0 + g, s1 - g
@@ -199,8 +200,8 @@ class Ishigaki:
         # 頂点の並び：z0(a0 前,a0 後,a1 前,a1 後), z1(同じ)
         v = verts
         faces = [(0, 2, 6, 4), (1, 5, 7, 3), (0, 4, 5, 1), (2, 3, 7, 6), (0, 1, 3, 2), (4, 6, 7, 5)]
-        shade = r.uniform(0.6, 1.3)
-        warm = r.uniform(-0.04, 0.18)
+        shade = r.uniform(0.55, 1.3)
+        warm = r.uniform(-0.03, 0.07)
         col = (shade * (1 + warm), shade, shade * (1 - warm * 0.8), 1.0)
         for fi in faces:
             try:

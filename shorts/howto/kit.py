@@ -289,8 +289,7 @@ def show(o, f_on, f_off=None, pop=0):
 # ---------- 人（関節つき） ----------
 SKIN = (0.52, 0.30, 0.20)
 DENIM = (0.09, 0.17, 0.32)
-HERO = dict(top=(0.62, 0.02, 0.015), bottom=DENIM, shorts=True, sleeves="short", hat="straw", shoes=(0.80, 0.80, 0.78),
-            print=(0.90, 0.55, 0.04))
+HERO = dict(top=(0.62, 0.02, 0.015), bottom=DENIM, shorts=True, sleeves="short", hat="straw", shoes=(0.80, 0.80, 0.78))   # 参考元：無地の赤T
 ENEMY = dict(top=(0.13, 0.12, 0.12), bottom=(0.17, 0.16, 0.16), sleeves="long", hat="jingasa", shoes=(0.35, 0.28, 0.18),
              armor=(0.08, 0.08, 0.09))
 ALLY_R = dict(top=(0.62, 0.08, 0.06), bottom=(0.20, 0.18, 0.17), sleeves="long", hat="jingasa", shoes=(0.35, 0.28, 0.18),
@@ -551,7 +550,10 @@ def bow():
 
 
 # ---------- 空・光・地面 ----------
-def daylight(elev=48, az=215, strength=3.0, sky_strength=0.2, col=(1.0, 0.91, 0.76), haze=1.0):
+CAM_SKY = ((0.022, 0.068, 0.30), (0.34, 0.45, 0.64))     # 参考元の空（上は濃い青、地平線は白っぽい水色）
+
+
+def daylight(elev=48, az=215, strength=3.0, sky_strength=0.2, col=(1.0, 0.91, 0.76), haze=1.0, cam_sky=CAM_SKY):
     """晴れた昼の光（太陽＋写実的な空の色）。az は太陽のある方角（0＝+y、90＝+x、180＝-y、215＝手前左＝-y と -x の間）。"""
     bpy.ops.object.light_add(type='SUN')
     s = bpy.context.object
@@ -579,6 +581,28 @@ def daylight(elev=48, az=215, strength=3.0, sky_strength=0.2, col=(1.0, 0.91, 0.
         pass
     nt.links.new(sky.outputs[0], bg.inputs[0])
     bg.inputs[1].default_value = sky_strength
+    if cam_sky:
+        # カメラに映る空だけ、参考元の濃い青に（照明は写実的な空のまま）
+        top, hor = cam_sky
+        tc = nt.nodes.new("ShaderNodeTexCoord")
+        sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+        nt.links.new(tc.outputs["Generated"], sep.inputs[0])
+        ramp = nt.nodes.new("ShaderNodeValToRGB")
+        ramp.color_ramp.elements[0].position = 0.0
+        ramp.color_ramp.elements[0].color = (*hor, 1)
+        ramp.color_ramp.elements[1].position = 0.38
+        ramp.color_ramp.elements[1].color = (*top, 1)
+        nt.links.new(sep.outputs[2], ramp.inputs[0])
+        bg2 = nt.nodes.new("ShaderNodeBackground")
+        nt.links.new(ramp.outputs[0], bg2.inputs[0])
+        bg2.inputs[1].default_value = 1.0
+        lp = nt.nodes.new("ShaderNodeLightPath")
+        mx = nt.nodes.new("ShaderNodeMixShader")
+        nt.links.new(lp.outputs["Is Camera Ray"], mx.inputs[0])
+        nt.links.new(bg.outputs[0], mx.inputs[1])
+        nt.links.new(bg2.outputs[0], mx.inputs[2])
+        wo = next(n for n in nt.nodes if n.type == 'OUTPUT_WORLD')
+        nt.links.new(mx.outputs[0], wo.inputs["Surface"])
     return s
 
 
@@ -588,8 +612,10 @@ def flat_sky(top=(0.18, 0.42, 0.85), horizon=(0.72, 0.84, 0.96), strength=1.0):
     nt = w.node_tree
     bg = nt.nodes["Background"]
     for n in list(nt.nodes):
-        if n.type not in ('BACKGROUND', 'OUTPUT_WORLD'):
+        if n.type not in ('BACKGROUND', 'OUTPUT_WORLD') or (n.type == 'BACKGROUND' and n != bg):
             nt.nodes.remove(n)
+    wo = next(n for n in nt.nodes if n.type == 'OUTPUT_WORLD')
+    nt.links.new(bg.outputs[0], wo.inputs["Surface"])
     tc = nt.nodes.new("ShaderNodeTexCoord")
     sep = nt.nodes.new("ShaderNodeSeparateXYZ")
     nt.links.new(tc.outputs["Generated"], sep.inputs[0])
@@ -603,8 +629,9 @@ def flat_sky(top=(0.18, 0.42, 0.85), horizon=(0.72, 0.84, 0.96), strength=1.0):
     bg.inputs[1].default_value = strength
 
 
-def clouds(seed=1, cover=0.56, height=600.0, radius=6000.0, bright=2.6, col=(1, 1, 1), shade=(0.55, 0.60, 0.70)):
-    """白い雲（半球の内側に描く。雲の層を下から見上げたような遠近になるよう、高さで割った座標で模様を作る）。"""
+def clouds(seed=1, cover=0.51, height=600.0, radius=6000.0, bright=3.2, col=(1, 1, 1), shade=(0.50, 0.54, 0.62), scale=2.4):
+    """参考元のような白い積雲（もくもく）。半球の内側に、見る方向だけで模様を作る（地平線の近くでも丸い雲になる）。
+    下ほど灰色、上ほど白く（下から見上げた雲の陰）。"""
     bm = bmesh.new()
     bmesh.ops.create_uvsphere(bm, u_segments=48, v_segments=24, radius=radius)
     bmesh.ops.delete(bm, geom=[v for v in bm.verts if v.co.z < -radius * 0.02], context='VERTS')
@@ -624,62 +651,86 @@ def clouds(seed=1, cover=0.56, height=600.0, radius=6000.0, bright=2.6, col=(1, 
             nt.nodes.remove(n)
     out = next(n for n in nt.nodes if n.type == 'OUTPUT_MATERIAL')
     geo = nt.nodes.new("ShaderNodeNewGeometry")
+    sc = nt.nodes.new("ShaderNodeVectorMath")
+    sc.operation = 'SCALE'
+    sc.inputs["Scale"].default_value = 1.0 / radius
+    nt.links.new(geo.outputs["Position"], sc.inputs[0])
+    sq = nt.nodes.new("ShaderNodeVectorMath")         # 横に少しのばす（雲は横長）
+    sq.operation = 'MULTIPLY'
+    sq.inputs[1].default_value = (1.0, 1.0, 1.9)
+    nt.links.new(sc.outputs[0], sq.inputs[0])
     sep = nt.nodes.new("ShaderNodeSeparateXYZ")
-    nt.links.new(geo.outputs["Position"], sep.inputs[0])
-    zc = nt.nodes.new("ShaderNodeMath")
-    zc.operation = 'MAXIMUM'
-    zc.inputs[1].default_value = radius * 0.035
-    nt.links.new(sep.outputs[2], zc.inputs[0])
-    comb = nt.nodes.new("ShaderNodeCombineXYZ")
-    for i, ax in enumerate((0, 1)):
-        dv = nt.nodes.new("ShaderNodeMath")
-        dv.operation = 'DIVIDE'
-        nt.links.new(sep.outputs[ax], dv.inputs[0])
-        nt.links.new(zc.outputs[0], dv.inputs[1])
-        mu = nt.nodes.new("ShaderNodeMath")
-        mu.operation = 'MULTIPLY'
-        mu.inputs[1].default_value = height / 1000.0
-        nt.links.new(dv.outputs[0], mu.inputs[0])
-        nt.links.new(mu.outputs[0], comb.inputs[i])
-    comb.inputs[2].default_value = seed * 3.7
-    nz = nt.nodes.new("ShaderNodeTexNoise")
-    nz.noise_dimensions = '3D'
-    nz.inputs["Scale"].default_value = 0.9
-    nz.inputs["Detail"].default_value = 5.0
-    nz.inputs["Roughness"].default_value = 0.5
-    nt.links.new(comb.outputs[0], nz.inputs["Vector"])
+    nt.links.new(sc.outputs[0], sep.inputs[0])
+
+    def noise(sc_, det, rough, w):
+        n = nt.nodes.new("ShaderNodeTexNoise")
+        n.noise_dimensions = '4D'
+        n.inputs["Scale"].default_value = sc_
+        n.inputs["Detail"].default_value = det
+        n.inputs["Roughness"].default_value = rough
+        n.inputs["W"].default_value = w
+        nt.links.new(sq.outputs[0], n.inputs["Vector"])
+        return n
+    nz = noise(scale, 3.0, 0.55, seed * 3.7)
     ramp = nt.nodes.new("ShaderNodeValToRGB")
     ramp.color_ramp.elements[0].position = cover
     ramp.color_ramp.elements[0].color = (0, 0, 0, 1)
-    ramp.color_ramp.elements[1].position = cover + 0.12
+    ramp.color_ramp.elements[1].position = cover + 0.07
     ramp.color_ramp.elements[1].color = (1, 1, 1, 1)
     nt.links.new(nz.outputs["Fac"], ramp.inputs[0])
-    # 地平線の近くはうすく
+    # 真上はうすく、地平線のすぐ上は残す（参考元は城の後ろに雲がある）
     hz = nt.nodes.new("ShaderNodeMapRange")
-    hz.inputs[1].default_value = radius * 0.02
-    hz.inputs[2].default_value = radius * 0.16
+    hz.inputs[1].default_value = 0.0
+    hz.inputs[2].default_value = 0.03
     nt.links.new(sep.outputs[2], hz.inputs[0])
+    top = nt.nodes.new("ShaderNodeMapRange")
+    top.inputs[1].default_value = 0.75
+    top.inputs[2].default_value = 0.35
+    nt.links.new(sep.outputs[2], top.inputs[0])
     al = nt.nodes.new("ShaderNodeMath")
     al.operation = 'MULTIPLY'
     nt.links.new(ramp.outputs[0], al.inputs[0])
     nt.links.new(hz.outputs[0], al.inputs[1])
-    # 雲の濃いところは少し灰色（立体感）
-    nz2 = nt.nodes.new("ShaderNodeTexNoise")
-    nz2.inputs["Scale"].default_value = 2.6
-    nz2.inputs["Detail"].default_value = 6.0
-    nt.links.new(comb.outputs[0], nz2.inputs["Vector"])
+    al2 = nt.nodes.new("ShaderNodeMath")
+    al2.operation = 'MULTIPLY'
+    nt.links.new(al.outputs[0], al2.inputs[0])
+    nt.links.new(top.outputs[0], al2.inputs[1])
+    # 陰：雲の中で、同じ模様を少し上にずらした濃さとの差 → 上の縁は白、下は灰色
+    nz_up = nt.nodes.new("ShaderNodeTexNoise")
+    nz_up.noise_dimensions = '4D'
+    nz_up.inputs["Scale"].default_value = scale
+    nz_up.inputs["Detail"].default_value = 3.0
+    nz_up.inputs["Roughness"].default_value = 0.55
+    nz_up.inputs["W"].default_value = seed * 3.7
+    off = nt.nodes.new("ShaderNodeVectorMath")
+    off.operation = 'ADD'
+    off.inputs[1].default_value = (0, 0, 0.035)
+    nt.links.new(sq.outputs[0], off.inputs[0])
+    nt.links.new(off.outputs[0], nz_up.inputs["Vector"])
+    df = nt.nodes.new("ShaderNodeMath")
+    df.operation = 'SUBTRACT'
+    nt.links.new(nz.outputs["Fac"], df.inputs[0])
+    nt.links.new(nz_up.outputs["Fac"], df.inputs[1])
     cr = nt.nodes.new("ShaderNodeValToRGB")
-    cr.color_ramp.elements[0].position = 0.35
+    cr.color_ramp.elements[0].position = 0.0
     cr.color_ramp.elements[0].color = (*shade, 1)
-    cr.color_ramp.elements[1].position = 0.7
+    cr.color_ramp.elements[1].position = 0.045
     cr.color_ramp.elements[1].color = (*col, 1)
-    nt.links.new(nz2.outputs["Fac"], cr.inputs[0])
+    # 差が負（上のほうが濃い＝雲の下側）→ 灰色、正（上の縁）→ 白
+    inv = nt.nodes.new("ShaderNodeMath")
+    inv.operation = 'MULTIPLY'
+    inv.inputs[1].default_value = -1.0
+    nt.links.new(df.outputs[0], inv.inputs[0])
+    nt.links.new(inv.outputs[0], cr.inputs[0])
+    # cr は「下側ほど 0 → 白」の向きなので、色を反対にする
+    cr.color_ramp.elements[0].color = (*col, 1)
+    cr.color_ramp.elements[1].color = (*shade, 1)
     em = nt.nodes.new("ShaderNodeEmission")
     em.inputs["Strength"].default_value = bright
     nt.links.new(cr.outputs[0], em.inputs["Color"])
     tr = nt.nodes.new("ShaderNodeBsdfTransparent")
     mx = nt.nodes.new("ShaderNodeMixShader")
-    nt.links.new(al.outputs[0], mx.inputs[0])
+    nt.links.new(al2.outputs[0], mx.inputs[0])
     nt.links.new(tr.outputs[0], mx.inputs[1])
     nt.links.new(em.outputs[0], mx.inputs[2])
     nt.links.new(mx.outputs[0], out.inputs["Surface"])
@@ -687,8 +738,11 @@ def clouds(seed=1, cover=0.56, height=600.0, radius=6000.0, bright=2.6, col=(1, 
     return o
 
 
-def grass_mat(name="grass2"):
-    """芝・草地：大きなまだら（濃い緑〜黄緑）＋草の株のむら＋細かい草のざらつき（参考元の写真のような芝に近づける）。"""
+GRASS = ((0.68, 0.53, 0.12), (0.78, 0.62, 0.15))     # 参考元の草地：明るい黄みの緑（オリーブ色、画面で 約148,134,63）
+
+
+def grass_mat(name="grass3"):
+    """草地：参考元の明るいオリーブ色。大きなまだら＋草の株のむら＋細かいざらつき（むらは参考元と同じく小さめ）。"""
     m = bpy.data.materials.get(name)
     if m:
         return m
@@ -712,16 +766,16 @@ def grass_mat(name="grass2"):
         return n
     big, mid, fine = nz(0.025, 4), nz(0.6, 6), nz(45.0, 2, 0.5)
     r1 = nt.nodes.new("ShaderNodeValToRGB")
-    r1.color_ramp.elements[0].position = 0.35
-    r1.color_ramp.elements[0].color = (0.085, 0.17, 0.045, 1)
-    r1.color_ramp.elements[1].position = 0.68
-    r1.color_ramp.elements[1].color = (0.25, 0.33, 0.10, 1)
+    r1.color_ramp.elements[0].position = 0.3
+    r1.color_ramp.elements[0].color = (*GRASS[0], 1)
+    r1.color_ramp.elements[1].position = 0.7
+    r1.color_ramp.elements[1].color = (*GRASS[1], 1)
     nt.links.new(big.outputs["Fac"], r1.inputs[0])
     r2 = nt.nodes.new("ShaderNodeValToRGB")
     r2.color_ramp.elements[0].position = 0.3
-    r2.color_ramp.elements[0].color = (0.62, 0.62, 0.62, 1)
+    r2.color_ramp.elements[0].color = (0.86, 0.86, 0.86, 1)
     r2.color_ramp.elements[1].position = 0.75
-    r2.color_ramp.elements[1].color = (1.15, 1.12, 1.0, 1)
+    r2.color_ramp.elements[1].color = (1.06, 1.05, 1.0, 1)
     nt.links.new(mid.outputs["Fac"], r2.inputs[0])
     m1 = nt.nodes.new("ShaderNodeMix")
     m1.data_type = 'RGBA'
@@ -731,9 +785,9 @@ def grass_mat(name="grass2"):
     nt.links.new(r2.outputs[0], m1.inputs[7])
     r3 = nt.nodes.new("ShaderNodeValToRGB")
     r3.color_ramp.elements[0].position = 0.35
-    r3.color_ramp.elements[0].color = (0.7, 0.72, 0.6, 1)
+    r3.color_ramp.elements[0].color = (0.84, 0.85, 0.78, 1)
     r3.color_ramp.elements[1].position = 0.65
-    r3.color_ramp.elements[1].color = (1.2, 1.2, 1.05, 1)
+    r3.color_ramp.elements[1].color = (1.1, 1.1, 1.04, 1)
     nt.links.new(fine.outputs["Fac"], r3.inputs[0])
     m2 = nt.nodes.new("ShaderNodeMix")
     m2.data_type = 'RGBA'
@@ -758,34 +812,141 @@ def ground(size=8000, col=(0.22, 0.34, 0.11), name="grass"):
     return g
 
 
-def countryside(seed=3, keep_out=60.0, r_max=900.0, n_fields=160, n_trees=220, center=(0, 0)):
-    """遠くの田畑（色ちがいの四角）と木のかたまり、さらに遠くの山なみ。中心から keep_out m までは何も置かない。"""
+FIELD_COLS = [(0.46, 0.40, 0.11), (0.25, 0.37, 0.07), (0.33, 0.29, 0.075), (0.42, 0.40, 0.17), (0.20, 0.30, 0.06)]   # 参考元の田畑（黄・明るい緑・オリーブ）
+
+
+def _quads_mesh(name, rects):
+    """たくさんの四角（中心 x,y、幅 w、奥行 h、回転 a、高さ z）を1つのメッシュに。"""
+    vs, fs = [], []
+    for (x, y, w, h, a, z) in rects:
+        c, s_ = math.cos(a), math.sin(a)
+        k = len(vs)
+        for dx, dy in ((-w / 2, -h / 2), (w / 2, -h / 2), (w / 2, h / 2), (-w / 2, h / 2)):
+            vs.append((x + dx * c - dy * s_, y + dx * s_ + dy * c, z))
+        fs.append((k, k + 1, k + 2, k + 3))
+    me = bpy.data.meshes.new(name)
+    me.from_pydata(vs, [], fs)
+    me.materials.append(None)
+    return me
+
+
+def _canopy_mesh(name, clumps, seed):
+    """木の葉のかたまり（いくつかのでこぼこの球を1つのメッシュに）。clumps = [(x, y, z, r, flat)]"""
     r = random.Random(seed)
-    cols = [(0.20, 0.30, 0.08), (0.30, 0.34, 0.11), (0.17, 0.26, 0.07), (0.36, 0.32, 0.15), (0.24, 0.31, 0.12)]
-    fm = [noisy(f"field{i}", c, 0.25, 0.25, 0.1, 0.95) for i, c in enumerate(cols)]
-    for i in range(n_fields):
+    bm = bmesh.new()
+    for (x, y, z, rad, flat) in clumps:
+        res = bmesh.ops.create_icosphere(bm, subdivisions=2, radius=1.0)
+        for v in res["verts"]:
+            n = v.co.normalized()
+            k = rad * (1 + r.uniform(-0.18, 0.18))
+            v.co = Vector((x + n.x * k, y + n.y * k, z + n.z * k * flat))
+    me = bpy.data.meshes.new(name)
+    bm.to_mesh(me)
+    bm.free()
+    for p in me.polygons:
+        p.use_smooth = True
+    me.materials.append(None)
+    return me
+
+
+_TREES = {}
+
+
+def tree_kinds():
+    """参考元のような木：細い幹の上に葉のかたまり（松のような高い木）と、丸い広葉樹。形を数種類つくって使い回す。"""
+    if _TREES:
+        return _TREES
+    r = random.Random(11)
+    bark = noisy("bark", (0.10, 0.07, 0.05), 4.0, 0.3, 0.3, 0.95)
+    leaves = [noisy("leaf_pine", (0.040, 0.075, 0.025), 0.9, 0.45, 0.9, 0.95),
+              noisy("leaf_broad", (0.075, 0.13, 0.035), 0.9, 0.45, 0.9, 0.95),
+              noisy("leaf_broad2", (0.10, 0.15, 0.04), 0.9, 0.45, 0.9, 0.95)]
+    kinds = []
+    for v in range(4):        # 松のような高い木
+        h = r.uniform(9, 13)
+        cl = []
+        for k in range(r.randint(4, 6)):
+            a = r.uniform(0, 2 * math.pi)
+            d = r.uniform(0.6, 1.8)
+            cl.append((d * math.cos(a), d * math.sin(a), h * r.uniform(0.62, 0.98), r.uniform(1.4, 2.3), 0.55))
+        kinds.append((cyl_mesh(0.2, 0.12, h * 0.95, 8), _canopy_mesh(f"pine{v}", cl, v), bark, leaves[0]))
+    for v in range(4):        # 広葉樹
+        h = r.uniform(5, 8)
+        cl = []
+        for k in range(r.randint(6, 9)):
+            a = r.uniform(0, 2 * math.pi)
+            d = r.uniform(0.0, 2.2)
+            cl.append((d * math.cos(a), d * math.sin(a), h * r.uniform(0.6, 1.0), r.uniform(1.6, 2.6), 0.85))
+        kinds.append((cyl_mesh(0.28, 0.18, h * 0.75, 8), _canopy_mesh(f"broad{v}", cl, 10 + v), bark, leaves[1 + v % 2]))
+    _TREES["k"] = kinds
+    return _TREES
+
+
+def tree(x, y, kind, scale=1.0, rot=0.0, name="tree", z=0.0, leaf_mat=None):
+    """kind 0〜3＝松のような高い木、4〜7＝広葉樹。leaf_mat で葉の色を変える（桜など）。"""
+    tr, cn, bark, leaf = tree_kinds()["k"][kind]
+    obj(tr, bark, None, (x, y, z), (0, 0, rot), scale, name=f"{name}_trunk")
+    return obj(cn, leaf_mat or leaf, None, (x, y, z), (0, 0, rot), scale, name=f"{name}_leaf")
+
+
+def countryside(seed=3, keep_out=60.0, r_max=900.0, n_fields=160, n_trees=220, center=(0, 0)):
+    """参考元のような平らな土地：遠くの田畑（黄・明るい緑の四角がならぶ）、木の列（林のふち）、さらに遠くにかすんだ山。
+    中心から keep_out m までは何も置かない。n_fields は田畑の多さの目安。"""
+    r = random.Random(seed)
+    # 田畑：格子の区画を、まとまり（いくつかの「田んぼの島」）ごとにうめる
+    gw, gh = 34.0, 22.0
+    rects = [[] for _ in FIELD_COLS]
+    n_isl = max(4, n_fields // 12)
+    isl = []
+    for i in range(n_isl):
         a = r.uniform(0, 2 * math.pi)
-        d = r.uniform(keep_out + 20, r_max)
-        x, y = center[0] + d * math.cos(a), center[1] + d * math.sin(a)
-        w, h = r.uniform(20, 60), r.uniform(15, 45)
-        me = bpy.data.meshes.new("field")
-        me.from_pydata([(-w / 2, -h / 2, 0), (w / 2, -h / 2, 0), (w / 2, h / 2, 0), (-w / 2, h / 2, 0)], [], [(0, 1, 2, 3)])
-        me.materials.append(None)
-        obj(me, fm[i % len(fm)], None, (x, y, 0.03 + 0.002 * i), rot=(0, 0, r.choice((0, 0.05, -0.04))), name="field")
-    tm = [noisy(f"tree{i}", c, 0.6, 0.3, 0.3, 0.9) for i, c in enumerate([(0.10, 0.20, 0.06), (0.14, 0.25, 0.08), (0.08, 0.16, 0.06)])]
-    for i in range(n_trees):
+        d = r.uniform(keep_out + 80, r_max)
+        isl.append((center[0] + d * math.cos(a), center[1] + d * math.sin(a), r.uniform(70, 170)))
+    seen = set()
+    for (ix, iy, rad) in isl:
+        for gx in range(int((ix - rad) // gw), int((ix + rad) // gw) + 1):
+            for gy in range(int((iy - rad) // gh), int((iy + rad) // gh) + 1):
+                if (gx, gy) in seen:
+                    continue
+                x, y = gx * gw + gw / 2, gy * gh + gh / 2
+                d0 = math.hypot(x - center[0], y - center[1])
+                if d0 < keep_out + 20 or math.hypot(x - ix, y - iy) > rad * r.uniform(0.75, 1.0):
+                    continue
+                seen.add((gx, gy))
+                ci = r.randrange(len(FIELD_COLS))
+                rects[ci].append((x, y, gw - 1.6, gh - 1.6, 0.0, 0.03 + 0.003 * ci))
+    for ci, rs in enumerate(rects):
+        if rs:
+            fm = noisy(f"field3_{ci}", FIELD_COLS[ci], 0.12, 0.12, 0.08, 0.95)
+            obj(_quads_mesh(f"fields{ci}", rs), fm, None, (0, 0, 0), name="fields")
+    # 木の列（林のふち）と、ところどころの1本木
+    made = 0
+    while made < n_trees:
         a = r.uniform(0, 2 * math.pi)
-        d = r.uniform(keep_out + 10, r_max)
-        x, y = center[0] + d * math.cos(a), center[1] + d * math.sin(a)
-        for k in range(r.randint(1, 4)):
-            s = r.uniform(3, 7)
-            obj(ellip_mesh(s, s, s * 1.1, 10, 6), tm[(i + k) % 3], None, (x + r.uniform(-6, 6), y + r.uniform(-6, 6), s * 0.8), name="tree")
-    hm = noisy("hills", (0.16, 0.26, 0.14), 0.01, 0.25, 0.0, 0.95)
-    for i in range(26):
-        a = i / 26 * 2 * math.pi + r.uniform(-0.1, 0.1)
-        d = r.uniform(2600, 3600)
-        s = r.uniform(500, 900)
-        obj(ellip_mesh(s, s * 0.8, r.uniform(160, 330), 16, 8), hm, None, (center[0] + d * math.cos(a), center[1] + d * math.sin(a), -20),
+        d = r.uniform(keep_out + 15, r_max)
+        x0, y0 = center[0] + d * math.cos(a), center[1] + d * math.sin(a)
+        if r.random() < 0.75:
+            ang = r.uniform(0, math.pi)
+            n = r.randint(10, 26)
+            pine = r.random() < 0.6
+            for k in range(n):
+                t = (k - n / 2) * r.uniform(3.8, 5.5)
+                x, y = x0 + t * math.cos(ang) + r.uniform(-2, 2), y0 + t * math.sin(ang) + r.uniform(-2, 2)
+                if math.hypot(x - center[0], y - center[1]) < keep_out + 8:
+                    continue
+                kind = r.randrange(4) if (pine or r.random() < 0.2) else 4 + r.randrange(4)
+                tree(x, y, kind, r.uniform(0.8, 1.25), r.uniform(0, 6.28))
+                made += 1
+        else:
+            tree(x0, y0, 4 + r.randrange(4), r.uniform(0.9, 1.4), r.uniform(0, 6.28))
+            made += 1
+    # 遠くの山（青っぽくかすむ）
+    hm = noisy("hills3", (0.30, 0.37, 0.46), 0.01, 0.10, 0.0, 0.95)
+    for i in range(22):
+        a = i / 22 * 2 * math.pi + r.uniform(-0.1, 0.1)
+        dd = r.uniform(4200, 5200)
+        sz = r.uniform(700, 1100)
+        obj(ellip_mesh(sz, sz * 0.8, r.uniform(90, 190), 16, 8), hm, None, (center[0] + dd * math.cos(a), center[1] + dd * math.sin(a), -30),
             rot=(0, 0, a), name="hill")
 
 

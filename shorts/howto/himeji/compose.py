@@ -25,18 +25,32 @@ BGM = os.path.join(HERE, "..", "..", "bgm", "howto_wafu.wav")
 TIMING = json.load(open(os.path.join(HERE, "voice", "timing.json")))
 LINES = TIMING["lines"]
 
-# 左上のチェックリスト：(秒, 項目)
-KIT = [(8.58, "石垣"), (13.75, "扇の勾配"), (23.79, "石落とし"), (28.40, "せまい門"), (41.24, "狭間"), (48.69, "白漆喰")]
+OW = TL.global_anchors()
+
+
+def W2(t):
+    """v2 の時刻 → v3 の時刻（動きに合わせた効果音・白い輪など）。"""
+    return TL.warp(OW, t)
+
+
+def LT(i):
+    """v3 の台本の i 行目のはじまり（秒）。"""
+    return LINES[i]["start"]
+
+
+# 左上のチェックリスト：(秒, 項目)。「これが○○です」などの句の頭
+KIT = [(LT(6), "石垣"), (LT(10), "扇の勾配"), (LT(19), "石落とし"), (LT(23), "せまい門"), (LT(32), "狭間"), (LT(35), "白漆喰")]
 # 右上の見張りの画面の状態：(はじまりの秒, 状態)。None は出さない
-STATUS = [(0.0, "防衛"), (3.2, "侵入"), (8.58, "防衛"), (15.38, "苦戦"), (17.29, "防衛"), (18.68, "苦戦"), (23.79, "防衛"),
-          (25.07, "苦戦"), (29.85, "防衛"), (31.89, "侵入"), (37.72, "防衛"), (44.32, "苦戦"), (48.69, "防衛"), (49.71, None)]
+STATUS = [(0.0, "防衛"), (LT(2), "侵入"), (LT(6), "防衛"), (LT(11), "苦戦"), (LT(12), "防衛"), (LT(13), "苦戦"), (LT(19), "防衛"),
+          (LT(20), "苦戦"), (LT(24), "防衛"), (LT(26), "侵入"), (LT(30), "防衛"), (LT(33), "苦戦"), (LT(35), "防衛"), (LT(36), None)]
 ST_COL = {"侵入": (235, 40, 40), "苦戦": (255, 150, 20), "防衛": (40, 200, 90)}
 # 白い輪：(場面, 印の名前, はじまり秒, おわり秒)（秒は全体の時間）
-RINGS = [("h01_house", "climb", 4.85, 6.15), ("h04_fall", "climber", 15.45, 17.25), ("h05_corner", "ishiotoshi", 22.45, 23.75),
-         ("h06_gate", "two", 28.40, 29.80), ("h07_sama", "holes", 35.75, 37.60)]
+RINGS = [("h01_house", "climb", W2(4.85), LT(4) - 0.05), ("h04_fall", "climber", LT(11) + 0.05, LT(12) - 0.05),
+         ("h05_corner", "ishiotoshi", LT(17), LT(18) + 0.4), ("h06_gate", "two", LT(23), LT(24) - 0.05),
+         ("h07_sama", "holes", W2(35.75), LT(29) - 0.1)]
 # 画面の上に大きく出す文字：(はじまり秒, おわり秒, 文字)
 OVER = [(l["start"], (LINES[i + 1]["start"] if i + 1 < len(LINES) else TL.TOTAL), l["over"]) for i, l in enumerate(LINES) if l.get("over")]
-OVER = [(a, (b if txt != "2026年" else 58.6), txt) for a, b, txt in OVER] + [(42.45, 44.31, "997")]
+OVER = [(a, (b if txt != "2026年" else 58.6), txt) for a, b, txt in OVER] + [(LT(32) + 0.95, LT(33) - 0.1, "997")]
 
 
 def font(size, weight=800):
@@ -209,7 +223,7 @@ def ring(g, name, scene, f_local, age, dur):
     g.alpha_composite(lay)
 
 
-GRADE = dict(lo=0.08, hi=0.97, gam=1.0, sat=1.35, r=1.05, b=0.93)
+GRADE = dict(lo=0.04, hi=0.97, gam=1.0, sat=1.12, r=1.0, b=1.0)
 
 
 def grade(img, g=None):
@@ -444,14 +458,19 @@ def build_audio(total):
     voice = np.zeros(n + SR)
     sfx = np.zeros(n + SR)
 
-    def put(buf, x, at, g=1.0):
+    def putn(buf, x, at, g=1.0):
+        """at は v3 の時刻。"""
         i = int(at * SR)
         j = min(len(buf), i + len(x))
         if j > i and i >= 0:
             buf[i:j] += g * x[: j - i]
+
+    def put(buf, x, at, g=1.0):
+        """at は v2 の時刻（場面の動きに合わせた効果音）。v3 へ写して置く。"""
+        putn(buf, x, W2(at), g)
     for l in LINES:
-        put(voice, read_wav(l["wav"]), l["start"], 1.0)
-    st = {name: f0 / FPS for name, (f0, nf) in TL.frames().items()}
+        putn(voice, read_wav(l["wav"]), l["start"], 1.0)
+    st = {name: t for name, t in TL.OLD_CUTS}          # v2 の場面の頭（put で v3 へ写る）
     # 1) 冒頭：塀がドドドッと飛び出す、カメラがシュッと引く、梯子がガシャッ、登る音
     put(sfx, whoosh(0.9, 1), 0.15, 0.9)
     for k, ts in enumerate([0.10, 0.30, 0.30, 0.95, 1.07]):
@@ -467,11 +486,11 @@ def build_audio(total):
         put(sfx, thud(40 + k, 90 + 4 * k, 0.3), st["h02_stone"] + 0.45 + k * 0.12, 0.45)
     put(sfx, thud(60, 45, 1.0), st["h02_stone"] + 2.30, 1.0)
     put(sfx, rumble(1.2, 61), st["h02_stone"] + 2.25, 0.6)
-    put(sfx, ding(), 8.58, 0.8)
+    putn(sfx, ding(), LT(6), 0.8)
     # 3) 扇の勾配：線が伸びるシュー
     for k, ts in enumerate([9.55, 10.75, 12.25]):
         put(sfx, swish(0.9, 70 + k), ts, 0.5)
-    put(sfx, ding(), 13.75, 0.8)
+    putn(sfx, ding(), LT(10), 0.8)
     put(sfx, whoosh(0.8, 71), 13.95, 0.6)
     # 4) 落ちる
     for k in range(4):
@@ -487,11 +506,11 @@ def build_audio(total):
     put(sfx, rumble(1.4, 122), 23.75, 0.9)
     for k in range(5):
         put(sfx, thud(125 + k, 65, 0.5), 24.1 + 0.18 * k, 0.7)
-    put(sfx, ding(), 23.79, 0.8)
+    putn(sfx, ding(), LT(19), 0.8)
     # 6) 門：群れの足音、石垣がゴゴゴと寄る、矢の雨
     put(sfx, roar(2.0, 130), st["h06_gate"] + 0.1, 0.3)
     put(sfx, rumble(1.0, 131), 27.2, 1.0)
-    put(sfx, ding(), 28.40, 0.8)
+    putn(sfx, ding(), LT(23), 0.8)
     for k in range(26):
         put(sfx, fwip(140 + k), 29.9 + 0.06 * k, 0.5)
     for k in range(10):
@@ -503,11 +522,13 @@ def build_audio(total):
         put(sfx, thud(190 + k, 140, 0.35), ts, 0.9)
         put(sfx, clack(195 + k), ts, 0.8)
     put(sfx, whoosh(0.9, 199), st["h07_sama"] + 0.4, 0.7)
-    # 8) 狭間：弾がカキン、数える音
+    # 8) 狭間：「穴は内側が広く外側が狭い」で台形のふちが光る（v3 で足した句）、弾がカキン、数える音
+    putn(sfx, swish(0.8, 205), LT(29) + 0.2, 0.6)
+    putn(sfx, ding(), LT(29) + 0.45, 0.35)
     for k in range(6):
         put(sfx, bang(200 + k), 37.85 + 0.22 * k, 0.35)
         put(sfx, clack(210 + k), 38.15 + 0.22 * k, 0.4)
-    put(sfx, ding(), 41.24, 0.8)
+    putn(sfx, ding(), LT(32), 0.8)
     for k in range(30):
         put(sfx, clack(220 + k) * 0.5, 41.6 + 0.05 * k, 0.35)
     # 9) 火矢：ヒュン、ボッ、パチパチ → こてのシャーッ → ジュッ
@@ -517,7 +538,7 @@ def build_audio(total):
     put(sfx, crackle(3.0, 280), st["h09_fire"] + 0.7, 0.6)
     put(sfx, swish(1.1, 281), 46.45, 0.8)
     put(sfx, swish(1.0, 282), 47.6, 0.8)
-    put(sfx, ding(), 48.69, 0.8)
+    putn(sfx, ding(), LT(35), 0.8)
     # 10) 完成：ドドン、時が流れるシュー、1945年の爆撃機と火、2026年の歓声
     for k in range(5):
         put(sfx, thud(300 + k, 70, 0.5), st["h10a_1609"] + 0.15 + 0.27 * k, 0.6)
@@ -525,8 +546,8 @@ def build_audio(total):
     put(sfx, drone(2.7, 310), st["h10b_1945"], 0.6)
     put(sfx, crackle(2.7, 311, 90), st["h10b_1945"], 0.5)
     put(sfx, whoosh(0.8, 312), st["h10c_final"] - 0.3, 0.6)
-    put(sfx, cheer(3.6, 320), 56.05, 0.6)
-    put(sfx, ding(), 56.85, 0.9)
+    putn(sfx, cheer(3.6, 320), LT(39) - 0.1, 0.6)
+    putn(sfx, ding(), LT(40) - 0.09, 0.9)
     bgm = read_wav(BGM)[:n + SR]
     bgm = np.pad(bgm, (0, max(0, n + SR - len(bgm))))
     t = np.arange(len(bgm)) / SR

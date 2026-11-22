@@ -20,8 +20,26 @@ bpy = K.bpy
 from mathutils import Vector  # noqa: E402
 
 D2R = K.D2R
-fr = K.fr
 SC = None          # 今の場面（timeline.scene）
+
+
+def fr(t):
+    """場面の頭からの秒（v2 の時刻）→ コマ番号（1から）。v3 の声（参考元と同じ速さ）に合わせて伸び縮みさせる（timeline の WARP）。"""
+    return K.fr(TL.warp(SC["anchors"], t))
+
+
+def nt(t):
+    """v3 の秒 → v2 の秒（v3 で新しく足した動きを、v3 の時刻で書くとき）。"""
+    return TL.unwarp(SC["anchors"], t)
+
+
+def campath(keys, nf, **kw):
+    """カメラのキーの秒（v2）を v3 へ写してから K.campath。"""
+    an = SC["anchors"]
+    keys = [(TL.warp(an, k[0]),) + tuple(k[1:]) for k in keys]
+    if kw.get("cuts"):
+        kw["cuts"] = [TL.warp(an, c) for c in kw["cuts"]]
+    return K.campath(keys, nf, **kw)
 
 # 本丸（石垣の上の四角い敷地）の大きさ
 WT, DT, HI, DI = 32.0, 26.0, 12.0, 4.5
@@ -32,7 +50,13 @@ BLUE = (0.15, 0.55, 1.0)
 
 
 def line_t(i):
-    """台本の i 行目の、この場面の頭からの (はじまり, おわり) 秒。"""
+    """v2 の台本の i 行目の、この場面の頭からの (はじまり, おわり) 秒（v2 の時刻。fr / campath で v3 へ写す）。"""
+    s, d = TL.OLD_LINES[i]
+    return s - SC["old_t0"], s - SC["old_t0"] + d
+
+
+def new_t(i):
+    """v3 の台本の i 行目の、この場面の頭からの (はじまり, おわり) 秒（v3 の時刻）。"""
     L = SC["lines"][i]
     return L["t"], L["t_end"]
 
@@ -50,7 +74,7 @@ def world(elev=50, az=215, fields=True, seed=3):
     K.clouds(seed=seed)
     K.ground()
     if fields:
-        K.countryside(seed=seed, keep_out=70, r_max=700, n_fields=110, n_trees=140)
+        K.countryside(seed=seed, keep_out=70, r_max=700, n_fields=110, n_trees=420)
 
 
 def gate_small(x, y, z, w=3.2, parent=None, name="gate"):
@@ -157,7 +181,7 @@ def h01_house(nf):
             (3.3, (-17.0, -29.0, 8.0), (-3.0, -12.5, 2.0), 28),
             (4.5, (-9.0, -21.5, 3.2), (-4.0, -12.8, 2.4), 26),
             (SC["dur"], (5.5, -20.5, 3.6), (1.5, -12.0, 2.4), 26)]
-    K.campath(keys, nf, shake=0.05)
+    campath(keys, nf, shake=0.05)
 
 
 # ============================ 2) 石垣を積む ============================
@@ -173,7 +197,7 @@ def h02_stone(nf):
     def zc(t):
         return HI * K.smooth((t - ta) / (tb - ta))
     for f in range(1, nf + 1, 2):
-        t = (f - 1) / K.FPS
+        t = nt((f - 1) / K.FPS)
         K.key_loc(root, f, (0, 0, zc(t)))
         K.key_scale(ig.core, f, (1, 1, max(1e-3, zc(t) / HI)))
     for k, ob in enumerate(ig.courses):
@@ -219,7 +243,7 @@ def h02_stone(nf):
             (1.4, (-14.0, -34.0, 2.2), (0, -6.0, 7.5), 24),
             (2.3, (-16.5, -37.5, 3.2), (0, -4.0, 9.6), 24),
             (T, (-17.5, -39.0, 3.6), (0, -4.0, 9.8), 24)]
-    cam = K.campath(keys, nf, shake=0.04)
+    cam = campath(keys, nf, shake=0.04)
     # 着地でカメラが一瞬ゆれる
     for f, dz in ((fland, 0.0), (fland + 2, -0.35), (fland + 4, 0.22), (fland + 6, -0.1), (fland + 8, 0.0)):
         if f <= nf:
@@ -272,7 +296,7 @@ def h03_curve(nf):
             (d, (62.0, -15.2, 6.4), (17.0, -15.2, 6.2), 62),
             (d + 0.5, (58.0, -22.0, 7.5), (14.0, -14.0, 6.2), 45),
             (T, (40.0, -48.0, 12.0), (0.0, -10.0, 6.5), 30)]
-    K.campath(keys, nf, shake=0.015)
+    campath(keys, nf, shake=0.015)
 
 
 # ============================ 4) 登るほど体が外へ反り、落ちる ============================
@@ -309,7 +333,7 @@ def h04_fall(nf):
     keys = [(0.0, (-21.0, -22.0, 3.6), (-7.0, -16.4, 4.2), 32),
             (a + 1.6, (-20.5, -23.0, 5.4), (-7.0, -16.0, 5.8), 32),
             (T, (-20.0, -25.5, 3.6), (-7.0, -17.5, 3.0), 30)]
-    K.campath(keys, nf, shake=0.03)
+    campath(keys, nf, shake=0.03)
 
 
 # ============================ 5) 角に集まる敵と石落とし ============================
@@ -412,7 +436,7 @@ def h05_corner(nf):
             (cut, (-11.2, -22.5, 4.0), (drop_x, hole.y, hole.z - 0.6), 28),
             (d, (-11.5, -23.5, 3.2), (drop_x, hole.y - 0.6, hole.z - 2.5), 26),
             (T, (-11.8, -25.0, 2.6), (drop_x, -15.0, 6.0), 26)]
-    K.campath(keys, nf, shake=0.03, cuts=[cut])
+    campath(keys, nf, shake=0.03, cuts=[cut])
 
 
 # ============================ 6) せまい門と上の櫓からの一斉攻撃 ============================
@@ -509,7 +533,7 @@ def h06_gate(nf):
             (d - 0.02, (5.0, -19.0, 10.0), (0, -4.5, 2.5), 28),
             (d, (-8.5, -17.0, 2.6), (0, -4.0, 4.6), 24),
             (T, (-9.5, -18.5, 2.3), (0, -4.0, 4.4), 24)]
-    K.campath(keys, nf, shake=0.03, cuts=[d])
+    campath(keys, nf, shake=0.03, cuts=[d])
 
 
 # ============================ 7) 鉄砲で撃たれる → 壁に小さな穴 ============================
@@ -662,7 +686,7 @@ def h07_sama(nf):
             (c - 0.02, (3.4, -26.0, 1.9), (0.0, 0.0, 5.8), 32),
             (c, (2.6, 5.6, 5.7), (0.0, 0.0, 5.3), 26),
             (T, (2.1, 5.0, 5.6), (0.0, 0.0, 5.3), 26)]
-    K.campath(keys, nf, shake=0.03, cuts=[b, c])
+    campath(keys, nf, shake=0.03, cuts=[b, c])
 
 
 # ============================ 8) 狭間の図解（外からは当たらず、中からは広く） ============================
@@ -672,16 +696,21 @@ def h08_cone(nf):
     a, _ = line_t(24)
     b, _ = line_t(25)
     c, _ = line_t(26)
-    # --- 図解の場所（遠くに置く）：壁を真上から見る（穴の高さで切った断面）
+    # --- 図解の場所（遠くに置く）：壁を上から見る（穴の高さで切った断面）。参考元のように白い壁の上に台形の穴、外は草地と敵
+    p29, _ = new_t(29)                       # v3 で足した句「穴は内側が広く外側が狭い」
     OX = 400.0
-    sec = CS.wall_box((OX - 7, 0), (OX + 7, 0), 0.0, 1.2, 1.0, K.mat("section", (0.42, 0.41, 0.40), 0.8), "sec")
+    sec = CS.wall_box((OX - 22, 0), (OX + 22, 0), 0.0, 1.2, 1.0, K.mat("section", (0.80, 0.79, 0.75), 0.8), "sec")
     ct = sama_cutter("square", OX, 0.6, -0.5, 0.5, "seccut")
     ct.scale = (1, 1, 6)
     md = sec.modifiers.new("b", 'BOOLEAN')
     md.operation = 'DIFFERENCE'
     md.object = ct
     md.solver = 'EXACT'
-    K.obj(K.box_mesh(30, 30, 0.05), K.noisy("sec_ground", (0.36, 0.33, 0.27), 0.5, 0.2, 0.1), None, (OX, 0, -0.03), name="secg")
+    K.obj(K.box_mesh(44, 12, 0.05), K.noisy("sec_floor", (0.36, 0.33, 0.27), 0.5, 0.2, 0.1), None, (OX, 6.5, 0.02), name="secg")   # 内側の地面
+    # 「穴は内側が広く外側が狭い」：台形の穴のふちを黄色く光らせる
+    tm = K.fade_mat(K.glow("trap_line", YELLOW, 5.0), fr(nt(p29 + 0.25)), fr(nt(p29 + 0.45)), fr(a), fr(a + 0.25), "trapl")
+    K.poly_curve([(OX - 0.16, -0.5, 1.23), (OX + 0.16, -0.5, 1.23), (OX + 0.34, 0.5, 1.23), (OX - 0.34, 0.5, 1.23)], 0.05, tm, "trap",
+                 cyclic=True)
     ally = K.Person((OX, 1.2, -0.9), 180, K.ALLY_B, name="sec_al", seed=700)
     gn = K.gun()
     ally.hold(gn, "R", (0, 0.02, 0), (90, 0, 0))
@@ -689,26 +718,30 @@ def h08_cone(nf):
     for f in range(fr(b), fr(c) + 1, 3):                 # 鉄砲の向きを左右に振る
         sw = math.sin((f - fr(b)) / K.FPS * 2.4) * 30
         ally.place(f, face=180 + sw)
-    for k, x in enumerate([-3.5, 0.6, 3.8]):
-        e = K.Person((OX + x, -11.0 - abs(x) * 0.3, 0), -math.degrees(math.atan2(x, 11)) * -1, K.ENEMY, name=f"sec_en{k}", seed=710 + k)
+    en_x = [-9.0, -4.2, 0.8, 4.6, 9.5, -1.8]
+    en_y = [-17.0, -19.5, -16.0, -21.0, -18.0, -24.0]
+    for k, (x, y) in enumerate(zip(en_x, en_y)):
+        e = K.Person((OX + x, y, 0), math.degrees(math.atan2(x, -y)) * -1, K.ENEMY, name=f"sec_en{k}", seed=710 + k)
         g2 = K.gun()
         e.hold(g2, "R", (0, 0.02, 0), (90, 0, 0))
         e.stand(1, shL=(85, -10), shR=(70, 10), elL=10, elR=70)
+    # 参考元と同じ広さの三角：外から（オレンジ、せまい）／中から（黄色、広い）
     om = K.fade_mat(K.glow("orange_fan", ORANGE, 2.5, 0.55), fr(a + 0.1), fr(a + 0.3), fr(b), fr(b + 0.2), "ofan")
-    K.fan((OX, 0.4, 1.25), (0, -1, 0), 7.0, 13.0, om, "ofan", width_at_apex=0.5)
+    K.fan((OX, -0.5, 1.25), (0, -1, 0), 17.0, 30.0, om, "ofan", width_at_apex=0.32)
     yfm = K.fade_mat(K.glow("yellow_fan", YELLOW, 2.5, 0.5), fr(b + 0.1), fr(b + 0.3), fr(c), fr(c + 0.2), "yfan")
-    K.fan((OX, -0.5, 1.26), (0, -1, 0), 40.0, 13.0, yfm, "yfan", width_at_apex=0.3)
+    K.fan((OX, 0.45, 1.26), (0, -1, 0), 55.0, 30.0, yfm, "yfan", width_at_apex=0.3)
     # 外からの弾：ほとんど壁に当たって止まる
     r = random.Random(3)
     bm_ = K.glow("bullet", (1.0, 0.9, 0.5), 15.0)
     for k in range(6):
         bl = K.obj(K.ellip_mesh(0.07, 0.25, 0.07, 8, 6), bm_, None, (0, 0, 0), name=f"bul{k}", shadow=False)
         t0 = a + 0.15 + 0.22 * k
-        x0 = r.choice([-3.5, 0.6, 3.8])
-        x1 = OX + r.uniform(-4, 4) if k % 3 else OX + 0.05
+        q = r.randrange(5)
+        x0, y0 = en_x[q], en_y[q]
+        x1 = OX + r.uniform(-5, 5) if k % 3 else OX + 0.05
         K.key_scale(bl, fr(t0) - 1, 1e-4)
         K.key_scale(bl, fr(t0), 1.0)
-        K.projectile(bl, fr(t0), fr(t0 + 0.3), (OX + x0, -10.5, 1.2), (x1, -0.55, 1.2), arc=0.0)
+        K.projectile(bl, fr(t0), fr(t0 + 0.3), (OX + x0, y0 + 0.5, 1.2), (x1, -0.55, 1.2), arc=0.0)
         K.key_scale(bl, fr(t0 + 0.3), 1.0)
         K.key_scale(bl, fr(t0 + 0.3) + 1, 1e-4)
         K.smoke_puffs((x1, -0.7, 1.2), fr(t0 + 0.3), n=2, seed=k, col=(0.8, 0.78, 0.72), size=0.35, rise=0.3, life=12, spread=0.1,
@@ -752,13 +785,14 @@ def h08_cone(nf):
         K.key_scale(g, f_on, 1.6)
         K.key_scale(g, f_on + 4, 1.0)
     K.marker("sama", (OX, -0.5, 1.2))
-    keys = [(0.0, (OX + 0.01, -0.6, 9.0), (OX, -0.9, 0.0), 30),
-            (a + 0.6, (OX + 0.01, -3.2, 17.0), (OX, -4.0, 0.0), 30),
-            (b, (OX + 0.01, -3.8, 21.0), (OX, -4.6, 0.0), 30),
-            (c - 0.02, (OX + 0.01, -4.0, 22.0), (OX, -4.6, 0.0), 30),
+    keys = [(0.0, (OX + 0.01, 1.9, 3.9), (OX, -0.3, 0.7), 30),                  # 穴に寄って、台形を見せる
+            (nt(p29 + 1.9), (OX + 0.01, 2.6, 5.2), (OX, -0.8, 0.6), 30),
+            (a + 0.55, (OX + 0.01, 6.0, 15.5), (OX, -9.0, 0.0), 27),               # 引いて、外の草地と敵（参考元の見せ方）
+            (b, (OX + 0.01, 6.4, 17.0), (OX, -9.6, 0.0), 26),
+            (c - 0.02, (OX + 0.01, 6.8, 18.0), (OX, -10.0, 0.0), 26),
             (c, (-14.0, -36.0, 19.0), (-2.0, -10.0, 12.5), 28),
             (T, (-24.0, -44.0, 24.0), (0.0, -4.0, 11.0), 28)]
-    K.campath(keys, nf, shake=0.02, cuts=[c])
+    campath(keys, nf, shake=0.02, cuts=[c])
 
 
 # ============================ 9) 火矢と白い漆喰 ============================
@@ -869,7 +903,7 @@ def h09_fire(nf):
             (b - 0.4, (-6.0, -27.0, 3.5), (0.0, -1.0, 6.0), 28),
             (b + 0.2, (3.5, -15.0, 6.0), (0.0, 0.0, 5.8), 26),
             (T, (2.5, -16.5, 5.5), (0.0, 0.0, 5.8), 26)]
-    K.campath(keys, nf, shake=0.03)
+    campath(keys, nf, shake=0.03)
 
 
 # ============================ 10) 完成した姫路城（1609年 → 1945年 → 2026年） ============================
@@ -895,25 +929,21 @@ def himeji_castle(trees=True, sakura=False):
         CS.yagura(x, y, 9.0, 7.0, 6.0, ishiotoshi=False, face=fc, name=f"sumi{x}{y}")
     if trees:
         r = random.Random(61)
-        pine = K.noisy("pine", (0.05, 0.12, 0.05), 0.8, 0.3, 0.4, 0.9)
         pink = K.noisy("sakura", (0.95, 0.62, 0.72), 0.9, 0.12, 0.4, 0.9)
-        trunk = K.noisy("trunk", (0.12, 0.08, 0.05), 3.0, 0.3, 0.2)
         spots = [(r.uniform(-32, 32), r.uniform(-23, -16)) for _ in range(10)] + [(r.uniform(28, 33), r.uniform(-20, 20)) for _ in range(5)]
         spots += [(r.uniform(-55, 55), r.uniform(-48, -36)) for _ in range(18)]
         for k, (x, y) in enumerate(spots):
             z = 9.0 if abs(x) < 34 and abs(y) < 25 else 0.0
-            m = pink if (sakura and k % 2 == 0) else pine
-            K.obj(K.cyl_mesh(0.25, 0.18, 3.0, 8), trunk, None, (x, y, z), name="trunk")
-            for j in range(3):
-                s_ = r.uniform(1.8, 2.8)
-                K.obj(K.ellip_mesh(s_, s_, s_ * 0.75, 10, 6), m, None, (x + r.uniform(-1.2, 1.2), y + r.uniform(-1.2, 1.2), z + 3.2 + j * 0.6),
-                      name="crown")
+            if sakura and k % 2 == 0:
+                K.tree(x, y, 4 + k % 4, r.uniform(0.75, 0.95), r.uniform(0, 6.28), f"sak{k}", z=z, leaf_mat=pink)
+            else:
+                K.tree(x, y, k % 4 if k % 3 else 4 + k % 4, r.uniform(0.7, 0.9), r.uniform(0, 6.28), f"pine{k}", z=z)
     return keep, smalls, big
 
 
 def h10a_1609(nf):
     world(az=200, fields=False)
-    K.countryside(seed=7, keep_out=300, r_max=1200, n_fields=150, n_trees=200)
+    K.countryside(seed=7, keep_out=300, r_max=1200, n_fields=150, n_trees=500)
     keep, smalls, big = himeji_castle()
     CS.town(0, 0, 150, 420, n=260, seed=4)
     T = SC["dur"]
@@ -936,7 +966,7 @@ def h10a_1609(nf):
     keys = [(0.0, (-30.0, -95.0, 7.0), (KEEP[0], KEEP[1], 18.0), 30),
             (1.4, (-48.0, -112.0, 24.0), (KEEP[0], KEEP[1], 24.0), 34),
             (T, (-54.0, -118.0, 30.0), (KEEP[0], KEEP[1], 24.0), 36)]
-    K.campath(keys, nf, shake=0.04)
+    campath(keys, nf, shake=0.04)
 
 
 def bomber(name):
@@ -951,7 +981,7 @@ def bomber(name):
 
 def h10b_1945(nf):
     world(az=200, fields=False)
-    K.countryside(seed=7, keep_out=300, r_max=1200, n_fields=120, n_trees=150)
+    K.countryside(seed=7, keep_out=300, r_max=1200, n_fields=120, n_trees=400)
     keep, smalls, big = himeji_castle()
     houses = CS.town(0, 0, 150, 420, n=260, seed=4)
     T = SC["dur"]
@@ -964,7 +994,7 @@ def h10b_1945(nf):
     cl.hide_render = True
     keys = [(0.0, (-110.0, -330.0, 62.0), (KEEP[0], KEEP[1], 22.0), 62),
             (T, (-100.0, -305.0, 58.0), (KEEP[0], KEEP[1], 23.0), 64)]
-    cam = K.campath(keys, nf, shake=0.03)
+    cam = campath(keys, nf, shake=0.03)
     from bpy_extras.object_utils import world_to_camera_view
     sc = bpy.context.scene
     sc.frame_set(1)
@@ -1016,7 +1046,7 @@ def h10b_1945(nf):
 
 def h10c_final(nf):
     world(az=205, fields=False)
-    K.countryside(seed=7, keep_out=300, r_max=1200, n_fields=150, n_trees=200)
+    K.countryside(seed=7, keep_out=300, r_max=1200, n_fields=150, n_trees=500)
     keep, smalls, big = himeji_castle(sakura=True)
     CS.town(0, 0, 150, 420, n=260, seed=4)
     T = SC["dur"]
@@ -1037,7 +1067,7 @@ def h10c_final(nf):
             (c, (-5.3, -64.6, 1.6), (-5.6, -59.0, 2.6), 32),
             (c + 1.6, (-12.0, -100.0, 12.0), (KEEP[0], KEEP[1], 20.0), 32),
             (T, (-14.0, -110.0, 15.0), (KEEP[0], KEEP[1], 21.0), 34)]
-    K.campath(keys, nf, shake=0.03, cuts=[cut])
+    campath(keys, nf, shake=0.03, cuts=[cut])
 
 
 SCENES = {k: v for k, v in globals().items() if callable(v) and k[:1] == "h" and k[1:3].isdigit()}
@@ -1050,6 +1080,7 @@ if __name__ == "__main__":
     last = int(sys.argv[5]) if len(sys.argv) > 5 else None
     K.W.reset()
     SC = TL.scene(name)
+    SC["dur"] = SC["old_dur"]          # 場面のコードは v2 の時刻で書いてある（fr / campath で v3 へ写す）
     SCENES[name](SC["nf"])
     K.render(out, SC["nf"], step, first, last, exposure=-0.8 + EXPOSURE.get(name, 0.0))
     print("rendered", name, flush=True)

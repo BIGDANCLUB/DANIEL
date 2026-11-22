@@ -234,7 +234,21 @@ def grade(img, g=None):
     lum = a @ np.array([0.299, 0.587, 0.114], np.float32)
     a = lum[..., None] + (a - lum[..., None]) * g["sat"]
     a = a * np.array([g["r"], 1.0, g["b"]], np.float32)
+    a = sky_lift(a)
     return Image.fromarray((np.clip(a, 0, 1) * 255 + 0.5).astype(np.uint8))
+
+
+# 空の青だけを明るく：3D の空は (20,45,92) で、参考元の空 (67,93,140) より暗い。青みの強いところ（b−r、b−g が大きい）だけを持ち上げる。
+# 雲（白・灰色）、石、草は青みが弱いので変わらない。
+SKY = dict(k=0.8, add=(0.20, 0.22, 0.25), br=(0.155, 0.255), bg=(0.08, 0.16))
+
+
+def sky_lift(a):
+    r, g, b = a[..., 0], a[..., 1], a[..., 2]
+    w = np.clip((b - r - SKY["br"][0]) / (SKY["br"][1] - SKY["br"][0]), 0, 1) * \
+        np.clip((b - g - SKY["bg"][0]) / (SKY["bg"][1] - SKY["bg"][0]), 0, 1)
+    out = a * SKY["k"] + np.array(SKY["add"], np.float32)
+    return a + (out - a) * w[..., None]
 
 
 ROOT = None

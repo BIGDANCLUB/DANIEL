@@ -537,6 +537,25 @@ def h06_gate(nf):
 
 
 # ============================ 7) 鉄砲で撃たれる → 壁に小さな穴 ============================
+def prism(poly, z0, z1, m, name="prism"):
+    """上から見た多角形（反時計回り）を z0〜z1 に立ち上げた柱。"""
+    import bmesh
+    bm = bmesh.new()
+    lo = [bm.verts.new((x, y, z0)) for x, y in poly]
+    hi = [bm.verts.new((x, y, z1)) for x, y in poly]
+    bm.faces.new(hi)
+    bm.faces.new(lo[::-1])
+    n = len(poly)
+    for k in range(n):
+        bm.faces.new((lo[k], lo[(k + 1) % n], hi[(k + 1) % n], hi[k]))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    me = bpy.data.meshes.new(name)
+    bm.to_mesh(me)
+    bm.free()
+    me.materials.append(m)
+    return K.obj(me, m, None, (0, 0, 0), name=name)
+
+
 def sama_cutter(kind, x, z, y0=-0.5, y1=0.5, name="cut"):
     """狭間の穴を開ける形（外 -y がせまく、内 +y が広い）。kind：tri / circle / square。"""
     import bmesh
@@ -630,8 +649,7 @@ def h07_sama(nf):
     HZ = Z + 2.3
     holes = [("tri", -1.6, HZ, f_h[0]), ("circle", 0.0, HZ, f_h[1]), ("square", 1.6, HZ, f_h[2])]
     sama_wall(-20, 20, Z, 3.4, 0.42, holes)
-    # 田んぼ（外）
-    K.obj(K.box_mesh(60, 30, 0.05), K.noisy("paddy", (0.30, 0.36, 0.12), 0.6, 0.3, 0.2), None, (0, -22, 0.03), name="paddy")
+    # 外は草地（参考元と同じ黄みのオリーブ。v2 の緑の田んぼはやめた）
     # 壁の上の味方（撃たれて落ちる）
     r = random.Random(7)
     for k, x in enumerate([-5.5, -2.8, 2.6, 5.4]):
@@ -699,19 +717,19 @@ def h08_cone(nf):
     # --- 図解の場所（遠くに置く）：壁を上から見る（穴の高さで切った断面）。参考元のように白い壁の上に台形の穴、外は草地と敵
     p29, _ = new_t(29)                       # v3 で足した句「穴は内側が広く外側が狭い」
     OX = 400.0
-    sec = CS.wall_box((OX - 22, 0), (OX + 22, 0), 0.0, 1.2, 1.0, K.mat("section", (0.80, 0.79, 0.75), 0.8), "sec")
-    ct = sama_cutter("square", OX, 0.6, -0.5, 0.5, "seccut")
-    ct.scale = (1, 1, 6)
-    md = sec.modifiers.new("b", 'BOOLEAN')
-    md.operation = 'DIFFERENCE'
-    md.object = ct
-    md.solver = 'EXACT'
-    K.obj(K.box_mesh(44, 12, 0.05), K.noisy("sec_floor", (0.36, 0.33, 0.27), 0.5, 0.2, 0.1), None, (OX, 6.5, 0.02), name="secg")   # 内側の地面
+    # 壁の断面：台形の穴（外 -y がせまく、内 +y が広い）で左右に分かれた白い壁 ＋ 穴の底（灰色）。参考元と同じ形を形のまま作る
+    SO, SI = 0.25, 0.70                       # 穴の半分の幅（外／内）
+    wm = K.mat("section", (0.95, 0.92, 0.85), 0.8)
+    prism([(OX - 22, -0.5), (OX - SO, -0.5), (OX - SI, 0.5), (OX - 22, 0.5)], 0.0, 1.2, wm, "sec_l")
+    prism([(OX + SO, -0.5), (OX + 22, -0.5), (OX + 22, 0.5), (OX + SI, 0.5)], 0.0, 1.2, wm, "sec_r")
+    prism([(OX - SO, -0.5), (OX + SO, -0.5), (OX + SI, 0.5), (OX - SI, 0.5)], 0.0, 0.8, K.mat("sec_sill", (0.30, 0.29, 0.27), 0.9),
+          "sec_sill")
+    K.obj(K.box_mesh(44, 12, 0.05), K.noisy("sec_floor", (0.50, 0.49, 0.46), 0.5, 0.15, 0.1), None, (OX, 6.5, 0.02), name="secg")   # 内側の地面
     # 「穴は内側が広く外側が狭い」：台形の穴のふちを黄色く光らせる
     tm = K.fade_mat(K.glow("trap_line", YELLOW, 5.0), fr(nt(p29 + 0.25)), fr(nt(p29 + 0.45)), fr(a), fr(a + 0.25), "trapl")
-    K.poly_curve([(OX - 0.16, -0.5, 1.23), (OX + 0.16, -0.5, 1.23), (OX + 0.34, 0.5, 1.23), (OX - 0.34, 0.5, 1.23)], 0.05, tm, "trap",
+    K.poly_curve([(OX - SO, -0.5, 1.23), (OX + SO, -0.5, 1.23), (OX + SI, 0.5, 1.23), (OX - SI, 0.5, 1.23)], 0.05, tm, "trap",
                  cyclic=True)
-    ally = K.Person((OX, 1.2, -0.9), 180, K.ALLY_B, name="sec_al", seed=700)
+    ally = K.Person((OX, 2.4, -0.9), 180, K.ALLY_B, name="sec_al", seed=700)
     gn = K.gun()
     ally.hold(gn, "R", (0, 0.02, 0), (90, 0, 0))
     ally.stand(1, shL=(85, -10), shR=(70, 10), elL=10, elR=70)
@@ -727,7 +745,7 @@ def h08_cone(nf):
         e.stand(1, shL=(85, -10), shR=(70, 10), elL=10, elR=70)
     # 参考元と同じ広さの三角：外から（オレンジ、せまい）／中から（黄色、広い）
     om = K.fade_mat(K.glow("orange_fan", ORANGE, 2.5, 0.55), fr(a + 0.1), fr(a + 0.3), fr(b), fr(b + 0.2), "ofan")
-    K.fan((OX, -0.5, 1.25), (0, -1, 0), 17.0, 30.0, om, "ofan", width_at_apex=0.32)
+    K.fan((OX, -0.5, 1.25), (0, -1, 0), 17.0, 30.0, om, "ofan", width_at_apex=2 * SO)
     yfm = K.fade_mat(K.glow("yellow_fan", YELLOW, 2.5, 0.5), fr(b + 0.1), fr(b + 0.3), fr(c), fr(c + 0.2), "yfan")
     K.fan((OX, 0.45, 1.26), (0, -1, 0), 55.0, 30.0, yfm, "yfan", width_at_apex=0.3)
     # 外からの弾：ほとんど壁に当たって止まる
@@ -785,8 +803,8 @@ def h08_cone(nf):
         K.key_scale(g, f_on, 1.6)
         K.key_scale(g, f_on + 4, 1.0)
     K.marker("sama", (OX, -0.5, 1.2))
-    keys = [(0.0, (OX + 0.01, 1.9, 3.9), (OX, -0.3, 0.7), 30),                  # 穴に寄って、台形を見せる
-            (nt(p29 + 1.9), (OX + 0.01, 2.6, 5.2), (OX, -0.8, 0.6), 30),
+    keys = [(0.0, (OX + 0.01, 0.85, 4.6), (OX, -0.9, 0.9), 30),                 # 穴の真上から：白い壁に台形の穴（味方は画面の外）
+            (nt(p29 + 1.9), (OX + 0.01, 1.1, 5.6), (OX, -1.2, 0.8), 30),
             (a + 0.55, (OX + 0.01, 6.0, 15.5), (OX, -9.0, 0.0), 27),               # 引いて、外の草地と敵（参考元の見せ方）
             (b, (OX + 0.01, 6.4, 17.0), (OX, -9.6, 0.0), 26),
             (c - 0.02, (OX + 0.01, 6.8, 18.0), (OX, -10.0, 0.0), 26),

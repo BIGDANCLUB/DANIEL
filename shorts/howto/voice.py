@@ -76,5 +76,43 @@ def build(name):
     print(f"done: speed {speed:.3f}, {morae} morae, {morae / (t - S.LEAD):.1f} morae/s, voice ends {t - S.GAP:.2f}s")
 
 
+def refit(name):
+    """声だけ替える：今の timing.json の行ごとの頭と長さはそのままにして、新しい声を行ごとに同じ長さで読ませる（映像の作り直しがいらない）。
+    VOICEVOX の速さ（speedScale）を行ごとに合わせ、残りのわずかな差は前後の無音で埋めるか、ごく少し縮める。"""
+    here = os.path.dirname(os.path.abspath(__file__))
+    sys.path.insert(0, os.path.join(here, name))
+    S = importlib.import_module("script")
+    out = os.path.join(here, name, "voice")
+    tj = os.path.join(out, "timing.json")
+    T = json.load(open(tj))
+    pitch, inton = getattr(S, "PITCH", 0.0), getattr(S, "INTONATION", 1.15)
+    morae = 0
+    for k, (L, old) in enumerate(zip(S.LINES, T["lines"])):
+        target = old["dur"]
+        sp = T["speed"]
+        for _ in range(8):                                 # 目標の長さより 0〜0.04秒 短くなる速さを探す（足りない分はうしろを無音で埋める）
+            x, m = synth(L["text"], S.SPEAKER, sp, L.get("kana"), pitch, inton)
+            d = len(x) / SR
+            if target - 0.04 <= d <= target:
+                break
+            sp *= d / (target - 0.02)
+        n = int(round(target * SR))
+        x = x[:n] if len(x) > n else np.concatenate([x, np.zeros(n - len(x), np.float32)])
+        f = int(0.012 * SR)                                # 終わりを少しだけ弱めて、切れた音のプツッを防ぐ
+        x[-f:] *= np.linspace(1, 0, f, dtype=np.float32)
+        morae += m
+        with wave.open(os.path.join(out, f"line_{k:02d}.wav"), "wb") as w:
+            w.setnchannels(1)
+            w.setsampwidth(2)
+            w.setframerate(SR)
+            w.writeframes((np.clip(x, -1, 1) * 32767).astype(np.int16).tobytes())
+        print(f"{k:02d} speed {sp:.3f} {d:.2f}s → {target:.2f}s  {L['text']}", flush=True)
+    T.update(speaker=S.SPEAKER, morae=morae)
+    json.dump(T, open(tj, "w"), ensure_ascii=False, indent=1)
+
+
 if __name__ == "__main__":
-    build(sys.argv[1])
+    if "--keep-timing" in sys.argv:
+        refit(sys.argv[1])
+    else:
+        build(sys.argv[1])

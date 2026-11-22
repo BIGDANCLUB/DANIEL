@@ -3,6 +3,7 @@
 python3 catmeme/short_132_tenin_koe.py → out/short_132_tenin_koe.mp4
 - 段階ごとに「札だけ → 右の猫（世界）→ 左の猫（日本）」の3段。どの国・人もけなさない
 - ベンチマーク3チャンネルの全タイトル（ほのぼの248・40代独身229・おひとりさま7）と被らないことを確認ずみ（11/22）
+- 11/22 修正：温めますか？（冷たい）・レシートはご入用ですか・世界20回「従業員として誘われる」・帰り際 日本はおらついた猫「っざぁしたぁ～」
 - 概要欄の注意：※よくあるイメージです（国や人によって違います）。BGM なし
 """
 import os
@@ -20,12 +21,12 @@ def cuts():
         ('1回', 'happy_hamster_open_arms', 'How are you?\nから雑談', 'work_typing_cat', 'いらっしゃい\nませ'),
         ('2回', 'dance_cute_dog', '名前を\n覚えられる', 'stare_tabby_wide_eyes_cat', 'ポイントカード\nお持ちですか？'),
         ('3回', 'listen_dancing_dog', '家族の話に\nなる', 'think_chin_paw_orange_cat', '袋は\nご利用ですか？'),
-        ('5回', 'cocky_dj_cat', 'もう友達', 'calm_black_face_sheep', '温めますか？'),
+        ('5回', 'cocky_dj_cat', 'もう友達', 'calm_black_face_sheep', '温めますか？\n（冷たい）'),
         ('7回', 'rizz_cat_rizz', 'パーティーに\n誘われる', 'confused_i_dont_know_cat', 'お箸\nおつけしますか？'),
-        ('10回', 'dance_edm_cat', '結婚式に\n呼ばれる', 'stare_interviewer_cat', 'レシートは\nいりますか？'),
+        ('10回', 'dance_edm_cat', '結婚式に\n呼ばれる', 'stare_interviewer_cat', 'レシートは\nご入用ですか'),
         ('15回', 'smug_squint_bicolor_cat', 'ほぼ親戚', 'blank_black_cat_zoning_out', '全部\n大丈夫です'),
-        ('20回', 'showoff_gojo_cosplay_cat', '店を継ぐ', 'sad_looking_away_tabby', 'セルフレジを\n探す'),
-        ('帰り際', 'dance_filmed_by_gray_cat', 'See you!', 'despair_dramatic_kitten', 'またお越し\nくださいませ'),
+        ('20回', 'showoff_gojo_cosplay_cat', '従業員として\n誘われる', 'sad_looking_away_tabby', 'セルフレジを\n探す'),
+        ('帰り際', 'dance_filmed_by_gray_cat', 'See you!', 'cocky_dj_cat', 'っざぁしたぁ～\n（ｵﾗｲｯｵﾗｲｯ）'),
     ]
     for k, (lv, wcat, wcap, jcat, jcap) in enumerate(rows):
         big = k >= len(rows) - 4

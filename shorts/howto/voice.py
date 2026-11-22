@@ -50,7 +50,8 @@ def build(name):
     budget = S.TOTAL - S.LEAD - S.TAIL
     speed = 1.15
     for _ in range(8):
-        clips = [synth(L["text"], S.SPEAKER, speed, L.get("kana")) for L in S.LINES]
+        clips = [synth(L["text"], S.SPEAKER, speed, L.get("kana"), getattr(S, "PITCH", 0.0), getattr(S, "INTONATION", 1.15))
+                 for L in S.LINES]
         total = sum(len(c[0]) for c in clips) / SR + S.GAP * (len(clips) - 1)
         print(f"speed {speed:.3f} → {total:.2f}s (budget {budget:.2f}s)", flush=True)
         if abs(total - budget) < 0.15:

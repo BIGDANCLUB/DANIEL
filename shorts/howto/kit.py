@@ -551,7 +551,7 @@ def bow():
 
 
 # ---------- 空・光・地面 ----------
-def daylight(elev=48, az=215, strength=3.0, sky_strength=0.2, col=(1.0, 0.95, 0.86), haze=1.0):
+def daylight(elev=48, az=215, strength=3.0, sky_strength=0.2, col=(1.0, 0.91, 0.76), haze=1.0):
     """晴れた昼の光（太陽＋写実的な空の色）。az は太陽のある方角（0＝+y、90＝+x、180＝-y、215＝手前左＝-y と -x の間）。"""
     bpy.ops.object.light_add(type='SUN')
     s = bpy.context.object
@@ -687,8 +687,71 @@ def clouds(seed=1, cover=0.56, height=600.0, radius=6000.0, bright=2.6, col=(1, 
     return o
 
 
+def grass_mat(name="grass2"):
+    """芝・草地：大きなまだら（濃い緑〜黄緑）＋草の株のむら＋細かい草のざらつき（参考元の写真のような芝に近づける）。"""
+    m = bpy.data.materials.get(name)
+    if m:
+        return m
+    m = bpy.data.materials.new(name)
+    m.use_nodes = True
+    nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]
+    b.inputs["Roughness"].default_value = 0.92
+    try:
+        b.inputs["Specular IOR Level"].default_value = 0.2
+    except Exception:
+        pass
+    tc = nt.nodes.new("ShaderNodeTexCoord")
+
+    def nz(scale, detail, rough=0.6):
+        n = nt.nodes.new("ShaderNodeTexNoise")
+        n.inputs["Scale"].default_value = scale
+        n.inputs["Detail"].default_value = detail
+        n.inputs["Roughness"].default_value = rough
+        nt.links.new(tc.outputs["Object"], n.inputs["Vector"])
+        return n
+    big, mid, fine = nz(0.025, 4), nz(0.6, 6), nz(45.0, 2, 0.5)
+    r1 = nt.nodes.new("ShaderNodeValToRGB")
+    r1.color_ramp.elements[0].position = 0.35
+    r1.color_ramp.elements[0].color = (0.085, 0.17, 0.045, 1)
+    r1.color_ramp.elements[1].position = 0.68
+    r1.color_ramp.elements[1].color = (0.25, 0.33, 0.10, 1)
+    nt.links.new(big.outputs["Fac"], r1.inputs[0])
+    r2 = nt.nodes.new("ShaderNodeValToRGB")
+    r2.color_ramp.elements[0].position = 0.3
+    r2.color_ramp.elements[0].color = (0.62, 0.62, 0.62, 1)
+    r2.color_ramp.elements[1].position = 0.75
+    r2.color_ramp.elements[1].color = (1.15, 1.12, 1.0, 1)
+    nt.links.new(mid.outputs["Fac"], r2.inputs[0])
+    m1 = nt.nodes.new("ShaderNodeMix")
+    m1.data_type = 'RGBA'
+    m1.blend_type = 'MULTIPLY'
+    m1.inputs["Factor"].default_value = 1.0
+    nt.links.new(r1.outputs[0], m1.inputs[6])
+    nt.links.new(r2.outputs[0], m1.inputs[7])
+    r3 = nt.nodes.new("ShaderNodeValToRGB")
+    r3.color_ramp.elements[0].position = 0.35
+    r3.color_ramp.elements[0].color = (0.7, 0.72, 0.6, 1)
+    r3.color_ramp.elements[1].position = 0.65
+    r3.color_ramp.elements[1].color = (1.2, 1.2, 1.05, 1)
+    nt.links.new(fine.outputs["Fac"], r3.inputs[0])
+    m2 = nt.nodes.new("ShaderNodeMix")
+    m2.data_type = 'RGBA'
+    m2.blend_type = 'MULTIPLY'
+    m2.inputs["Factor"].default_value = 1.0
+    nt.links.new(m1.outputs[2], m2.inputs[6])
+    nt.links.new(r3.outputs[0], m2.inputs[7])
+    nt.links.new(m2.outputs[2], b.inputs["Base Color"])
+    bp = nt.nodes.new("ShaderNodeBump")
+    bp.inputs["Strength"].default_value = 0.7
+    bp.inputs["Distance"].default_value = 0.05
+    nt.links.new(fine.outputs["Fac"], bp.inputs["Height"])
+    nt.links.new(bp.outputs["Normal"], b.inputs["Normal"])
+    return m
+
+
 def ground(size=8000, col=(0.22, 0.34, 0.11), name="grass"):
-    m = noisy(name, col, 0.12, 0.45, 0.35, 0.95)
+    m = grass_mat()
     bpy.ops.mesh.primitive_plane_add(size=size, location=(0, 0, 0))
     g = bpy.context.object
     g.data.materials.append(m)
@@ -698,7 +761,7 @@ def ground(size=8000, col=(0.22, 0.34, 0.11), name="grass"):
 def countryside(seed=3, keep_out=60.0, r_max=900.0, n_fields=160, n_trees=220, center=(0, 0)):
     """遠くの田畑（色ちがいの四角）と木のかたまり、さらに遠くの山なみ。中心から keep_out m までは何も置かない。"""
     r = random.Random(seed)
-    cols = [(0.30, 0.42, 0.12), (0.42, 0.48, 0.16), (0.26, 0.36, 0.10), (0.50, 0.46, 0.22), (0.34, 0.44, 0.18)]
+    cols = [(0.20, 0.30, 0.08), (0.30, 0.34, 0.11), (0.17, 0.26, 0.07), (0.36, 0.32, 0.15), (0.24, 0.31, 0.12)]
     fm = [noisy(f"field{i}", c, 0.25, 0.25, 0.1, 0.95) for i, c in enumerate(cols)]
     for i in range(n_fields):
         a = r.uniform(0, 2 * math.pi)

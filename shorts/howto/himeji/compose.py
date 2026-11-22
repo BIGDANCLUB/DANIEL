@@ -48,7 +48,7 @@ def font(size, weight=800):
     return f
 
 
-F_CAP = font(58, 800)
+F_CAP = font(56, 700)
 F_OVER = font(150, 900)
 F_KIT_H = font(30, 900)
 F_KIT = font(36, 800)
@@ -79,29 +79,46 @@ def caption(g, t):
     txt = cur["text"].replace(" ", "　")
     f = F_CAP
     while f.getlength(txt) > W - 90 and f.size > 40:
-        f = font(f.size - 2, 800)
-    outlined(g, (W // 2, int(H * 0.67)), txt, f)
+        f = font(f.size - 2, 700)
+    outlined(g, (W // 2, int(H * 0.67)), txt, f, stroke=4)
+
+
+MONO = "/usr/share/fonts/truetype/jetbrains-mono/JetBrainsMono-ExtraBold.ttf"
+
+
+def mono(size):
+    try:
+        return ImageFont.truetype(MONO, size)
+    except Exception:
+        return font(size, 900)
+
+
+F_HEAD = mono(30)
+F_ITEM = font(34, 700)
+F_RAD = mono(22)
 
 
 def kit(g, t):
-    """左上：作ったものが ✓ で増えていくチェックリスト。新しい項目は一瞬だけ黄色い枠で光る。"""
+    """左上：作ったものが ✓ で増えていくチェックリスト（参考元2と同じ形：黄色い見出し＋項目ごとの黒い札）。"""
     items = [(ts, name) for ts, name in KIT if t >= ts]
-    x0, y0 = 34, 150
-    w = 300
-    h = 64 + 50 * max(1, len(items))
+    x0, y0 = 30, 120
     lay = Image.new("RGBA", g.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(lay)
-    d.rounded_rectangle((x0, y0, x0 + w, y0 + h), 18, fill=(10, 14, 20, 150), outline=(255, 255, 255, 90), width=2)
-    d.text((x0 + 20, y0 + 16), "CASTLE KIT", font=F_KIT_H, fill=(255, 210, 60, 255))
+    d.text((x0, y0), "CASTLE KIT", font=F_HEAD, fill=(255, 196, 40, 255), stroke_width=3, stroke_fill=(40, 25, 0, 200))
     for k, (ts, name) in enumerate(items):
-        y = y0 + 60 + 50 * k
+        y = y0 + 46 + 62 * k
         age = t - ts
-        a = int(255 * min(1.0, age / 0.15))
-        d.text((x0 + 22, y), "✓", font=F_KIT, fill=(90, 230, 110, a))
-        d.text((x0 + 68, y), name, font=F_KIT, fill=(255, 255, 255, a))
+        a = min(1.0, age / 0.15)
+        tw = F_ITEM.getlength(name)
+        x1 = x0 + 62 + tw + 20
+        slide = int((1 - a) * -40)
+        d.rounded_rectangle((x0 + slide, y, x1 + slide, y + 54), 7, fill=(38, 42, 48, int(205 * a)), outline=(255, 255, 255, int(40 * a)),
+                            width=2)
+        d.text((x0 + 18 + slide, y + 27), "✓", font=F_ITEM, fill=(150, 235, 140, int(255 * a)), anchor="lm")
+        d.text((x0 + 58 + slide, y + 27), name, font=F_ITEM, fill=(255, 255, 255, int(255 * a)), anchor="lm")
         if age < 0.7:
             k2 = 1 - age / 0.7
-            d.rounded_rectangle((x0 + 10, y - 4, x0 + w - 10, y + 46), 10, outline=(255, 220, 60, int(255 * k2)), width=4)
+            d.rounded_rectangle((x0 - 4, y - 4, x1 + 4, y + 58), 9, outline=(255, 210, 60, int(255 * k2)), width=4)
     g.alpha_composite(lay)
 
 
@@ -114,42 +131,44 @@ def status_at(t):
 
 
 def scope(g, t):
-    """右上：見張りの丸い画面（緑の格子、回る線、敵の赤い点）と状態の札（侵入 赤／苦戦 橙／防衛 緑）。"""
+    """右上：見張りの丸い画面（参考元2の ENEMY RADAR と同じ形）と状態の札（侵入 赤／苦戦 橙／防衛 緑）。"""
     st = status_at(t)
     if st is None:
         return
-    cx, cy, R = W - 150, 260, 110
+    cx, cy, R = W - 168, 268, 110
     lay = Image.new("RGBA", g.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(lay)
-    d.ellipse((cx - R, cy - R, cx + R, cy + R), fill=(6, 28, 14, 200), outline=(120, 255, 160, 220), width=3)
+    d.text((cx, cy - R - 22), "ENEMY RADAR", font=F_RAD, fill=(150, 230, 170, 230), anchor="mm")
+    d.ellipse((cx - R, cy - R, cx + R, cy + R), fill=(4, 34, 18, 225), outline=(90, 200, 120, 200), width=3)
     for rr in (R * 0.33, R * 0.66):
-        d.ellipse((cx - rr, cy - rr, cx + rr, cy + rr), outline=(80, 200, 120, 110), width=2)
-    d.line((cx - R, cy, cx + R, cy), fill=(80, 200, 120, 110), width=2)
-    d.line((cx, cy - R, cx, cy + R), fill=(80, 200, 120, 110), width=2)
-    # 城（真ん中の白い四角）
-    d.rectangle((cx - 16, cy - 13, cx + 16, cy + 13), outline=(255, 255, 255, 230), width=3)
-    ang = t * 2.4
-    for k in range(14):
-        a = ang - k * 0.05
-        d.line((cx, cy, cx + R * math.cos(a), cy + R * math.sin(a)), fill=(120, 255, 160, int(150 * (1 - k / 14))), width=3)
-    n = {"侵入": 9, "苦戦": 6, "防衛": 2}[st]
+        d.ellipse((cx - rr, cy - rr, cx + rr, cy + rr), outline=(70, 170, 100, 110), width=2)
+    d.line((cx - R, cy, cx + R, cy), fill=(70, 170, 100, 110), width=2)
+    d.line((cx, cy - R, cx, cy + R), fill=(70, 170, 100, 110), width=2)
+    ang = math.degrees(t * 2.4) % 360
+    d.pieslice((cx - R, cy - R, cx + R, cy + R), ang - 50, ang, fill=(110, 255, 150, 70))
+    d.line((cx, cy, cx + R * math.cos(math.radians(ang)), cy + R * math.sin(math.radians(ang))), fill=(150, 255, 180, 220), width=3)
+    d.rectangle((cx - 12, cy - 10, cx + 12, cy + 10), outline=(255, 255, 255, 220), width=3)       # 城
+    n = {"侵入": 4, "苦戦": 3, "防衛": 1}[st]
     rng = np.random.default_rng(3)
+    blobs = Image.new("RGBA", g.size, (0, 0, 0, 0))
+    db = ImageDraw.Draw(blobs)
     for k in range(n):
         base = rng.uniform(0, 2 * math.pi)
-        r0 = rng.uniform(0.55, 0.95)
+        r0 = rng.uniform(0.5, 0.9)
         if st == "侵入":
-            r0 = max(0.12, r0 - 0.25 * ((t * 0.6 + k * 0.1) % 1.0))
+            r0 = max(0.15, r0 - 0.3 * ((t * 0.5 + k * 0.2) % 1.0))
         elif st == "防衛":
-            r0 = min(0.98, r0 + 0.2 * ((t * 0.3) % 1.0))
-        a = base + 0.15 * math.sin(t * 1.3 + k)
+            r0 = min(0.95, r0 + 0.25 * ((t * 0.3) % 1.0))
+        a = base + 0.1 * math.sin(t * 1.3 + k)
         x, y = cx + R * r0 * math.cos(a), cy + R * r0 * math.sin(a)
-        blink = 0.6 + 0.4 * math.sin(t * 8 + k)
-        d.ellipse((x - 7, y - 7, x + 7, y + 7), fill=(255, 50, 40, int(255 * blink)))
+        db.ellipse((x - 13, y - 13, x + 13, y + 13), fill=(255, 140, 30, 150))
+        db.ellipse((x - 7, y - 7, x + 7, y + 7), fill=(255, 200, 80, 255))
+    lay.alpha_composite(blobs.filter(ImageFilter.GaussianBlur(3)))
     col = ST_COL[st]
     tw = F_ST.getlength(st)
-    bx0, by0 = cx - tw / 2 - 22, cy + R + 16
-    d.rounded_rectangle((bx0, by0, bx0 + tw + 44, by0 + 54), 12, fill=(*col, 235))
-    d.text((cx, by0 + 27), st, font=F_ST, fill=(255, 255, 255, 255), anchor="mm")
+    bx0, by0 = cx - tw / 2 - 22, cy + R + 22
+    d.rounded_rectangle((bx0, by0, bx0 + tw + 44, by0 + 54), 6, fill=(25, 22, 20, 220), outline=(*col, 255), width=4)
+    d.text((cx, by0 + 27), st, font=F_ST, fill=(*col, 255), anchor="mm")
     g.alpha_composite(lay)
 
 
@@ -190,12 +209,17 @@ def ring(g, name, scene, f_local, age, dur):
     g.alpha_composite(lay)
 
 
-def grade(img):
-    """少しだけ締める（黒を下げ、色を少し濃く）。"""
+GRADE = dict(lo=0.08, hi=0.97, gam=1.0, sat=1.35, r=1.05, b=0.93)
+
+
+def grade(img, g=None):
+    """参考元に合わせた色：黒をしめて（影 lo 約30）、色を濃く（彩度 約38）、少し暖かく（計測で決めた値）。"""
+    g = g or GRADE
     a = np.asarray(img, np.float32) / 255
-    a = np.clip((a - 0.03) / 0.95, 0, 1)
+    a = np.clip((a - g["lo"]) / (g["hi"] - g["lo"]), 0, 1) ** g["gam"]
     lum = a @ np.array([0.299, 0.587, 0.114], np.float32)
-    a = lum[..., None] + (a - lum[..., None]) * 1.12
+    a = lum[..., None] + (a - lum[..., None]) * g["sat"]
+    a = a * np.array([g["r"], 1.0, g["b"]], np.float32)
     return Image.fromarray((np.clip(a, 0, 1) * 255 + 0.5).astype(np.uint8))
 
 
@@ -366,6 +390,55 @@ def read_wav(p):
     return x
 
 
+def limiter(x, ceil=0.78, look=0.003, rel=0.12):
+    """先読みのピーク制限（声と効果音の山だけ下げて、全体を大きくできるように）。"""
+    n = len(x)
+    L = max(1, int(look * SR))
+    need = np.minimum(1.0, ceil / np.maximum(np.abs(x), 1e-9))
+    pad = np.concatenate([need, np.ones(L)])
+    win = np.lib.stride_tricks.sliding_window_view(pad, L + 1)[:n].min(1)
+    try:
+        from scipy.signal import lfilter
+        a = math.exp(-1 / (rel * SR))
+        # 下げるのはすぐ、戻すのはゆっくり：1-g を「最大値を保ちながら減衰」させる
+        r = 1 - win
+        out = np.empty(n)
+        acc = 0.0
+        for i in range(0, n, 4096):
+            seg = r[i:i + 4096]
+            y = np.empty(len(seg))
+            for j, v in enumerate(seg):
+                acc = v if v > acc else acc * a
+                y[j] = acc
+            out[i:i + 4096] = y
+        g = 1 - out
+        _ = lfilter
+    except Exception:
+        g = win
+    return x * g
+
+
+def lufs(x):
+    p = "/tmp/_hj_lufs.wav"
+    with wave.open(p, "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(SR)
+        w.writeframes((np.clip(x, -1, 1) * 32767).astype(np.int16).tobytes())
+    r = subprocess.run(["ffmpeg", "-i", p, "-af", "ebur128", "-f", "null", "-"], capture_output=True, text=True).stderr
+    return float([l for l in r.splitlines() if l.strip().startswith("I:")][-1].split()[1])
+
+
+def loudness_to(x, target=-13.0):
+    """参考元（約 -12〜-13 LUFS）に合わせる：大きさを上げて、山は先読みで抑える。"""
+    for _ in range(8):
+        I = lufs(x)
+        if abs(I - target) < 0.25:
+            break
+        x = limiter(x * 10 ** ((target - I) / 20 * 1.3))
+    return x
+
+
 def build_audio(total):
     n = int(total * SR)
     voice = np.zeros(n + SR)
@@ -462,7 +535,8 @@ def build_audio(total):
     s = sfx / max(1e-6, np.abs(sfx).max()) * 0.45
     b = bgm / max(1e-6, np.abs(bgm).max()) * 0.16
     mix = v + s + b
-    return mix[:n] / max(1e-6, np.abs(mix).max()) * 0.92
+    mix = mix[:n] / max(1e-6, np.abs(mix).max()) * 0.78
+    return loudness_to(mix, -13.0)
 
 
 def main():
@@ -498,7 +572,7 @@ def main():
         w.setframerate(SR)
         w.writeframes((audio * 32767).astype(np.int16).tobytes())
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", out + ".video.mp4", "-i", wav, "-filter_complex",
-                    "[1:a]loudnorm=I=-13.5:TP=-1.5:LRA=7[a]", "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+                    "[1:a]anull[a]", "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
                     "-ar", "44100", "-t", f"{total:.3f}", "-movflags", "+faststart", out], check=True)
     os.remove(out + ".video.mp4")
     os.remove(wav)

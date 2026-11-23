@@ -1,5 +1,6 @@
 # 自堕落シリーズ #27 ドトールのモーニング：リンク・タイトル・説明文
 - 1080：https://github.com/bigdanclub/daniel/blob/claude/cat-meme-longform/catmeme/release/jidaraku_27_doutor.mp4（4:04）
+- サムネ：thumbs/jidaraku_27_doutor_thumb_final.png（30代独身 平日休み／優雅な朝（給料日前））
 
 タイトル案（安さを前面に・きっかけ入り）：
 1. 【猫ミーム】30代独身、平日休みに1人でドトールのモーニング #猫ミーム #猫マニ

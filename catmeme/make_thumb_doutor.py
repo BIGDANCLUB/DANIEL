@@ -18,9 +18,9 @@ def one(name, runs, tag="30代独身　給料日の夜"):
     img = T.fill_photo("dt01_front", T.W, T.H, cy=0.3)
     cat = Image.open(os.path.join(D, "t_cat_coffee.png")).convert("RGBA")
     cat = cat.crop((0, 0, cat.width, int(cat.height * 0.6)))   # 上半身（顔・ドトールのカップまで）
-    k = 600 / cat.width
-    cat = cat.resize((600, int(cat.height * k)), Image.LANCZOS)
-    img.alpha_composite(cat, (T.W - cat.width - 10, T.H - cat.height - 200))   # 右寄せ：左の DOUTOR の看板と、猫のカップが見えるように
+    k = 640 / cat.width
+    cat = cat.resize((640, int(cat.height * k)), Image.LANCZOS)
+    img.alpha_composite(cat, ((T.W - cat.width) // 2, T.H - cat.height - 170))   # 11/23 ユーザー指定：猫は真ん中
     big = T.runs(runs, 170, 10, T.W - 220)
     bh = big.height + 40
     by = T.H - bh - 18

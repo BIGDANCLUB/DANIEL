@@ -24,7 +24,7 @@ def cuts():
         ('年16日', 'surprise_big_pupils_cat', 'そんなに？', 'confused_i_dont_know_cat', '日本の\n祝日の数', '😲', '🇯🇵'),
         ('祝日当日', 'cocky_dj_cat', '店も\n全部休み', 'sad_looking_away_tabby', 'サービス業は\n出勤', '🏪', '🏬'),
         ('有給', 'rizz_cat_rizz', '祝日より\n有給で休む', 'despair_dramatic_kitten', '祝日があるから\n有給は使わない', '🏖️', '💼'),
-        ('振替休日', 'dance_filmed_by_gray_cat', '何それ', 'dance_edm_cat', '月曜休み\n最高', '❓', '🎉'),
+        ('振替休日', 'huh_huh_cat', '何それ', 'dance_edm_cat', '月曜休み\n最高', '❓', '🎉'),
     ]
     return Wd.vs_rows(ST, rows)
 

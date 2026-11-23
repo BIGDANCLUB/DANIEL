@@ -3,6 +3,7 @@
 python3 catmeme/short_135_bus_machi.py → out/short_135_bus_machi.mp4
 - 11/23 分析（research/own_shorts_20261123.md）：札が数字の日本vs世界がいちばん強い → 数字の段で作る
 - 11/23 ユーザー指定：ベンチマークのようにエフェクト増し（Wd.vs_rows：絵文字スタンプは抜いた・線がゆれる・背景が流れる・猫大きめ・字幕は下まん中で色分け）
+- 11/23 修正：2時間 日本「バス会社がクレームで溢れる」・時刻表の段だけ日本→世界の順（世界の猫が上）
 - 段階ごとに「札だけ → 右の猫（世界）→ 左の猫（日本）」の3段。どの国・人もけなさない
 - 概要欄の注意：※よくあるイメージです（国や人によって違います）。BGM なし
 """
@@ -23,8 +24,8 @@ def cuts():
         ('20分', 'cocky_dj_cat', 'まだ\n早いほう', 'sad_looking_away_tabby', 'タクシーを\n考える', '🚌', '🚕'),
         ('30分', 'rizz_cat_rizz', '座って\n昼寝', 'scream_phone_orange_cat', '会社に\n遅刻の連絡', '😴', '☎️'),
         ('1時間', 'dance_edm_cat', '2台まとめて\n来る', 'despair_dramatic_kitten', '時刻表を\n疑う', '🚌', '📋'),
-        ('2時間', 'showoff_gojo_cosplay_cat', '今日は\n来ない日', 'blank_black_cat_zoning_out', 'ニュースになる', '🚫', '📺'),
-        ('時刻表', 'dance_filmed_by_gray_cat', 'そもそも\nない', 'money_counting_orange_cat', '1分単位', '❓', '🕐'),
+        ('2時間', 'showoff_gojo_cosplay_cat', '今日は\n来ない日', 'blank_black_cat_zoning_out', 'バス会社が\nクレームで溢れる', '🚫', '📺'),
+        ('時刻表', 'dance_filmed_by_gray_cat', 'そもそも\nない', 'money_counting_orange_cat', '1分単位', '❓', '🕐', 'J'),
     ]
     return Wd.vs_rows(ST, rows)
 

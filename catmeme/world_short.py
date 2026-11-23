@@ -838,9 +838,15 @@ def vs_rows(st, rows, heads=("日本", "世界"), total=59.9, emoji=False):
         lv, wcat, wcap, jcat, jcap = r[:5]
         we, je = (r[5], r[6]) if len(r) > 6 else (None, None)
         big = k >= len(rows) - 4
+        jfirst = len(r) > 7 and r[7] == "J"   # 11/23 ユーザー指定：この段だけ日本→世界の順（後から出る世界の猫を上に重ねる）
         a = split(st, lv, dur=1.2 * K, se=["explosion_chudoon"] if big else ["pi"])
-        b = split(st, lv, right=wcat, cap=wcap, cap_side="R", sound="R", dur=2.3 * K, se="don_hit")
-        c = split(st, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K, se="pikon")
+        if jfirst:
+            b = split(st, lv, left=jcat, cap=jcap, cap_side="L", sound="L", dur=2.3 * K, se="don_hit")
+            c = split(st, lv, left=jcat, right=wcat, cap=wcap, cap_side="R", sound="R", dur=3.0 * K, se="pikon")
+            c["right_top"] = True
+        else:
+            b = split(st, lv, right=wcat, cap=wcap, cap_side="R", sound="R", dur=2.3 * K, se="don_hit")
+            c = split(st, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K, se="pikon")
         if we and emoji:   # 11/23 ユーザー指定：絵文字スタンプは抜く（emoji=True のときだけ出す）
             b["emojis"] = [(we, 930, 860, 230)]
             c["emojis"] = [(we, 930, 860, 230)] + ([(je, 150, 860, 230)] if je else [])
@@ -851,5 +857,5 @@ def vs_rows(st, rows, heads=("日本", "世界"), total=59.9, emoji=False):
         t0 += c["dur"]
         for q in c["cats"]:
             q.update(h=860, w=660, bottom=1500, x=330 if q["x"] < 540 else 750)
-        c["cats"].sort(key=lambda q: q["x"] < 540)
+        c["cats"].sort(key=lambda q: (q["x"] < 540) != bool(c.get("right_top")))   # 後から出る側の猫を上に
     return out

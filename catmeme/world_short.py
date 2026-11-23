@@ -549,10 +549,10 @@ class Renderer(I.Renderer):
         c = self.c
         if c.get("ref"):   # 読み上げ型（11/22 参考どおり）：背景を少し大きくして、横にゆっくりスライド（カットをまたいで続く）
             if not hasattr(self, "wide"):
-                self.wide = cv2.resize(self.base, None, fx=1.18, fy=1.18, interpolation=cv2.INTER_LINEAR)
+                self.wide = cv2.resize(self.base, None, fx=1.35, fy=1.35, interpolation=cv2.INTER_LINEAR)
             T = c.get("t0", 0.0) + t
             span = self.wide.shape[1] - W
-            ph = (T / 30.0) % 2.0   # 30秒で端から端へ、そのあと戻る
+            ph = (T / 10.0) % 2.0   # 10秒で端から端へ、そのあと戻る（11/23 ユーザー指定：動いているのがわかるように）
             x0 = int(span * (ph if ph <= 1 else 2 - ph))
             y0 = (self.wide.shape[0] - H) // 2
             out = self.wide[y0:y0 + H, x0:x0 + W].copy()
@@ -827,7 +827,7 @@ def dedupe(cs, key="cats"):
     return cs
 
 
-def vs_rows(st, rows, heads=("日本", "世界"), total=59.9):
+def vs_rows(st, rows, heads=("日本", "世界"), total=59.9, emoji=False):
     """11/23 ユーザー指定：ベンチマークのようにエフェクトを増やした段階型。
     rows = [(札, 右の猫, 右の字幕, 左の猫, 左の字幕[, 右の絵文字, 左の絵文字]), ...]
     参考どおりの画面（線がゆれる・猫大きめで重なってよい・字幕は下まん中で左は青/右は赤・背景が横に流れる）＋
@@ -841,7 +841,7 @@ def vs_rows(st, rows, heads=("日本", "世界"), total=59.9):
         a = split(st, lv, dur=1.2 * K, se=["explosion_chudoon"] if big else ["pi"])
         b = split(st, lv, right=wcat, cap=wcap, cap_side="R", sound="R", dur=2.3 * K, se="don_hit")
         c = split(st, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K, se="pikon")
-        if we:
+        if we and emoji:   # 11/23 ユーザー指定：絵文字スタンプは抜く（emoji=True のときだけ出す）
             b["emojis"] = [(we, 930, 860, 230)]
             c["emojis"] = [(we, 930, 860, 230)] + ([(je, 150, 860, 230)] if je else [])
         out += [a, b, c]

@@ -262,6 +262,32 @@ def cap_box(t, full=False, col=None, size=None):
     return im
 
 
+EMOJI_FONT = "/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf"   # Noto Color Emoji（Apache 2.0）
+_EMO = {}
+
+
+def emoji_img(e, size):
+    """字幕に合わせた小道具（11/23 ユーザー指定：ベンチマークの体温計・時計のような絵）。白いふち取りのステッカーにする。"""
+    key = (e, size)
+    if key not in _EMO:
+        f = ImageFont.truetype(EMOJI_FONT, 109)
+        im = Image.new("RGBA", (160, 160), (0, 0, 0, 0))
+        ImageDraw.Draw(im).text((10, 10), e, font=f, embedded_color=True)
+        im = im.crop(im.getbbox())
+        k = size / max(im.size)
+        im = im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
+        a = np.asarray(im)[..., 3]
+        pad = 16
+        big = np.zeros((a.shape[0] + 2 * pad, a.shape[1] + 2 * pad), np.uint8)
+        big[pad:-pad, pad:-pad] = a
+        edge = cv2.dilate((big > 60).astype(np.uint8) * 255, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (19, 19)))
+        out = Image.new("RGBA", (big.shape[1], big.shape[0]), (255, 255, 255, 0))
+        out.putalpha(Image.fromarray(edge))
+        out.alpha_composite(im, (pad, pad))
+        _EMO[key] = out
+    return _EMO[key]
+
+
 def rounded(w, h, r, fill):
     im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     ImageDraw.Draw(im).rounded_rectangle((0, 0, w - 1, h - 1), r, fill=fill)
@@ -558,6 +584,12 @@ class Renderer(I.Renderer):
                 I.put(out, self.labels[i], min(max(lx, lw + 40), W - lw - 60), q["bottom"])
         for im, x, y in self.props:   # 小道具は猫の手前
             I.put(out, im, x, y)
+        for j, (e, x, y, size) in enumerate(c.get("emojis", [])):   # 字幕に合わせた絵：ポンと出て、ゆらゆら揺れる（11/23）
+            T = c.get("t0", 0.0) + t
+            ang = 9 * math.sin(T * 2 * math.pi / 1.1 + j * 1.7)
+            k = 1.0 if t > 0.12 else 0.6 + 0.4 * (t / 0.12)
+            im = emoji_img(e, int(size * k)).rotate(ang, expand=True, resample=Image.BICUBIC)
+            I.put(out, im, x, y + 6 * math.sin(T * 2 * math.pi / 0.9 + j))
         for im, x, y, at in self.bubbles:
             if t >= at:
                 I.put(out, im, x, y)
@@ -582,7 +614,11 @@ class Renderer(I.Renderer):
                 im = im.resize((int(im.width * k), int(im.height * k)), Image.BILINEAR)
             I.put(out, im, min(805, W - 10 - im.width / 2), 1290 - im.height / 2)   # 大きいときは右はしにそろえる
         if c["kind"] == "split" and self.cap is not None and not c.get("skit") and c.get("ref"):
-            I.put(out, self.cap, W / 2, min(1440, SAFE_BOTTOM - self.cap.height / 2))
+            cp = self.cap
+            if t < 0.12 and not c.get("cap_cont"):   # ポンと出る
+                k = 0.7 + 0.3 * (t / 0.12)
+                cp = cp.resize((max(1, int(cp.width * k)), max(1, int(cp.height * k))), Image.BILINEAR)
+            I.put(out, cp, W / 2, min(1440, SAFE_BOTTOM - self.cap.height / 2))
         elif c["kind"] == "split" and self.cap is not None and not c.get("skit"):
             cx = W / 2 if c.get("cap_full") else (275 if c["cap_side"] == "L" else 805)
             cx = min(max(cx, self.cap.width / 2 + 20), W - self.cap.width / 2 - 20)
@@ -738,6 +774,11 @@ def hai_extend(cs):
 def run(cs, band, out_path, prev=None):
     hai_extend(cs)
     dedupe(cs)
+    t0 = 0.0
+    for c in cs:   # 背景のスライド・線のゆれ・絵文字のゆれを、場面をまたいでつなげる（長さが変わったあとに数え直す）
+        if c.get("ref"):
+            c["t0"] = t0
+        t0 += c["dur"]
     I.run(cs, None, None, out_path, prev, band=band, renderer=Renderer)
 
 
@@ -784,3 +825,31 @@ def dedupe(cs, key="cats"):
             alt = [x for x in group if x not in used] or [x for x in MOODS[3] if x not in used]
             q["a"] = alt[(i * 7 + len(a)) % len(alt)]
     return cs
+
+
+def vs_rows(st, rows, heads=("日本", "世界"), total=59.9):
+    """11/23 ユーザー指定：ベンチマークのようにエフェクトを増やした段階型。
+    rows = [(札, 右の猫, 右の字幕, 左の猫, 左の字幕[, 右の絵文字, 左の絵文字]), ...]
+    参考どおりの画面（線がゆれる・猫大きめで重なってよい・字幕は下まん中で左は青/右は赤・背景が横に流れる）＋
+    字幕に合わせた絵文字の小道具（ポンと出て揺れる）。後から出る左の猫を上に重ねる。"""
+    K = total / (len(rows) * 6.5)
+    out = []
+    for k, r in enumerate(rows):
+        lv, wcat, wcap, jcat, jcap = r[:5]
+        we, je = (r[5], r[6]) if len(r) > 6 else (None, None)
+        big = k >= len(rows) - 4
+        a = split(st, lv, dur=1.2 * K, se=["explosion_chudoon"] if big else ["pi"])
+        b = split(st, lv, right=wcat, cap=wcap, cap_side="R", sound="R", dur=2.3 * K, se="don_hit")
+        c = split(st, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K, se="pikon")
+        if we:
+            b["emojis"] = [(we, 930, 860, 230)]
+            c["emojis"] = [(we, 930, 860, 230)] + ([(je, 150, 860, 230)] if je else [])
+        out += [a, b, c]
+    t0 = 0.0
+    for c in out:
+        c.update(blur=9, band_y=0, tag_y=460, heads=heads, ref=True, t0=t0)
+        t0 += c["dur"]
+        for q in c["cats"]:
+            q.update(h=860, w=660, bottom=1500, x=330 if q["x"] < 540 else 750)
+        c["cats"].sort(key=lambda q: q["x"] < 540)
+    return out

@@ -39,6 +39,7 @@
 ## 143_gyokai_nenshu
 - 1080：https://github.com/bigdanclub/daniel/blob/claude/cat-meme-longform/catmeme/release/short_143_gyokai_nenshu.mp4
 - タイトル：【猫ミーム】業界別 平均年収 勝ち抜きバトル #猫ミーム #猫マニ #サラリーマン #あるある
+- 固定コメント案：あなたの業界の平均年収、実感と合ってますか？（業界名だけでもOK）
 ```
 業界別 平均年収 勝ち抜きバトル
 #猫ミーム #shorts #catmemes #猫マニ #サラリーマン #あるある #年収 #平均年収

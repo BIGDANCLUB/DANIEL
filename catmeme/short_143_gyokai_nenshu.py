@@ -6,6 +6,7 @@ python3 catmeme/short_143_gyokai_nenshu.py → out/short_143_gyokai_nenshu.mp4
 - 数字：国税庁「令和6年分 民間給与実態統計調査」（令和7年9月公表）業種別の平均給与（1年を通じて勤務した給与所得者）を万円に四捨五入
   電気・ガス・熱供給・水道 8,324千円／金融・保険 7,023／情報通信 6,595／製造 5,676／建設 5,654／
   学術研究・専門技術サービス・教育 549万円／不動産・物品賃貸 4,955／運輸・郵便 4,876。全体平均 478万円
+- 11/24 ユーザー指定：字幕を生々しく人間味あふれる本音に作り直し（どの業界もけなさない）
 - 画面：Wd.chain_cut（棒は黄色・勝った棒は赤・数字が数え上がる・背景は横に流れる）。BGM なし
 """
 import os
@@ -45,22 +46,22 @@ def rnd(k, old, new, comment):
 
 
 def cuts():
-    intro = Wd.solo(ST, "", "業界別\n平均年収で\n勝負！", "scream_standing_marmot_fast", dur=3.4, se="gong_dora_jaan", big_say=True)
+    intro = Wd.solo(ST, "", "うちの業界\n平均より\n上だよね…？", "scream_standing_marmot_fast", dur=3.4, se="gong_dora_jaan", big_say=True)
     intro.update(no_tag=True, ref=True, blur=8, say_y=420, band_y=0)
     out = [intro]
     w = None
-    for k, (new, com) in enumerate([([UNYU, FUDO, GAKU], "専門知識はお金になる"),
-                                    ([KEN, SEI], "製造と建設はたった3万円差"),
-                                    ([JOHO], "ITが一気に抜き去る"),
-                                    ([KIN], "金融はさすがの貫禄"),
-                                    ([DEN], "差は130万円 インフラ最強")]):
+    for k, (new, com) in enumerate([([UNYU, FUDO, GAKU], "大学院の学費、やっと回収"),
+                                    ([KEN, SEI], "工場の夜勤手当が効いてる"),
+                                    ([JOHO], "でも終電まで障害対応"),
+                                    ([KIN], "ノルマの胃痛代込み"),
+                                    ([DEN], "台風の夜は家に帰れない")]):
         cs, w = rnd(k, w, new, com)
         out += cs
     end = [(KIN[0], KIN[1], False, False), (DEN[0], DEN[1], False, True)]
     out.append(Wd.chain_cut(ST, end, [("sad_looking_away_tabby", False, 270), ("happy_girlfriend_dance_cat", True, 380)], 4.0,
                             say="全体の平均は478万円", se="pikon"))
     out.append(Wd.chain_cut(ST, end, [("think_chin_paw_orange_cat", False, 270), ("dance_tabby_standing_cat", True, 380)], 4.5,
-                            say="あなたの業界はどうだった？"))
+                            say="あなたの業界、平均より上？"))
     return out
 
 

@@ -500,8 +500,10 @@ class Renderer(I.Renderer):
             if c.get("ref"):   # 読み上げ型（11/22）：字幕は下のまん中・日本は青、世界は赤
                 self.cap = cap_box(c["cap"], col=BLUE if c["cap_side"] == "L" else RED, size=100) if c.get("cap") else None
             else:
-                self.cap = cap_box(c["cap"], c.get("cap_full", False)) if c.get("cap") else None
-            self.cap2 = cap_box(c["cap2"]) if c.get("cap2") else None   # 反対側にも説明を出しっぱなしにする（11/7 ショート81）
+                # 11/24 ユーザー指定（全ショートのルール）：右側（世界・赤の見出しの側）の字幕は赤い字、左側は青い字
+                side_col = RED if c.get("cap_side") == "R" else BLUE
+                self.cap = cap_box(c["cap"], c.get("cap_full", False), col=None if c.get("cap_full") else side_col) if c.get("cap") else None
+            self.cap2 = cap_box(c["cap2"], col=BLUE if c.get("cap_side") == "R" else RED) if c.get("cap2") else None   # 反対側にも説明を出しっぱなしにする（11/7 ショート81）
             # 見出しの下に出しっぱなしにする説明（11/2 ショート57：平均と中央値のちがい）
             self.note = rich(c["note"], c.get("note_size", 46), stroke=6, stroke_col=WHITE, max_w=1040) if c.get("note") else None
 
@@ -620,6 +622,8 @@ class Renderer(I.Renderer):
                 I.put(out, self.labels[i], min(max(lx, lw + 40), W - lw - 60), q["bottom"])
         for im, x, y in self.props:   # 小道具は猫の手前
             I.put(out, im, x, y)
+        for txt, x, y in c.get("minis", []):   # 11/24：猫の左上などに小さい注記（例「※社員」）
+            I.put(out, _btx(txt, WHITE, 52, stroke=8, scol=BLACK), x, y)
         if c.get("talks"):   # 猫より手前に
             talks_draw(out, c, t)
         for j, (e, x, y, size) in enumerate(c.get("emojis", [])):   # 字幕に合わせた絵：ポンと出て、ゆらゆら揺れる（11/23）

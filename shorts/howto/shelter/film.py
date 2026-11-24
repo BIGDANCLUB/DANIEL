@@ -275,8 +275,8 @@ def ash_fall(n, f0, f1, xr=(-14, 14), yr=(0.3, 9.0), land=None, seed=1, name="as
     obs = []
     for i in range(n):
         x, y = r.uniform(*xr), r.uniform(*yr)
-        s = r.uniform(0.05, 0.1)
-        o = K.obj(K.ellip_mesh(s, s, s * 0.8, 6, 4), m, None, (x, y, 18), name=f"{name}{i}", shadow=False)
+        s = r.uniform(0.12, 0.24)
+        o = K.obj(K.ellip_mesh(s, s, s * 0.7, 6, 4), m, None, (x, y, 18), name=f"{name}{i}", shadow=False)
         t0 = f0 + r.uniform(0, (f1 - f0) * 0.75)
         zl = (land(x) if land else 0.0) + s * 0.6
         K.key_loc(o, 1, (x, y, 30))
@@ -286,7 +286,7 @@ def ash_fall(n, f0, f1, xr=(-14, 14), yr=(0.3, 9.0), land=None, seed=1, name="as
     return obs
 
 
-def ash_mat(strength=1.2):
+def ash_mat(strength=2.5):
     """灰：灰色で、うすく黄緑に光る（放射性）。"""
     m = bpy.data.materials.get("ash_glow")
     if m:
@@ -380,7 +380,7 @@ def s01_hole(nf):
     sh = K.empty(name="shovel")
     K.obj(K.cyl_mesh(0.025, 0.025, 1.1, 8), M("wood"), sh, (0, 0, -0.55), name="shovel_h")
     K.obj(K.box_mesh(0.25, 0.03, 0.3), M("pipe"), sh, (0, 0, -0.65), name="shovel_b")
-    hero.hold(sh, "R", (0, 0.02, 0), (0, 0, 0))
+    hero.hold(sh, "R", (0, 0.02, 0), (-50, 0, 0))
     hero.stand(1, shR=(40, 10), elR=40, shL=(40, -10), elL=40)
     hero.pose(fr(t_dig), shR=(120, 10), elR=20, shL=(110, -10), elL=20, spine=-25)
     hero.pose(fr(t_dig + 0.3), shR=(20, 10), elR=20, shL=(20, -10), elL=20, spine=-5)
@@ -412,7 +412,8 @@ def s01_hole(nf):
             (a1, (0.5, -16.0, 1.5), (0.5, 2.0, -0.8), 26),
             (a2 + 0.6, (1.0, -15.5, -1.0), (0.6, 2.0, -1.6), 26),
             (a3 + 0.3, (1.0, -15.0, -0.6), (0.8, 2.0, -0.8), 26),
-            (T, (1.0, -14.0, 0.2), (20.0, 300.0, 80.0), 24)]
+            (a3 + 1.0, (1.0, -14.5, -0.2), (4.0, 40.0, 10.0), 25),
+            (T, (1.0, -14.0, 0.2), (14.0, 120.0, 40.0), 24)]
     campath(keys, nf, shake=0.02)
 
 
@@ -464,16 +465,26 @@ def s02_blast(nf):
     for k, (x, y, kind) in enumerate([(-16, 4, 5), (8, 5, 1), (14, 3, 6), (-5, 10, 2), (18, 9, 0)]):
         trees.append(K.tree(x, y, kind, 1.0, k * 50 * D2R, name=f"tr{k}"))
     t_w = a5 - 0.3
-    for k in range(40):
-        y = 0.3 + k * 0.6
-        o = K.obj(K.ellip_mesh(1, 1, 1, 10, 8), K.smoke_mat("blast_dust", (0.62, 0.52, 0.40), 0.9), None, (-60, y, 1.5), name=f"wave{k}",
-                  shadow=False)
+    dm = K.smoke_mat("blast_dust", (0.50, 0.41, 0.30), 1.0)
+    for k in range(70):
+        y = 0.3 + k * 0.45
+        o = K.obj(K.ellip_mesh(1, 1, 1, 10, 8), dm, None, (-60, y, 1.5), name=f"wave{k}", shadow=False)
         K.key_scale(o, fr(t_w) - 1, 1e-3)
-        K.key_scale(o, fr(t_w), 3.0 + r.uniform(0, 1.5))
-        K.key_loc(o, fr(t_w), (-45 + r.uniform(-2, 2), y, r.uniform(1.0, 4.0)))
-        K.key_loc(o, fr(t_w + 1.6), (60 + r.uniform(-2, 2), y, r.uniform(1.0, 5.0)))
-        K.key_scale(o, fr(t_w + 1.6), 4.5)
+        K.key_scale(o, fr(t_w), 4.0 + r.uniform(0, 2.5))
+        K.key_loc(o, fr(t_w), (-45 + r.uniform(-3, 3), y, r.uniform(1.0, 5.0)))
+        K.key_loc(o, fr(t_w + 1.6), (60 + r.uniform(-3, 3), y, r.uniform(2.0, 7.0)))
+        K.key_scale(o, fr(t_w + 1.6), 7.0)
         K.key_scale(o, fr(t_w + 1.7), 1e-3)
+    deb = K.noisy("debris", (0.35, 0.28, 0.20), 2.0, 0.3, 0.2)
+    for k in range(40):
+        o = K.obj(K.box_mesh(r.uniform(0.2, 0.6), r.uniform(0.2, 0.6), r.uniform(0.1, 0.3)), deb, None, (-60, 0, -9), name=f"deb{k}")
+        t0 = t_w + r.uniform(0.2, 0.9)
+        x0 = -45 + 105 * (t0 - t_w) / 1.6
+        K.key_scale(o, fr(t0) - 1, 1e-4)
+        K.key_scale(o, fr(t0), 1.0)
+        K.projectile(o, fr(t0), fr(t0 + 0.7), (x0, r.uniform(1, 20), 0.3), (x0 + 30, r.uniform(1, 20), 0.5), arc=r.uniform(2, 6), align=True)
+        K.key_scale(o, fr(t0 + 0.7), 1.0)
+        K.key_scale(o, fr(t0 + 0.75), 1e-4)
     def x_at(t):
         return -45 + 105 * (t - t_w) / 1.6
     th = t_w + (-10 + 45) / 105 * 1.6
@@ -482,10 +493,11 @@ def s02_blast(nf):
         K.key_rot(ch, fr(th), (0, 0, 0))
         K.key_loc(ch, fr(th + 0.8), (30, 8, 9))
         K.key_rot(ch, fr(th + 0.8), (0.8, -2.4, 0.6))
-    for tr in trees:
+    for k, tr in enumerate(trees):
         tt = t_w + (tr.location.x + 45) / 105 * 1.6
-        K.key_rot(tr, fr(tt), tuple(tr.rotation_euler))
-        K.key_rot(tr, fr(tt + 0.25), (0, 75 * D2R, tr.rotation_euler.z))
+        for o in (tr, bpy.data.objects[f"tr{k}_trunk"]):
+            K.key_rot(o, fr(tt), tuple(o.rotation_euler))
+            K.key_rot(o, fr(tt + 0.25), (0, 75 * D2R, o.rotation_euler.z))
     _ = x_at
     # 地面の下：部屋の壁が うすい → 分厚い鉄筋コンクリートに。入口に鋼鉄の扉
     room_cut = cutter_box(-RX - THIN - 0.02, RX + THIN + 0.02, RF - THIN - 0.02, RC + THIN + 0.02, name="cut_room")
@@ -510,9 +522,11 @@ def s02_blast(nf):
     for k in range(5):
         z = RF - THICK / 2 + (RC - RF + THICK) * k / 4
         K.poly_curve([(-RX - THICK / 2, -0.03, z), (RX + THICK / 2, -0.03, z)], 0.025, rbm, f"rb_h{k}")
-    shell_hl = box((2 * RX + 2 * THICK + 0.1, 0.05, RC - RF + 2 * THICK + 0.1), (0, -0.05, (RC + RF) / 2),
-                   hl("shell", fr(t_rc), fr(t_rc + 0.15), fr(e6 + 0.4), fr(e6 + 0.7)), "shell_hl", shadow=False)
-    _ = shell_hl
+    shm = hl("shell", fr(t_rc), fr(t_rc + 0.15), fr(e6 + 0.4), fr(e6 + 0.7))
+    W_, H_ = 2 * RX + 2 * THICK, RC - RF + 2 * THICK
+    for (sx_, sz_, cx_, cz_) in ((W_, THICK, 0, RC + THICK / 2), (W_, THICK, 0, RF - THICK / 2), (THICK, H_, -RX - THICK / 2, (RC + RF) / 2),
+                                 (THICK, RC - RF - 2.05 + THICK, RX + THICK / 2, (RC + THICK + RF + 2.05) / 2)):
+        box((sx_ + 0.04, 0.05, sz_ + 0.04), (cx_, -0.05, cz_), shm, "shell_hl", shadow=False)
     door_h, door = blast_door(closed=False)
     K.key_rot(door_h, 1, (0, 0, -95 * D2R))
     K.show(door_h, fr(a7))
@@ -542,9 +556,9 @@ def s02_blast(nf):
     fill_light((0.0, -24.0, -1.0), (0, 0, -1.5), 3000, 16.0)
     cut1 = a6 - 0.05
     cut2 = a7 + 0.1
-    keys = [(0.0, (-2.0, -20.0, 6.0), (-120.0, 400.0, 60.0), 26),
-            (a5, (-4.0, -24.0, 5.0), (-10.0, 50.0, 8.0), 24),
-            (cut1 - 0.02, (2.0, -24.0, 4.0), (5.0, 40.0, 5.0), 24),
+    keys = [(0.0, (-2.0, -20.0, 4.0), (-200.0, 600.0, 100.0), 24),
+            (a5 - 0.1, (-3.0, -24.0, 4.0), (-150.0, 500.0, 70.0), 24),
+            (cut1 - 0.02, (0.0, -26.0, 4.0), (-60.0, 300.0, 40.0), 24),
             (cut1, (0.8, -17.0, -1.3), (0.8, 2.0, -1.6), 26),
             (cut2 - 0.02, (1.4, -15.5, -1.3), (1.2, 2.0, -1.6), 27),
             (cut2, (RX + 3.6, -3.2, RF + 1.6), (RX + 0.1, 0.9, RF + 1.0), 26),
@@ -587,17 +601,17 @@ def s03_soil(nf):
     _ = tx
     # 死の灰が降って、地面（と盛り土）に積もる
     land = lambda x: (min(1.0, max(0.0, (6.0 - abs(x)) / 1.4)) if abs(x) < 6.0 else 0.0)   # noqa: E731
-    ash_fall(110, fr(a9), fr(a9 + 2.2), land=None, seed=3, name="ashA")
+    ash_fall(220, fr(a9), fr(a9 + 2.2), xr=(-16, 16), yr=(0.3, 5.0), land=None, seed=3, name="ashA")
     am = ash_mat()
-    am2 = K.mat("ash_glow2", (0.55, 0.56, 0.50), 0.9, emit=RAD, emit_strength=1.2)
+    am2 = K.mat("ash_glow2", (0.55, 0.56, 0.50), 0.9, emit=RAD, emit_strength=2.5)
     obs = ash_fall(40, fr(t_m + 0.4), fr(t_m + 0.9), xr=(-4.5, 4.5), land=land, seed=9, name="ashB", glow_m=am2)
     for o in obs:
         K.show(o, fr(t_m + 0.4))
     _ = am
     # 放射線：灰から下へ。土をかぶせる前は、うすい土とコンクリートの屋根を通りぬけて部屋の中まで → 盛り土のあとは、土の中で止まる
-    p_before = [[(x, 0.5, 0.1), (x + 0.3, 0.5, RF + 0.6)] for x in (-2.4, -1.2, 0.0, 1.2, 2.4)]
+    p_before = [[(x, -0.12, 0.3), (x + 0.3, -0.12, RF + 0.6)] for x in (-2.4, -1.2, 0.0, 1.2, 2.4)]
     rays(p_before, fr(a10 + 0.1), fr(t_m + 0.25), "rayA", speed=6.0)
-    p_after = [[(x, 0.5, 1.15), (x + 0.1, 0.5, 0.25 - 0.08 * (k % 3))] for k, x in enumerate((-3.2, -1.6, 0.0, 1.6, 3.2))]
+    p_after = [[(x, -0.12, 1.25), (x + 0.1, -0.12, 0.25 - 0.08 * (k % 3))] for k, x in enumerate((-3.2, -1.6, 0.0, 1.6, 3.2))]
     rays(p_after, fr(t_m + 0.6), nf, "rayB", speed=2.5)
     hero = hero_in_room(loc=(-0.6, 1.4, RF), face=0)
     hero.pose(fr(a11 + 0.2), shL=(150, 40), shR=(150, 40), elL=120, elR=120, neck=-20, spine=8)
@@ -654,11 +668,11 @@ def s04_entrance(nf):
     K.show(lad, fr(t_c + 0.25))
     # 放射線：坂道ではまっすぐ扉まで届く → 曲げたあとは、縦穴の底と曲がり角で止まる
     dx, dz = SLANT[0][0] - (RX + 6.3), RF + 1.0 - 0.6
-    p1 = [[(RX + 6.3 + 0.2 * k, 0.7, 0.6 + 0.25 * k), (RX + 0.35, 0.7, RF + 0.8 + 0.25 * k)] for k in range(3)]
+    p1 = [[(RX + 6.3 + 0.2 * k, -0.12, 0.6 + 0.25 * k), (RX + 0.35, -0.12, RF + 0.8 + 0.25 * k)] for k in range(3)]
     _ = (dx, dz)
     rays(p1, fr(a15), fr(t_c), "rayS", speed=7.0)
-    p2 = [[(SHAFT[0] + 0.3 + 0.3 * k, 0.7, 1.4), (SHAFT[0] + 0.3 + 0.3 * k, 0.7, RF + 0.3)] for k in range(3)]
-    p2 += [[(SHAFT[1] + 1.2, 0.7, 1.4), (SHAFT[0] + 0.6, 0.7, RF + 0.9)]]
+    p2 = [[(SHAFT[0] + 0.3 + 0.3 * k, -0.12, 1.4), (SHAFT[0] + 0.3 + 0.3 * k, -0.12, RF + 0.3)] for k in range(3)]
+    p2 += [[(SHAFT[1] + 1.2, -0.12, 1.4), (SHAFT[0] + 0.6, -0.12, RF + 0.9)]]
     rays(p2, fr(t_c + 0.4), nf, "rayL", speed=4.0)
     # 曲がり角に「×」（止まる）
     xm = hl("xmark", fr(a17 + 0.2), fr(a17 + 0.35), None, None, (1.0, 0.25, 0.15), 0.97, 5.0)

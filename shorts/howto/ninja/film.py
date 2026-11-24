@@ -701,7 +701,7 @@ def n06_katana(nf):
     K.key_rot(kt, 1, (0, 0, 0))
     K.key_loc(kt, fr(a27 + 0.2), (1.35, -1.3, 0.12))
     K.key_loc(kt, fr(a27 + 0.45), (1.35, -1.3, Z1 + 0.5))
-    kt_hl = box((0.1, 1.1, 0.06), (0, 0.35, 0), hl("kt", fr(a26 + 0.5), fr(a26 + 0.7), fr(a28 + 0.5), fr(a28 + 0.8), YELLOW, 0.55, 3.0), "kt_hl", kt,
+    kt_hl = box((0.1, 1.1, 0.06), (0, 0.35, 0), hl("kt", fr(a26 + 0.1), fr(a26 + 0.3), fr(a28 + 0.5), fr(a28 + 0.8), YELLOW, 0.55, 4.0), "kt_hl", kt,
                 shadow=False)
     _ = kt_hl
     K.marker("katana", (0, 0.4, 0), kt)
@@ -739,7 +739,8 @@ def n06_katana(nf):
     en.pose(nf, shL=(70, 50), shR=(70, 50), elL=20, elR=20, hipL=90, hipR=90, kneeL=-60, kneeR=-60, hz=-0.6, spine=-20, neck=15)
     K.marker("enemy", (0, 0, 0.2), en.j["neck"])
     fill_light((0.0, -14.0, 2.5), (0, 0, 0.6), 4000, 12.0)
-    fill_light((1.6, -3.4, 0.25), (1.3, -1.0, 0.15), 260, 1.2, name="under")          # 床下を照らす
+    fill_light((1.9, -2.4, 0.3), (1.35, -0.9, 0.1), 1500, 0.8, name="under")          # 床下を照らす
+    fill_light((0.6, -2.6, 0.3), (1.35, -0.9, 0.1), 600, 0.8, name="under2")
     cut = a26
     keys = [(0.0, (-4.0, -9.0, 4.2), (-0.5, -0.6, 0.6), 28),
             (cut - 0.02, (-2.5, -8.6, 3.2), (-0.2, -0.8, 0.8), 30),
@@ -807,12 +808,12 @@ def n07_window(nf):
     en.place(nf, face=0)
     K.marker("enemy", (0, 0, 0.2), en.j["neck"])
     # 主人公（中）：かんぬきを抜いて、窓から顔を出す
-    hero = K.Person((WX + 0.5, Y0 + 0.8, Z1), 180, K.HERO_NINJA, name="hero")
+    hero = K.Person((WX + 1.25, Y0 + 0.55, Z1), 150, K.HERO_NINJA, name="hero")
     hero.stand(1)
     hero.pose(fr(t_open - 0.35), shR=(150, -10), elR=60)
     hero.pose(fr(t_open - 0.05), shR=(170, -10), elR=20)
-    hero.place(fr(t_open + 0.2), (WX + 0.5, Y0 + 0.8, Z1), 180)
-    hero.place(fr(t_open + 0.55), (WX - 0.3, Y0 + 0.4, Z1), 180)
+    hero.place(fr(t_open + 0.2), (WX + 1.25, Y0 + 0.55, Z1), 150)
+    hero.place(fr(t_open + 0.55), (WX + 0.35, Y0 + 0.45, Z1), 180)
     hero.pose(fr(t_open + 0.6), shL=(15, 10), shR=(150, 20), elR=95)
     fill_light((WX + 1.2, Y0 + 3.2, 2.6), (WX, Y0, 1.6), 900, 3.0, name="inner")
     fill_light((WX - 2.5, Y0 + 2.0, 2.2), (WX, Y0 + 0.6, 1.4), 400, 2.0, name="inner2")
@@ -820,10 +821,10 @@ def n07_window(nf):
     keys = [(0.0, (-4.5, -11.0, 2.6), (0.0, Y0, 1.6), 30),
             (a29 + 0.6, (-1.8, -8.6, 2.0), (WX, Y0, 1.8), 30),
             (cut - 0.02, (-0.9, -7.4, 2.0), (WX, Y0, 1.8), 32),
-            (cut, (WX + 1.5, Y0 + 2.6, 2.1), (WX, Y0 - 0.5, 1.8), 30),            # 中から：かんぬきが見える
-            (a31 + 0.4, (WX + 1.2, Y0 + 2.3, 2.0), (WX, Y0 - 0.5, 1.8), 30),
-            (a32, (WX + 1.0, Y0 + 2.6, 2.1), (WX, Y0 - 0.5, 1.7), 28),
-            (T, (WX + 0.9, Y0 + 3.0, 2.2), (WX - 0.3, Y0 - 1.0, 1.3), 28)]
+            (cut, (WX - 1.4, Y0 + 2.6, 2.0), (WX + 0.3, Y0, 1.85), 30),            # 中から：かんぬきが見える
+            (a31 + 0.4, (WX - 1.2, Y0 + 2.3, 2.0), (WX + 0.3, Y0, 1.85), 30),
+            (a32, (WX - 1.3, Y0 + 2.6, 2.1), (WX + 0.2, Y0, 1.7), 28),
+            (T, (WX - 1.6, Y0 + 3.0, 2.2), (WX + 0.0, Y0 - 1.0, 1.3), 28)]
     campath(keys, nf, shake=0.02, cuts=[cut])
 
 

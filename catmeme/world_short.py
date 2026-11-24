@@ -942,6 +942,16 @@ def bars_draw(out, c, t):
         box.alpha_composite(nm, ((box.width - nm.width) // 2, 8))
         box.alpha_composite(am, ((box.width - am.width) // 2, 12 + nm.height))
         I.put(out, box, b["x"], BAR_BASE + 6 + bh / 2)
+    for j, (x, y, txt, big) in enumerate(c.get("talks", [])):   # 11/24 ユーザー指定：猫がしゃべっている吹き出し（勝ち＝大きく、負け＝小さく）
+        tt = t - 0.08 * j
+        if tt < 0:
+            continue
+        im = bubble_talk(txt, big)
+        k3 = 1.0 if tt > 0.15 else 0.5 + 0.5 * (tt / 0.15)
+        if k3 != 1.0:
+            im = im.resize((max(1, int(im.width * k3)), max(1, int(im.height * k3))), Image.BILINEAR)
+        cx = min(max(x, im.width / 2 + 16), W - im.width / 2 - 16)
+        I.put(out, im, cx, y - im.height / 2)
     if c.get("say_mid"):   # 字幕：棒の上のまん中に白い太字
         sm = _btx(c["say_mid"], WHITE, 84, stroke=12, scol=BLACK, max_w=W - 60)
         k2 = 1.0 if t > 0.12 else 0.7 + 0.3 * (t / 0.12)
@@ -962,3 +972,25 @@ def chain_cut(st, bars, cats, dur, say=None, se=None, say_y=700, bgvid="v09_shib
     if se:
         c["se"] = se
     return c
+
+
+_TALK = {}
+
+
+def bubble_talk(txt, big):
+    """しゃべる吹き出し：白い角丸・黒い太いふち・下に三角のしっぽ。勝ち＝赤い太字（大）、負け＝青い字（小）。3行まで。"""
+    key = (txt, big)
+    if key not in _TALK:
+        tx = rich([[(ln, RED if big else BLUE)] for ln in txt.split("\n")], 76 if big else 54, stroke=4, stroke_col=WHITE,
+                  max_w=620 if big else 360, lh=1.08)
+        pw, ph = tx.width + 56, tx.height + 40
+        im = Image.new("RGBA", (pw + 12, ph + 52), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        cx = im.width // 2
+        d.polygon([(cx - 26, ph - 4), (cx + 26, ph - 4), (cx, ph + 44)], fill=BLACK)
+        d.rounded_rectangle((0, 0, pw + 11, ph + 1), 34, fill=BLACK)
+        d.polygon([(cx - 17, ph - 8), (cx + 17, ph - 8), (cx, ph + 32)], fill=WHITE)
+        d.rounded_rectangle((7, 7, pw + 4, ph - 6), 28, fill=WHITE)
+        im.alpha_composite(tx, ((im.width - tx.width) // 2, (ph - tx.height) // 2))
+        _TALK[key] = im
+    return _TALK[key]

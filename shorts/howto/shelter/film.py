@@ -168,7 +168,7 @@ LPASS = [(RX + 0.3, RF), (SHAFT[1], RF), (SHAFT[1], 0.05), (SHAFT[0], 0.05), (SH
 
 def ground_and_soil(cutters):
     """土の断面（手前の面が y=0）と、その上の草地。cutters で部屋・通路の穴をあける。"""
-    soil = box((80.0, DEPTH, 14.0), (0, DEPTH / 2, -7.0), soil_layers(), "soil")
+    soil = box((80.0, DEPTH, 30.0), (0, DEPTH / 2, -15.0), soil_layers(), "soil")
     subtract(soil, cutters)
     grass = box((80.0, DEPTH, 0.08), (0, DEPTH / 2, 0.0), K.grass_mat(), "grass_top")
     subtract(grass, cutters)
@@ -268,7 +268,7 @@ def text3d(s, loc, size=0.6, m=None, name="txt"):
     return o
 
 
-def ash_fall(n, f0, f1, xr=(-14, 14), yr=(0.3, 9.0), land=None, seed=1, name="ash", glow_m=None):
+def ash_fall(n, f0, f1, xr=(-14, 14), yr=(0.3, 9.0), land=None, seed=1, name="ash", glow_m=None, landed=False):
     """死の灰：空から降ってきて地面に積もる。land(x)＝その x の地面の高さ。"""
     r = random.Random(seed)
     m = glow_m or ash_mat()
@@ -279,6 +279,10 @@ def ash_fall(n, f0, f1, xr=(-14, 14), yr=(0.3, 9.0), land=None, seed=1, name="as
         o = K.obj(K.ellip_mesh(s, s, s * 0.7, 6, 4), m, None, (x, y, 18), name=f"{name}{i}", shadow=False)
         t0 = f0 + r.uniform(0, (f1 - f0) * 0.75)
         zl = (land(x) if land else 0.0) + s * 0.6
+        if landed:
+            o.location = (x, y, zl)
+            obs.append(o)
+            continue
         K.key_loc(o, 1, (x, y, 30))
         K.key_loc(o, int(t0), (x + r.uniform(-1, 1), y, 16))
         K.key_loc(o, int(t0) + r.randint(30, 50), (x, y, zl))
@@ -645,8 +649,8 @@ def s04_entrance(nf):
     blast_door(True)
     mound()
     # 灰（入口のまわり）
-    ash_fall(70, 1, 2, xr=(RX + 0.5, RX + 12), yr=(0.3, 6.0), seed=21, name="ashE")
-    ash_fall(50, 1, 2, xr=(-12, -6.5), yr=(0.3, 6.0), seed=22, name="ashW")
+    ash_fall(90, 1, 2, xr=(RX + 0.5, RX + 12), yr=(0.3, 6.0), seed=21, name="ashE", landed=True)
+    ash_fall(60, 1, 2, xr=(-12, -6.5), yr=(0.3, 6.0), seed=22, name="ashW", landed=True)
     # まっすぐの坂道 → 直角に曲げた通路（縦穴＋横の通路）に作りかえる
     t_c = a16 + 0.6
     K.key_loc(lp, 1, (0, 0, -60))
@@ -730,7 +734,7 @@ def s05_air(nf):
     blast_door(True)
     mound()
     ash_fall(80, 1, 2, xr=(-12, 12), yr=(0.3, 6.0), land=lambda x: (min(1.0, max(0.0, (6.0 - abs(x)) / 1.4)) if abs(x) < 6.0 else 0.0),
-             seed=31, name="ashG")
+             seed=31, name="ashG", landed=True)
     t_v = a20 - 0.4
     vr, filt, blades = vent()
     K.show(vr, fr(t_v), pop=6)
@@ -794,19 +798,21 @@ def s06_days(nf):
     # 地上の灰の光が、時間とともに弱まる（7時間で 1/10、2日で 1/100、2週間で 1/1000）
     land = lambda x: (min(1.0, max(0.0, (6.0 - abs(x)) / 1.4)) if abs(x) < 6.0 else 0.0)   # noqa: E731
     am = ash_mat(3.0)
-    ash_fall(150, 1, 2, xr=(-14, 14), yr=(0.3, 9.0), land=land, seed=41, name="ashD", glow_m=am)
+    ash_fall(180, 1, 2, xr=(-14, 14), yr=(0.3, 9.0), land=land, seed=41, name="ashD", glow_m=am, landed=True)
     b = am.node_tree.nodes["Principled BSDF"]
     for t, v in ((0.0, 3.0), (a25 + 0.2, 3.0), (a25 + 1.2, 0.9), (a26 + 0.6, 0.25), (a27 + 1.0, 0.0)):
         b.inputs["Emission Strength"].default_value = v
         b.inputs["Emission Strength"].keyframe_insert("default_value", frame=fr(t))
     # 壁の時計とカレンダー（ページがめくれる）
-    clock = K.empty((-2.2, RY - 0.05, RF + 1.75), None, "clock")
+    clock = K.empty((-1.3, RY - 0.05, RF + 1.6), None, "clock")
+    clock.scale = (1.5, 1.5, 1.5)
     K.obj(K.cyl_mesh(0.28, 0.28, 0.04, 24), K.mat("clock_face", (0.95, 0.95, 0.92), 0.4), clock, (0, 0, 0), rot=(90 * D2R, 0, 0), name="clock_f")
     hand = K.empty((0, -0.05, 0), clock, "hand")
     box((0.03, 0.02, 0.22), (0, 0, 0.1), K.mat("hand_m", (0.05, 0.05, 0.05), 0.4), "clock_h", hand)
     K.key_rot(hand, fr(a25), (0, 0, 0))
     K.key_rot(hand, fr(a28), (0, 2 * math.pi * 14, 0))
-    cal = K.empty((-1.2, RY - 0.05, RF + 1.6), None, "cal")
+    cal = K.empty((-0.1, RY - 0.05, RF + 1.5), None, "cal")
+    cal.scale = (1.6, 1.6, 1.6)
     box((0.5, 0.02, 0.6), (0, 0, 0), K.mat("cal_back", (0.9, 0.9, 0.88), 0.6), "cal_b", cal)
     box((0.5, 0.025, 0.12), (0, -0.005, 0.24), K.mat("cal_top", (0.8, 0.1, 0.08), 0.6), "cal_t", cal)
     pages = []
@@ -850,8 +856,8 @@ def s06_days(nf):
     fill_light((0.0, -22.0, -0.5), (0, 0, -1.2), 3000, 16.0)
     keys = [(0.0, (-0.6, -9.0, -1.4), (-1.2, 2.0, -1.6), 28),
             (a25, (-1.0, -16.0, 0.6), (-0.5, 2.0, -0.4), 26),
-            (a26, (-1.4, -8.0, -1.2), (-1.6, RY, -1.3), 30),
-            (a27 + 0.6, (-1.2, -8.5, -1.3), (-1.5, RY, -1.3), 30),
+            (a26, (-0.7, -4.6, -1.3), (-0.7, RY, -1.35), 30),
+            (a27 + 0.6, (-0.6, -5.0, -1.3), (-0.6, RY, -1.35), 30),
             (a28, (0.8, -10.5, -1.4), (1.2, 2.5, -1.8), 28),
             (T, (0.8, -11.5, -1.3), (1.2, 2.5, -1.8), 28)]
     campath(keys, nf, shake=0.02)

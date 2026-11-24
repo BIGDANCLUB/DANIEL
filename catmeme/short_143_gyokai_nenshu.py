@@ -7,7 +7,8 @@ python3 catmeme/short_143_gyokai_nenshu.py → out/short_143_gyokai_nenshu.mp4
   電気・ガス・熱供給・水道 8,324千円／金融・保険 7,023／情報通信 6,595／製造 5,676／建設 5,654／
   学術研究・専門技術サービス・教育 549万円／不動産・物品賃貸 4,955／運輸・郵便 4,876。全体平均 478万円
 - 11/24 ユーザー指定：字幕を生々しく人間味あふれる本音に作り直し（どの業界もけなさない）
-- 画面：Wd.chain_cut（棒は黄色・勝った棒は赤・数字が数え上がる・背景は横に流れる）。BGM なし
+- 11/24 ユーザー指定：配置は参考動画（日本vs海外 損する国）どおり・背景は動画（渋谷スクランブル交差点）
+- 画面：Wd.chain_cut（棒は黄色・勝った棒は赤・金額が数え上がる）。BGM なし
 """
 import os
 
@@ -27,19 +28,19 @@ def rnd(k, old, new, comment):
     items = ([old] if old else []) + new
     win = max(items, key=lambda x: x[1])
     grow = [(n, v, (n, v) != old, False) for n, v in items]
-    nerv = [(("smug_squint_bicolor_cat" if (n, v) == old else NERV[(k + i) % 4]), False, 280) for i, (n, v) in enumerate(items)]
+    nerv = [(("smug_squint_bicolor_cat" if (n, v) == old else NERV[(k + i) % 4]), False, 340) for i, (n, v) in enumerate(items)]
     out = [Wd.chain_cut(ST, grow, nerv, 3.4, se="drumroll")]
     res = [(n, v, False, (n, v) == win) for n, v in items]
     j = 0
     cats = []
     for n, v in items:
         if (n, v) == win:
-            cats.append((JOY[k % len(JOY)], True, 380))
+            cats.append((JOY[k % len(JOY)], True, 460))
         else:
-            cats.append((SAD[(k + j) % len(SAD)], False, 270))
+            cats.append((SAD[(k + j) % len(SAD)], False, 340))
             j += 1
     out.append(Wd.chain_cut(ST, res, cats, 3.0, se="explosion_chudoon"))
-    cats2 = [((JOY[(k + 2) % len(JOY)], True, 380) if (n, v) == win else (SAD[(k + i + 2) % len(SAD)], False, 270))
+    cats2 = [((JOY[(k + 2) % len(JOY)], True, 460) if (n, v) == win else (SAD[(k + i + 2) % len(SAD)], False, 340))
              for i, (n, v) in enumerate(items)]
     out.append(Wd.chain_cut(ST, res, cats2, 3.2, say=comment, se="pikon"))
     return out, win
@@ -47,7 +48,7 @@ def rnd(k, old, new, comment):
 
 def cuts():
     intro = Wd.solo(ST, "", "うちの業界\n平均より\n上だよね…？", "scream_standing_marmot_fast", dur=3.4, se="gong_dora_jaan", big_say=True)
-    intro.update(no_tag=True, ref=True, blur=8, say_y=420, band_y=0)
+    intro.update(no_tag=True, bgvid="v09_shibuya_crossing_aerial", blur=3, dark=0.15, say_y=420, band_y=0)
     out = [intro]
     w = None
     for k, (new, com) in enumerate([([UNYU, FUDO, GAKU], "大学院の学費、やっと回収"),
@@ -58,9 +59,9 @@ def cuts():
         cs, w = rnd(k, w, new, com)
         out += cs
     end = [(KIN[0], KIN[1], False, False), (DEN[0], DEN[1], False, True)]
-    out.append(Wd.chain_cut(ST, end, [("sad_looking_away_tabby", False, 270), ("happy_girlfriend_dance_cat", True, 380)], 4.0,
+    out.append(Wd.chain_cut(ST, end, [("sad_looking_away_tabby", False, 340), ("happy_girlfriend_dance_cat", True, 460)], 4.0,
                             say="全体の平均は478万円", se="pikon"))
-    out.append(Wd.chain_cut(ST, end, [("think_chin_paw_orange_cat", False, 270), ("dance_tabby_standing_cat", True, 380)], 4.5,
+    out.append(Wd.chain_cut(ST, end, [("think_chin_paw_orange_cat", False, 340), ("dance_tabby_standing_cat", True, 460)], 4.5,
                             say="あなたの業界、平均より上？"))
     return out
 

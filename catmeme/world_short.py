@@ -545,9 +545,41 @@ class Renderer(I.Renderer):
         cy = max(top + h * 0.3, self.tag_y + 120 + self.say.height / 2)
         self.say_xy = (cx, cy)
 
+    def vid_frame(self, T):
+        """11/24 ユーザー指定：動画の背景（assets_video/wide の横動画を縦に切り出してくり返す・少しぼかす）。"""
+        c = self.c
+        if not hasattr(self, "cap"):
+            self.cap = cv2.VideoCapture(os.path.join(HERE, "assets_video", "wide", c["bgvid"] + ".mp4"))
+            self.vfps = self.cap.get(cv2.CAP_PROP_FPS) or 30
+            self.vn = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 1
+            self.vi = -1
+            self.vimg = None
+        want = int(T * self.vfps) % self.vn
+        if want < self.vi or self.vi < 0 or want - self.vi > 60:
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, want)
+            self.vi = want - 1
+        while self.vi < want:
+            ok, fr = self.cap.read()
+            if not ok:
+                self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                ok, fr = self.cap.read()
+            self.vi += 1
+            if ok:
+                self.vimg = fr
+        fr = self.vimg
+        k = H / fr.shape[0]
+        fr = cv2.resize(fr, (int(fr.shape[1] * k), H), interpolation=cv2.INTER_LINEAR)
+        x0 = (fr.shape[1] - W) // 2
+        fr = fr[:, x0:x0 + W].astype(np.float32) / 255
+        if c.get("blur"):
+            fr = cv2.GaussianBlur(fr, (0, 0), c["blur"])
+        return fr * (1 - c.get("dark", 0.0))
+
     def frame(self, t):
         c = self.c
-        if c.get("ref"):   # 読み上げ型（11/22 参考どおり）：背景を少し大きくして、横にゆっくりスライド（カットをまたいで続く）
+        if c.get("bgvid"):
+            out = self.vid_frame(c.get("t0", 0.0) + t)
+        elif c.get("ref"):   # 読み上げ型（11/22 参考どおり）：背景を少し大きくして、横にゆっくりスライド（カットをまたいで続く）
             if not hasattr(self, "wide"):
                 self.wide = cv2.resize(self.base, None, fx=1.35, fy=1.35, interpolation=cv2.INTER_LINEAR)
             T = c.get("t0", 0.0) + t
@@ -777,8 +809,8 @@ def run(cs, band, out_path, prev=None):
     hai_extend(cs)
     dedupe(cs)
     t0 = 0.0
-    for c in cs:   # 背景のスライド・線のゆれ・絵文字のゆれを、場面をまたいでつなげる（長さが変わったあとに数え直す）
-        if c.get("ref"):
+    for c in cs:   # 背景のスライド・線のゆれ・絵文字のゆれ・動画の背景を、場面をまたいでつなげる（長さが変わったあとに数え直す）
+        if c.get("ref") or c.get("bgvid"):
             c["t0"] = t0
         t0 += c["dur"]
     I.run(cs, None, None, out_path, prev, band=band, renderer=Renderer)
@@ -870,7 +902,9 @@ def vs_rows(st, rows, heads=("日本", "世界"), total=59.9, emoji=False, ref=F
 
 
 # ---- 勝ち抜き棒グラフ（11/24 ユーザー指定：業界別の平均年収。順位は出さず、低い順に比べて勝った側が次へ） ----
-BAR_BASE, BAR_MAXH, BAR_MAXV = 1080, 560, 900.0
+# 配置は参考動画（日本vs海外 損する国はどこ？）どおり：縦に長い棒・下に白い札（業界名＋金額）・猫は棒の下のほうに大きく重ねる・
+# 字幕は棒の上にまん中で白い太字（黒ふち）。背景は動画
+BAR_BASE, BAR_MAXH, BAR_MAXV = 1300, 820, 900.0
 _BARTX = {}
 
 
@@ -882,41 +916,45 @@ def _btx(t, col, size, stroke=8, scol=BLACK, max_w=1000):
 
 
 def bars_draw(out, c, t):
-    """c["bars"] = [dict(name, val(万円), x, w, grow, win)]。grow の棒は 0 からのびて数字が数え上がる。win の棒は赤く光る。"""
+    """c["bars"] = [dict(name, val(万円), x, w, grow, win)]。grow の棒は 0 からのびて金額が数え上がる。win の棒は赤。"""
     for b in c["bars"]:
         k = 1.0
         if b.get("grow"):
             u = min(1.0, max(0.0, (t - 0.15) / 2.2))
             k = 1 - (1 - u) ** 3
-        full = BAR_MAXH * b["val"] / BAR_MAXV
-        h = int(full * k)
+        h = int(BAR_MAXH * b["val"] / BAR_MAXV * k)
         x0, x1 = int(b["x"] - b["w"] / 2), int(b["x"] + b["w"] / 2)
-        col = (40, 40, 230) if b.get("win") else (40, 215, 255)   # BGR：勝ち＝赤、ふつう＝黄色
+        col = (40, 40, 225) if b.get("win") else (30, 225, 255)   # BGR：勝ち＝赤、ふつう＝黄色
+        cv2.rectangle(out, (x0 - 7, BAR_BASE - BAR_MAXH - 7), (x1 + 7, BAR_BASE), (0, 0, 0), -1)   # 枠（参考どおり上まで黒い枠）
+        cv2.rectangle(out, (x0, BAR_BASE - BAR_MAXH), (x1, BAR_BASE - 1), (0.93, 0.93, 0.93), -1)
         if h > 0:
-            cv2.rectangle(out, (x0 - 6, BAR_BASE - h - 6), (x1 + 6, BAR_BASE), (0, 0, 0), -1)
             cv2.rectangle(out, (x0, BAR_BASE - h), (x1, BAR_BASE - 1), tuple(v / 255 for v in col), -1)
-            cv2.rectangle(out, (x0, BAR_BASE - h), (x0 + 18, BAR_BASE - 1), tuple(min(1, v / 255 + 0.25) for v in col), -1)
         v = int(round(b["val"] * k))
-        num = _btx("%d万円" % v, RED if b.get("win") else BLACK, 74 if b.get("win") else 64, stroke=8, scol=WHITE)
-        if b.get("win") and t < 0.25:
-            s_ = 1.4 - 0.4 * (t / 0.25)
-            num = num.resize((int(num.width * s_), int(num.height * s_)), Image.BILINEAR)
-        I.put(out, num, b["x"], BAR_BASE - h - num.height / 2 - 10)
-        lab = _btx(b["name"], WHITE, 58, stroke=9, scol=BLACK, max_w=int(b["w"] + 120))
-        I.put(out, lab, b["x"], BAR_BASE + 16 + lab.height / 2)
-    cv2.rectangle(out, (40, BAR_BASE), (W - 40, BAR_BASE + 8), (0, 0, 0), -1)
+        # 下の白い札：業界名（色つき）＋金額
+        nm = _btx(b["name"].replace("\n", ""), RED if b.get("win") else BLUE, 46, stroke=0, max_w=int(b["w"] - 10))
+        am = _btx("%d万" % v, RED if b.get("win") else BLACK, 76, stroke=0, max_w=int(b["w"] - 10))
+        bh = nm.height + am.height + 28
+        box = Image.new("RGBA", (int(b["w"]) + 14, bh), (255, 255, 255, 255))
+        box.alpha_composite(nm, ((box.width - nm.width) // 2, 8))
+        box.alpha_composite(am, ((box.width - am.width) // 2, 12 + nm.height))
+        I.put(out, box, b["x"], BAR_BASE + 6 + bh / 2)
+    if c.get("say_mid"):   # 字幕：棒の上のまん中に白い太字
+        sm = _btx(c["say_mid"], WHITE, 84, stroke=12, scol=BLACK, max_w=W - 60)
+        k2 = 1.0 if t > 0.12 else 0.7 + 0.3 * (t / 0.12)
+        if k2 != 1.0:
+            sm = sm.resize((int(sm.width * k2), int(sm.height * k2)), Image.BILINEAR)
+        I.put(out, sm, W / 2, c.get("say_mid_y", 700))
 
 
-def chain_cut(st, bars, cats, dur, say=None, se=None, say_y=355):
+def chain_cut(st, bars, cats, dur, say=None, se=None, say_y=700, bgvid="v09_shibuya_crossing_aerial"):
     """bars=[(名前, 値, grow, win)]・cats=[(素材, 鳴らす, 大きさ)]（棒と同じ並び）。"""
     n = len(bars)
-    xs = {2: (330, 750), 3: (215, 540, 865)}[n]
-    bw = {2: 250, 3: 200}[n]
-    c = dict(kind="chain", bg=st, tag="", tag_style="red", flag=None, say=say, say_y=say_y, dur=dur, fixed=True, no_pop=True,
-             no_tag=True, ref=True, blur=8,
+    xs = {2: (295, 785), 3: (200, 540, 880)}[n]
+    bw = {2: 440, 3: 310}[n]
+    c = dict(kind="chain", bg=st, tag="", tag_style="red", flag=None, say=None, say_mid=say, say_mid_y=say_y, dur=dur, fixed=True,
+             no_pop=True, no_tag=True, bgvid=bgvid, blur=3, dark=0.15, band_y=0,
              bars=[dict(name=nm, val=v, x=x, w=bw, grow=g, win=wn) for (nm, v, g, wn), x in zip(bars, xs)],
-             cats=[_cat(a, x, sz, sz * 1.1, 1650, None, mute=not snd) for (a, snd, sz), x in zip(cats, xs) if a],
-             band_y=0, say_size=78)
+             cats=[_cat(a, x, sz, sz * 1.15, 1295, None, mute=not snd) for (a, snd, sz), x in zip(cats, xs) if a])
     if se:
         c["se"] = se
     return c

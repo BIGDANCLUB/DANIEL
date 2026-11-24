@@ -107,5 +107,5 @@ def cuts():
 
 
 if __name__ == "__main__":
-    Wd.run(cuts(), Wd.rich_band([("{y}業界別平均年収", 96, Wd.BLACK, 95), ("{y}勝ち抜きバトル", 96, Wd.BLACK, 245)], 0, 330),
+    Wd.run(cuts(), Wd.rich_band([("{y}業界別{b}平均年収", 96, Wd.WHITE, 95), ("{r}勝ち抜きバトル", 96, Wd.WHITE, 245)], 0, 330),
            os.path.join(Wd.HERE, "out", "short_143_gyokai_nenshu.mp4"), os.path.join(Wd.HERE, "out", "short_143_gyokai_nenshu_preview"))

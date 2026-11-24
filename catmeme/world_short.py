@@ -146,7 +146,7 @@ def say_img(t, size=80, base=WHITE, stroke=7):
 def rich_band(rows, y0, y1):
     """上の黒い帯。rows = [(行のマークアップ, 文字の大きさ, 縁の色, 中心のy), ...]。
     行のマークアップは「{r}日本{w}vs{c}海外」のように {色} で色を切りかえる。"""
-    cols = dict(r=RED, w=WHITE, c=CYAN, y=YELLOW, g=GREEN, k=BLACK)
+    cols = dict(r=RED, w=WHITE, c=CYAN, y=YELLOW, g=GREEN, k=BLACK, b=BLUE)
     im = Image.new("RGBA", (W, y1 - y0), (0, 0, 0, 255))
     for mk, size, sc, cy in rows:
         segs, col = [], WHITE

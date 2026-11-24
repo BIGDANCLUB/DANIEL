@@ -829,7 +829,7 @@ def dedupe(cs, key="cats"):
     return cs
 
 
-def vs_rows(st, rows, heads=("日本", "世界"), total=59.9, emoji=False):
+def vs_rows(st, rows, heads=("日本", "世界"), total=59.9, emoji=False, ref=False):
     """11/23 ユーザー指定：ベンチマークのようにエフェクトを増やした段階型。
     rows = [(札, 右の猫, 右の字幕, 左の猫, 左の字幕[, 右の絵文字, 左の絵文字]), ...]
     参考どおりの画面（線がゆれる・猫大きめで重なってよい・字幕は下まん中で左は青/右は赤・背景が横に流れる）＋
@@ -853,6 +853,11 @@ def vs_rows(st, rows, heads=("日本", "世界"), total=59.9, emoji=False):
             b["emojis"] = [(we, 930, 860, 230)]
             c["emojis"] = [(we, 930, 860, 230)] + ([(je, 150, 860, 230)] if je else [])
         out += [a, b, c]
+    if not ref:   # 11/24 ユーザー指定：少し前の形に戻す（猫は大きくしない・字幕はそれぞれの側に出す・背景は止まったまま）
+        for c in out:
+            c.update(blur=9, band_y=0, tag_y=460, heads=heads)
+            c.pop("right_top", None)
+        return out
     t0 = 0.0
     for c in out:
         c.update(blur=9, band_y=0, tag_y=460, heads=heads, ref=True, t0=t0)

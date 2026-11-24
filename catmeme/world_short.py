@@ -596,6 +596,8 @@ class Renderer(I.Renderer):
             I.put(out, self.phone, W / 2 + 20, 1010)
         if c.get("bars"):   # 11/24 勝ち抜き棒グラフ（chain_bars）
             bars_draw(out, c, t)
+        if c.get("scroll"):   # 11/24 最後に登場した全業界を左から右へ流す
+            scroll_draw(out, c, t)
         if c["kind"] == "split" and not c.get("skit"):
             if c.get("ref"):   # 読み上げ型：線はゆらゆら少し左右に動く・下の字幕の後ろまでのばす
                 lx = int(W // 2 + 22 * math.sin((c.get("t0", 0.0) + t) * 2 * math.pi / 3.2))
@@ -618,6 +620,8 @@ class Renderer(I.Renderer):
                 I.put(out, self.labels[i], min(max(lx, lw + 40), W - lw - 60), q["bottom"])
         for im, x, y in self.props:   # 小道具は猫の手前
             I.put(out, im, x, y)
+        if c.get("talks"):   # 猫より手前に
+            talks_draw(out, c, t)
         for j, (e, x, y, size) in enumerate(c.get("emojis", [])):   # 字幕に合わせた絵：ポンと出て、ゆらゆら揺れる（11/23）
             T = c.get("t0", 0.0) + t
             ang = 9 * math.sin(T * 2 * math.pi / 1.1 + j * 1.7)
@@ -942,16 +946,6 @@ def bars_draw(out, c, t):
         box.alpha_composite(nm, ((box.width - nm.width) // 2, 8))
         box.alpha_composite(am, ((box.width - am.width) // 2, 12 + nm.height))
         I.put(out, box, b["x"], BAR_BASE + 6 + bh / 2)
-    for j, (x, y, txt, big) in enumerate(c.get("talks", [])):   # 11/24 ユーザー指定：猫がしゃべっている吹き出し（勝ち＝大きく、負け＝小さく）
-        tt = t - 0.08 * j
-        if tt < 0:
-            continue
-        im = bubble_talk(txt, big)
-        k3 = 1.0 if tt > 0.15 else 0.5 + 0.5 * (tt / 0.15)
-        if k3 != 1.0:
-            im = im.resize((max(1, int(im.width * k3)), max(1, int(im.height * k3))), Image.BILINEAR)
-        cx = min(max(x, im.width / 2 + 16), W - im.width / 2 - 16)
-        I.put(out, im, cx, y - im.height / 2)
     if c.get("say_mid"):   # 字幕：棒の上のまん中に白い太字
         sm = _btx(c["say_mid"], WHITE, 84, stroke=12, scol=BLACK, max_w=W - 60)
         k2 = 1.0 if t > 0.12 else 0.7 + 0.3 * (t / 0.12)
@@ -978,19 +972,59 @@ _TALK = {}
 
 
 def bubble_talk(txt, big):
-    """しゃべる吹き出し：白い角丸・黒い太いふち・下に三角のしっぽ。勝ち＝赤い太字（大）、負け＝青い字（小）。3行まで。"""
+    """11/24 ユーザー指定：吹き出しではなくテキストボックス（白い角丸・黒い太いふち）。勝ち＝赤い太字（大）、負け＝青い字（小）。3行まで。"""
     key = (txt, big)
     if key not in _TALK:
         tx = rich([[(ln, RED if big else BLUE)] for ln in txt.split("\n")], 76 if big else 54, stroke=4, stroke_col=WHITE,
                   max_w=620 if big else 360, lh=1.08)
         pw, ph = tx.width + 56, tx.height + 40
-        im = Image.new("RGBA", (pw + 12, ph + 52), (0, 0, 0, 0))
+        im = Image.new("RGBA", (pw, ph), (0, 0, 0, 0))
         d = ImageDraw.Draw(im)
-        cx = im.width // 2
-        d.polygon([(cx - 26, ph - 4), (cx + 26, ph - 4), (cx, ph + 44)], fill=BLACK)
-        d.rounded_rectangle((0, 0, pw + 11, ph + 1), 34, fill=BLACK)
-        d.polygon([(cx - 17, ph - 8), (cx + 17, ph - 8), (cx, ph + 32)], fill=WHITE)
-        d.rounded_rectangle((7, 7, pw + 4, ph - 6), 28, fill=WHITE)
-        im.alpha_composite(tx, ((im.width - tx.width) // 2, (ph - tx.height) // 2))
+        d.rounded_rectangle((0, 0, pw - 1, ph - 1), 22, fill=BLACK)
+        d.rounded_rectangle((7, 7, pw - 8, ph - 8), 16, fill=WHITE)
+        im.alpha_composite(tx, ((pw - tx.width) // 2, (ph - tx.height) // 2))
         _TALK[key] = im
     return _TALK[key]
+
+
+def scroll_draw(out, c, t):
+    """c["scroll"] = [(名前, 値, 勝ち)]（低い順・左から）。棒を横に並べた帯が、左から右へ流れていく。高さは全体でそろえる。"""
+    items = c["scroll"]
+    vals = [v for _, v, _ in items]
+    lo, hi = min(vals), max(vals)
+    bw, gap = 230, 50
+    strip = len(items) * (bw + gap)
+    off = -strip + (W + strip) * min(1.0, t / c["dur"])
+    for i, (nm, v, win) in enumerate(items):
+        x = off + i * (bw + gap) + bw / 2
+        if x < -bw or x > W + bw:
+            continue
+        frac = 0.25 + 0.75 * (v - lo) / (hi - lo) if hi > lo else 1.0
+        h = int(BAR_MAXH * frac)
+        x0, x1 = int(x - bw / 2), int(x + bw / 2)
+        col = (40, 40, 225) if win else (30, 225, 255)
+        cv2.rectangle(out, (max(0, x0 - 7), BAR_BASE - h - 7), (min(W - 1, x1 + 7), BAR_BASE), (0, 0, 0), -1)
+        if x1 > 0 and x0 < W:
+            cv2.rectangle(out, (max(0, x0), BAR_BASE - h), (min(W - 1, x1), BAR_BASE - 1), tuple(q / 255 for q in col), -1)
+        nmi = _btx(nm, RED if win else BLUE, 46, stroke=0, max_w=bw - 10)
+        am = _btx("%d万" % v, RED if win else BLACK, 64, stroke=0, max_w=bw - 10)
+        bh = nmi.height + am.height + 28
+        box = Image.new("RGBA", (bw + 14, bh), (255, 255, 255, 255))
+        box.alpha_composite(nmi, ((box.width - nmi.width) // 2, 8))
+        box.alpha_composite(am, ((box.width - am.width) // 2, 12 + nmi.height))
+        I.put(out, box, x, BAR_BASE + 6 + bh / 2)
+
+
+def talks_draw(out, c, t):
+    for j, (x, y, txt, big) in enumerate(c.get("talks", [])):   # 11/24 ユーザー指定：猫がしゃべっているテキストボックス（勝ち＝大きく、負け＝小さく）
+        if not txt:
+            continue
+        tt = t - 0.08 * j
+        if tt < 0:
+            continue
+        im = bubble_talk(txt, big)
+        k3 = 1.0 if tt > 0.15 else 0.5 + 0.5 * (tt / 0.15)
+        if k3 != 1.0:
+            im = im.resize((max(1, int(im.width * k3)), max(1, int(im.height * k3))), Image.BILINEAR)
+        cx = min(max(x, im.width / 2 + 16), W - im.width / 2 - 16)
+        I.put(out, im, cx, y - im.height / 2)

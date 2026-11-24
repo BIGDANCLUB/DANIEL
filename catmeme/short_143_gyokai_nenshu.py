@@ -33,17 +33,17 @@ def rnd(k, old, new, win_line, lose_lines, say=None):
     win = max(items, key=lambda x: x[1])
     xs = {2: (295, 785), 3: (200, 540, 880)}[len(items)]
     grow = [(n, v, (n, v) != old, False) for n, v in items]
-    nerv = [(("smug_squint_bicolor_cat" if (n, v) == old else NERV[(k + i) % 4]), False, 340) for i, (n, v) in enumerate(items)]
+    nerv = [(("smug_squint_bicolor_cat" if (n, v) == old else NERV[(k + i) % 4]), False, 420) for i, (n, v) in enumerate(items)]
     out = [Wd.chain_cut(ST, grow, nerv, 2.5, say=say, se="drumroll")]
     res = [(n, v, False, (n, v) == win) for n, v in items]
     cats, talks, j = [], [], 0
     for x, (n, v) in zip(xs, items):
         if (n, v) == win:
-            cats.append((JOY[k % len(JOY)], True, 460))
-            talks.insert(0, (x, 800, win_line, True))
+            cats.append((JOY[k % len(JOY)], True, 560))
+            talks.insert(0, (x, 650, win_line, True))
         else:
-            cats.append((SAD[(k + j) % len(SAD)], False, 340))
-            talks.append((x, 1000, lose_lines.get(n), False))
+            cats.append((SAD[(k + j) % len(SAD)], False, 420))
+            talks.append((x, 840, lose_lines.get(n), False))
             j += 1
     c = Wd.chain_cut(ST, res, cats, 4.6, se="explosion_chudoon")
     c["talks"] = talks
@@ -85,7 +85,8 @@ def cuts():
     scats = ["sad_banana_cat_cry", "despair_dramatic_kitten", "happy_hamster_open_arms", "blank_black_cat_zoning_out",
              "dance_edm_cat", "rizz_cat_rizz", "dance_filmed_by_gray_cat", "showoff_gojo_cosplay_cat", "happy_girlfriend_dance_cat",
              "dance_tabby_standing_cat"]
-    T = 59.9 - full - sum(c["dur"] for c in body)
+    HOLD = 1.0   # 11/24 ユーザー指定：右はしに着いたら1秒止める（止まった瞬間にパラララッパラー）
+    T = 59.9 - full - sum(c["dur"] for c in body) - HOLD
     n = len(allv)
     strip = n * (230 + 50)
     u_enter = (75 + (n - 1) * 280 - W_ + 0.0) / (strip + 75 - W_)   # 総合商社の棒が右はしから入りはじめる位置
@@ -97,7 +98,7 @@ def cuts():
         c["cats"] = []
         c.update(scroll=[(nm, v, (nm, v) == SOGO, cat) for (nm, v), cat in zip(allv, scats)], scroll_t0=t0, scroll_T=T)
         return c
-    head = scroll(tA, T - tA, se=[{"f": "fanfare_pararappara", "at": 0.05}])   # 総合商社にたどり着く → パラララッパラー
+    head = scroll(tA, T - tA + HOLD, se=[{"f": "fanfare_pararappara", "at": T - tA}])   # 右はしに着いて止まる瞬間 → パラララッパラー
     tail = scroll(0.0, tA)
     out = [head, intro_scene(full)] + body + [tail]
     for c in out:

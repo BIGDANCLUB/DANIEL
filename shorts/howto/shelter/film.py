@@ -399,25 +399,36 @@ def s01_hole(nf):
     hero.pose(fr(a3 + 0.5), shL=(10, 8), shR=(10, 8), elL=12, elR=12, neck=-30)                # 上を見上げる
     hero.pose(nf, shL=(135, 45), shR=(135, 45), elL=120, elR=120, neck=-20, spine=6)
     K.marker("hero", (0, 0, 0.15), hero.j["neck"])
-    # 核ミサイル：空を左から右の奥へ
+    # 核ミサイル：右上の空から、左の奥へ（はっきり見える大きさ・近さで）
+    MS = 3.0
     mis = K.empty(name="missile")
-    K.obj(K.cyl_mesh(0.6, 0.6, 7.0, 12), K.mat("missile", (0.85, 0.85, 0.82), 0.4), mis, (0, -3.5, 0), rot=(-90 * D2R, 0, 0), name="mis_body")
-    K.obj(K.cyl_mesh(0.6, 0.0, 1.8, 12), K.mat("missile_nose", (0.75, 0.1, 0.08), 0.4), mis, (0, 3.5, 0), rot=(-90 * D2R, 0, 0), name="mis_nose")
-    K.obj(K.ellip_mesh(0.7, 2.5, 0.7, 10, 6), K.glow("exhaust", (1.0, 0.7, 0.3), 12.0), mis, (0, -5.5, 0), name="mis_fire", shadow=False)
+    K.obj(K.cyl_mesh(0.6 * MS, 0.6 * MS, 7.0 * MS, 12), K.mat("missile", (0.85, 0.85, 0.82), 0.4), mis, (0, -3.5 * MS, 0), rot=(-90 * D2R, 0, 0),
+          name="mis_body")
+    K.obj(K.cyl_mesh(0.6 * MS, 0.0, 1.8 * MS, 12), K.mat("missile_nose", (0.75, 0.1, 0.08), 0.4), mis, (0, 3.5 * MS, 0), rot=(-90 * D2R, 0, 0),
+          name="mis_nose")
+    for k in range(2):                      # 尾びれ（十字）
+        K.obj(K.box_mesh(0.12 * MS if k else 3.2 * MS, 1.6 * MS, 3.2 * MS if k else 0.12 * MS), K.mat("missile_nose", (0.75, 0.1, 0.08), 0.4),
+              mis, (0.0, -3.2 * MS, 0.0), name=f"mis_fin{k}")
+    K.obj(K.ellip_mesh(0.8 * MS, 3.0 * MS, 0.8 * MS, 10, 6), K.glow("exhaust", (1.0, 0.7, 0.3), 14.0), mis, (0, -6.0 * MS, 0), name="mis_fire",
+          shadow=False)
     t_m = a3 + 0.2
+    P0, P1, ARC = Vector((70.0, 160.0, 110.0)), Vector((-150.0, 380.0, -5.0)), 10.0
     K.show(mis, fr(t_m))
-    K.projectile(mis, fr(t_m), fr(T), (180, 500, 160), (-260, 700, 40), arc=30, align=True)
-    for k in range(18):
-        K.smoke_puffs((180 - 25 * k, 500 + 11 * k, 160 - 4 * k), fr(t_m + 0.1 * k), n=2, seed=60 + k, col=(0.85, 0.85, 0.85), size=6.0, rise=2.0,
-                      life=40, spread=2.0, alpha=0.8, name=f"trail{k}")
+    K.projectile(mis, fr(t_m), fr(T), tuple(P0), tuple(P1), arc=ARC, align=True)
+    NT = 26
+    for k in range(NT):                     # 白い煙のすじ（ミサイルが通ったところに残る）
+        u = k / NT
+        p = P0 + (P1 - P0) * u + Vector((0, 0, 4 * ARC * u * (1 - u)))
+        K.smoke_puffs(tuple(p), fr(t_m + (T - t_m) * u), n=2, seed=60 + k, col=(0.9, 0.9, 0.9), size=4.5, rise=1.0,
+                      life=60, spread=1.5, alpha=0.85, name=f"trail{k}")
     fill_light((0.0, -24.0, -1.0), (0, 0, -1.5), 3000, 16.0)
     keys = [(0.0, (-3.0, -4.0, 1.7), (-4.6, 1.4, 1.3), 30),
             (0.3, (-2.0, -7.0, 2.0), (-2.5, 1.2, 0.2), 28),
             (a1, (0.5, -16.0, 1.5), (0.5, 2.0, -0.8), 26),
             (a2 + 0.6, (1.0, -15.5, -1.0), (0.6, 2.0, -1.6), 26),
             (a3 + 0.3, (1.0, -15.0, -0.6), (0.8, 2.0, -0.8), 26),
-            (a3 + 1.0, (1.0, -14.5, -0.2), (4.0, 40.0, 10.0), 25),
-            (T, (1.0, -14.0, 0.2), (14.0, 120.0, 40.0), 24)]
+            (a3 + 1.0, (1.0, -14.5, -0.2), (0.0, 60.0, 14.0), 25),
+            (T, (1.0, -14.0, 0.2), (-50.0, 300.0, 45.0), 24)]
     campath(keys, nf, shake=0.02)
 
 
@@ -443,28 +454,44 @@ def s02_blast(nf):
     sun.data.keyframe_insert("energy", frame=fr(a4) + 2)
     sun.data.energy = se
     sun.data.keyframe_insert("energy", frame=fr(a4) + 20)
-    cm = K.smoke_mat("mush", (0.62, 0.55, 0.50), 0.95)
-    core = K.glow("mush_core", (1.0, 0.45, 0.12), 12.0, 0.9)
+    # キノコ雲：地上が見えているあいだ（〜a6）に大きく育ちきる。地下の場面へ切りかわったら消す（空のすみに半端に映らないように）
+    cut1 = a6 - 0.05
+    f_grow = fr(a6 - 0.4)
+    cm = K.smoke_mat("mush", (0.56, 0.54, 0.52), 0.95)
+    core = K.glow("mush_core", (1.0, 0.45, 0.12), 10.0, 0.9)
     r = random.Random(5)
     for k in range(26):                     # 柱
         z = 20 + k * 14
         o = K.obj(K.ellip_mesh(1, 1, 1, 12, 8), cm if k > 4 else core, None, tuple(C + Vector((0, 0, z * 0.2))), name=f"stem{k}", shadow=False)
+        s_end = 45 + r.uniform(-6, 6)
+        p_end = C + Vector((r.uniform(-8, 8), r.uniform(-8, 8), z * 1.1))
         K.key_scale(o, fr(a4) + 2, 1e-3)
         K.key_loc(o, fr(a4) + 2, tuple(C + Vector((0, 0, 10))))
-        K.key_scale(o, fr(T), 45 + r.uniform(-6, 6))
-        K.key_loc(o, fr(T), tuple(C + Vector((r.uniform(-8, 8), r.uniform(-8, 8), z * 1.1))))
+        K.key_scale(o, f_grow, s_end)
+        K.key_loc(o, f_grow, tuple(p_end))
+        K.key_scale(o, fr(cut1) - 1, s_end * 1.08)
+        K.key_loc(o, fr(cut1) - 1, tuple(p_end + Vector((0, 0, z * 0.05))))
+        K.key_scale(o, fr(cut1), 1e-3)
     for k in range(30):                     # かさ
         a = k / 30 * 2 * math.pi
-        o = K.obj(K.ellip_mesh(1, 1, 0.6, 12, 8), cm if k % 3 else core, None, tuple(C), name=f"cap{k}", shadow=False)
+        o = K.obj(K.ellip_mesh(1, 1, 0.6, 12, 8), cm if k % 4 else core, None, tuple(C), name=f"cap{k}", shadow=False)
+        rad = 95 + r.uniform(-15, 15)
+        s_end = 90 + r.uniform(-10, 10)
+        p_end = C + Vector((rad * math.cos(a), rad * math.sin(a), 380 + r.uniform(-30, 30)))
         K.key_scale(o, fr(a4) + 4, 1e-3)
         K.key_loc(o, fr(a4) + 4, tuple(C + Vector((0, 0, 30))))
-        rad = 95 + r.uniform(-15, 15)
-        K.key_scale(o, fr(T), 90 + r.uniform(-10, 10))
-        K.key_loc(o, fr(T), tuple(C + Vector((rad * math.cos(a), rad * math.sin(a), 380 + r.uniform(-30, 30)))))
+        K.key_scale(o, f_grow, s_end)
+        K.key_loc(o, f_grow, tuple(p_end))
+        K.key_scale(o, fr(cut1) - 1, s_end * 1.08)
+        K.key_loc(o, fr(cut1) - 1, tuple(p_end + Vector((0, 0, 20))))
+        K.key_scale(o, fr(cut1), 1e-3)
     # 地面の上：家と木。爆風（土けむりの壁）が左から右へ吹き抜け、家と木が飛ぶ
     hut = K.empty((-10.0, 6.0, 0.0), None, "hut")
-    box((5.0, 4.0, 2.6), (0, 0, 1.3), K.noisy("hut_wall", (0.72, 0.66, 0.55), 2.0, 0.08, 0.05), "hut_body", hut)
-    box((5.8, 4.8, 0.3), (0, 0, 2.8), K.noisy("hut_roof", (0.25, 0.20, 0.18), 3.0, 0.2, 0.2), "hut_roof", hut)
+    box((5.0, 4.0, 2.6), (0, 0, 1.3), K.noisy("hut_wall", (0.90, 0.87, 0.80), 2.0, 0.06, 0.04), "hut_body", hut)
+    roof = xz_prism([(-3.1, 2.5), (3.1, 2.5), (0.0, 4.3)], -2.4, 2.4, K.noisy("hut_roof", (0.42, 0.16, 0.12), 3.0, 0.2, 0.2), "hut_roof")
+    roof.parent = hut
+    box((1.0, 0.06, 1.9), (1.3, -2.02, 0.95), K.noisy("hut_door", (0.35, 0.22, 0.12), 3.0, 0.2, 0.1), "hut_door", hut)
+    box((1.3, 0.06, 0.9), (-1.2, -2.02, 1.5), K.mat("hut_glass", (0.15, 0.22, 0.30), 0.1), "hut_win", hut)
     trees = []
     for k, (x, y, kind) in enumerate([(-16, 4, 5), (8, 5, 1), (14, 3, 6), (-5, 10, 2), (18, 9, 0)]):
         trees.append(K.tree(x, y, kind, 1.0, k * 50 * D2R, name=f"tr{k}"))
@@ -558,11 +585,10 @@ def s02_blast(nf):
     hero.pose(nf, shL=(10, 10), shR=(160, 20), elR=60)
     K.marker("hero", (0, 0, 0.15), hero.j["neck"])
     fill_light((0.0, -24.0, -1.0), (0, 0, -1.5), 3000, 16.0)
-    cut1 = a6 - 0.05
     cut2 = a7 + 0.1
     keys = [(0.0, (-2.0, -20.0, 4.0), (-130.0, 380.0, 110.0), 24),
-            (a5 - 0.1, (-3.0, -24.0, 4.0), (-110.0, 380.0, 80.0), 24),
-            (cut1 - 0.02, (0.0, -26.0, 4.0), (-60.0, 300.0, 40.0), 24),
+            (a5 - 0.1, (-3.0, -24.0, 4.0), (-110.0, 380.0, 90.0), 24),
+            (cut1 - 0.02, (0.0, -26.0, 4.0), (-90.0, 300.0, 50.0), 24),
             (cut1, (0.8, -17.0, -1.3), (0.8, 2.0, -1.6), 26),
             (cut2 - 0.02, (1.4, -15.5, -1.3), (1.2, 2.0, -1.6), 27),
             (cut2, (RX + 3.6, -3.2, RF + 1.6), (RX + 0.1, 0.9, RF + 1.0), 26),

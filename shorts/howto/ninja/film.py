@@ -697,9 +697,9 @@ def n06_katana(nf):
     K.key_loc(kake, fr(a27 + 0.4), (-0.6, -0.2, Z1 + 0.1))
     # 刀：床下 → 手へ
     kt = katana("kt")
-    K.key_loc(kt, 1, (1.35, -1.3, 0.12))
+    K.key_loc(kt, 1, (1.35, -1.3, Z1 - 0.12))
     K.key_rot(kt, 1, (0, 0, 0))
-    K.key_loc(kt, fr(a27 + 0.2), (1.35, -1.3, 0.12))
+    K.key_loc(kt, fr(a27 + 0.2), (1.35, -1.3, Z1 - 0.12))
     K.key_loc(kt, fr(a27 + 0.45), (1.35, -1.3, Z1 + 0.5))
     kt_hl = box((0.1, 1.1, 0.06), (0, 0.35, 0), hl("kt", fr(a26 + 0.1), fr(a26 + 0.3), fr(a28 + 0.5), fr(a28 + 0.8), YELLOW, 0.55, 4.0), "kt_hl", kt,
                 shadow=False)

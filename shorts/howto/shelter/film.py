@@ -431,7 +431,7 @@ def s02_blast(nf):
     a7, _ = lt(7)
     a8, _ = lt(8)
     # 光る爆発（遠く）とキノコ雲
-    C = Vector((-420.0, 900.0, 0.0))
+    C = Vector((-230.0, 520.0, 0.0))
     fl = K.obj(K.ellip_mesh(1, 1, 1, 24, 16), K.fade_mat(K.glow("flash", (1.0, 0.95, 0.85), 60.0, 0.99), fr(a4), fr(a4) + 2, fr(a4) + 12, fr(a4) + 30, "flash_f"),
                None, tuple(C + Vector((0, 0, 40))), name="flash", shadow=False)
     K.key_scale(fl, fr(a4) - 1, 1e-3)
@@ -451,15 +451,15 @@ def s02_blast(nf):
         o = K.obj(K.ellip_mesh(1, 1, 1, 12, 8), cm if k > 4 else core, None, tuple(C + Vector((0, 0, z * 0.2))), name=f"stem{k}", shadow=False)
         K.key_scale(o, fr(a4) + 2, 1e-3)
         K.key_loc(o, fr(a4) + 2, tuple(C + Vector((0, 0, 10))))
-        K.key_scale(o, fr(T), 34 + r.uniform(-5, 5))
-        K.key_loc(o, fr(T), tuple(C + Vector((r.uniform(-8, 8), r.uniform(-8, 8), z))))
+        K.key_scale(o, fr(T), 45 + r.uniform(-6, 6))
+        K.key_loc(o, fr(T), tuple(C + Vector((r.uniform(-8, 8), r.uniform(-8, 8), z * 1.1))))
     for k in range(30):                     # かさ
         a = k / 30 * 2 * math.pi
         o = K.obj(K.ellip_mesh(1, 1, 0.6, 12, 8), cm if k % 3 else core, None, tuple(C), name=f"cap{k}", shadow=False)
         K.key_scale(o, fr(a4) + 4, 1e-3)
         K.key_loc(o, fr(a4) + 4, tuple(C + Vector((0, 0, 30))))
-        rad = 80 + r.uniform(-15, 15)
-        K.key_scale(o, fr(T), 70 + r.uniform(-10, 10))
+        rad = 95 + r.uniform(-15, 15)
+        K.key_scale(o, fr(T), 90 + r.uniform(-10, 10))
         K.key_loc(o, fr(T), tuple(C + Vector((rad * math.cos(a), rad * math.sin(a), 380 + r.uniform(-30, 30)))))
     # 地面の上：家と木。爆風（土けむりの壁）が左から右へ吹き抜け、家と木が飛ぶ
     hut = K.empty((-10.0, 6.0, 0.0), None, "hut")
@@ -560,8 +560,8 @@ def s02_blast(nf):
     fill_light((0.0, -24.0, -1.0), (0, 0, -1.5), 3000, 16.0)
     cut1 = a6 - 0.05
     cut2 = a7 + 0.1
-    keys = [(0.0, (-2.0, -20.0, 4.0), (-200.0, 600.0, 100.0), 24),
-            (a5 - 0.1, (-3.0, -24.0, 4.0), (-150.0, 500.0, 70.0), 24),
+    keys = [(0.0, (-2.0, -20.0, 4.0), (-130.0, 380.0, 110.0), 24),
+            (a5 - 0.1, (-3.0, -24.0, 4.0), (-110.0, 380.0, 80.0), 24),
             (cut1 - 0.02, (0.0, -26.0, 4.0), (-60.0, 300.0, 40.0), 24),
             (cut1, (0.8, -17.0, -1.3), (0.8, 2.0, -1.6), 26),
             (cut2 - 0.02, (1.4, -15.5, -1.3), (1.2, 2.0, -1.6), 27),

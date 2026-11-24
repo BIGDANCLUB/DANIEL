@@ -917,17 +917,21 @@ def _btx(t, col, size, stroke=8, scol=BLACK, max_w=1000):
 
 def bars_draw(out, c, t):
     """c["bars"] = [dict(name, val(万円), x, w, grow, win)]。grow の棒は 0 からのびて金額が数え上がる。win の棒は赤。"""
+    # 11/24 ユーザー指定：白い枠の中ではなく、比べるたびに上下の幅を使い切る（いちばん高い棒＝上いっぱい、いちばん低い棒＝3割）。
+    # 数十万円の差でも棒の長さではっきりわかるようにする
+    vals = [b["val"] for b in c["bars"]]
+    lo, hi = min(vals), max(vals)
     for b in c["bars"]:
         k = 1.0
         if b.get("grow"):
             u = min(1.0, max(0.0, (t - 0.15) / 2.2))
             k = 1 - (1 - u) ** 3
-        h = int(BAR_MAXH * b["val"] / BAR_MAXV * k)
+        frac = 0.3 + 0.7 * (b["val"] - lo) / (hi - lo) if hi > lo else 1.0
+        h = int(BAR_MAXH * frac * k)
         x0, x1 = int(b["x"] - b["w"] / 2), int(b["x"] + b["w"] / 2)
         col = (40, 40, 225) if b.get("win") else (30, 225, 255)   # BGR：勝ち＝赤、ふつう＝黄色
-        cv2.rectangle(out, (x0 - 7, BAR_BASE - BAR_MAXH - 7), (x1 + 7, BAR_BASE), (0, 0, 0), -1)   # 枠（参考どおり上まで黒い枠）
-        cv2.rectangle(out, (x0, BAR_BASE - BAR_MAXH), (x1, BAR_BASE - 1), (0.93, 0.93, 0.93), -1)
         if h > 0:
+            cv2.rectangle(out, (x0 - 7, BAR_BASE - h - 7), (x1 + 7, BAR_BASE), (0, 0, 0), -1)
             cv2.rectangle(out, (x0, BAR_BASE - h), (x1, BAR_BASE - 1), tuple(v / 255 for v in col), -1)
         v = int(round(b["val"] * k))
         # 下の白い札：業界名（色つき）＋金額

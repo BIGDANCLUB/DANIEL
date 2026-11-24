@@ -930,7 +930,7 @@ def bars_draw(out, c, t):
         if b.get("grow"):
             u = min(1.0, max(0.0, (t - 0.15) / 2.2))
             k = 1 - (1 - u) ** 3
-        frac = 0.3 + 0.7 * (b["val"] - lo) / (hi - lo) if hi > lo else 1.0
+        frac = 0.55 + 0.45 * (b["val"] - lo) / (hi - lo) if hi > lo else 1.0   # 11/24：右以外も高めに（いちばん低い棒＝55%）
         h = int(BAR_MAXH * frac * k)
         x0, x1 = int(b["x"] - b["w"] / 2), int(b["x"] + b["w"] / 2)
         col = (40, 40, 225) if b.get("win") else (30, 225, 255)   # BGR：勝ち＝赤、ふつう＝黄色

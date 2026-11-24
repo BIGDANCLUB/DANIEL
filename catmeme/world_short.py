@@ -849,6 +849,7 @@ def vs_rows(st, rows, heads=("日本", "世界"), total=59.9, emoji=False, ref=F
         else:
             b = split(st, lv, right=wcat, cap=wcap, cap_side="R", sound="R", dur=2.3 * K, se="don_hit")
             c = split(st, lv, left=jcat, right=wcat, cap=jcap, cap_side="L", sound="L", dur=3.0 * K, se="pikon")
+        c["cap2"] = jcap if jfirst else wcap   # 11/24 ユーザー指定：後の側に移っても、先に出た側の字幕は残す
         if we and emoji:   # 11/23 ユーザー指定：絵文字スタンプは抜く（emoji=True のときだけ出す）
             b["emojis"] = [(we, 930, 860, 230)]
             c["emojis"] = [(we, 930, 860, 230)] + ([(je, 150, 860, 230)] if je else [])

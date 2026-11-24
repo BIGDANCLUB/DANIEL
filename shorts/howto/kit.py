@@ -297,6 +297,9 @@ ALLY_R = dict(top=(0.62, 0.08, 0.06), bottom=(0.20, 0.18, 0.17), sleeves="long",
 ALLY_B = dict(top=(0.10, 0.20, 0.50), bottom=(0.20, 0.18, 0.17), sleeves="long", hat="jingasa", shoes=(0.35, 0.28, 0.18),
               armor=(0.08, 0.16, 0.42))
 WORKER = dict(top=(0.95, 0.42, 0.05), bottom=(0.22, 0.22, 0.25), sleeves="long", hat="hachimaki", shoes=(0.25, 0.22, 0.2))
+NINJA = dict(top=(0.035, 0.035, 0.045), bottom=(0.04, 0.04, 0.05), sleeves="long", hat="zukin", shoes=(0.05, 0.05, 0.06))     # 敵の忍者（黒装束）
+HERO_NINJA = dict(HERO, hat="zukin", hood=(0.04, 0.04, 0.05))      # 主人公（赤いT・ジーンズの半ズボン）が忍者の頭巾をかぶる
+HERO_HELMET = dict(HERO, hat="helmet")                              # 参考元（シェルター）と同じ黄色いヘルメット
 
 
 class Person:
@@ -336,15 +339,23 @@ class Person:
         obj(capsule_mesh(0.05, 0.05, 0.05), skin, J["spine"], (0, 0, 0.53), name=f"{name}_neckm")
         J["neck"] = empty((0, 0, 0.52), J["spine"], f"{name}_neck")
         H = J["neck"]
-        obj(ellip_mesh(0.098, 0.108, 0.125), skin, H, (0, 0, 0.14), name=f"{name}_head")
-        obj(ellip_mesh(0.104, 0.112, 0.105), hair, H, (0, -0.016, 0.172), name=f"{name}_hair")
-        for sx in (-1, 1):
-            obj(ellip_mesh(0.013, 0.008, 0.016), dark, H, (sx * 0.036, 0.098, 0.15), name=f"{name}_eye")
-            obj(box_mesh(0.035, 0.008, 0.009), hair, H, (sx * 0.037, 0.099, 0.178), rot=(0, sx * 6 * D2R, 0), name=f"{name}_brow")
-            obj(ellip_mesh(0.016, 0.022, 0.03), skin, H, (sx * 0.097, 0.0, 0.135), name=f"{name}_ear")
-        obj(ellip_mesh(0.016, 0.02, 0.026), skin, H, (0, 0.105, 0.118), name=f"{name}_nose")
-        obj(box_mesh(0.03, 0.006, 0.007), mat("mouth", (0.35, 0.10, 0.08), 0.5), H, (0, 0.1, 0.078), name=f"{name}_mouth")
         hat = look.get("hat")
+        obj(ellip_mesh(0.098, 0.108, 0.125), skin, H, (0, 0, 0.14), name=f"{name}_head")
+        if hat == "zukin":      # 忍者の頭巾：頭と顔をおおい、目のところだけ細く肌が見える
+            hm = mat(f"zukin_{look.get('hood', (0.03, 0.03, 0.035))}", look.get("hood", (0.03, 0.03, 0.035)), 0.75)
+            obj(ellip_mesh(0.112, 0.122, 0.138), hm, H, (0, 0, 0.14), name=f"{name}_hood")
+            obj(ellip_mesh(0.062, 0.016, 0.022), skin, H, (0, 0.112, 0.152), name=f"{name}_slit")
+            for sx in (-1, 1):
+                obj(ellip_mesh(0.012, 0.007, 0.013), dark, H, (sx * 0.03, 0.126, 0.153), name=f"{name}_eye")
+            obj(ellip_mesh(0.03, 0.03, 0.05), hm, H, (0, -0.1, 0.25), rot=(-0.6, 0, 0), name=f"{name}_knot")
+        else:
+            obj(ellip_mesh(0.104, 0.112, 0.105), hair, H, (0, -0.016, 0.172), name=f"{name}_hair")
+            for sx in (-1, 1):
+                obj(ellip_mesh(0.013, 0.008, 0.016), dark, H, (sx * 0.036, 0.098, 0.15), name=f"{name}_eye")
+                obj(box_mesh(0.035, 0.008, 0.009), hair, H, (sx * 0.037, 0.099, 0.178), rot=(0, sx * 6 * D2R, 0), name=f"{name}_brow")
+                obj(ellip_mesh(0.016, 0.022, 0.03), skin, H, (sx * 0.097, 0.0, 0.135), name=f"{name}_ear")
+            obj(ellip_mesh(0.016, 0.02, 0.026), skin, H, (0, 0.105, 0.118), name=f"{name}_nose")
+            obj(box_mesh(0.03, 0.006, 0.007), mat("mouth", (0.35, 0.10, 0.08), 0.5), H, (0, 0.1, 0.078), name=f"{name}_mouth")
         if hat == "straw":
             st = noisy("straw", (0.86, 0.68, 0.33), 60.0, 0.25, 0.4, 0.9)
             obj(cyl_mesh(0.112, 0.105, 0.095, 20), st, H, (0, -0.005, 0.2), name=f"{name}_crown")

@@ -562,6 +562,8 @@ class Renderer(I.Renderer):
             self.side_layout()
         if self.phone is not None:
             I.put(out, self.phone, W / 2 + 20, 1010)
+        if c.get("bars"):   # 11/24 勝ち抜き棒グラフ（chain_bars）
+            bars_draw(out, c, t)
         if c["kind"] == "split" and not c.get("skit"):
             if c.get("ref"):   # 読み上げ型：線はゆらゆら少し左右に動く・下の字幕の後ろまでのばす
                 lx = int(W // 2 + 22 * math.sin((c.get("t0", 0.0) + t) * 2 * math.pi / 3.2))
@@ -631,7 +633,7 @@ class Renderer(I.Renderer):
             I.put(out, self.cap2, cx, cy)
         b = R.to_np(self.band)
         I.over(out, b[0], b[1], 0, c.get("band_y", I.BAND[0]))
-        if not c.get("skit"):
+        if not c.get("skit") and not c.get("no_tag"):
             I.put(out, self.tag, W / 2, self.tag_y)
         if self.huh:
             n = len(self.huh)
@@ -859,3 +861,56 @@ def vs_rows(st, rows, heads=("日本", "世界"), total=59.9, emoji=False):
             q.update(h=860, w=660, bottom=1500, x=330 if q["x"] < 540 else 750)
         c["cats"].sort(key=lambda q: (q["x"] < 540) != bool(c.get("right_top")))   # 後から出る側の猫を上に
     return out
+
+
+# ---- 勝ち抜き棒グラフ（11/24 ユーザー指定：業界別の平均年収。順位は出さず、低い順に比べて勝った側が次へ） ----
+BAR_BASE, BAR_MAXH, BAR_MAXV = 1080, 560, 900.0
+_BARTX = {}
+
+
+def _btx(t, col, size, stroke=8, scol=BLACK, max_w=1000):
+    key = (t, col, size, stroke, scol, max_w)
+    if key not in _BARTX:
+        _BARTX[key] = rich([[(ln, col)] for ln in t.split("\n")], size, stroke=stroke, stroke_col=scol, max_w=max_w, lh=1.05)
+    return _BARTX[key]
+
+
+def bars_draw(out, c, t):
+    """c["bars"] = [dict(name, val(万円), x, w, grow, win)]。grow の棒は 0 からのびて数字が数え上がる。win の棒は赤く光る。"""
+    for b in c["bars"]:
+        k = 1.0
+        if b.get("grow"):
+            u = min(1.0, max(0.0, (t - 0.15) / 2.2))
+            k = 1 - (1 - u) ** 3
+        full = BAR_MAXH * b["val"] / BAR_MAXV
+        h = int(full * k)
+        x0, x1 = int(b["x"] - b["w"] / 2), int(b["x"] + b["w"] / 2)
+        col = (40, 40, 230) if b.get("win") else (40, 215, 255)   # BGR：勝ち＝赤、ふつう＝黄色
+        if h > 0:
+            cv2.rectangle(out, (x0 - 6, BAR_BASE - h - 6), (x1 + 6, BAR_BASE), (0, 0, 0), -1)
+            cv2.rectangle(out, (x0, BAR_BASE - h), (x1, BAR_BASE - 1), tuple(v / 255 for v in col), -1)
+            cv2.rectangle(out, (x0, BAR_BASE - h), (x0 + 18, BAR_BASE - 1), tuple(min(1, v / 255 + 0.25) for v in col), -1)
+        v = int(round(b["val"] * k))
+        num = _btx("%d万円" % v, RED if b.get("win") else BLACK, 74 if b.get("win") else 64, stroke=8, scol=WHITE)
+        if b.get("win") and t < 0.25:
+            s_ = 1.4 - 0.4 * (t / 0.25)
+            num = num.resize((int(num.width * s_), int(num.height * s_)), Image.BILINEAR)
+        I.put(out, num, b["x"], BAR_BASE - h - num.height / 2 - 10)
+        lab = _btx(b["name"], WHITE, 58, stroke=9, scol=BLACK, max_w=int(b["w"] + 120))
+        I.put(out, lab, b["x"], BAR_BASE + 16 + lab.height / 2)
+    cv2.rectangle(out, (40, BAR_BASE), (W - 40, BAR_BASE + 8), (0, 0, 0), -1)
+
+
+def chain_cut(st, bars, cats, dur, say=None, se=None, say_y=355):
+    """bars=[(名前, 値, grow, win)]・cats=[(素材, 鳴らす, 大きさ)]（棒と同じ並び）。"""
+    n = len(bars)
+    xs = {2: (330, 750), 3: (215, 540, 865)}[n]
+    bw = {2: 250, 3: 200}[n]
+    c = dict(kind="chain", bg=st, tag="", tag_style="red", flag=None, say=say, say_y=say_y, dur=dur, fixed=True, no_pop=True,
+             no_tag=True, ref=True, blur=8,
+             bars=[dict(name=nm, val=v, x=x, w=bw, grow=g, win=wn) for (nm, v, g, wn), x in zip(bars, xs)],
+             cats=[_cat(a, x, sz, sz * 1.1, 1650, None, mute=not snd) for (a, snd, sz), x in zip(cats, xs) if a],
+             band_y=0, say_size=78)
+    if se:
+        c["se"] = se
+    return c

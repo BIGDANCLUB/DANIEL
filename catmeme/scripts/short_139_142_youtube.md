@@ -35,3 +35,12 @@
 #猫ミーム #shorts #catmemes #猫マニ #サラリーマン #あるある #日本vs世界 #転職
 ※よくあるイメージです（国や人によって違います）
 ```
+
+## 143_gyokai_nenshu
+- 1080：https://github.com/bigdanclub/daniel/blob/claude/cat-meme-longform/catmeme/release/short_143_gyokai_nenshu.mp4
+- タイトル：【猫ミーム】業界別 平均年収 勝ち抜きバトル #猫ミーム #猫マニ #サラリーマン #あるある
+```
+業界別 平均年収 勝ち抜きバトル
+#猫ミーム #shorts #catmemes #猫マニ #サラリーマン #あるある #年収 #平均年収
+※国税庁「令和6年分 民間給与実態統計調査」業種別の平均給与（1年を通じて勤務した人）を万円に四捨五入
+```

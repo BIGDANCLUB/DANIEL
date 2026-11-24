@@ -947,7 +947,7 @@ def bars_draw(out, c, t):
         box.alpha_composite(am, ((box.width - am.width) // 2, 12 + nm.height))
         I.put(out, box, b["x"], BAR_BASE + 6 + bh / 2)
     if c.get("say_mid"):   # 字幕：棒の上のまん中に白い太字
-        sm = _btx(c["say_mid"], WHITE, 84, stroke=12, scol=BLACK, max_w=W - 60)
+        sm = _btx(c["say_mid"], c.get("say_mid_col", WHITE), c.get("say_mid_size", 84), stroke=14, scol=BLACK, max_w=W - 40)
         k2 = 1.0 if t > 0.12 else 0.7 + 0.3 * (t / 0.12)
         if k2 != 1.0:
             sm = sm.resize((int(sm.width * k2), int(sm.height * k2)), Image.BILINEAR)
@@ -987,25 +987,64 @@ def bubble_talk(txt, big):
     return _TALK[key]
 
 
-def scroll_draw(out, c, t):
-    """c["scroll"] = [(名前, 値, 勝ち)]（低い順・左から）。棒を横に並べた帯が、左から右へ流れていく。高さは全体でそろえる。"""
-    items = c["scroll"]
-    vals = [v for _, v, _ in items]
-    lo, hi = min(vals), max(vals)
+_SCLIP = {}
+
+
+def _scroll_cat(name, t, h):
+    if name not in _SCLIP:
+        _SCLIP[name] = (R.Clip(name), I.clip_bbox(name))
+    cl, (y0, y1, x0, x1) = _SCLIP[name]
+    fr, al = cl.frame(t + 0.25)
+    fr, al = fr[y0:y1, x0:x1], al[y0:y1, x0:x1]
+    k = h / fr.shape[0]
+    w = max(1, int(fr.shape[1] * k))
+    img = cv2.resize(fr, (w, h), interpolation=cv2.INTER_AREA).astype(np.float32) / 255
+    a = cv2.resize(al.astype(np.float32), (w, h), interpolation=cv2.INTER_AREA)
+    pad = 10
+    img = cv2.copyMakeBorder(img, pad, pad, pad, pad, cv2.BORDER_CONSTANT, value=0)
+    a = cv2.copyMakeBorder(a, pad, pad, pad, pad, cv2.BORDER_CONSTANT, value=0)
+    edge = cv2.dilate((a > 0.4).astype(np.uint8), cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (13, 13))).astype(np.float32)
+    img = img * a[..., None] + (1 - a[..., None]) * 1.0
+    return img, np.maximum(a, edge)
+
+
+def scroll_x(c, i, t):
+    """流れる帯の i 本目の棒の中心 x（全体の時間 T のうち、この場面は t0 から）。左端の業界から読み、右端（いちばん高い業界）で止まる。"""
     bw, gap = 230, 50
-    strip = len(items) * (bw + gap)
-    off = -strip + (W + strip) * min(1.0, t / c["dur"])
-    for i, (nm, v, win) in enumerate(items):
-        x = off + i * (bw + gap) + bw / 2
+    n = len(c["scroll"])
+    strip = n * (bw + gap)
+    T = c.get("scroll_T", c["dur"])
+    u = min(1.0, (c.get("scroll_t0", 0.0) + t) / T)
+    off = 75 - (strip + 75 - W) * u
+    return off + i * (bw + gap) + bw / 2
+
+
+def scroll_draw(out, c, t):
+    """c["scroll"] = [(名前, 値, 勝ち, 猫)]（低い順・左から）。11/24 ユーザー指定：左から右へ読むように流す（中身は左へ動く）・
+    いちばん高い業界までたどり着いたらファンファーレ（SE は場面側で鳴らす）・各棒の上に猫。高さは全体でそろえる。"""
+    items = c["scroll"]
+    vals = [it[1] for it in items]
+    lo, hi = min(vals), max(vals)
+    bw = 230
+    for i, it in enumerate(items):
+        nm, v, win = it[:3]
+        x = scroll_x(c, i, t)
         if x < -bw or x > W + bw:
             continue
-        frac = 0.25 + 0.75 * (v - lo) / (hi - lo) if hi > lo else 1.0
+        frac = 0.3 + 0.7 * (v - lo) / (hi - lo) if hi > lo else 1.0
         h = int(BAR_MAXH * frac)
         x0, x1 = int(x - bw / 2), int(x + bw / 2)
         col = (40, 40, 225) if win else (30, 225, 255)
-        cv2.rectangle(out, (max(0, x0 - 7), BAR_BASE - h - 7), (min(W - 1, x1 + 7), BAR_BASE), (0, 0, 0), -1)
-        if x1 > 0 and x0 < W:
+        if x1 > -7 and x0 < W + 7:
+            cv2.rectangle(out, (max(0, x0 - 7), BAR_BASE - h - 7), (min(W - 1, x1 + 7), BAR_BASE), (0, 0, 0), -1)
             cv2.rectangle(out, (max(0, x0), BAR_BASE - h), (min(W - 1, x1), BAR_BASE - 1), tuple(q / 255 for q in col), -1)
+        if len(it) > 3 and it[3]:
+            img, al = _scroll_cat(it[3], c.get("scroll_t0", 0.0) + t, 210)
+            ch, cw = al.shape
+            xx, yy = int(x - cw / 2), int(BAR_BASE - h - ch + 30)
+            if xx + cw > 0 and xx < W:
+                sx0, sx1 = max(0, -xx), min(cw, W - xx)
+                I.over(out, img[:, sx0:sx1], al[:, sx0:sx1], xx + sx0, yy)
         nmi = _btx(nm, RED if win else BLUE, 46, stroke=0, max_w=bw - 10)
         am = _btx("%d万" % v, RED if win else BLACK, 64, stroke=0, max_w=bw - 10)
         bh = nmi.height + am.height + 28

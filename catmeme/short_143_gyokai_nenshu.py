@@ -13,6 +13,8 @@ import os
 
 import world_short as Wd
 
+W_ = 1080
+
 ST = "bg25_office_desk"
 FUDO, GIN, KEN, DEN = ("不動産", 703), ("銀行", 716), ("建設", 768), ("電気・ガス", 772)
 KOU, IYAKU, HOKEN = ("鉱業", 778), ("医薬品", 826), ("保険", 923)
@@ -57,8 +59,11 @@ def intro_scene(dur, ss=0.0):
 
 
 def cuts():
+    """11/24 ユーザー指定：ループする構成。
+    冒頭＝流れるランキングが総合商社に届くところ（ファンファーレ）→「うちの業界〜」→ 本編の勝ち抜き → 流れるランキング（総合商社が出る前で終わる）
+    合計 59.9 秒（TOP9。各場面は少し長め）"""
     full = 3.4
-    out = [intro_scene(2.0, ss=full - 2.0)]   # 冒頭は最後の場面の最後2秒
+    body = []
     w = None
     rounds = [
         ([FUDO, GIN, KEN], "現場は\n朝6時\n集合", {"不動産": "こちらも\n激務だが？", "銀行": "建設より\n下なの？"}, None),
@@ -67,19 +72,36 @@ def cuts():
         ([HOKEN], "契約1件に\n親戚\n総動員", {"医薬品": "それは\nヤバイ"}, None),
         ([SHOKEN], "ノルマの\n胃痛代込み", {"保険": "ノルマは\nこっちも\nあるが？"}, None),
         ([KAIUN], "1000万超え\nFOOO～↑", {"証券": "フィジカルで\n負けてそう"}, None),
-        ([SOGO], "24時まで\n働いた後\n飲めますか？", {"海運": "アンタには\n勝てん"}, "別格 参戦"),
+        ([SOGO], "24時まで\n働いた後\n飲めますか？", {"海運": "アンタには\n勝てん"}, "※別格"),
     ]
     for k, (new, wl, ll, say) in enumerate(rounds):
         cs, w = rnd(k, w, new, wl, ll, say)
-        out += cs
+        body += cs
+    for c in body:
+        if c.get("say_mid") == "※別格":   # 11/24 ユーザー指定：「※別格」を極大に
+            c.update(say_mid_size=230, say_mid_col=(255, 236, 40), say_mid_y=560)
+    # 流れるランキング（左の業界から読み、総合商社で止まる）
     allv = [FUDO, GIN, KEN, DEN, KOU, IYAKU, HOKEN, SHOKEN, KAIUN, SOGO]
-    sc = Wd.chain_cut(ST, [GIN + (False, False), SOGO + (False, True)], [(None, False, 0), (None, False, 0)], 4.8, se="pikon")
-    sc.pop("bars")
-    sc["scroll"] = [(n, v, (n, v) == SOGO) for n, v in allv]
-    out.append(sc)
-    out.append(intro_scene(full))
+    scats = ["sad_banana_cat_cry", "despair_dramatic_kitten", "happy_hamster_open_arms", "blank_black_cat_zoning_out",
+             "dance_edm_cat", "rizz_cat_rizz", "dance_filmed_by_gray_cat", "showoff_gojo_cosplay_cat", "happy_girlfriend_dance_cat",
+             "dance_tabby_standing_cat"]
+    T = 59.9 - full - sum(c["dur"] for c in body)
+    n = len(allv)
+    strip = n * (230 + 50)
+    u_enter = (75 + (n - 1) * 280 - W_ + 0.0) / (strip + 75 - W_)   # 総合商社の棒が右はしから入りはじめる位置
+    tA = round(T * u_enter, 2)
+
+    def scroll(t0, dur, se=None):
+        c = Wd.chain_cut(ST, [GIN + (False, False), SOGO + (False, True)], [(None, False, 0), (None, False, 0)], dur, se=se)
+        c.pop("bars")
+        c["cats"] = []
+        c.update(scroll=[(nm, v, (nm, v) == SOGO, cat) for (nm, v), cat in zip(allv, scats)], scroll_t0=t0, scroll_T=T)
+        return c
+    head = scroll(tA, T - tA, se=[{"f": "fanfare_pararappara", "at": 0.05}])   # 総合商社にたどり着く → パラララッパラー
+    tail = scroll(0.0, tA)
+    out = [head, intro_scene(full)] + body + [tail]
     for c in out:
-        c["free_len"] = True   # 長さは各場面で合計 59.9 秒にそろえてある
+        c["free_len"] = True
     return out
 
 

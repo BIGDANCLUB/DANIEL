@@ -49,7 +49,7 @@ def M(key):
         "heri": lambda: K.mat("heri", (0.07, 0.09, 0.08), 0.7),
         "shoji": lambda: K.mat("shoji", (0.93, 0.91, 0.85), 0.9),
         "door": lambda: K.noisy("itado", (0.30, 0.19, 0.10), 3.0, 0.25, 0.2, 0.7),
-        "soil": lambda: K.noisy("soil_sec", (0.42, 0.30, 0.18), 0.8, 0.25, 0.3, 0.95),
+        "soil": lambda: K.noisy("soil_sec", (0.26, 0.17, 0.09), 0.8, 0.25, 0.3, 0.95),
         "dark": lambda: K.mat("pit_dark", (0.05, 0.04, 0.035), 0.95),
         "tile": lambda: CS.tile_mat("tile_n", (0.17, 0.18, 0.19), (0.24, 0.24, 0.25)),
         "futon": lambda: K.noisy("futon", (0.80, 0.80, 0.86), 6.0, 0.05, 0.1, 0.9),
@@ -226,6 +226,9 @@ def shell(front=True, z_top=EAVE, roof=True, cut_roof=False, windows=True, back=
         r = CS.hip_roof(0, 0, z_top, X1 - X0, Y1 - Y0, 3.4, over=1.0, sori=0.1, m=M("tile"), name=f"{name}_roof", gable=True)
         if cut_roof:
             cut_mesh(r, 0.0)
+            for ch in r.children_recursive:
+                if "hafu" in ch.name:
+                    ch.hide_render = True
         out["roof"] = r
     return out
 
@@ -316,11 +319,12 @@ def n01_house(nf):
             K.smoke_puffs((p[0], p[1], 0.2), fr(ts) + 2, n=4, seed=r.randint(0, 999), col=(0.60, 0.52, 0.40), size=1.6, rise=1.5,
                           life=20, spread=1.6, alpha=0.9, name=f"dust{side}{u}")
     roof = H["roof"]
-    K.key_loc(roof, 1, (0, 0, 40))
-    K.key_loc(roof, fr(0.95), (0, 0, 22))
-    K.key_loc(roof, fr(1.2), (0, 0, -0.25))
-    K.key_loc(roof, fr(1.28), (0, 0, 0.08))
-    K.key_loc(roof, fr(1.34), (0, 0, 0))
+    rz = roof.location.z                                  # 屋根の元の高さ（軒の高さ）
+    K.key_loc(roof, 1, (0, 0, rz + 40))
+    K.key_loc(roof, fr(0.95), (0, 0, rz + 22))
+    K.key_loc(roof, fr(1.2), (0, 0, rz - 0.25))
+    K.key_loc(roof, fr(1.28), (0, 0, rz + 0.08))
+    K.key_loc(roof, fr(1.34), (0, 0, rz))
     for k in range(8):
         a = k / 8 * 2 * math.pi
         K.smoke_puffs((7.5 * math.cos(a), 5.5 * math.sin(a), 6.0), fr(1.2), n=3, seed=40 + k, col=(0.62, 0.56, 0.46), size=1.8, rise=0.8,
@@ -459,9 +463,9 @@ def n02_donden(nf):
             (a5 + 0.1, (-4.5, -7.0, 4.2), (-0.2, 0.0, 1.5), 28),
             (e6, (-3.8, -6.4, 3.8), (0.0, 0.0, 1.5), 30),
             (a7 + 0.4, (-5.2, -8.5, 5.0), (-1.0, -0.4, 1.2), 28),
-            (t_push + 0.5, (-3.0, -8.0, 5.8), (0.2, 0.0, 1.2), 28),
-            (a9, (-1.5, -8.8, 6.6), (0.6, 0.2, 1.2), 28),
-            (T, (-0.5, -9.4, 7.4), (0.8, 0.3, 1.2), 27)]
+            (t_push + 0.5, (0.8, -8.0, 6.8), (0.0, 0.0, 1.0), 28),
+            (a9, (1.8, -8.6, 7.2), (0.2, 0.2, 1.0), 28),
+            (T, (2.4, -9.0, 7.6), (0.3, 0.3, 1.0), 27)]
     campath(keys, nf, shake=0.02)
 
 
@@ -575,8 +579,9 @@ def n04_floors(nf):
         K.key_loc(piece, fr(t), (0, 0, 0))
         K.key_loc(piece, fr(t + 0.3), (0, 0, -6.3))
     r = H["roof"]
-    K.key_loc(r, fr(t + 0.05), (0, 0, 0))
-    K.key_loc(r, fr(t + 0.45), (0, 4.0, 18.0))
+    rz = r.location.z
+    K.key_loc(r, fr(t + 0.05), (0, 0, rz))
+    K.key_loc(r, fr(t + 0.45), (0, 4.0, rz + 18.0))
     K.key_scale(r, fr(t + 0.4), 1.0)
     K.key_scale(r, fr(t + 0.45), 1e-4)
     for k, x in enumerate((-4.0, 0.0, 4.0)):
@@ -652,7 +657,7 @@ def n05_pit(nf):
     K.smoke_puffs(((px0 + px1) / 2, -3.1, pz + 0.1), fr(a22 + 0.05), n=5, seed=44, col=(0.50, 0.40, 0.28), size=0.6, rise=0.8, life=18,
                   spread=0.5, alpha=0.85, name="pitdust")
     K.marker("enemy", (0, 0, 0.2), en.j["neck"])
-    fill_light((0.0, -14.0, 1.0), (0, 0, 0.0), 4000, 12.0)
+    fill_light((0.0, -14.0, 1.0), (0, 0, 0.0), 1800, 12.0)
     keys = [(0.0, (-6.5, -11.0, 3.8), (-3.5, -1.0, 1.0), 28),
             (a20, (-3.5, -11.5, 3.0), (-0.8, -1.5, 0.6), 28),
             (a21, (-0.5, -11.0, 2.2), (1.6, -2.0, 0.2), 28),
@@ -686,9 +691,9 @@ def n06_katana(nf):
     K.key_rot(lid, fr(a27 + 0.25), (0, -110 * D2R, 0))
     # ふとん
     box((1.1, 2.1, 0.12), (0.4, -0.9, Z1 + 0.06), M("futon"), "shikibuton")
-    kake = box((1.15, 1.5, 0.14), (0.4, -0.6, Z1 + 0.2), M("futon2"), "kakebuton")
-    box((0.5, 0.3, 0.12), (0.4, -1.75, Z1 + 0.18), M("futon"), "makura")
-    K.key_loc(kake, fr(a27 + 0.15), (0.4, -0.6, Z1 + 0.2))
+    kake = box((1.15, 1.45, 0.12), (0.4, -0.45, Z1 + 0.2), M("futon2"), "kakebuton")
+    box((0.45, 0.28, 0.07), (0.4, -1.62, Z1 + 0.155), M("futon"), "makura")
+    K.key_loc(kake, fr(a27 + 0.15), (0.4, -0.45, Z1 + 0.2))
     K.key_loc(kake, fr(a27 + 0.4), (-0.6, -0.2, Z1 + 0.1))
     # 刀：床下 → 手へ
     kt = katana("kt")
@@ -701,10 +706,11 @@ def n06_katana(nf):
     _ = kt_hl
     K.marker("katana", (0, 0.4, 0), kt)
     # 主人公：あおむけに寝ている → 床から刀をとって、はね起きる
-    hero = K.Person((0.4, 0.15, Z1 + 0.13), 0, K.HERO_NINJA, name="hero")
-    hero.place(1, (0.4, 0.15, Z1 + 0.13), 0, (90, 0))
+    HL = (0.4, 0.3, Z1 + 0.27)                  # 寝ている主人公の足もと（頭は -y の枕の上）
+    hero = K.Person(HL, 0, K.HERO_NINJA, name="hero")
+    hero.place(1, HL, 0, (90, 0))
     hero.stand(1, shL=(10, 10), shR=(10, 10))
-    hero.place(fr(a27 + 0.15), (0.4, 0.15, Z1 + 0.13), 0, (90, 0))
+    hero.place(fr(a27 + 0.15), HL, 0, (90, 0))
     hero.pose(fr(a27 + 0.15), shR=(60, 70), elR=20)
     hero.place(fr(a27 + 0.55), (0.9, -0.6, Z1), -110, (0, 0))
     hero.pose(fr(a27 + 0.55), shL=(30, 20), shR=(80, 10), elR=30, hipL=40, hipR=20, kneeL=-60, kneeR=-40, hz=-0.2)
@@ -733,6 +739,7 @@ def n06_katana(nf):
     en.pose(nf, shL=(70, 50), shR=(70, 50), elL=20, elR=20, hipL=90, hipR=90, kneeL=-60, kneeR=-60, hz=-0.6, spine=-20, neck=15)
     K.marker("enemy", (0, 0, 0.2), en.j["neck"])
     fill_light((0.0, -14.0, 2.5), (0, 0, 0.6), 4000, 12.0)
+    fill_light((1.6, -3.4, 0.25), (1.3, -1.0, 0.15), 260, 1.2, name="under")          # 床下を照らす
     cut = a26
     keys = [(0.0, (-4.0, -9.0, 4.2), (-0.5, -0.6, 0.6), 28),
             (cut - 0.02, (-2.5, -8.6, 3.2), (-0.2, -0.8, 0.8), 30),
@@ -807,7 +814,8 @@ def n07_window(nf):
     hero.place(fr(t_open + 0.2), (WX + 0.5, Y0 + 0.8, Z1), 180)
     hero.place(fr(t_open + 0.55), (WX - 0.3, Y0 + 0.4, Z1), 180)
     hero.pose(fr(t_open + 0.6), shL=(15, 10), shR=(150, 20), elR=95)
-    fill_light((0.0, 8.0, 3.0), (0, Y0, 1.6), 1500, 6.0, name="inner")
+    fill_light((WX + 1.2, Y0 + 3.2, 2.6), (WX, Y0, 1.6), 900, 3.0, name="inner")
+    fill_light((WX - 2.5, Y0 + 2.0, 2.2), (WX, Y0 + 0.6, 1.4), 400, 2.0, name="inner2")
     cut = a30 + 0.4
     keys = [(0.0, (-4.5, -11.0, 2.6), (0.0, Y0, 1.6), 30),
             (a29 + 0.6, (-1.8, -8.6, 2.0), (WX, Y0, 1.8), 30),

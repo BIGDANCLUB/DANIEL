@@ -79,7 +79,7 @@ def cuts():
         body += cs
     for c in body:
         if c.get("say_mid") == "※別格":   # 11/24 ユーザー指定：「※別格」を極大に
-            c.update(say_mid_size=200, say_mid_col=(255, 236, 40), say_mid_y=470)
+            c.update(say_mid_size=170, say_mid_col=Wd.RED, say_mid_scol=Wd.WHITE, say_mid_stroke=16, say_mid_y=400)   # 11/24：赤い字＋白いふち・上に
     # 流れるランキング（左の業界から読み、総合商社で止まる）
     allv = [FUDO, GIN, KEN, DEN, KOU, IYAKU, HOKEN, SHOKEN, KAIUN, SOGO]
     scats = ["sad_banana_cat_cry", "despair_dramatic_kitten", "happy_hamster_open_arms", "blank_black_cat_zoning_out",
@@ -107,5 +107,5 @@ def cuts():
 
 
 if __name__ == "__main__":
-    Wd.run(cuts(), Wd.rich_band([("{y}業界別", 96, Wd.BLACK, 95), ("{y}平均年収 勝ち抜きバトル", 90, Wd.BLACK, 245)], 0, 330),
+    Wd.run(cuts(), Wd.rich_band([("{y}業界別平均年収", 96, Wd.BLACK, 95), ("{y}勝ち抜きバトル", 96, Wd.BLACK, 245)], 0, 330),
            os.path.join(Wd.HERE, "out", "short_143_gyokai_nenshu.mp4"), os.path.join(Wd.HERE, "out", "short_143_gyokai_nenshu_preview"))

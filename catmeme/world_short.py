@@ -951,7 +951,7 @@ def bars_draw(out, c, t):
         box.alpha_composite(am, ((box.width - am.width) // 2, 12 + nm.height))
         I.put(out, box, b["x"], BAR_BASE + 6 + bh / 2)
     if c.get("say_mid"):   # 字幕：棒の上のまん中に白い太字
-        sm = _btx(c["say_mid"], c.get("say_mid_col", WHITE), c.get("say_mid_size", 84), stroke=14, scol=BLACK, max_w=W - 40)
+        sm = _btx(c["say_mid"], c.get("say_mid_col", WHITE), c.get("say_mid_size", 84), stroke=c.get("say_mid_stroke", 14), scol=c.get("say_mid_scol", BLACK), max_w=W - 40)
         k2 = 1.0 if t > 0.12 else 0.7 + 0.3 * (t / 0.12)
         if k2 != 1.0:
             sm = sm.resize((int(sm.width * k2), int(sm.height * k2)), Image.BILINEAR)

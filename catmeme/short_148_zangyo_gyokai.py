@@ -5,6 +5,7 @@ python3 catmeme/short_148_zangyo_gyokai.py → out/short_148_zangyo_gyokai.mp4
 - 数字：厚生労働省「毎月勤労統計調査」令和6年分結果確報（事業所規模5人以上・就業形態計の所定外労働時間・月あたり）
   卸売・小売 7.1／建設 12.7／金融・保険 12.9／鉱業 14.1／電気・ガス 15.8／情報通信 15.8／運輸・郵便 21.7（全体 10.0）
   電気・ガスと情報通信は同じ値 → 「引き分け」にして情報通信が次へ
+- 11/25 修正：冒頭の猫はスマホ猫と踊る猫・横流しを速く・今回だけ勝った（残業が多い）側の猫を悲しませる
 - 構成：冒頭＝流れるランキングが右はしに着く（1秒止めてファンファーレ）→「うちの会社〜」→ 1対1の勝ち抜き6回 → 流れるランキング
 """
 import os
@@ -38,7 +39,7 @@ def rnd(k, a, b, win_line, lose_line, tie=None):
     out = [cc(grow, nerv, 2.5, se="drumroll")]
     if tie:
         res = [(a[0], a[1], False, True), (b[0], b[1], False, True)]
-        cats = [(JOY[k % len(JOY)], True, 520), (JOY[(k + 1) % len(JOY)], False, 520)]
+        cats = [(SAD[k % len(SAD)], True, 520), (SAD[(k + 1) % len(SAD)], False, 520)]   # 11/25：残業が多い側は悲しむ
         c = cc(res, cats, 4.6, say="引き分け", se="explosion_chudoon")
         c.update(say_mid_y=455, say_mid_size=110, say_mid_col=Wd.RED, say_mid_scol=Wd.WHITE, say_mid_stroke=14)
         c["talks"] = [(xs[0], 650, tie[0], True), (xs[1], 650, tie[1], True)]
@@ -46,7 +47,7 @@ def rnd(k, a, b, win_line, lose_line, tie=None):
         return out, b
     win, lose_x, win_x = (b, xs[0], xs[1]) if b[1] > a[1] else (a, xs[1], xs[0])
     res = [(a[0], a[1], False, a == win), (b[0], b[1], False, b == win)]
-    cats = [((JOY[k % len(JOY)], True, 560) if q == win else (SAD[k % len(SAD)], False, 420)) for q in (a, b)]
+    cats = [((SAD[k % len(SAD)], True, 560) if q == win else (JOY[k % len(JOY)], False, 420)) for q in (a, b)]   # 11/25：今回だけ勝った（残業が多い）側が悲しむ
     c = cc(res, cats, 4.6, se="explosion_chudoon")
     c["talks"] = [(win_x, 650, win_line, True), (lose_x, 840, lose_line, False)]
     out.append(c)
@@ -54,7 +55,7 @@ def rnd(k, a, b, win_line, lose_line, tie=None):
 
 
 def intro_scene(dur, ss=0.0):
-    c = Wd.solo(ST, "", INTRO, "scream_standing_marmot_fast", dur=dur, se="gong_dora_jaan" if ss == 0 else None, big_say=True)
+    c = Wd.solo(ST, "", INTRO, "dance_filmed_by_gray_cat", dur=dur, se="gong_dora_jaan" if ss == 0 else None, big_say=True)
     c.update(no_tag=True, bgvid=VID, blur=3, dark=0.15, say_y=420, band_y=0)
     c["cats"][0]["ss"] = ss
     return c
@@ -76,10 +77,14 @@ def cuts():
         cs, w = rnd(k, w, new, wl, ll, tie)
         body += cs
     allv = [OROSHI, KEN, KIN, KOU, DEN, JOHO, UNYU]
-    scats = ["sad_banana_cat_cry", "despair_dramatic_kitten", "blank_black_cat_zoning_out", "happy_hamster_open_arms",
-             "dance_edm_cat", "rizz_cat_rizz", "dance_tabby_standing_cat"]
+    scats = ["happy_hamster_open_arms", "dance_edm_cat", "rizz_cat_rizz", "blank_black_cat_zoning_out",
+             "sad_looking_away_tabby", "despair_dramatic_kitten", "sad_banana_cat_cry"]   # 残業が多いほど悲しい
     HOLD = 1.0
-    T = 59.9 - full - sum(c["dur"] for c in body) - HOLD
+    T = 6.5   # 11/25：横流しを速く（前は約13秒）。余った時間は本編の勝ち負けの場面に足す
+    extra = 59.9 - full - sum(c["dur"] for c in body) - HOLD - T
+    res_cuts = [c for c in body if c.get("talks")]
+    for c in res_cuts:
+        c["dur"] += extra / len(res_cuts)
     n = len(allv)
     strip = n * 280
     u_enter = (75 + (n - 1) * 280 - W_ + 0.0) / (strip + 75 - W_)

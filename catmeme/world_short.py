@@ -941,10 +941,10 @@ def bars_draw(out, c, t):
         if h > 0:
             cv2.rectangle(out, (x0 - 7, BAR_BASE - h - 7), (x1 + 7, BAR_BASE), (0, 0, 0), -1)
             cv2.rectangle(out, (x0, BAR_BASE - h), (x1, BAR_BASE - 1), tuple(v / 255 for v in col), -1)
-        v = int(round(b["val"] * k))
+        v = b["val"] * k
         # 下の白い札：業界名（色つき）＋金額
         nm = _btx(b["name"].replace("\n", ""), RED if b.get("win") else BLUE, 46, stroke=0, max_w=int(b["w"] - 10))
-        am = _btx("%d万" % v, RED if b.get("win") else BLACK, 76, stroke=0, max_w=int(b["w"] - 10))
+        am = _btx(c.get("unit_fmt", "%d万") % (v if "." in c.get("unit_fmt", "%d万") else round(v)), RED if b.get("win") else BLACK, 76, stroke=0, max_w=int(b["w"] - 10))
         bh = nm.height + am.height + 28
         box = Image.new("RGBA", (int(b["w"]) + 14, bh), (255, 255, 255, 255))
         box.alpha_composite(nm, ((box.width - nm.width) // 2, 8))
@@ -1050,7 +1050,7 @@ def scroll_draw(out, c, t):
                 sx0, sx1 = max(0, -xx), min(cw, W - xx)
                 I.over(out, img[:, sx0:sx1], al[:, sx0:sx1], xx + sx0, yy)
         nmi = _btx(nm, RED if win else BLUE, 46, stroke=0, max_w=bw - 10)
-        am = _btx("%d万" % v, RED if win else BLACK, 64, stroke=0, max_w=bw - 10)
+        am = _btx(c.get("unit_fmt", "%d万") % v, RED if win else BLACK, 64, stroke=0, max_w=bw - 10)
         bh = nmi.height + am.height + 28
         box = Image.new("RGBA", (bw + 14, bh), (255, 255, 255, 255))
         box.alpha_composite(nmi, ((box.width - nmi.width) // 2, 8))

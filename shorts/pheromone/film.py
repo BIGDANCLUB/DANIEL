@@ -1182,11 +1182,15 @@ def p10_confuse(nf):
     kway.append((nf, 0.3 + 0.9 * math.cos(1.0 + 0.6 * nf / FPS), -2.5 + 0.9 * math.sin(1.0 + 0.6 * nf / FPS)))
     actor(1, L(KACHO, face="worried"), kway, nf, period=8)
     # 街をおおうピンクのもや（大きなけむりが重なる）
-    mat = pink_mat(0.06, col=(1.0, 0.62, 0.80), glow=1.6)
+    mat = pink_mat(0.07, col=(1.0, 0.66, 0.84), glow=3.2)      # にごった色にならないよう、明るく光らせる
     births, par = [], []
-    for k in range(120):
+    cam = Vector((-9.0, -15.0, 4.2))
+    while len(par) < 95:
+        p = (r.uniform(-16, 16), r.uniform(-14, 22), r.uniform(0.5, 3.5), r.uniform(1.3, 2.6), r.uniform(0, 6.3))
+        if (Vector(p[:3]) - cam).length < 7.5:       # カメラの目の前は置かない（画面がくもる）
+            continue
         births.append(1)
-        par.append((r.uniform(-16, 16), r.uniform(-14, 22), r.uniform(0.5, 3.5), r.uniform(1.3, 2.6), r.uniform(0, 6.3)))
+        par.append(p)
 
     def fn(k, f0, f):
         x, y, z, s, ph = par[k]

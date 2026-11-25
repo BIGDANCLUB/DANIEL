@@ -2,6 +2,7 @@
 
 python3 catmeme/short_146_chokin_nendai.py → out/short_146_chokin_nendai.mp4
 - 11/24 の決まり：題材は「生々しさ」「コメントが増えそう」・字幕は生々しく人間味あふれる本音・固定コメント案を付ける
+- 11/25 修正：本音の段 40代「正直めっちゃ不安」（泣く猫）・20代「40代のオレがなんとかする」（スマホ猫と踊る猫）。右の字幕は赤
 - Wd.vs_rows（少し前の形：猫は大きくしない・字幕はそれぞれの側・左に移っても右の字幕は残す）
 - 段階ごとに「札だけ → 右の猫（40代）→ 左の猫（20代）」の3段。どちらもけなさない
 - 概要欄の注意：※よくあるイメージです（人によって違います）。BGM なし
@@ -24,7 +25,7 @@ def cuts():
         ('500万円', 'calm_black_face_sheep', 'やっと\n平均くらい？', 'surprise_big_pupils_cat', '誰にも\n言えない額'),
         ('1000万円', 'money_counting_orange_cat', 'でも\n住宅ローンが\n残っている', 'scream_standing_marmot', 'FIREの\n計算を始める'),
         ('通帳を見る', 'blank_black_cat_zoning_out', '見なかった\nことにする', 'work_typing_cat', '毎日アプリで\n確認する'),
-        ('本音', 'dance_filmed_by_gray_cat', '20代のうちに\nやっとけば…', 'dance_edm_cat', '40代の\n自分よろしく'),
+        ('本音', 'sad_banana_cat_cry', '正直\nめっちゃ\n不安', 'dance_filmed_by_gray_cat', '40代のオレが\nなんとかする'),
     ]
     return Wd.vs_rows(ST, rows, heads=('20代', '40代'))
 

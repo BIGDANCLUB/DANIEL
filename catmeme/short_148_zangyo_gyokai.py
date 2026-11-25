@@ -99,9 +99,9 @@ def cuts():
         c["cats"] = []
         c.update(scroll=[(nm, v, (nm, v) == UNYU, cat) for (nm, v), cat in zip(allv, scats)], scroll_t0=t0, scroll_T=T)
         return c
-    head = scroll(tA, T - tA + HOLD, se=[{"f": "doon_movie", "at": 0.0, "len": 4.5, "gain": -4},   # 11/25：帯の音は派手で重厚で長く（映画風ドーン＋ゴゴゴ＋サイレン）
-                                          {"f": "rumble_gogogo", "at": 0.0, "len": T - tA + HOLD + 0.8, "gain": -6},
-                                          {"f": "siren_police", "at": 0.1, "len": T - tA + HOLD + 0.8, "gain": -10},
+    head = scroll(tA, T - tA + HOLD, se=[{"f": "doon_movie", "at": 0.0, "len": T - tA + HOLD, "gain": -4},   # 11/25：帯の音は派手で重厚に（映画風ドーン＋ゴゴゴ＋サイレン）。帯が消えるところでフェードアウト
+                                          {"f": "rumble_gogogo", "at": 0.0, "len": T - tA + HOLD, "gain": -6},
+                                          {"f": "siren_police", "at": 0.1, "len": T - tA + HOLD - 0.1, "gain": -10},
                                           {"f": "fanfare_pararappara", "at": T - tA}])   # 帯が出ている間は警告音
     head["danger"] = ("業界別！\n残業時間バトル", 1112)   # 猫と下の業界名にかからない高さ・横いっぱい   # 11/25 ユーザー指定：冒頭に危険の帯ふうの題名
     tail = scroll(0.0, tA)

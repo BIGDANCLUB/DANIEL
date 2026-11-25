@@ -35,7 +35,17 @@ def sepia(img):
     return Image.fromarray((out * 255 + 0.5).astype(np.uint8))
 
 
+EXPO = {"p00_moth": 1.35, "p01_open": 1.75, "p02_burst": 1.3, "p03_plume": 1.3, "p11_used": 0.85}   # 場面ごとの明るさ合わせ（ガンマ）
+
+
+def lift(img, k):
+    a = np.asarray(img.convert("RGB"), np.float32) / 255
+    return Image.fromarray((np.power(a, 1.0 / k) * 255 + 0.5).astype(np.uint8))
+
+
 def look(base, s):
+    if s["name"] in EXPO:
+        base = lift(base, EXPO[s["name"]])
     return FC.look(sepia(base) if s.get("sepia") else base)
 
 

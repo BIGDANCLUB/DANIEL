@@ -693,7 +693,7 @@ def p03_plume(nf):
                spread=0.24, z_lo=0.2, z_hi=1.55, name="kp")
     body_plume((0.0, 0.0), 1, nf, nf, every=6, rise=0.30, size=(0.12, 0.2), grow=2.0, life=120, mat=pink_mat(0.16), seed=32,
                swirl=0.45, spread=0.3, z_lo=1.4, z_hi=2.0, name="kq")
-    W.camera((1.1, -2.9, 1.05), (0.0, 0.0, 1.85), lens=32)
+    W.camera((1.1, -2.9, 1.25), (0.0, 0.0, 1.4), lens=32)      # 顔が字幕より上に来るように
     fill((1.5, -2.5, 1.6), (0, 0, 1.5), power=90)
     return nf
 

@@ -608,30 +608,40 @@ def onset_fx(roots, f_on, nf, seed=1, plume_every=7, life=70, burst_n=5):
     return locs
 
 
+def cp(f):
+    """冒頭2のカメラの位置：人波の中を進み、課長に寄る → 出た瞬間から少し上がる。"""
+    if f <= F_ON:
+        return lerp3((-0.6, -15.5, 1.2), (-0.25, -5.4, 1.6), smooth((f - 1) / (F_ON - 1)) * 0.85 + 0.15 * (f - 1) / (F_ON - 1))
+    return lerp3((-0.25, -5.4, 1.6), (-0.45, -5.9, 1.95), smooth((f - F_ON) / 70))
+
+
+def ca(f):
+    if f <= F_ON:
+        return lerp3((0.4, 0.0, 1.5), (0.2, -3.0, 1.5), smooth((f - 1) / (F_ON - 1)))
+    return lerp3((0.2, -3.0, 1.5), (0.1, -2.6, 1.95), smooth((f - F_ON) / 70))
+
+
 def p01_open(nf):
     FJ.morning()
     crossing_set()
     r = random.Random(11)
     kacho = actor(1, L(KACHO, face="neutral"), kacho_open_way(nf), nf, face_at=(F_ON + 3, "surprised"))
-    roots = crossing_crowd(r, nf, F_ON, n=70, avoid=[(0.3, 0.0, 1.2), (0.2, -3.0, 1.3), (-0.6, -9.5, 2.6), (-0.6, -12.5, 2.2)])
-    # カメラのすぐ前を横切る人（動きを強く）
-    for k in range(10):
-        y = r.uniform(-13.5, -9.0)
-        sx = r.choice([-1, 1])
-        x0 = -sx * r.uniform(5, 9)
-        sp = r.uniform(1.4, 1.8)
-        t0 = r.uniform(0, 2.0)
-        f0 = 1 + int(t0 * FPS)
-        x1 = x0 + sx * sp * (F_ON - f0) / FPS
-        x2 = x0 + sx * sp * (nf - f0) / FPS
-        way = [(1, x0 - sx * sp * t0, y), (f0, x0, y), (nf, x2, y)]
+    roots = crossing_crowd(r, nf, F_ON, n=70, avoid=[(0.3, 0.0, 1.2), (0.2, -3.0, 1.3), (-0.4, -6.0, 1.6)])
+    # カメラのすぐ前（1.5〜4m）を横切る人（動きを強く）：カメラが進むのに合わせて、次々に前を通る
+    for k in range(16):
+        tk = 0.15 + k * 0.19 + r.uniform(-0.05, 0.05)
+        fk = 1 + tk * FPS
+        cy = cp(min(fk, F_ON))[1]
+        y = cy + r.uniform(1.6, 3.8)
+        if y > -4.5:
+            continue
+        sx = 1 if k % 2 else -1
+        sp = r.uniform(1.5, 1.9)
+        x_at = lambda f: -0.5 + sx * sp * (f - fk) / FPS
+        way = [(1, x_at(1), y), (nf, x_at(nf), y)]
         actor(200 + k, crowd_look(r), way, nf, period=7)
     onset_fx(roots + [kacho], F_ON, nf, seed=2, plume_every=10)
     # カメラ：人波の中を進み、課長に寄る → 出た瞬間に少し下がって見上げる
-    cp = lambda f: (lerp3((-0.6, -16.5, 1.1), (-0.3, -7.6, 1.55), smooth((f - 1) / (F_ON - 1))) if f <= F_ON else
-                    lerp3((-0.3, -7.6, 1.55), (-0.9, -9.6, 2.3), smooth((f - F_ON) / (nf - F_ON))))
-    ca = lambda f: (lerp3((0.4, 0.0, 1.5), (0.2, -3.0, 1.45), smooth((f - 1) / (F_ON - 1))) if f <= F_ON else
-                    lerp3((0.2, -3.0, 1.45), (0.0, -2.0, 2.2), smooth((f - F_ON) / (nf - F_ON))))
     c = track_cam(cp, ca, 1, nf, 24)
     shake(c, 1, F_ON + 10, 1.1, seed=5)
     fill((-1.5, -7.0, 2.4), (0.2, -3.0, 1.5), power=70)

@@ -97,7 +97,7 @@ def cuts():
         c.update(scroll=[(nm, v, (nm, v) == UNYU, cat) for (nm, v), cat in zip(allv, scats)], scroll_t0=t0, scroll_T=T)
         return c
     head = scroll(tA, T - tA + HOLD, se=[{"f": "fanfare_pararappara", "at": T - tA}])
-    head["danger"] = ("業界別！\n残業時間バトル", 860)   # 11/25 ユーザー指定：冒頭に危険の帯ふうの題名
+    head["danger"] = ("業界別！\n残業時間バトル", 1112)   # 猫と下の業界名にかからない高さ・横いっぱい   # 11/25 ユーザー指定：冒頭に危険の帯ふうの題名
     tail = scroll(0.0, tA)
     out = [head, intro_scene(full)] + body + [tail]
     for c in out:

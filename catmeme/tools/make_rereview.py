@@ -24,7 +24,10 @@ import income_short as I  # noqa: E402
 import world_short as W  # noqa: E402
 
 OUT = os.path.join(HERE, "rereview")
-BOTSU = {"75_karasa", "87_manin", "89_natsuyasumi", "99_oshikatsu", "101_fukugyo"}
+BOTSU = {"75_karasa", "87_manin", "89_natsuyasumi", "99_oshikatsu", "101_fukugyo",
+         # 11/25 ユーザー指定「141まで全ボツ」：未修正のまま残っていた 141 までのショート
+         "113_tsukin", "117_okinawa", "119_conbini_yoru", "124_ryoko_nimotsu", "125_kaze_danjo", "126_chikoku_danjo",
+         "130_sanrenkyu_yoru", "133_denchi", "136_gohan_ryo", "137_kotsuhi", "139_shiokuri", "140_taishoku", "141_kozukai_fufu"}
 
 
 def place(src, dst):

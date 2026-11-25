@@ -1015,24 +1015,28 @@ def p07_perfume(nf):
             bottles.append(b)
     # 店員（こちら向き・困り顔）が上の段から、手前の「返品」の箱へ移す
     box_m = W.mat("cardboard", (0.72, 0.56, 0.36), 0.9)
-    bx = 0.35
+    bx = -0.6
     W.box((bx, 2.6, 1.17), (0.6, 0.45, 0.3), box_m, bevel=0.01)
     sign((bx, 2.37, 1.2), 0.5, 0.2, text_texture("label_henpin.png", [("返品", 150)], size=(512, 200), bg=(220, 30, 40)), "henpin")
     order = [b for b in bottles if b.location.z > 1.6][::-1][:7]
     for k, b in enumerate(order):
         f0 = 20 + k * 14
         b.keyframe_insert("location", frame=f0)
-        b.location = (1.0, 3.35, 1.95)                 # 店員の手（頭の上）
+        b.location = (0.2, 3.35, 2.15)                 # 店員の手（頭の上）
         b.keyframe_insert("location", frame=f0 + 5)
         b.location = (bx + r.uniform(-0.15, 0.15), 2.6 + r.uniform(-0.1, 0.1), 1.2)
         b.keyframe_insert("location", frame=f0 + 11)
-    actor(1, L(CLERK, face="worried"), [(1, 1.05, 3.45, 195), (nf, 1.05, 3.45, 195)], nf, arms="hold", alt="up", alt_period=7)
+    clerk = actor(1, L(CLERK, face="worried"), [(1, 0.25, 3.45, 190), (nf, 0.25, 3.45, 190)], nf, arms="hold", alt="up", alt_period=7)
+    step = bpy.data.objects.new("clerk_step", None)      # カウンターの奥の台に立つ（顔が字幕より上に来る）
+    bpy.context.collection.objects.link(step)
+    step.location = (0, 0, 0.2)
+    clerk.parent = step
     # 通りすぎる客（見向きもしない）
     actor(3, crowd_look(r, "neutral"), [(1, -5.0, 1.2), (45, -5.0, 1.2), (nf, 3.5, 1.2)], nf, period=8)
     for x in (-3, 0, 3):
         C.point_light((x, 2.0, 3.2), 120, (1.0, 0.95, 0.88), 0.5)
     W.camera((-0.1, -1.0, 1.65), (0.2, 4.6, 1.95), lens=26)
-    fill((0.8, 0.0, 2.0), (0.9, 3.4, 1.5), power=70)
+    fill((0.4, 0.0, 2.0), (0.25, 3.4, 1.7), power=70)
     return nf
 
 

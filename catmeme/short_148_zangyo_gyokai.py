@@ -48,14 +48,14 @@ def rnd(k, a, b, win_line, lose_line, tie=None):
         cats = [(SAD[k % len(SAD)], True, 520), (SAD[(k + 1) % len(SAD)], False, 520)]   # 11/25：残業が多い側は悲しむ
         c = cc(res, cats, 4.6, say="引き分け", se="explosion_chudoon")
         c.update(say_mid_y=455, say_mid_size=110, say_mid_col=Wd.RED, say_mid_scol=Wd.WHITE, say_mid_stroke=14)
-        c["talks"] = [(xs[0], 650, tie[0], True), (xs[1], 650, tie[1], True)]
+        c["talks"] = [(xs[0], 590, tie[0], True), (xs[1], 590, tie[1], True)]
         out.append(c)
         return out, b
     win, lose_x, win_x = (b, xs[0], xs[1]) if b[1] > a[1] else (a, xs[1], xs[0])
     res = [(a[0], a[1], False, a == win), (b[0], b[1], False, b == win)]
     cats = [((SAD[k % len(SAD)], True, 560) if q == win else (JOY[k % len(JOY)], False, 420)) for q in (a, b)]   # 11/25：今回だけ勝った（残業が多い）側が悲しむ
     c = cc(res, cats, 4.6, se="explosion_chudoon")
-    c["talks"] = [(win_x, 650, win_line, True), (lose_x, 840, lose_line, False)]
+    c["talks"] = [(win_x, 590, win_line, True), (lose_x, 770, lose_line, False)]   # 11/25：猫にかからないよう少し上に
     out.append(c)
     return out, win
 

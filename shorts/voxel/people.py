@@ -48,10 +48,18 @@ def face_image(skin, hair, face="neutral", brows=None, kid=False, beard=False, g
         put(0, y, Hc)
         put(15, y, Hc)
     ey = 8
-    for ex in (4, 10):                      # 目（2×2）
-        for dx in (0, 1):
-            for dy in (0, 1):
-                put(ex + dx, ey + dy, eye)
+    if face == "love":                      # 目がハート（3×3）
+        for ex in (3, 10):
+            for dx, dy in ((0, 0), (2, 0), (0, 1), (1, 1), (2, 1), (1, 2)):
+                put(ex + dx, ey - 1 + dy, (225, 45, 85))
+    else:
+        for ex in (4, 10):                  # 目（2×2）
+            for dx in (0, 1):
+                for dy in (0, 1):
+                    put(ex + dx, ey + dy, eye)
+    if face in ("blush", "love"):           # 赤いほっぺ（照れ）
+        for x in (2, 3, 12, 13):
+            put(x, 11, (240, 120, 130))
     if face == "worried":                   # まゆ：困り顔は内側が上がる
         for k, (x, y) in enumerate(((3, 6), (4, 6), (5, 5), (10, 5), (11, 6), (12, 6))):
             put(x, y, B)
@@ -61,7 +69,7 @@ def face_image(skin, hair, face="neutral", brows=None, kid=False, beard=False, g
     else:
         for x, y in ((3, 6), (4, 6), (5, 6), (10, 6), (11, 6), (12, 6)):
             put(x, y, B)
-    if face == "happy":                     # 口：笑顔は U の形
+    if face in ("happy", "blush", "love"):  # 口：笑顔は U の形
         for x, y in ((6, 12), (7, 13), (8, 13), (9, 12)):
             put(x, y, mouth)
     elif face == "worried":

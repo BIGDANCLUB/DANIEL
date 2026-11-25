@@ -26,12 +26,12 @@ tone, noise, lp, env, band = CC.tone, CC.noise, CC.lp, CC.env, SC.band
 HY, HS = FC.HY, FC.HS
 
 
-def sepia(img):
-    """昔の話（実話の場面）は、セピア色の古い写真のように。"""
+def sepia(img, k=0.88):
+    """昔の話（実話の場面）は、セピア色の古い写真のように。k：セピアの強さ（1995年は弱め＝色が少し残る）。"""
     a = np.asarray(img.convert("RGB"), np.float32) / 255
     lum = a @ np.array([0.299, 0.587, 0.114], np.float32)
     s = np.clip(lum[..., None] * np.array([1.08, 0.90, 0.66], np.float32), 0, 1)
-    out = s * 0.88 + a * 0.12
+    out = s * k + a * (1 - k)
     return Image.fromarray((out * 255 + 0.5).astype(np.uint8))
 
 
@@ -47,7 +47,8 @@ def lift(img, k):
 def look(base, s):
     if s["name"] in EXPO:
         base = lift(base, EXPO[s["name"]])
-    return FC.look(sepia(base) if s.get("sepia") else base)
+    sp = s.get("sepia")
+    return FC.look(sepia(base, 0.88 if sp is True else sp) if sp else base)
 
 
 def end_card(im):
@@ -162,6 +163,26 @@ def piano(notes, dt=0.42, decay=0.7, amp=0.16):
     return out
 
 
+def sniff(seed=0):
+    """においをかぐ「くんくん」（短い息を2回）。"""
+    out = np.zeros(int(0.45 * SR))
+    for k, t0 in enumerate((0.0, 0.17)):
+        n = int(0.09 * SR)
+        x = band(noise(0.09, seed * 10 + k), 1200, 5000) * env(n, 0.01, 0.05) * 0.5
+        i = int(t0 * SR)
+        out[i:i + n] += x
+    return out
+
+
+def bell(f0=880, dur=2.6):
+    """結婚式の鐘（金属の音）。"""
+    n = int(dur * SR)
+    tt = np.arange(n) / SR
+    x = sum(np.sin(2 * np.pi * f0 * h * tt) * np.exp(-tt / d) * a for h, d, a in ((1.0, 1.2, 1.0), (2.0, 0.8, 0.5), (2.76, 0.5, 0.35),
+                                                                                  (5.4, 0.25, 0.2)))
+    return x * np.minimum(1, tt / 0.004) * 0.18
+
+
 def impact():
     n = int(0.9 * SR)
     tt = np.arange(n) / SR
@@ -228,6 +249,8 @@ def build_audio(total):
     put(SC.murmur(4.0, 56), t, 0.9)
     for k in range(6):
         put(poof(10 + k), t + 0.2 + k * 0.55, 0.45)
+    put(heartbeat(), t + 80 / FPS, 0.9)                 # あの朝の2人、目が合う
+    put(CC.sparkle(2, 1.6), t + 82 / FPS, 0.7)
     t = st["p03_plume"]
     put(FC.wind(4.5, 57), t, 0.25)
     put(heartbeat(), t + 0.6, 0.7)
@@ -248,6 +271,13 @@ def build_audio(total):
         put(CC.chirp(70 + k), t + 0.6 + k * 0.9, 0.35)
     for k in range(12):
         put(SC.step(130 + k, hard=False), t + 0.5 + k * 0.38, 0.4)
+    put(heartbeat(), t + 118 / FPS, 0.8)                # ベンチの青年を見つけた
+    put(CC.sparkle(3, 1.6), t + 118 / FPS, 0.7)
+    t = st["p06b_tshirt"]
+    for k, f0 in enumerate((4, 34, 62, 90)):
+        put(sniff(k), t + f0 / FPS, 0.9)
+    put(heartbeat(), t + 92 / FPS, 0.8)
+    put(CC.sparkle(4, 1.6), t + 92 / FPS, 0.7)
     t = st["p07_perfume"]
     for k in range(7):
         put(clink(k), t + (22 + k * 13 + 10) / FPS, 0.8)
@@ -269,6 +299,12 @@ def build_audio(total):
     for k in range(10):
         put(SC.step(180 + k), t + 0.4 + k * 0.45, 0.35)
     put(deflate(1.3), t + 1.6, 1.0)
+    t = st["p12a_wedding"]
+    for k, f0 in enumerate((988, 784, 880, 659, 988, 784)):
+        put(bell(f0), t + 0.15 + k * 0.42, 0.8)
+    put(FC.cheer(4.5, 66), t + 0.3, 0.5)
+    put(CC.sparkle(5, 2.0), t + 112 / FPS, 0.9)
+    put(heartbeat() * 0.7, t + 108 / FPS, 0.7)
     t = st["p12_home"]
     put(FC.thud(), t + 0.3, 0.3)
     put(piano([(262, 330, 392), 392, 440, 392, (349, 440, 523), 523, 494, 440, (330, 392, 523), 392, 440, 523, (349, 440, 587),

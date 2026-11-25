@@ -43,6 +43,9 @@ KACHO = {"hair": (0.42, 0.42, 0.42), "top": (0.12, 0.15, 0.26), "bottom": (0.12,
 WIFE = {"hair": (0.30, 0.24, 0.20), "top": (0.36, 0.50, 0.46), "bottom": (0.42, 0.36, 0.40), "long": True}
 SCIENTIST = {"hair": (0.12, 0.10, 0.09), "top": (0.93, 0.93, 0.90), "bottom": (0.25, 0.24, 0.24), "glasses": True}
 CLERK = {"hair": (0.10, 0.07, 0.05), "top": (0.20, 0.22, 0.34), "bottom": (0.20, 0.22, 0.34), "long": True}
+YOUNG_M = {"hair": (0.07, 0.05, 0.04), "top": (0.40, 0.60, 0.80), "bottom": (0.18, 0.20, 0.28)}                 # あの朝に出会う2人（青年）
+YOUNG_W = {"hair": (0.28, 0.17, 0.09), "top": (0.90, 0.72, 0.30), "bottom": (0.30, 0.33, 0.46), "long": True}   # （女性）
+WOMEN_TOPS = [(0.92, 0.80, 0.82), (0.75, 0.55, 0.60), (0.95, 0.92, 0.85), (0.55, 0.65, 0.80), (0.85, 0.70, 0.45), (0.60, 0.75, 0.62)]
 TOPS = [(0.85, 0.85, 0.82), (0.20, 0.22, 0.30), (0.75, 0.35, 0.35), (0.35, 0.55, 0.75), (0.90, 0.75, 0.35), (0.30, 0.30, 0.32),
         (0.55, 0.70, 0.45), (0.85, 0.55, 0.65), (0.45, 0.35, 0.60), (0.95, 0.95, 0.95)]
 BOTTOMS = [(0.18, 0.20, 0.28), (0.25, 0.25, 0.27), (0.40, 0.36, 0.30), (0.15, 0.15, 0.16), (0.30, 0.35, 0.50)]
@@ -649,14 +652,42 @@ def p01_open(nf):
 
 
 # ============================ 2) 同じ瞬間：交差点の全員から ============================
+def vis(o, keys):
+    """keys = [(コマ, 見える?)]：その場にいる人を、コマで入れかえる（表情を変えるときなど）。"""
+    for f, v in keys:
+        o.scale = (1.0,) * 3 if v else (1e-4,) * 3
+        o.keyframe_insert("scale", frame=f)
+    FJ.set_interp(o, 'CONSTANT')
+
+
+def pair_plumes(pm, pw, f0, nf, seed, z=(1.3, 1.7), name="pr"):
+    """向かい合う2人のけむりが、まん中へ寄って まざる。"""
+    m1, m2 = pink_mat(0.22), pink_mat(0.22, (1.0, 0.55, 0.72), "phero2")
+    dx, dy = (pw[0] - pm[0]) * 0.16, (pw[1] - pm[1]) * 0.16
+    body_plume(pm, f0, nf, nf, every=5, rise=0.22, life=80, mat=m1, seed=seed, drift=(dx, dy), name=name + "m", size=(0.06, 0.11),
+               z_lo=z[0], z_hi=z[1], spread=0.12)
+    body_plume(pw, f0, nf, nf, every=5, rise=0.22, life=80, mat=m2, seed=seed + 1, drift=(-dx, -dy), name=name + "w", size=(0.06, 0.11),
+               z_lo=z[0], z_hi=z[1], spread=0.12)
+
+
 def p02_burst(nf):
     FJ.morning()
     crossing_set()
     r = random.Random(12)
+    # あの朝に出会う2人（後半のアップで、目が合う）
+    c = Vector((2.4, -3.9, 0))
+    pm, pw = (c.x - 0.42, c.y), (c.x + 0.42, c.y)
+    f_cut, f_meet = 66, 80
+    actor(2, L(YOUNG_M, face="surprised"), [(1, *pm, 200), (f_cut, *pm, 230), (f_meet - 4, *pm, 120), (nf, *pm, 120)], nf,
+          face_at=(f_meet, "love"))
+    actor(3, L(YOUNG_W, face="surprised"), [(1, *pw, 150), (f_cut, *pw, 140), (f_meet - 2, *pw, 235), (nf, *pw, 235)], nf,
+          face_at=(f_meet + 2, "love", "pray"))
     roots = []
     for k in range(80):
         x, y = r.uniform(-10, 10), r.uniform(-10, 10)
         face = r.uniform(0, 360)
+        if 1.0 < x < 4.0 and -7.0 < y < -2.8:     # 2人のアップの画面に入らない
+            continue
         way = look_around(r, (x, y), r.randint(1, 20), nf, face, n=3)
         arms = r.choice(["down", "down", "cheek", "head"])
         roots.append(actor(40 + k, crowd_look(r, "surprised"), way, nf, arms=arms))
@@ -665,8 +696,13 @@ def p02_burst(nf):
     for k, o in enumerate(roots):
         p = way_xy(o)
         body_plume(p, 1, nf, nf, every=8, life=80, mat=m, seed=500 + k, name=f"bq{k}_", rise=0.5, size=(0.16, 0.26))
+    pair_plumes(pm, pw, 1, nf, seed=590, name="pq")
+    pink_burst([(c.x + r.uniform(-0.3, 0.3), c.y + r.uniform(-0.2, 0.2), r.uniform(1.4, 1.9)) for _ in range(14)], f_meet + 2, size=0.045,
+               rise=0.6, seed=591, spread=0.5)
     W.camera((-13.0, -17.0, 6.5), (0.0, -1.0, 1.0), lens=26)
+    cut(f_cut, (c.x + 0.15, c.y - 2.3, 1.55), (c.x, c.y, 1.42), lens=30, orbit=3, push=0.12)
     fill((-6.0, -12.0, 5.0), (0, 0, 1.2), power=200, size=4)
+    fill((c.x + 0.8, c.y - 1.6, 2.0), (c.x, c.y, 1.4), power=40)
     return nf
 
 
@@ -888,24 +924,38 @@ def kacho_desk(nf, face, arms="down", alt=None, period=18):
 
 def p05_office(nf):
     office_set(nf)
-    kacho_desk(nf, "surprised", arms="down", alt="brow", period=26)
+    # 課長：おどろき → 照れる（ほおに手）
+    f_shy = 64
+    k1 = kacho_desk(nf, "surprised", arms="down", alt="brow", period=26)
+    k2 = kacho_desk(nf, "blush", arms="cheek", alt="down", period=30)
+    vis(k1, [(1, True), (f_shy, False)])
+    vis(k2, [(1, False), (f_shy, True)])
     r = random.Random(15)
     cup = W.mat("teacup", (0.95, 0.95, 0.92), 0.4)
+    gift = W.mat("gift_pink", (0.95, 0.45, 0.62), 0.5)
+    ribbon = W.mat("gift_ribbon", (0.95, 0.85, 0.30), 0.4)
     targets = [(-1.2, 1.35), (1.2, 1.4), (-1.3, 2.35), (1.35, 2.4), (-0.95, 0.55), (1.0, 0.5)]
     starts = [(-7.0, 4.0), (7.0, 3.0), (-5.0, -1.0), (5.5, -1.5), (0.0, -4.5), (-8.0, 7.0)]
     for k, ((tx, ty), (sx_, sy_)) in enumerate(zip(targets, starts)):
         fc = math.degrees(math.atan2(0.0 - tx, 2.25 - ty))
         f_arr = 30 + k * 12 + r.randint(0, 6)
-        lk = L(crowd_look(r, "happy"), top=r.choice([(0.85, 0.85, 0.82), (0.30, 0.32, 0.40), (0.75, 0.55, 0.60), (0.40, 0.50, 0.62)]))
+        # 女性社員（目がハート）が、お茶やプレゼントを持って集まる
+        lk = L(crowd_look(r, "love"), long=True, top=WOMEN_TOPS[k % len(WOMEN_TOPS)], hair=r.choice(HAIRS[:3]))
         a = actor(70 + k, lk, [(1, sx_, sy_), (f_arr, tx, ty, fc), (nf, tx, ty, fc)], nf, arms="hold", period=7)
-        _ = a
-        # 手に持つもの（お茶・書類）
-        o = C.link_copy(SG.ico_mesh(), (0, 0.33, 1.0), f"gift{k}")
-        o.parent = a
-        o.scale = (0.05, 0.05, 0.06)
-        o.material_slots[0].link = 'OBJECT'
-        o.material_slots[0].material = cup
+        if k % 2:
+            o = C.link_copy(SG.ico_mesh(), (0, 0.33, 1.0), f"gift{k}")
+            o.parent = a
+            o.scale = (0.05, 0.05, 0.06)
+            o.material_slots[0].link = 'OBJECT'
+            o.material_slots[0].material = cup
+        else:           # リボンのついた箱
+            o = W.box((0, 0.36, 1.0), (0.2, 0.14, 0.12), gift, bevel=0.005)
+            o.parent = a
+            rb = W.box((0, 0.36, 1.065), (0.21, 0.03, 0.012), ribbon, bevel=0)
+            rb.parent = a
     body_plume((0.0, 2.25), 1, nf, nf, every=4, rise=0.3, life=80, mat=pink_mat(0.18), seed=51, name="op", z_lo=0.6, z_hi=1.2)
+    pink_burst([(r.uniform(-0.4, 0.4), 2.1 + r.uniform(-0.2, 0.2), r.uniform(1.0, 1.4)) for _ in range(12)], f_shy, size=0.04,
+               rise=0.6, seed=52, spread=0.5)
     W.camera((0.5, -2.7, 1.7), (0.0, 1.7, 1.05), lens=28)
     fill((0.5, -2.5, 2.2), (0, 1.8, 1.0), power=80)
     return nf
@@ -933,8 +983,12 @@ def park_set(seed=7):
 def p06_wind(nf):
     FJ.day(elev=40, az=150)
     bx, by = park_set()
-    kacho = person((bx - 0.05, by, 0.27), 90, seed=1, pose="sit", look=L(KACHO, face="surprised"), arms="hold")
-    _ = kacho
+    # ベンチの青年（においのもと）。風下から、あの女性がジグザグに歩いてきて見つける
+    f_meet = 114
+    m1 = person((bx - 0.05, by, 0.27), 90, seed=2, pose="sit", look=L(YOUNG_M, face="neutral"), arms="hold")
+    m2 = person((bx - 0.05, by, 0.27), 105, seed=2, pose="sit", look=L(YOUNG_M, face="love"), arms="down")
+    vis(m1, [(1, True), (f_meet + 4, False)])
+    vis(m2, [(1, False), (f_meet + 4, True)])
     W.box((bx + 0.32, by, 0.82), (0.16, 0.25, 0.06), W.mat("bento", (0.85, 0.25, 0.20), 0.5), bevel=0.01)
     # においの帯：風下（+x）へ流れ、ゆっくり左右にゆれる（ホースの水のように）
     src = Vector((bx + 0.15, by, 1.2))
@@ -955,19 +1009,30 @@ def p06_wind(nf):
         z = src.z + 0.06 * t + 0.1 * math.sin(0.8 * t + ph)
         return (x, y, z), s0 * (1.0 + 0.32 * t)
     puff_objs(births, nf, fn, mat, "wp", every=3)
-    # 風下から、ジグザグに歩いてくる人
-    for k, (x0, y0) in enumerate([(4.5, 4.8), (6.0, 7.2), (3.5, 7.4)]):
+    # 風下から、ジグザグに歩いてくる女性（いちばん前が、あの朝の女性）
+    wx, wy = bx + 0.85, by + 0.45
+    way = [(1, bx + 6.1, by - 1.2)]
+    side = 1
+    for j in range(1, 5):
+        way.append((1 + 22 * j, bx + 6.1 - 1.05 * j, src.y + side * r.uniform(0.9, 1.4)))
+        side = -side
+    way += [(f_meet, wx, wy, 250), (nf, wx, wy, 250)]
+    actor(3, L(YOUNG_W, face="neutral"), way, nf, period=8, face_at=(f_meet + 2, "love", "pray"))
+    for k, (x0, y0) in enumerate([(bx + 10.5, by - 1.0), (bx + 12.0, by + 1.6)]):     # 少しおくれて、ほかの女性も
         way = [(1, x0, y0)]
         f = 1
         x, y = x0, y0
         side = 1 if k % 2 else -1
         while f < nf:
-            f += 22
-            x -= 1.05
+            f += 26
+            x -= 1.0
             y = src.y + side * r.uniform(0.9, 1.6)
             side = -side
             way.append((min(f, nf), x, y))
-        actor(90 + k, crowd_look(r, "happy"), way, nf, period=8)
+        actor(90 + k, L(crowd_look(r, "love"), long=True, top=WOMEN_TOPS[k + 2]), way, nf, period=8)
+    pair_plumes((bx + 0.15, by), (wx, wy), f_meet, nf, seed=161, z=(1.1, 1.5), name="pk")
+    pink_burst([(bx + 0.5 + r.uniform(-0.3, 0.3), by + 0.25 + r.uniform(-0.2, 0.2), r.uniform(1.1, 1.6)) for _ in range(12)],
+               f_meet + 4, size=0.045, rise=0.6, seed=162, spread=0.5)
     # 風で飛ぶ葉っぱ
     leaf = W.mat("leaf_fly", (0.55, 0.65, 0.20), 0.8)
     for k in range(40):
@@ -981,7 +1046,73 @@ def p06_wind(nf):
             o.keyframe_insert("location", frame=f)
             o.keyframe_insert("rotation_euler", frame=f)
     W.camera((bx - 2.2, by - 1.5, 2.1), (bx + 6.0, by + 0.4, 0.9), lens=28)
+    cut(f_meet + 4, (bx + 2.3, by - 1.3, 1.3), (bx + 0.3, by + 0.05, 1.05), lens=28, orbit=3, push=0.1)    # 青年の顔（目がハート）
     fill((bx + 3.0, by - 2.0, 2.2), (bx + 6, by, 1.0), power=120)
+    return nf
+
+
+# ============================ 6b) 【実話】1995年 Tシャツ実験（スイス・ベルン大学） ============================
+def tshirt(x, y, z, m, name):
+    W.box((x, y, z), (0.42, 0.02, 0.5), m, bevel=0.005)
+    W.box((x, y, z + 0.18), (0.68, 0.02, 0.14), m, bevel=0.005)
+    W.box((x, y, z + 0.27), (0.008, 0.008, 0.08), W.mat("hanger", (0.35, 0.30, 0.25), 0.5), bevel=0)
+    _ = name
+
+
+def p06b_tshirt(nf):
+    FJ.room((0.95, 0.90, 0.80), 0.85)
+    FJ.window_sun(35, 200, 2.4)
+    W.box((2, 0, -0.05), (14, 10, 0.1), W.mat("lab_floor2", (0.55, 0.50, 0.44), 0.8), bevel=0)
+    W.box((2, -2.6, 1.6), (14, 0.2, 3.2), W.mat("lab_wall2", (0.85, 0.82, 0.74), 0.9), bevel=0)
+    # 高い台に、においをかぐ穴のあいた6つの箱（中に、男性が2晩着たTシャツ）
+    W.box((2.25, 0.62, 0.525), (5.4, 0.55, 1.05), W.mat("lab_table2", (0.32, 0.22, 0.14), 0.7), bevel=0.01)
+    box_m = W.mat("cardboard", (0.72, 0.56, 0.36), 0.9)
+    hole = W.mat("hole_dark", (0.05, 0.04, 0.03), 0.9)
+    xs = [k * 0.9 for k in range(6)]
+    for k, x in enumerate(xs):
+        W.box((x, 0.62, 1.23), (0.42, 0.40, 0.36), box_m, bevel=0.01)
+        F._cyl(0.055, 0.055, 0.01, (x, 0.416, 1.28), hole, rot=(math.radians(90), 0, 0), verts=14)
+        sign((x, 0.414, 1.11), 0.14, 0.09, text_texture(f"tbox{k}.png", [(str(k + 1), 150)], size=(320, 200), bg=(235, 225, 200),
+                                                         fg=(60, 30, 20)), f"tlabel{k}")
+        sign((x, 0.824, 1.23), 0.2, 0.13, text_texture(f"tbox{k}.png", [(str(k + 1), 150)], size=(320, 200), bg=(235, 225, 200),
+                                                         fg=(60, 30, 20)), f"tlabelb{k}", rot_z=180)     # カメラ側にも番号
+    # うしろのハンガーに、白いTシャツ
+    white = W.mat("tshirt_white", (0.95, 0.95, 0.93), 0.8)
+    steel = W.mat("rack_steel", (0.55, 0.55, 0.58), 0.3)
+    W.box((1.6, -1.9, 1.92), (4.6, 0.03, 0.03), steel, bevel=0)
+    for sx in (-1, 1):
+        W.box((1.6 + sx * 2.3, -1.9, 0.96), (0.04, 0.04, 1.92), steel, bevel=0)
+    for k in range(6):
+        tshirt(-0.25 + k * 0.75, -1.9, 1.45, white, f"ts{k}")
+    # においをかぐ女性：箱を1つずつ。4つ目で目がハート
+    y = -0.05
+    stops = [(1, 20), (32, 48), (60, 76), (88, nf)]
+    way = []
+    for j, (fa, fb) in enumerate(stops):
+        way += [(fa, xs[j], y, 0), (fb, xs[j], y, 0)]
+    stu = {"hair": (0.45, 0.30, 0.15), "top": (0.55, 0.62, 0.75), "bottom": (0.25, 0.25, 0.30), "long": True}
+    actor(1, L(stu, face="neutral"), way, nf, arms="down", face_at=(92, "love", "pray"))
+    # 記録する研究者
+    person((1.3, -1.3, 0), 20, seed=5, look=L(SCIENTIST, face="neutral"), arms="hold")
+    W.box((1.3 + 0.12, -1.3 + 0.34, 1.0), (0.24, 0.02, 0.3), W.mat("clipboard", (0.55, 0.40, 0.25), 0.6), bevel=0.005)
+    # 穴からもれるにおい（4つ目の箱が いちばん「いいにおい」）
+    for k, x in enumerate(xs):
+        strong = k == 3
+        body_plume((x, 0.38), 1, nf, nf, every=5 if strong else 11, rise=0.10, size=(0.03, 0.06) if strong else (0.03, 0.05),
+                   life=45, mat=pink_mat(0.20 if strong else 0.14), seed=170 + k, drift=(0, -0.10), spread=0.04, name=f"ts{k}_",
+                   z_lo=1.25, z_hi=1.31, grow=1.6)
+    pink_burst([(xs[3] + r_, -0.1, 1.85 + r_ * 0.5) for r_ in (-0.2, -0.1, 0.0, 0.1, 0.2, 0.15, -0.15)], 92, size=0.04, rise=0.5, seed=171,
+               spread=0.4)
+    def xw(f):          # 女性の x（箱から箱へ）
+        for j in range(len(stops) - 1):
+            if f <= stops[j][1]:
+                return xs[j]
+            if f < stops[j + 1][0]:
+                return xs[j] + (xs[j + 1] - xs[j]) * smooth((f - stops[j][1]) / (stops[j + 1][0] - stops[j][1]))
+        return xs[len(stops) - 1]
+    # カメラ：箱の向こうの高いところから、女性の顔を見下ろして横に追う（箱にかくれない）
+    track_cam(lambda f: (xw(f) + 0.9, 1.9, 2.55), lambda f: (xw(f) + 0.1, 0.1, 1.32), 1, nf, 30)
+    fill((2.6, 1.6, 2.4), (1.3, 0.0, 1.5), power=70)
     return nf
 
 
@@ -1222,6 +1353,105 @@ def p11_used(nf):
     W.camera((0.6, -3.6, 1.75), (0.0, 1.6, 1.0), lens=28)
     cut(80, (-0.6, -0.4, 1.3), (0.0, 2.3, 1.15), lens=32, orbit=3, push=0.12)
     fill((0.5, -2.5, 2.2), (0, 1.8, 1.0), power=80)
+    return nf
+
+
+# ============================ 12a) 1年後：あの朝の2人の結婚式（課長も出席） ============================
+def p12a_wedding(nf):
+    FJ.day(elev=48, az=200)
+    C.grass_ground(col=(0.30, 0.48, 0.18), name="grass_wed", tufts=900, area=(-10, 10, -8, 14), seed=21)
+    r = random.Random(22)
+    for k in range(14):
+        C.tree((r.choice([-1, 1]) * r.uniform(4.5, 14), r.uniform(4, 20), 0), h=r.uniform(5, 8), seed=220 + k)
+    white = W.mat("wed_white", (0.96, 0.95, 0.92), 0.6)
+    W.box((0, 11.0, 3.0), (6.0, 2.0, 6.0), white, bevel=0.02)                 # 白いチャペル
+    W.box((0, 11.0, 7.2), (1.6, 1.6, 2.4), white, bevel=0.02)
+    W.box((0, 10.1, 9.0), (0.12, 0.12, 1.2), W.mat("gold_cross", (0.85, 0.68, 0.30), 0.3), bevel=0)
+    W.box((0, 10.1, 9.25), (0.6, 0.12, 0.12), W.mat("gold_cross", (0.85, 0.68, 0.30), 0.3), bevel=0)
+    W.box((0, 0.5, 0.012), (1.2, 9.0, 0.02), W.mat("aisle", (0.97, 0.96, 0.94), 0.7), bevel=0)
+    # 花のアーチ
+    for sx in (-1, 1):
+        W.box((sx * 1.05, 3.4, 1.25), (0.14, 0.14, 2.5), white, bevel=0.01)
+    fl_p, fl_w = W.mat("flower_pink2", (0.95, 0.50, 0.65), 0.6), W.mat("flower_white2", (0.98, 0.97, 0.95), 0.6)
+    pts_p, pts_w = [], []
+    for j in range(40):
+        a = math.pi * j / 39
+        p = (1.05 * math.cos(a) + r.uniform(-0.05, 0.05), 3.4 + r.uniform(-0.06, 0.06), 2.5 + 1.05 * math.sin(a) + r.uniform(-0.05, 0.05),
+             r.uniform(0.07, 0.11), (1, 1, 1))
+        (pts_p if j % 3 else pts_w).append(p)
+    for sx in (-1, 1):
+        for j in range(16):
+            p = (sx * 1.05 + r.uniform(-0.1, 0.1), 3.4 + r.uniform(-0.1, 0.1), r.uniform(0.3, 2.5), r.uniform(0.06, 0.1), (1, 1, 1))
+            (pts_p if j % 2 else pts_w).append(p)
+    C.multi_ball(pts_p, fl_p, "arch_pink")
+    C.multi_ball(pts_w, fl_w, "arch_white")
+    # 新郎・新婦（あの朝の2人）
+    groom_l = L(YOUNG_M, top=(0.10, 0.10, 0.12), bottom=(0.10, 0.10, 0.12), face="love")
+    bride_l = L(YOUNG_W, top=(0.97, 0.96, 0.94), bottom=(0.97, 0.96, 0.94), face="love")
+    pg, pb = (-0.38, 3.0), (0.38, 3.0)
+    person((*pg, 0), 160, seed=2, look=groom_l, arms="down")
+    bride = person((*pb, 0), 200, seed=3, look=bride_l, arms="hold")
+    veil = W.mat("veil", (0.98, 0.98, 0.98), 0.4, alpha=0.6)
+    for o, loc, size in ((W.box((0, -0.15, VP.HC_STAND - 0.15), (0.44, 0.03, 0.85), veil, bevel=0), None, None),):
+        o.parent = bride
+        _ = loc, size
+    skirt = F._cyl(0.48, 0.21, 0.78, (0, 0, 0.39), white, verts=16)
+    skirt.parent = bride
+    bq = []
+    for dx, dz in ((0, 0), (0.06, 0.04), (-0.06, 0.04), (0.03, -0.05), (-0.03, -0.05), (0, 0.08)):
+        bq.append((dx, 0.42, 0.99 + dz, 0.05, (1, 1, 1)))
+    C.multi_ball(bq, fl_p, "bouquet").parent = bride
+    # 参列者（拍手）。課長も前のほうに
+    for k in range(22):
+        sx = -1 if k % 2 else 1
+        x = sx * r.uniform(1.15, 2.8)
+        y = r.uniform(-1.6, 2.2)
+        if -1.75 < x < -0.9 and 0.3 < y < 2.6:          # 課長の前とまわりはあける
+            continue
+        fc = math.degrees(math.atan2(0 - x, 3.0 - y)) + r.uniform(-10, 10)
+        actor(40 + k, crowd_look(r, "happy"), [(1, x, y, fc), (nf, x, y, fc)], nf, arms="pray", alt="hold", alt_period=4 + k % 2)
+    actor(1, L(KACHO, face="happy"), [(1, -1.15, 2.0, 125), (nf, -1.15, 2.0, 125)], nf, arms="pray", alt="hold", alt_period=4)
+    # 花びらのシャワー
+    pet_p, pet_w = W.mat("petal_pink", (0.98, 0.60, 0.72), 0.6), W.mat("petal_white", (0.99, 0.98, 0.96), 0.6)
+    for k in range(140):
+        o = W.box((0, 0, 0), (0.05, 0.035, 0.004), pet_p if k % 3 else pet_w, bevel=0)
+        x0, y0, z0 = r.uniform(-2.2, 2.2), r.uniform(-0.5, 3.8), r.uniform(0.0, 4.5)
+        vz, ph = r.uniform(0.35, 0.6), r.uniform(0, 6.3)
+        for f in range(1, nf + 1, 4):
+            t = f / FPS
+            z = 4.5 - ((4.5 - z0) + vz * t) % 4.5
+            o.location = (x0 + 0.25 * math.sin(1.3 * t + ph), y0 + 0.15 * math.cos(1.1 * t + ph), z)
+            o.rotation_euler = (2.5 * t + ph, 1.7 * t, 3.1 * t + k)
+            o.keyframe_insert("location", frame=f)
+            o.keyframe_insert("rotation_euler", frame=f)
+    # 2人のけむりがのぼり、頭の上でハートになる
+    pair_plumes(pg, pb, 1, nf, seed=230, z=(1.3, 1.7), name="wd")
+    N = 44
+    heart = pink_mat(0.38, glow=0.9, name="heart")
+    births, par = [], []
+    for k in range(N):
+        t = 2 * math.pi * k / N
+        hx = 16 * math.sin(t) ** 3
+        hz = 13 * math.cos(t) - 5 * math.cos(2 * t) - 2 * math.cos(3 * t) - math.cos(4 * t)
+        T = Vector((0.042 * hx, 3.0, 2.75 + 0.042 * hz))
+        S = Vector((pg[0] if hx < 0 else pb[0], 3.0, 1.6))
+        f0 = 40 + int(abs(math.pi - t) / math.pi * 40)          # 下の先から上へ、順にできる
+        births.append(f0)
+        par.append((S, T, r.uniform(0, 6.3)))
+
+    def fn(k, f0, f):
+        S, T, ph = par[k]
+        u = smooth((f - f0) / 30)
+        side = Vector((0.25 * math.sin(math.pi * u) * (1 if T.x >= 0 else -1), 0, 0))
+        p = S + (T - S) * u + side
+        s = (0.05 + 0.11 * u) * (1 + 0.08 * math.sin(0.25 * f + ph))
+        return tuple(p), s
+    puff_objs(births, nf, fn, heart, "heart", every=2)
+    pink_burst([(0.042 * 16 * math.sin(a) ** 3, 2.95, 2.75 + 0.042 * (13 * math.cos(a) - 5 * math.cos(2 * a) - 2 * math.cos(3 * a)
+               - math.cos(4 * a))) for a in np.linspace(0, 6.28, 24)], 112, size=0.05, rise=0.4, seed=231, spread=0.6)
+    c = W.camera((0.0, -3.2, 1.7), (0.0, 3.0, 1.68), lens=30)
+    c["push"] = 0.08
+    fill((0.8, -1.5, 2.4), (0, 3.0, 1.5), power=120)
     return nf
 
 

@@ -141,8 +141,15 @@ def actor(seed, look, way, nf, arms="down", alt=None, period=7, alt_period=16, f
 
 
 # ---------- フェロモン（ピンクのけむりと光の粒） ----------
-def pink_mat(alpha=0.30, col=PINK, name="phero"):
-    return F.puff_mat(f"{name}_{alpha}_{col}", col, alpha)
+def pink_mat(alpha=0.30, col=PINK, name="phero", glow=0.35):
+    key = f"{name}_{alpha}_{col}_{glow}"
+    new = bpy.data.materials.get(key) is None
+    m = F.puff_mat(key, col, alpha)
+    if new and glow:
+        b = m.node_tree.nodes["Principled BSDF"]
+        b.inputs["Emission Color"].default_value = (*col, 1)
+        b.inputs["Emission Strength"].default_value = glow
+    return m
 
 
 def pink_particles():
@@ -364,6 +371,8 @@ def crossing_set(seed=3, haze=False):
             bars.append((side * 9.6, x, 0.006, 2.6, 0.45, 0.012, 0.0))          # 東・西
     for diag in (1, -1):
         for k in range(-11, 12):
+            if diag < 0 and abs(k) <= 1:
+                continue
             t = k * 0.9
             bars.append((t * 0.7071, diag * t * 0.7071, 0.007, 0.45, 2.6, 0.012, math.radians(-45 * diag)))
     C.multi_box(bars, white, "zebra_bars")
@@ -525,7 +534,7 @@ def p00_moth(nf):
         x = FEMALE.x - wind * t
         if x < -6:
             return None
-        sway = 0.35 * t * math.sin(0.9 * (f0 / FPS) + ph * 0.15) + 0.12 * t * math.sin(1.7 * t + ph)
+        sway = 0.14 * t * math.sin(0.9 * (f0 / FPS) + ph * 0.15) + 0.08 * t * math.sin(1.7 * t + ph)
         loc = (x, FEMALE.y + sway, FEMALE.z + 0.15 * t * math.sin(1.3 * t + ph) - 0.03 * t)
         return loc, s0 * (0.6 + 0.28 * t)
     puff_objs(births, nf, fn, mat, "trail", every=3)
@@ -549,10 +558,10 @@ def p00_moth(nf):
         P[:, f, 0] = x
         P[:, f, 1] = y0 + (FEMALE.y - y0) * u ** 1.5 + za * np.sin(zf * t + zph)          # ジグザグ（左右に行ったり来たり）
         P[:, f, 2] = z0 + (FEMALE.z - z0) * u ** 1.5 + 0.12 * np.sin(1.7 * zf * t + zph)
-    cam_p = lambda f: lerp3((-3.4, 3.6, 1.55), (2.6, 4.0, 1.75), smooth((f - 1) / (nf - 1)))
+    cam_p = lambda f: lerp3((-3.4, 3.6, 1.0), (2.6, 4.0, 1.25), smooth((f - 1) / (nf - 1)))
     near = {i for i in range(N) if np.min(np.linalg.norm(P[i, 1:] - np.array(cam_p(40)), axis=1)) < 6.0}
     fly_moths(P, nf, near=near, scale=2.0, name="male")
-    c = track_cam(cam_p, lambda f: lerp3((0.5, 7.0, 1.45), (11.0, 7.0, 1.7), smooth((f - 1) / (nf - 1)) ** 0.8), 1, nf, 24)
+    c = track_cam(cam_p, lambda f: lerp3((0.5, 7.0, 2.0), (11.0, 7.0, 2.0), smooth((f - 1) / (nf - 1)) ** 0.8), 1, nf, 24)
     shake(c, 1, nf, 1.3, seed=3)
     fill((-1.0, -2.0, 2.0), (2.0, 3.0, 1.5), power=60, col=(1.0, 0.75, 0.6))
     return nf
@@ -571,7 +580,7 @@ def crossing_crowd(r, nf, fo, n=70, area=9.0, surprised=True, stop=True, avoid=N
     roots = []
     for k in range(n):
         way = crowd_way(r, fo, nf, area=area, stop=stop)
-        if avoid and any(abs(way[0][1] - a[0]) < a[2] and abs(way[0][2] - a[1]) < a[2] for a in avoid):
+        if avoid and any(abs(w[1] - a[0]) < a[2] and abs(w[2] - a[1]) < a[2] for a in avoid for w in way[:2]):
             continue
         lk = crowd_look(r)
         if stop:
@@ -580,7 +589,7 @@ def crossing_crowd(r, nf, fo, n=70, area=9.0, surprised=True, stop=True, avoid=N
     return roots
 
 
-def onset_fx(roots, f_on, nf, seed=1, plume_every=9, life=60, burst_n=4):
+def onset_fx(roots, f_on, nf, seed=1, plume_every=7, life=70, burst_n=5):
     """出はじめる瞬間：一人ひとりの体からピンクの粒が飛び出し、けむりがわき上がる。"""
     r = random.Random(seed)
     pts = []
@@ -591,11 +600,11 @@ def onset_fx(roots, f_on, nf, seed=1, plume_every=9, life=60, burst_n=4):
     for p in locs:
         for _ in range(burst_n):
             pts.append((p.x + r.uniform(-0.22, 0.22), p.y + r.uniform(-0.15, 0.15), r.uniform(0.6, 1.6)))
-    pink_burst(pts, f_on, size=0.045, rise=1.1, seed=seed, spread=0.5)
-    m = pink_mat(0.22)
+    pink_burst(pts, f_on, size=0.06, rise=1.4, seed=seed, spread=0.7)
+    m = pink_mat(0.30)
     for k, p in enumerate(locs):
-        body_plume((p.x, p.y), f_on + r.randint(0, 5), nf, nf, every=plume_every, life=life, mat=m, seed=seed * 100 + k,
-                   name=f"bp{k}_")
+        body_plume((p.x, p.y), f_on + r.randint(0, 3), nf, nf, every=plume_every, life=life, mat=m, seed=seed * 100 + k,
+                   name=f"bp{k}_", size=(0.14, 0.24), rise=0.45)
     return locs
 
 
@@ -604,7 +613,7 @@ def p01_open(nf):
     crossing_set()
     r = random.Random(11)
     kacho = actor(1, L(KACHO, face="neutral"), kacho_open_way(nf), nf, face_at=(F_ON + 3, "surprised"))
-    roots = crossing_crowd(r, nf, F_ON, n=64, avoid=[(0.3, 0.0, 1.4), (0.0, -9.0, 2.0)])
+    roots = crossing_crowd(r, nf, F_ON, n=70, avoid=[(0.3, 0.0, 1.2), (0.2, -3.0, 1.3), (-0.6, -9.5, 2.6), (-0.6, -12.5, 2.2)])
     # カメラのすぐ前を横切る人（動きを強く）
     for k in range(10):
         y = r.uniform(-13.5, -9.0)
@@ -614,8 +623,9 @@ def p01_open(nf):
         t0 = r.uniform(0, 2.0)
         f0 = 1 + int(t0 * FPS)
         x1 = x0 + sx * sp * (F_ON - f0) / FPS
-        way = [(1, x0 - sx * sp * t0, y), (f0, x0, y), (F_ON, x1, y), (nf, x1, y, r.uniform(0, 360))]
-        roots.append(actor(200 + k, crowd_look(r), way, nf, face_at=(F_ON + 3, "surprised"), period=7))
+        x2 = x0 + sx * sp * (nf - f0) / FPS
+        way = [(1, x0 - sx * sp * t0, y), (f0, x0, y), (nf, x2, y)]
+        actor(200 + k, crowd_look(r), way, nf, period=7)
     onset_fx(roots + [kacho], F_ON, nf, seed=2, plume_every=10)
     # カメラ：人波の中を進み、課長に寄る → 出た瞬間に少し下がって見上げる
     cp = lambda f: (lerp3((-0.6, -16.5, 1.1), (-0.3, -7.6, 1.55), smooth((f - 1) / (F_ON - 1))) if f <= F_ON else
@@ -641,10 +651,10 @@ def p02_burst(nf):
         arms = r.choice(["down", "down", "cheek", "head"])
         roots.append(actor(40 + k, crowd_look(r, "surprised"), way, nf, arms=arms))
     roots.append(actor(1, L(KACHO, face="surprised"), look_around(r, (0.2, -3.0), 10, nf, 180, n=2), nf))
-    m = pink_mat(0.20)
+    m = pink_mat(0.28)
     for k, o in enumerate(roots):
         p = way_xy(o)
-        body_plume(p, 1, nf, nf, every=10, life=70, mat=m, seed=500 + k, name=f"bq{k}_", rise=0.45)
+        body_plume(p, 1, nf, nf, every=8, life=80, mat=m, seed=500 + k, name=f"bq{k}_", rise=0.5, size=(0.16, 0.26))
     W.camera((-13.0, -17.0, 6.5), (0.0, -1.0, 1.0), lens=26)
     fill((-6.0, -12.0, 5.0), (0, 0, 1.2), power=200, size=4)
     return nf
@@ -754,14 +764,14 @@ def p04_train(nf):
     # すわっている人
     for k in range(10):
         sx = -1 if k % 2 else 1
-        y = r.choice([-9.0, -8.3, -4.5, -3.8, -3.1, -2.4, 2.4, 3.1, 3.8, 4.5])
+        y = r.choice([-4.5, -3.8, -3.1, -2.4, 2.4, 3.1, 3.8, 4.5, 7.5, 8.2])
         o = person((sx * (CAR_W / 2 - 0.42), y, 0.28), 90 * sx + 180, seed=60 + k, pose="sit",
                    look=crowd_look(r, "worried" if k % 3 else "surprised"))
         people.append((sx * (CAR_W / 2 - 0.5), y))
         _ = o
     # 立っている人（つり革）
-    stand_pts = [(0.75, -4.0), (-0.7, -3.4), (0.6, -2.0), (-0.65, -1.2), (0.7, 1.2), (-0.6, 2.0), (0.1, 3.5), (0.65, 4.4),
-                 (-0.7, 5.0), (0.5, -8.2), (-0.4, -7.6), (0.0, -0.5)]
+    stand_pts = [(0.75, -4.6), (-0.7, -3.4), (0.6, -1.6), (-0.65, -1.2), (0.7, 1.2), (-0.6, 2.0), (0.1, 3.5), (0.65, 4.4),
+                 (-0.7, 5.0), (0.0, -0.5)]
     for k, (x, y) in enumerate(stand_pts):
         arms = ("down", "up") if x > 0 else ("up", "down")
         face = r.choice([0, 180, 90, 270]) + r.uniform(-30, 30)
@@ -773,7 +783,8 @@ def p04_train(nf):
     people.append(k_pos)
     # たまるけむり：最初は体のまわり → 車内に広がる。ドアが開くと、ドアへ吸い寄せられて外へ
     door = Vector((-CAR_W / 2, -6.5, 1.1))
-    m = pink_mat(0.20)
+    cam0 = Vector((0.9, -9.5, 1.65))
+    m = pink_mat(0.16)
     births, par = [], []
     for k, (x, y) in enumerate(people):
         for j in range(9):
@@ -788,7 +799,9 @@ def p04_train(nf):
         px = x + vx * 0.9 * spread
         py = y + vy * 2.2 * spread
         pz = min(CAR_H - 0.25, z + 0.9 * spread)
-        s = s0 * (0.6 + 3.0 * spread)
+        s = s0 * (0.6 + 2.2 * spread)
+        if (Vector((px, py, pz)) - cam0).length < 1.2 and f < 80:
+            s *= 0.3
         if f > f_open:
             to = door - Vector((px, py, pz))
             dist = to.length
@@ -803,7 +816,7 @@ def p04_train(nf):
         return (px, py, pz), s
     puff_objs(births, nf, fn, m, "tp", every=3)
     W.camera((0.9, -9.5, 1.65), (-0.4, -3.0, 1.3), lens=24)
-    cut(80, (0.9, -2.3, 1.7), (-1.3, -6.6, 1.2), lens=24, orbit=4, push=0.1)
+    cut(80, (0.85, -3.0, 1.75), (-1.3, -6.6, 1.15), lens=24, orbit=4, push=0.1)
     fill((0.5, -9.0, 2.0), (0, -4, 1.4), power=60)
     return nf
 
@@ -875,7 +888,7 @@ def p05_office(nf):
         o.material_slots[0].link = 'OBJECT'
         o.material_slots[0].material = cup
     body_plume((0.0, 2.25), 1, nf, nf, every=4, rise=0.3, life=80, mat=pink_mat(0.18), seed=51, name="op", z_lo=0.6, z_hi=1.2)
-    W.camera((0.6, -3.6, 1.75), (0.0, 1.6, 1.0), lens=28)
+    W.camera((0.5, -2.7, 1.7), (0.0, 1.7, 1.05), lens=28)
     fill((0.5, -2.5, 2.2), (0, 1.8, 1.0), power=80)
     return nf
 
@@ -891,10 +904,10 @@ def park_set(seed=7):
     wood = W.mat("bench_wood", (0.55, 0.36, 0.20), 0.8)
     iron = W.mat("bench_iron", (0.15, 0.15, 0.16), 0.5)
     bx, by = -5.0, 5.8
-    W.box((bx, by, 0.45), (1.8, 0.45, 0.05), wood, bevel=0.01)
-    W.box((bx, by + 0.25, 0.75), (1.8, 0.05, 0.35), wood, bevel=0.01)
-    for sx in (-1, 1):
-        W.box((bx + sx * 0.8, by, 0.22), (0.06, 0.45, 0.45), iron, bevel=0)
+    W.box((bx, by, 0.45), (0.45, 1.8, 0.05), wood, bevel=0.01)
+    W.box((bx - 0.25, by, 0.75), (0.05, 1.8, 0.35), wood, bevel=0.01)
+    for sy in (-1, 1):
+        W.box((bx, by + sy * 0.8, 0.22), (0.45, 0.06, 0.45), iron, bevel=0)
     C.skyline(seed=seed + 1, y_from=160, y_to=260, x=(-250, 250), n=30, hmin=20, hmax=70)
     return bx, by
 
@@ -902,11 +915,11 @@ def park_set(seed=7):
 def p06_wind(nf):
     FJ.day(elev=40, az=150)
     bx, by = park_set()
-    kacho = person((bx + 0.2, by - 0.05, 0.27), 180, seed=1, pose="sit", look=L(KACHO, face="neutral"), arms="hold")
+    kacho = person((bx - 0.05, by, 0.27), 90, seed=1, pose="sit", look=L(KACHO, face="surprised"), arms="hold")
     _ = kacho
-    W.box((bx + 0.2, by + 0.3, 0.82), (0.25, 0.16, 0.06), W.mat("bento", (0.85, 0.25, 0.20), 0.5), bevel=0.01)
+    W.box((bx + 0.32, by, 0.82), (0.16, 0.25, 0.06), W.mat("bento", (0.85, 0.25, 0.20), 0.5), bevel=0.01)
     # においの帯：風下（+x）へ流れ、ゆっくり左右にゆれる（ホースの水のように）
-    src = Vector((bx + 0.2, by - 0.05, 1.1))
+    src = Vector((bx + 0.15, by, 1.2))
     mat = pink_mat(0.24)
     r = random.Random(16)
     births = list(range(-260, nf, 2))
@@ -925,14 +938,14 @@ def p06_wind(nf):
         return (x, y, z), s0 * (1.0 + 0.32 * t)
     puff_objs(births, nf, fn, mat, "wp", every=3)
     # 風下から、ジグザグに歩いてくる人
-    for k, (x0, y0) in enumerate([(9.0, 4.0), (10.5, 8.0), (7.5, 9.5)]):
+    for k, (x0, y0) in enumerate([(4.5, 4.8), (6.0, 7.2), (3.5, 7.4)]):
         way = [(1, x0, y0)]
         f = 1
         x, y = x0, y0
         side = 1 if k % 2 else -1
         while f < nf:
             f += 22
-            x -= 1.4
+            x -= 1.05
             y = src.y + side * r.uniform(0.9, 1.6)
             side = -side
             way.append((min(f, nf), x, y))
@@ -949,8 +962,8 @@ def p06_wind(nf):
             o.rotation_euler = (3 * t + k, 2 * t, 4 * t)
             o.keyframe_insert("location", frame=f)
             o.keyframe_insert("rotation_euler", frame=f)
-    W.camera((1.5, -13.0, 3.0), (2.5, 5.0, 1.0), lens=22)
-    fill((-3.0, 1.0, 2.2), (bx, by, 1.0), power=80)
+    W.camera((bx - 2.2, by - 1.5, 2.1), (bx + 6.0, by + 0.4, 0.9), lens=28)
+    fill((bx + 3.0, by - 2.0, 2.2), (bx + 6, by, 1.0), power=120)
     return nf
 
 
@@ -977,10 +990,10 @@ def p07_perfume(nf):
             x = -1.5 + k * 0.37
             col = cols[(k + int(z * 10)) % 4]
             m = W.mat(f"bottle_{col}", col, 0.1, emit=col, emit_strength=0.4)
-            b = F._cyl(0.06, 0.06, 0.16, (x, 4.7, z + 0.08), m, verts=8)
-            cap = F._cyl(0.03, 0.03, 0.06, (x, 4.7, z + 0.19), gold, verts=8)
+            b = F._cyl(0.075, 0.075, 0.2, (x, 4.7, z + 0.1), m, verts=8)
+            cap = F._cyl(0.035, 0.035, 0.07, (x, 4.7, z + 0.24), gold, verts=8)
             cap.parent = b
-            cap.location = (0, 0, 0.11)
+            cap.location = (0, 0, 0.135)
             bottles.append(b)
     # 店員が上の段から箱へ移す
     box_m = W.mat("cardboard", (0.72, 0.56, 0.36), 0.9)
@@ -996,14 +1009,13 @@ def p07_perfume(nf):
         b.location = (1.0 + r.uniform(-0.15, 0.15), 2.6 + r.uniform(-0.1, 0.1), 1.2)
         b.keyframe_insert("location", frame=f0 + 11)
         _ = p0
-    actor(1, L(CLERK, face="worried"), [(1, 0.4, 3.75, 0), (nf, 0.4, 3.75, 0)], nf, arms="up", alt="hold", alt_period=7)
+    actor(1, L(CLERK, face="worried"), [(1, 0.95, 3.75, 330), (nf, 0.95, 3.75, 330)], nf, arms="up", alt="hold", alt_period=7)
     # 通りすぎる客（見向きもしない）
-    actor(2, crowd_look(r, "neutral"), [(1, -6.0, 0.8), (nf, 5.0, 1.0)], nf, period=8)
-    actor(3, crowd_look(r, "neutral"), [(20, 6.0, -0.2), (nf, -2.5, -0.4)], nf, period=8)
+    actor(3, crowd_look(r, "neutral"), [(1, -5.0, 1.3), (60, -5.0, 1.3), (nf, 2.0, 1.3)], nf, period=8)
     for x in (-3, 0, 3):
         C.point_light((x, 2.0, 3.2), 120, (1.0, 0.95, 0.88), 0.5)
-    W.camera((-2.2, -2.6, 1.6), (0.3, 4.2, 1.5), lens=28)
-    fill((-1.5, -1.0, 2.0), (0.4, 3.8, 1.4), power=60)
+    W.camera((0.45, 0.1, 1.7), (0.35, 4.6, 1.7), lens=26)
+    fill((1.5, 0.5, 2.0), (0.8, 3.8, 1.5), power=70)
     return nf
 
 
@@ -1022,7 +1034,7 @@ def p08_silk(nf):
     crate = W.mat("crate_wood", (0.62, 0.48, 0.30), 0.8)
     cocoon = W.mat("cocoon", (0.97, 0.96, 0.90), 0.9)
     r = random.Random(18)
-    for k, (x, y, z) in enumerate([(-2.6, 3.6, 0.3), (-2.6, 4.4, 0.3), (-2.6, 4.0, 0.9), (2.7, 4.2, 0.3), (2.7, 4.2, 0.9)]):
+    for k, (x, y, z) in enumerate([(-1.6, 3.7, 0.3), (-1.6, 4.5, 0.3), (-1.6, 4.1, 0.9), (2.1, 4.2, 0.3), (2.1, 4.2, 0.9)]):
         W.box((x, y, z), (1.0, 0.75, 0.6), crate, bevel=0.01)
         if k in (0, 3):
             sign((x, y - 0.38, z), 0.8, 0.3, text_texture("crate_japan.png", [("日本　カイコ", 120)], size=(800, 300), bg=(200, 170, 120),
@@ -1033,7 +1045,7 @@ def p08_silk(nf):
         h = 0.25 * max(0.0, 1 - ((x + 0.85) / 0.6) ** 2 - ((y - 2.2) / 0.4) ** 2)
         pts.append((x, y, 0.9 + r.uniform(0, h), 0.03, (1.0, 1.6, 1.0)))
     for k in range(120):
-        x, y, z = -2.6 + r.uniform(-0.45, 0.45), 4.0 + r.uniform(-0.3, 0.3), 1.22 + r.uniform(0, 0.06)
+        x, y, z = -1.6 + r.uniform(-0.45, 0.45), 4.1 + r.uniform(-0.3, 0.3), 1.22 + r.uniform(0, 0.06)
         pts.append((x, y, z, 0.03, (1.0, 1.6, 1.0)))
     C.multi_ball(pts, cocoon, "cocoons", sub=1)
     glass = W.mat("lab_glass", (0.85, 0.92, 0.95), 0.05, alpha=0.45)
@@ -1052,14 +1064,14 @@ def p08_silk(nf):
     P = np.zeros((N, nfm + 1, 3))
     for i in range(N):
         a0 = r.uniform(0, 6.3)
-        rad = r.uniform(0.25, 0.45)
+        rad = r.uniform(0.3, 0.55)
         for f in range(nfm + 1):
             a = a0 + 0.5 * f / FPS
             P[i, f] = (0.35 + rad * math.cos(a), 2.15 + 0.6 * rad * math.sin(a), 0.89)
-    fly_moths(P, nfm, near=set(range(N)), scale=0.9, name="silk", col=(0.96, 0.95, 0.90), wing=(0.97, 0.96, 0.92), flap=2)
+    fly_moths(P, nfm, near=set(range(N)), scale=2.2, name="silk", col=(0.96, 0.95, 0.90), wing=(0.97, 0.96, 0.92), flap=2)
     _ = vial
     C.point_light((0.5, 1.5, 2.2), 80, (1.0, 0.85, 0.6), 0.4)
-    W.camera((-0.9, -0.6, 1.55), (0.3, 2.6, 1.05), lens=30)
+    W.camera((-0.9, -0.5, 1.6), (-0.1, 3.0, 1.2), lens=24)
     fill((-0.5, 0.5, 1.8), (0.25, 3.0, 1.3), power=60)
     return nf
 
@@ -1080,12 +1092,12 @@ def apple_tree(x, y, seed):
         rr = r.uniform(1.0, 1.3)
         ap.append((x + rr * math.cos(a), y + rr * math.sin(a), r.uniform(1.4, 2.4), 0.06, (1, 1, 1)))
     C.multi_ball(ap, red, f"apples{seed}", sub=1)
-    tube = W.mat("dispenser_red", (0.85, 0.10, 0.10), 0.5)
+    tube = W.mat("dispenser_red", (0.90, 0.08, 0.08), 0.5, emit=(0.9, 0.05, 0.05), emit_strength=0.6)
     disp = []
-    for k in range(2):
+    for k in range(3):
         a = r.uniform(0, 6.3)
-        p = (x + 1.0 * math.cos(a), y + 1.0 * math.sin(a), 1.6)
-        F._cyl(0.012, 0.012, 0.22, p, tube, rot=(math.radians(70), 0, a), verts=6)
+        p = (x + 1.15 * math.cos(a), y + 1.15 * math.sin(a), 1.35)
+        F._cyl(0.022, 0.022, 0.32, p, tube, rot=(math.radians(25), 0, a), verts=6)
         disp.append(p)
     return disp
 
@@ -1096,11 +1108,11 @@ def p09_orchard(nf):
     disp = []
     for row in range(-2, 3):
         for j in range(8):
-            disp += apple_tree(row * 4.0, 1.5 + j * 3.5, seed=row * 20 + j + 50)
+            disp += apple_tree(row * 5.0, 1.5 + j * 3.5, seed=row * 20 + j + 50)
     FJ.foothills(seed=12, y=(500, 900), x=(-900, 900), n=10, col=(0.30, 0.40, 0.48), h=(80, 220))
     # 管から出るにおい（畑じゅうにうっすら）
     r = random.Random(19)
-    mat = pink_mat(0.13)
+    mat = pink_mat(0.20)
     births, par = [], []
     for k, p in enumerate(disp):
         for j in range(3):
@@ -1113,19 +1125,19 @@ def p09_orchard(nf):
         return (p[0] + vx * t + 0.4 * t, p[1] + vy * t, p[2] + 0.05 * t), s0 * (1 + 0.5 * t)
     puff_objs(births, nf, fn, mat, "orp", every=4)
     # 迷うガ：行ったり来たり、ぐるぐる
-    N = 26
+    N = 30
     P = np.zeros((N, nf + 1, 3))
     rng = np.random.default_rng(9)
-    c = np.column_stack([rng.uniform(-4, 4, N), rng.uniform(2, 12, N), rng.uniform(1.0, 2.4, N)])
+    c = np.column_stack([rng.uniform(0.8, 4.2, N), rng.uniform(0.0, 9, N), rng.uniform(1.1, 2.2, N)])
     w = rng.uniform(1.5, 3.5, (N, 3))
     ph = rng.uniform(0, 6.3, (N, 3))
     for f in range(nf + 1):
         t = f / FPS
-        P[:, f, 0] = c[:, 0] + 0.9 * np.sin(w[:, 0] * t + ph[:, 0])
-        P[:, f, 1] = c[:, 1] + 0.9 * np.sin(w[:, 1] * t + ph[:, 1])
+        P[:, f, 0] = c[:, 0] + 0.6 * np.sin(w[:, 0] * t + ph[:, 0])
+        P[:, f, 1] = c[:, 1] + 0.6 * np.sin(w[:, 1] * t + ph[:, 1])
         P[:, f, 2] = c[:, 2] + 0.35 * np.sin(w[:, 2] * t + ph[:, 2])
     fly_moths(P, nf, near=set(range(N)), scale=2.0, name="apm", col=(0.50, 0.40, 0.28), wing=(0.66, 0.55, 0.38))
-    W.camera((1.8, -3.0, 1.6), (0.5, 6.0, 1.6), lens=26)
+    W.camera((2.5, -3.2, 1.65), (2.3, 6.0, 1.55), lens=26)
     fill((1.0, -1.0, 2.0), (0, 4, 1.6), power=40)
     return nf
 
@@ -1149,7 +1161,7 @@ def p10_confuse(nf):
     kway.append((nf, 0.3 + 0.9 * math.cos(1.0 + 0.6 * nf / FPS), -2.5 + 0.9 * math.sin(1.0 + 0.6 * nf / FPS)))
     actor(1, L(KACHO, face="worried"), kway, nf, period=8)
     # 街をおおうピンクのもや（大きなけむりが重なる）
-    mat = pink_mat(0.10)
+    mat = pink_mat(0.06, col=(1.0, 0.62, 0.80), glow=1.6)
     births, par = [], []
     for k in range(120):
         births.append(1)
@@ -1198,9 +1210,7 @@ def p12_home(nf):
     # 玄関のドア（開いている）と、外の夜
     W.box((-1.1, 4.15, 1.2), (1.8, 0.1, 2.4), wall, bevel=0)
     W.box((1.6, 4.15, 1.2), (0.8, 0.1, 2.4), wall, bevel=0)
-    door = W.box((0.75, 4.1, 1.05), (0.9, 0.06, 2.1), W.mat("door_wood", (0.30, 0.20, 0.12), 0.6), bevel=0.01)
-    door.rotation_euler.z = math.radians(-70)
-    door.location = (1.2, 3.75, 1.05)
+    W.box((1.15, 3.65, 1.05), (0.06, 0.9, 2.1), W.mat("door_wood", (0.30, 0.20, 0.12), 0.6), bevel=0.01)
     W.box((0.45, 6.0, 1.5), (6, 0.1, 3), W.mat("night_out", (0.05, 0.07, 0.15), 0.8, emit=(0.06, 0.09, 0.20), emit_strength=1.0), bevel=0)
     # げた箱・花・写真
     W.box((-1.65, 2.6, 0.5), (0.6, 1.4, 1.0), W.mat("getabako", (0.62, 0.45, 0.28), 0.6), bevel=0.01)
@@ -1209,33 +1219,34 @@ def p12_home(nf):
                  W.mat("flower_pink", (0.95, 0.45, 0.60), 0.6), "flowers")
     sign((-1.62, 2.85, 1.2), 0.3, 0.22, text_texture("photo_wedding.png", [("1995", 140)], size=(500, 360), bg=(240, 235, 225),
                                                        fg=(150, 120, 90), border=(120, 90, 60)), "photo", rot_z=90)
-    C.point_light((0, 1.6, 2.6), 160, (1.0, 0.82, 0.55), 0.3)
+    C.point_light((0, 1.6, 2.5), 90, (1.0, 0.82, 0.55), 0.6)
     C.point_light((0.4, 3.2, 2.5), 60, (1.0, 0.80, 0.55), 0.2)
     # 課長（入ってくる）と妻（迎える）
     f_in = 40
     f_give = 75
-    actor(1, L(KACHO, face="happy"), [(1, 0.5, 5.2), (f_in, 0.45, 3.4, 190), (nf, 0.45, 3.4, 190)], nf, arms="hold",
+    actor(1, L(KACHO, face="happy"), [(1, 0.5, 5.2), (f_in, 0.55, 3.05, 217), (nf, 0.55, 3.05, 217)], nf, arms="hold",
           face_at=(f_give + 12, "happy", "down"), period=8)
-    wife = actor(2, L(WIFE, face="happy"), [(1, -0.35, 1.6, 20), (nf, -0.35, 1.6, 20)], nf, arms="down", face_at=(f_give, "happy", "hold"))
+    wife = actor(2, L(WIFE, face="happy"), [(1, -0.02, 2.3, 37), (nf, -0.02, 2.3, 37)], nf, arms="down", face_at=(f_give, "happy", "hold"))
     lift = bpy.data.objects.new("lift", None)
     bpy.context.collection.objects.link(lift)
     lift.location = (0, 0, 0.25)
     wife.parent = lift
     jacket = W.box((0.5, 4.85, 1.0), (0.45, 0.12, 0.5), W.mat("jacket", (0.12, 0.15, 0.26), 0.8), bevel=0.02)
-    for f, p in ((1, (0.5, 4.85, 1.0)), (f_in, (0.44, 3.05, 1.0)), (f_give, (0.44, 3.05, 1.0)), (f_give + 12, (-0.24, 1.94, 1.25)),
-                 (nf, (-0.24, 1.94, 1.25))):
+    for f, p in ((1, (0.5, 4.85, 1.0)), (f_in, (0.33, 2.76, 1.0)), (f_give, (0.33, 2.76, 1.0)), (f_give + 12, (0.2, 2.59, 1.23)),
+                 (nf, (0.2, 2.59, 1.23))):
         jacket.location = p
         jacket.keyframe_insert("location", frame=f)
     for o in (jacket,):
         o.location.z += 0.25 * 0
     # ふたりのけむりが、上で ひとつにまざる
-    mA, mB = pink_mat(0.20), pink_mat(0.20, (1.0, 0.55, 0.70), "phero2")
-    body_plume(lambda f: (0.45, 3.4) if f > f_in else (0.45, 4.5), 1, nf, nf, every=6, rise=0.3, life=90, mat=mA, seed=71,
-               drift=(-0.12, -0.25), name="ha")
-    body_plume((-0.35, 1.6), 1, nf, nf, every=6, rise=0.3, life=90, mat=mB, seed=72, drift=(0.12, 0.25), name="hb")
-    W.camera((-1.4, -1.4, 1.55), (0.2, 3.0, 1.35), lens=28)
-    cut(132, (1.3, 0.4, 1.6), (-0.1, 2.6, 1.45), lens=30, orbit=4, push=0.15)
-    fill((-0.8, 0.2, 2.0), (0.3, 3.0, 1.4), power=50, col=(1.0, 0.85, 0.7))
+    mA, mB = pink_mat(0.16), pink_mat(0.16, (1.0, 0.55, 0.70), "phero2")
+    body_plume(lambda f: (0.55, 3.05) if f > f_in else (0.5, 4.5), 1, nf, nf, every=8, rise=0.25, life=60, mat=mA, seed=71,
+               drift=(-0.10, -0.12), name="ha", size=(0.06, 0.11), z_lo=1.2, z_hi=1.7, spread=0.15)
+    body_plume((-0.02, 2.3), 1, nf, nf, every=8, rise=0.25, life=60, mat=mB, seed=72, drift=(0.10, 0.12), name="hb",
+               size=(0.06, 0.11), z_lo=1.45, z_hi=1.95, spread=0.15)
+    W.camera((1.8, 1.5, 1.6), (0.2, 2.62, 1.4), lens=21)
+    cut(132, (1.65, 1.75, 1.65), (0.24, 2.66, 1.5), lens=26, orbit=3, push=0.12)
+    fill((1.3, 1.2, 2.0), (0.1, 2.8, 1.4), power=50, col=(1.0, 0.85, 0.7))
     return nf
 
 

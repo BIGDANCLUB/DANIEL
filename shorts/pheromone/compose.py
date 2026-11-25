@@ -18,7 +18,7 @@ SC = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(SC)       # スギ版の色の仕上げと音の部品を使う
 FC, CC, Y = SC.FC, SC.CC, SC.Y
 O = Y.O
-FC.GRADE = dict(FC.GRADE, gam=1.6, r=1.0, b=0.98)
+FC.GRADE = dict(FC.GRADE, lo=0.05, hi=0.86, gam=1.45, s=0.6, r=0.98, b=1.01, sat=0.6, vib=0.4)     # 試しの画で計測して決めた値
 FPS, SR = TL.FPS, CC.SR
 LABEL = "フェロモンが出てから"
 WORD, PRE, POST = "フェロモン", "もしも", "が出たら？"

@@ -149,12 +149,19 @@ def install(FJ):
         hair = flat(f"vhair_{hc_col}", hc_col)
         shoe = flat("vshoe", (0.10, 0.08, 0.07))
         p = []
+        stride = {"walk1": 1, "walk2": -1}.get(pose, 0)      # 歩くポーズ：walk1 は左足が前、walk2 は右足が前
         if pose == "sit":
             hip = 0.2
             for sx in (-1, 1):
                 p.append(box((sx * 0.1, 0.2, hip), (0.17, 0.46, 0.17), bottom))
                 p.append(box((sx * 0.1, 0.42, hip - 0.24), (0.16, 0.16, 0.44), bottom))
                 p.append(box((sx * 0.1, 0.47, hip - 0.47), (0.17, 0.26, 0.08), shoe))
+        elif stride:
+            hip = 0.72
+            for sx in (-1, 1):
+                fy = 0.17 * stride * (-sx)
+                p.append(limb((sx * 0.1, 0, hip - 0.02), (sx * 0.1, fy, 0.09), 0.17, bottom))
+                p.append(box((sx * 0.1, fy + 0.03, 0.04), (0.18, 0.26, 0.08), shoe))
         else:
             hip = 0.72
             for sx in (-1, 1):
@@ -179,6 +186,10 @@ def install(FJ):
                 h = (sx * 0.5, 0.0, sh + 0.42)
             elif a == "hold":
                 h = (sx * 0.12, 0.36, sh - 0.3)
+            elif a == "cheek":                  # 手をほおに（照れる・困る）
+                h = (sx * 0.13, 0.2, hc - 0.08)
+            elif stride:                        # 歩くときは、足と逆の腕を前へふる
+                h = (sx * 0.285, -0.16 * stride * (-sx), sh - 0.58)
             else:
                 h = (sx * 0.285, 0.01, sh - 0.6)
             from mathutils import Vector

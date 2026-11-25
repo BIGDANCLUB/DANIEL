@@ -1089,10 +1089,10 @@ def danger_box(txt, t=0.0):
     if txt not in _DANGER:
         lines = txt.split("\n")
         rows = [[(lines[0], WHITE)]] + [[(ln, YELLOW)] for ln in lines[1:]]
-        _DANGER[txt] = rich(rows, 92, stroke=8, stroke_col=BLACK, max_w=W - 120, lh=1.05)
+        _DANGER[txt] = rich(rows, 108, stroke=9, stroke_col=BLACK, max_w=W - 80, lh=1.05)
     tx = _DANGER[txt]
-    bw = 26
-    h = tx.height + 36
+    bw = 32
+    h = tx.height + 44
     im = Image.new("RGBA", (W, h + 2 * bw), YELLOW + (255,))
     d = ImageDraw.Draw(im)
     off = int(t * 160) % 60   # しまが横に流れる

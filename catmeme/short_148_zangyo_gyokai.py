@@ -103,7 +103,7 @@ def cuts():
                                           {"f": "rumble_gogogo", "at": 0.0, "len": T - tA + HOLD, "gain": -6},
                                           {"f": "siren_police", "at": 0.1, "len": T - tA + HOLD - 0.1, "gain": -10},
                                           {"f": "fanfare_pararappara", "at": T - tA}])   # 帯が出ている間は警告音
-    head["danger"] = ("業界別！\n残業時間バトル", 1080)   # 猫と下の業界名にかからない高さ・横いっぱい   # 11/25 ユーザー指定：冒頭に危険の帯ふうの題名
+    head["danger"] = ("業界別！\n残業時間バトル", 960)   # 猫と下の業界名にかからない高さ・横いっぱい   # 11/25 ユーザー指定：冒頭に危険の帯ふうの題名
     tail = scroll(0.0, tA)
     out = [head] + body + [tail]
     for c in out:

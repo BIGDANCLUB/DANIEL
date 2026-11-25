@@ -1083,21 +1083,46 @@ def talks_draw(out, c, t):
 _DANGER = {}
 
 
+def _warn_tri(size):
+    """黄色い三角形に黒い「！」（注意の標識ふう）。"""
+    key = ("tri", size)
+    if key not in _DANGER:
+        im = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        d.polygon([(size / 2, 4), (size - 4, size - 6), (4, size - 6)], fill=BLACK)
+        d.polygon([(size / 2, 16), (size - 15, size - 13), (15, size - 13)], fill=YELLOW)
+        ex = rich([[("！", BLACK)]], int(size * 0.55), stroke=0)
+        im.alpha_composite(ex, ((size - ex.width) // 2, int(size * 0.62 - ex.height / 2)))
+        _DANGER[key] = im
+    return _DANGER[key]
+
+
 def danger_box(txt, t=0.0):
     """11/25 ユーザー指定：黄色と黒の斜めじま（危険・注意の帯ふう）の枠。画面の横を貫く帯で、しまが流れて動く。
-    中は黒、1行目は白、2行目は黄色の極太字。"""
+    中は黒、1行目は白、2行目は黄色の極太字。左右に注意の三角マーク、上下に「! WARNING !」の文字が点滅する。"""
     if txt not in _DANGER:
         lines = txt.split("\n")
         rows = [[(lines[0], WHITE)]] + [[(ln, YELLOW)] for ln in lines[1:]]
-        _DANGER[txt] = rich(rows, 108, stroke=9, stroke_col=BLACK, max_w=W - 80, lh=1.05)
+        _DANGER[txt] = rich(rows, 124, stroke=10, stroke_col=BLACK, max_w=W - 300, lh=1.02)
     tx = _DANGER[txt]
-    bw = 32
-    h = tx.height + 44
+    bw = 40
+    h = tx.height + 110
     im = Image.new("RGBA", (W, h + 2 * bw), YELLOW + (255,))
     d = ImageDraw.Draw(im)
-    off = int(t * 160) % 60   # しまが横に流れる
-    for x in range(-im.height - 60 + off, W + im.height, 60):
-        d.polygon([(x, 0), (x + 30, 0), (x + 30 - im.height, im.height), (x - im.height, im.height)], fill=BLACK)
+    off = int(t * 160) % 70   # しまが横に流れる
+    for x in range(-im.height - 70 + off, W + im.height, 70):
+        d.polygon([(x, 0), (x + 35, 0), (x + 35 - im.height, im.height), (x - im.height, im.height)], fill=BLACK)
     d.rectangle((0, bw, W - 1, bw + h - 1), fill=BLACK)
+    on = int(t / 0.25) % 2 == 0   # 点滅（0.25秒ごと）
+    if on:
+        wk = "warn_line"
+        if wk not in _DANGER:
+            _DANGER[wk] = rich([[("! WARNING !  ! WARNING !  ! WARNING !", (230, 40, 40))]], 40, stroke=0, max_w=W - 20)
+        wl = _DANGER[wk]
+        im.alpha_composite(wl, ((W - wl.width) // 2, bw + 8))
+        im.alpha_composite(wl, ((W - wl.width) // 2, bw + h - wl.height - 8))
+        tri = _warn_tri(124)
+        im.alpha_composite(tri, (10, bw + (h - tri.height) // 2))
+        im.alpha_composite(tri, (W - 10 - tri.width, bw + (h - tri.height) // 2))
     im.alpha_composite(tx, ((W - tx.width) // 2, bw + (h - tx.height) // 2))
     return im

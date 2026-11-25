@@ -919,7 +919,7 @@ def vs_rows(st, rows, heads=("日本", "世界"), total=59.9, emoji=False, ref=F
 # ---- 勝ち抜き棒グラフ（11/24 ユーザー指定：業界別の平均年収。順位は出さず、低い順に比べて勝った側が次へ） ----
 # 配置は参考動画（日本vs海外 損する国はどこ？）どおり：縦に長い棒・下に白い札（業界名＋金額）・猫は棒の下のほうに大きく重ねる・
 # 字幕は棒の上にまん中で白い太字（黒ふち）。背景は動画
-BAR_BASE, BAR_MAXH, BAR_MAXV = 1300, 760, 900.0   # 11/24：棒は高め・字幕ボックスは上のほう（棒にかかってよい）
+BAR_BASE, BAR_MAXH, BAR_MAXV = 1225, 685, 900.0   # 11/25：棒の起点を上げて、下の白い札を高く（文字を大きく）
 _BARTX = {}
 
 
@@ -950,13 +950,18 @@ def bars_draw(out, c, t):
             cv2.rectangle(out, (x0, BAR_BASE - h), (x1, BAR_BASE - 1), tuple(v / 255 for v in col), -1)
         v = b["val"] * k
         # 下の白い札：業界名（色つき）＋金額
-        nm = _btx(b["name"].replace("\n", ""), RED if b.get("win") else BLUE, 46, stroke=0, max_w=int(b["w"] - 10))
-        am = _btx(c.get("unit_fmt", "%d万") % (v if "." in c.get("unit_fmt", "%d万") else round(v)), RED if b.get("win") else BLACK, 76, stroke=0, max_w=int(b["w"] - 10))
-        bh = nm.height + am.height + 28
+        nm = _btx(b["name"].replace("\n", ""), RED if b.get("win") else BLUE, 62, stroke=0, max_w=int(b["w"] - 10))
+        am = _btx(c.get("unit_fmt", "%d万") % (v if "." in c.get("unit_fmt", "%d万") else round(v)), RED if b.get("win") else BLACK, 86, stroke=0, max_w=int(b["w"] - 10))
+        bh = nm.height + am.height + 44
         box = Image.new("RGBA", (int(b["w"]) + 14, bh), (255, 255, 255, 255))
-        box.alpha_composite(nm, ((box.width - nm.width) // 2, 8))
-        box.alpha_composite(am, ((box.width - am.width) // 2, 12 + nm.height))
-        I.put(out, box, b["x"], BAR_BASE + 6 + bh / 2)
+        box.alpha_composite(nm, ((box.width - nm.width) // 2, 14))
+        box.alpha_composite(am, ((box.width - am.width) // 2, 20 + nm.height))
+        bx = b["x"]
+        if b.get("slide_from") is not None and t < 0.35:   # 11/25：前の場面の勝者の札が、元の位置からスッと動いてくる
+            u = t / 0.35
+            u = 1 - (1 - u) ** 3
+            bx = b["slide_from"] + (b["x"] - b["slide_from"]) * u
+        I.put(out, box, bx, BAR_BASE + 6 + bh / 2)
     if c.get("say_mid"):   # 字幕：棒の上のまん中に白い太字
         sm = _btx(c["say_mid"], c.get("say_mid_col", WHITE), c.get("say_mid_size", 84), stroke=c.get("say_mid_stroke", 14), scol=c.get("say_mid_scol", BLACK), max_w=W - 40)
         k2 = 1.0 if t > 0.12 else 0.7 + 0.3 * (t / 0.12)
@@ -972,8 +977,8 @@ def chain_cut(st, bars, cats, dur, say=None, se=None, say_y=700, bgvid="v09_shib
     bw = {2: 440, 3: 310}[n]
     c = dict(kind="chain", bg=st, tag="", tag_style="red", flag=None, say=None, say_mid=say, say_mid_y=say_y, dur=dur, fixed=True,
              no_pop=True, no_tag=True, bgvid=bgvid, blur=3, dark=0.15, band_y=0,
-             bars=[dict(name=nm, val=v, x=x, w=bw, grow=g, win=wn) for (nm, v, g, wn), x in zip(bars, xs)],
-             cats=[_cat(a, x, sz, sz * 1.15, 1295, None, mute=not snd) for (a, snd, sz), x in zip(cats, xs) if a])
+             bars=[dict(dict(name=b_[0], val=b_[1], x=x, w=bw, grow=b_[2], win=b_[3]), **(b_[4] if len(b_) > 4 else {})) for b_, x in zip(bars, xs)],
+             cats=[_cat(a, x, sz, sz * 1.15, BAR_BASE - 2, None, mute=not snd) for (a, snd, sz), x in zip(cats, xs) if a])
     if se:
         c["se"] = se
     return c

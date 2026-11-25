@@ -36,7 +36,7 @@ def cc(*a, **k):
 def rnd(k, a, b, win_line, lose_line, tie=None):
     """1対1。a が前の勝者（左）、b が新しく出る業界（右）。tie＝(左のセリフ, 右のセリフ) なら引き分け（両方赤）。"""
     xs = (295, 785)
-    grow = [(a[0], a[1], k == 0, False), (b[0], b[1], True, False)]
+    grow = [(a[0], a[1], k == 0, False, {} if k == 0 else {"slide_from": 785}), (b[0], b[1], True, False)]   # 11/25：前の勝者の札は右から左へスッと動く（色はふつうに戻してから）
     nerv = [("smug_squint_bicolor_cat" if k else NERV[k % 4], False, 420), (NERV[(k + 1) % 4], False, 420)]
     out = [cc(grow, nerv, 2.5, se="drumroll")]
     if tie:

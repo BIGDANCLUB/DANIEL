@@ -600,6 +600,13 @@ class Renderer(I.Renderer):
             bars_draw(out, c, t)
         if c.get("scroll"):   # 11/24 最後に登場した全業界を左から右へ流す
             scroll_draw(out, c, t)
+        if c.get("danger"):   # 11/25：黄色と黒のしま模様（危険の帯ふう）の枠に大きな題名
+            txt, y = c["danger"]
+            im = danger_box(txt)
+            k = 1.0 if t > 0.15 else 0.6 + 0.4 * (t / 0.15)
+            if k != 1.0:
+                im = im.resize((int(im.width * k), int(im.height * k)), Image.BILINEAR)
+            I.put(out, im, W / 2, y)
         if c["kind"] == "split" and not c.get("skit"):
             if c.get("ref"):   # 読み上げ型：線はゆらゆら少し左右に動く・下の字幕の後ろまでのばす
                 lx = int(W // 2 + 22 * math.sin((c.get("t0", 0.0) + t) * 2 * math.pi / 3.2))
@@ -1071,3 +1078,24 @@ def talks_draw(out, c, t):
             im = im.resize((max(1, int(im.width * k3)), max(1, int(im.height * k3))), Image.BILINEAR)
         cx = min(max(x, im.width / 2 + 16), W - im.width / 2 - 16)
         I.put(out, im, cx, y - im.height / 2)
+
+
+_DANGER = {}
+
+
+def danger_box(txt):
+    """11/25 ユーザー指定：黄色と黒の斜めじま（危険・注意の帯ふう）の太い枠。中は黒、1行目は白、2行目は黄色の極太字。"""
+    if txt not in _DANGER:
+        lines = txt.split("\n")
+        rows = [[(lines[0], WHITE)]] + [[(ln, YELLOW)] for ln in lines[1:]]
+        tx = rich(rows, 120, stroke=8, stroke_col=BLACK, max_w=880, lh=1.1)
+        bw = 34
+        w, h = max(tx.width + 90, 900), tx.height + 70
+        im = Image.new("RGBA", (w + 2 * bw, h + 2 * bw), YELLOW + (255,))
+        d = ImageDraw.Draw(im)
+        for x in range(-im.height, im.width + im.height, 60):   # 斜めの黒いしま
+            d.polygon([(x, 0), (x + 30, 0), (x + 30 - im.height, im.height), (x - im.height, im.height)], fill=BLACK)
+        d.rectangle((bw, bw, bw + w - 1, bw + h - 1), fill=BLACK)
+        im.alpha_composite(tx, (bw + (w - tx.width) // 2, bw + (h - tx.height) // 2))
+        _DANGER[txt] = im
+    return _DANGER[txt]

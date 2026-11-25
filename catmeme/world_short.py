@@ -621,7 +621,13 @@ class Renderer(I.Renderer):
                 al = cv2.resize(al, None, fx=s, fy=s)
             h, w = al.shape
             lo, hi = (20, W - 20) if c["kind"] != "split" or c.get("skit") or c.get("ref") else ((20, W // 2 - 14) if q["x"] < W / 2 else (W // 2 + 14, W - 40))
-            x0 = min(max(int(q["x"] - w / 2), lo), hi - w)   # 画面（左右くらべでは自分の側）からはみ出さない
+            if t < q.get("appear", 0.0):   # 決まった時間まで出さない
+                continue
+            qx = q["x"]
+            if q.get("slide_from") is not None and t < SLIDE_T:
+                u = 1 - (1 - t / SLIDE_T) ** 3
+                qx = q["slide_from"] + (q["x"] - q["slide_from"]) * u
+            x0 = min(max(int(qx - w / 2), lo), hi - w)   # 画面（左右くらべでは自分の側）からはみ出さない
             over_cat(out, img, al, x0, int(q["bottom"] - h), c["kind"] == "split")
             if self.labels[i] is not None:
                 lx = q["x"] - 60 if q["x"] < W / 2 else q["x"] + 40
@@ -919,6 +925,7 @@ def vs_rows(st, rows, heads=("日本", "世界"), total=59.9, emoji=False, ref=F
 # ---- 勝ち抜き棒グラフ（11/24 ユーザー指定：業界別の平均年収。順位は出さず、低い順に比べて勝った側が次へ） ----
 # 配置は参考動画（日本vs海外 損する国はどこ？）どおり：縦に長い棒・下に白い札（業界名＋金額）・猫は棒の下のほうに大きく重ねる・
 # 字幕は棒の上にまん中で白い太字（黒ふち）。背景は動画
+SLIDE_T = 0.7   # 11/25：前の勝者が動く時間
 BAR_BASE, BAR_MAXH, BAR_MAXV = 1225, 685, 900.0   # 11/25：棒の起点を上げて、下の白い札を高く（文字を大きく）
 _BARTX = {}
 
@@ -936,14 +943,24 @@ def bars_draw(out, c, t):
     # 数十万円の差でも棒の長さではっきりわかるようにする
     vals = [b["val"] for b in c["bars"]]
     lo, hi = min(vals), max(vals)
+    sliding = any(b.get("slide_from") is not None for b in c["bars"])
     for b in c["bars"]:
         k = 1.0
         if b.get("grow"):
-            u = min(1.0, max(0.0, (t - 0.15) / 2.2))
+            if sliding:   # 前の勝者が動き終わってから、新しい棒が出てのびる
+                if t < SLIDE_T:
+                    continue
+                u = min(1.0, max(0.0, (t - SLIDE_T - 0.05) / 1.5))
+            else:
+                u = min(1.0, max(0.0, (t - 0.15) / 2.2))
             k = 1 - (1 - u) ** 3
         frac = 0.55 + 0.45 * (b["val"] - lo) / (hi - lo) if hi > lo else 1.0   # 11/24：右以外も高めに（いちばん低い棒＝55%）
         h = int(BAR_MAXH * frac * k)
-        x0, x1 = int(b["x"] - b["w"] / 2), int(b["x"] + b["w"] / 2)
+        cxb = b["x"]
+        if b.get("slide_from") is not None and t < SLIDE_T:   # 11/25：前の勝者は棒・札ごと元の位置からスッと動いてくる
+            u = 1 - (1 - t / SLIDE_T) ** 3
+            cxb = b["slide_from"] + (b["x"] - b["slide_from"]) * u
+        x0, x1 = int(cxb - b["w"] / 2), int(cxb + b["w"] / 2)
         col = (40, 40, 225) if b.get("win") else (30, 225, 255)   # BGR：勝ち＝赤、ふつう＝黄色
         if h > 0:
             cv2.rectangle(out, (x0 - 7, BAR_BASE - h - 7), (x1 + 7, BAR_BASE), (0, 0, 0), -1)
@@ -956,12 +973,7 @@ def bars_draw(out, c, t):
         box = Image.new("RGBA", (int(b["w"]) + 14, bh), (255, 255, 255, 255))
         box.alpha_composite(nm, ((box.width - nm.width) // 2, 14))
         box.alpha_composite(am, ((box.width - am.width) // 2, 20 + nm.height))
-        bx = b["x"]
-        if b.get("slide_from") is not None and t < 0.35:   # 11/25：前の場面の勝者の札が、元の位置からスッと動いてくる
-            u = t / 0.35
-            u = 1 - (1 - u) ** 3
-            bx = b["slide_from"] + (b["x"] - b["slide_from"]) * u
-        I.put(out, box, bx, BAR_BASE + 6 + bh / 2)
+        I.put(out, box, cxb, BAR_BASE + 6 + bh / 2)
     if c.get("say_mid"):   # 字幕：棒の上のまん中に白い太字
         sm = _btx(c["say_mid"], c.get("say_mid_col", WHITE), c.get("say_mid_size", 84), stroke=c.get("say_mid_stroke", 14), scol=c.get("say_mid_scol", BLACK), max_w=W - 40)
         k2 = 1.0 if t > 0.12 else 0.7 + 0.3 * (t / 0.12)

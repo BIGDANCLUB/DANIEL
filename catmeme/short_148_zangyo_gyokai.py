@@ -38,7 +38,11 @@ def rnd(k, a, b, win_line, lose_line, tie=None):
     xs = (295, 785)
     grow = [(a[0], a[1], k == 0, False, {} if k == 0 else {"slide_from": 785}), (b[0], b[1], True, False)]   # 11/25：前の勝者の札は右から左へスッと動く（色はふつうに戻してから）
     nerv = [("smug_squint_bicolor_cat" if k else NERV[k % 4], False, 420), (NERV[(k + 1) % 4], False, 420)]
-    out = [cc(grow, nerv, 2.5, se="drumroll")]
+    g0 = cc(grow, nerv, 2.5, se="drumroll")
+    if k:
+        g0["cats"][0]["slide_from"] = 785   # 猫も一緒に動く
+        g0["cats"][1]["appear"] = Wd.SLIDE_T   # 新しい業界の猫は動き終わってから
+    out = [g0]
     if tie:
         res = [(a[0], a[1], False, True), (b[0], b[1], False, True)]
         cats = [(SAD[k % len(SAD)], True, 520), (SAD[(k + 1) % len(SAD)], False, 520)]   # 11/25：残業が多い側は悲しむ

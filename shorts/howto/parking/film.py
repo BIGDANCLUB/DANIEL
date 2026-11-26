@@ -348,6 +348,8 @@ def s01_drill(nf):
     vac.parent = sign
     vac.location = (0, -0.08, 2.6)
     K.show(vac, 1, fr(a4))
+    hero.place(1, face=180)
+    hero.place(fr(a3 - 0.5) - 1, face=180)
     hero.walk(fr(a3 - 0.5), fr(a3 + 0.6), [(0.0, 1.3, 0), (-1.2, 0.2, 0), (-1.2, -0.6, 0)])
     hero.place(fr(a3 + 0.7), (-1.2, -0.6, 0), 200)
     hero.pose(fr(a4 - 0.2), shL=(10, 8), shR=(10, 8), elL=12, elR=12, neck=-8)

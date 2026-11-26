@@ -38,7 +38,7 @@ def M(key):
     tab = {
         "sand": lambda: K.noisy("sand", (0.72, 0.62, 0.44), 14.0, 0.10, 0.25, 0.95),
         "heavy": lambda: K.noisy("log_heavy", (0.36, 0.24, 0.14), 6.0, 0.25, 0.4, 0.8),
-        "balsa": lambda: K.noisy("log_balsa", (0.86, 0.76, 0.56), 6.0, 0.12, 0.3, 0.8),
+        "balsa": lambda: K.noisy("log_balsa", (0.72, 0.58, 0.38), 6.0, 0.14, 0.3, 0.8),
         "cut": lambda: K.mat("log_cut", (0.92, 0.82, 0.60), 0.8),
         "rope": lambda: K.noisy("rope", (0.72, 0.60, 0.38), 40.0, 0.2, 0.5, 0.9),
         "wood": lambda: K.noisy("plank", (0.55, 0.38, 0.20), 3.0, 0.25, 0.2, 0.7),
@@ -324,6 +324,8 @@ def s01_drill(nf):
     K.drill_fx(tip, 1, fr(a1 - 0.1), "chips", seed=3, n=60, up=(0, -0.4, 1))
     hero.pose(fr(a1 - 0.05), **DRILL_LOG2)
     hero.pose(fr(a1 + 0.3), spine=0, neck=-5, shR=(25, 8), elR=40, shL=(15, -8), elL=20, hipL=0, hipR=0, kneeL=0, kneeR=0, hz=0)
+    hero.place(1, face=180)
+    hero.place(fr(a2 - 0.2) - 1, face=180)
     hero.walk(fr(a2 - 0.2), fr(a2 + 0.9), [(0.91, -2.45, 0.135), (0.3, 0.5, 0.0), (0.3, 3.8, 0.2)], run=True)
     f_on = fr(a2 + 0.95)
     ride(hero, rf, (0.3, -0.2, LOG_R), 180, f_on, nf)
@@ -412,7 +414,7 @@ def canoe(name="canoe"):
 
 
 def s03_outrigger(nf):
-    world()
+    world(beach=False)
     T = SC["dur"]
     a7, _ = lt(7)
     a8, _ = lt(8)
@@ -475,8 +477,8 @@ def s03_outrigger(nf):
             (a8, (2.4, -6.5, 2.6), (0.0, 4.0, 1.0), 24),
             (a9, (3.5, -5.0, 2.4), (0.5, 4.0, 0.4), 24),
             (a10 + 0.8, (5.0, -3.5, 1.8), (1.0, 4.0, 0.4), 24),
-            (a11, (2.0, 22.0, 2.0), (-9.0, 40.0, 1.5), 28),
-            (T, (1.0, 24.0, 2.0), (-7.0, 40.0, 1.5), 30)]
+            (a11, (-2.5, 31.0, 1.6), (-11.0, 40.0, 1.4), 30),
+            (T, (-2.0, 32.0, 1.6), (-8.0, 40.0, 1.4), 32)]
     campath(keys, nf, shake=0.02, cuts=[a11])
 
 

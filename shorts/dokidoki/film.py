@@ -210,11 +210,13 @@ def d02_train(nf):
     FJ.room((0.95, 0.95, 0.95), 0.9)
     PF.train_car(nf=nf)
     r = random.Random(33)
-    pm, pw = (0.55, -5.0), (0.55, -4.25)
-    yman = actor(2, L(YOUNG_M, face="neutral"), [(1, *pm, 0), (nf, *pm, 0)], nf, arms=("down", "up"), face_at=(fr(1.6), "blush", ("down", "up")))
-    actor(3, L(YOUNG_W, face="neutral"), [(1, *pw, 180), (nf, *pw, 180)], nf, arms=("up", "down"), face_at=(fr(3.0), "blush", ("up", "down")))
+    pm, pw = (0.2, -4.6), (0.82, -4.55)          # つり革につかまって並ぶ2人（こちら向き）。青年はちらっと彼女のほうへ
+    yman = actor(2, L(YOUNG_M, face="neutral"), [(1, *pm, 180), (fr(1.2), *pm, 180), (nf, *pm, 205)], nf, arms=("down", "up"),
+                 face_at=(fr(1.6), "blush", ("down", "up")))
+    actor(3, L(YOUNG_W, face="neutral"), [(1, *pw, 180), (fr(2.8), *pw, 180), (nf, *pw, 160)], nf, arms=("up", "down"),
+          face_at=(fr(3.0), "blush", ("up", "down")))
     others = []
-    for k, (x, y, f0) in enumerate([(-0.6, -5.6, 120), (-0.5, -4.2, 60), (-0.7, -3.4, 150), (0.75, -3.4, 200), (0.0, -6.4, 30), (-0.1, -2.6, 170)]):
+    for k, (x, y, f0) in enumerate([(-0.75, -5.4, 120), (-0.6, -4.0, 60), (-0.7, -2.9, 150), (1.0, -2.3, 200), (1.05, -6.2, 30), (-0.85, -6.6, 170)]):
         to_m = math.degrees(math.atan2(pm[0] - x, pm[1] - y))
         way = [(1, x, y, f0), (fr(2.4) + 2 * k, x, y, f0), (nf, x, y, to_m)]
         others.append(actor(80 + k, crowd_look(r, "surprised"), way, nf, arms=("hold", "up") if k % 2 else ("up", "down")))
@@ -223,8 +225,8 @@ def d02_train(nf):
         PF.person((sx * (PF.CAR_W / 2 - 0.42), -8.0 + 1.6 * k, 0.28), 90 * sx + 180, seed=60 + k, pose="sit", look=crowd_look(r, "neutral"))
     crowd_rings(others, 0.0, nf / FPS, nf, seed=5, alpha=0.35, size=0.5)
     main_rings("d02_train", chest_of(yman), nf, size=1.2)
-    W.camera((1.0, -7.4, 1.6), (0.45, -4.6, 1.45), lens=26)
-    cut(fr(2.6), (-0.6, -4.0, 1.55), (0.55, -5.0, 1.55), lens=32, orbit=3, push=0.1)
+    W.camera((0.5, -7.2, 1.6), (0.5, -4.6, 1.5), lens=26)
+    cut(fr(2.6), (0.5, -6.0, 1.6), (0.5, -4.6, 1.55), lens=30, orbit=3, push=0.1)
     fill((0.6, -6.8, 2.0), (0.5, -4.6, 1.4), power=60)
     return nf
 
@@ -280,8 +282,8 @@ def d04_meeting(nf):
     kacho = actor(1, L(KACHO, face="neutral"), [(1, 0.9, 4.4, 200), (nf, 0.9, 4.4, 200)], nf, arms="hold",
                   face_at=(fr(2.0), "worried", "brow"))
     main_rings("d04_meeting", chest_of(kacho), nf, size=1.5)
-    W.camera((0.2, -1.6, 1.9), (0.4, 3.8, 1.3), lens=26)
-    fill((0.5, 0.0, 2.4), (0.8, 4.2, 1.4), power=90)
+    W.camera((-0.6, 1.2, 1.75), (0.9, 4.4, 1.45), lens=28)
+    fill((0.0, 1.5, 2.4), (0.9, 4.4, 1.4), power=90)
     return nf
 
 
@@ -330,14 +332,29 @@ def d05_bridge(nf):
 
 
 # ============================ 遊園地：ジェットコースター ============================
+def rail(pts, width, m, name="rail"):
+    cu = bpy.data.curves.new(name, 'CURVE')
+    cu.dimensions = '3D'
+    cu.bevel_depth = width
+    cu.bevel_resolution = 2
+    sp = cu.splines.new('POLY')
+    sp.points.add(len(pts) - 1)
+    for p, q in zip(sp.points, pts):
+        p.co = (*q, 1)
+    o = bpy.data.objects.new(name, cu)
+    bpy.context.collection.objects.link(o)
+    o.data.materials.append(m)
+    return o
+
+
 def coaster_track(pts, m, name="track"):
-    for k in range(len(pts) - 1):
-        a, b = Vector(pts[k]), Vector(pts[k + 1])
-        d = b - a
-        o = W.box(tuple((a + b) / 2), (0.9, d.length + 0.05, 0.08), m, bevel=0)
-        o.rotation_euler = d.to_track_quat('Y', 'Z').to_euler()
-        if k % 3 == 0 and a.z > 0.5:
-            W.box((a.x, a.y, a.z / 2), (0.12, 0.12, a.z), m, bevel=0)
+    for sx in (-1, 1):
+        rail([(p[0] + sx * 0.4, p[1], p[2]) for p in pts], 0.06, m, f"{name}_rail")
+    for k in range(0, len(pts), 2):
+        a = pts[k]
+        W.box((a[0], a[1], a[2] - 0.05), (1.0, 0.12, 0.06), m, bevel=0)
+        if k % 6 == 0 and a[2] > 0.5:
+            W.box((a[0], a[1], a[2] / 2), (0.14, 0.14, a[2]), m, bevel=0)
 
 
 def d06_coaster(nf):
@@ -383,12 +400,20 @@ def d06_coaster(nf):
         car.keyframe_insert("rotation_euler", frame=f)
     for k, o in enumerate((pm, pw)):
         main_rings("d06_coaster", chest_of(o, CHEST - 0.15), nf, size=1.3, name=f"cr{k}_")
+    W.box((0, 100, -0.05), (800, 800, 0.1), W.mat("far_grass", (0.28, 0.40, 0.16), 0.9), bevel=0)
     c = W.camera((5.5, -6.0, 15.5), (0.0, 0.0, 14.5), lens=26)
     c["keep"] = 1
-    for f in range(1, nf + 1, 2):
-        p, _a = pos(f / FPS)
-        c.location = (5.0, p[1] - 5.0, p[2] + 1.6)
-        W.aim(c, Vector((0.0, p[1] + 0.5, p[2] + 0.6)))
+    for f in range(1, nf + 1, 2):         # 前から2人の顔 → 横から落ちるところ → 下で、また前から
+        t = f / FPS
+        p, _a = pos(t)
+        if t < 1.0:
+            loc, aim = (1.2, p[1] + 3.2, p[2] + 1.1), (0.0, p[1], p[2] + 0.9)
+        elif t < 3.0:
+            loc, aim = (10.0, p[1] - 1.0, p[2] + 1.5), (0.0, p[1] + 1.0, p[2] + 0.4)
+        else:
+            loc, aim = (1.4, p[1] + 3.0, p[2] + 1.2), (0.0, p[1], p[2] + 0.9)
+        c.location = loc
+        W.aim(c, Vector(aim))
         c.keyframe_insert("location", frame=f)
         c.keyframe_insert("rotation_euler", frame=f)
     fill((4.0, 0.0, 10.0), (0, 6, 6), power=200, size=6)

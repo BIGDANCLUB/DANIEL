@@ -705,9 +705,9 @@ def s05_turn(nf):
     a21, _ = lt(21)
     a22, _ = lt(22)
     root, body, _p = tower("tw", cars=True)
-    # 前の壁は切りとって中を見せる（断面）
+    # 前の壁と看板は切りとって中を見せる（断面）
     for o in list(body.children):
-        if o.name.startswith("tw_front") or o.name.startswith("tw_lintel"):
+        if o.name.startswith("tw_front") or o.name.startswith("tw_lintel") or o.name.startswith("tw_sign") or o.name.startswith("tw_p"):
             o.scale = (1e-3, 1e-3, 1e-3)
     tt = K.empty((TT_C[0], TT_C[1], 0.0), None, "turntable")
     K.obj(K.cyl_mesh(2.7, 2.7, 0.08, 48), M("turn"), tt, (0, 0, 0.04), name="tt_disc")
@@ -743,11 +743,11 @@ def s05_turn(nf):
     drive(c, fr(a22 + 0.2), fr(T), [(TT_C[0], TT_C[1], 0.1), (0.0, 4.0, 0), (0.0, -2.0, 0), (-8.0, -2.4, 0)])
     K.marker("car", (0, 0, 1.5), c)
     fill_light((-3.0, 2.0, 6.0), (0, 11.5, 0.5), 2500, 8.0)
-    keys = [(0.0, (-3.0, -4.0, 3.0), (0.0, 8.0, 0.8), 26),
-            (a20, (-2.5, 3.2, 3.2), (0.0, 11.0, 0.4), 24),
-            (a21, (-1.6, 5.0, 3.9), (0.0, 11.5, 0.2), 24),
-            (a22, (-1.4, 5.4, 3.7), (0.0, 11.3, 0.3), 24),
-            (T, (-2.5, 1.5, 3.0), (0.0, 7.0, 0.5), 24)]
+    keys = [(0.0, (-3.0, -4.0, 1.9), (0.0, 8.0, 0.8), 26),
+            (a20, (-2.2, 3.6, 1.9), (0.0, 11.0, 0.5), 24),
+            (a21, (-1.5, 5.2, 1.9), (0.0, 11.5, 0.3), 24),
+            (a22, (-1.4, 5.4, 1.9), (0.0, 11.3, 0.3), 24),
+            (T, (-2.5, 1.5, 1.9), (0.0, 7.0, 0.5), 24)]
     campath(keys, nf, shake=0.02)
 
 

@@ -603,7 +603,7 @@ class Renderer(I.Renderer):
         if c.get("danger"):   # 11/25：黄色と黒のしま模様（危険の帯ふう）の枠に大きな題名
             txt, y = c["danger"]
             im = danger_box(txt, c.get("t0", 0.0) + t)
-            if t < 0.15:   # 横からシュッと入る
+            if t < 0.15 and not c.get("danger_static"):   # 横からシュッと入る（danger_static なら1フレーム目から出ている）
                 I.put(out, im, W / 2 - W * (1 - t / 0.15), y)
             else:
                 I.put(out, im, W / 2, y)
@@ -1073,7 +1073,7 @@ def scroll_draw(out, c, t):
             if xx + cw > 0 and xx < W:
                 sx0, sx1 = max(0, -xx), min(cw, W - xx)
                 I.over(out, img[:, sx0:sx1], al[:, sx0:sx1], xx + sx0, yy)
-        nmi = _btx(nm, RED if win else BLUE, 46, stroke=0, max_w=bw - 10)
+        nmi = _btx("？？？" if c.get("hide_names") else nm, RED if win else BLUE, 46, stroke=0, max_w=bw - 10)   # 11/26：冒頭は名前を隠す
         am = _btx(c.get("unit_fmt", "%d万") % v, RED if win else BLACK, 64, stroke=0, max_w=bw - 10)
         bh = nmi.height + am.height + 28
         box = Image.new("RGBA", (bw + 14, bh), (255, 255, 255, 255))
@@ -1120,7 +1120,7 @@ def danger_box(txt, t=0.0):
     if txt not in _DANGER:
         lines = txt.split("\n")
         rows = [[(lines[0], WHITE)]] + [[(ln, YELLOW)] for ln in lines[1:]]
-        _DANGER[txt] = rich(rows, 124, stroke=10, stroke_col=BLACK, max_w=W - 300, lh=1.02)
+        _DANGER[txt] = rich(rows, 124, stroke=10, stroke_col=BLACK, max_w=W - 280, lh=1.02)   # 長い行は自動で小さくなる
     tx = _DANGER[txt]
     bw = 40
     h = tx.height + 110

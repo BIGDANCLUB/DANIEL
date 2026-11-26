@@ -300,6 +300,9 @@ WORKER = dict(top=(0.95, 0.42, 0.05), bottom=(0.22, 0.22, 0.25), sleeves="long",
 NINJA = dict(top=(0.035, 0.035, 0.045), bottom=(0.04, 0.04, 0.05), sleeves="long", hat="zukin", shoes=(0.05, 0.05, 0.06))     # 敵の忍者（黒装束）
 HERO_NINJA = dict(HERO, hat="zukin", hood=(0.04, 0.04, 0.05))      # 主人公（赤いT・ジーンズの半ズボン）が忍者の頭巾をかぶる
 HERO_HELMET = dict(HERO, hat="helmet")                              # 参考元（シェルター）と同じ黄色いヘルメット
+# レッサーパンダの主人公（ユーザー指定 2026-11-26）：赤茶の毛、白い顔の模様、こげ茶の手足、しましまのしっぽ、黄色いヘルメット、オレンジのベスト
+PANDA = dict(panda=True, top=(0.70, 0.27, 0.08), bottom=(0.10, 0.055, 0.035), sleeves="long", arm=(0.10, 0.055, 0.035),
+             skin=(0.10, 0.055, 0.035), shoes=(0.07, 0.04, 0.03), hat="helmet", vest=(1.0, 0.42, 0.03))
 
 
 class Person:
@@ -324,7 +327,10 @@ class Person:
         dark = mat("face_dark", (0.03, 0.02, 0.02), 0.4)
         self.j = {}
         J = self.j
-        J["pelvis"] = empty((0, 0, 0.93), self.root, f"{name}_pelvis")
+        pa = bool(look.get("panda"))
+        self.hip0 = 0.75 if pa else 0.93          # レッサーパンダは足が短い（腰の高さ）
+        lw = 1.45 if pa else 1.0                  # 手足の太さ
+        J["pelvis"] = empty((0, 0, self.hip0), self.root, f"{name}_pelvis")
         obj(ellip_mesh(0.16, 0.10, 0.11), bot, J["pelvis"], (0, 0, 0.0), name=f"{name}_hips")
         J["spine"] = empty((0, 0, 0.02), J["pelvis"], f"{name}_spine")
         obj(capsule_mesh(0.17, 0.145, 0.36, sy=0.62, cz=0.45), top, J["spine"], (0, 0, 0.44), name=f"{name}_torso")
@@ -338,10 +344,45 @@ class Person:
                 obj(box_mesh(0.30 - 0.02 * k, 0.03, 0.035), am, J["spine"], (0, 0.085, 0.02 - 0.07 * k), name=f"{name}_kusazuri")
         obj(capsule_mesh(0.05, 0.05, 0.05), skin, J["spine"], (0, 0, 0.53), name=f"{name}_neckm")
         J["neck"] = empty((0, 0, 0.52), J["spine"], f"{name}_neck")
+        if pa:
+            J["neck"].scale = (1.3, 1.3, 1.3)      # 頭を大きく（かわいく）
         H = J["neck"]
         hat = look.get("hat")
-        obj(ellip_mesh(0.098, 0.108, 0.125), skin, H, (0, 0, 0.14), name=f"{name}_head")
-        if hat == "zukin":      # 忍者の頭巾：頭と顔をおおい、目のところだけ細く肌が見える
+        if not look.get("panda"):
+            obj(ellip_mesh(0.098, 0.108, 0.125), skin, H, (0, 0, 0.14), name=f"{name}_head")
+        if look.get("panda"):   # レッサーパンダの頭：丸い赤茶の頭、白い口もと・ほお・まゆ、黒い目と鼻、白いふちの耳、目の下の涙のすじ
+            fur = noisy(f"fur_{look['top']}", look["top"], 40.0, 0.12, 0.15, 0.95)
+            white = mat("panda_white", (0.93, 0.90, 0.84), 0.8)
+            tear = mat("panda_tear", (0.36, 0.11, 0.04), 0.8)
+            black = mat("panda_black", (0.02, 0.015, 0.012), 0.3)
+            obj(ellip_mesh(0.135, 0.125, 0.118), fur, H, (0, 0, 0.15), name=f"{name}_head")
+            obj(ellip_mesh(0.062, 0.05, 0.045), white, H, (0, 0.092, 0.098), name=f"{name}_muzzle")
+            obj(ellip_mesh(0.021, 0.014, 0.015), black, H, (0, 0.14, 0.113), name=f"{name}_nose")
+            obj(box_mesh(0.026, 0.006, 0.006), black, H, (0, 0.135, 0.078), name=f"{name}_mouth")
+            for sx in (-1, 1):
+                obj(ellip_mesh(0.042, 0.03, 0.036), white, H, (sx * 0.075, 0.082, 0.118), name=f"{name}_cheek")
+                obj(ellip_mesh(0.024, 0.012, 0.016), white, H, (sx * 0.048, 0.108, 0.208), name=f"{name}_wbrow")
+                obj(ellip_mesh(0.012, 0.007, 0.03), tear, H, (sx * 0.05, 0.112, 0.13), rot=(0, sx * 15 * D2R, 0), name=f"{name}_tear")
+                obj(ellip_mesh(0.018, 0.011, 0.02), black, H, (sx * 0.047, 0.113, 0.166), name=f"{name}_eye")
+                obj(ellip_mesh(0.006, 0.004, 0.006), white, H, (sx * 0.042, 0.123, 0.174), name=f"{name}_glint")
+                ear = empty((sx * 0.112, -0.01, 0.235), H, f"{name}_ear{sx}")
+                ear.rotation_euler = (0, sx * 38 * D2R, 0)
+                obj(ellip_mesh(0.05, 0.016, 0.056), white, ear, (0, -0.006, 0), name=f"{name}_earrim")
+                obj(ellip_mesh(0.038, 0.016, 0.044), fur, ear, (0, 0.004, -0.004), name=f"{name}_earfur")
+                obj(ellip_mesh(0.022, 0.01, 0.026), white, ear, (0, 0.016, -0.006), name=f"{name}_earin")
+            # しましまのしっぽ（腰の うしろから、ふんわり上へ）
+            ring = mat("panda_ring", (0.86, 0.60, 0.34), 0.9)
+            self.j["tail"] = tl = empty((0, -0.12, -0.02), J["pelvis"], f"{name}_tail")
+            NT_ = 11
+            for k in range(NT_):
+                u = k / (NT_ - 1)
+                y = -0.05 - 0.05 * k
+                z = -0.14 + 0.42 * u ** 1.5
+                rr = 0.092 - 0.02 * u
+                obj(ellip_mesh(rr, 0.08, rr), ring if k % 3 == 2 else fur, tl, (0, y, z), name=f"{name}_tail{k}")
+            obj(ellip_mesh(0.07, 0.06, 0.07), mat("panda_tip", (0.20, 0.08, 0.03), 0.9), tl, (0, -0.05 - 0.05 * NT_, 0.30),
+                name=f"{name}_tailtip")
+        elif hat == "zukin":      # 忍者の頭巾：頭と顔をおおい、目のところだけ細く肌が見える
             hm = mat(f"zukin_{look.get('hood', (0.03, 0.03, 0.035))}", look.get("hood", (0.03, 0.03, 0.035)), 0.75)
             obj(ellip_mesh(0.112, 0.122, 0.138), hm, H, (0, 0, 0.14), name=f"{name}_hood")
             obj(ellip_mesh(0.062, 0.016, 0.022), skin, H, (0, 0.112, 0.152), name=f"{name}_slit")
@@ -366,26 +407,41 @@ class Person:
             obj(cyl_mesh(0.26, 0.03, 0.11, 20, False), jm, H, (0, -0.005, 0.2), name=f"{name}_jingasa")
         elif hat == "hachimaki":
             obj(cyl_mesh(0.11, 0.108, 0.03, 18), mat("hachimaki", (0.95, 0.95, 0.92), 0.7), H, (0, -0.01, 0.2), name=f"{name}_hm")
+        elif hat == "helmet" and look.get("panda"):     # 耳が横から出るよう、頭の上にのせる
+            hy = mat("helmet_y", (0.95, 0.70, 0.05), 0.3)
+            obj(ellip_mesh(0.118, 0.13, 0.085), hy, H, (0, -0.005, 0.248), name=f"{name}_helmet")
+            obj(cyl_mesh(0.128, 0.128, 0.012, 24), hy, H, (0, 0.012, 0.215), name=f"{name}_brim")
         elif hat == "helmet":
             obj(ellip_mesh(0.13, 0.14, 0.1), mat("helmet_y", (0.95, 0.70, 0.05), 0.3), H, (0, -0.005, 0.2), name=f"{name}_helmet")
+        if look.get("vest"):     # 作業用のベスト（反射の帯つき）
+            vm = mat(f"vest_{look['vest']}", look["vest"], 0.7)
+            obj(capsule_mesh(0.178, 0.152, 0.30, sy=0.66, cz=0.42), vm, J["spine"], (0, 0, 0.42), name=f"{name}_vest")
+            for zz in (0.22, 0.34):
+                obj(box_mesh(0.346, 0.24, 0.028), mat("vest_reflect", (0.85, 0.86, 0.85), 0.25), J["spine"], (0, 0, zz), name=f"{name}_band")
+        if look.get("arm"):
+            top = mat(f"arm_{look['arm']}", look["arm"], 0.9)
         long_sl = look.get("sleeves") == "long"
         for side, sx in (("L", -1), ("R", 1)):
             s = J[f"sh{side}"] = empty((sx * 0.205, 0, 0.42), J["spine"], f"{name}_sh{side}")
-            obj(capsule_mesh(0.05, 0.043, 0.25), top if long_sl else skin, s, (0, 0, 0), name=f"{name}_uarm")
+            if pa:
+                s.scale = (0.88, 0.88, 0.88)
+            obj(capsule_mesh(0.05 * lw, 0.043 * lw, 0.25), top if long_sl else skin, s, (0, 0, 0), name=f"{name}_uarm")
             if not long_sl:
                 obj(capsule_mesh(0.066, 0.062, 0.1), top, s, (0, 0, 0.0), name=f"{name}_sleeve")
             e = J[f"el{side}"] = empty((0, 0, -0.28), s, f"{name}_el{side}")
-            obj(capsule_mesh(0.043, 0.035, 0.21), top if long_sl else skin, e, (0, 0, 0), name=f"{name}_farm")
-            obj(ellip_mesh(0.032, 0.026, 0.055), skin, e, (0, 0.005, -0.27), name=f"{name}_hand")
+            obj(capsule_mesh(0.043 * lw, 0.035 * lw, 0.21), top if long_sl else skin, e, (0, 0, 0), name=f"{name}_farm")
+            obj(ellip_mesh(0.032 * (1.3 if pa else 1), 0.026 * (1.3 if pa else 1), 0.055), skin, e, (0, 0.005, -0.27), name=f"{name}_hand")
             self.j[f"hand{side}"] = empty((0, 0.01, -0.28), e, f"{name}_hand{side}")
             h = J[f"hip{side}"] = empty((sx * 0.095, 0, -0.05), J["pelvis"], f"{name}_hip{side}")
             sh_ = look.get("shorts")
-            obj(capsule_mesh(0.075, 0.06, 0.34), skin if sh_ else bot, h, (0, 0, 0), name=f"{name}_thigh")
+            if pa:
+                h.scale = (0.806, 0.806, 0.806)
+            obj(capsule_mesh(0.075 * lw, 0.06 * lw, 0.34), skin if sh_ else bot, h, (0, 0, 0), name=f"{name}_thigh")
             if sh_:
                 obj(capsule_mesh(0.088, 0.083, 0.2), bot, h, (0, 0, 0.0), name=f"{name}_short")
             k = J[f"knee{side}"] = empty((0, 0, -0.41), h, f"{name}_knee{side}")
-            obj(capsule_mesh(0.056, 0.04, 0.3), skin if sh_ else bot, k, (0, 0, 0), name=f"{name}_shin")
-            obj(ellip_mesh(0.052, 0.12, 0.045), shoe, k, (0, 0.045, -0.425), name=f"{name}_shoe")
+            obj(capsule_mesh(0.056 * lw, 0.04 * lw, 0.3), skin if sh_ else bot, k, (0, 0, 0), name=f"{name}_shin")
+            obj(ellip_mesh(0.052 * (1.3 if pa else 1), 0.12, 0.045), shoe, k, (0, 0.045, -0.425), name=f"{name}_shoe")
         self.rest = {"shL": (0, 6, 0), "shR": (0, -6, 0), "elL": (12, 0, 0), "elR": (12, 0, 0)}
         self.pose_now = {}
         for k_ in self.JOINTS:
@@ -413,7 +469,7 @@ class Person:
             self._apply(k, kw.get(k, self.pose_now.get(k, (0, 0, 0))))
             self.j[k].keyframe_insert("rotation_euler", frame=f)
         if "hz" in kw:
-            self.j["pelvis"].location.z = 0.93 + kw["hz"]
+            self.j["pelvis"].location.z = self.hip0 + kw["hz"]
             self.j["pelvis"].keyframe_insert("location", frame=f)
 
     def place(self, f, loc=None, face=None, tilt=None):
@@ -504,12 +560,100 @@ class Person:
             kw = {f"sh{side}": (165, 25 + 15 * w), f"el{side}": 20 + 15 * w}
             self.pose(f, **kw)
 
+    def wag(self, f0, f1, amp=14.0, rate=1.1, step=2):
+        """しっぽをゆらす（レッサーパンダ）。"""
+        tl = self.j.get("tail")
+        if tl is None:
+            return
+        for f in list(range(f0, f1 + 1, step)) + [f1]:
+            ph = 2 * math.pi * rate * f / FPS
+            tl.rotation_euler = ((8 + 6 * math.sin(ph * 0.7)) * D2R, 0, amp * math.sin(ph) * D2R)
+            tl.keyframe_insert("rotation_euler", frame=f)
+
     def hold(self, item, side="R", offset=(0, 0, 0), rot=(0, 0, 0)):
         """道具を手に持たせる（手の空オブジェクトの子にする）。"""
         item.parent = self.j[f"hand{side}"]
         item.location = offset
         item.rotation_euler = tuple(a * D2R for a in rot)
         return item
+
+
+# ---------- 電動ドリル（レッサーパンダの道具。最初と最後の場面で使う） ----------
+def drill(scale=1.6, name="drill"):
+    """持つところ（にぎり）が原点。刃は +y の向き、にぎりは -z。tip＝刃の先の空オブジェクト、bit＝回る刃。"""
+    d = empty(name=name)
+    d.scale = (scale, scale, scale)
+    yel = mat("drill_body", (0.98, 0.72, 0.05), 0.35)
+    blk = mat("drill_black", (0.05, 0.05, 0.055), 0.5)
+    gry = mat("drill_chuck", (0.55, 0.56, 0.58), 0.25)
+    obj(capsule_mesh(0.042, 0.04, 0.16, sy=1.0), yel, d, (0, 0.115, 0.085), rot=(-90 * D2R, 0, 0), name=f"{name}_barrel")
+    obj(cyl_mesh(0.046, 0.046, 0.05, 16), blk, d, (0, -0.06, 0.085), rot=(-90 * D2R, 0, 0), name=f"{name}_motor")
+    obj(box_mesh(0.05, 0.06, 0.15), blk, d, (0, 0.0, 0.0), rot=(-12 * D2R, 0, 0), name=f"{name}_grip")
+    obj(box_mesh(0.085, 0.13, 0.055), yel, d, (0, 0.01, -0.095), name=f"{name}_battery")
+    obj(box_mesh(0.016, 0.02, 0.03), mat("drill_red", (0.85, 0.08, 0.05), 0.4), d, (0, 0.035, 0.035), name=f"{name}_trigger")
+    obj(cyl_mesh(0.026, 0.02, 0.055, 14), gry, d, (0, 0.175, 0.085), rot=(-90 * D2R, 0, 0), name=f"{name}_chuck")
+    bit = empty((0, 0.2, 0.085), d, f"{name}_bit")
+    steel = mat("drill_bit", (0.80, 0.80, 0.82), 0.15)
+    for k in range(6):          # ねじれた刃（回ると、すじが動いて見える）
+        obj(box_mesh(0.016, 0.022, 0.006), steel, bit, (0, 0.012 + 0.02 * k, 0), rot=(0, k * 32 * D2R, 0), name=f"{name}_flute{k}")
+    obj(cyl_mesh(0.004, 0.004, 0.13, 8), steel, bit, (0, 0.065, 0), rot=(-90 * D2R, 0, 0), name=f"{name}_core")
+    d["tip"] = empty((0, 0.135, 0), bit, f"{name}_tip").name
+    d["bit"] = bit.name
+    return d
+
+
+def spin(d, f0, f1, rpm_deg=70.0):
+    """ドリルの刃を回す（f0〜f1）。1コマに rpm_deg 度。"""
+    bit = bpy.data.objects[d["bit"]]
+    for f in range(max(1, f0 - 1), f1 + 2):
+        a = 0.0 if f < f0 else (f - f0) * rpm_deg * (1.0 if f <= f1 else 0.0)
+        if f > f1:
+            a = (f1 - f0) * rpm_deg
+        bit.rotation_euler = (0, a * D2R, 0)
+        bit.keyframe_insert("rotation_euler", frame=f)
+    if bit.animation_data and bit.animation_data.action:
+        try:
+            for fc in bit.animation_data.action.fcurves:
+                for kp in fc.keyframe_points:
+                    kp.interpolation = 'LINEAR'
+        except AttributeError:
+            pass
+
+
+def drill_fx(loc, f0, f1, kind="dust", seed=1, n=None, up=(0, 0, 1)):
+    """穴をあけるときに飛ぶもの。dust＝土ぼこり、chips＝木くず、sparks＝火花（鉄）。"""
+    r = random.Random(seed)
+    loc = Vector(loc)
+    up = Vector(up).normalized()
+    if kind == "sparks":
+        m = glow("spark", (1.0, 0.62, 0.15), 18.0)
+        me = ellip_mesh(0.012, 0.012, 0.035, 6, 4)
+        cnt = n or 60
+        for k in range(cnt):
+            o = obj(me, m, None, (0, 0, -50), name=f"spark{seed}_{k}", shadow=False)
+            fa = r.randint(f0, max(f0, f1 - 6))
+            v = Vector((r.uniform(-1, 1), r.uniform(-1, 1), 0)).normalized() * r.uniform(1.0, 3.0) + up * r.uniform(1.0, 3.0)
+            key_scale(o, fa - 1, 1e-4)
+            key_scale(o, fa, 1.0)
+            projectile(o, fa, fa + 8, tuple(loc), tuple(loc + v * 0.45), arc=r.uniform(0.0, 0.2), align=True, step=1)
+            key_scale(o, fa + 8, 1.0)
+            key_scale(o, fa + 9, 1e-4)
+        return
+    col = (0.78, 0.60, 0.36) if kind == "chips" else (0.55, 0.45, 0.32)
+    m = mat(f"bits_{kind}", col, 0.9)
+    cnt = n or 40
+    for k in range(cnt):
+        o = obj(box_mesh(0.03, 0.018, 0.008), m, None, (0, 0, -50), name=f"{kind}{seed}_{k}")
+        fa = r.randint(f0, max(f0, f1 - 10))
+        v = Vector((r.uniform(-1, 1), r.uniform(-1, 1), 0)).normalized() * r.uniform(0.4, 1.2) + up * r.uniform(0.4, 1.0)
+        key_scale(o, fa - 1, 1e-4)
+        key_scale(o, fa, r.uniform(0.7, 1.4))
+        projectile(o, fa, fa + 14, tuple(loc), tuple(loc + v * 0.6 - up * 0.1), arc=r.uniform(0.15, 0.4), align=False, step=2)
+        key_scale(o, fa + 30, 1.0)
+        key_scale(o, fa + 31, 1e-4)
+    for k in range(max(1, (f1 - f0) // 8)):
+        smoke_puffs(tuple(loc), f0 + 8 * k, n=2, seed=seed * 50 + k, col=col, size=0.35, rise=0.5, life=20, spread=0.15, alpha=0.6,
+                    name=f"dfx{seed}_{k}")
 
 
 def crowd(n, center, spread, look, seed=1, face=0.0, scale=1.0, prefix="c"):

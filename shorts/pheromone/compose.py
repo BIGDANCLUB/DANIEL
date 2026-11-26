@@ -36,7 +36,7 @@ def sepia(img, k=0.88):
 
 
 EXPO = {"p00_moth": 1.35, "p01_open": 1.75, "p02_burst": 1.3, "p03_plume": 1.5, "p04_train": 0.87, "p05_office": 0.82,
-        "p06_wind": 0.87, "p07_perfume": 0.63, "p08_silk": 0.85, "p11_used": 0.71, "p12_home": 0.74}   # 場面ごとの明るさ合わせ（ガンマ。全体で参考元の明るさに）
+        "p06_wind": 0.87, "p06b_tshirt": 1.2, "p07_perfume": 0.63, "p08_silk": 0.85, "p11_used": 0.71, "p12a_wedding": 0.75, "p12_home": 0.74}   # 場面ごとの明るさ合わせ（ガンマ。全体で参考元の明るさに）
 
 
 def lift(img, k):

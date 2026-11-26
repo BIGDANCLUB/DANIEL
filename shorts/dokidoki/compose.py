@@ -30,7 +30,7 @@ def draw(s, i, base):
     if s.get("kind") == "open":
         sec = s.get("t0", 0.0) + i / FPS
         if sec < TL.T_VANISH:
-            Y.big_title(g, W_, P_, "が", "聞こえるようになったら？", "恋をしたときの心臓の音が、まわりの人に聞こえはじめたら")
+            Y.big_title(g, W_, P_, "が", "聞こえたら？", "恋をしたときの心臓の音が、まわりの人に聞こえはじめたら")
             Y.countdown(g, "聞こえるまで", TL.T_VANISH - sec)
             Y.headline(g, "心臓は1日に[約10万回]打つ", ["ふだんは", "聞こえない"], fade(sec, 0.4, 2.75), y=HY, size=HS)
             Y.headline(g, "好きな人の前では[速くなる]", ["1分に70回が", "100回をこえることも"], fade(sec, 2.75, TL.T_VANISH + 0.01), y=HY, size=HS)

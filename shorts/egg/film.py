@@ -86,7 +86,7 @@ def bassinet(loc, name="bas"):
     bpy.context.collection.objects.link(root)
     root.location = loc
     clear = W.mat("bas_clear", (0.85, 0.92, 0.95), 0.1, alpha=0.35)
-    W.box((0, 0, 0.82), (0.45, 0.75, 0.25), clear, bevel=0.02).parent = root
+    W.box((0, 0, 0.78), (0.45, 0.75, 0.14), clear, bevel=0.02).parent = root
     W.box((0, 0, 0.7), (0.47, 0.77, 0.03), W.mat("bas_base", (0.85, 0.85, 0.88), 0.4), bevel=0.01).parent = root
     for sx in (-1, 1):
         W.box((sx * 0.2, 0, 0.35), (0.03, 0.6, 0.7), W.mat("bas_leg", (0.75, 0.76, 0.78), 0.3), bevel=0).parent = root
@@ -199,17 +199,17 @@ def e00_open(nf):
         actor(60 + k, L(NURSE, face="happy"), [(1, x0, y), (f0, x0, y), (min(nf, f0 + 120), -x0, y)], nf, period=8,
               face_at=(F_ON + 4, "surprised", "cheek"))
 
-    def cp(f):
+    def cp(f):          # 赤ちゃんの列のすぐ横を、ベッドの高さで走る → タマゴになったら少し引く
         if f <= F_ON:
-            u = smooth((f - 1) / (F_ON - 1))
-            return lerp3((-5.5, -1.8, 1.25), (2.0, 0.0, 1.35), u)
-        return lerp3((2.0, 0.0, 1.35), (2.6, -1.6, 2.0), smooth((f - F_ON) / 40))
+            u = smooth((f - 1) / (F_ON - 1)) * 0.8 + 0.2 * (f - 1) / (F_ON - 1)
+            return lerp3((-5.6, 0.25, 1.12), (0.6, 0.25, 1.12), u)
+        return lerp3((0.6, 0.25, 1.12), (1.4, -0.9, 1.6), smooth((f - F_ON) / 40))
 
     def ca(f):
         if f <= F_ON:
-            u = smooth((f - 1) / (F_ON - 1))
-            return lerp3((-3.0, 2.0, 0.85), (1.5, 3.0, 0.85), u)
-        return lerp3((1.5, 3.0, 0.85), (0.5, 3.4, 0.8), smooth((f - F_ON) / 40))
+            u = smooth((f - 1) / (F_ON - 1)) * 0.8 + 0.2 * (f - 1) / (F_ON - 1)
+            return lerp3((-4.2, 1.0, 0.82), (1.8, 1.4, 0.82), u)
+        return lerp3((1.8, 1.4, 0.82), (0.8, 2.6, 0.8), smooth((f - F_ON) / 40))
     c = PF.track_cam(cp, ca, 1, nf, 24)
     PF.shake(c, 1, F_ON + 10, 0.8, seed=6)
     fill((0.0, -2.0, 2.6), (0, 3, 0.9), power=150, size=3)
@@ -245,7 +245,7 @@ def e02_size(nf):
         o.keyframe_insert("scale", frame=16 + 18 * k)
         PF.sign((x, 1.18, 0.62), 0.36, 0.16, PF.text_texture(f"egglab{k}.png", [(lab, 120), (wgt, 90)], size=(400, 260),
                                                              bg=(40, 40, 50)), f"lab{k}")
-    W.camera((0.05, -0.6, 1.25), (0.0, 1.6, 0.92), lens=32)
+    W.camera((-0.05, -1.3, 1.3), (-0.05, 1.6, 0.9), lens=30)
     fill((0.0, 0.0, 2.0), (0, 1.6, 0.9), power=80)
     return nf
 
@@ -261,12 +261,12 @@ def e03_warm(nf):
     pm = PF.person((0.55, 2.55, 0.3), 225, seed=2, pose="sit", look=L(YOUNG_M, face="love"), arms="hold")
     pw = PF.person((-0.55, 2.55, 0.3), 135, seed=3, pose="sit", look=L(YOUNG_W, face="happy"), arms="hold", alt="cheek", nf=nf, period=40)
     _ = (pm, pw)
-    th = PF.sign((0.0, 2.2, 1.25), 0.5, 0.22, PF.text_texture("temp37.png", [("37℃", 150)], size=(500, 220), bg=(230, 70, 60)), "temp")
+    th = PF.sign((0.0, 0.99, 0.32), 0.36, 0.16, PF.text_texture("temp37.png", [("37℃", 150)], size=(500, 220), bg=(230, 70, 60)), "temp")
     _ = th
     PF.pink_burst([(0.0 + random.uniform(-0.2, 0.2), 2.5, 0.8 + random.uniform(0, 0.3)) for _ in range(8)], fr(1.2), size=0.03, rise=0.5,
                   seed=43, spread=0.4)
-    W.camera((0.9, 0.3, 1.3), (0.0, 2.55, 0.65), lens=28)
-    cut(fr(2.6), (-0.6, 1.0, 1.0), (0.0, 2.55, 0.6), lens=34, orbit=3, push=0.1)
+    W.camera((1.3, -0.4, 1.45), (0.0, 2.4, 0.75), lens=26)
+    cut(fr(2.6), (-0.5, 0.6, 1.1), (0.0, 2.55, 0.62), lens=30, orbit=3, push=0.1)
     fill((0.6, 0.6, 1.8), (0, 2.55, 0.6), power=60, col=(1.0, 0.85, 0.7))
     return nf
 
@@ -292,11 +292,11 @@ def e04_office(nf):
     k1 = PF.kacho_desk(nf, "surprised", arms="down", alt="brow", period=26)
     _ = k1
     dads = []
-    for k, ((x0, y0), (x1, y1)) in enumerate([((-7.0, 0.3), (-1.4, 0.4)), ((7.0, 0.9), (1.3, 0.9)), ((-6.0, -1.2), (-0.4, -0.6))]):
+    for k, ((x0, y0), (x1, y1)) in enumerate([((-7.0, 0.3), (-1.35, 0.2)), ((7.0, 0.5), (1.35, 0.3)), ((7.0, -1.0), (0.75, -0.9))]):
         lk = L(crowd_look(r, "happy"), top=(0.85, 0.85, 0.82), long=False)
         if k == 0:
             lk = L(YOUNG_M, face="happy")
-        fc = math.degrees(math.atan2(0 - x1, 2.25 - y1))
+        fc = 185 - 10 * k                    # こちら向き（抱っこひものタマゴが見える）
         a = actor(70 + k, lk, [(1, x0, y0), (40 + 15 * k, x1, y1, fc), (nf, x1, y1, fc)], nf, period=8)
         sling(a, f"sl{k}")
         dads.append(a)
@@ -306,7 +306,7 @@ def e04_office(nf):
         egg((3.4 + 0.4 * j, 4.2, 1.2), name=f"shelf_egg{j}")
     PF.sign((4.0, 3.93, 1.55), 0.9, 0.25, PF.text_texture("egg_place.png", [("タマゴ置き場", 120)], size=(800, 220), bg=(240, 150, 60)),
             "egg_place")
-    W.camera((0.5, -2.9, 1.7), (0.3, 1.8, 1.0), lens=26)
+    W.camera((-0.3, -4.4, 1.8), (0.1, 1.2, 1.05), lens=24)
     fill((0.5, -2.5, 2.2), (0, 1.8, 1.0), power=80)
     return nf
 
@@ -361,7 +361,7 @@ def e05_penguin(nf):
             x = ((x0 + sp * f / FPS) + 8) % 16 - 8
             o.location = (x, y0, z0 + 0.2 * math.sin(f / 7 + k))
             o.keyframe_insert("location", frame=f)
-    W.camera((0.8, -3.0, 0.7), (0.0, -0.4, 0.45), lens=28)
+    W.camera((0.6, -2.2, 0.5), (0.0, -0.5, 0.42), lens=30)
     cut(fr(2.6), (-3.5, -6.0, 3.5), (0.0, 2.0, 0.8), lens=26, orbit=3, push=0.12)
     fill((1.5, -2.5, 1.5), (0, -0.5, 0.5), power=120, col=(0.85, 0.9, 1.0))
     return nf
@@ -395,7 +395,7 @@ def e06_strong(nf):
             pts.append((0.3 + rr * math.cos(a), 2.55 + rr * math.sin(a), cz + ER * EZ * 1.04 * math.cos(th)))
         cv = curve(pts, 0.006, bm, f"force{k}")
         grow(cv, fr(2.0), fr(2.9))
-    W.camera((1.2, 0.6, 1.0), (0.3, 2.55, 0.75), lens=30)
+    W.camera((1.6, 1.3, 0.75), (0.3, 2.55, 0.75), lens=28)
     fill((1.0, 1.0, 1.8), (0.3, 2.55, 0.7), power=60, col=(1.0, 0.85, 0.7))
     return nf
 
@@ -434,14 +434,19 @@ def e07_hatch(nf):
         pts.append((rr * math.cos(a), 2.55 + rr * math.sin(a), zc + (0.012 if j % 2 else -0.012)))
     cv = curve(pts, 0.004, crack, "crack")
     grow(cv, fr(1.4), fr(3.8))
-    # 赤ちゃんの手と顔
+    # 赤ちゃんの顔（目と口）と手が、殻の上に出る
     skin = W.mat("baby_skin", (0.95, 0.76, 0.62), 0.6)
-    hand = F._ball(0.03, (0.0, 2.55, zc - 0.05), skin, sub=2)
-    head = F._ball(0.075, (0.0, 2.55, zc - 0.1), skin, sub=2)
-    for o, z1 in ((hand, zc + 0.08), (head, zc + 0.02)):
-        o.keyframe_insert("location", frame=f_open)
-        o.location = (o.location.x, o.location.y, z1)
-        o.keyframe_insert("location", frame=f_open + 12)
+    bb = bpy.data.objects.new("hatch_baby", None)
+    bpy.context.collection.objects.link(bb)
+    bb.location = (0.0, 2.55, zc - 0.14)
+    F._ball(0.075, (0, 0, 0), skin, sub=2).parent = bb
+    for sx in (-1, 1):
+        W.box((sx * 0.025, -0.07, 0.01), (0.026, 0.006, 0.005), W.mat("baby_eye", (0.15, 0.1, 0.08), 0.5), bevel=0).parent = bb
+    W.box((0, -0.072, -0.025), (0.018, 0.006, 0.01), W.mat("baby_mouth", (0.75, 0.30, 0.30), 0.5), bevel=0).parent = bb
+    F._ball(0.028, (0.07, -0.02, 0.07), skin, sub=2).parent = bb
+    bb.keyframe_insert("location", frame=f_open)
+    bb.location = (0.0, 2.55, zc + 0.02)
+    bb.keyframe_insert("location", frame=f_open + 12)
     PF.pink_burst([(random.uniform(-0.2, 0.2), 2.55 + random.uniform(-0.2, 0.2), zc + random.uniform(0, 0.3)) for _ in range(14)], f_open + 6,
                   size=0.035, rise=0.6, seed=47, spread=0.5)
     pm = actor(2, L(YOUNG_M, face="surprised"), [(1, 0.75, 2.1, 300), (nf, 0.75, 2.1, 300)], nf, arms="cheek",
@@ -474,8 +479,8 @@ def e08_home(nf):
         b.keyframe_insert("scale", frame=f)
     PF.pink_burst([(random.uniform(-0.3, 0.3), 2.5, 0.9 + random.uniform(0, 0.3)) for _ in range(10)], fr(4.4), size=0.03, rise=0.6,
                   seed=48, spread=0.4)
-    W.camera((1.5, 0.2, 1.4), (0.0, 2.55, 0.8), lens=24)
-    cut(fr(4.4), (0.0, 1.0, 1.1), (0.0, 2.55, 0.75), lens=30, orbit=3, push=0.12)
+    W.camera((1.4, -0.2, 1.4), (0.0, 2.55, 0.85), lens=24)
+    cut(fr(4.4), (0.0, 0.5, 1.25), (0.0, 2.55, 0.85), lens=26, orbit=3, push=0.12)
     fill((1.0, 0.6, 1.8), (0, 2.55, 0.8), power=60, col=(1.0, 0.85, 0.7))
     return nf
 

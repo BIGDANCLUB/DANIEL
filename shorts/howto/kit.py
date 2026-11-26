@@ -579,26 +579,101 @@ class Person:
 
 
 # ---------- 電動ドリル（レッサーパンダの道具。最初と最後の場面で使う） ----------
+def toon_outline(o, width=0.006, name="toon_ink"):
+    """漫画の黒いふち（裏返しの殻）。Cycles では「裏から見える面」だけ黒く、表は透明。"""
+    m = bpy.data.materials.get(name)
+    if m is None:
+        m = bpy.data.materials.new(name)
+        m.use_nodes = True
+        nt = m.node_tree
+        for n in list(nt.nodes):
+            if n.type != 'OUTPUT_MATERIAL':
+                nt.nodes.remove(n)
+        out = next(n for n in nt.nodes if n.type == 'OUTPUT_MATERIAL')
+        geo = nt.nodes.new("ShaderNodeNewGeometry")
+        em = nt.nodes.new("ShaderNodeEmission")
+        em.inputs["Color"].default_value = (0.01, 0.008, 0.008, 1)
+        em.inputs["Strength"].default_value = 1.0
+        tr = nt.nodes.new("ShaderNodeBsdfTransparent")
+        mx = nt.nodes.new("ShaderNodeMixShader")
+        nt.links.new(geo.outputs["Backfacing"], mx.inputs[0])
+        nt.links.new(tr.outputs[0], mx.inputs[1])
+        nt.links.new(em.outputs[0], mx.inputs[2])
+        nt.links.new(mx.outputs[0], out.inputs["Surface"])
+    key = ("ink", o.data.name, width)
+    me = _MESH.get(key)
+    if me is None:
+        bm = bmesh.new()
+        bm.from_mesh(o.data)
+        bm.normal_update()
+        for v in bm.verts:
+            v.co = v.co + v.normal * width * min(2.0, v.calc_shell_factor())
+        me = bpy.data.meshes.new(f"ink{len(_MESH)}")
+        bm.to_mesh(me)
+        bm.free()
+        for pl in me.polygons:
+            pl.use_smooth = True
+        me.materials.clear()
+        me.materials.append(None)
+        _MESH[key] = me
+    h = obj(me, m, o.parent, tuple(o.location), tuple(o.rotation_euler), tuple(o.scale), name=f"{o.name}_ink", shadow=False)
+    h.visible_diffuse = False
+    h.visible_glossy = False
+    return h
+
+
 def drill(scale=1.6, name="drill"):
-    """持つところ（にぎり）が原点。刃は +y の向き、にぎりは -z。tip＝刃の先の空オブジェクト、bit＝回る刃。"""
+    """漫画っぽいドリル（太くて丸い・黒いふち・大きなうず巻きの刃）。
+    持つところ（にぎり）が原点。刃は +y の向き、にぎりは -z。tip＝刃の先の空オブジェクト、bit＝回る刃。"""
     d = empty(name=name)
     d.scale = (scale, scale, scale)
-    yel = mat("drill_body", (0.98, 0.72, 0.05), 0.35)
-    blk = mat("drill_black", (0.05, 0.05, 0.055), 0.5)
-    gry = mat("drill_chuck", (0.55, 0.56, 0.58), 0.25)
-    obj(capsule_mesh(0.042, 0.04, 0.16, sy=1.0), yel, d, (0, 0.115, 0.085), rot=(-90 * D2R, 0, 0), name=f"{name}_barrel")
-    obj(cyl_mesh(0.046, 0.046, 0.05, 16), blk, d, (0, -0.06, 0.085), rot=(-90 * D2R, 0, 0), name=f"{name}_motor")
-    obj(box_mesh(0.05, 0.06, 0.15), blk, d, (0, 0.0, 0.0), rot=(-12 * D2R, 0, 0), name=f"{name}_grip")
-    obj(box_mesh(0.085, 0.13, 0.055), yel, d, (0, 0.01, -0.095), name=f"{name}_battery")
-    obj(box_mesh(0.016, 0.02, 0.03), mat("drill_red", (0.85, 0.08, 0.05), 0.4), d, (0, 0.035, 0.035), name=f"{name}_trigger")
-    obj(cyl_mesh(0.026, 0.02, 0.055, 14), gry, d, (0, 0.175, 0.085), rot=(-90 * D2R, 0, 0), name=f"{name}_chuck")
-    bit = empty((0, 0.2, 0.085), d, f"{name}_bit")
-    steel = mat("drill_bit", (0.80, 0.80, 0.82), 0.15)
-    for k in range(6):          # ねじれた刃（回ると、すじが動いて見える）
-        obj(box_mesh(0.016, 0.022, 0.006), steel, bit, (0, 0.012 + 0.02 * k, 0), rot=(0, k * 32 * D2R, 0), name=f"{name}_flute{k}")
-    obj(cyl_mesh(0.004, 0.004, 0.13, 8), steel, bit, (0, 0.065, 0), rot=(-90 * D2R, 0, 0), name=f"{name}_core")
-    d["tip"] = empty((0, 0.135, 0), bit, f"{name}_tip").name
+    yel = mat("toon_drill_body", (1.0, 0.62, 0.02), 0.45)
+    red = mat("toon_drill_red", (0.92, 0.10, 0.06), 0.45)
+    blk = mat("toon_drill_black", (0.06, 0.06, 0.07), 0.55)
+    gry = mat("toon_drill_chuck", (0.62, 0.64, 0.68), 0.3)
+    wht = mat("toon_drill_white", (0.95, 0.95, 0.92), 0.5)
+    ink = 0.0045
+    parts = []
+    parts.append(obj(capsule_mesh(0.064, 0.058, 0.17, seg=20, rings=6), yel, d, (0, 0.10, 0.09), rot=(-90 * D2R, 0, 0), name=f"{name}_barrel"))
+    parts.append(obj(ellip_mesh(0.066, 0.045, 0.066, 20, 10), red, d, (0, -0.075, 0.09), name=f"{name}_motor"))
+    parts.append(obj(capsule_mesh(0.034, 0.03, 0.10, sx=1.1, sy=1.25, seg=14, rings=4), blk, d, (0, 0.0, 0.045), rot=(-14 * D2R, 0, 0), name=f"{name}_grip"))
+    parts.append(obj(box_mesh(0.11, 0.15, 0.06), red, d, (0, 0.012, -0.085), name=f"{name}_battery"))
+    parts.append(obj(box_mesh(0.022, 0.028, 0.035), wht, d, (0, 0.045, 0.026), name=f"{name}_trigger"))
+    # 胴の白いすじ（漫画の光）
+    obj(box_mesh(0.012, 0.11, 0.008, bevel=0.003), wht, d, (-0.03, 0.05, 0.148), name=f"{name}_shine")
+    parts.append(obj(cyl_mesh(0.045, 0.03, 0.05, 18), gry, d, (0, 0.155, 0.09), rot=(-90 * D2R, 0, 0), name=f"{name}_chuck"))
+    for k in range(2):
+        obj(cyl_mesh(0.047 - 0.008 * k, 0.047 - 0.008 * k, 0.008, 18), blk, d, (0, 0.163 + 0.022 * k, 0.09), rot=(-90 * D2R, 0, 0),
+            name=f"{name}_ring{k}")
+    bit = empty((0, 0.2, 0.09), d, f"{name}_bit")
+    steel = mat("toon_drill_bit", (0.86, 0.87, 0.90), 0.2)
+    # 大きなうず巻きの刃（先が細くなる円すい＋らせんの羽）
+    parts.append(obj(cyl_mesh(0.03, 0.004, 0.15, 14), steel, bit, (0, 0.0, 0), rot=(-90 * D2R, 0, 0), name=f"{name}_core"))
+    n = 9
+    for k in range(n):
+        u = k / (n - 1)
+        w = 0.075 * (1.0 - 0.75 * u)
+        parts.append(obj(box_mesh(w, 0.018, 0.014), steel, bit, (0, 0.01 + 0.014 * k, 0), rot=(0, k * 40 * D2R, 0),
+                         name=f"{name}_flute{k}"))
+    for o in parts:
+        toon_outline(o, ink)
+    d["tip"] = empty((0, 0.14, 0), bit, f"{name}_tip").name
     d["bit"] = bit.name
+    # 回っているときの「うず巻きの線」（spin で出す）
+    swm = glow("toon_swirl", (1.0, 1.0, 1.0), 2.0, alpha=0.6)
+    sw = empty((0, 0.2, 0.09), d, f"{name}_swirl")
+    sw.scale = (1e-4, 1e-4, 1e-4)
+    for k in range(3):
+        a0 = k * 120.0
+        pts = []
+        for j in range(9):
+            a = (a0 + j * 11.0) * D2R
+            rr = 0.065 + 0.003 * j
+            pts.append((rr * math.cos(a), 0.03 + 0.03 * k + 0.004 * j, rr * math.sin(a)))
+        c = poly_curve(pts, 0.006, swm, name=f"{name}_sw{k}")
+        c.parent = sw
+        c.visible_shadow = False
+    d["swirl"] = sw.name
     return d
 
 
@@ -611,6 +686,15 @@ def spin(d, f0, f1, rpm_deg=70.0):
             a = (f1 - f0) * rpm_deg
         bit.rotation_euler = (0, a * D2R, 0)
         bit.keyframe_insert("rotation_euler", frame=f)
+    sw = bpy.data.objects.get(d.get("swirl", ""))
+    if sw is not None:
+        key_scale(sw, max(0, f0 - 1), 1e-4)
+        key_scale(sw, f0, 1.0)
+        key_scale(sw, f1, 1.0)
+        key_scale(sw, f1 + 1, 1e-4)
+        for f in range(f0, f1 + 1, 2):
+            sw.rotation_euler = (0, -(f - f0) * 47.0 * D2R, 0)
+            sw.keyframe_insert("rotation_euler", frame=f)
     if bit.animation_data and bit.animation_data.action:
         try:
             for fc in bit.animation_data.action.fcurves:

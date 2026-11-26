@@ -2,7 +2,7 @@
 
 python3 catmeme/short_151_bonus_nendai.py → out/short_151_bonus_nendai.mp4
 - 11/24 の決まり：題材は「生々しさ」「コメントが増えそう」・字幕は生々しく人間味あふれる本音・固定コメント案を付ける
-- 11/26 修正：3日目40代「洗濯機が壊れる」・1週間後20代「ソシャゲガチャへ課金」・1月20代「口座には何も残っていない」・本音20代「夏のボーナスはよ！！」・素材を全部見直し（初期の素材も含めて最近使っていないもの中心・150 とも重ならない。最後のスマホ猫と踊る猫はそのまま）
+- 11/26 修正：3日目40代「洗濯機が壊れる」・1週間後20代「ソシャゲガチャへ課金」・1月20代「口座には何も残っていない」・本音20代「夏のボーナスはよ！！」・1日目20代「iPhone18Pro即予約」・1月は両方「何も残っていない」でむなしい素材（虚ろな黒猫・しょんぼり黒い犬）・素材を全部見直し（初期の素材も含めて最近使っていないもの中心・150 とも重ならない。最後のスマホ猫と踊る猫はそのまま）
 - 札はボーナスが入ってからの日数（12月向き）。右＝40代、左＝20代。右の字幕は赤
 - Wd.vs_rows（少し前の形：猫は大きくしない・字幕はそれぞれの側・左に移っても右の字幕は残す）
 - 段階ごとに「札だけ → 右の猫（40代）→ 左の猫（20代）」の3段。どちらもけなさない
@@ -19,13 +19,13 @@ def cuts():
     # (札, 右の猫＝40代, 右の字幕, 左の猫＝20代, 左の字幕)
     rows = [
         ('入金の朝', 'ignore_orange_cat_sniffed', '明細を\nそっと閉じる', 'huh_huh_cat', '金額を\n二度見'),
-        ('1日目', 'money_counting_orange_cat', '住宅ローンの\nボーナス払い', 'showoff_gojo_cosplay_cat', '新しい\nスマホを予約'),
+        ('1日目', 'money_counting_orange_cat', '住宅ローンの\nボーナス払い', 'showoff_gojo_cosplay_cat', 'iPhone18Pro\n即予約'),
         ('2日目', 'sulk_hungry_cat', '子どもの\n冬休み費用', 'dance_wild_dog', '友達と\n旅行の計画'),
         ('3日目', 'spit_not_my_taste_cat', '洗濯機が\n壊れる', 'flip_emo_cat_hair', 'ちょっといい\n時計'),
         ('1週間後', 'talk_orange_white_sitting_cat', '親にも\nちょっと渡す', 'spin_spinning_cat', 'ソシャゲ\nガチャへ課金'),
         ('2週間後', 'think_bike_front_seat_cat', '新NISAに\n少しだけ', 'dance_white_dog', '年末の\n飲み会ラッシュ'),
         ('年末', 'meow_ragdoll_chubby_cat', 'お年玉で\n消える', 'peek_what_happen_cat', 'あれ…\n残りいくら？'),
-        ('1月', 'stand_real_sheep', '自分には\n何も残ってない', 'weird_meowing_cat', '口座には\n何も\n残っていない'),
+        ('1月', 'sad_black_dog', '自分には\n何も残っていない', 'blank_black_cat_zoning_out', '口座には\n何も残っていない'),
         ('本音', 'leave_cat_leaves_home', 'ボーナスは\n通り過ぎる\nもの', 'dance_filmed_by_gray_cat', '夏のボーナス\nはよ！！'),
     ]
     return Wd.vs_rows(ST, rows, heads=('20代', '40代'))

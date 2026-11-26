@@ -15,3 +15,4 @@
 
 ## キャプション作成ずみ
 - 46 値上げ（short_46_neage.mp4）
+- 61 睡眠時間（short_61_suimin.mp4）

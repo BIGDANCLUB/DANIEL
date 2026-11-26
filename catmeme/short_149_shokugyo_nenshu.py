@@ -92,15 +92,15 @@ def cuts():
              "dance_tabby_standing_cat"]
     HOLD = 1.0
     n = len(allv)
-    u_enter = (75 + (n - 1) * 280 - W_ + 0.0) / (n * 280 + 75 - W_)
+    u_enter = (75 + (n - 1) * (Wd.SC_BW + Wd.SC_GAP) - W_ + 0.0) / (n * (Wd.SC_BW + Wd.SC_GAP) + 75 - W_)
     T = round((2.0 - HOLD) / (1 - u_enter), 2)   # 11/26：帯の場面は2秒（右はしに着くまで1秒＋止まって1秒）
     extra = 59.9 - full - sum(c["dur"] for c in body) - HOLD - T
     res_cuts = [c for c in body if c.get("talks")]
     for c in res_cuts:
         c["dur"] += extra / len(res_cuts)
     n = len(allv)
-    strip = n * 280
-    u_enter = (75 + (n - 1) * 280 - W_ + 0.0) / (strip + 75 - W_)
+    strip = n * (Wd.SC_BW + Wd.SC_GAP)
+    u_enter = (75 + (n - 1) * (Wd.SC_BW + Wd.SC_GAP) - W_ + 0.0) / (strip + 75 - W_)
     tA = round(T * u_enter, 2)
 
     def scroll(t0, dur, se=None):

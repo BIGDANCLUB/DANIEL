@@ -1036,9 +1036,12 @@ def _scroll_cat(name, t, h):
     return img, np.maximum(a, edge)
 
 
+SC_BW, SC_GAP, SC_CAT, SC_NM, SC_AM = 330, 40, 440, 62, 84   # 11/26 ユーザー指定：流れるランキングはアップで（同時に3列くらい）・猫と文字を大きく
+
+
 def scroll_x(c, i, t):
     """流れる帯の i 本目の棒の中心 x（全体の時間 T のうち、この場面は t0 から）。左端の業界から読み、右端（いちばん高い業界）で止まる。"""
-    bw, gap = 230, 50
+    bw, gap = SC_BW, SC_GAP
     n = len(c["scroll"])
     strip = n * (bw + gap)
     T = c.get("scroll_T", c["dur"])
@@ -1053,28 +1056,28 @@ def scroll_draw(out, c, t):
     items = c["scroll"]
     vals = [it[1] for it in items]
     lo, hi = min(vals), max(vals)
-    bw = 230
+    bw = SC_BW
     for i, it in enumerate(items):
         nm, v, win = it[:3]
         x = scroll_x(c, i, t)
         if x < -bw or x > W + bw:
             continue
         frac = 0.3 + 0.7 * (v - lo) / (hi - lo) if hi > lo else 1.0
-        h = int(BAR_MAXH * frac)
+        h = int((BAR_MAXH - SC_CAT + 140) * frac)   # 猫を大きくしても上が切れないよう、棒は少し低め
         x0, x1 = int(x - bw / 2), int(x + bw / 2)
         col = (40, 40, 225) if win else (30, 225, 255)
         if x1 > -7 and x0 < W + 7:
             cv2.rectangle(out, (max(0, x0 - 7), BAR_BASE - h - 7), (min(W - 1, x1 + 7), BAR_BASE), (0, 0, 0), -1)
             cv2.rectangle(out, (max(0, x0), BAR_BASE - h), (min(W - 1, x1), BAR_BASE - 1), tuple(q / 255 for q in col), -1)
         if len(it) > 3 and it[3]:
-            img, al = _scroll_cat(it[3], c.get("scroll_t0", 0.0) + t, 210)
+            img, al = _scroll_cat(it[3], c.get("scroll_t0", 0.0) + t, SC_CAT)
             ch, cw = al.shape
             xx, yy = int(x - cw / 2), int(BAR_BASE - h - ch + 30)
             if xx + cw > 0 and xx < W:
                 sx0, sx1 = max(0, -xx), min(cw, W - xx)
                 I.over(out, img[:, sx0:sx1], al[:, sx0:sx1], xx + sx0, yy)
-        nmi = _btx("？？？" if (c.get("hide_names") and (win or c["hide_names"] == "all")) else nm, RED if win else BLUE, 46, stroke=0, max_w=bw - 10)   # 11/26：冒頭は1位の名前だけ隠す
-        am = _btx(c.get("unit_fmt", "%d万") % v, RED if win else BLACK, 64, stroke=0, max_w=bw - 10)
+        nmi = _btx("？？？" if (c.get("hide_names") and (win or c["hide_names"] == "all")) else nm, RED if win else BLUE, SC_NM, stroke=0, max_w=bw - 10)   # 11/26：冒頭は1位の名前だけ隠す
+        am = _btx(c.get("unit_fmt", "%d万") % v, RED if win else BLACK, SC_AM, stroke=0, max_w=bw - 10)
         bh = nmi.height + am.height + 28
         box = Image.new("RGBA", (bw + 14, bh), (255, 255, 255, 255))
         box.alpha_composite(nmi, ((box.width - nmi.width) // 2, 8))

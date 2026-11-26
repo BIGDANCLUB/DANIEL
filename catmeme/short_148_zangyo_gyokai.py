@@ -93,8 +93,8 @@ def cuts():
     for c in res_cuts:
         c["dur"] += extra / len(res_cuts)
     n = len(allv)
-    strip = n * 280
-    u_enter = (75 + (n - 1) * 280 - W_ + 0.0) / (strip + 75 - W_)
+    strip = n * (Wd.SC_BW + Wd.SC_GAP)
+    u_enter = (75 + (n - 1) * (Wd.SC_BW + Wd.SC_GAP) - W_ + 0.0) / (strip + 75 - W_)
     tA = round(T * u_enter, 2)
 
     def scroll(t0, dur, se=None):

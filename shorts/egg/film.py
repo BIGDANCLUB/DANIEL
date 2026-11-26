@@ -234,8 +234,8 @@ def e02_size(nf):
     FJ.room((0.98, 0.96, 0.92), 1.0)
     W.box((0, 2, -0.05), (10, 10, 0.1), W.mat("lab_floor3", (0.80, 0.82, 0.78), 0.5), bevel=0)
     W.box((0, 4.0, 1.6), (10, 0.2, 3.2), W.mat("nur_wall", (0.98, 0.92, 0.88), 0.9), bevel=0)
-    W.box((0, 1.6, 0.4), (1.6, 0.8, 0.8), W.mat("size_table", (0.90, 0.90, 0.88), 0.5), bevel=0.02)
-    eggs = [(-0.55, 0.028, 1.28, "ニワトリ", "60g"), (-0.15, 0.065, 1.22, "ダチョウ", "1.5kg"), (0.4, ER, EZ, "人", "4.5kg")]
+    W.box((0, 1.6, 0.4), (2.2, 0.8, 0.8), W.mat("size_table", (0.90, 0.90, 0.88), 0.5), bevel=0.02)
+    eggs = [(-0.68, 0.028, 1.28, "ニワトリ", "60g"), (-0.08, 0.065, 1.22, "ダチョウ", "1.5kg"), (0.6, ER, EZ, "人", "4.5kg")]
     for k, (x, rr, zz, lab, wgt) in enumerate(eggs):
         o = egg((x, 1.6, 0.8), rr, zz, name=f"cmp{k}", m=egg_mat(f"egg_c{k}", (0.96, 0.93, 0.86) if k != 0 else (0.90, 0.75, 0.55)))
         K = o.scale.copy()
@@ -243,9 +243,9 @@ def e02_size(nf):
         o.keyframe_insert("scale", frame=max(1, 10 + 18 * k))
         o.scale = K
         o.keyframe_insert("scale", frame=16 + 18 * k)
-        PF.sign((x, 1.18, 0.62), 0.36, 0.16, PF.text_texture(f"egglab{k}.png", [(lab, 120), (wgt, 90)], size=(400, 260),
+        PF.sign((x, 1.18, 0.4), 0.44, 0.24, PF.text_texture(f"egglab2_{k}.png", [(lab, 84), (wgt, 84)], size=(440, 240),
                                                              bg=(40, 40, 50)), f"lab{k}")
-    W.camera((-0.05, -1.3, 1.3), (-0.05, 1.6, 0.9), lens=30)
+    W.camera((0.0, -1.5, 1.55), (0.0, 1.6, 1.02), lens=28)
     fill((0.0, 0.0, 2.0), (0, 1.6, 0.9), power=80)
     return nf
 

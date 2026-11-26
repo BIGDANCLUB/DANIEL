@@ -30,6 +30,7 @@
 ## 142_tenshoku_kaisu
 - 1080：https://github.com/bigdanclub/daniel/blob/claude/cat-meme-longform/catmeme/release/short_142_tenshoku_kaisu.mp4
 - タイトル：【猫ミーム】日本vs世界 転職回数への反応 #猫ミーム #猫マニ #サラリーマン #あるある
+- 固定コメント案：転職、何回しましたか？（0回もOK）
 ```
 日本vs世界 転職回数への反応
 #猫ミーム #shorts #catmemes #猫マニ #サラリーマン #あるある #日本vs世界 #転職

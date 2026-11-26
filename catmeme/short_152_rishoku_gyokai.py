@@ -5,6 +5,7 @@ python3 catmeme/short_152_rishoku_gyokai.py → out/short_152_rishoku_gyokai.mp4
 - 数字：厚生労働省「令和6年雇用動向調査結果の概要」表4-2 産業別離職率（常用労働者計・令和6年1年間）TOP10
   宿泊・飲食 25.1／サービス業（他に分類されないもの）20.3／生活関連・娯楽 19.0／卸売・小売 15.1／医療・福祉 13.8／
   不動産 13.5／教育 13.1／学術研究 11.1／情報通信 10.2／運輸・郵便 10.2（産業計 14.2）。情報通信と運輸は同率 → 引き分け
+- 11/26 修正：負けた側のセリフ（情報通信「そっちノルマあるの？」・不動産「0.3差でセーフ！(アウト)」・医療「わかる」・卸売「そんな高いの？」（とまどう猫）・派遣「そらそうよ」）と卸売の勝ちセリフ「土日休みくださぁい！」
 - 冒頭は 149 と同じ（チリン・帯は最初から・1位だけ？？？・2秒・流れるランキングはアップ）
 """
 import os
@@ -71,17 +72,21 @@ def cuts():
     w = UNYU
     rounds = [
         (JOHO, None, None, ("荷物と一緒に\n人も出ていく", "まさかの\n同率…")),
-        (GAKU, "徹夜明けに\n転職サイト", "まだ辞めて\nない…ほっ", None),
+        (GAKU, "徹夜明けに\n転職サイト", "そっちノルマ\nあるの？", None),
         (KYOIKU, "4月が来るたび\n先生が減る", "研究室は\n辞められない", None),
         (FUDO, "ノルマ未達で\n春に消える", "わずか\n0.4差…", None),
-        (IRYO, "夜勤明けに\n退職届", "0.3差で\nセーフ", None),
-        (OROSHI, "土日休み\nください", "こっちも\n人手不足…", None),
-        (SEIKATSU, "美容師\n3年目の壁", "ここから\n一気に上がる", None),
+        (IRYO, "夜勤明けに\n退職届", "0.3差でセーフ！\n(アウト)", None),
+        (OROSHI, "土日休み\nくださぁい！", "わかる", None),
+        (SEIKATSU, "美容師\n3年目の壁", "そんな\n高いの？", None),
         (SERV, "3か月ごとに\n人が\n入れ替わる", "まだ上が\nいた…", None),
-        (SHUKU, "4人に1人が\nいなくなる", "アンタには\n勝てん", None),
+        (SHUKU, "4人に1人が\nいなくなる", "そらそうよ", None),
     ]
     for k, (new, wl, ll, tie) in enumerate(rounds):
         cs, w = rnd(k, w, new, wl, ll, tie)
+        if new == SEIKATSU:   # 11/26 ユーザー指定：卸売「そんな高いの？」はとまどう猫
+            for q in cs[-1]["cats"]:
+                if q["x"] < 540:
+                    q["a"] = "confused_i_dont_know_cat"
         body += cs
     allv = [UNYU, JOHO, GAKU, KYOIKU, FUDO, IRYO, OROSHI, SEIKATSU, SERV, SHUKU]
     scats = ["happy_hamster_open_arms", "dance_edm_cat", "rizz_cat_rizz", "dance_cute_dog", "think_chin_paw_orange_cat",

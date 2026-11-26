@@ -1073,7 +1073,7 @@ def scroll_draw(out, c, t):
             if xx + cw > 0 and xx < W:
                 sx0, sx1 = max(0, -xx), min(cw, W - xx)
                 I.over(out, img[:, sx0:sx1], al[:, sx0:sx1], xx + sx0, yy)
-        nmi = _btx("？？？" if c.get("hide_names") else nm, RED if win else BLUE, 46, stroke=0, max_w=bw - 10)   # 11/26：冒頭は名前を隠す
+        nmi = _btx("？？？" if (c.get("hide_names") and (win or c["hide_names"] == "all")) else nm, RED if win else BLUE, 46, stroke=0, max_w=bw - 10)   # 11/26：冒頭は1位の名前だけ隠す
         am = _btx(c.get("unit_fmt", "%d万") % v, RED if win else BLACK, 64, stroke=0, max_w=bw - 10)
         bh = nmi.height + am.height + 28
         box = Image.new("RGBA", (bw + 14, bh), (255, 255, 255, 255))

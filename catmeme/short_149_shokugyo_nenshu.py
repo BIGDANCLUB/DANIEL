@@ -3,6 +3,7 @@
 python3 catmeme/short_149_shokugyo_nenshu.py → out/short_149_shokugyo_nenshu.mp4
 - 11/26 ユーザー指定（最初の5秒で離脱させない）：冒頭の流れるランキングは職業名を「？？？」で隠す・帯に「あなたの職業は何位？」・
   帯は1フレーム目から出ていて大きく読める（横から入ってこない）・冒頭にチリン・帯の場面は2秒
+- 11/26 修正：「？？？」は1位だけ・管理職は「管理的職業従事者」（会社の課長以上など全般）なので「管理職（全般）」
 - 数字：厚生労働省「令和6年賃金構造基本統計調査」の職業別の年収（男女計・きまって支給する現金給与額×12＋年間賞与等）を
   まとめた記事（東洋経済・GBase）で確認した値。1〜4位と公認会計士・税理士・法務従事者は東洋経済、それ以外は GBase
   航空機操縦士 1697／医師 1338／歯科医師 1135／大学教授 1093／管理的職業 917／経営・金融・保険専門職 903／獣医師 885／
@@ -18,7 +19,7 @@ ST = "bg25_office_desk"
 VID = "v14_business_meeting"
 FMT = "%d万"
 HOU, KAIKEI, JUN = ("法務従事者", 765), ("会計士・税理士", 856), ("大学准教授", 881)
-JUI, KINYU, KANRI = ("獣医師", 885), ("金融専門職", 903), ("管理職", 917)
+JUI, KINYU, KANRI = ("獣医師", 885), ("金融専門職", 903), ("管理職（全般）", 917)
 KYOJU, SHIKA, ISHI, PILOT = ("大学教授", 1093), ("歯科医師", 1135), ("医師", 1338), ("パイロット", 1697)
 NERV = ["confused_i_dont_know_cat", "stare_tabby_wide_eyes_cat", "peek_what_happen_cat", "think_chin_paw_orange_cat"]
 JOY = ["happy_hamster_open_arms", "dance_edm_cat", "rizz_cat_rizz", "dance_filmed_by_gray_cat", "showoff_gojo_cosplay_cat",
@@ -113,7 +114,7 @@ def cuts():
                                           {"f": "siren_police", "at": 0.1, "len": T - tA + HOLD - 0.1, "gain": -10},
                                           {"f": "fanfare_pararappara", "at": T - tA}])   # 帯が出ている間は警告音
     head["danger"] = ("あなたの職業は\n何位？", 960)   # 11/26：帯の中に問いかけ（大きく読めるよう短く2行）
-    head.update(danger_static=True, hide_names=True)   # 11/26：帯は最初から出ている・職業名は「？？？」
+    head.update(danger_static=True, hide_names="top")   # 11/26：帯は最初から出ている・1位の職業名だけ「？？？」
     head["se"] = [{"f": "chirin", "at": 0.0}] + head["se"]   # 11/26：冒頭にチリン
     tail = scroll(0.0, tA)
     out = [head] + body + [tail]

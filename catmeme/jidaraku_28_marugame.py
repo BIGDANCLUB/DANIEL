@@ -1,15 +1,15 @@
 """自堕落シリーズ #28：30代独身、給料日前に丸亀製麺の釜揚げうどん半額の日（11/28 ユーザー指定）。約6分（11/28 ユーザー指定：5〜7分）。ドトールと同じ作り。
 
 python3 catmeme/jidaraku_28_marugame.py → out/jidaraku_28_marugame.mp4
-- 11/28 ユーザー指定の内容：11月は創業感謝月で、1日だけでなく11日・21日も釜揚げうどんが半額（この回は11/21）。
+- 11/28 ユーザー指定の内容：11月は創業感謝祭で、1日だけでなく11日・21日も釜揚げうどんが半額（この回は11/21）。
   給料日前に助かる。当然「得盛」（丸亀は特盛ではなく「得」という表記）。普段はただの特盛で得ではないのでは…と思うが、
   今日ばかりは名実ともに得盛。天ぷらはお得感たっぷりの野菜かき揚げ。お盆のボリュームがすごい。これで600円未満
 - 値段は店や時期で変わるので「600円未満」だけ言う（細かい金額は出さない）
 - 11/28 修正：千円札1枚・もやしだけはリアルでないので「ボーナス前かつ給料日前・財布の中身はさびしい・寒くなってきた・財布の中も寒い」に
-- 流れ：給料日前の財布 → 今日は21日 → 創業感謝月で半額 → 店へ・行列 → 「得で」→ 得盛の話 → 天ぷら（野菜かき揚げ）→
+- 流れ：給料日前の財布 → 今日は21日 → 創業感謝祭で半額 → 店へ・行列 → 「得で」→ 得盛の話 → 天ぷら（野菜かき揚げ）→
   ねぎ・天かす → お会計600円未満 → お盆のボリューム → 実食 → 帰り道 → 給料日まであと少しがんばれる
-- 写真：backgrounds/jidaraku/28_marugame（mg01_front 店の外・mg02_line 行列とカウンター・mg03_tempura 天ぷらの棚・
-  mg04_seat 席・f_tray お盆・f_kamaage 釜揚げのアップ・f_kakiage 野菜かき揚げ）
+- 写真：backgrounds/jidaraku/28_marugame（11/28 ユーザー提供5枚：f_poster 創業感謝祭（11/1〜11/30）・mg02_inside 店内（行列と席の両方）・
+  mg03_tempura 天ぷらの棚・f_tray お盆・f_kakiage 野菜かき揚げ。f_kamaage はお盆の写真から切り出し。mg01_front 店の外は待ち）
 - 11/17 からのルール：場面転換ゆっくり・字幕は1行12字・最大2行・2.5〜3秒・職場の回想なし
 - 11/26 のルール：素材は多様に（使いすぎの素材を減らす）
 """
@@ -23,7 +23,8 @@ J.BGS += [os.path.join(J.HERE, "backgrounds", d) for d in sorted(os.listdir(os.p
           if os.path.isdir(os.path.join(J.HERE, "backgrounds", d)) and d != "jidaraku"]
 J.BGS += [os.path.join(J.HERE, "backgrounds", "jidaraku")]
 ROOM_N, STREET_N = "j07_room_night", "bg51_night_street"
-FRONT, LINE, TEMPURA, SEAT = "mg01_front", "mg02_line", "mg03_tempura", "mg04_seat"
+FRONT, LINE, TEMPURA, SEAT = "mg01_front", "mg02_inside", "mg03_tempura", "mg02_inside"
+POSTER = "f_poster"
 TRAY, KAMA, KAKI = "f_tray", "f_kamaage", "f_kakiage"
 J.HOLD = 6
 J.LOOPS = 1
@@ -61,9 +62,9 @@ def cuts():
         s(ROOM_N, "scream_phone_orange_cat", "いや待て", se="pi"),
         s(ROOM_N, "stare_big_eyes_tabby_kitten", "今日は\n11月21日"),
         s(ROOM_N, "surprise_big_pupils_cat", "あの日だ", se="shine_kiraan_maou"),
-        s(ROOM_N, "read_book_orange_kitten", "丸亀製麺は\n毎月1日が\n釜揚げうどん半額"),
-        s(ROOM_N, "talk_orange_white_sitting_cat", "でも11月は\n創業感謝月"),
-        s(ROOM_N, "joy_happy_happy_happy_cat", "11日と21日も\n半額になる"),
+        s(ROOM_N, "read_book_orange_kitten", "丸亀製麺は\n毎月1日が\n釜揚げうどん半額", item=POSTER),
+        s(ROOM_N, "talk_orange_white_sitting_cat", "でも11月は\n創業感謝祭", item=POSTER),
+        s(ROOM_N, "joy_happy_happy_happy_cat", "11日と21日も\n半額になる", item=POSTER),
         s(ROOM_N, "dance_three_kittens", "給料日前に\nこれは助かる"),
         s(ROOM_N, "angry_aiming_cat", "行くしかない"),
         s(ROOM_N, "think_bike_front_seat_cat", "でもこの時間は\n混んでいるはず"),

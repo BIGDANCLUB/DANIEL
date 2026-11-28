@@ -53,3 +53,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def final():
+    """11/28 ユーザー指定：札「30代独身　給料日前」・帯「半額の丸亀製麺で得盛」（タイトルと同じ言葉）。"""
+    one("jidaraku_28_marugame_thumb_final.png", [("半額の", T.RED), ("丸亀製麺", T.BLUE), ("で得盛", T.RED)], tag="30代独身　給料日前")

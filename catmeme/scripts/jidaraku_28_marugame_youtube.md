@@ -1,6 +1,6 @@
 # 自堕落シリーズ #28 丸亀製麺 釜揚げうどん半額の日：リンク・タイトル・説明文
 - 1080：https://github.com/bigdanclub/daniel/blob/claude/cat-meme-longform/catmeme/release/jidaraku_28_marugame.mp4
-- サムネ：thumbs/jidaraku_28_marugame_thumb_final.png（11/28 ユーザー決定：3案目　30代独身 ボーナス前／給料日前の丸亀製麺）
+- サムネ：thumbs/jidaraku_28_marugame_thumb_final.png（11/28 ユーザー指定：30代独身 給料日前／半額の丸亀製麺で得盛）
 - 決定タイトル（11/28 ユーザー指定）：【猫ミーム】30代独身、給料日前 半額の丸亀製麺で得盛 #猫ミーム #猫マニ
 - 固定コメント案：丸亀で頼む天ぷら、何が一番好きですか？（野菜かき揚げ派は手を挙げて）
 

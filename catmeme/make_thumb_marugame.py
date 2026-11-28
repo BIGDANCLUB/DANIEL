@@ -45,9 +45,10 @@ def one(name, big_runs, sub_runs=None, tag="30代独身　給料日前"):
 
 
 def main():
-    one("jidaraku_28_marugame_thumb_c1.png", [("名実ともに", T.RED), ("得盛", T.BLUE)])
-    one("jidaraku_28_marugame_thumb_c2.png", [("財布も寒い日の", T.RED), ("得盛", T.BLUE)], tag="30代独身　ボーナス前")
-    one("jidaraku_28_marugame_thumb_c3.png", [("今日だけは", T.RED), ("得", T.BLUE)], [("（半額）", T.RED)])
+    # 11/28 ユーザー指定：「丸亀製麺」を入れて作り直し
+    one("jidaraku_28_marugame_thumb_c1.png", [("丸亀製麺で", T.RED), ("得盛", T.BLUE)])
+    one("jidaraku_28_marugame_thumb_c2.png", [("名実ともに", T.RED), ("得盛", T.BLUE)], tag="30代独身　給料日前の丸亀製麺")
+    one("jidaraku_28_marugame_thumb_c3.png", [("給料日前の", T.RED), ("丸亀製麺", T.BLUE)], tag="30代独身　ボーナス前")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,152 @@
+{
+ "_comment": "ST-012 大谷翔平のゴミ拾い。高校1年で書いた目標達成シートの「運」の項目に、ゴミ拾い・あいさつ・部屋そうじ・道具を大切に使う等がある（広く報道）。「人が捨てた運を拾う」は本人の考え方として知られるが正確な言い回しは未確認のため伝聞の形にした。本人や似た人物の画像は使わない。",
+ "tempo": 1.2,
+ "gap": 0.12,
+ "max_pause": 0.2,
+ "lead_in": 0.05,
+ "banner": "メジャーの舞台で\n{なぜゴミを拾うのか}",
+ "thumb_top": "メジャーの試合中に\nゴミを拾う理由",
+ "thumb_teaser": "高校1年の1枚の紙",
+ "tts": {
+  "model": "gemini-3.8-flash-tts",
+  "voice": "Algenib",
+  "style": "# AUDIO PROFILE\n50代の日本人男性ナレーター。落ち着いた低めの声で、温かく語りかける。\n## THE SCENE\nある野球選手の若い頃の物語を、同世代の視聴者に静かに語って聞かせている。\n### DIRECTOR'S NOTES\n棒読みにせず、感情をこめて抑揚をはっきりつける。最後の一文は胸を打つように力強く。間延びさせず、テンポよく語る。",
+  "voice_dir": "work_st012_ai/voice"
+ },
+ "image_gen": {
+  "image_dir": "work_st012_ai/images"
+ },
+ "scenes": {
+  "s01": {
+   "prompt": "A baseball player's hand in a plain gray uniform sleeve picking up a small piece of paper trash from the grass of a huge ballpark at night under stadium lights. No face visible, no team logos, no readable text."
+  },
+  "s02": {
+   "prompt": "Wide aerial view of a packed major league ballpark at night, bright lights, crowd as tiny dots. No face visible, no team logos, no readable text."
+  },
+  "s03": {
+   "prompt": "A rural Japanese high school baseball field in spring with cherry blossoms along the fence, empty, morning light. No face visible, no team logos, no readable text."
+  },
+  "s04": {
+   "prompt": "A teenage boy's hand writing with a pencil on a large grid sheet of paper on a classroom desk, writing blurred and unreadable. No face visible, no team logos, no readable text."
+  },
+  "s05": {
+   "prompt": "Extreme close-up of the center square of a hand-drawn 9x9 grid on paper, pencil marks blurred, dramatic light. No face visible, no team logos, no readable text."
+  },
+  "s06": {
+   "prompt": "Close-up of a pencil tip circling one square on a hand-drawn grid sheet, everything blurred except the pencil, warm desk lamp. No face visible, no team logos, no readable text."
+  },
+  "s07": {
+   "prompt": "A high school student's hands in a practice uniform picking up litter near the dugout of a dirt baseball field, late afternoon. No face visible, no team logos, no readable text."
+  },
+  "s08": {
+   "prompt": "A well-oiled leather baseball glove being carefully wiped with a cloth on a wooden bench in a dormitory room. No face visible, no team logos, no readable text."
+  },
+  "s09": {
+   "prompt": "An empty dirt baseball field at dusk with a single rake leaning on the fence, long shadows, quiet mood. No face visible, no team logos, no readable text."
+  },
+  "s10": {
+   "prompt": "A giant modern ballpark lit up against a deep blue evening sky, viewed from outside the gates, crowds walking in seen from behind. No face visible, no team logos, no readable text."
+  },
+  "s11": {
+   "prompt": "Macro close-up of a crumpled paper cup lying on bright green ballpark grass, shallow depth of field. No face visible, no team logos, no readable text."
+  },
+  "s12": {
+   "prompt": "Close-up of a hand placing a piece of trash into a pocket of a plain baseball uniform, stadium lights glowing behind. No face visible, no team logos, no readable text."
+  },
+  "s13": {
+   "prompt": "Morning sunlight streaming across an empty major league infield, dew on the grass, hopeful mood. No face visible, no team logos, no readable text."
+  },
+  "s14": {
+   "prompt": "A silhouette of a baseball player seen from far behind walking onto a huge field at dawn, golden backlight, epic and moving. No face visible, no team logos, no readable text."
+  }
+ },
+ "lines": [
+  {
+   "text": "メジャーの試合中\nグラウンドで\n<ゴミを拾う>\n選手がいる",
+   "tone": "静かに語り始める。少し不思議そうに",
+   "say": "メジャーリーグの試合中、グラウンドでゴミを拾う選手がいる。",
+   "scene": "s01",
+   "hook": true,
+   "se": "don"
+  },
+  {
+   "text": "世界最高の舞台で\nなぜ{ゴミ}を拾うのか",
+   "tone": "問いかけるように",
+   "say": "世界最高の舞台で、なぜゴミを拾うのか。",
+   "scene": "s02"
+  },
+  {
+   "text": "始まりは\n{高校1年}の春",
+   "tone": "懐かしむように",
+   "say": "始まりは、高校1年の春。",
+   "scene": "s03"
+  },
+  {
+   "text": "監督の教えで\n1枚の{目標シート}を\n書いた",
+   "tone": "淡々と、少し期待をこめて",
+   "say": "監督の教えで、1枚の目標シートを書いた。",
+   "scene": "s04"
+  },
+  {
+   "text": "真ん中には\n{ドラ1 8球団}",
+   "tone": "力をこめて",
+   "say": "真ん中に書いたのは、ドラフト1位、8球団。",
+   "scene": "s05"
+  },
+  {
+   "text": "その周りに\n<運>という目標",
+   "tone": "意外さを伝えるように",
+   "say": "その周りに、運という目標を置いた。",
+   "scene": "s06"
+  },
+  {
+   "text": "運を呼ぶために\n書いたのは\n{ゴミ拾い}",
+   "tone": "はっきりと",
+   "say": "運を呼ぶために書いたのは、ゴミ拾い。",
+   "scene": "s07"
+  },
+  {
+   "text": "{あいさつ}\n{部屋の掃除}\n{道具を大切に}",
+   "tone": "ひとつずつ、丁寧に",
+   "say": "あいさつ。部屋の掃除。道具を大切に使うこと。",
+   "scene": "s08"
+  },
+  {
+   "text": "誰も見ていない場所で\n毎日続けた",
+   "tone": "しみじみと",
+   "say": "誰も見ていない場所で、毎日続けた。",
+   "scene": "s09"
+  },
+  {
+   "text": "そしてプロへ\n{メジャー}へ",
+   "tone": "高揚感をこめて",
+   "say": "そしてプロへ。メジャーへ。",
+   "scene": "s10"
+  },
+  {
+   "text": "ゴミは\n{人が捨てた運}",
+   "tone": "ゆっくり、重みをこめて",
+   "say": "ゴミは、人が捨てた運。",
+   "scene": "s11"
+  },
+  {
+   "text": "それを拾えば\n{運}が味方する",
+   "tone": "語りかけるように",
+   "say": "それを拾えば、運が味方してくれる。そう考えているという。",
+   "scene": "s12"
+  },
+  {
+   "text": "高校1年の目標は\n<夢>で\n終わらなかった",
+   "tone": "力強く、胸を張って",
+   "say": "高校1年の目標は、夢で終わらなかった。",
+   "scene": "s13"
+  },
+  {
+   "text": "ゴミを拾う少年は\n<大谷翔平>に\nなった",
+   "tone": "胸を打つように、力強く",
+   "say": "ゴミを拾う少年は、大谷翔平になった。",
+   "scene": "s14"
+  }
+ ],
+ "tail": 1.3
+}

@@ -1,0 +1,561 @@
+"""長尺動画のサムネ：参考フォーマット（ユーザー指定 10/13）をマネして作る。横 1280x720。
+
+参考3枚の作り
+- A（「山本由伸の季節到来に…」型）：上6割は写真2枚（左にアップ、右に場面）。左の写真の下に白い札＋赤い文字の小見出しを少し傾けて。
+  下4割は黄色の地に、黒い極太文字2行（大事な言葉だけ青・赤）、白い縁取り
+- B（「ここは大人の遊園地だ！」型）：写真4枚を縦に切って横に並べる。赤い矢印と黄色の書き文字で写真の中を指す。
+  下に白〜黄色のグラデーションの帯、赤い文字と紺の文字の2行、白い太縁＋影
+- C（「全員日本に連れてけ」型）：写真を全面に。上の端の黒い帯に黄色い小さめの1行（黒縁）、下に黄色グラデーションの超巨大文字1行（黒い太縁）
+- 右下（約1060〜1270, 640〜700）は再生時間の表示で隠れるので、大事な文字は置かない
+- 猫ミームは写真の中に入れ込む
+
+python3 catmeme/make_thumb_long_ref.py → thumbs/12_akaihane_ref_a.png / _b / _c
+"""
+import os
+
+import numpy as np
+from PIL import Image, ImageDraw, ImageFilter
+
+import parts as P
+from make_thumb_01 import cat_img
+from make_thumb_short_ref import bg_path
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+W, H = 1280, 720
+WHITE, BLACK = (255, 255, 255), (0, 0, 0)
+RED, YELLOW, BLUE, NAVY = (226, 30, 30), (255, 236, 40), (36, 90, 220), (20, 30, 110)
+
+
+def fill_photo(name, w, h, cx=0.5, zoom=1.0, cy=0.5):
+    im = Image.open(bg_path(name)).convert("RGB")
+    k = max(w / im.width, h / im.height) * zoom
+    im = im.resize((int(im.width * k) + 1, int(im.height * k) + 1), Image.LANCZOS)
+    x0 = int((im.width - w) * cx)
+    y0 = int((im.height - h) * cy)
+    return im.crop((x0, y0, x0 + w, y0 + h)).convert("RGBA")
+
+
+def put_cat(img, name, t, x, bottom, h, flip=False):
+    c = cat_img(name, t, h, flip)
+    img.alpha_composite(c, (int(x - c.width / 2), int(bottom - c.height)))
+
+
+def runs(parts, size, sw, max_w, shadow=False, grad=None):
+    """色ちがいの文字を1行に並べる。parts=[(文字, 色)]。grad=(上の色, 下の色) で文字をグラデーションに。"""
+    f = P.font("black", size)
+    d0 = ImageDraw.Draw(Image.new("RGBA", (8, 8)))
+    while sum(d0.textlength(t, font=f) for t, _ in parts) > max_w - sw * 2 and size > 30:
+        size -= 3
+        f = P.font("black", size)
+    tw = int(sum(d0.textlength(t, font=f) for t, _ in parts)) + sw * 2 + 20
+    th = int(size * 1.3) + sw * 2
+    im = Image.new("RGBA", (tw, th), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    x = sw + 10
+    for t, col in parts:
+        stroke = col[1] if isinstance(col, tuple) and isinstance(col[0], tuple) else WHITE
+        fill = col[0] if isinstance(col[0], tuple) else col
+        if shadow:
+            d.text((x + 6, sw + 6), t, font=f, fill=(0, 0, 0, 160), stroke_width=sw, stroke_fill=(0, 0, 0, 160))
+        d.text((x, sw), t, font=f, fill=fill, stroke_width=sw, stroke_fill=stroke)
+        x += d.textlength(t, font=f)
+    if grad:
+        mask = Image.new("L", im.size, 0)
+        md = ImageDraw.Draw(mask)
+        x = sw + 10
+        for t, _ in parts:
+            md.text((x, sw), t, font=f, fill=255)
+            x += d.textlength(t, font=f)
+        g = Image.new("RGBA", im.size)
+        gd = ImageDraw.Draw(g)
+        for y in range(im.height):
+            u = y / im.height
+            gd.line((0, y, im.width, y), fill=tuple(int(a + (b - a) * u) for a, b in zip(grad[0], grad[1])) + (255,))
+        im.paste(g, (0, 0), mask)
+    return im.crop(im.getbbox())
+
+
+def arrow(img, x0, y0, x1, y1, col=RED, w=22):
+    d = ImageDraw.Draw(img)
+    v = np.array([x1 - x0, y1 - y0], float)
+    n = v / np.linalg.norm(v)
+    p = np.array([-n[1], n[0]])
+    tip = np.array([x1, y1])
+    base = tip - n * 48
+    d.line((x0, y0, *base), fill=WHITE, width=w + 10)
+    d.line((x0, y0, *base), fill=col, width=w)
+    tri = [tuple(tip + n * 6), tuple(base + p * 40), tuple(base - p * 40)]
+    d.polygon([tuple(tip + n * 12), tuple(base + p * 48 - n * 6), tuple(base - p * 48 - n * 6)], fill=WHITE)
+    d.polygon(tri, fill=col)
+
+
+def scribble(img, text, x, y, size, col=YELLOW, angle=0):
+    t = runs([(text, (col, BLACK))], size, max(6, size // 9), 900)
+    t = t.rotate(angle, expand=True, resample=Image.BICUBIC)
+    img.alpha_composite(t, (int(x - t.width / 2), int(y - t.height / 2)))
+
+
+def save(img, name):
+    p = os.path.join(HERE, "thumbs", name)
+    img.convert("RGB").save(p)
+    print("->", p)
+
+
+def type_a(name, left_bg, right_bg, left_cat, right_cats, tag, line1, line2, split=500, size=150):
+    """split＝左の写真の幅（人物の写真を大きく見せたい時は広げる）。"""
+    img = Image.new("RGBA", (W, H), WHITE)
+    top_h = 410
+    img.alpha_composite(fill_photo(left_bg, split, top_h, cx=0.5), (0, 0))
+    img.alpha_composite(fill_photo(right_bg, W - split - 4, top_h), (split + 4, 0))
+    put_cat(img, *left_cat)
+    for c in right_cats:
+        put_cat(img, *c)
+    # 小見出しの札
+    t = runs([(tag, (RED, WHITE))], 52, 2, 640)
+    box = Image.new("RGBA", (t.width + 50, t.height + 34), WHITE + (255,))
+    ImageDraw.Draw(box).rectangle((0, 0, box.width - 1, box.height - 1), outline=BLACK, width=5)
+    box.alpha_composite(t, (25, 17))
+    box = box.rotate(2, expand=True, resample=Image.BICUBIC)
+    img.alpha_composite(box, (14, top_h - box.height + 40))
+    # 下の黄色い地と2行
+    ImageDraw.Draw(img).rectangle((0, top_h + 18, W, H), fill=(255, 245, 60, 255), outline=BLACK, width=6)
+    l1 = runs(line1, size, 8, W - 40)
+    l2 = runs(line2, size, 8, W - 40)
+    img.alpha_composite(l1, ((W - l1.width) // 2, top_h + 40))
+    img.alpha_composite(l2, ((W - l2.width) // 2, top_h + 50 + l1.height))
+    save(img, name)
+
+
+def type_b(name, panels, notes, line1, line2):
+    img = Image.new("RGBA", (W, H), WHITE)
+    pw = W // len(panels)
+    for i, (bg, cats) in enumerate(panels):
+        ph = fill_photo(bg, pw - 6, 470, cx=0.5)
+        for c in cats:
+            put_cat(ph, *c)
+        img.alpha_composite(ph, (i * pw + 3, 0))
+    for kind, *a in notes:
+        if kind == "arrow":
+            arrow(img, *a)
+        else:
+            scribble(img, *a)
+    g = Image.new("RGBA", (W, H - 455))
+    gd = ImageDraw.Draw(g)
+    for y in range(g.height):
+        u = y / g.height
+        gd.line((0, y, W, y), fill=(255, 255, int(235 - 160 * u), 255))
+    img.alpha_composite(g, (0, 455))
+    l1 = runs(line1, 104, 9, W - 30, shadow=True)
+    l2 = runs(line2, 104, 9, W - 30, shadow=True)
+    gap = (H - 455 - l1.height - l2.height) // 3
+    img.alpha_composite(l1, ((W - l1.width) // 2, 455 + gap))
+    img.alpha_composite(l2, ((W - l2.width) // 2, 455 + gap * 2 + l1.height))
+    save(img, name)
+
+
+def type_c(name, bg, cats, top, big, zoom=1.0, cy=0.5, cx=0.5):
+    img = fill_photo(bg, W, H, cx=cx, zoom=zoom, cy=cy)
+    for c in cats:
+        put_cat(img, *c)
+    shade = Image.new("RGBA", (W, H))
+    sd = ImageDraw.Draw(shade)
+    for y in range(H):
+        a = int(150 * max(0, (y - 420) / 300))
+        sd.line((0, y, W, y), fill=(0, 0, 0, a))
+    img.alpha_composite(shade)
+    t = runs([(top, (YELLOW, BLACK))], 64, 6, W - 30)
+    ImageDraw.Draw(img).rectangle((0, 0, W, t.height + 22), fill=BLACK + (255,))   # 上の1行は黒い帯にのせる（参考どおり・10/13）
+    img.alpha_composite(t, ((W - t.width) // 2, 11))
+    b = runs([(big, (YELLOW, BLACK))], 230, 12, W - 40, grad=((255, 250, 210), (245, 200, 30)))
+    img.alpha_composite(b, ((W - b.width) // 2, H - b.height - 22))
+    save(img, name)
+
+
+def akaihane():
+    """12本目（赤い羽根）で3案。元事務局長は描かない。"""
+    type_a("12_akaihane_ref_a.png", "bg35_akaihane_box", "bg36_akaihane_bow",
+           ("surprise_big_pupils_cat", 0.6, 480, 330, 200, False),
+           [("sad_banana_cat_cry", 1.0, 1180, 410, 300, True)],
+           "国税が来て初めて発覚…",
+           [("赤い羽根募金", BLACK), ("2.5億円", BLUE)], [("が行方不明になっていた", RED)])   # 何が起きたか分かる文言に（10/13 ユーザー指定）
+    type_b("12_akaihane_ref_b.png",
+           [("bg36_akaihane_bow", [("huh_huh_cat", 1.0, 160, 470, 300, False)]),
+            ("bg35_akaihane_box", [("sad_banana_cat_cry", 1.0, 160, 470, 300, False)]),
+            ("bg37_akaihane_hands", [("glare_disgusted_cat", 1.0, 160, 470, 300, False)]),
+            ("bg21_school_gate", [("sad_black_dog", 1.0, 160, 470, 330, False)])],
+           [("txt", "!!", 110, 130, 140, RED, -8), ("txt", "羽根なし!!", 120, 330, 48, YELLOW, -6),
+            ("arrow", 420, 110, 500, 200), ("txt", "お釣り入れてたのに", 470, 330, 38, YELLOW, 4),
+            ("arrow", 860, 110, 900, 230), ("txt", "1人で管理!?", 820, 60, 46, YELLOW, -4),
+            ("txt", "お弁当半分…", 1130, 260, 40, YELLOW, 6)],
+           [("赤い羽根2.5億円が", RED)], [("行方不明に大激怒", NAVY)])
+    type_c("12_akaihane_ref_c.png", "bg34_akaihane_full",
+           [("surprise_big_pupils_cat", 0.6, 960, 560, 330, False)],
+           "赤い羽根2.5億円が行方不明 通帳も印鑑も1人で管理", "善意どこ行った")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB", "12") == "12":
+    akaihane()
+
+
+def yard():
+    """13本目（盗難ハイエース・ヤード）で3案。逮捕された人は描かない。背景は 10/13 ユーザー提供の写真（backgrounds/13_yard）。猫はニュース猫と車を盗まれた猫。"""
+    type_a("13_yard_ref_a.png", "bg39_hiace_black_garage", "bg41_yard_scrap",
+           ("surprise_big_pupils_cat", 0.6, 250, 470, 520, False),
+           [("sad_banana_cat_cry", 1.0, 760, 410, 330, True), ("glare_disgusted_cat", 1.0, 1080, 410, 300, True)],
+           "条例違反は30万円…",
+           [("盗難ハイエース", BLACK), ("300台", BLUE)], [("塀の中で解体し海外へ", RED)])
+    type_b("13_yard_ref_b.png",
+           [("bg39_hiace_black_garage", [("sad_banana_cat_cry", 1.0, 160, 470, 360, False)]),
+            ("bg42_yard_raid_ai", [("huh_huh_cat", 1.0, 160, 470, 360, False)]),
+            ("bg41_yard_scrap", [("glare_disgusted_cat", 1.0, 160, 470, 340, False)]),
+            ("bg26_phone_alert", [("sad_black_dog", 1.0, 160, 470, 330, False)])],
+           [("txt", "車がない…", 160, 60, 46, YELLOW, -6), ("txt", "!!", 420, 130, 110, RED, 8),
+            ("txt", "容疑は1台!?", 480, 330, 44, YELLOW, 4), ("arrow", 860, 110, 900, 230),
+            ("txt", "条例違反30万円", 820, 60, 44, YELLOW, -4), ("txt", "自分で探す…", 1130, 260, 40, YELLOW, 6)],
+           [("盗難車300台が塀の中へ", RED)], [("日本は盗難天国なのか", NAVY)])
+    type_c("13_yard_ref_c.png", "bg42_yard_raid_ai",
+           [("surprise_big_pupils_cat", 0.6, 250, 560, 500, False), ("sad_banana_cat_cry", 1.0, 660, 560, 470, True),
+            ("rage_talking_cat", 1.0, 1040, 560, 470, True)],
+           "盗難ハイエース300台が塀の中で解体され海外へ", "日本ナメられすぎ")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "13":
+    yard()
+
+
+def japan():
+    """14本目（日本が世界で最も魅力的な国 4年連続1位）で3案。背景は AI 生成のイラスト（backgrounds/14_japan）。"""
+    type_a("14_japan_ref_a.png", "bg59_sakura_park", "bg46_sushi_counter",
+           ("surprise_big_pupils_cat", 0.6, 250, 470, 520, False),
+           [("excited_hodomoe_city_cat", 1.0, 760, 410, 330, True), ("happy_girlfriend_dance_cat", 0.5, 1080, 410, 300, True)],
+           "米旅行誌の読者投票",
+           [("日本が世界1位", BLACK), ("4年連続", RED)], [("海外が驚く“当たり前”", BLUE)])
+    type_b("14_japan_ref_b.png",
+           [("bg46_sushi_counter", [("excited_hodomoe_city_cat", 1.0, 160, 470, 360, False)]),
+            ("bg49_public_toilet", [("huh_huh_cat", 1.0, 160, 470, 360, False)]),
+            ("bg52_koban", [("surprise_big_pupils_cat", 0.6, 160, 470, 340, False)]),
+            ("bg65_crowded_kyoto", [("sad_banana_cat_cry", 1.0, 160, 470, 330, False)])],
+           [("txt", "満足度96.9%", 160, 60, 44, YELLOW, -6), ("txt", "ゴミ箱どこ!?", 480, 70, 44, YELLOW, 4),
+            ("txt", "財布が戻る!!", 800, 330, 44, YELLOW, -4), ("arrow", 860, 110, 900, 230),
+            ("txt", "混雑は不満…", 1130, 260, 40, YELLOW, 6)],
+           [("世界で最も魅力的な国", RED)], [("日本が4年連続1位", NAVY)])
+    type_c("14_japan_ref_c.png", "bg59_sakura_park",
+           [("surprise_big_pupils_cat", 0.6, 250, 560, 500, False), ("excited_hodomoe_city_cat", 1.0, 660, 560, 470, True),
+            ("happy_girlfriend_dance_cat", 0.5, 1040, 560, 470, True)],
+           "米旅行誌の読者投票で日本が4年連続世界1位", "なぜ日本なの？")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "14":
+    japan()
+
+
+def vambi():
+    """15本目（ヴァンビの経歴と逮捕報道）で3案。本人・関係者の写真や似顔絵は使わない。背景は AI 生成（backgrounds/15_vambi）。
+    逮捕は容疑の段階なので、有罪のように見える言葉は使わない。"""
+    type_a("15_vambi_ref_a.png", "bg80_counter_rocket", "bg76_roppongi_night",
+           ("surprise_big_pupils_cat", 0.6, 250, 470, 520, False),
+           [("huh_huh_cat", 1.0, 760, 410, 330, True), ("peek_what_happen_cat", 1.0, 1080, 410, 300, True)],
+           "日本人最速1,000万人",
+           [("人気YouTuber", BLACK), ("ヴァンビ", RED)], [("成功から逮捕報道まで", BLUE)])
+    type_b("15_vambi_ref_b.png",
+           [("bg69_vkei_stage", [("surprise_big_pupils_cat", 0.6, 160, 470, 340, False)]),
+            ("bg71_wedding_chapel", [("huh_huh_cat", 1.0, 160, 470, 360, False)]),
+            ("bg80_counter_rocket", [("excited_hodomoe_city_cat", 1.0, 160, 470, 360, False)]),
+            ("bg77_police_station", [("peek_what_happen_cat", 1.0, 160, 470, 340, False)])],
+           [("txt", "元バンドマン", 160, 60, 44, YELLOW, -6), ("txt", "結婚企画で炎上", 480, 70, 42, YELLOW, 4),
+            ("txt", "1,000万人!!", 800, 330, 46, YELLOW, -4), ("arrow", 860, 110, 900, 230),
+            ("txt", "逮捕報道…", 1130, 260, 42, YELLOW, 6)],
+           [("ヴァンビの経歴", RED)], [("成功と騒動のくり返し", NAVY)])
+    type_c("15_vambi_ref_c.png", "bg76_roppongi_night",
+           [("surprise_big_pupils_cat", 0.6, 250, 560, 500, False), ("huh_huh_cat", 1.0, 660, 560, 470, True),
+            ("peek_what_happen_cat", 1.0, 1040, 560, 470, True)],
+           "登録者1,000万人のYouTuberヴァンビ 逮捕報道と事務所退所", "何があった？")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "15":
+    vambi()
+
+
+def tenchim():
+    """16本目（てんちむ モテフィット裁判の逆転）で3案。背景はユーザー提供の本人の写真（backgrounds/16_tenchim）。
+    猫は顔にかけない。控訴審の結果は本人の報告なので「確定」とは書かない。"""
+    type_a("16_tenchim_ref_a.png", "bg81_tenchim_neon", "bg84_courthouse",
+           ("surprise_big_pupils_cat", 0.6, 90, 470, 300, False),
+           [("huh_huh_cat", 1.0, 1130, 410, 300, True)],
+           "ナイトブラ裁判",
+           [("てんちむ3.8億円賠償", BLACK), ("が0円に", RED)], [("控訴審で支払い命令取り消し", BLUE)], split=780)
+    type_b("16_tenchim_ref_b.png",
+           [("bg82_tenchim_feather", []),
+            ("bg87_refund_money", [("surprise_big_pupils_cat", 0.6, 160, 470, 340, False)]),
+            ("bg84_courthouse", [("sad_banana_cat_cry", 1.0, 160, 470, 330, False)]),
+            ("bg85_courtroom", [("excited_hodomoe_city_cat", 1.0, 160, 470, 360, False)])],
+           [("txt", "豊胸隠し発覚", 160, 330, 42, YELLOW, -6), ("txt", "自腹で返金", 480, 70, 44, YELLOW, 4),
+            ("txt", "一審3.8億円…", 800, 70, 42, YELLOW, -4), ("arrow", 860, 110, 900, 230),
+            ("txt", "逆転!!", 1130, 260, 54, RED, 6)],
+           [("3億8,000万円が0円に", RED)], [("てんちむ　6年越しの逆転", NAVY)])
+    type_c("16_tenchim_ref_c.png", "bg81_tenchim_neon",
+           [("surprise_big_pupils_cat", 0.6, 170, 560, 420, False), ("huh_huh_cat", 1.0, 1130, 560, 420, True)],
+           "てんちむ ナイトブラ裁判 3億8,000万円の支払い命令が控訴審で取り消し", "まさかの逆転")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "16":
+    tenchim()
+
+
+def imamori():
+    """17本目（今森茉耶）で3案。ユーザー提供の写真（backgrounds/17_imamori/photos）。猫は顔にかけない。疑惑は疑惑と書く。"""
+    type_a("17_imamori_ref_a.png", "p5_event_smile", "p1_cast_and_hero",
+           ("stare_big_eyes_tabby_kitten", 1.0, 90, 470, 300, False),
+           [("stare_interviewer_cat", 1.0, 1200, 410, 280, True)],
+           "元戦隊ヒロイン",
+           [("再出発からわずか", BLACK), ("6日", RED)], [("今森茉耶がSNS発信休止", BLUE)], split=700)
+    type_b("17_imamori_ref_b.png",
+           [("p2_missmagazine_gp", []),
+            ("p1_cast_and_hero", []),
+            ("bg98_izakaya_night", [("sad_banana_cat_cry", 1.0, 160, 470, 330, False)]),
+            ("bg101_phone_chat", [("realize_wet_cat_stare", 1.0, 160, 470, 340, False)])],
+           [("txt", "ミスマガGP", 160, 330, 44, YELLOW, -6), ("txt", "戦隊ヒロイン", 480, 330, 42, YELLOW, 4),
+            ("txt", "20歳未満飲酒で降板", 800, 60, 38, YELLOW, -4), ("arrow", 860, 110, 900, 230),
+            ("txt", "発信休止…", 1130, 60, 44, YELLOW, 6)],
+           [("元戦隊ヒロインの1年", RED)], [("今森茉耶に何があった？", NAVY)])
+    type_c("17_imamori_ref_c.png", "p5_event_smile",
+           [("stare_big_eyes_tabby_kitten", 1.0, 150, 560, 380, False), ("stare_interviewer_cat", 1.0, 1130, 560, 380, True)],
+           "元戦隊ヒロイン今森茉耶 YouTube再出発から6日で発信休止", "何があった？")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "17":
+    imamori()
+
+
+def put_flag(img, code, x, y, h=90, angle=0):
+    """国旗を写真の中に（白い縁＋影）。code は story_style.flag_img と同じ（jp / us / tw）。"""
+    import story_style as T
+    fl = T.flag_img(code, h).convert("RGBA")
+    box = Image.new("RGBA", (fl.width + 12, fl.height + 12), WHITE + (255,))
+    box.alpha_composite(fl, (6, 6))
+    sh = Image.new("RGBA", (box.width + 30, box.height + 30), (0, 0, 0, 0))
+    ImageDraw.Draw(sh).rectangle((15, 15, 15 + box.width, 15 + box.height), fill=(0, 0, 0, 120))
+    sh = sh.filter(ImageFilter.GaussianBlur(6))
+    sh.alpha_composite(box, (9, 9))
+    sh = sh.rotate(angle, expand=True, resample=Image.BICUBIC)
+    img.alpha_composite(sh, (int(x - sh.width / 2), int(y - sh.height / 2)))
+
+
+def flags_on(name, items):
+    """できあがったサムネに国旗を重ねて保存し直す。items = [(code, x, y, h, angle)]。"""
+    p = os.path.join(HERE, "thumbs", name)
+    img = Image.open(p).convert("RGBA")
+    for it in items:
+        put_flag(img, *it)
+    img.convert("RGB").save(p)
+
+
+def semicon():
+    """18本目（寸劇シリーズ）日本の素材と半導体で3案。サムネには「寸劇」と書かない（10/20 ユーザー指定・「実は〜」で）。国旗を写真の中に入れる。背景は AI（backgrounds/18_semicon）。他の国をバカにする言葉は使わない。"""
+    type_a("18_semicon_ref_a.png", "bg03_jp_material_plant", "ph02_wafer_closeup",
+           ("talk_orange_white_sitting_cat", 1.0, 250, 470, 400, False),
+           [("surprise_big_pupils_cat", 0.6, 1100, 410, 300, True)],
+           "実は…AIブームの陰の主役",
+           [("日本の素材がないと", BLACK)], [("半導体が作れない？", RED)], split=600, size=126)
+    flags_on("18_semicon_ref_a.png", [("jp", 70, 60, 70, -6), ("us", 760, 70, 80, 5), ("tw", 900, 60, 80, -4)])
+    type_b("18_semicon_ref_b.png",
+           [("bg01_us_ai_office", [("dance_edm_cat", 1.0, 160, 470, 360, False)]),
+            ("bg02_cleanroom", [("work_typing_cat", 1.0, 160, 470, 340, False)]),
+            ("bg03_jp_material_plant", [("talk_orange_white_sitting_cat", 1.0, 160, 470, 360, False)]),
+            ("bg04_kumamoto_factory", [("surprise_big_pupils_cat", 0.6, 160, 470, 330, False)])],
+           [("txt", "AIチップ今すぐ!", 160, 60, 40, YELLOW, -6), ("txt", "材料さえあれば", 480, 60, 40, YELLOW, 4),
+            ("txt", "“いつものやつ”", 800, 60, 42, YELLOW, -4), ("arrow", 860, 110, 900, 230),
+            ("txt", "工場ごと来た!?", 1130, 60, 40, YELLOW, 6)],
+           [("AIの陰の主役は", RED)], [("日本の“地味な”素材", NAVY)])
+    flags_on("18_semicon_ref_b.png", [("us", 250, 420, 56, -5), ("tw", 570, 420, 56, 4), ("jp", 890, 420, 56, -4),
+                                      ("tw", 1210, 420, 56, 5)])
+    type_c("18_semicon_ref_c.png", "ph02_wafer_closeup",
+           [("talk_orange_white_sitting_cat", 1.0, 200, 560, 420, False), ("surprise_big_pupils_cat", 0.6, 1100, 560, 400, True)],
+           "実は…日本の素材がないと半導体が作れない？", "陰の主役")
+    flags_on("18_semicon_ref_c.png", [("jp", 200, 150, 80, -6), ("us", 960, 150, 80, 4), ("tw", 1120, 165, 80, -4)])
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "18":
+    semicon()
+
+
+def inawashiro():
+    """19本目（猪苗代湖ボート事故の逆転有罪）で3案。人が亡くなった事故なので、落ち着いた猫だけ・事故の様子は描かない。名前は出さない。"""
+    type_a("19_inawashiro_ref_a.png", "bg106_lake_calm", "bg104_supreme_court",
+           ("realize_wet_cat_stare", 1.0, 120, 470, 300, False),
+           [("calm_black_face_sheep", 1.0, 1180, 410, 260, True)],
+           "猪苗代湖ボート事故",
+           [("最高裁で", BLACK), ("逆転有罪", RED)], [("6年目の判決", BLUE)], split=640, size=126)
+    type_b("19_inawashiro_ref_b.png",
+           [("bg106_lake_calm", []),
+            ("bg105_courtroom", [("realize_wet_cat_stare", 1.0, 160, 470, 320, False)]),
+            ("bg104_supreme_court", [("sad_black_dog", 1.0, 160, 470, 320, False)]),
+            ("bg110_lake_sunset", [])],
+           [("txt", "2020年 湖で", 160, 60, 44, YELLOW, -6), ("txt", "一審 有罪", 480, 60, 46, YELLOW, 4),
+            ("txt", "二審 無罪", 800, 60, 46, YELLOW, -4), ("txt", "最高裁 有罪", 1130, 60, 46, RED, 6)],
+           [("「見えたはず」か", RED)], [("「見えなかった」か", NAVY)])
+    type_c("19_inawashiro_ref_c.png", "bg104_supreme_court",
+           [("realize_wet_cat_stare", 1.0, 170, 560, 380, False)],
+           "猪苗代湖ボート事故　最高裁が二審の無罪を破棄", "逆転有罪")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "19":
+    inawashiro()
+
+
+def sagi():
+    """20本目（郵便局を名乗る特殊詐欺）で3案。被害を公表した YouTuber の名前・写真は出さない。被害者を笑いにしない。"""
+    type_a("20_sagi_ref_a.png", "bg17_post_office", "bg77_police_station",
+           ("surprise_big_pupils_cat", 0.6, 250, 470, 480, False),
+           [("angry_aiming_cat", 1.0, 1100, 410, 300, True)],
+           "人気YouTuberも被害",
+           [("「郵便局です」", RED), ("は", BLACK)], [("ニセ警察の入り口", BLUE)], split=620, size=126)
+    type_b("20_sagi_ref_b.png",
+           [("bg14_home_night", [("peek_what_happen_cat", 1.0, 160, 470, 330, False)]),
+            ("bg17_post_office", [("call_customer_service_cat", 1.0, 160, 470, 340, False)]),
+            ("bg77_police_station", [("angry_aiming_cat", 1.0, 160, 470, 330, False)]),
+            ("bg26_phone_alert", [("surprise_big_pupils_cat", 0.6, 160, 470, 330, False)])],
+           [("txt", "自動音声", 160, 60, 46, YELLOW, -6), ("txt", "“郵便局員”", 480, 60, 44, YELLOW, 4),
+            ("txt", "“警察官”に交代", 800, 60, 40, YELLOW, -4), ("arrow", 860, 110, 900, 230),
+            ("txt", "お金を移して!?", 1130, 60, 40, RED, 6)],
+           [("1日10億円の特殊詐欺", RED)], [("その電話、いったん切って", NAVY)])
+    type_c("20_sagi_ref_c.png", "bg26_phone_alert",
+           [("surprise_big_pupils_cat", 0.6, 200, 560, 420, False), ("angry_aiming_cat", 1.0, 1100, 560, 400, True)],
+           "人気YouTuberも次々被害　郵便局を名乗る特殊詐欺", "それ詐欺です")
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "20":
+    sagi()
+
+
+def carbon():
+    """21本目（炭素繊維と787）で3案。「寸劇」とは書かない（「実は…」）。国旗を写真の中に。背景は仮（ChatGPT の画像が届いたら差しかえ）。"""
+    type_a("21_carbon_ref_a.png", "bg03_jp_material_plant", "bg45_airport_arrival",
+           ("talk_orange_white_sitting_cat", 1.0, 250, 470, 400, False),
+           [("surprise_big_pupils_cat", 0.6, 1100, 410, 300, True)],
+           "実は…飛行機の半分は“糸”？",
+           [("ボーイング787を", BLACK)], [("支える日本の“黒い糸”", RED)], split=600, size=112)
+    flags_on("21_carbon_ref_a.png", [("jp", 70, 60, 70, -6), ("us", 900, 60, 80, 5), ("eu", 1050, 70, 80, -4)])
+    type_b("21_carbon_ref_b.png",
+           [("bg01_us_ai_office", [("despair_dramatic_kitten", 1.0, 160, 470, 340, False)]),
+            ("bg03_jp_material_plant", [("talk_orange_white_sitting_cat", 1.0, 160, 470, 360, False)]),
+            ("bg45_airport_arrival", [("cocky_dj_cat", 1.0, 160, 470, 340, False)]),
+            ("ph07_sunset_factory", [("realize_wet_cat_stare", 1.0, 160, 470, 330, False)])],
+           [("txt", "燃料代高すぎ…", 160, 60, 40, YELLOW, -6), ("txt", "うちの“糸”です", 480, 60, 40, YELLOW, 4),
+            ("txt", "ほぼ日本製!?", 800, 60, 44, YELLOW, -4), ("txt", "ほんとに飛んだ…", 1130, 60, 38, YELLOW, 6)],
+           [("787の半分は", RED)], [("日本の“黒い糸”？", NAVY)])
+    flags_on("21_carbon_ref_b.png", [("us", 250, 420, 56, -5), ("jp", 570, 420, 56, 4), ("us", 890, 420, 56, -4), ("jp", 1210, 420, 56, 5)])
+    type_c("21_carbon_ref_c.png", "bg45_airport_arrival",
+           [("talk_orange_white_sitting_cat", 1.0, 200, 560, 420, False), ("surprise_big_pupils_cat", 0.6, 1100, 560, 400, True)],
+           "実は…飛行機の半分は“日本の糸”？　ボーイング787", "黒い糸")
+    flags_on("21_carbon_ref_c.png", [("jp", 200, 150, 80, -6), ("us", 960, 150, 80, 4), ("eu", 1120, 165, 80, -4)])
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "21":
+    carbon()
+
+
+def terakoya():
+    """22本目（寺子屋と江戸の識字率）で3案。「世界一」と言い切らない。「寸劇」とは書かない。背景は仮。"""
+    type_a("22_terakoya_ref_a.png", "bg56_kyoto_temple", "bg55_ryokan",
+           ("excited_hodomoe_city_cat", 1.0, 250, 470, 380, False),
+           [("surprise_big_pupils_cat", 0.6, 1100, 410, 300, True)],
+           "実は…江戸の子は字が読めた",
+           [("江戸の識字率は", BLACK)], [("世界トップクラス？", RED)], split=600, size=112)
+    flags_on("22_terakoya_ref_a.png", [("jp", 70, 60, 70, -6), ("gb", 1040, 60, 80, 5)])
+    type_b("22_terakoya_ref_b.png",
+           [("bg56_kyoto_temple", [("excited_hodomoe_city_cat", 1.0, 160, 470, 340, False)]),
+            ("bg55_ryokan", [("sleepy_old_memories_cat", 1.0, 160, 470, 340, False)]),
+            ("bg16_food_aisle", [("huh_goat_talks_to_huh_cat", 1.0, 160, 470, 320, False)]),
+            ("bg08_study", [("realize_wet_cat_stare", 1.0, 160, 470, 330, False)])],
+           [("txt", "看板が読める!?", 160, 60, 40, YELLOW, -6), ("txt", "先生は町の人", 480, 60, 42, YELLOW, 4),
+            ("txt", "授業料が大根!?", 800, 60, 40, RED, -4), ("txt", "推計で幅あり", 1130, 60, 40, YELLOW, 6)],
+           [("江戸の子どもは", RED)], [("字が読めた", NAVY)])
+    type_c("22_terakoya_ref_c.png", "bg60_autumn_leaves",
+           [("surprise_big_pupils_cat", 0.6, 200, 560, 420, False), ("sleepy_old_memories_cat", 1.0, 1100, 560, 380, True)],
+           "実は…江戸の子どもは字が読めた　寺子屋のひみつ", "寺子屋")
+    flags_on("22_terakoya_ref_c.png", [("gb", 200, 150, 80, -6), ("jp", 1100, 150, 80, 4)])
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "22":
+    terakoya()
+
+
+def passport():
+    """23本目（世界2位のパスポート）で3案。順位の低い国は出さない。「寸劇」とは書かない。背景は仮。"""
+    type_a("23_passport_ref_a.png", "bg43_award_stage", "bg45_airport_arrival",
+           ("sleepy_sleepy_cat", 1.0, 250, 470, 360, False),
+           [("surprise_big_pupils_cat", 0.6, 1100, 410, 300, True)],
+           "実は…世界2位なのに",
+           [("5人に4人が", BLACK)], [("パスポートなし", RED)], split=600, size=112)
+    flags_on("23_passport_ref_a.png", [("jp", 70, 60, 70, -6), ("sg", 900, 60, 80, 5), ("kr", 1050, 70, 80, -4)])
+    type_b("23_passport_ref_b.png",
+           [("bg43_award_stage", [("showoff_gojo_cosplay_cat", 1.0, 160, 470, 340, False)]),
+            ("bg43_award_stage", [("dance_trending_cat", 1.0, 160, 470, 360, False)]),
+            ("bg25_office_desk", [("sulk_hungry_cat", 1.0, 160, 470, 330, False)]),
+            ("bg20_counter", [("excited_hodomoe_city_cat", 1.0, 160, 470, 340, False)])],
+           [("txt", "1位シンガポール", 160, 60, 38, YELLOW, -6), ("txt", "2位 日本・韓国", 480, 60, 40, YELLOW, 4),
+            ("txt", "休めない…", 800, 60, 44, YELLOW, -4), ("txt", "7,000円安く!?", 1130, 60, 40, RED, 6)],
+           [("世界2位のパスポート", RED)], [("保有率は17.8%", NAVY)])
+    flags_on("23_passport_ref_b.png", [("sg", 250, 420, 56, -5), ("jp", 520, 420, 56, 4), ("kr", 620, 420, 56, -4),
+                                       ("jp", 890, 420, 56, -4), ("jp", 1210, 420, 56, 5)])
+    type_c("23_passport_ref_c.png", "bg44_world_map",
+           [("sleepy_sleepy_cat", 1.0, 200, 560, 400, False), ("surprise_big_pupils_cat", 0.6, 1100, 560, 400, True)],
+           "実は…最強パスポートなのに　日本人の5人に4人が持っていない", "17.8%")
+    flags_on("23_passport_ref_c.png", [("jp", 200, 150, 80, -6), ("sg", 960, 150, 80, 4), ("kr", 1120, 165, 80, -4)])
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "23":
+    passport()
+
+
+def chudo():
+    """24本目（中道改革連合の政党交付金）で3案。10/22 作り直し：ユーザー提供の報道写真（backgrounds/24_chudo/photos）を使う。
+    猫は顔にかけない。笑顔の写真は使わない（からかっているように見せない）。悪口・あだ名は書かない。"""
+    type_a("24_chudo_ref_a.png", "p2_hashina_talk", "bg87_refund_money",
+           ("surprise_big_pupils_cat", 0.6, 80, 470, 260, False),
+           [("huh_huh_cat", 1.0, 1150, 410, 300, True)],
+           "中道改革連合の政党交付金",
+           [("議員1人の党に", BLACK)], [("交付金5.8億円", RED)], split=700, size=112)
+    type_b("24_chudo_ref_b.png",
+           [("bg05_meeting", [("peek_what_happen_cat", 1.0, 160, 470, 330, False)]),
+            ("bg04_voting", [("sad_banana_cat_cry", 1.0, 160, 470, 330, False)]),
+            ("bg25_office_desk", [("blank_black_cat_zoning_out", 1.0, 160, 470, 330, False)]),
+            ("bg87_refund_money", [("surprise_big_pupils_cat", 0.6, 160, 470, 330, False)])],
+           [("txt", "1月 合流して結党", 160, 60, 38, YELLOW, -6), ("txt", "衆院選で49議席", 480, 60, 40, YELLOW, 4),
+            ("txt", "残ったのは1人", 800, 60, 42, YELLOW, -4), ("txt", "交付金5.8億円!?", 1130, 60, 40, RED, 6)],
+           [("議員1人の党に交付金", RED)], [("あなたは納得できる？", NAVY)])
+    type_c("24_chudo_ref_c.png", "p2_hashina_talk",
+           [("surprise_big_pupils_cat", 0.6, 130, 560, 330, False), ("huh_huh_cat", 1.0, 1170, 560, 330, True)],
+           "中道改革連合　議員1人で政党交付金を受け取り", "5.8億円", zoom=1.3, cy=1.0, cx=0.45)
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "24":
+    chudo()
+
+
+def wagyu():
+    """25本目（和牛を狙った男たち）で3案。運んだ人・牧場の人は描かない。ユーザー提供の写真を使う。"""
+    import sys as _s
+    import make_thumb_short_ref as _S
+    _S.BGS.insert(0, os.path.join(HERE, "backgrounds", "25_wagyu"))
+    type_a("25_wagyu_ref_a.png", "bg25_wagyu_sashi", "bg25_frozen_straws",
+           ("surprise_big_pupils_cat", 0.6, 120, 470, 280, False),
+           [("huh_huh_cat", 1.0, 1150, 410, 300, True)],
+           "2018年 和牛の精液持ち出し事件",
+           [("和牛の宝が", BLACK), ("ストロー1本", RED), ("で", BLACK)], [("海を渡りかけた", RED)], split=700, size=112)
+    type_b("25_wagyu_ref_b.png",
+           [("bg25_wagyu_ranch", [("think_bike_front_seat_cat", 1.0, 160, 470, 300, False)]),
+            ("bg25_straws_color", [("surprise_big_pupils_cat", 0.6, 160, 470, 300, False)]),
+            ("bg45_airport_arrival", [("stare_tabby_wide_eyes_cat", 0.6, 160, 470, 300, False)]),
+            ("bg85_courtroom", [("huh_huh_cat", 1.0, 160, 470, 330, False)])],
+           [("txt", "何十年もの改良", 160, 60, 38, YELLOW, -6), ("txt", "ストロー365本", 480, 60, 40, YELLOW, 4),
+            ("txt", "見つけたのは中国", 800, 60, 38, YELLOW, -4), ("txt", "法律がなかった!?", 1130, 60, 40, RED, 6)],
+           [("和牛を狙った男たち", RED)], [("日本の宝はなぜ守られなかった？", NAVY)])
+    type_c("25_wagyu_ref_c.png", "bg25_wagyu_steak",
+           [("surprise_big_pupils_cat", 0.6, 1130, 600, 380, True)],
+           "和牛の精液・受精卵 持ち出し事件", "和牛を狙った男たち", zoom=1.1)
+
+
+if __name__ == "__main__" and os.environ.get("THUMB") == "25":
+    wagyu()

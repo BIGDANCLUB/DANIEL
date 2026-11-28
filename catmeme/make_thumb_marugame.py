@@ -29,17 +29,17 @@ def one(name, big_runs, sub_runs=None, tag="30代独身　給料日前"):
         line = line.resize((int(line.width * k2), int(line.height * k2)), Image.LANCZOS)
     bh = line.height + 36
     by = T.H - bh - 14
-    if os.path.exists(CAT):
-        cat = Image.open(CAT).convert("RGBA")
-        cat = cat.crop((0, 0, cat.width, int(cat.height * 0.66)))   # 顔・うどん・どんぶりまで
-        k = 600 / cat.width
-        cat = cat.resize((600, int(cat.height * k)), Image.LANCZOS)
-        img.alpha_composite(cat, ((T.W - cat.width) // 2, max(0, by - cat.height + 40)))
-    ImageDraw.Draw(img).rounded_rectangle((30, by, T.W - 30, by + bh), 40, fill=(255, 245, 60, 255))
-    img.alpha_composite(line, ((T.W - line.width) // 2, by + 18))
     t = T.runs([(tag, (T.RED, T.WHITE))], 64, 2, 900)
     box = Image.new("RGBA", (t.width + 56, t.height + 34), T.WHITE + (255,))
     box.alpha_composite(t, (28, 17))
+    if os.path.exists(CAT):
+        cat = Image.open(CAT).convert("RGBA")
+        cat = cat.crop((0, 0, cat.width, int(cat.height * 0.65)))   # 顔・うどん・どんぶりまで（11/28 どんぶりが帯に隠れないように）
+        ch = by - box.height + 30
+        cat = cat.resize((int(cat.width * ch / cat.height), ch), Image.LANCZOS)
+        img.alpha_composite(cat, ((T.W - cat.width) // 2, by - box.height + 30 - ch))
+    ImageDraw.Draw(img).rounded_rectangle((30, by, T.W - 30, by + bh), 40, fill=(255, 245, 60, 255))
+    img.alpha_composite(line, ((T.W - line.width) // 2, by + 18))
     img.alpha_composite(box, ((T.W - box.width) // 2, by - box.height + 12))
     T.save(img, name)
 

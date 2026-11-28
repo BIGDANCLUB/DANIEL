@@ -42,8 +42,9 @@ def draw(s, i, base):
     Y.title_small(g, W_, P_, Q_)
     e, speed = TL.e_of(s, i)
     Y.elapsed(g, PC.LABEL, CC.fmt_speed(speed), CC.fmt_elapsed(e, speed), s.get("loc"))
+    hy = HY - 420 if s["name"] == "e02_size" else HY      # 大きさくらべは名札の上（壁の前）に出す
     for a, b, head, sub in s.get("captions", []):
-        Y.headline(g, head, sub, fade(sec, a, b), y=HY, size=HS)
+        Y.headline(g, head, sub, fade(sec, a, b), y=hy, size=HS)
     if s.get("card"):
         Y.card(g, s["card"], fade(sec, 0.0, 1.3, k=0.12))
     return g

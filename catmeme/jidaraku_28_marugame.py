@@ -9,7 +9,7 @@ python3 catmeme/jidaraku_28_marugame.py → out/jidaraku_28_marugame.mp4
 - 流れ：給料日前の財布 → 今日は21日 → 創業感謝祭で半額 → 店へ・行列 → 「得で」→ 得盛の話 → 天ぷら（野菜かき揚げ）→
   ねぎ・天かす → お会計600円未満 → お盆のボリューム → 実食 → 帰り道 → 給料日まであと少しがんばれる
 - 写真：backgrounds/jidaraku/28_marugame（11/28 ユーザー提供5枚：f_poster 創業感謝祭（11/1〜11/30）・mg02_inside 店内（行列と席の両方）・
-  mg03_tempura 天ぷらの棚・f_tray お盆・f_kakiage 野菜かき揚げ。f_kamaage はお盆の写真から切り出し。mg01_front 店の外は待ち）
+  mg03_tempura 天ぷらの棚・f_tray お盆・f_kakiage 野菜かき揚げ。f_kamaage はお盆の写真から切り出し。mg01_front 店の外（11/28 ユーザー提供）
 - 11/17 からのルール：場面転換ゆっくり・字幕は1行12字・最大2行・2.5〜3秒・職場の回想なし
 - 11/26 のルール：素材は多様に（使いすぎの素材を減らす）
 """

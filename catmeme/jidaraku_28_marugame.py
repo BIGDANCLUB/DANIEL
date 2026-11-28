@@ -5,6 +5,7 @@ python3 catmeme/jidaraku_28_marugame.py → out/jidaraku_28_marugame.mp4
   給料日前に助かる。当然「得盛」（丸亀は特盛ではなく「得」という表記）。普段はただの特盛で得ではないのでは…と思うが、
   今日ばかりは名実ともに得盛。天ぷらはお得感たっぷりの野菜かき揚げ。お盆のボリュームがすごい。これで600円未満
 - 値段は店や時期で変わるので「600円未満」だけ言う（細かい金額は出さない）
+- 11/28 修正：千円札1枚・もやしだけはリアルでないので「ボーナス前かつ給料日前・財布の中身はさびしい・寒くなってきた・財布の中も寒い」に
 - 流れ：給料日前の財布 → 今日は21日 → 創業感謝月で半額 → 店へ・行列 → 「得で」→ 得盛の話 → 天ぷら（野菜かき揚げ）→
   ねぎ・天かす → お会計600円未満 → お盆のボリューム → 実食 → 帰り道 → 給料日まであと少しがんばれる
 - 写真：backgrounds/jidaraku/28_marugame（mg01_front 店の外・mg02_line 行列とカウンター・mg03_tempura 天ぷらの棚・
@@ -45,16 +46,18 @@ def cuts():
     return [
         # ---- 給料日前の夜 ----
         s(ROOM_N, "stare_lying_tabby_cat", "仕事帰りの\n夕方6時", bgm={"file": NANDE, "gain": -12}),
+        s(ROOM_N, "stare_interviewer_cat", "最近\n急に寒くなってきた"),
+        s(ROOM_N, "snore_snoring_dog", "朝、布団から\n出られない"),
         s(ROOM_N, "money_counting_cream_cat", "財布を開く"),
-        s(ROOM_N, "despair_dramatic_kitten", "千円札が1枚"),
+        s(ROOM_N, "despair_dramatic_kitten", "…さびしい"),
         s(ROOM_N, "sulk_hungry_cat", "給料日まで\nあと4日"),
-        s(ROOM_N, "blank_black_cat_zoning_out", "冷蔵庫には\nマヨネーズだけ"),
-        s(ROOM_N, "sad_black_dog", "今日も\nもやしかな…"),
-        s(ROOM_N, "stare_lying_tabby_cat", "昨日も\nもやし炒め"),
-        s(ROOM_N, "blank_black_cat_zoning_out", "おとといも\nもやし炒め"),
-        s(ROOM_N, "sad_banana_cat_cry", "もやしに\n申し訳ない気がしてきた"),
-        s(ROOM_N, "slack_nail_filing_cat", "スマホで\n無料のクーポンを探す"),
-        s(ROOM_N, "confused_i_dont_know_cat", "使えるものが\n何もない"),
+        s(ROOM_N, "blank_black_cat_zoning_out", "ボーナスまでは\nまだ2週間"),
+        s(ROOM_N, "sad_black_dog", "ボーナス前で\n給料日前"),
+        s(ROOM_N, "sad_banana_cat_cry", "どっちも\nまだ来ない"),
+        s(ROOM_N, "stand_real_sheep", "外も寒いが"),
+        s(ROOM_N, "realize_wet_cat_stare", "財布の中も\n寒いのだ"),
+        s(ROOM_N, "slack_nail_filing_cat", "スマホで\nクーポンを探す"),
+        s(ROOM_N, "confused_i_dont_know_cat", "今日使えるものが\nない"),
         s(ROOM_N, "scream_phone_orange_cat", "いや待て", se="pi"),
         s(ROOM_N, "stare_big_eyes_tabby_kitten", "今日は\n11月21日"),
         s(ROOM_N, "surprise_big_pupils_cat", "あの日だ", se="shine_kiraan_maou"),
@@ -129,7 +132,7 @@ def cuts():
         # ---- お会計 ----
         s(LINE, "money_counting_cream_cat", "お会計"),
         s(LINE, "stare_aloha_gray_cat", "600円未満", se="price_display"),
-        s(LINE, "joy_happy_happy_happy_cat", "千円札で\nおつりが来る"),
+        s(LINE, "joy_happy_happy_happy_cat", "財布にやさしい"),
         s(SEAT, "work_typing_cat", "お盆を持って\n席へ"),
         s(SEAT, "drive_driving_cat", "お盆が重い", item=TRAY),
         s(SEAT, "surprise_big_pupils_cat", "ボリュームが\nすごい", item=TRAY),
@@ -168,7 +171,7 @@ def cuts():
         # ---- 帰り道と家 ----
         s(FRONT, "walk_white_duck", "お店を出る", bgm={"file": JITAKU, "gain": -10, "fade": 1.0}),
         s(STREET_N, "think_bike_front_seat_cat", "夜風が\nちょうどいい"),
-        s(STREET_N, "money_counting_orange_cat", "財布には\nまだお金が\n残っている"),
+        s(STREET_N, "money_counting_orange_cat", "財布の中は\nまだ少しあたたかい"),
         s(STREET_N, "joy_happy_happy_happy_cat", "給料日まで\nいける"),
         s(STREET_N, "dance_white_dog", "得盛ありがとう"),
         s(STREET_N, "peek_what_happen_cat", "次の半額は\n12月1日"),
